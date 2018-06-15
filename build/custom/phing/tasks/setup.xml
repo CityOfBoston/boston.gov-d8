@@ -1,0 +1,238 @@
+<project name="setup" default="setup">
+
+  <target name="setup" description="Install dependencies, builds docroot, installs Drupal."
+          depends="setup:drupal, setup:drupal:newdb">
+    <echo>For a full list of available Phing targets, run:</echo>
+    <echo>from host: lando phing -l</echo>
+    <echo>from container: phing -l</echo>
+  </target>
+
+  <target name="setup:drupal" description="Uses Composer to install drupal in the container.">
+    <if>
+      <not>
+        <available file="${project.basedir}/docroot/core/lib/Drupal.php" />
+      </not>
+      <then>
+        <echo message="Using Composer to install Drupal" />
+        <exec command="composer install" />
+      </then>
+      <else>
+        <echo message="Drupal is already installed."/>
+        <echo message="To update all drupal core and contributed modules, use: "/>
+        <echo message="   lando phing update:drupal:composer"/>
+        <echo message="or"/>
+        <echo message="   lando composer update."/>
+        <echo message="to update all drupal custom and features modules."/>
+        <echo message="   lando git pull."/>
+      </else>
+    </if>
+  </target>
+
+  <target name="setup:drupal:newdb"
+          description="Uses Composer to install drupal in the container attaching to database in Lando-controlled container.">
+    <if>
+      <not>
+        <available file="${project.basedir}/docroot/core/lib/Drupal.php" />
+      </not>
+      <then>
+
+        <echo message="Creating the default database for initial Drupal modules." />
+
+        <phingcall target="setup:drupal:local_settings_php:delete"
+                   description="Remove any pre-existing local.settings.php file."/>
+        <phingcall target="setup:drupal:local_settings_php:write"
+                   description="Recreate the local.settings.php file from default and load DB and any other settings."/>
+
+        <exec
+              description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
+              dir="${docroot}"
+              command="${drush.cmd} si ${project.profile.name}
+                --db-url=${lando.db.type}://${lando.db.user}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database}
+                --site-name=${lando.name}
+                --site-mail=${drupal.account.mail}
+                --account-name=${drupal.account.name}
+                --account-pass=${drupal.account.password}
+                --account-mail=${drupal.account.mail}
+                -y
+                "
+              logoutput="true"/>
+
+      </then>
+    </if>
+  </target>
+
+  <target name="setup:drupal:local_settings_php:delete"
+          description="Deletes any existing local.settings.php file.">
+    <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
+  </target>
+
+  <target name="setup:drupal:local_settings_php:write"
+    description="Sets the database and any other default values into the local.settings.php file.">
+      <if>
+        <not>
+          <available file="${local.settings.file}" />
+        </not>
+        <then>
+          <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" overwrite="false" verbose="true"/>
+          <echo message="$databases['default']['default'] = array (" append="true" file="${local.settings.file}"></echo>
+          <echo message="'driver' => 'mysql'," append="true" file="${local.settings.file}"></echo>
+          <echo message="'database' => '${lando.db.database}'," append="true" file="${local.settings.file}"></echo>
+          <echo message="'username' => '${lando.db.user}'," append="true" file="${local.settings.file}"></echo>
+          <echo message="'password' => '${lando.db.password}'," append="true" file="${local.settings.file}"></echo>
+          <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost'," append="true" file="${local.settings.file}"></echo>
+          <echo message="'port' => '${lando.db.port}'," append="true" file="${local.settings.file}"></echo>
+          <echo message=");" append="true" file="${local.settings.file}"></echo>
+        </then>
+        <else>
+          <echo message="local.settings.php already exists, ignoring." />
+        </else>
+      </if>
+
+      <echo message="Using settings file ${local.settings.file}"/>
+      <echo level="warning" message='Using ${lando.db.type} "${lando.db.database}" database on "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
+
+  </target>
+
+<!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
+
+  <target name="setup:behat" description="Generates tests/behat/local.yml file for executing Behat tests locally.">
+    <if>
+      <not>
+        <available file="${repo.root}/tests/behat/local.yml"/>
+      </not>
+      <then>
+        <copy file="${repo.root}/tests/behat/example.local.yml" tofile="${repo.root}/tests/behat/local.yml" overwrite="false">
+          <filterchain>
+            <expandproperties />
+          </filterchain>
+        </copy>
+      </then>
+      <else>
+        <echo message="local.yml already exists, ignoring."></echo>
+      </else>
+    </if>
+  </target>
+
+  <!-- This is run when a project is cloned to a new environment. -->
+  <target name="setup:build:all" description="Generates all required files for a full build. E.g., removes docroot, builds via `drush make`, restores symlinks, etc."
+          depends="setup:behat, setup:build:make, frontend:build">
+  </target>
+
+  <!-- Drush make the build using a recursive strategy -->
+  <target name="setup:build:make" description="Downloads core and contrib based on project's make.yml.">
+    <!--Rebuild core. -->
+    <exec dir="${repo.root}" command="./scripts/make/non-destructive-make-core.sh" logoutput="true" passthru="true"/>
+
+    <!-- Rebuild contrib -->
+    <drush command="make" assume="yes">
+      <option name="concurrency">8</option>
+      <param>"${repo.root}/${project.make_file}"</param>
+      <param>"${docroot}"</param>
+      <option name="no-core"/>
+      <option name="no-gitinfofile"/>
+      <option name="contrib-destination">sites/all</option>
+    </drush>
+  </target>
+
+  <target name="setup:robots:install" description="Copies robots.txt file">
+    <copy file="${core.phing.dir}/../files/${drupal.multisite.name}.robots.txt" tofile="${docroot}/robots.txt" overwrite="true"/>
+  </target>
+
+  <target name="setup:drupal:install" description="Installs a specific Drupal site.">
+    <!-- Temporarily move setting.php so it is not simply overwritten during install -->
+    <chmod mode="0755" file="${docroot}/sites/${drupal.multisite.name}"/>
+    <copy file="${docroot}/sites/${drupal.multisite.name}/settings.php" tofile="${docroot}/sites/${drupal.multisite.name}/settings.php.bak"/>
+
+    <drush command="sql-drop" assume="yes" verbose="TRUE">
+      <!--<option name="db-url">"mysql://${db.username}:${db.password}@${db.host}:${db.port}/${db.database}"</option>-->
+      <option name="uri">"${drupal.multisite.name}"</option>
+    </drush>
+    <drush command="site-install" assume="yes" verbose="TRUE">
+      <!--<option name="db-url">"mysql://${db.username}:${db.password}@${db.host}:${db.port}/${db.database}"</option>-->
+      <option name="site-name">"${project.human_name}"</option>
+      <option name="site-mail">"${drupal.account.mail}"</option>
+      <option name="account-name">"${drupal.account.name}"</option>
+      <option name="account-pass">"${drupal.account.password}"</option>
+      <option name="account-mail">"${drupal.account.mail}"</option>
+      <option name="uri">"${drupal.multisite.name}"</option>
+      <param>"${project.profile.name}"</param>
+      <param>"install_configure_form.update_status_module='array(FALSE,FALSE)'"</param>
+    </drush>
+
+    <phingcall target="setup:drupal:permissions"/>
+
+    <!-- Restore original settings.php, wiped out by Drupal installation. -->
+    <chmod mode="0755" file="${docroot}/sites/${drupal.multisite.name}"/>
+    <copy file="${docroot}/sites/${drupal.multisite.name}/settings.php.bak" tofile="${docroot}/sites/${drupal.multisite.name}/settings.php"/>
+  </target>
+
+  <target name="setup:drupal:permissions" description="Reset permissions after installation or sync.">
+    <drush command="acquia-reset-permissions" assume="yes">
+      <option name="uri">${drupal.multisite.name}</option>
+    </drush>
+  </target>
+
+  <target name="setup:drupal:settings" description="Create a local.settings.php with local db creds from local.yml.">
+    <if>
+      <not>
+        <available file="${docroot}/sites/${drupal.multisite.name}/settings/local.settings.php" />
+      </not>
+      <then>
+        <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${docroot}/sites/${drupal.multisite.name}/settings/local.settings.php" overwrite="false" verbose="true">
+          <filterchain>
+            <expandproperties />
+          </filterchain>
+        </copy>
+      </then>
+      <else>
+        <echo message="local.settings.php already exists, ignoring." />
+      </else>
+    </if>
+  </target>
+
+  <target name="setup:git-hooks" description="Installs git hooks to local .git/hooks directory from version controlled scripts/git-hooks directory.">
+
+    <!-- Symlink into .git directory. -->
+    <delete dir="${repo.root}/.git/hooks" quiet="true" failonerror="false"/>
+    <exec dir="${repo.root}/.git" command="ln -snv ../scripts/git-hooks hooks" logoutput="true"/>
+
+    <!-- Grant execution permissions. -->
+    <chmod mode="0755">
+      <fileset dir="${repo.root}/scripts/git-hooks">
+        <exclude name="**/*.sample" />
+        <exclude name="**/README.md" />
+      </fileset>
+    </chmod>
+  </target>
+
+  <target name="setup:bolt:update" description="Pulls in upstream changes to project template from Bolt respository.">
+    <echo>You may be prompted to trust GitHub's SSL certification and to enter your GitHub password.</echo>
+    <echo>If you have two factor authentication enabled for GitHub, you must use an access token in lieu of a password.</echo>
+    <echo>GitHub access tokens can be generated here: https://github.com/settings/tokens</echo>
+
+    <input message="Press any key to continue" propertyName="continue" />
+
+    <exec dir="${repo.root}" command="./scripts/bolt/update-scaffold" logoutput="true" passthru="true"/>
+  </target>
+
+  <target name="local:composer-install" description="Install drupal core files using composer.">
+    <exec dir="${repo.root}" command="composer status" logoutput="true"/>
+  </target>
+
+  <target name="local:refresh" description="Refreshes local environment from upstream testing database." depends="local:sync, local:update"/>
+
+  <target name="local:sync" description="Synchronize remote environment with local environment." depends="setup:drupal:settings">
+    <exec dir="${docroot}" command="cp -rfu ~/host-ssh/ ~/.ssh/" logoutput="true"/>
+    <exec dir="${docroot}" command="${drush.cmd} sql-drop -y" logoutput="true"/>
+    <exec dir="${docroot}" command="${drush.cmd} sql-sync ${project.cloud_alias}.test @self --create-db --structure-tables-list='field_revision_*,*_revision*,cache*,metatag,watchdog' -y" logoutput="true"/>
+    <exec dir="${docroot}" command="${drush.cmd} cr" logoutput="true"/>
+  </target>
+
+  <target name="local:update" description="Update current database to reflect the state of the Drupal file system.">
+    <exec dir="${docroot}" command="${drush.cmd} fra -y" logoutput="true"/>
+    <exec dir="${docroot}" command="${drush.cmd} updb -y" logoutput="true"/>
+    <exec dir="${docroot}" command="${drush.cmd} acquia-reset-permissions -y" logoutput="true"/>
+  </target>
+
+
+</project>

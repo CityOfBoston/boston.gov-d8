@@ -1,0 +1,160 @@
+#!/bin/bash
+
+# Define colors
+Black='\033[0;30m'
+DarkGray='\033[1;30m'
+Red='\033[0;31m'
+LightRed='\033[1;31m'
+Green='\033[0;32m'
+LightGreen='\033[1;32m'
+BrownOrange='\033[0;33m'
+Yellow='\033[1;33m'
+Blue='\033[0;34m'
+LightBlue='\033[1;34m'
+Purple='\033[0;35m'
+LightPurple='\033[1;35m'
+Cyan='\033[0;36m'
+LightCyan='\033[1;36m'
+LightGray='\033[0;37m'
+White='\033[1;37m'
+NC='\033[0m' # No Color
+
+# Define paths (relative to this script)
+SCRIPTS_PATH="$(pwd)/scripts"
+DOIT_SCRIPTS_PATH="${SCRIPTS_PATH}/doit"
+LANDO_SCRIPTS_PATH="${SCRIPTS_PATH}/lando"
+
+# Draws "DoIT" in CLI block letters.
+function doitbrand() {
+    ${DOIT_SCRIPTS_PATH}/branding.sh
+  # Image credit: http://www.chris.com/ascii/index.php?art=objects/buildings
+}
+
+# Provide some details on how this tool works.
+function doithelp() {
+  echo $'\r'
+  echo -e "${Yellow}Community Commands:${NC}"
+  echo -e "${LightBlue}  install${NC}       Creates and starts containers for first time."
+  echo -e "${LightBlue}  rebuild${NC}       Destroys, rebuilds and starts containers."
+  echo $'\r'
+  echo -e "${Yellow}Staff Commands:${NC}"
+  echo $'\r'
+}
+
+# Formatting for a simple comment.
+function doitcomment() {
+  echo $'\r'
+  echo -ne "${Yellow}$1${LightGreen} $2${NC}"
+  echo $'\r'
+  echo $'\r'
+}
+
+# basic parse of a yml file into a series of variables.
+function parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
+# Wrapper to load the .lando.yml file
+function load_lando_yml() {
+    eval $(parse_yaml ".lando.yml" "lando_")
+}
+
+
+#################################
+# START CUSTOM SCRIPTS
+#################################
+
+function doitinstall() {
+    # Run the doit install script.
+    # Expect this to be run when the containers do not already exist.
+    doitcomment "Install container from scratch."
+
+    load_lando_yml
+
+    # Test if container exists and if do prompt to delete.
+    if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
+        echo -e "${LightBlue}Lando app ${lando_name} already exists, do you wish to continue?\n${Red}NOTE: this will destroy the containers${NC}?"
+        while true; do
+            read -p "" yn
+            case $yn in
+                [Yy]* ) lando destroy -y; break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes or no.";;
+            esac
+            if [ $? -ne 0 ]; then
+                doitcomment "FAILED:" "The container could not be deleted."
+                exit 1
+            fi
+        done
+    fi
+    doitcomment "Creating the lando app: ${lando_name}"
+
+    ${DOIT_SCRIPTS_PATH}/install.sh
+    retVal=$?
+    if [ $retVal -ne 0 ]; then
+        doitcomment "FAILED:" "Container is NOT built check output above for reasons for failure."
+    else
+        doitcomment "SUCCESS:" "Container is now built and started."
+    fi
+    exit $retVal
+}
+
+function doitrebuild() {
+    # First, destroy (if exists)
+    if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
+        echo -e "${LightBlue}Lando app ${lando_name} found, do you wish to continue?\n${Red}NOTE: this will destroy and rebuild the containers${NC}?"
+        while true; do
+            read -p "" yn
+            case $yn in
+                [Yy]* ) lando destroy -y; break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+    else
+        doitcomment "No pre-existing lando app found."  "\nSuggestion: use ${White}./doit install"
+        exit 0
+    fi
+
+    # Now install
+    doitinstall
+}
+
+#################################
+# END CUSTOM SCRIPTS
+#################################
+
+# Get the first word from user input.
+command=$1
+# Get everything after the first word from input.
+args=${@:2}
+
+# Run a function based on the command the user supplied.
+if [[ -n "$command" ]]; then
+  if [[ $command == "install" ]]; then
+    doitinstall
+  elif [[ $command == "rebuild" ]]; then
+    doitrebuild
+  elif [[ $command == "welcome" ]]; then
+    doitbrand
+  else
+    echo "$command is not a valid command. Please use \"./doit help\" to see what is available."
+  fi
+# The user did not give any input.
+else
+  echo $'\r'
+  doitbrand
+  doithelp
+fi

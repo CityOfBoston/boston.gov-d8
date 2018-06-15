@@ -1,0 +1,1165 @@
+<?php
+/**
+ * @file
+ * Install file for Boston.gov.
+ */
+
+
+/**
+ * Implements hook_install().
+ *
+ * This function is also used by the hub_profile_install() function.
+ *
+ * This function needs to call all of the migrations in order to set
+ * up a fresh Drupal install.
+ */
+function bos_profile_install() {
+  bos_profile_install_common();
+
+  bos_profile_update_7001(TRUE);
+  bos_profile_update_7002();
+  bos_profile_update_7003();
+  bos_profile_update_7004();
+  bos_profile_update_7005();
+  bos_profile_update_7006();
+  bos_profile_update_7007();
+  bos_profile_update_7008();
+  bos_profile_update_7009();
+  bos_profile_update_7010();
+  bos_profile_update_7011();
+  bos_profile_update_7012();
+  bos_profile_update_7013();
+  bos_profile_update_7014();
+  bos_profile_update_7015();
+  bos_profile_update_7016();
+  bos_profile_update_7017();
+  bos_profile_update_7018();
+  bos_profile_update_7019();
+  bos_profile_update_7020();
+  bos_profile_update_7021();
+  bos_profile_update_7022();
+  bos_profile_update_7023();
+  bos_profile_update_7024();
+  bos_profile_update_7025();
+  bos_profile_update_7026();
+  bos_profile_update_7027();
+  bos_profile_update_7028();
+  bos_profile_update_7029();
+  bos_profile_update_7030();
+  bos_profile_update_7031();
+  bos_profile_update_7032();
+  bos_profile_update_7033();
+  bos_profile_update_7034();
+  bos_profile_update_7035();
+  bos_profile_update_7036();
+  bos_profile_update_7037();
+}
+
+/**
+ * This function is also used by the hub_profile_install() function.
+ */
+function bos_profile_install_common() {
+  // Enable user picture support and set the default
+  // to a square thumbnail option.
+  variable_set('user_pictures', '1');
+  variable_set('user_picture_dimensions', '1024x1024');
+  variable_set('user_picture_file_size', '800');
+  variable_set('user_picture_style', 'thumbnail');
+
+  // Enable default permissions for system roles.
+  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content'));
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content'));
+
+  // Create a default role for site administrators,
+  // with all available permissions assigned.
+  $admin_role = new stdClass();
+  $admin_role->name = 'administrator';
+  $admin_role->weight = 2;
+  user_role_save($admin_role);
+  user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+  // Set this as the administrator role.
+  variable_set('user_admin_role', $admin_role->rid);
+
+  // Assign user 1 the "administrator" role.
+  db_insert('users_roles')
+    ->fields(array('uid' => 1, 'rid' => $admin_role->rid))
+    ->execute();
+
+  // Create a Home link in the main menu.
+  $item = array(
+    'link_title' => st('Home'),
+    'link_path' => '<front>',
+    'menu_name' => 'main-menu',
+  );
+  menu_link_save($item);
+
+  // Update the menu router information.
+  menu_rebuild();
+
+  // Enable the admin theme.
+  db_update('system')
+    ->fields(array('status' => 1))
+    ->condition('type', 'theme')
+    ->condition('name', 'seven')
+    ->execute();
+  variable_set('admin_theme', 'seven');
+  variable_set('node_admin_theme', '1');
+
+  _bos_profile_fix_full_html();
+}
+
+/**
+ * Set cache value to be FALSE for full_html filter format.
+ *
+ * Only do this once, then set a variable bos_full_html_cache_cleared
+ * so that this function will no take much to run.
+ */
+function _bos_profile_fix_full_html() {
+  // Load the filter.
+  $format = filter_format_load('full_html');
+
+  // If the filter is set to be cached.
+  if ($format->cache) {
+    $format->cache = 0;
+
+    // Update the text format to have the cache = 0.
+    $return = db_merge('filter_format')
+      ->key(array('format' => $format->format))
+      ->fields(array(
+        'name' => $format->name,
+        'cache' => (int) $format->cache,
+        'status' => (int) $format->status,
+        'weight' => (int) $format->weight,
+      ))
+      ->execute();
+  }
+  return NULL;
+}
+
+/**
+ * Enable modules added in Sprint 4.
+ *
+ * Work for: Sprint 4
+ */
+function bos_profile_update_7001($is_install = FALSE) {
+  // Deleted field instances in sprint 4 should be listed here.
+  $deleted_field_instances = array(
+    'taxonomy_term' => array(
+      'contact' => array(
+        'field_external_link',
+        'field_icon',
+        'field_phone_number',
+      ),
+    ),
+  );
+  // If you need to disable a module for work done during sprint 4, add it here.
+  $disabled_modules = array(
+    'bos_migrate',
+  );
+  // If you need to enable a module for work done during sprint 4, add it here.
+  $enabled_modules = array(
+    'bos_settings_system',
+    'bos_workflow',
+    'special_menu_items',
+    'bos_settings_menu',
+    'bos_content_type_article',
+    'addressfield',
+    'bos_content_type_department_profile',
+    'bos_content_type_post',
+    'bos_vocabulary_event_type',
+    'bos_vocabulary_news_tags',
+    'bos_vocabulary_neighborhoods',
+    'bos_content_type_event',
+    'bos_view_calendar_listing',
+  );
+  foreach ($deleted_field_instances as $entity_type => $bundles) {
+    foreach ($bundles as $bundle_id => $bundle_fields) {
+      foreach ($bundle_fields as $field) {
+        $instance = field_info_instance($entity_type, $field, $bundle_id);
+        field_delete_instance($instance);
+      }
+    }
+  }
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+
+  if (!$is_install) {
+    // Remove orphaned migrations since we're disabling bos_migrate. This is
+    // identical to what the drush deregistration command does.
+    $migrations = array();
+    $result = db_select('migrate_status', 'ms')
+      ->fields('ms', array('class_name', 'machine_name'))
+      ->execute();
+    foreach ($result as $row) {
+      if (!class_exists($row->class_name)) {
+        $migrations[] = $row->machine_name;
+      }
+    }
+    foreach ($migrations as $machine_name) {
+      $machine_name = drupal_strtolower($machine_name);
+      // The class is gone, so we'll manually clear migrate_status, and make
+      // the default assumptions about the map/message tables.
+      db_drop_table('migrate_map_' . $machine_name);
+      db_drop_table('migrate_message_' . $machine_name);
+      db_delete('migrate_status')
+        ->condition('machine_name', $machine_name)
+        ->execute();
+      db_delete('migrate_field_mapping')
+        ->condition('machine_name', $machine_name)
+        ->execute();
+    }
+  }
+}
+
+/**
+ * Enable modules added in Sprint 5.
+ *
+ * Work for: Sprint 5
+ */
+function bos_profile_update_7002() {
+  $disabled_modules = array();
+  // If you need to enable a module for work done during sprint 5, add it here.
+  $enabled_modules = array(
+    'bos_content_type_person_profile',
+    'bos_vocabulary_political_party',
+    'bos_vocabulary_profile_type',
+    'crumbs',
+    'bos_settings_breadcrumbs',
+    'better_exposed_filters',
+    'bos_view_news_landing',
+    'bos_view_calendar_listing',
+    'bos_component_list',
+    'bos_component_header_text',
+    'bos_component_featured_item',
+    'bos_content_type_listing_page',
+    'bos_view_department_listing',
+    'adminimal_admin_menu',
+    'bos_file_type_document',
+  );
+
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+
+  // Re-run this function since the admin theme was changed during sprint 5.
+  _bos_profile_set_theme();
+}
+
+/**
+ * Enable modules added in Sprint 6.
+ *
+ * Work for: Sprint 6
+ */
+function bos_profile_update_7003() {
+  $disabled_modules = array(
+    'search',
+    'shortcut',
+  );
+  // If you need to enable a module for work done during sprint 6, add it here.
+  $enabled_modules = array(
+    'wysiwyg_filter',
+    'media_wysiwyg',
+    'media_wysiwyg_view_mode',
+    'bos_content_type_how_to',
+    'bos_component_custom_hours_text',
+    'bos_component_daily_hours',
+    'bos_components_sidebar',
+    'bos_vocabulary_program_type',
+    'bos_content_type_program_initiative_profile',
+    'bos_content_type_place_profile',
+    'bos_vocabulary_place_type',
+  );
+
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+
+  // Disable the workbench block.
+  db_update('block')
+    ->fields(array(
+      'status' => 0,
+      'region' => '',
+    ))
+    ->condition('module', 'workbench')
+    ->condition('delta', 'block')
+    ->execute();
+
+  // Re-run this function since the admin theme was changed during sprint 6.
+  _bos_profile_set_theme();
+
+  // Delete event_type, neighborhood, news_tags fields then
+  // re-add them with the features so that we can
+  // change them to entity_reference.
+  $delete_fields = array(
+    'field_event_type',
+    'field_neighborhood',
+    'field_news_tags',
+  );
+  foreach ($delete_fields as $field) {
+    if (field_info_field($field)) {
+      field_delete_field($field);
+    }
+  }
+
+  field_purge_batch(10);
+  $revert_features = array(
+    'bos_shared_fields',
+    'bos_content_type_event',
+    'bos_content_type_post',
+  );
+  features_revert($revert_features);
+
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * All sprint 7 updates belong in this update hook.
+ */
+function bos_profile_update_7004() {
+  $disabled_modules = array();
+  $enabled_modules = array(
+    'bos_view_places',
+    'bos_view_program_initiatives',
+    'bos_component_gol_list',
+    'bos_component_grid_of_places',
+    'bos_component_grid_of_programs_initiatives',
+    'advanced_text_formatter',
+    'bos_vocabulary_features',
+  );
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+
+  // Delete  neighborhood
+  // re-add them with the features so that we can
+  // change the name.
+  $delete_fields = array(
+    'field_neighborhood',
+    'field_great_for',
+    'field_not_great_for',
+  );
+  foreach ($delete_fields as $field) {
+    if (field_info_field($field)) {
+      field_delete_field($field);
+    }
+  }
+  field_purge_batch(10);
+
+}
+
+/**
+ * Enable modules added in Sprint 8.
+ *
+ * All sprint 8 updates belong in this update hook.
+ */
+function bos_profile_update_7005() {
+  $enabled_modules = array(
+    'bos_core',
+    'bos_component_grid_of_people',
+    'bos_component_cabinet',
+    'bos_component_grid_of_topics',
+    'bos_component_news_announcements',
+    'bos_view_news_announcements',
+  );
+  module_enable($enabled_modules);
+
+  // Fix any Person Profile records with the wrong Preferred setting.
+  db_update('field_data_field_preferred_contact')
+    ->fields(array(
+      'field_preferred_contact_value' => 'phone',
+    ))
+    ->condition('field_preferred_contact_value', 'phone|')
+    ->execute();
+
+}
+
+/**
+ * Enable modules added in Sprint 9.
+ *
+ * All sprint 9 updates belong in this update hook.
+ */
+function bos_profile_update_7006() {
+  $disabled_modules = array();
+  $enabled_modules = array(
+    'linkit',
+    'bos_settings_linkit_editor',
+    'bos_core',
+    'entityreference_autocreate'
+  );
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+
+  // Re-run this function since the subthemes were added during sprint 9.
+  _bos_profile_set_theme();
+}
+
+/**
+ * Enable modules added in Sprint 10.
+ *
+ * All sprint 10 updates belong in this update hook.
+ */
+function bos_profile_update_7007() {
+  $disabled_modules = array();
+  $enabled_modules = array(
+    'bos_component_fyi',
+    'bos_component_iframe',
+    'bos_menu_secondary_menu',
+    'bos_drawers_component',
+    'bos_drawer_component',
+    'bos_menu_secondary_menu',
+    'bos_settings_theme',
+  );
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+}
+
+/**
+ * Enable the event's view for the workbench for the public site only.
+ * Work for: Sprint 11
+ */
+function bos_profile_update_7008() {
+  $disabled_modules = array();
+  $enabled_modules = array(
+    'bos_component_311',
+    'bos_vocabulary_311_request',
+  );
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+
+  // Boston: Events defaults to being disabled. We only want it enabled on
+  // the public site. Load the view, set it's disabled flag to false, and then
+  // save it so that it becomes enabled.
+  $events = views_get_view('boston_events');
+  if (!empty($events)) {
+    $events->disabled = FALSE;
+    views_save_view($events);
+  }
+}
+
+/**
+ * First part of Sprint 12. Add any new work to the next hook update.
+ *
+ * Enable new modules.
+ */
+function bos_profile_update_7009() {
+  $disabled_modules = array();
+  $enabled_modules = array(
+    'bos_form_neighborhood_lookup',
+    'bos_content_type_status_item',
+    'bos_view_status_displays',
+    'rabbit_hole',
+    'rh_node',
+    'rh_file',
+    'rh_taxonomy',
+  );
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+}
+
+/**
+ * Work for: Sprint 12.
+ *
+ * Enable new modules.
+ */
+function bos_profile_update_7010() {
+  $delete_fields = array(
+    'field_alert_icon',
+  );
+  $disabled_modules = array();
+  $enabled_modules = array(
+    'bos_vocabulary_icons',
+    'bos_vocabulary_holidays',
+    'bos_view_boston_media',
+    'token_custom',
+    'token_filter',
+    'bos_content_type_transaction',
+    'bos_view_transactions',
+  );
+  module_disable($disabled_modules);
+  module_enable($enabled_modules);
+  // Custom tokens needed for transactions page section headers.
+  $custom_tokens = array(
+    'main' => array(
+      'machine_name' => 'main-transactions-header',
+      'name' => 'Main Transactions Header',
+      'description' => 'Content that will appear in the main transactions section header on the transaction landing page.',
+      'type' => 'boston',
+      'content' => 'Main Transactions',
+      'format' => 'filtered_html',
+    ),
+    'sticky' => array(
+      'machine_name' => 'sticky-transactions-header',
+      'name' => 'Sticky Transactions Header',
+      'description' => 'Content that will appear in the sticky transactions section header on the transaction landing page.',
+      'type' => 'boston',
+      'content' => 'Sticky Transactions',
+      'format' => 'filtered_html',
+    ),
+  );
+  foreach ($custom_tokens as $token) {
+    drupal_write_record('token_custom', $token);
+  }
+  foreach ($delete_fields as $field) {
+    if (field_info_field($field)) {
+      field_delete_field($field);
+    }
+  }
+  field_purge_batch(10);
+}
+
+/**
+ * Work for Sprint 14.
+ *
+ * Enable the bos_component_status_override and bos_content_type_emergency_alert
+ * modules.
+ */
+function bos_profile_update_7011() {
+  $enabled_modules = array(
+    'bos_component_status_override',
+    'bos_content_type_emergency_alert',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Work for Sprint 17.
+ */
+function bos_profile_update_7012() {
+  $enabled_modules = array(
+    'bos_incapsula',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Updates for 10/05/2016
+ */
+function bos_profile_update_7013() {
+  $enabled_modules = array(
+    'bos_component_election_results',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Updates for 10/31/2016.
+ */
+function bos_profile_update_7014() {
+  $enabled_modules = array(
+    'services',
+    'services_views',
+    'services_api_key_auth',
+    'bos_api_public_notice',
+    'bos_view_api_public_notices',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Updates for 12/12/2016.
+ */
+function bos_profile_update_7015() {
+  $enabled_modules = array(
+    'bos_view_blank_layouts',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Updates for 12/14/2016.
+ */
+function bos_profile_update_7016() {
+  $enabled_modules = array(
+    'salesforce',
+    'salesforce_mapping',
+    'salesforce_pull',
+    'salesforce_term_ref',
+    'bos_metrolist_affordable_housing',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Updates for 1/19/2017.
+ */
+function bos_profile_update_7017() {
+  $enabled_modules = array(
+    'bos_form_related_content',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Updates for 1/20/2017.
+ */
+function bos_profile_update_7018() {
+  $enabled_modules = array(
+    'bos_content_type_tabbed_content',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 2/7/2017.
+ */
+function bos_profile_update_7019() {
+  $delete_fields = array(
+    'field_mah_metrolist_hold',
+    'field_mah_lottery',
+    'field_mah_lottery_flyer_url',
+  );
+  foreach ($delete_fields as $field) {
+    if (field_info_field($field)) {
+      field_delete_field($field);
+    }
+  }
+
+  field_purge_batch(1000);
+}
+
+/**
+ * Updates for 2/28/2017.
+ */
+function bos_profile_update_7020() {
+  $enabled_modules = array(
+    'bos_view_feeds',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 4/21/17
+ */
+function bos_profile_update_7021() {
+  $enabled_modules = array(
+    'keyboard_shortcut',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 4/27/17
+ */
+function bos_profile_update_7022() {
+  $enabled_modules = array(
+    'bos_view_related_events',
+    'bos_related_content_migration_view',
+    'bos_related_content_migration',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 5/5/17
+ */
+function bos_profile_update_7023() {
+  $enabled_modules = array(
+    'bos_component_newsletter',
+    'bos_vocabulary_newsletters',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 5/16/17
+ */
+function bos_profile_update_7024() {
+  $enabled_modules = array(
+    'bos_signup_alerts',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 5/24/17
+ */
+function bos_profile_update_7025() {
+  $enabled_modules = array(
+    'paragraphs_reference_manager',
+    'bos_field_instances',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 6/5/17
+ */
+function bos_profile_update_7026() {
+  $enabled_modules = array(
+    'bos_form_citywide_neighborhood',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 6/12/17
+ */
+function bos_profile_update_7027() {
+  $enabled_modules = array(
+    'bos_vocabulary_maps_basemap',
+    'bos_vocabulary_maps_esri_feed',
+    'bos_component_map',
+    'bos_component_map_pin',
+    'bos_component_map_coordinates',
+    'bos_component_map_esri_feed',
+  );
+
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 6/28/17
+ */
+function bos_profile_update_7028() {
+  $enabled_modules = array(
+    'bos_view_upcoming_events_featured_event_filter',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 10/12/17
+ */
+function bos_profile_update_7029() {
+  $enabled_modules = array(
+    'rules',
+    'entity_token',
+    'slack',
+    'bos_slack',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 10/20/17
+ */
+function bos_profile_update_7030() {
+  $enabled_modules = array(
+    'bos_video_component_title_migration',
+    'bos_view_video_component_title_migration',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 10/20/17
+ */
+function bos_profile_update_7031() {
+  $disabled_modules = array(
+    'bos_video_component_title_migration',
+    'bos_view_video_component_title_migration',
+    'bos_related_content_migration',
+    'bos_related_content_migration_view',
+  );
+  module_disable($disabled_modules);
+}
+
+/**
+ * Update for 10/26/17
+ */
+function bos_profile_update_7032() {
+  $enabled_modules = array(
+    'bos_swiftype',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 12/19/17
+ */
+function bos_profile_update_7033() {
+  $enabled_modules = array(
+    'bos_content_type_procurement_advertisement',
+    'bos_component_bid',
+    'bos_vocabulary_bid_offering',
+    'bos_vocabulary_bid_type',
+    'bos_vocabulary_massachusetts_general_law',
+    'bos_vocabulary_procurement_type',
+  );
+  module_enable($enabled_modules);
+
+  // Set default bid_offering terms.
+  $bid_offering_terms = ['Services', 'Supplies'];
+  $vocabulary = taxonomy_vocabulary_machine_name_load('bid_offering');
+  foreach ($bid_offering_terms as $term) {
+    $newterm = new stdClass();
+    $newterm->name = $term;
+    $newterm->vid = $vocabulary->vid;
+    taxonomy_term_save($newterm);
+  }
+
+  // Set default bid_type terms.
+  $bid_type_terms = ['Electronic', 'Paper'];
+  $vocabulary = taxonomy_vocabulary_machine_name_load('bid_type');
+  foreach ($bid_type_terms as $term) {
+    $newterm = new stdClass();
+    $newterm->name = $term;
+    $newterm->vid = $vocabulary->vid;
+    taxonomy_term_save($newterm);
+  }
+
+  // Set default massachusetts_general_law terms.
+  $ma_law_terms = [
+    'Chapter 7C',
+    'Chapter 30B',
+    'Chapter 30/39M',
+    'Chapter 149',
+    'Chapter 25A Section 11C & 11I',
+    'Chapter 30B Section 1(b)(33)',
+    'Chapter 25A Section 14',
+    'Chapter 7C Section 44',
+    'Chapter 7C Section 44-57',
+  ];
+  $vocabulary = taxonomy_vocabulary_machine_name_load('massachusetts_general_law');
+  foreach ($ma_law_terms as $term) {
+    $newterm = new stdClass();
+    $newterm->name = $term;
+    $newterm->vid = $vocabulary->vid;
+    taxonomy_term_save($newterm);
+  }
+
+  // Set default procurement_type terms.
+  $procurement_type_terms = [
+    'Invitation for Bids',
+    'Notice to Contractors',
+    'Request for Information',
+    'Request for Proposals',
+    'Request for Qualifications',
+  ];
+  $vocabulary = taxonomy_vocabulary_machine_name_load('procurement_type');
+  foreach ($procurement_type_terms as $term) {
+    $newterm = new stdClass();
+    $newterm->name = $term;
+    $newterm->vid = $vocabulary->vid;
+    taxonomy_term_save($newterm);
+  }
+
+}
+
+/**
+ * Update for 1/18/18.
+ */
+function bos_profile_update_7034() {
+  $enabled_modules = array(
+    's3fs',
+    's3fs_cors',
+    's3fs_migrate',
+  );
+  module_enable($enabled_modules);
+}
+
+/**
+ * Update for 2/8/18.
+ */
+function bos_profile_update_7035() {
+  $enabled_modules = array(
+    'paragraphs_bundle_permissions',
+  );
+  module_enable($enabled_modules);
+}
+
+function bos_profile_update_7036() {
+  $enabled_modules = array(
+    'bos_components_commissions',
+  );
+  module_enable($enabled_modules);
+
+  # Initializing the taxonomy with Boards and Commissions as of 5/14
+
+  $vocabulary = taxonomy_vocabulary_machine_name_load('commissions');
+  if (!$vocabulary) {
+    return;
+  }
+
+  /*
+    GraphQL query:
+
+    {
+      commissions {
+        name
+        id
+      }
+    }
+  */
+  $COMMISSIONS_DUMP = <<<"EOF"
+{
+  "data": {
+    "commissions": [
+      {
+        "name": "Trustees of Charitable Donations for Inhabitants of Boston",
+        "id": 1
+      },
+      {
+        "name": "Boston School Committee Nominating Panel",
+        "id": 2
+      },
+      {
+        "name": "Boston School Committee",
+        "id": 4
+      },
+      {
+        "name": "Neighborhood Housing Trust Fund",
+        "id": 7
+      },
+      {
+        "name": "City of Boston School Trust Fund",
+        "id": 10
+      },
+      {
+        "name": "George Robert White Fund",
+        "id": 11
+      },
+      {
+        "name": "Fund for Parks & Recreation in Boston",
+        "id": 13
+      },
+      {
+        "name": "Resident Advisory Board",
+        "id": 15
+      },
+      {
+        "name": "Boston Cultural Council",
+        "id": 16
+      },
+      {
+        "name": "Neighborhood Jobs Trust",
+        "id": 18
+      },
+      {
+        "name": "Zoning Commission",
+        "id": 21
+      },
+      {
+        "name": "Boston Fair Housing Commission",
+        "id": 25
+      },
+      {
+        "name": "Boston Compensation Advisory Board",
+        "id": 28
+      },
+      {
+        "name": "Mass. Water Resources Authority",
+        "id": 31
+      },
+      {
+        "name": "Board of Review--Assessing",
+        "id": 32
+      },
+      {
+        "name": "Air Pollution Control Commission",
+        "id": 34
+      },
+      {
+        "name": "Archives and Records Advisory Commission",
+        "id": 35
+      },
+      {
+        "name": "Boston Art Commission",
+        "id": 36
+      },
+      {
+        "name": "Audit Committee of the City of Boston",
+        "id": 37
+      },
+      {
+        "name": "Back Bay Architectural Commission",
+        "id": 38
+      },
+      {
+        "name": "Back Bay West/Bay State Road Architectural Conservation District Commission",
+        "id": 39
+      },
+      {
+        "name": "Bay Village Historic District Commission",
+        "id": 40
+      },
+      {
+        "name": "Beacon Hill Architectural Commission",
+        "id": 41
+      },
+      {
+        "name": "Board of Examiners",
+        "id": 42
+      },
+      {
+        "name": "Boston Employment Commission",
+        "id": 43
+      },
+      {
+        "name": "Boston Housing Authority Monitoring Committee",
+        "id": 44
+      },
+      {
+        "name": "Boston Industrial Development Financing Authority",
+        "id": 45
+      },
+      {
+        "name": "Boston Public Health Commission",
+        "id": 46
+      },
+      {
+        "name": "Boston Public Library Board of Trustees",
+        "id": 47
+      },
+      {
+        "name": "Boston Redevelopment Authority (BRA)/Economic Development Industrial Corp (EDIC)",
+        "id": 48
+      },
+      {
+        "name": "Edward Ingersoll Browne Trust Fund",
+        "id": 51
+      },
+      {
+        "name": "Boston Elections Commission",
+        "id": 52
+      },
+      {
+        "name": "Freedom Trail Commission",
+        "id": 53
+      },
+      {
+        "name": "Parks & Recreation Commission",
+        "id": 55
+      },
+      {
+        "name": "Public Improvement Commission",
+        "id": 56
+      },
+      {
+        "name": "Licensing Board for the City of Boston",
+        "id": 59
+      },
+      {
+        "name": "Boston Conservation Commission",
+        "id": 60
+      },
+      {
+        "name": "Boston Water and Sewer Commission",
+        "id": 64
+      },
+      {
+        "name": "Boston Landmarks Commission",
+        "id": 65
+      },
+      {
+        "name": "Mission Hill Triangle Architectural Conservation District Commission",
+        "id": 66
+      },
+      {
+        "name": "South End Landmark District Commission",
+        "id": 67
+      },
+      {
+        "name": "St. Botolph Architectural Conservation District Commission",
+        "id": 68
+      },
+      {
+        "name": "Boston Civic Design Commission",
+        "id": 69
+      },
+      {
+        "name": "Fund for Boston Neighborhoods, Inc.",
+        "id": 84
+      },
+      {
+        "name": "Public Facilities Commission",
+        "id": 85
+      },
+      {
+        "name": "Residency Compliance Commission",
+        "id": 86
+      },
+      {
+        "name": "City of Boston Scholarship Fund",
+        "id": 87
+      },
+      {
+        "name": "Boston Waterways Board",
+        "id": 91
+      },
+      {
+        "name": "Boston Groundwater Trust",
+        "id": 157
+      },
+      {
+        "name": "Fort Point Channel Landmark District Commission",
+        "id": 162
+      },
+      {
+        "name": "Boston Disability Advisory Commission",
+        "id": 165
+      },
+      {
+        "name": "Boston Finance Commission",
+        "id": 168
+      },
+      {
+        "name": "Aberdeen Architectural Conservation District Commission",
+        "id": 170
+      },
+      {
+        "name": "Boston Retirement Board",
+        "id": 171
+      },
+      {
+        "name": "Zoning Board of Appeals",
+        "id": 180
+      },
+      {
+        "name": "Boston Human Rights Commission",
+        "id": 208
+      },
+      {
+        "name": "Trustee of the Copley Square Charitable Trust",
+        "id": 209
+      },
+      {
+        "name": "Off-Street Parking Facilities Board",
+        "id": 210
+      },
+      {
+        "name": "Living Wage Advisory Committee",
+        "id": 211
+      },
+      {
+        "name": "Animal Control Commission",
+        "id": 212
+      },
+      {
+        "name": "Residency Policy Commission",
+        "id": 213
+      },
+      {
+        "name": "Community Preservation Committee",
+        "id": 214
+      }
+    ]
+  }
+}
+EOF;
+
+  $commissions_data = drupal_json_decode($COMMISSIONS_DUMP);
+  foreach ($commissions_data['data']['commissions'] as &$commission) {
+    $term = (object) array(
+      'name' => $commission['name'],
+      'vid' => $vocabulary->vid,
+      'field_commission_id' => array(
+        LANGUAGE_NONE => array(array(
+          'value' => $commission['id'],
+        )),
+      ),
+    );
+
+    taxonomy_term_save($term);
+  }
+}
+
+function bos_profile_update_7037() {
+    $enabled_modules = array(
+        'bos_component_lightbox_link',
+    );
+    module_enable($enabled_modules);
+}
+
+/*******************************************************************
+Any new migrations need to also be added to bos_profile_install so that
+they can run on fresh Docker installs.
+********************************************************************/
