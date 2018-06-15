@@ -1,0 +1,22 @@
+<project name="update"
+         default="update:info"
+         description="Project defines tragets to update apps and services in docker containers.">
+
+    <target name="update:info"
+            description="Update apps and services in docker containers.">
+        <echo message="Project defines tragets to update apps and services in docker containers."/>
+    </target>
+
+    <target name="update:drupal:composer:install"
+            description="Install composer.json in repo root.">
+        <echo message="Using Composer to install Drupal" />
+        <exec command="composer install" />
+    </target>
+
+    <target name="update:drupal:composer:update"
+            description="Update/install composer.json and replace composer.lock in repo root.">
+        <echo message="Using Composer to install Drupal" />
+        <exec command="composer install" />
+    </target>
+
+</project>

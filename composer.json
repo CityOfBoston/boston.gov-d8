@@ -1,0 +1,164 @@
+{
+  "name": "drupal-composer/drupal-project",
+  "description": "Project template for Drupal 8 projects with composer",
+  "type": "project",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Jim Fisk",
+      "role": "Drupal developer",
+      "email": "james.fisk@boston.gov"
+    },
+    {
+      "name": "Keith Donaldson",
+      "role": "Drupal developer",
+      "email": "keith.donaldson@boston.gov"
+    },
+    {
+      "name": "David Upton",
+      "role": "Drupal developer",
+      "email": "david.upton@boston.gov"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
+  "require": {
+    "composer/installers": "^1.2",
+    "cweagans/composer-patches": "^1.6",
+    "drush/drush": "^9.0.0",
+    "vlucas/phpdotenv": "^2.4",
+    "webflo/drupal-finder": "^1.0.0",
+    "webmozart/path-util": "^2.3",
+    "drupal-composer/drupal-scaffold": "^2.5",
+    "drupal/console": "^1.0.2",
+    "drupal/core": "~8.5.3",
+
+    "drupal/acquia_connector": "^1.14",
+    "drupal/acquia_purge": "^1.0",
+    "drupal/admin_toolbar": "^1.23",
+    "drupal/admin_toolbar_tools": "^1.23",
+    "drupal/better_exposed_filters": "^3.0@alpha",
+    "drupal/config_filter": "^1.0",
+    "drupal/config_override": "^1.0",
+    "drupal/config_split": "^1.0@beta",
+    "drupal/config_update": "^1.5",
+    "drupal/ctools": "^3.0",
+    "drupal/field_group": "^1.0",
+    "drupal/honeypot": "^1.27",
+    "drupal/memcache": "^2.0",
+    "drupal/metatag": "^1.5",
+    "drupal/module_filter": "^3.1",
+    "drupal/paragraphs": "^1.2",
+    "drupal/smart_trim": "^1.1",
+    "drupal/workbench": "^1.0",
+    "drupal/workbench_moderation": "^1.3"
+  },
+  "require-dev": {
+    "webflo/drupal-core-require-dev": "~8.5.3",
+    "behat/behat": "^3.4",
+    "phpunit/phpunit": "*",
+    "ajgl/breakpoint-twig-extension": "^0.3.0",
+
+    "drupal/config_devel": "^1.2",
+    "drupal/devel": "^1.2",
+    "drupal/environment_indicator": "^3.3",
+    "drupal/masquerade": "^2.0@beta",
+    "drupal/twig_xdebug": "1.x-dev",
+    "drupal/stage_file_proxy": "^1.0@alpha",
+    "drupal/migrate_plus": "^4.0",
+    "drupal/migrate_tools": "^4.0",
+    "phing/phing": "2.*"
+  },
+  "suggest": {
+    "drupal/address": "~1.0",
+    "drupal/adminimal_theme": "^1.3",
+    "drupal/adminimal_admin_toolbar": "^1.4",
+    "drupal/allowed_formats": "^1.1",
+    "drupal/anchor_link": "^1.6",
+    "drupal/auto_entitylabel": "^2.1@beta",
+    "drupal/bootstrap": "^3.5",
+    "drupal/chosen": "^2.3",
+    "drupal/ckeditor_media_embed": "^1.2",
+    "harvesthq/chosen": "^1.6",
+    "drupal/config_update": "^1.3",
+    "drupal/context": "^4.0@beta",
+    "drupal/contribute": "^1.0",
+    "drupal/crop": "^1.2",
+    "drupal/date_popup": "^1.0",
+    "drupal/diff": "^1.0@RC",
+    "drupal/editor_advanced_link": "^1.4",
+    "drupal/embed": "^1.0",
+    "drupal/entity": "^1.0",
+    "drupal/entityqueue": "^1.0",
+    "drupal/entity_browser": "^1.1",
+    "drupal/entity_embed": "^1.0",
+    "drupal/entity_reference_revisions": "^1.3",
+    "drupal/features": "^3.5",
+    "drupal/geolocation": "^1.10",
+    "drupal/image_url_formatter": "^1.0@beta",
+    "drupal/image_widget_crop": "^2.0",
+    "drupal/imce": "^1.6",
+    "drupal/linkicon": "^1.4",
+    "drupal/linkit": "^5.0",
+    "drupal/inline_entity_form": "^1.0@beta",
+    "drupal/views_infinite_scroll": "^1.5",
+    "drupal/media_entity": "^1.6",
+    "drupal/media_entity_audio": "^1.0@beta",
+    "drupal/media_entity_document": "^1.1",
+    "drupal/media_entity_image": "^1.2",
+    "drupal/media_entity_slideshow": "^1.2",
+    "drupal/media_entity_video": "^1.0@beta",
+    "drupal/media_entity_youtube": "1.x-dev",
+    "drupal/menu_block": "^1.4",
+    "drupal/metatag": "^1.2",
+    "drupal/node_edit_protection": "1.x-dev",
+    "drupal/paragraphs_edit": "^2.0@alpha",
+    "drupal/paragraphs_browser": "1.x-dev",
+    "drupal/pathauto": "^1.0",
+    "drupal/purge": "^3.0@beta",
+    "drupal/rabbit_hole": "^1.0@beta",
+    "drupal/redirect": "^1.1",
+    "drupal/restui": "^1.15",
+    "drupal/robotstxt": "^1.1",
+    "drupal/rules": "^3.0@alpha",
+    "drupal/search_exclude": "^1.1",
+    "drupal/sharethis": "^2.0@beta",
+    "drupal/shield": "^1.2",
+    "drupal/simple_sitemap": "^2.9",
+    "drupal/tmgmt": "^1.2",
+    "drupal/tmgmt_google": "^1.0@beta",
+    "drupal/tmgmt_microsoft": "^1.0@beta",
+    "drupal/token": "^1.0",
+    "drupal/video_embed_field": "^1.5",
+    "drupal/view_unpublished": "^1.0@alpha",
+    "drupal/webform": "^5.0",
+    "drupal/xmlsitemap": "^1.0@alpha"
+  },
+  "conflict": {
+    "drupal/core": "7.*"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "autoload": {
+    "classmap": [
+      "scripts/composer/ScriptHandler.php"
+    ]
+  },
+  "extra": {
+    "installer-paths": {
+      "docroot/core": ["type:drupal-core"],
+      "docroot/libraries/{$name}": ["type:drupal-library"],
+      "docroot/modules/contrib/{$name}": ["type:drupal-module"],
+      "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
+      "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
+      "drush/Commands/{$name}": ["type:drupal-drush"]
+    }
+  }
+}
