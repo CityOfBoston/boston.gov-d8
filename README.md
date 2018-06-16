@@ -1,4 +1,5 @@
 # boston.gov-d8
+Creates a drupal 8 container, mysql container and node container, and connects them all up.
 1. Ensure you have docker installed on your host computer [**Installation**](https://docs.docker.com/install/).
 1. Ensure you have Lando installed on your host computer [**git repo**](https://github.com/lando/lando) and [**Install Instructions**](https://github.com/lando/lando)
 1. Clone this repo into a local folder
