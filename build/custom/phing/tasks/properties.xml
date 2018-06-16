@@ -1,4 +1,6 @@
-<project name="properties" default="build">
+<project name="properties"
+         default="build"
+         description="Loads properties and all projects so tasks can be accessed from everywhere.">
 
   <!-- redefine the base Phing directory so that PHPStorm does not throw symbol errors -->
   <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />
