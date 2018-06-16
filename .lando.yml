@@ -1,0 +1,108 @@
+# Acquia friendly mods from https://github.com/lando/lando/issues/105
+# See readme in ./build/readme.boston.md
+
+name: boston
+recipe: drupal8
+#proxy:
+#  nginx:
+#  edge:
+#    - edge.acquia.lndo.site
+
+config:
+  php: '7.1'
+  webroot: 'docroot'
+  database: mysql:5.7
+  drush: composer
+  xdebug: true
+  drupal: false
+
+services:
+  node:
+    type: node:6.10
+
+    run:
+      - echo "\033[1;33m> Verify linux node library/extensions in node service...\033[0m"
+      - cd $LANDO_MOUNT && phing build:info
+
+    globals:
+      gulp-cli: "latest"
+
+  # Database container.
+  # Set default port mapping and default database credentials.
+  database:
+    type: mysql
+    portforward: 3307
+    host: localhost
+    creds:
+      user: drupal
+      password: drupal
+      database: drupal
+
+  appserver:
+    composer:
+        "phing/phing": "2.*"
+
+    run_as_root:
+      - echo "\033[1;33m> Verify linux library/extensions in appserver service...\033[0m"
+      - apt-get update -y  > ${LANDO_MOUNT}/.lando.log
+      - apt-get install -y --no-install-recommends apt-utils zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq  >> ${LANDO_MOUNT}/.lando.log
+#      - apt-get install -y --no-install-recommends nodejs  >> ${LANDO_MOUNT}/.lando.log
+      - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ >> ${LANDO_MOUNT}/.lando.log
+      - chmod 777 ${LANDO_MOUNT}/.lando.log >> ${LANDO_MOUNT}/.lando.log
+
+    run:
+      - echo "\033[1;33m> Verify Drupal and dependencies are installed in appserver service...\033[0m"
+      - if [ ! -e  /usr/local/bin/phing ]; then ln -s ${LANDO_MOUNT}/vendor/phing/phing/bin/phing /usr/local/bin/ >> ${LANDO_MOUNT}/.lando.log; fi
+      - cd $LANDO_MOUNT && phing build:docker:drupal-local
+
+    overrides:
+      services:
+        environment:
+          LANDO_INFO: LANDO_INFO
+
+
+  # set up a Varnish edge
+#  edge:
+#    type: varnish:4.1
+#    backends:
+#      - appserver
+#    ssl: true
+#
+#  cache:
+#    type: memcached:2.2
+
+tooling:
+
+  phpunit:
+    service: appserver
+    description: "Run PHP Unit tests: lando phpunit"
+
+  npm:
+    service: node
+
+  node:
+    service: node
+
+  gulp:
+    service: node
+
+  phing:
+    service: appserver
+    description: "Run phing commands"
+    cmd:
+      - phing
+
+  # Add in routes to the varnish cli tools
+#  varnishadm:
+#    service: edge
+#    user: root
+#  varnishstat:
+#    service: edge
+#    user: root
+#  varnishlog:
+#    service: edge
+#    user: root
+
+events:
+  post-start:
+    - cd $LANDO_MOUNT && $LANDO_MOUNT/scripts/doit/branding.sh

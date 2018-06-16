@@ -1,12 +1,14 @@
-<project name="setup" default="setup">
+<project name="setup"
+         default="setup"
+         description="Setup tasks for various containers.">
 
   <target name="setup" description="Install dependencies, builds docroot, installs Drupal."
           depends="setup:drupal, setup:drupal:newdb">
-    <echo>For a full list of available Phing targets, run:</echo>
-    <echo>from host: lando phing -l</echo>
-    <echo>from container: phing -l</echo>
+    <echo message="For a full list of available Phing targets, run:"/>
+    <echo message="from host: lando phing -l"/>
+    <echo message="from container: phing -l"/>
   </target>
-
+<!---->
   <target name="setup:drupal" description="Uses Composer to install drupal in the container.">
     <if>
       <not>
@@ -27,27 +29,24 @@
       </else>
     </if>
   </target>
-
+<!---->
   <target name="setup:drupal:newdb"
           description="Uses Composer to install drupal in the container attaching to database in Lando-controlled container.">
     <if>
-      <not>
-        <available file="${project.basedir}/docroot/core/lib/Drupal.php" />
-      </not>
+      <available file="${project.basedir}/docroot/core/lib/Drupal.php"/>
       <then>
 
-        <echo message="Creating the default database for initial Drupal modules." />
+        <echo message="Creating the default database for initial Drupal modules."/>
 
         <phingcall target="setup:drupal:local_settings_php:delete"
                    description="Remove any pre-existing local.settings.php file."/>
         <phingcall target="setup:drupal:local_settings_php:write"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
 
-        <exec
-              description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
+        <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
               command="${drush.cmd} si ${project.profile.name}
-                --db-url=${lando.db.type}://${lando.db.user}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database}
+                --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database}
                 --site-name=${lando.name}
                 --site-mail=${drupal.account.mail}
                 --account-name=${drupal.account.name}
@@ -60,35 +59,35 @@
       </then>
     </if>
   </target>
-
+<!---->
   <target name="setup:drupal:local_settings_php:delete"
           description="Deletes any existing local.settings.php file.">
     <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
   </target>
-
+<!---->
   <target name="setup:drupal:local_settings_php:write"
-    description="Sets the database and any other default values into the local.settings.php file.">
+          description="Sets the database and any other default values into the local.settings.php file.">
       <if>
         <not>
-          <available file="${local.settings.file}" />
+          <available file="${local.settings.file}"/>
         </not>
         <then>
-          <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" overwrite="false" verbose="true"/>
-          <echo message="$databases['default']['default'] = array (" append="true" file="${local.settings.file}"></echo>
-          <echo message="'driver' => 'mysql'," append="true" file="${local.settings.file}"></echo>
-          <echo message="'database' => '${lando.db.database}'," append="true" file="${local.settings.file}"></echo>
-          <echo message="'username' => '${lando.db.user}'," append="true" file="${local.settings.file}"></echo>
-          <echo message="'password' => '${lando.db.password}'," append="true" file="${local.settings.file}"></echo>
-          <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost'," append="true" file="${local.settings.file}"></echo>
-          <echo message="'port' => '${lando.db.port}'," append="true" file="${local.settings.file}"></echo>
+          <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
+          <echo message="$databases['default']['default'] = array (" append="true" file="${local.settings.file}"/>
+          <echo message="'driver' => 'mysql'," append="true" file="${local.settings.file}"/>
+          <echo message="'database' => '${lando.db.database}'," append="true" file="${local.settings.file}"/>
+          <echo message="'username' => '${lando.db.username}'," append="true" file="${local.settings.file}"/>
+          <echo message="'password' => '${lando.db.password}'," append="true" file="${local.settings.file}"/>
+          <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost'," append="true" file="${local.settings.file}"/>
+          <echo message="'port' => '${lando.db.port}'," append="true" file="${local.settings.file}"/>
           <echo message=");" append="true" file="${local.settings.file}"></echo>
         </then>
         <else>
-          <echo message="local.settings.php already exists, ignoring." />
+          <echo message="local.settings.php already exists, ignoring."/>
         </else>
       </if>
 
-      <echo message="Using settings file ${local.settings.file}"/>
+      <echo level="warning" message="Using settings file ${local.settings.file}"/>
       <echo level="warning" message='Using ${lando.db.type} "${lando.db.database}" database on "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
 
   </target>
@@ -108,7 +107,7 @@
         </copy>
       </then>
       <else>
-        <echo message="local.yml already exists, ignoring."></echo>
+        <echo message="local.yml already exists, ignoring."/>
       </else>
     </if>
   </target>
