@@ -22,6 +22,7 @@ services:
 
     run:
       - echo "\033[1;33m> Verify linux node library/extensions in node service...\033[0m"
+      - cd /app && ./script/doit/branding.sh
 
     globals:
       gulp-cli: "latest"
