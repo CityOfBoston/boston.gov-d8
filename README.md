@@ -16,4 +16,3 @@ Creates a drupal 8 container, mysql container and node container, and connects t
 * `lando ssh` to ssh and login as `www-data`
 * `lando ssh -user=root` to ssh and login as root.
 * `lando ssh <servicename>` servicename = appserver / database / node
-
