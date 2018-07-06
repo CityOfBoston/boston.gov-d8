@@ -105,4 +105,5 @@ tooling:
 
 events:
   post-start:
+    - echo "Post-start Event"
     - cd $LANDO_MOUNT && $LANDO_MOUNT/scripts/doit/branding.sh
