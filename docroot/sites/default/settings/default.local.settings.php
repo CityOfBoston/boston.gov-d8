@@ -5,7 +5,8 @@
  * Local settings.
  */
   /*
-   * BOSTON.GOV NOTE: Database array is set by Phing script in properties.xml
+   * BOSTON.GOV NOTE: Database array is set by Phing script in setup.xml
+   *    setup:drupal:local_settings_php:write
   */
   $config_directories[CONFIG_SYNC_DIRECTORY] = '../config';
   $settings['hash_salt'] = 'ivciasdbopasvbdcpasdiv';
