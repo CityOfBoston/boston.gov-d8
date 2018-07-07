@@ -23,7 +23,7 @@ services:
     run:
       - cd /app && ./scripts/doit/branding.sh
       - echo "\033[1;33mUse the following link to login to the site as administrator.\033[0m"
-      - cat /app/.uli
+      - cat /app/.uli && rm -f /app/.uli
 
     globals:
       gulp-cli: "latest"
