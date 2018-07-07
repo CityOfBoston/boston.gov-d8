@@ -18,7 +18,7 @@
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <echo message="Use the following link to login as administrator" level="warning"/>
-    <exec output='~/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
+    <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
   </target>
 
   <!-- Define the build task used by travis. -->
