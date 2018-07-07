@@ -18,7 +18,7 @@ function bos_profile_install() {
 
   $config = \Drupal::service('config.factory')->getEditable('system.theme');
   $config->set('admin', 'adminimal_theme');
-  $config->set('default', 'boston');
+  $config->set('default', 'bos_theme');
   $config->save();
 
   $config = \Drupal::service('config.factory')->getEditable('node.settings');
