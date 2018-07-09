@@ -25,9 +25,20 @@ function bos_profile_install() {
   $config->set('use_admin_theme', TRUE);
   $config->save();
 
-  $dis_list = [
+  // Override certain modules which are installed by default.
+  $disabled_modules = array(
     'contextual',
     'config_translation',
     'content_translation',
-  ];
+  );
+  // Make sure certain modules are disabled in prod.
+  if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prd' || $_ENV['AH_SITE_ENVIRONMENT'] === 'stg') {
+    $disabled_modules += [
+      'devel'
+    ];
+  }
+
+  // do the disabling.
+  \Drupal::service('module_installer')->uninstall($disabled_modules);
+
 }
