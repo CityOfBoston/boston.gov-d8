@@ -24,4 +24,10 @@ function bos_profile_install() {
   $config = \Drupal::service('config.factory')->getEditable('node.settings');
   $config->set('use_admin_theme', TRUE);
   $config->save();
+
+  $dis_list = [
+    'contextual',
+    'config_translation',
+    'content_translation',
+  ];
 }
