@@ -81,18 +81,27 @@ tooling:
     service: appserver
     description: "Run PHP Unit tests: lando phpunit"
 
+  drush:
+    service: appserver
+    description: "Run drush commands in app container: lando drush <command>"
+    cmd:
+      - drush
+
   npm:
     service: node
+    description: "Run npm commands in node container: lando npm <command>"
 
   node:
     service: node
+    description: "Run node commands in node container: lando node <command>"
 
   gulp:
     service: node
+    description: "Run node:gulp commands in node container: lando gulp <command>"
 
   phing:
     service: appserver
-    description: "Run phing commands"
+    description: "Run Phing tasks in app container: lando phing <task>"
     cmd:
       - phing
 
