@@ -42,7 +42,7 @@
       </not>
       <then>
         <echo message="Using Composer to install Drupal" />
-        <exec command="composer install" />
+        <exec command="composer install" dir="${project.basedir}/" description="when ready, use update:drupal:composer:install" logoutput="true"/>
       </then>
       <else>
         <echo message="Drupal is already installed."/>
@@ -84,6 +84,10 @@
               logoutput="true"/>
 
       </then>
+      <else>
+        <echo message="Drupal is already installed."/>
+        <echo message="Database was not imported, use update:drupal:db to update the database."/>
+      </else>
     </if>
   </target>
 
