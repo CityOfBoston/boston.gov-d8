@@ -1,0 +1,23 @@
+<?php
+/**
+ * @file
+ * Contains functions to alter Drupal's markup for the STARTERKIT theme.
+ */
+
+/**
+ * Implements hook_preprocess_node.
+ */
+function bos_theme_preprocess_node(&$variables) {
+  // Place theme settings into the variable object so they can be used in twig.
+  $variables['bos_theme'] = array(
+    'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
+    'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
+    'boston_breadcrumb_home' => theme_get_setting('boston_breadcrumb_home'),
+    'boston_breadcrumb_trailing' => theme_get_setting('boston_breadcrumb_trailing'),
+    'boston_breadcrumb_title' => theme_get_setting('boston_breadcrumb_title'),
+    'boston_skip_link_anchor' => theme_get_setting('boston_skip_link_anchor'),
+    'boston_skip_link_text' => theme_get_setting('boston_skip_link_text'),
+    'boston_meta' => theme_get_setting('boston_meta'),
+    'boston_layout' => theme_get_setting('boston_layout'),
+  );
+}

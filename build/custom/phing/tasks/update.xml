@@ -1,6 +1,6 @@
 <project name="update"
          default="update:info"
-         description="Project defines tragets to update apps and services in docker containers.">
+         description="Project defines targets to update apps and services in docker containers.">
 
     <target name="update:info"
             description="Update apps and services in docker containers.">
@@ -17,6 +17,11 @@
             description="Update/install composer.json and replace composer.lock in repo root.">
         <echo message="Using Composer to install Drupal" />
         <exec command="composer install" />
+    </target>
+<!---->
+    <target name="update:drupal:db"
+            description="Update the drupal DB from a remote source.">
+        <echo message="Updates sql database" />
     </target>
 
 </project>

@@ -10,6 +10,8 @@
           description="* Defines targets used for setting up apps and services in containers."/>
   <import file="${custom.phing.dir}/tasks/tests.xml"
           description="Contains targets relevant to the execution of tests. E.g., Behat, jMeter."/>
+  <import file="${custom.phing.dir}/tasks/update.xml"
+          description="Contains targets used to maintain/update a Drupal 8 installation."/>
 
   <!-- Define the repo root as a property, and resolve to an absolute file path. -->
   <property name="docroot" value="${repo.root}/docroot"/>

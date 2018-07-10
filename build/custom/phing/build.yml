@@ -18,12 +18,12 @@ behat:
 project:
   profile:
 #    name: 'bos_profile'
-    name: 'standard'
+#    name: 'standard'
+    name: 'bos_profile'
     contrib: false
   cloud_alias: "@boston"
   themes:
-    - boston
-    - boston_public
+    - bos_theme
   # Set this to 'initialize' to start a fresh install.
   # Otherwise set it to sync to sync from the stg environment.
   build_db_from: sync

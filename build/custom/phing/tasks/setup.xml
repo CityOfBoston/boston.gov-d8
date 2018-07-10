@@ -18,7 +18,7 @@
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <echo message="Use the following link to login as administrator" level="warning"/>
-    <exec command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
+    <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
   </target>
 
   <!-- Define the build task used by travis. -->
@@ -42,7 +42,7 @@
       </not>
       <then>
         <echo message="Using Composer to install Drupal" />
-        <exec command="composer install" />
+        <exec command="composer install" dir="${project.basedir}/" description="when ready, use update:drupal:composer:install" logoutput="true"/>
       </then>
       <else>
         <echo message="Drupal is already installed."/>
@@ -84,6 +84,10 @@
               logoutput="true"/>
 
       </then>
+      <else>
+        <echo message="Drupal is already installed."/>
+        <echo message="Database was not imported, use update:drupal:db to update the database."/>
+      </else>
     </if>
   </target>
 

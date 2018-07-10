@@ -18,10 +18,12 @@ config:
 
 services:
   node:
-    type: node:6.10
+    type: node:8.9
 
     run:
       - cd /app && ./scripts/doit/branding.sh
+      - echo "\033[1;33mUse the following link to login to the site as administrator.\033[0m"
+      - cat /app/.uli && rm -f /app/.uli
 
     globals:
       gulp-cli: "latest"
@@ -79,18 +81,27 @@ tooling:
     service: appserver
     description: "Run PHP Unit tests: lando phpunit"
 
+  drush:
+    service: appserver
+    description: "Run drush commands in app container: lando drush <command>"
+    cmd:
+      - drush
+
   npm:
     service: node
+    description: "Run npm commands in node container: lando npm <command>"
 
   node:
     service: node
+    description: "Run node commands in node container: lando node <command>"
 
   gulp:
     service: node
+    description: "Run node:gulp commands in node container: lando gulp <command>"
 
   phing:
     service: appserver
-    description: "Run phing commands"
+    description: "Run Phing tasks in app container: lando phing <task>"
     cmd:
       - phing
 
