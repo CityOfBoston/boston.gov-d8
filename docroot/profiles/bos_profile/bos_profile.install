@@ -27,7 +27,7 @@ function bos_profile_install() {
 
   // ensure the apple-touch-icons are in place and meta-tagged.
   $config = \Drupal::service("config.factory")->getEditable('metatag.metatag_defaults.global');
-  $tags = $config.get('tags');
+  $tags = $config->get('tags');
   $tags['apple-touch-icon'] = "/themes/custom/bos_theme/images/apple-touch-icon.png";
   $tags['apple-touch-icon-precomposed'] = "/themes/custom/bos_theme/images/apple-touch-icon-precomposed.png";
   $config->save('tags', $tags);
@@ -57,6 +57,7 @@ function bos_profile_install() {
       'migrate_plus',
       'migrate_drupal',
       'migrate_drupal_ui',
+      'dblog',
     ];
   }
 
