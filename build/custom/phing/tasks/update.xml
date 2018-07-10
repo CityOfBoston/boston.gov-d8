@@ -38,7 +38,7 @@
               dir="${docroot}" command="${drush.cmd} cex sync" logoutput="true"/>
     </target>
 <!---->
-    <target name="update:config:update"
+    <target name="update:config:updatedb"
             description="Update the database with any hook_updates etc.">
         <echo message="Updates sql database" />
         <exec description="Update the database with any hook_updates etc."
