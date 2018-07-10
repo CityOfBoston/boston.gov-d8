@@ -20,8 +20,29 @@
     </target>
 <!---->
     <target name="update:drupal:db"
-            description="Update the drupal DB from a remote source.">
+            description="Export configurations to the sync location.">
         <echo message="Updates sql database" />
+    </target>
+<!---->
+    <target name="update:config:import"
+            description="Import configurations from sync location into the DB.">
+        <echo message="Import configuration from sync folder: '${project.sync}' into database" />
+        <exec description="Imports the config files in the sync folder at ${project.sync}."
+              dir="${docroot}" command="${drush.cmd} cim sync" logoutput="true"/>
+    </target>
+<!---->
+    <target name="update:config:export"
+            description="Export configurations in DB to files in sync location.">
+        <echo message="Export database configuration to sync folder: '${project.sync}'" />
+        <exec description="Exports database configuration settings to files in the sync folder at ${project.sync}."
+              dir="${docroot}" command="${drush.cmd} cex sync" logoutput="true"/>
+    </target>
+<!---->
+    <target name="update:config:update"
+            description="Update the database with any hook_updates etc.">
+        <echo message="Updates sql database" />
+        <exec description="Update the database with any hook_updates etc."
+              dir="${docroot}" command="${drush.cmd} updb --entity-updates" logoutput="true"/>
     </target>
 
 </project>

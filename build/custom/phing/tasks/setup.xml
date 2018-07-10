@@ -83,6 +83,11 @@
                 "
               logoutput="true"/>
 
+        <phingcall target="update:config:updatedb"
+                   description="Run any database updates."/>
+        <phingcall target="update:config:export"
+                   description="Export configurations files from database."/>
+
       </then>
       <else>
         <echo message="Drupal is already installed."/>
@@ -105,7 +110,7 @@
           <available file="${local.settings.file}"/>
         </not>
         <then>
-          <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
+          <move file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
           <echo message="$databases['default']['default'] = array (" append="true" file="${local.settings.file}"/>
           <echo message="'driver' => 'mysql'," append="true" file="${local.settings.file}"/>
           <echo message="'database' => '${lando.db.database}'," append="true" file="${local.settings.file}"/>
@@ -113,7 +118,9 @@
           <echo message="'password' => '${lando.db.password}'," append="true" file="${local.settings.file}"/>
           <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost'," append="true" file="${local.settings.file}"/>
           <echo message="'port' => '${lando.db.port}'," append="true" file="${local.settings.file}"/>
-          <echo message=");" append="true" file="${local.settings.file}"></echo>
+          <echo message=");\n\n" append="true" file="${local.settings.file}"/>
+          <echo message="$config_directories['sync'] = '${project.basedir}/${project.sync}';\n" append="true" file="${local.settings.file}"/>
+          <echo message="$settings['install_profile'] = '${project.profile.name}';\n" append="true" file="${local.settings.file}"/>
         </then>
         <else>
           <echo message="local.settings.php already exists, ignoring."/>
