@@ -25,14 +25,6 @@ function bos_profile_install() {
   $config->set('use_admin_theme', TRUE);
   $config->save();
 
-  // ensure the apple-touch-icons are in place and meta-tagged.
-  $config = \Drupal::service("config.factory")->getEditable('metatag.metatag_defaults.global');
-  $tags = $config->get('tags');
-  $tags['apple-touch-icon'] = "/themes/custom/bos_theme/images/apple-touch-icon.png";
-  $tags['apple-touch-icon-precomposed'] = "/themes/custom/bos_theme/images/apple-touch-icon-precomposed.png";
-  $config->save('tags', $tags);
-  $config->save();
-
   // Override certain modules which are installed by default.
   $disabled_modules = array(
     'contextual',
