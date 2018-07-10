@@ -15,19 +15,54 @@
   $settings['hash_salt'] = 'ivciasdbopasvbdcpasdiv';
 
   // set an enviroment variable to denote the environment status.
-  $_ENV['AH_SITE_ENVIRONMENT'] = 'loc'; $config['environment_indicator.indicator']['name'] = 'Local';
-  $_ENV['AH_SITE_ENVIRONMENT'] = 'dev'; $config['environment_indicator.indicator']['name'] = 'Development';
-  $_ENV['AH_SITE_ENVIRONMENT'] = 'stg'; $config['environment_indicator.indicator']['name'] = 'Staging';
-  $_ENV['AH_SITE_ENVIRONMENT'] = 'prd'; $config['environment_indicator.indicator']['name'] = 'Production';
+  $_ENV['AH_SITE_ENVIRONMENT'] = 'loc';
 
-  // lock down site if it is tagged as production.
-  if (isset($_ENV['AH_SITE_ENVIRONMENT']) && $_ENV['AH_SITE_ENVIRONMENT'] === 'prd') {
-    $settings['config_readonly'] = TRUE;
+  switch ($_ENV['AH_SITE_ENVIRONMENT']) {
+    case "loc":
+      $env = [
+        'name' => 'Local',
+        'bg_color' => '#023e0a', //Green
+        'fg_color' => '#ffffff',
+      ];
+      break;
+
+    case 'dev':
+      $env = [
+        'name' => 'Development',
+        'bg_color' => '#3e0202', //Red
+        'fg_color' => '#ffffff',
+      ];
+      break;
+
+    case 'stg':
+      $env = [
+        'name' => 'Staging',
+        'bg_color' => '#505500', //Yellow
+        'fg_color' => '#ffffff',
+      ];
+      // lock down site if it is tagged as staging.
+      $settings['config_readonly'] = TRUE;
+      break;
+
+    case 'prd':
+    default:
+      $env = [
+        'name' => 'Production',
+        'bg_color' => '#303655', //blue
+        'fg_color' => '#ffffff',
+      ];
+      // lock down site if it is tagged as production.
+      $settings['config_readonly'] = TRUE;
+      break;
   }
 
-  // set the values for the environment_indicator module.
-  $config['environment_indicator.indicator']['bg_color'] = '#cf0000'; //Red
-  $config['environment_indicator.indicator']['fg_color'] = '#ffffff';
-  $config['shield.settings']['credentials']['shield']['user'] = NULL;
+  // update the config if the environment variable has changed.
+  $config = \Drupal::service('config.factory')->getEditable('environment_indicator.indicator');
+  if ($config->get('name') != $env['name']) {
+    $config->set('name', $env['name']);
+    $config->set('bg_color', $env['bg_color']);
+    $config->set('fg_color', $env['v']);
+    $config->save();
+  }
 
   $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/default/development.services.yml';
