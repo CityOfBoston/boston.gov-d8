@@ -9,13 +9,12 @@
    *    setup:drupal:local_settings_php:write
   */
 
-  // make the default config storage for import/export ouside the docroot.
-  $config_directories[CONFIG_SYNC_DIRECTORY] = '../config';
-
   $settings['hash_salt'] = 'ivciasdbopasvbdcpasdiv';
 
   // set an enviroment variable to denote the environment status.
-  $_ENV['AH_SITE_ENVIRONMENT'] = 'loc';
+  if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
+    $_ENV['AH_SITE_ENVIRONMENT'] = 'loc';
+  }
 
   switch ($_ENV['AH_SITE_ENVIRONMENT']) {
     case "loc":

@@ -122,6 +122,7 @@
           <echo message=");${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$config_directories['sync'] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
         </then>
         <else>
           <echo message="local.settings.php already exists, ignoring."/>
