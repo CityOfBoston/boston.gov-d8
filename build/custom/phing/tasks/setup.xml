@@ -133,9 +133,10 @@
 
   <target name="setup:drush:local-config"
           description="Creates a drush.yml file to default drush commands to the local site.">
-    <echo message="options:{line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="Update the drush config to the container url"/>
+    <echo message="options:${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
     <echo message="uri: 'http://boston.lndo.site:8000'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="root: '/app/docroot';${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="root: '/app/docroot'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
   </target>
 
 </project>
