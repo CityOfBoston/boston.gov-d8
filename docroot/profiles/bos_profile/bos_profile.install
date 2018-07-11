@@ -8,23 +8,8 @@
 /**
  * Implements hook_install().
  *
- * This function needs to call all of the migrations in order to set
- * up a fresh Drupal install.
  */
 function bos_profile_install() {
-  $config = \Drupal::service('config.factory')->getEditable('system.site');
-  $config->set('name', 'Boston.gov');
-  $config->save();
-
-  $config = \Drupal::service('config.factory')->getEditable('system.theme');
-  $config->set('admin', 'adminimal_theme');
-  $config->set('default', 'bos_theme');
-  $config->save();
-
-  $config = \Drupal::service('config.factory')->getEditable('node.settings');
-  $config->set('use_admin_theme', TRUE);
-  $config->save();
-
   // Override certain modules which are installed by default.
   $disabled_modules = array(
     'contextual',

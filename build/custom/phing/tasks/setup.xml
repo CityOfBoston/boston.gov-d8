@@ -17,7 +17,6 @@
           depends="setup:drupal, setup:drupal:newdb">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
-    <echo message="Use the following link to login as administrator" level="warning"/>
     <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
   </target>
 
@@ -119,7 +118,7 @@
           <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost',${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="'port' => '${lando.db.port}',${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message=");${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="$config_directories['sync'] = '${project.basedir}/${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="$config_directories['sync'] = '${project.basedir}${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
         </then>
         <else>
