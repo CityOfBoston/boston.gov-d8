@@ -14,7 +14,7 @@
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a drupal environment in docker for local development."
-          depends="setup:drupal, setup:drupal:newdb, setup:drush:create-drushrc">
+          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
