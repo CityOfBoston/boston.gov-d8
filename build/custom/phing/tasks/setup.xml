@@ -14,12 +14,10 @@
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a drupal environment in docker for local development."
-          depends="setup:drupal, setup:drupal:newdb">
+          depends="setup:drupal, setup:drupal:newdb, setup:drush:create-drushrc">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
-    <echo message="<?php${line.separator}" append="false" file="${project.basedir}/drush/drushrc.local.php"/>
-    <echo message="$options['uri'] = 'http://boston.lndo.site:8000';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
   </target>
 
   <!-- Define the build task used by travis. -->
@@ -131,6 +129,13 @@
       <echo level="warning" message="Using settings file ${local.settings.file}"/>
       <echo level="warning" message='Using ${lando.db.type} "${lando.db.database}" database on "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
 
+  </target>
+
+  <target name="setup:drush:create-drushrc"
+          description="Creates a drushrc file to default drush commands to the local site.">
+    <echo message="&lt;?php${line.separator}" append="false" file="${project.basedir}/drush/drushrc.local.php"/>
+    <echo message="$options['uri'] = 'http://boston.lndo.site:8000';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
+    <echo message="$options['l'] = 'http://boston.lndo.site:8000';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
   </target>
 
 </project>
