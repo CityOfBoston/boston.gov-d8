@@ -42,7 +42,8 @@
   <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
 
   <!-- set path for local.settings.php file. -->
-  <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings/settings.local.php" />
+  <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.local.php" />
+  <property name="settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.php" />
 
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
 
