@@ -136,6 +136,7 @@
     <echo message="&lt;?php${line.separator}" append="false" file="${project.basedir}/drush/drushrc.local.php"/>
     <echo message="$options['uri'] = 'http://boston.lndo.site:8000';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
     <echo message="$options['l'] = 'http://boston.lndo.site:8000';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
+    <echo message="$options['root'] = '${docroot}';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
   </target>
 
 </project>
