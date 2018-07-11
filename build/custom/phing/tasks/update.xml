@@ -45,4 +45,9 @@
               dir="${docroot}" command="${drush.cmd} updb --entity-updates -y" logoutput="true"/>
     </target>
 
+    <target name="update:user:loginadmin"
+            description="Create a link which logs the user in on the uid=1 account.">
+        <exec command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
+    </target>
+
 </project>
