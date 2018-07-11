@@ -18,6 +18,8 @@
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
+    <echo message="<?php${line.separator}" append="false" file="${project.basedir}/drush/drushrc.local.php"/>
+    <echo message="$options['uri'] = 'http://boston.lndo.site:8000';${line.separator}" append="true" file="${project.basedir}/drush/drushrc.local.php"/>
   </target>
 
   <!-- Define the build task used by travis. -->
@@ -110,7 +112,7 @@
         </not>
         <then>
           <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
-          <echo message="$databases['default']['default'] = array (${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="${line.separator}$databases['default']['default'] = array (${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="'driver' => 'mysql',${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="'database' => '${lando.db.database}',${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="'username' => '${lando.db.username}',${line.separator}" append="true" file="${local.settings.file}"/>
