@@ -2,6 +2,8 @@
          default="update:info"
          description="Project defines targets to update apps and services in docker containers.">
 
+    <echo message="Building ${custom.phing.dir}/tasks/update.xml"/>
+
     <target name="update:info"
             description="Update apps and services in docker containers.">
         <echo message="Project defines tragets to update apps and services in docker containers."/>

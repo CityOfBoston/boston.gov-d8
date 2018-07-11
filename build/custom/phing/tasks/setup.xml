@@ -2,6 +2,8 @@
          default="setup"
          description="Setup tasks for various containers.">
 
+  <echo message="Building ${custom.phing.dir}/tasks/setup.xml"/>
+
 <!-- Define the default task for the setup project. -->
   <target name="setup"
           description="Install dependencies, builds docroot, installs Drupal."
@@ -118,7 +120,7 @@
           <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost',${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="'port' => '${lando.db.port}',${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message=");${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="$config_directories['sync'] = '${project.basedir}${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="$config_directories['sync'] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
         </then>
         <else>
@@ -135,8 +137,9 @@
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Update the drush config to the container url"/>
     <echo message="options:${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="uri: 'http://boston.lndo.site:8000'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="root: '/app/docroot'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
   </target>
 
 </project>

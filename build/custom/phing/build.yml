@@ -23,7 +23,7 @@ project:
   themes:
     - bos_theme
   # define the folder, relative to the project root, for config files, no trailing slash.
-  sync: "/sync"
+  sync: "../sync"
   # Set this to 'initialize' to start a fresh install.
   # Otherwise set it to sync to sync from the stg environment.
   build_db_from: sync
@@ -65,7 +65,7 @@ drupal:
 
 drush:
   bin: ${composer.bin}/drush
-  cmd: ${drush.bin} -r ${docroot} # -l ${drupal.multisite.name}
+  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
   root: ${docroot}
 
 # deploy:
