@@ -8,31 +8,8 @@
 /**
  * Implements hook_install().
  *
- * This function needs to call all of the migrations in order to set
- * up a fresh Drupal install.
  */
 function bos_profile_install() {
-  $config = \Drupal::service('config.factory')->getEditable('system.site');
-  $config->set('name', 'Boston.gov');
-  $config->save();
-
-  $config = \Drupal::service('config.factory')->getEditable('system.theme');
-  $config->set('admin', 'adminimal_theme');
-  $config->set('default', 'bos_theme');
-  $config->save();
-
-  $config = \Drupal::service('config.factory')->getEditable('node.settings');
-  $config->set('use_admin_theme', TRUE);
-  $config->save();
-
-  // ensure the apple-touch-icons are in place and meta-tagged.
-  $config = \Drupal::service("config.factory")->getEditable('metatag.metatag_defaults.global');
-  $tags = $config->get('tags');
-  $tags['apple-touch-icon'] = "/themes/custom/bos_theme/images/apple-touch-icon.png";
-  $tags['apple-touch-icon-precomposed'] = "/themes/custom/bos_theme/images/apple-touch-icon-precomposed.png";
-  $config->save('tags', $tags);
-  $config->save();
-
   // Override certain modules which are installed by default.
   $disabled_modules = array(
     'contextual',

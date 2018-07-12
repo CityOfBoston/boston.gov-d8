@@ -2,6 +2,8 @@
          default="update:info"
          description="Project defines targets to update apps and services in docker containers.">
 
+    <echo message="Building ${custom.phing.dir}/tasks/update.xml"/>
+
     <target name="update:info"
             description="Update apps and services in docker containers.">
         <echo message="Project defines tragets to update apps and services in docker containers."/>
@@ -28,21 +30,26 @@
             description="Import configurations from sync location into the DB.">
         <echo message="Import configuration from sync folder: '${project.sync}' into database" />
         <exec description="Imports the config files in the sync folder at ${project.sync}."
-              dir="${docroot}" command="${drush.cmd} cim sync" logoutput="true"/>
+              dir="${docroot}" command="${drush.cmd} cim sync -y" logoutput="true"/>
     </target>
 <!---->
     <target name="update:config:export"
             description="Export configurations in DB to files in sync location.">
         <echo message="Export database configuration to sync folder: '${project.sync}'" />
         <exec description="Exports database configuration settings to files in the sync folder at ${project.sync}."
-              dir="${docroot}" command="${drush.cmd} cex sync" logoutput="true"/>
+              dir="${docroot}" command="${drush.cmd} cex sync -y" logoutput="true"/>
     </target>
 <!---->
     <target name="update:config:updatedb"
             description="Update the database with any hook_updates etc.">
         <echo message="Updates sql database" />
         <exec description="Update the database with any hook_updates etc."
-              dir="${docroot}" command="${drush.cmd} updb --entity-updates" logoutput="true"/>
+              dir="${docroot}" command="${drush.cmd} updb --entity-updates -y" logoutput="true"/>
+    </target>
+
+    <target name="update:user:loginadmin"
+            description="Create a link which logs the user in on the uid=1 account.">
+        <exec command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
     </target>
 
 </project>

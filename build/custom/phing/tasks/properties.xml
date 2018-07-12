@@ -2,6 +2,8 @@
          default="build:info"
          description="Loads properties and all projects so tasks can be accessed from everywhere.">
 
+  <echo message="Building ${custom.phing.dir}/tasks/properties.xml"/>
+
   <!-- redefine the base Phing directory so that PHPStorm does not throw symbol errors -->
   <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />
 
@@ -34,8 +36,15 @@
   <!-- Load file directory and binary locations. -->
   <property file="${custom.phing.dir}/build.yml"  override="true"/>
 
+  <!--<property environment="env"/>-->
+  <property name="lando.url.domain" value="${env.LANDO_DOMAIN}" override="true"/>
+  <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}" override="true"/>
+  <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
+
   <!-- set path for local.settings.php file. -->
-  <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings/local.settings.php" />
+  <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.local.php" />
+  <property name="settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.php" />
+  <property name="local.services.file" value="${docroot}/sites/${drupal.multisite.name}/services.yml" />
 
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
 

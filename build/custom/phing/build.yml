@@ -17,15 +17,13 @@ behat:
 
 project:
   profile:
-#    name: 'bos_profile'
-#    name: 'standard'
     name: 'bos_profile'
     contrib: false
   cloud_alias: "@boston"
   themes:
     - bos_theme
   # define the folder, relative to the project root, for config files, no trailing slash.
-  sync: "../sync"
+  sync: "../config/sync"
   # Set this to 'initialize' to start a fresh install.
   # Otherwise set it to sync to sync from the stg environment.
   build_db_from: sync
@@ -63,11 +61,12 @@ drupal:
     password: admin
     mail: no-reply@acquia.com
   multisite:
+    # Use 'default' as the name if there are no multisites.
     name: default
 
 drush:
   bin: ${composer.bin}/drush
-  cmd: ${drush.bin} -r ${docroot} # -l ${drupal.multisite.name}
+  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
   root: ${docroot}
 
 # deploy:
@@ -83,19 +82,6 @@ reports:
 
 doit:
   cmd: ${repo.root}/scripts/doit/doit
-
-# Configuration for the Ansible Drupal VM. To prevent inclusion of a vm, remove
-# the "vm" key.
-vm:
-  # If true, this provisions and launches the virtual machine as part of the
-  # installation process. Note that dependencies (vagrant, ansible, virtual box)
-  # must be installed for this work.
-  # @see /box
-  bootstrap: false
-  # This loads the necessary ansible requirements.
-  rebuild_requirements: true
-  drush_version: 6.6.0
-  drupal_major_version: 7
 
 # The testing framework is limited to the `tests` directory, and includes
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent

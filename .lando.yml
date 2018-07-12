@@ -63,7 +63,8 @@ services:
       services:
         environment:
           LANDO_INFO: LANDO_INFO
-
+          PHP_IDE_CONFIG: 'serverName=lando'
+          XDEBUG_CONFIG: 'idekey=PHPSTORM'
 
   # set up a Varnish edge
 #  edge:
