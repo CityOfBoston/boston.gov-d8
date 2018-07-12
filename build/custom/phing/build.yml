@@ -41,6 +41,12 @@ project:
   # It should live in the project root.
   make_file: 'make.yml'
 
+php:
+  xdebug:
+    ini_file: '/usr/local/etc/php/conf.d/zzz-lando-my-custom-ini-file-called-php.ini'
+    settings:
+      - "xdebug.idekey=PHPSTORM"
+
 # Configuration settings for new git repository.
 git:
   remotes:
