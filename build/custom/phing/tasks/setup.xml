@@ -112,6 +112,7 @@
         </not>
         <then>
           <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
+          <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.services.yml" tofile="${local.services.file}" haltonerror="false" overwrite="false" verbose="true"/>
           <!--<echo message="${line.separator}$databases['default']['default'] = array (${line.separator}" append="true" file="${local.settings.file}"/>-->
           <!--<echo message="'driver' => 'mysql',${line.separator}" append="true" file="${local.settings.file}"/>-->
           <!--<echo message="'database' => '${lando.db.database}',${line.separator}" append="true" file="${local.settings.file}"/>-->
