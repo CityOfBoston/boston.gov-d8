@@ -116,7 +116,7 @@
           <echo message="${line.separator}/*${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="$config_directories['sync'] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="$config_directories[CONFIG_SYNC_DIRECTORY] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
 
           <echo message="&lt;?php${line.separator}${line.separator}" append="true" file="${settings.file}"/>
