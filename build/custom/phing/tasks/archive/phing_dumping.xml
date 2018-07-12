@@ -1,0 +1,306 @@
+<project>
+
+<!-- CODE BELOW FROM D7 BUILD.XML -->
+    <target name="build:test"
+            description="Builds, tests, and deploys an artifact."
+            depends="setup:build:all, local:sync, local:update, tests:all">
+    </target>
+    <target name="build:validate:test"
+            description="Builds, validates, tests, and deploys an artifact."
+            depends="validate:all, setup, tests:all">
+    </target>
+    <!-- @todo Re-enable Behat tests by adding tests:behat as a dependency! -->
+    <target name="tests:all" description="Runs all Behat tests and Security Update check."
+            depends="tests:security-updates, tests:behat"/>
+    <target name="build:local"
+            description="Build the site locally."
+            depends="setup:build:all">
+        <if>
+            <equals arg1="${project.build_db_from}" arg2="initialize"/>
+            <then>
+                <phingcall target="setup:drupal:install"/>
+            </then>
+            <else>
+                <phingcall target="local:sync"/>
+                <phingcall target="local:update"/>
+            </else>
+        </if>
+        <exec dir="${docroot}" command="${drush.cmd} dis acquia_purge acquia_agent --verbose --yes" logoutput="true"/>
+        <exec dir="${docroot}"
+              command="${drush.cmd} en stage_file_proxy migrate_ui field_ui views_ui context_ui bos_development dblog --verbose --yes"
+              logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} cron --verbose --yes" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} mrs --all --verbose --yes" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} cc all" logoutput="true"/>
+    </target>
+
+<!-- CODE BELOW FROM D7 SETUP.XML -->
+
+    <target name="setup:behat" description="Generates tests/behat/local.yml file for executing Behat tests locally.">
+        <if>
+            <not>
+                <available file="${repo.root}/tests/behat/local.yml"/>
+            </not>
+            <then>
+                <copy file="${repo.root}/tests/behat/example.local.yml" tofile="${repo.root}/tests/behat/local.yml" overwrite="false">
+                    <filterchain>
+                        <expandproperties />
+                    </filterchain>
+                </copy>
+            </then>
+            <else>
+                <echo message="local.yml already exists, ignoring."/>
+            </else>
+        </if>
+    </target>
+
+    <!-- This is run when a project is cloned to a new environment. -->
+    <target name="setup:build:all" description="Generates all required files for a full build. E.g., removes docroot, builds via `drush make`, restores symlinks, etc."
+            depends="setup:behat, setup:build:make, frontend:build">
+    </target>
+
+    <!-- Drush make the build using a recursive strategy -->
+    <target name="setup:build:make" description="Downloads core and contrib based on project's make.yml.">
+        <!--Rebuild core. -->
+        <exec dir="${repo.root}" command="./scripts/make/non-destructive-make-core.sh" logoutput="true" passthru="true"/>
+
+        <!-- Rebuild contrib -->
+        <drush command="make" assume="yes">
+            <option name="concurrency">8</option>
+            <param>"${repo.root}/${project.make_file}"</param>
+            <param>"${docroot}"</param>
+            <option name="no-core"/>
+            <option name="no-gitinfofile"/>
+            <option name="contrib-destination">sites/all</option>
+        </drush>
+    </target>
+
+    <target name="setup:robots:install" description="Copies robots.txt file">
+        <copy file="${core.phing.dir}/../files/${drupal.multisite.name}.robots.txt" tofile="${docroot}/robots.txt" overwrite="true"/>
+    </target>
+
+    <target name="setup:drupal:install" description="Installs a specific Drupal site.">
+        <!-- Temporarily move setting.php so it is not simply overwritten during install -->
+        <chmod mode="0755" file="${docroot}/sites/${drupal.multisite.name}"/>
+        <copy file="${docroot}/sites/${drupal.multisite.name}/settings.php" tofile="${docroot}/sites/${drupal.multisite.name}/settings.php.bak"/>
+
+        <drush command="sql-drop" assume="yes" verbose="TRUE">
+            <!--<option name="db-url">"mysql://${db.username}:${db.password}@${db.host}:${db.port}/${db.database}"</option>-->
+            <option name="uri">"${drupal.multisite.name}"</option>
+        </drush>
+        <drush command="site-install" assume="yes" verbose="TRUE">
+            <!--<option name="db-url">"mysql://${db.username}:${db.password}@${db.host}:${db.port}/${db.database}"</option>-->
+            <option name="site-name">"${project.human_name}"</option>
+            <option name="site-mail">"${drupal.account.mail}"</option>
+            <option name="account-name">"${drupal.account.name}"</option>
+            <option name="account-pass">"${drupal.account.password}"</option>
+            <option name="account-mail">"${drupal.account.mail}"</option>
+            <option name="uri">"${drupal.multisite.name}"</option>
+            <param>"${project.profile.name}"</param>
+            <param>"install_configure_form.update_status_module='array(FALSE,FALSE)'"</param>
+        </drush>
+
+        <phingcall target="setup:drupal:permissions"/>
+
+        <!-- Restore original settings.php, wiped out by Drupal installation. -->
+        <chmod mode="0755" file="${docroot}/sites/${drupal.multisite.name}"/>
+        <copy file="${docroot}/sites/${drupal.multisite.name}/settings.php.bak" tofile="${docroot}/sites/${drupal.multisite.name}/settings.php"/>
+    </target>
+
+    <target name="setup:drupal:permissions" description="Reset permissions after installation or sync.">
+        <drush command="acquia-reset-permissions" assume="yes">
+            <option name="uri">${drupal.multisite.name}</option>
+        </drush>
+    </target>
+
+    <target name="setup:drupal:settings" description="Create a local.settings.php with local db creds from local.yml.">
+        <if>
+            <not>
+                <available file="${docroot}/sites/${drupal.multisite.name}/settings/local.settings.php" />
+            </not>
+            <then>
+                <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${docroot}/sites/${drupal.multisite.name}/settings/local.settings.php" overwrite="false" verbose="true">
+                    <filterchain>
+                        <expandproperties />
+                    </filterchain>
+                </copy>
+            </then>
+            <else>
+                <echo message="local.settings.php already exists, ignoring." />
+            </else>
+        </if>
+    </target>
+
+    <target name="setup:git-hooks" description="Installs git hooks to local .git/hooks directory from version controlled scripts/git-hooks directory.">
+
+        <!-- Symlink into .git directory. -->
+        <delete dir="${repo.root}/.git/hooks" quiet="true" failonerror="false"/>
+        <exec dir="${repo.root}/.git" command="ln -snv ../scripts/git-hooks hooks" logoutput="true"/>
+
+        <!-- Grant execution permissions. -->
+        <chmod mode="0755">
+            <fileset dir="${repo.root}/scripts/git-hooks">
+                <exclude name="**/*.sample" />
+                <exclude name="**/README.md" />
+            </fileset>
+        </chmod>
+    </target>
+
+    <target name="setup:bolt:update" description="Pulls in upstream changes to project template from Bolt respository.">
+        <echo>You may be prompted to trust GitHub's SSL certification and to enter your GitHub password.</echo>
+        <echo>If you have two factor authentication enabled for GitHub, you must use an access token in lieu of a password.</echo>
+        <echo>GitHub access tokens can be generated here: https://github.com/settings/tokens</echo>
+
+        <input message="Press any key to continue" propertyName="continue" />
+
+        <exec dir="${repo.root}" command="./scripts/bolt/update-scaffold" logoutput="true" passthru="true"/>
+    </target>
+
+    <target name="local:composer-install" description="Install drupal core files using composer.">
+        <exec dir="${repo.root}" command="composer status" logoutput="true"/>
+    </target>
+
+    <target name="local:refresh" description="Refreshes local environment from upstream testing database." depends="local:sync, local:update"/>
+
+    <target name="local:sync" description="Synchronize remote environment with local environment." depends="setup:drupal:settings">
+        <exec dir="${docroot}" command="cp -rfu ~/host-ssh/ ~/.ssh/" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} sql-drop -y" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} sql-sync ${project.cloud_alias}.test @self --create-db --structure-tables-list='field_revision_*,*_revision*,cache*,metatag,watchdog' -y" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} cr" logoutput="true"/>
+    </target>
+
+    <target name="local:update" description="Update current database to reflect the state of the Drupal file system.">
+        <exec dir="${docroot}" command="${drush.cmd} fra -y" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} updb -y" logoutput="true"/>
+        <exec dir="${docroot}" command="${drush.cmd} acquia-reset-permissions -y" logoutput="true"/>
+    </target>
+
+<!-- CODE BELOW FROM D7 TESTS.XML -->
+
+    <target name="tests:all" description="Runs all tests, including Behat, PHPUnit, and Security Update check."
+            depends="tests:security-updates, tests:behat, tests:phpunit"/>
+
+    <!-- If you experience 'Maximum function nesting level' errors in your PHP
+         error log, set 'xdebug.max_nesting_level=1000' in php.ini. -->
+    <target name="tests:behat" depends="tests:run-server, tests:phantomjs:launch" description="Executes Behat all behat tests in behat.paths.">
+        <mkdir dir="${reports.localDir}/behat"/>
+        <phingcall target="tests:behat:execute"/>
+        <phingcall target="tests:phantomjs:kill"/>
+    </target>
+
+    <target name="tests:behat:execute" description="Executes behat tests against specific path.">
+        <!-- Run behat. Any settings in behat.yml or local.yml will be used. -->
+        <behat executable="${composer.bin}/behat"
+               config="${behat.config}"
+               profile="${behat.profile}"
+               verbose="true"
+               strict="true"
+               haltonerror="false"
+               returnProperty="behatFail"
+               out="std,${reports.localDir}"
+               format="pretty,junit"
+               tags="${behat.tags}"
+        />
+
+        <if>
+            <istrue value="${behatFail}"/>
+            <then>
+                <fail message="One ore more Behat tests failed." />
+            </then>
+        </if>
+    </target>
+
+    <target name="tests:phantomjs:launch"
+            description="Launches a GhostDriver.">
+
+        <if>
+            <equals arg1="${behat.launch-phantom}" arg2="true"/>
+            <then>
+                <echo message="Launching PhantomJS GhostDriver." />
+                <exec command="${composer.bin}/phantomjs --webdriver=4444 --ignore-ssl-errors=true"
+                      passthru="true"
+                      spawn="true"
+                      checkreturn="true" />
+            </then>
+        </if>
+    </target>
+
+    <target name="tests:phantomjs:kill"
+            description="Launches a GhostDriver.">
+        <exec command="pgrep phantomjs | xargs kill" logoutput="true" passthru="true" />
+    </target>
+
+    <!-- Execute PHPUnit tests. -->
+    <target name="tests:phpunit" description="Executes PHPUnit tests against custom code.">
+        <delete dir="${reports.localDir}/phpunit" quiet="true"/>
+        <mkdir dir="${reports.localDir}/phpunit"/>
+
+        <phpunit printsummary="true" failureproperty="phpunit.failures" errorproperty="phpunit.errors">
+            <formatter type="plain" usefile="false"/>
+            <formatter type="xml" todir="${reports.localDir}/phpunit"/>
+            <batchtest>
+                <fileset dir="${repo.root}/tests/phpunit">
+                    <include name="**/*Test*.php"/>
+                </fileset>
+            </batchtest>
+        </phpunit>
+        <phpunitreport infile="${reports.localDir}/phpunit/testsuites.xml" format="noframes" todir="${reports.localDir}/phpunit" />
+        <property name="reports.phpunit.file" value="${reports.localDir}/phpunit/phpunit-noframes.html"/>
+        <echo>PHPUnit Report is available at ${reports.phpunit.file}</echo>
+
+        <if>
+            <or>
+                <equals arg1="${phpunit.failures}" arg2="true"/>
+                <equals arg1="${phpunit.errors}" arg2="true"/>
+            </or>
+            <then>
+                <fail message="PHPUnit Failed. See report for details."/>
+            </then>
+        </if>
+    </target>
+
+    <target name="rsync-results">
+        <property name="reports.remoteDir" value="build-results" />
+
+        <drush command="rsync">
+            <arg>"${reports.localDir}"</arg>
+            <arg>"${drush.aliases.default}:%files/${reports.remoteDir}"</arg>
+        </drush>
+
+        <!-- @todo Add message with link to new reports. -->
+    </target>
+
+    <!-- Optionally run tests against internal PHP server. -->
+    <target name="tests:run-server">
+        <if>
+            <equals arg1="${behat.run-server}" arg2="true"/>
+            <then>
+                <echo message="Using drush runserver for tests." />
+                <echo message="Running server at ${behat.server-url}"/>
+                <exec command="pkill -f runserver" logoutput="true"/>
+                <exec executable="${composer.bin}/drush" dir="${docroot}" spawn="true" logoutput="true">
+                    <arg line="runserver ${behat.server-url} -l ${drupal.multisite.name}"/>
+                </exec>
+                <echo message="Waiting 10 seconds for ${behat.server-url} to become available."/>
+                <waitfor maxwait="10" maxwaitunit="second" checkevery="1" checkeveryunit="second">
+                    <http url="${behat.server-url}"/>
+                </waitfor>
+            </then>
+            <else>
+                <echo message="Using local LAMP stack for tests." />
+            </else>
+        </if>
+    </target>
+
+    <!-- Ensure Drupal doesn't have any modules requiring security updates. -->
+    <!-- Intentionally removed checkreturn="true" so that this does not cause failure. -->
+    <target name="tests:security-updates"
+            description="Check local Drupal installation for security updates.">
+        <exec dir="${docroot}"
+              command="! ${drush.cmd} -n ups --check-disabled --security-only 2>/dev/null | grep 'SECURITY UPDATE'"
+              logoutput="true"
+              passthru="true"/>
+    </target>
+
+
+</project>

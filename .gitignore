@@ -9,7 +9,7 @@
 /docroot/libraries/
 
 # Ignore sensitive information
-/docroot/sites/*/settings.php
+/docroot/sites/*/*settings.php
 /docroot/sites/*/settings.local.php
 /docroot/sites/*/*settings.php
 /docroot/sites/*/*/*settings.php
@@ -42,3 +42,6 @@
 
 # Ignore lando logfile
 /.lando.log
+
+# Ignore drushrc.local.php
+/docroot/sites/all/drush/drush.yml

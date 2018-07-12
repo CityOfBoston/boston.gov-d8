@@ -1,6 +1,8 @@
 <project name="properties"
-         default="build"
+         default="build:info"
          description="Loads properties and all projects so tasks can be accessed from everywhere.">
+
+  <echo message="Building ${custom.phing.dir}/tasks/properties.xml"/>
 
   <!-- redefine the base Phing directory so that PHPStorm does not throw symbol errors -->
   <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />
@@ -8,25 +10,10 @@
    <!--Load up sub-project files-->
   <import file="${custom.phing.dir}/tasks/setup.xml"
           description="* Defines targets used for setting up apps and services in containers."/>
-  <import file="${custom.phing.dir}/tasks/update.xml"
-          description="* Defines targets used for updating container content (apps/services/files)."/>
-
-  <import file="${custom.phing.dir}/tasks/frontend.xml"
-          description=""/>
-  <import file="${custom.phing.dir}/tasks/migrate.xml"
-          description=""/>
-  <import file="${custom.phing.dir}/tasks/search.xml"
-          description=""/>
-  <import file="${custom.phing.dir}/tasks/validate.xml"
-          description=""/>
-  <import file="${custom.phing.dir}/tasks/deploy.xml"
-          description="Commit build artifacts, push to remote."/>
   <import file="${custom.phing.dir}/tasks/tests.xml"
           description="Contains targets relevant to the execution of tests. E.g., Behat, jMeter."/>
-  <import file="${custom.phing.dir}/tasks/validate.xml"
-          description="Contains tasks relevant to validation. E.g., code metrics."/>
-  <import file="${custom.phing.dir}/tasks/filesets.xml"
-          description="Contains fileset definitions. E.g., patterns defining contrib locations, theming files, etc."/>
+  <import file="${custom.phing.dir}/tasks/update.xml"
+          description="Contains targets used to maintain/update a Drupal 8 installation."/>
 
   <!-- Define the repo root as a property, and resolve to an absolute file path. -->
   <property name="docroot" value="${repo.root}/docroot"/>
@@ -49,7 +36,79 @@
   <!-- Load file directory and binary locations. -->
   <property file="${custom.phing.dir}/build.yml"  override="true"/>
 
+  <!--<property environment="env"/>-->
+  <property name="lando.url.domain" value="${env.LANDO_DOMAIN}" override="true"/>
+  <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}" override="true"/>
+  <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
+
   <!-- set path for local.settings.php file. -->
-  <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings/local.settings.php" />
+  <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.local.php" />
+  <property name="settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.php" />
+  <property name="local.services.file" value="${docroot}/sites/${drupal.multisite.name}/services.yml" />
+
+  <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
+
+  <!-- This defines generic, reusable file sets that are used by other targets -->
+  <patternset id="files.php">
+    <include name="**/*.inc"/>
+    <include name="**/*.php"/>
+    <include name="**/*.module"/>
+    <include name="**/*.install"/>
+    <include name="**/*.profile"/>
+    <include name="**/*.test"/>
+    <include name="**/*.theme"/>
+    <exclude name="**/*.features.*"/>
+    <exclude name="**/vendor/**/*"/>
+  </patternset>
+
+  <patternset id="files.frontend">
+    <include name="**/*.js"/>
+    <!-- Ignore CSS. SASS usage is expected. CSS should be compiled. -->
+    <exclude name="**/*.css"/>
+    <exclude name="**/vendor/**/*"/>
+    <exclude name="**/node_modules/**/*"/>
+    <exclude name="**/bower_components/**/*"/>
+    <exclude name="**/dist/**/*"/>
+    <exclude name="**/styleguide/**/*"/>
+  </patternset>
+
+  <fileset dir="${repo.root}" id="files.php.all">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/themes/custom" id="files.php.custom.themes">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/default/settings" id="files.php.custom.settings">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${repo.root}/tests" id="files.php.tests" expandsymboliclinks="true">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/themes/custom" id="files.frontend.custom.themes" expandsymboliclinks="true">
+    <patternset refid="files.frontend"/>
+  </fileset>
+
+  <!-- overrides and additional custom filesets supplementing core filesets -->
+
+  <!-- exclude custom files that use Views coding standards -->
+  <patternset id="files.views">
+    <exclude name="bos_core/includes/bos_core_plugin_argument_validate_first_page.inc"/>
+  </patternset>
+
+  <fileset dir="${docroot}/sites/all/modules/custom" id="files.php.custom.modules">
+    <patternset refid="files.php"/>
+    <patternset refid="files.views"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/modules/features" id="files.php.features.modules">
+    <include name="**/*.module"/>
+    <include name="**/*.inc"/>
+    <exclude name="**/*.features.*"/>
+    <exclude name="**/*.feature.*"/>
+  </fileset>
 
 </project>
