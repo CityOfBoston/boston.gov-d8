@@ -121,3 +121,4 @@ events:
   post-start:
     - echo "Containers started."
     - cd $LANDO_MOUNT && $LANDO_MOUNT/scripts/doit/branding.sh
+    - cd $LANDO_MOUNT && phing -f /app/build.xml setup:php:xdebug
