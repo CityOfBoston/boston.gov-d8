@@ -157,9 +157,7 @@
   <target name="setup:php:xdebug"
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Apply PHP xdebug config to enable debugging." level="info"/>
-    <copy file="${phing.file}/${php.xdebug.default_file}" tofile="${php.xdebug.remote_file}"/>
-
+    <copy file="${custom.phing.files.dir}/${php.xdebug.default_file}" tofile="${php.xdebug.remote_file}"/>
   </target>
-
 
 </project>

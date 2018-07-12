@@ -6,6 +6,7 @@
 
   <!-- redefine the base Phing directory so that PHPStorm does not throw symbol errors -->
   <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />
+  <property name="custom.phing.files.dir" value="${project.basedir}/build/custom/files" />
 
    <!--Load up sub-project files-->
   <import file="${custom.phing.dir}/tasks/setup.xml"
