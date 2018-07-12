@@ -112,7 +112,7 @@
         </not>
         <then>
           <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
-          <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.services.yml" tofile="${local.services.file}" haltonerror="false" overwrite="false" verbose="true"/>
+          <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml" tofile="${local.services.file}" haltonerror="false" overwrite="false" verbose="true"/>
           <echo message="${line.separator}/*${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
