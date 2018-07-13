@@ -155,10 +155,4 @@
     <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
   </target>
 
-  <target name="setup:php:xdebug"
-          description="Creates a drush.yml file to default drush commands to the local site.">
-    <echo message="Apply PHP xdebug config to enable debugging." level="info"/>
-    <exec command="sudo cp ${custom.phing.files.dir}/${php.xdebug.default_file} ${php.xdebug.remote_file}" logoutput="true" />
-  </target>
-
 </project>
