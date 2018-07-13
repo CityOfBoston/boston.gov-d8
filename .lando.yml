@@ -50,7 +50,7 @@ services:
       - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ >> ${LANDO_MOUNT}/.lando.log
       - chmod 777 ${LANDO_MOUNT}/.lando.log >> ${LANDO_MOUNT}/.lando.log
       # do not need this on stage or production servers
-      - echo -e "\nxdebug.remote_host=${LANDO_HOST_IP}\n" >>/app/build/custom/files/xdebug.ini
+      - printf "\nxdebug.remote_host=${LANDO_HOST_IP}\n" >>/app/build/custom/files/xdebug.ini
       - cp /app/build/custom/files/xdebug.ini /usr/local/etc/php/conf.d/boston.xdebug.ini
 
     run:
