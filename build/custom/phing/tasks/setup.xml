@@ -124,8 +124,8 @@
           <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
           <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="if (file_exists($app_root . '/' . $site_path . 'settings.local.php')) {${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="   include $app_root . '/' . $site_path . 'settings.local.php';${line.separator}" append="true" file="${settings.file}"/>
+          <echo message="if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {${line.separator}" append="true" file="${settings.file}"/>
+          <echo message="   include $app_root . '/' . $site_path . '/settings.local.php';${line.separator}" append="true" file="${settings.file}"/>
           <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
           <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
           <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
