@@ -2,7 +2,7 @@
          default="build:info"
          description="Loads properties and all projects so tasks can be accessed from everywhere.">
 
-  <echo message="Building ${custom.phing.dir}/tasks/properties.xml"/>
+  <echo message="Building ${custom.phing.dir}/tasks/properties.xml" level="verbose"/>
 
   <!-- redefine the base Phing directory so that PHPStorm does not throw symbol errors -->
   <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />

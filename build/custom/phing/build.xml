@@ -3,7 +3,7 @@
          phingVersion="2.8.2"
          description="Defines main entry points for build processes required for docker containers.">
 
-    <echo message="Building ${custom.phing.dir}/build.xml"/>
+    <echo message="Building ${custom.phing.dir}/build.xml" level="verbose"/>
 
     <!-- Redefine the base Phing directory so that PHPStorm does not throw symbol errors. -->
     <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />
