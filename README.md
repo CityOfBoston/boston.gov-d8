@@ -7,7 +7,7 @@
 [Install Instructions](https://github.com/CityOfBoston/boston.gov-d8/wiki/Installation-Instructions)
 
 
-
+---
 ## Public domain
 
 This project is in the worldwide [public domain](https://github.com/CityOfBoston/boston.gov-d8/blob/master/README.md/LICENSE.md). As stated in [LICENSE](https://github.com/CityOfBoston/boston.gov-d8/blob/master/README.md/LICENSE.md):
