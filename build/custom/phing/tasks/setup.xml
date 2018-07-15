@@ -2,7 +2,7 @@
          default="setup"
          description="Setup tasks for various containers.">
 
-  <echo message="Building ${custom.phing.dir}/tasks/setup.xml"/>
+  <echo message="Building ${custom.phing.dir}/tasks/setup.xml" level="verbose"/>
 
 <!-- Define the default task for the setup project. -->
   <target name="setup"
@@ -16,7 +16,7 @@
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a drupal environment in docker for local development."
-          depends="setup:php:xdebug, setup:drupal, setup:drupal:newdb, setup:drush:local-config">
+          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec output='${project.basedir}/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
@@ -80,6 +80,7 @@
                 --account-name=${drupal.account.name}
                 --account-pass=${drupal.account.password}
                 --account-mail=${drupal.account.mail}
+                --config-dir=${project.sync}
                 -y
                 "
               logoutput="true"/>
@@ -123,8 +124,8 @@
           <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
           <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="if (file_exists($app_root . '/' . $site_path . 'settings.local.php')) {${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="   include $app_root . '/' . $site_path . 'settings.local.php';${line.separator}" append="true" file="${settings.file}"/>
+          <echo message="if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {${line.separator}" append="true" file="${settings.file}"/>
+          <echo message="   include $app_root . '/' . $site_path . '/settings.local.php';${line.separator}" append="true" file="${settings.file}"/>
           <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
           <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
           <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
@@ -153,11 +154,5 @@
     <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
     <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
   </target>
-
-  <target name="setup:php:xdebug"
-          description="Creates a drush.yml file to default drush commands to the local site.">
-    <echo message="${php.xdebug.settings}${line.separator}" append="true" file="${php.xdebug.ini_file}"/>
-  </target>
-
 
 </project>
