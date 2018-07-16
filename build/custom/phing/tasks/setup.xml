@@ -127,7 +127,7 @@
 
       <if>
         <not>
-          <available file="${local.settings.file}"/>
+          <available file="${settings.file}"/>
         </not>
         <then>
           <echo message="&lt;?php${line.separator}${line.separator}" append="true" file="${settings.file}"/>
