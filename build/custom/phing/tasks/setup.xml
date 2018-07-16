@@ -106,6 +106,9 @@
 <!-- Define a task to copy a new local.settings.php file and append initial settings. -->
   <target name="setup:drupal:local_settings_php:write"
           description="Sets the database and any other default values into the local.settings.php file.">
+
+      <exec command="cat ${settings.file}" passthru="true" logoutput="true" />
+
       <if>
         <not>
           <available file="${local.settings.file}"/>
