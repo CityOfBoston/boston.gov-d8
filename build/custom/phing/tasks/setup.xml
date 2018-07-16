@@ -118,14 +118,14 @@
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$config_directories[CONFIG_SYNC_DIRECTORY] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="$databases['default']['default'] = array (" append="true" file="${local.settings.file}"/>
-          <echo message="'driver' => 'mysql'," append="true" file="${local.settings.file}"/>
-          <echo message="'database' => '${lando.db.database}'," append="true" file="${local.settings.file}"/>
-          <echo message="'username' => '${lando.db.username}'," append="true" file="${local.settings.file}"/>
-          <echo message="'password' => '${lando.db.password}'," append="true" file="${local.settings.file}"/>
-          <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost'," append="true" file="${local.settings.file}"/>
-          <echo message="'port' => '${lando.db.port}'," append="true" file="${local.settings.file}"/>
-          <echo message=");" append="true" file="${local.settings.file}"></echo>
+          <echo message="$databases['default']['default'] = array (${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="'driver' => 'mysql',${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="'database' => '${lando.db.database}',${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="'username' => '${lando.db.username}',v" append="true" file="${local.settings.file}"/>
+          <echo message="'password' => '${lando.db.password}',v" append="true" file="${local.settings.file}"/>
+          <echo message="'host' => getenv('DRUPAL_DATABASE_HOST') ? getenv('DRUPAL_DATABASE_HOST') : 'localhost',${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="'port' => '${lando.db.port}',v" append="true" file="${local.settings.file}"/>
+          <echo message=");${line.separator}" append="true" file="${local.settings.file}"></echo>
         </then>
         <else>
           <echo message="local.settings.php already exists, ignoring."/>
