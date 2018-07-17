@@ -71,10 +71,10 @@
   }
 
   //  update the config if the environment variable has changed.
-  $config = \Drupal::service('config.factory')->getEditable('environment_indicator.indicator');
-  if (isset($config) && $config->get('name') != $env['name']) {
-    $config->set('name', $env['name']);
-    $config->set('bg_color', $env['bg_color']);
-    $config->set('fg_color', $env['fg_color']);
-    $config->save();
-  }
+//  $config = \Drupal::service('config.factory')->getEditable('environment_indicator.indicator');
+//  if (isset($config) && $config->get('name') != $env['name']) {
+//    $config->set('name', $env['name']);
+//    $config->set('bg_color', $env['bg_color']);
+//    $config->set('fg_color', $env['fg_color']);
+//    $config->save();
+//  }
