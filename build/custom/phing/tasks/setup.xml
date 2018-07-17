@@ -80,11 +80,11 @@
                 --account-name=${drupal.account.name}
                 --account-pass=${drupal.account.password}
                 --account-mail=${drupal.account.mail}
-                --sites-subdir='default'
                 --config-dir=${project.sync}
                 -y
                 "
               logoutput="true"/>
+        <!--&#45;&#45;sites-subdir='default'-->
 
         <phingcall target="update:config:updatedb"
                    description="Run any database updates."/>
