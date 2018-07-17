@@ -54,18 +54,11 @@
       break;
   }
 
-  //   update the config if the environment variable has changed.
-//  $config = \Drupal::service('config.factory')->getEditable('environment_indicator.indicator');
-//  if ($config->get('name') != $env['name']) {
-//    $config->set('name', $env['name']);
-//    $config->set('bg_color', $env['bg_color']);
-//    $config->set('fg_color', $env['fg_color']);
-//    $config->save();
-//  }
+
 
   $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/default/development.services.yml';
 
-  if ($_SERVER['LANDO'] === 'ON') {
+  if (!empty($_SERVER['LANDO']) && $_SERVER['LANDO'] === 'ON') {
     $lando_info = json_decode(getenv('LANDO_INFO'), TRUE);
     $databases['default']['default'] = [
       'driver' => 'mysql',
@@ -75,4 +68,13 @@
       'host' => $lando_info['database']['internal_connection']['host'],
       'port' => $lando_info['database']['internal_connection']['port'],
     ];
+  }
+
+  //  update the config if the environment variable has changed.
+  $config = \Drupal::service('config.factory')->getEditable('environment_indicator.indicator');
+  if (isset($config) && $config->get('name') != $env['name']) {
+    $config->set('name', $env['name']);
+    $config->set('bg_color', $env['bg_color']);
+    $config->set('fg_color', $env['fg_color']);
+    $config->save();
   }
