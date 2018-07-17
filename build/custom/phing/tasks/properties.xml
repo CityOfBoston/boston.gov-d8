@@ -26,8 +26,8 @@
   <property file="${repo.root}/.lando.yml" prefix="lando" override="true"/>
 
   <!-- Read the LANDO_INFO environment variablt to get the correct hostname and port for the database -->
-  <php expression="json_decode('${env.LANDO_INFO}')->database->external_connection->host;" returnProperty="lando.db.host" level="verbose"/>
-  <php expression="json_decode('${env.LANDO_INFO}')->database->external_connection->port;" returnProperty="lando.db.port" level="verbose"/>
+  <php expression="json_decode('${env.LANDO_INFO}')->database->internal_connection->host;" returnProperty="lando.db.host" level="verbose"/>
+  <php expression="json_decode('${env.LANDO_INFO}')->database->internal_connection->port;" returnProperty="lando.db.port" level="verbose"/>
   <php expression="json_decode('${env.LANDO_INFO}')->database->creds->user;" returnProperty="lando.db.username" level="verbose"/>
   <php expression="json_decode('${env.LANDO_INFO}')->database->creds->password;" returnProperty="lando.db.password" level="verbose"/>
   <php expression="json_decode('${env.LANDO_INFO}')->database->creds->database;" returnProperty="lando.db.database" level="verbose"/>
