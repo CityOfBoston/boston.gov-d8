@@ -80,10 +80,11 @@
                 --account-name=${drupal.account.name}
                 --account-pass=${drupal.account.password}
                 --account-mail=${drupal.account.mail}
-                --config-dir=${project.sync}
+                --sites-subdir=${drupal.multisite.name}
                 -y
                 "
               logoutput="true"/>
+        <!--&#45;&#45;config-dir=${project.sync}-->
 
         <phingcall target="update:config:updatedb"
                    description="Run any database updates."/>
@@ -107,6 +108,7 @@
 <!-- Define a task to copy a new local.settings.php file and append initial settings. -->
   <target name="setup:drupal:local_settings_php:write"
           description="Sets the database and any other default values into the local.settings.php file.">
+
       <if>
         <not>
           <available file="${local.settings.file}"/>
@@ -117,29 +119,45 @@
           <echo message="${line.separator}/*${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="$config_directories[CONFIG_SYNC_DIRECTORY] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="$config_directories['sync'] = '${project.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
-
-          <echo message="&lt;?php${line.separator}${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="   include $app_root . '/' . $site_path . '/settings.local.php';${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="$settings['file_scan_ignore_directories'] = [${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="  'node_modules',${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="  'bower_components',${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="];${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="$settings['entity_update_batch_size'] = 50;${line.separator}" append="true" file="${settings.file}"/>
-          <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
         </then>
         <else>
           <echo message="local.settings.php already exists, ignoring."/>
         </else>
       </if>
+
+      <if>
+        <not>
+          <available file="${settings.file}"/>
+        </not>
+        <then>
+          <echo message="&lt;?php${line.separator}${line.separator}" append="true" file="${settings.file}"/>
+        </then>
+      </if>
+
+      <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="if (file_exists('${local.settings.file}')) {${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="   include '${local.settings.file}';${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="$settings['file_scan_ignore_directories'] = [${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'node_modules',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'bower_components',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="];${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="$settings['entity_update_batch_size'] = 50;${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="$databases['default']['default'] = array (${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'driver' => 'mysql',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'database' => '${lando.db.database}',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'username' => '${lando.db.username}',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'password' => '${lando.db.password}',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'host' => '${lando.db.host}',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  'port' => '${lando.db.port}',${line.separator}" append="true" file="${settings.file}"/>
+      <echo message=");${line.separator}" append="true" file="${settings.file}"></echo>
+      <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
 
       <echo level="warning" message="Using settings file ${local.settings.file}"/>
       <echo level="warning" message='Using ${lando.db.type} "${lando.db.database}" database on "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
