@@ -50,7 +50,7 @@
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
 
   <!-- This defines generic, reusable file sets that are used by other targets -->
-  <patternset id="files.php">
+  <fileset dir="${docroot}" id="files.php" description="All docroot PHP files which are not core or contributed.">
     <include name="**/*.inc"/>
     <include name="**/*.php"/>
     <include name="**/*.module"/>
@@ -58,11 +58,23 @@
     <include name="**/*.profile"/>
     <include name="**/*.test"/>
     <include name="**/*.theme"/>
-    <exclude name="**/*.features.*"/>
-    <exclude name="**/vendor/**/*"/>
-  </patternset>
+    <exclude name="**/core/**/*"/>
+    <exclude name="**/contrib/**/*"/>
+  </fileset>
 
-  <patternset id="files.frontend">
+  <fileset dir="${docroot}" id="files.yml" description="All docroot YML files which are not core or contributed.">
+    <include name="**/*.yml"/>
+    <exclude name="**/core/**/*"/>
+    <exclude name="**/contrib/**/*"/>
+  </fileset>
+
+  <fileset dir="${docroot}" id="files.twig" description="All docroot TWIG template files which are not core or contributed.">
+    <include name="**/*.twig"/>
+    <exclude name="**/core/**/*"/>
+    <exclude name="**/contrib/**/*"/>
+  </fileset>
+
+  <fileset dir="." id="files.frontend">
     <include name="**/*.js"/>
     <!-- Ignore CSS. SASS usage is expected. CSS should be compiled. -->
     <exclude name="**/*.css"/>
@@ -71,7 +83,7 @@
     <exclude name="**/bower_components/**/*"/>
     <exclude name="**/dist/**/*"/>
     <exclude name="**/styleguide/**/*"/>
-  </patternset>
+  </fileset>
 
   <fileset dir="${repo.root}" id="files.php.all">
     <patternset refid="files.php"/>
@@ -96,9 +108,9 @@
   <!-- overrides and additional custom filesets supplementing core filesets -->
 
   <!-- exclude custom files that use Views coding standards -->
-  <patternset id="files.views">
+  <fileset id="files.views">
     <exclude name="bos_core/includes/bos_core_plugin_argument_validate_first_page.inc"/>
-  </patternset>
+  </fileset>
 
   <fileset dir="${docroot}/sites/all/modules/custom" id="files.php.custom.modules">
     <patternset refid="files.php"/>
