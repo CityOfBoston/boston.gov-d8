@@ -37,6 +37,7 @@
 <!-- Define the Drupal setup task -->
   <target name="setup:drupal"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
+      <property environment="env"/>
       <if>
           <equals arg1="${env.AH_SITE_ENVIRONMENT}" arg2="dev"/>
           <then>
@@ -44,7 +45,7 @@
               <property name="flag.dev" value="--dev" description="Sets default dev flag for composer command." />
           </then>
           <else>
-              <echo message="* ${env.AH_SITE_ENVIRONMENT}"/>
+              <exec command='echo "${env}"' passthru="true"/>
               <property name="flag.dev" value="--no-dev" description="Sets default dev flag for composer command." />
           </else>
       </if>
