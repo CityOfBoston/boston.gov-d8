@@ -40,10 +40,11 @@
       <if>
           <equals arg1="${env.AH_SITE_ENVIRONMENT}" arg2="dev"/>
           <then>
-              <echo message="DEVELOPMENT"/>
+              <echo message="DEVELOPMENT (${env.AH_SITE_ENVIRONMENT})"/>
               <property name="flag.dev" value="--dev" description="Sets default dev flag for composer command." />
           </then>
           <else>
+              <echo message="* ${env.AH_SITE_ENVIRONMENT}"/>
               <property name="flag.dev" value="--no-dev" description="Sets default dev flag for composer command." />
           </else>
       </if>
