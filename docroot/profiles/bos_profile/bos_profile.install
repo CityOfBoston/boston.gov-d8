@@ -26,6 +26,7 @@ function bos_profile_install() {
   else {
     $enabled_modules += [
       'devel',
+      'diff',
       'masquerade',
       'twig_xdebug',
       'stage_file_proxy',
@@ -34,6 +35,8 @@ function bos_profile_install() {
       'migrate_plus',
       'migrate_drupal',
       'migrate_drupal_ui',
+      'migrate_upgrade',
+      'stage_file_proxy',
       'dblog',
     ];
   }
