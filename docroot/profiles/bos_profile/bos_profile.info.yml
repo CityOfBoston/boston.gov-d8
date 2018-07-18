@@ -4,14 +4,22 @@ description: 'Profile for boston.gov public site.'
 core: 8.x
 package: boston
 dependencies:
+  - address
   - admin_toolbar
   - admin_toolbar_tools
   - adminimal_admin_toolbar
+  - advanced_text_formatter
+  - ape
+  - autologout
+  - better_exposed_filters
+  - bg_image_formatter
   - block
   - block_content
   - breakpoint
   - ckeditor
+  - chosen
   - color
+  - comment
   - content_moderation
   - config
   - config_devel
@@ -20,22 +28,32 @@ dependencies:
   - config_split
   - config_update
   - config_update_ui
+  - context
+  - contextual
+  - cors
   - datetime
   - dynamic_page_cache
   - editor
   - entity_reference_revisions
   - environment_indicator
   - environment_indicator_ui
+  - fences
   - field
+  - field_collection
   - field_group
   - field_ui
   - file
   - filter
+  - honeypot
   - image
+  - imce
   - inline_entity_form
   - language
   - link
+  - linkit
+  - login_security
   - media
+  - menu_block
   - menu_link_content
   - menu_ui
   - metatag
@@ -44,22 +62,43 @@ dependencies:
   - metatag_twitter_cards
   - module_filter
   - node
+  - office_hours
   - options
   - page_cache
+  - panels
   - paragraphs
+  - password_policy
   - path
+  - phpexcel
+  - publication_date
+  - purge
   - quickedit
+  - rabbit_hole
+  - rdf
+  - redirect
+  - rules
+  - salesforce
   - search
+  - seckit
+#  - simplesamlphp_auth
+  - slack
   - system
   - taxonomy
   - text
   - token
+  - token_custom
+  - token_filter
   - toolbar
   - update
   - user
+  - viewfield
   - views
+  - views_bulk_operations
   - views_ui
   - workbench
+  - xmlsitemap
+  - xmlsitemap_custom
+  - xmlsitemap_engines
 themes:
   - adminimal_theme
   - bos_theme

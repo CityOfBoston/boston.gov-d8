@@ -93,8 +93,8 @@
 
       </then>
       <else>
-        <echo message="Drupal is already installed."/>
-        <echo message="Database was not imported, use update:drupal:db to update the database."/>
+        <echo message="Drupal core is not found."/>
+        <fail message="Setup is incomplete." status="1"/>
       </else>
     </if>
   </target>
