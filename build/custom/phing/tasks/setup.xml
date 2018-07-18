@@ -36,23 +36,31 @@
 
 <!-- Define the Drupal setup task -->
   <target name="setup:drupal"
-          description="Uses Composer to install drupal in the container.">
+          description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
+      <if>
+          <equals arg1="${env.AH_SITE_ENVIRONMENT}" arg2="dev"/>
+          <then>
+              <echo message="DEVELOPMENT"/>
+              <property name="flag.dev" value="--dev" description="Sets default dev flag for composer command." />
+          </then>
+          <else>
+              <property name="flag.dev" value="--no-dev" description="Sets default dev flag for composer command." />
+          </else>
+      </if>
     <if>
       <not>
         <available file="${project.basedir}/docroot/core/lib/Drupal.php" />
       </not>
       <then>
-        <echo message="Using Composer to install Drupal" />
-        <exec command="composer install" dir="${project.basedir}/" description="when ready, use update:drupal:composer:install" logoutput="true"/>
+        <echo message="Using Composer to install Drupal." level="info"/>
+        <echo message=" (see ${project.basedir}/setup/composer.log for output)." level="warning"/>
+        <exec command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              description="when ready, use update:drupal:composer:install"
+              logoutput="true"/>
       </then>
       <else>
-        <echo message="Drupal is already installed."/>
-        <echo message="To update all drupal core and contributed modules, use: "/>
-        <echo message="   lando phing update:drupal:composer"/>
-        <echo message="or"/>
-        <echo message="   lando composer update."/>
-        <echo message="to update all drupal custom and features modules."/>
-        <echo message="   lando git pull."/>
+        <fail message="Drupal is already installed."/>
       </else>
     </if>
   </target>
@@ -81,8 +89,9 @@
                 --account-pass=${drupal.account.password}
                 --account-mail=${drupal.account.mail}
                 --sites-subdir=${drupal.multisite.name}
+                --verbose
                 -y
-                "
+                > ${project.basedir}/setup/drush_site_install.log "
               logoutput="true"/>
         <!--&#45;&#45;config-dir=${project.sync}-->
 
