@@ -41,6 +41,16 @@ project:
   # It should live in the project root.
   make_file: 'make.yml'
 
+  # These configurations map to AH_XXXX environment variables.
+  # refer: https://docs.acquia.com/acquia-cloud/develop/env-variable/
+  acquia:
+    # Un-comment is this is a production site
+    # production: 1
+    # Un-comment is this is a non-production site
+    non_production: 1
+    # set one of dev, test or prod based on host
+    site_environment: dev
+
 php:
   xdebug:
     # Provide absolute path and filename on the drupal server for the xdebug.ini file.
