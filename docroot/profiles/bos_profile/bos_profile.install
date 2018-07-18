@@ -39,6 +39,9 @@ function bos_profile_install() {
       'stage_file_proxy',
       'dblog',
     ];
+    $disabled_modules += [
+      'autologout'
+    ];
   }
 
   // do the disabling.
