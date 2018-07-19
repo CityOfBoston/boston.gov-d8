@@ -90,6 +90,7 @@
                 --account-pass=${drupal.account.password}
                 --account-mail=${drupal.account.mail}
                 --sites-subdir=${drupal.multisite.name}
+                --config-dir=${project.sync}
                 --verbose
                 -y
                 > ${project.basedir}/setup/drush_site_install.log "
