@@ -23,7 +23,8 @@ project:
   themes:
     - bos_theme
   # define the folder, relative to the project root, for config files, no trailing slash.
-  sync: "../config/sync"
+  # aquia require ./config/default: https://docs.acquia.com/acquia-cloud/develop/config-d8/
+  sync: "../config/default"
   # Set this to 'initialize' to start a fresh install.
   # Otherwise set it to sync to sync from the stg environment.
   build_db_from: sync
@@ -40,16 +41,6 @@ project:
   # This is the default makefile that will be used to build dependencies.
   # It should live in the project root.
   make_file: 'make.yml'
-
-  # These configurations map to AH_XXXX environment variables.
-  # refer: https://docs.acquia.com/acquia-cloud/develop/env-variable/
-  acquia:
-    # Un-comment is this is a production site
-    # production: 1
-    # Un-comment is this is a non-production site
-    non_production: 1
-    # set one of dev, test or prod based on host
-    site_environment: dev
 
 php:
   xdebug:

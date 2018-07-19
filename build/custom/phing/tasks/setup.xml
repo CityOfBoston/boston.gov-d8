@@ -37,15 +37,14 @@
 <!-- Define the Drupal setup task -->
   <target name="setup:drupal"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
-      <property environment="env"/>
       <if>
-          <equals arg1="${env.AH_SITE_ENVIRONMENT}" arg2="dev"/>
+          <equals arg1="${acquia.site_environment}" arg2="dev"/>
           <then>
-              <echo message="DEVELOPMENT (${env.AH_SITE_ENVIRONMENT})"/>
+              <echo message="DEVELOPMENT (${acquia.site_environment})"/>
               <property name="flag.dev" value="--dev" description="Sets default dev flag for composer command." />
           </then>
           <else>
-              <exec command='echo "${env}"' passthru="true"/>
+              <exec command='echo "ENVIRONMENT: ${acquia.site_environment}"' passthru="true"/>
               <property name="flag.dev" value="--no-dev" description="Sets default dev flag for composer command." />
           </else>
       </if>

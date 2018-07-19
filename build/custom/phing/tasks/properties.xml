@@ -46,6 +46,10 @@
   <property name="settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.php" />
   <property name="local.services.file" value="${docroot}/sites/${drupal.multisite.name}/services.yml" />
 
+  <!-- Determine the Aquia Cloud Environment variables -->
+  <php expression="getenv('AH_SITE_ENVIRONMENT') ? getenv('AH_SITE_ENVIRONMENT') : 'dev'" returnProperty="acquia.site_environment" level="verbose"/>
+  <echo message="${acquia.site_environment}"/>
+
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
 
   <!-- This defines generic, reusable file sets that are used by other targets -->
