@@ -12,7 +12,13 @@
 
   // set an enviroment variable to denote the environment status.
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
-    $_ENV['AH_SITE_ENVIRONMENT'] = 'loc';
+    $envvar = getenv('AH_SITE_ENVIRONMENT');
+    if (isset($envvar)) {
+      $_ENV['AH_SITE_ENVIRONMENT'] = $envvar;
+    }
+    else {
+      $_ENV['AH_SITE_ENVIRONMENT'] = 'dev';
+    }
   }
 
   $settings['container_yamls'][] = DRUPAL_ROOT . '/sites/default/development.services.yml';

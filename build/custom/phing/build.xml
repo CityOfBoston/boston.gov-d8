@@ -20,7 +20,7 @@
 
 <!-- Define the default task for this project - a welcome screen -->
     <target name="build:info" description="Welcome to Boston.gov.">
-        <exec dir="${project.basedir}" command="${project.basedir}/scripts/doit/branding.sh" logoutput="true"/>
+        <exec dir="${project.basedir}" command="${project.basedir}/scripts/doit/branding.sh" passthru="true" logoutput="true"/>
     </target>
 
 </project>

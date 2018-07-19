@@ -129,3 +129,4 @@ events:
   post-start:
     - echo "Containers started."
     - cd $LANDO_MOUNT && $LANDO_MOUNT/scripts/doit/branding.sh
+#    - cd $LANDO_MOUNT && [ ! -d $LANDO_MOUNT/setup ] && mkdir $LANDO_MOUNT/setup

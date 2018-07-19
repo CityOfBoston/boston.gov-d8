@@ -4,26 +4,41 @@
  * Install file for Boston.gov.
  */
 
-
 /**
  * Implements hook_install().
- *
  */
 function bos_profile_install() {
   // Override certain modules which are installed by default.
+
+  // Be sure an environment indicator is set.
+  if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
+    $envvar = getenv('AH_SITE_ENVIRONMENT');
+    if (isset($envvar)) {
+      $_ENV['AH_SITE_ENVIRONMENT'] = $envvar;
+    }
+    else {
+      $_ENV['AH_SITE_ENVIRONMENT'] = 'dev';
+    }
+  }
+
+  // Disable modules enabled by core by default.
   $disabled_modules = array(
     'config_translation',
     'content_translation',
     'search',
   );
+  // Don't set defaults here - use the .info file instead.
   $enabled_modules = array();
-  // Make sure certain modules are disabled in prod.
-  if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prd' || $_ENV['AH_SITE_ENVIRONMENT'] === 'stg') {
+
+  if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prod' || $_ENV['AH_SITE_ENVIRONMENT'] === 'test') {
+    // Make sure certain modules are disabled in prod.
     $disabled_modules += [
       'devel'
     ];
   }
+
   else {
+    // enable development modules in develop environments.
     $enabled_modules += [
       'devel',
       'diff',
@@ -41,8 +56,11 @@ function bos_profile_install() {
       'dblog',
       'syslog',
     ];
+    // disable annoying modules in develop environments.
     $disabled_modules += [
-      'autologout'
+      'autologout',
+      'acquia_connector',
+      'acquia_purge',
     ];
   }
 

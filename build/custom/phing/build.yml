@@ -23,7 +23,8 @@ project:
   themes:
     - bos_theme
   # define the folder, relative to the project root, for config files, no trailing slash.
-  sync: "../config/sync"
+  # aquia require ./config/default: https://docs.acquia.com/acquia-cloud/develop/config-d8/
+  sync: "../config/default"
   # Set this to 'initialize' to start a fresh install.
   # Otherwise set it to sync to sync from the stg environment.
   build_db_from: sync
