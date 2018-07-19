@@ -7,9 +7,9 @@
 /**
  * Implements hook_preprocess_node.
  */
-function bos_theme_preprocess_node(&$variables) {
+function boston_preprocess_node(&$variables) {
   // Place theme settings into the variable object so they can be used in twig.
-  $variables['bos_theme'] = array(
+  $variables['boston'] = array(
     'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
     'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
     'boston_breadcrumb_home' => theme_get_setting('boston_breadcrumb_home'),
