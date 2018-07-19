@@ -48,7 +48,6 @@
 
   <!-- Determine the Aquia Cloud Environment variables -->
   <php expression="getenv('AH_SITE_ENVIRONMENT') ? getenv('AH_SITE_ENVIRONMENT') : 'dev'" returnProperty="acquia.site_environment" level="verbose"/>
-  <echo message="${acquia.site_environment}"/>
 
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
 
