@@ -1,0 +1,40 @@
+uuid: 7d35bc7e-b314-4a3a-8214-784e29058a87
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.tabbed_content_tab.field_component_title
+    - field.field.paragraph.tabbed_content_tab.field_components
+    - paragraphs.paragraphs_type.tabbed_content_tab
+  module:
+    - paragraphs
+    - workbench_moderation
+id: paragraph.tabbed_content_tab.default
+targetEntityType: paragraph
+bundle: tabbed_content_tab
+mode: default
+content:
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_components:
+    weight: 2
+    type: entity_reference_paragraphs
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

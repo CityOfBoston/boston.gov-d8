@@ -1,0 +1,21 @@
+uuid: b341a944-8e64-44cf-9aba-d27ce594d0e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.recollect_widget.field_short_description
+    - paragraphs.paragraphs_type.recollect_widget
+id: paragraph.recollect_widget.default
+targetEntityType: paragraph
+bundle: recollect_widget
+mode: default
+content:
+  field_short_description:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

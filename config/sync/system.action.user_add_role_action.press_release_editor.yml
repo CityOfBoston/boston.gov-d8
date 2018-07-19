@@ -1,0 +1,14 @@
+uuid: c6c2b72e-0016-4fcd-9b1f-a6c7f86ea4ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.press_release_editor
+  module:
+    - user
+id: user_add_role_action.press_release_editor
+label: 'Add the Press Release Editor role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: press_release_editor

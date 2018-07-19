@@ -1,0 +1,26 @@
+uuid: f9010a5b-1784-4923-a7f7-8fe563c964d9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.seamless_doc.field_document_id
+    - paragraphs.paragraphs_type.seamless_doc
+  module:
+    - workbench_moderation
+id: paragraph.seamless_doc.default
+targetEntityType: paragraph
+bundle: seamless_doc
+mode: default
+content:
+  field_document_id:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

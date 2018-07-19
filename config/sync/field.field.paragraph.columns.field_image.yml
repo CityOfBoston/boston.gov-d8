@@ -1,0 +1,33 @@
+uuid: 61e17348-8ebb-4897-9458-2f8c229d9537
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_image
+    - paragraphs.paragraphs_type.columns
+  module:
+    - image
+id: paragraph.columns.field_image
+field_name: field_image
+entity_type: paragraph
+bundle: columns
+label: 'Column Image'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  alt_field: false
+  default_image: 0
+  file_directory: 'field-columns-image-[current-date:file_directory_storage_date]'
+  file_extensions: 'png gif jpg jpeg svg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  title_field: false
+  alt_field_required: true
+  title_field_required: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image

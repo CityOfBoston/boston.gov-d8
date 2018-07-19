@@ -1,0 +1,31 @@
+uuid: 6e971ef5-49c8-422d-a040-b73ae513cb9e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.featured_topics.field_short_title
+    - field.field.paragraph.featured_topics.field_topics
+    - paragraphs.paragraphs_type.featured_topics
+id: paragraph.featured_topics.default
+targetEntityType: paragraph
+bundle: featured_topics
+mode: default
+content:
+  field_short_title:
+    label: above
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_topics:
+    label: hidden
+    weight: 0
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

@@ -1,0 +1,45 @@
+uuid: 5b871738-3112-43c4-8663-f0445774215c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.map_pin.field_map_latitude
+    - field.field.paragraph.map_pin.field_map_longitude
+    - field.field.paragraph.map_pin.field_pin_name
+    - paragraphs.paragraphs_type.map_pin
+  module:
+    - link
+    - workbench_moderation
+id: paragraph.map_pin.default
+targetEntityType: paragraph
+bundle: map_pin
+mode: default
+content:
+  field_map_latitude:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_map_longitude:
+    weight: 5
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_pin_name:
+    weight: 0
+    type: link_default
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

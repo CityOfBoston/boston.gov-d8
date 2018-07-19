@@ -1,0 +1,21 @@
+uuid: e4426afc-8129-4a74-b953-1fb0c28fea6c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_date
+    - paragraphs.paragraphs_type.message_for_the_day
+  module:
+    - datetime
+id: paragraph.message_for_the_day.field_date
+field_name: field_date
+entity_type: paragraph
+bundle: message_for_the_day
+label: Date
+description: 'The date associated with particular message text.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

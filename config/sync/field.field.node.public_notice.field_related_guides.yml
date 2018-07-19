@@ -1,0 +1,30 @@
+uuid: 5cfa3c56-a5a1-4586-ac1e-b22493475f5b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_guides
+    - node.type.public_notice
+    - node.type.topic_page
+id: node.public_notice.field_related_guides
+field_name: field_related_guides
+entity_type: node
+bundle: public_notice
+label: 'Related guides'
+description: 'Which guides are relevant for this public notice?'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      topic_page: topic_page
+field_type: entity_reference

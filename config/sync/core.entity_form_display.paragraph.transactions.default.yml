@@ -1,0 +1,40 @@
+uuid: 9b6ef606-fcc2-46d8-b7c0-d5ecac98081d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.transactions.field_grid_link
+    - field.field.paragraph.transactions.field_icon
+    - paragraphs.paragraphs_type.transactions
+  module:
+    - file
+    - paragraphs
+    - workbench_moderation
+id: paragraph.transactions.default
+targetEntityType: paragraph
+bundle: transactions
+mode: default
+content:
+  field_grid_link:
+    weight: 4
+    type: entity_reference_paragraphs
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_icon:
+    weight: 2
+    type: file_generic
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

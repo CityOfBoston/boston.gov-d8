@@ -1,0 +1,19 @@
+uuid: 7cb2ba61-f0f0-4c4c-b13b-b9304db240b7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_short_title
+    - paragraphs.paragraphs_type.commission_members
+id: paragraph.commission_members.field_short_title
+field_name: field_short_title
+entity_type: paragraph
+bundle: commission_members
+label: 'Short Title'
+description: 'The short title is used to populate the in-page navigation. Please keep it short: one to three words is ideal. Example can be found on boston.gov/winter/.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

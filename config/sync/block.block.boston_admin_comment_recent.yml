@@ -1,0 +1,24 @@
+uuid: 46202322-ec2f-4a55-9a84-ed508315c540
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.comments_recent
+  module:
+    - views
+  theme:
+    - seven
+id: boston_admin_comment_recent
+theme: seven
+region: content
+weight: 2
+provider: null
+plugin: 'views_block:comments_recent-block_1'
+settings:
+  id: 'views_block:comments_recent-block_1'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: none
+visibility: {  }

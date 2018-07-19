@@ -1,0 +1,41 @@
+uuid: 2d1e9561-db31-4747-b143-ee0063cde1f0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.daily_hours.field_daily_hours
+    - field.field.paragraph.daily_hours.field_hours_icon
+    - field.field.paragraph.daily_hours.field_title
+    - paragraphs.paragraphs_type.daily_hours
+  module:
+    - office_hours
+    - workbench_moderation
+id: paragraph.daily_hours.default
+targetEntityType: paragraph
+bundle: daily_hours
+mode: default
+content:
+  field_daily_hours:
+    weight: 3
+    type: office_hours_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_hours_icon:
+    weight: 2
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

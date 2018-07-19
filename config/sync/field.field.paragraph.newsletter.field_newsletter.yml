@@ -1,0 +1,30 @@
+uuid: 191be887-5db4-44c7-bc83-8928b0ce297c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_newsletter
+    - paragraphs.paragraphs_type.newsletter
+    - taxonomy.vocabulary.newsletters
+id: paragraph.newsletter.field_newsletter
+field_name: field_newsletter
+entity_type: paragraph
+bundle: newsletter
+label: 'Email List'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      newsletters: newsletters
+field_type: entity_reference

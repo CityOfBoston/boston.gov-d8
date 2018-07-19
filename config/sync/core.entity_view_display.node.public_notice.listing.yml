@@ -1,0 +1,196 @@
+uuid: 238d0e36-6985-42bf-930c-c198f955a0bb
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.listing
+    - field.field.node.public_notice.body
+    - field.field.node.public_notice.comment_node_public_notice
+    - field.field.node.public_notice.field_cancelled
+    - field.field.node.public_notice.field_city_hall
+    - field.field.node.public_notice.field_components
+    - field.field.node.public_notice.field_contact
+    - field.field.node.public_notice.field_drawer
+    - field.field.node.public_notice.field_email
+    - field.field.node.public_notice.field_event_contact
+    - field.field.node.public_notice.field_extra_info
+    - field.field.node.public_notice.field_featured
+    - field.field.node.public_notice.field_is_there_public_testimony
+    - field.field.node.public_notice.field_links
+    - field.field.node.public_notice.field_multiple_neighborhoods
+    - field.field.node.public_notice.field_people
+    - field.field.node.public_notice.field_phone_number
+    - field.field.node.public_notice.field_place
+    - field.field.node.public_notice.field_program_initiative
+    - field.field.node.public_notice.field_public_notice_date
+    - field.field.node.public_notice.field_related_content
+    - field.field.node.public_notice.field_related_departments
+    - field.field.node.public_notice.field_related_events_notices
+    - field.field.node.public_notice.field_related_guides
+    - field.field.node.public_notice.field_related_posts
+    - field.field.node.public_notice.field_time
+    - field.field.node.public_notice.field_updated_date
+    - node.type.public_notice
+  module:
+    - datetime
+    - entity_reference_revisions
+    - options
+    - text
+    - user
+id: node.public_notice.listing
+targetEntityType: node
+bundle: public_notice
+mode: listing
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_cancelled:
+    label: hidden
+    weight: 13
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_components:
+    label: hidden
+    weight: 15
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 3
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_drawer:
+    label: hidden
+    weight: 17
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_email:
+    label: hidden
+    weight: 5
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_event_contact:
+    label: hidden
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_extra_info:
+    label: hidden
+    weight: 14
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_featured:
+    label: hidden
+    weight: 1
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_is_there_public_testimony:
+    label: above
+    weight: 18
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_links:
+    label: hidden
+    weight: 16
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_multiple_neighborhoods:
+    label: hidden
+    weight: 11
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    label: hidden
+    weight: 6
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_public_notice_date:
+    label: hidden
+    weight: 8
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_related_content:
+    label: hidden
+    weight: 10
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_time:
+    label: above
+    weight: 19
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: hidden
+    weight: 21
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_public_notice: true
+  field_city_hall: true
+  field_people: true
+  field_place: true
+  field_program_initiative: true
+  field_related_departments: true
+  field_related_events_notices: true
+  field_related_guides: true
+  field_related_posts: true

@@ -1,0 +1,40 @@
+uuid: f31337e8-8909-47ff-8a98-0ca6d6d73e93
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.feedback.field_component_title
+    - field.field.paragraph.feedback.field_poll
+    - field.field.paragraph.feedback.field_question
+    - paragraphs.paragraphs_type.feedback
+id: paragraph.feedback.default
+targetEntityType: paragraph
+bundle: feedback
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_poll:
+    label: hidden
+    weight: 2
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_question:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

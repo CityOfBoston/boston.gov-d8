@@ -1,0 +1,27 @@
+uuid: ad4263f6-26b7-43ba-8bd7-d2a27492a7ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.file.thumbnail
+    - file_entity.type.document
+_core:
+  default_config_hash: zlB0VonOjJywsH9sIrMlYt9bIpPdi3QysmBkBUaV1YY
+id: file.document.thumbnail
+targetEntityType: file
+bundle: document
+mode: thumbnail
+content:
+  filename:
+    type: string
+    weight: 0
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    label: hidden
+    region: content
+hidden:
+  filemime: true
+  filesize: true
+  uid: true
+  uri: true

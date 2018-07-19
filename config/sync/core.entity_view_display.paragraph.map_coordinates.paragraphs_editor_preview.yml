@@ -1,0 +1,19 @@
+uuid: de40ecd8-2508-4da2-ac90-69a8af0970a2
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.map_coordinates.field_map_latitude
+    - field.field.paragraph.map_coordinates.field_map_longitude
+    - field.field.paragraph.map_coordinates.field_map_zoom
+    - paragraphs.paragraphs_type.map_coordinates
+id: paragraph.map_coordinates.paragraphs_editor_preview
+targetEntityType: paragraph
+bundle: map_coordinates
+mode: paragraphs_editor_preview
+content: {  }
+hidden:
+  field_map_latitude: true
+  field_map_longitude: true
+  field_map_zoom: true

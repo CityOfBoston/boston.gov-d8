@@ -1,0 +1,19 @@
+uuid: d616213c-34e5-45ee-8671-f6560fdb17f7
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.preview
+    - field.field.paragraph.commission_members.field_commission
+    - field.field.paragraph.commission_members.field_component_title
+    - field.field.paragraph.commission_members.field_short_title
+    - paragraphs.paragraphs_type.commission_members
+id: paragraph.commission_members.preview
+targetEntityType: paragraph
+bundle: commission_members
+mode: preview
+content: {  }
+hidden:
+  field_commission: true
+  field_component_title: true
+  field_short_title: true

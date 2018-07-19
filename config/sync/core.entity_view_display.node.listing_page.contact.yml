@@ -1,0 +1,30 @@
+uuid: 09e145a5-37c8-4c1c-ba5b-337c23b49709
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.contact
+    - field.field.node.listing_page.comment_node_listing_page
+    - field.field.node.listing_page.field_components
+    - field.field.node.listing_page.field_header_component
+    - field.field.node.listing_page.field_intro_image
+    - field.field.node.listing_page.field_published_date
+    - field.field.node.listing_page.field_updated_date
+    - node.type.listing_page
+  module:
+    - user
+id: node.listing_page.contact
+targetEntityType: node
+bundle: listing_page
+mode: contact
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_listing_page: true
+  field_components: true
+  field_header_component: true
+  field_intro_image: true
+  field_published_date: true
+  field_updated_date: true

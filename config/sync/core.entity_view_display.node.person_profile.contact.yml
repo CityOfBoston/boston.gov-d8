@@ -1,0 +1,46 @@
+uuid: 8f33fc61-68ae-417f-bbcb-9e1ac3deb17e
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.contact
+    - field.field.node.person_profile.comment_node_person_profile
+    - field.field.node.person_profile.field_components
+    - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_email
+    - field.field.node.person_profile.field_first_name
+    - field.field.node.person_profile.field_last_name
+    - field.field.node.person_profile.field_person_photo
+    - field.field.node.person_profile.field_phone_number
+    - field.field.node.person_profile.field_political_party
+    - field.field.node.person_profile.field_position_title
+    - field.field.node.person_profile.field_preferred_contact
+    - field.field.node.person_profile.field_profile_type
+    - field.field.node.person_profile.field_sidebar_components
+    - field.field.node.person_profile.field_year_elected
+    - node.type.person_profile
+  module:
+    - user
+id: node.person_profile.contact
+targetEntityType: node
+bundle: person_profile
+mode: contact
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_person_profile: true
+  field_components: true
+  field_contact: true
+  field_email: true
+  field_first_name: true
+  field_last_name: true
+  field_person_photo: true
+  field_phone_number: true
+  field_political_party: true
+  field_position_title: true
+  field_preferred_contact: true
+  field_profile_type: true
+  field_sidebar_components: true
+  field_year_elected: true

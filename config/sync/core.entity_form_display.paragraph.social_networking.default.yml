@@ -1,0 +1,34 @@
+uuid: 5c1ae5f0-9494-4eaa-816f-17fa1934d707
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.social_networking.field_external_link
+    - field.field.paragraph.social_networking.field_social_icon
+    - paragraphs.paragraphs_type.social_networking
+  module:
+    - link
+    - workbench_moderation
+id: paragraph.social_networking.default
+targetEntityType: paragraph
+bundle: social_networking
+mode: default
+content:
+  field_external_link:
+    weight: 2
+    type: link_default
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    region: content
+  field_social_icon:
+    weight: 1
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

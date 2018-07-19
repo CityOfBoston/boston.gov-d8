@@ -1,0 +1,64 @@
+uuid: c0315684-af7f-48ed-9500-bcb9607dd3e6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.maps_esri_feed.field_map_default_coordinates
+    - field.field.taxonomy_term.maps_esri_feed.field_map_esri_feed
+    - taxonomy.vocabulary.maps_esri_feed
+  module:
+    - paragraphs
+    - path
+    - text
+id: taxonomy_term.maps_esri_feed.default
+targetEntityType: taxonomy_term
+bundle: maps_esri_feed
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_map_default_coordinates:
+    weight: 9
+    type: entity_reference_paragraphs
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_map_esri_feed:
+    weight: 8
+    type: entity_reference_paragraphs
+    settings:
+      title: 'ESRI Feed'
+      title_plural: 'ESRI Feeds'
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
