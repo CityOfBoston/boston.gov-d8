@@ -69,6 +69,15 @@
 <!-- Define the task to create a new Drupal 8 Database. -->
   <target name="setup:drupal:newdb"
           description="Uses Composer to install drupal in the container attaching to database in Lando-controlled container.">
+  <property name="si.flag.config_site" value=""/>
+
+    <if>
+      <available file="${project.sync}/system.site.yml"/>
+      <then>
+          <property name="si.flag.config_site" value="--config-dir=${project.sync}"/>
+      </then>
+    </if>
+
     <if>
       <available file="${project.basedir}/docroot/core/lib/Drupal.php"/>
       <then>
@@ -90,12 +99,11 @@
                 --account-pass=${drupal.account.password}
                 --account-mail=${drupal.account.mail}
                 --sites-subdir=${drupal.multisite.name}
-                --config-dir=${project.sync}
+                ${si.flag.config_site}
                 --verbose
                 -y
                 > ${project.basedir}/setup/drush_site_install.log "
               logoutput="true"/>
-        <!--&#45;&#45;config-dir=${project.sync}-->
 
         <phingcall target="update:config:updatedb"
                    description="Run any database updates."/>
