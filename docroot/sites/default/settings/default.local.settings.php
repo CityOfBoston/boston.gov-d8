@@ -34,3 +34,5 @@
       'port' => $lando_info['database']['internal_connection']['port'],
     ];
   }
+
+  $settings['file_private_path'] = 'sites/default/files/private';
