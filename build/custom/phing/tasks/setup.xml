@@ -190,6 +190,31 @@
     <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
     <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
     <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+
+    <if>
+        <available filepath="${docroot}/modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate"/>
+
+        <then>
+            <reflexive file="${docroot}/modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d6/FieldGroup.php"
+                    description="Updates the d6 field_group file header for migrate tasks.">
+              <filterchain>
+                  <replaceregexp>
+                      <regexp pattern=' * @MigrateSource(\n *   id = "d6_field_group"\n * )'
+                              replace=' * @MigrateSource(\n *   id = "d6_field_group",\n *   source_module = "field_group",\n *   destination_module = "field_group"\n * )'/>
+                  </replaceregexp>
+              </filterchain>
+            </reflexive>
+            <reflexive file="${docroot}/modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d7/FieldGroup.php"
+                    description="Updates the d7 field_group file header for migrate tasks.">
+              <filterchain>
+                  <replaceregexp>
+                      <regexp pattern=' * @MigrateSource(\n *   id = "d7_field_group"\n * )'
+                              replace=' * @MigrateSource(\n *   id = "d7_field_group",\n *   source_module = "field_group",\n *   destination_module = "field_group"\n * )'/>
+                  </replaceregexp>
+              </filterchain>
+            </reflexive>
+        </then>
+    </if>
   </target>
 
 </project>
