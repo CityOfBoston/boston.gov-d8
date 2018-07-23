@@ -2,13 +2,13 @@
 
 [Refer to Wiki](https://github.com/CityOfBoston/boston.gov-d8/wiki)
 
-*Shortcuts*
+## Shortcuts ##
 
-[Install Instructions](https://github.com/CityOfBoston/boston.gov-d8/wiki/Installation-Instructions)
+* [Install Instructions](https://github.com/CityOfBoston/boston.gov-d8/wiki/Installation-Instructions)
 
 
 ---
-## Public domain
+## Public domain ##
 
 This project is in the worldwide [public domain](https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md). As stated in [LICENSE](https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md):
 
