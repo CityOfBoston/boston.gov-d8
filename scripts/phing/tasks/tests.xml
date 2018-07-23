@@ -4,7 +4,7 @@
           description="Tests project contains all PHPUnit and Behat testing for CI."
           depends="build:info"/>
 
-  <echo message="Building ${custom.phing.dir}/tasks/tests.xml" level="verbose"/>
+  <echo message="Building ${custom.phing.tasks.dir}/tests.xml" level="verbose"/>
 
   <target name="tests:all" description="Runs all tests, including Behat, PHPUnit, and Security Update check."
           depends="tests:security-updates, tests:behat, tests:phpunit"/>
