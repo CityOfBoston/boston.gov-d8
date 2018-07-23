@@ -1,0 +1,71 @@
+<project name="properties"
+         default="build:info"
+         description="Loads properties and all projects so tasks can be accessed from everywhere.">
+
+  <echo message="Building ${custom.phing.dir}/tasks/properties.xml" level="verbose"/>
+
+  <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
+
+  <fileset dir="${docroot}" id="files.yml" description="All docroot YML files which are not core or contributed.">
+    <include name="**/*.yml"/>
+    <exclude name="**/core/**/*"/>
+    <exclude name="**/contrib/**/*"/>
+  </fileset>
+
+  <fileset dir="${docroot}" id="files.twig" description="All docroot TWIG template files which are not core or contributed.">
+    <include name="**/*.twig"/>
+    <exclude name="**/core/**/*"/>
+    <exclude name="**/contrib/**/*"/>
+  </fileset>
+
+  <fileset dir="." id="files.frontend">
+    <include name="**/*.js"/>
+    <!-- Ignore CSS. SASS usage is expected. CSS should be compiled. -->
+    <exclude name="**/*.css"/>
+    <exclude name="**/vendor/**/*"/>
+    <exclude name="**/node_modules/**/*"/>
+    <exclude name="**/bower_components/**/*"/>
+    <exclude name="**/dist/**/*"/>
+    <exclude name="**/styleguide/**/*"/>
+  </fileset>
+
+  <fileset dir="${repo.root}" id="files.php.all">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/themes/custom" id="files.php.custom.themes">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/default/settings" id="files.php.custom.settings">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${repo.root}/tests" id="files.php.tests" expandsymboliclinks="true">
+    <patternset refid="files.php"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/themes/custom" id="files.frontend.custom.themes" expandsymboliclinks="true">
+    <patternset refid="files.frontend"/>
+  </fileset>
+
+  <!-- overrides and additional custom filesets supplementing core filesets -->
+
+  <!-- exclude custom files that use Views coding standards -->
+  <fileset id="files.views">
+    <exclude name="bos_core/includes/bos_core_plugin_argument_validate_first_page.inc"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/modules/custom" id="files.php.custom.modules">
+    <patternset refid="files.php"/>
+    <patternset refid="files.views"/>
+  </fileset>
+
+  <fileset dir="${docroot}/sites/all/modules/features" id="files.php.features.modules">
+    <include name="**/*.module"/>
+    <include name="**/*.inc"/>
+    <exclude name="**/*.features.*"/>
+    <exclude name="**/*.feature.*"/>
+  </fileset>
+
+</project>
