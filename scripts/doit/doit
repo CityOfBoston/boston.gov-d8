@@ -34,8 +34,9 @@ function doitbrand() {
 function doithelp() {
   echo $'\r'
   echo -e "${Yellow}Community Commands:${NC}"
-  echo -e "${LightBlue}  install${NC}       Creates and starts containers for first time."
-  echo -e "${LightBlue}  rebuild${NC}       Destroys, rebuilds and starts containers."
+  echo -e "${LightBlue}  install${NC}        Creates and starts containers for first time."
+  echo -e "${LightBlue}  rebuild full${NC}   Destroys, rebuilds and starts containers."
+  echo -e "${LightBlue}  rebuild quick${NC}  Rebuilds Drupal site but does not change customisations."
   echo $'\r'
   echo -e "${Yellow}Staff Commands:${NC}"
   echo $'\r'
@@ -71,66 +72,87 @@ function load_lando_yml() {
     eval $(parse_yaml ".lando.yml" "lando_")
 }
 
-
 #################################
 # START CUSTOM SCRIPTS
 #################################
 
 function doitinstall() {
-    # Run the doit install script.
-    # Expect this to be run when the containers do not already exist.
     doitcomment "Install container from scratch."
 
-    load_lando_yml
-
-    # Test if container exists and if do prompt to delete.
+    # Check if the containers exist, and if they do, destroy them
     if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
-        echo -e "${LightBlue}Lando app ${lando_name} already exists, do you wish to continue?\n${Red}NOTE: this will destroy the containers${NC}?"
-        while true; do
-            read -p "" yn
-            case $yn in
-                [Yy]* ) lando destroy -y; break;;
-                [Nn]* ) exit;;
-                * ) echo "Please answer yes or no.";;
-            esac
-            if [ $? -ne 0 ]; then
-                doitcomment "FAILED:" "The container could not be deleted."
-                exit 1
-            fi
-        done
+        doitcomment "> Removing (destroying) the existing containers." ""
+        cd ~/sources/drupal8/boston.gov-d8/
+        lando destroy -y
+        if [ $? -ne 0 ]; then
+            doitcomment "FAILED:" "The container could not be deleted."
+            exit 1
+        fi
     fi
-    doitcomment "Creating the lando app: ${lando_name}"
 
-    ${DOIT_SCRIPTS_PATH}/install.sh
+    # Completely remove the existing repo contents.
+    doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo) - requires elevated permissions."
+    cd ~/sources/drupal8/
+    sudo rm -rf ./boston.gov-d8
+
+    # Clone the repo locally.
+    doitcomment "> Make a new clone of the repo." ""
+    git clone -b develop git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
+
+    # Rebuild the containers and run the install scripts
+    doitcomment "> Rebuild the containers and run install scripts." ""
+    cd ~/sources/drupal8/boston.gov-d8/
+    lando start
     retVal=$?
     if [ $retVal -ne 0 ]; then
         doitcomment "FAILED:" "Container is NOT built check output above for reasons for failure."
     else
         doitcomment "SUCCESS:" "Container is now built and started."
     fi
+    cd ~/sources/drupal8/boston.gov-d8/
     exit $retVal
 }
 
+# Wrapper to re-install the drupal site into existing containers.
+function doitrefresh() {
+    doitcomment "Re-install Drupal into existing container."
+
+    # remove the key existing drupal files and folders
+    doitcomment "> Removing key Drupal files and folders." " - requires elevated permissions."
+    doitcomment "" "NOTE: does not pull the repo and keeps custom modules, initial config files and installed user files."
+    cd ~/sources/drupal8/
+    sudo rm -rf ./boston.gov-d8/docroot/core
+    sudo rm -f ./boston.gov-d8/docroot/sites/default/settings*.php
+    sudo rm -rf ./boston.gov-d8/docroot/modules/contrib/*
+    sudo rm -rf ./boston.gov-d8/config/sync/*
+    sudo rm -f ./boston.gov-d8/setup/*
+    sudo rm -f ./boston.gov-d8/composer.lock
+    sudo chmod -R 777 ./boston.gov-d8/docroot/sites/default/
+
+    # Rebuild the Drupal site.
+    cd ~/sources/drupal8/boston.gov-d8/
+    lando phing setup:docker:drupal-local
+    cd ~/sources/drupal8/boston.gov-d8/
+}
+
 function doitrebuild() {
-    # First, destroy (if exists)
-    if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
-        echo -e "${LightBlue}Lando app ${lando_name} found, do you wish to continue?\n${Red}NOTE: this will destroy and rebuild the containers${NC}?"
-        while true; do
-            read -p "" yn
-            case $yn in
-                [Yy]* ) lando destroy -y; break;;
-                [Nn]* ) exit;;
-                * ) echo "Please answer yes or no.";;
-            esac
-        done
+    if [ $1 == "quick" ]; then
+        QUICK=1
+    elif [ $1 == "full" ]; then
+        doitinstall
     else
-        doitcomment "No pre-existing lando app found."  "\nSuggestion: use ${White}./doit install"
-        exit 0
+        echo "Rebuild not specified, execute [q]uick or [f]ast ?"
+        read -p "" qf
+            case $qf in
+                [Qq]* ) QUICK=1; break;;
+                [Aa]* ) QUICK=0;;
+                * ) echo "Please answer q (quick) or f (fast).";;
+            esac
     fi
 
-    # Now install
-    doitinstall
+
 }
+
 
 #################################
 # END CUSTOM SCRIPTS
