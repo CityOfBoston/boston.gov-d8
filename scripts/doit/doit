@@ -137,15 +137,15 @@ function doitrefresh() {
 
 function doitrebuild() {
     if [ $1 == "quick" ]; then
-        QUICK=1
+        doitrefresh
     elif [ $1 == "full" ]; then
         doitinstall
     else
         echo "Rebuild not specified, execute [q]uick or [f]ast ?"
         read -p "" qf
             case $qf in
-                [Qq]* ) QUICK=1; break;;
-                [Aa]* ) QUICK=0;;
+                [Qq]* ) doitrefresh; break;;
+                [Aa]* ) doitinstall;;
                 * ) echo "Please answer q (quick) or f (fast).";;
             esac
     fi
@@ -168,7 +168,7 @@ if [[ -n "$command" ]]; then
   if [[ $command == "install" ]]; then
     doitinstall
   elif [[ $command == "rebuild" ]]; then
-    doitrebuild
+    doitrebuild $args
   elif [[ $command == "welcome" ]]; then
     doitbrand
   else
