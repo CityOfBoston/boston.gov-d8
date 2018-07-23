@@ -7,6 +7,9 @@
 
     <property name="repo.root" value="${project.basedir}" description="repo.root is an alias for the project.basedir"/>
 
+    <!-- Define the repo root as a property, and resolve to an absolute file path. -->
+    <property name="docroot" value="${project.basedir}/docroot"/>
+
 <!-- Define the base Phing directories  -->
     <property name="custom.phing.files.dir" value="${custom.phing.dir}/files" />
     <property name="custom.phing.tasks.dir" value="${custom.phing.dir}/tasks" />
@@ -24,10 +27,6 @@
             description="Contains targets relevant to the execution of tests. E.g., Behat, jMeter."/>
     <import file="${custom.phing.tasks.dir}/update.xml"
             description="Contains targets used to maintain/update a Drupal 8 installation."/>
-
-<!-- Define the repo root as a property, and resolve to an absolute file path. -->
-    <property name="docroot" value="${project.basedir}/docroot"/>
-    <property name="custom.files" value="${project.basedir}/build/custom/files"/>
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true"/>

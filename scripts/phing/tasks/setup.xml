@@ -2,7 +2,7 @@
          default="setup"
          description="Setup tasks for various containers.">
 
-  <echo message="Building ${custom.phing.dir}/tasks/setup.xml" level="verbose"/>
+  <echo message="Building ${custom.phing.tasks.dir}/setup.xml" level="verbose"/>
 
 <!-- Define the default task for the setup project. -->
   <target name="setup"
@@ -50,7 +50,7 @@
       </if>
     <if>
       <not>
-        <available file="${project.basedir}/docroot/core/lib/Drupal.php" />
+        <available file="${docroot}/core/lib/Drupal.php" />
       </not>
       <then>
         <echo message="Using Composer to install Drupal." level="info"/>
@@ -74,12 +74,12 @@
     <if>
       <available file="${project.sync}/system.site.yml"/>
       <then>
-          <property name="si.flag.config_site" value="--config-dir=${project.sync}"/>
+          <property name="si.flag.config_site" value="--config-dir=${install_config}"/>
       </then>
     </if>
 
     <if>
-      <available file="${project.basedir}/docroot/core/lib/Drupal.php"/>
+      <available file="${docroot}/core/lib/Drupal.php"/>
       <then>
 
         <echo message="Creating the default database for initial Drupal modules."/>
