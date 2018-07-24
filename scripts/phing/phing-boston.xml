@@ -29,7 +29,7 @@
             description="Contains targets used to maintain/update a Drupal 8 installation."/>
 
 <!-- Load the lando file to get db locations etc. -->
-    <property file="${project.basedir}/.lando.yml" prefix="lando" override="true"/>
+    <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
 
 <!-- Read the LANDO_INFO environment variablt to get the correct hostname and port for the database -->
     <php expression="json_decode('${env.LANDO_INFO}')->database->internal_connection->host;" returnProperty="lando.db.host" level="verbose"/>
@@ -41,7 +41,7 @@
     <php expression="json_decode('${env.LANDO_INFO}')->database->hostnames[0];" returnProperty="lando.db.container" level="verbose"/>
 
 <!-- Load file directory and binary locations. -->
-    <property file="${custom.phing.dir}/phing-boston.yml"  override="true"/>
+    <property file="${custom.phing.dir}/phing-boston.yml"  override="true" logoutput="false"/>
 
     <property name="lando.url.domain" value="${env.LANDO_DOMAIN}" override="true"/>
     <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}" override="true"/>

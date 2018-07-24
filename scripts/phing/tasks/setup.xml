@@ -99,12 +99,12 @@
                         description="Sets the location of a previous installation Drupal configs to import to this installation."/>
                 <property name="si_site_profile" value="${project.profile.name}"
                         description="Defines the profile to be applied after the import is performed."/>
-                <echo level="warning" message="Migrating configs from ${install_config_abs}"/>
+                <echo level="warning" message="Build is migrating configs from ${install_config_abs} during install (takes a while)."/>
             </then>
             <else>
               <property name="si_install_profile" value="${project.profile.name}"/>
               <property name="si_site_profile" value="${project.profile.name}"/>
-              <echo message="File: ${install_config.abs}/system.site.yml does not exist, normal install performed."/>
+              <echo message="${install_config.abs}/system.site.yml does not exist, normal profile-based install performed."/>
             </else>
         </if>
 
@@ -198,8 +198,8 @@
       <echo message=");${line.separator}" append="true" file="${settings.file}"></echo>
       <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
 
-      <echo level="warning" message="Using settings file ${local.settings.file}"/>
-      <echo level="warning" message='Using ${lando.db.type} "${lando.db.database}" database on "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
+      <echo level="warning" message="Build is now using settings file ${local.settings.file}"/>
+      <echo level="warning" message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
 
   </target>
 
