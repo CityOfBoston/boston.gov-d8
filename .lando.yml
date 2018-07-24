@@ -55,7 +55,7 @@ services:
       # Change the permissions on the log file so that non-root user can add to log.
       - chmod 777 ${LANDO_MOUNT}/setup/.lando.log >> ${LANDO_MOUNT}/setup/.lando.log
       # [Optional] Do not need the next 2 statements on stage or production servers
-      - cp /app/build/custom/files/xdebug.ini /usr/local/etc/php/conf.d/boston.xdebug.ini
+      - cp /app/scripts/phing/files/xdebug.ini /usr/local/etc/php/conf.d/boston.xdebug.ini
       - printf "\nxdebug.remote_host=${LANDO_HOST_IP}\n" >>/usr/local/etc/php/conf.d/boston.xdebug.ini
 
     run:
