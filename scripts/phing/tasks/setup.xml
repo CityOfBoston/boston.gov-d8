@@ -88,9 +88,9 @@
         <echo message="Install the Drupal 8 database."/>
         <echo message=" -> see ${project.basedir}/setup/drush_site_install.log for output." level="warning"/>
 
-        <resolvepath propertyName="install_config_abs" file="${docroot}/${project.config.install}"/>
+        <resolvepath propertyName="install_config_abs" file="${docroot}/${project.config.sync}"/>
         <if>
-            <available filepath="${docroot}/${project.config.install}" file="system.site.yml"/>
+            <available filepath="${docroot}/${project.config.sync}" file="system.site.yml"/>
             <then>
                 <property name="si_install_profile" value="${project.profile.install_profile}"
                           description="Directs si to use the config_installer profile."/>
@@ -125,18 +125,8 @@
 
         <phingcall target="update:config:updatedb"
                    description="Run any database updates."/>
-          <if>
-              <available file="${settings.file}" />
-              <then>
-                  <echo message="/* Content added by Phing &lt;setup:drupal:newdb&gt; */"
-                        append="true" file="${settings.file}"/>
-                  <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
-                        append="true" file="${settings.file}"/>
-              </then>
-          </if>
-
-          <phingcall target="update:config:export"
-                   description="Export configurations files from database."/>
+          <!--<phingcall target="update:config:export"-->
+                   <!--description="Export configurations files from database."/>-->
 
       </then>
       <else>

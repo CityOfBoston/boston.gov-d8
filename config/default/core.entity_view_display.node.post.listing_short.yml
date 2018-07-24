@@ -1,0 +1,82 @@
+uuid: 1eace035-352a-40ce-bd01-93059acbd593
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.listing_short
+    - field.field.node.post.body
+    - field.field.node.post.comment_node_post
+    - field.field.node.post.field_components
+    - field.field.node.post.field_contact
+    - field.field.node.post.field_intro_image
+    - field.field.node.post.field_news_tags
+    - field.field.node.post.field_people
+    - field.field.node.post.field_place
+    - field.field.node.post.field_program_initiative
+    - field.field.node.post.field_published_date
+    - field.field.node.post.field_related_content
+    - field.field.node.post.field_related_departments
+    - field.field.node.post.field_related_events_notices
+    - field.field.node.post.field_related_guides
+    - field.field.node.post.field_related_posts
+    - field.field.node.post.field_sidebar_components
+    - field.field.node.post.field_thumbnail
+    - field.field.node.post.field_type_of_content
+    - field.field.node.post.field_updated_date
+    - node.type.post
+  module:
+    - datetime
+    - image
+    - user
+id: node.post.listing_short
+targetEntityType: node
+bundle: post
+mode: listing_short
+content:
+  field_contact:
+    label: hidden
+    weight: 3
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_published_date:
+    label: hidden
+    weight: 1
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_thumbnail:
+    label: hidden
+    weight: 12
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  body: true
+  comment_node_post: true
+  field_components: true
+  field_intro_image: true
+  field_news_tags: true
+  field_people: true
+  field_place: true
+  field_program_initiative: true
+  field_related_content: true
+  field_related_departments: true
+  field_related_events_notices: true
+  field_related_guides: true
+  field_related_posts: true
+  field_sidebar_components: true
+  field_type_of_content: true
+  field_updated_date: true
+  published_at: true

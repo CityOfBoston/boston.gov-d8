@@ -1,0 +1,31 @@
+uuid: a7528fe9-90c7-451a-a2ad-97e51ed97499
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.change.body
+    - field.field.node.change.comment_node_change
+    - node.type.change
+  module:
+    - text
+    - user
+id: node.change.teaser
+targetEntityType: node
+bundle: change
+mode: teaser
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_summary_or_trimmed
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_change: true
+  published_at: true

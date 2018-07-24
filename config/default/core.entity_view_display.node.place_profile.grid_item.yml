@@ -1,0 +1,67 @@
+uuid: c0fdf62e-5b49-4d4f-a4b8-d065b5fe30ab
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.grid_item
+    - field.field.node.place_profile.body
+    - field.field.node.place_profile.comment_node_place_profile
+    - field.field.node.place_profile.field_components
+    - field.field.node.place_profile.field_contact
+    - field.field.node.place_profile.field_did_you_know
+    - field.field.node.place_profile.field_features
+    - field.field.node.place_profile.field_intro_image
+    - field.field.node.place_profile.field_links
+    - field.field.node.place_profile.field_operation_hours
+    - field.field.node.place_profile.field_phone_number
+    - field.field.node.place_profile.field_place_neighborhood
+    - field.field.node.place_profile.field_place_type
+    - field.field.node.place_profile.field_published_date
+    - field.field.node.place_profile.field_sidebar_components
+    - field.field.node.place_profile.field_single_neighborhood
+    - field.field.node.place_profile.field_updated_date
+    - node.type.place_profile
+  module:
+    - image
+    - user
+id: node.place_profile.grid_item
+targetEntityType: node
+bundle: place_profile
+mode: grid_item
+content:
+  field_intro_image:
+    label: hidden
+    weight: 1
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  field_single_neighborhood:
+    label: hidden
+    weight: 16
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  body: true
+  comment_node_place_profile: true
+  field_components: true
+  field_contact: true
+  field_did_you_know: true
+  field_features: true
+  field_links: true
+  field_operation_hours: true
+  field_phone_number: true
+  field_place_neighborhood: true
+  field_place_type: true
+  field_published_date: true
+  field_sidebar_components: true
+  field_updated_date: true
+  published_at: true

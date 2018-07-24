@@ -1,0 +1,46 @@
+uuid: 434b2d4e-8027-4b9d-adaa-e93a65b953d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.listing_long
+    - field.field.node.topic_page.comment_node_topic_page
+    - field.field.node.topic_page.field_components
+    - field.field.node.topic_page.field_contacts
+    - field.field.node.topic_page.field_intro_image
+    - field.field.node.topic_page.field_published_date
+    - field.field.node.topic_page.field_thumbnail
+    - field.field.node.topic_page.field_topic_category
+    - field.field.node.topic_page.field_type_of_content
+    - field.field.node.topic_page.field_updated_date
+    - node.type.topic_page
+  module:
+    - image
+    - user
+id: node.topic_page.listing_long
+targetEntityType: node
+bundle: topic_page
+mode: listing_long
+content:
+  field_intro_image:
+    label: hidden
+    weight: 0
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_topic_page: true
+  field_components: true
+  field_contacts: true
+  field_published_date: true
+  field_thumbnail: true
+  field_topic_category: true
+  field_type_of_content: true
+  field_updated_date: true
+  published_at: true
