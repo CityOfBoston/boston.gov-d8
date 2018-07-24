@@ -1,0 +1,14 @@
+uuid: 91e58019-89f6-451f-b2ea-eb25dfb8f785
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.landing_author
+  module:
+    - user
+id: user_add_role_action.landing_author
+label: 'Add the Landing Author role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: landing_author

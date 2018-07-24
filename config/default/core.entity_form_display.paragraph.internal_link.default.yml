@@ -1,0 +1,36 @@
+uuid: 78b31610-5782-47bd-a76b-0fdacc29c797
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.internal_link.field_internal_link
+    - field.field.paragraph.internal_link.field_title
+    - paragraphs.paragraphs_type.internal_link
+  module:
+    - workbench_moderation
+id: paragraph.internal_link.default
+targetEntityType: paragraph
+bundle: internal_link
+mode: default
+content:
+  field_internal_link:
+    weight: 4
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

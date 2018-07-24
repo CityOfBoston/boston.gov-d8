@@ -1,0 +1,39 @@
+uuid: 75881495-7cb0-4582-95f0-dcaefbed9740
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.commission_summary.field_commission
+    - field.field.paragraph.commission_summary.field_component_title
+    - field.field.paragraph.commission_summary.field_short_title
+    - paragraphs.paragraphs_type.commission_summary
+id: paragraph.commission_summary.default
+targetEntityType: paragraph
+bundle: commission_summary
+mode: default
+content:
+  field_commission:
+    label: above
+    weight: 0
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    label: above
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: above
+    weight: 2
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

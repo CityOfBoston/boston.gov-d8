@@ -1,0 +1,48 @@
+uuid: 37a82ff8-edb7-4e48-8130-226f6344d715
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.fyi.field_extra_info
+    - field.field.paragraph.fyi.field_icon
+    - field.field.paragraph.fyi.field_link
+    - field.field.paragraph.fyi.field_short_title
+    - field.field.paragraph.fyi.field_title
+    - paragraphs.paragraphs_type.fyi
+  module:
+    - entity_reference_revisions
+    - image
+id: paragraph.fyi.default
+targetEntityType: paragraph
+bundle: fyi
+mode: default
+content:
+  field_icon:
+    label: hidden
+    weight: 0
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  field_link:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: fyi
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_extra_info: true
+  field_title: true

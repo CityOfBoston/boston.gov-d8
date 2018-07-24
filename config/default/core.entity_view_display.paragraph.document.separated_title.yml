@@ -1,0 +1,25 @@
+uuid: b942cabf-6758-4d05-8a29-b9b25eedb0b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.separated_title
+    - field.field.paragraph.document.field_document
+    - field.field.paragraph.document.field_title
+    - paragraphs.paragraphs_type.document
+  module:
+    - file
+id: paragraph.document.separated_title
+targetEntityType: paragraph
+bundle: document
+mode: separated_title
+content:
+  field_document:
+    label: hidden
+    weight: 1
+    type: file_url_plain
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_title: true

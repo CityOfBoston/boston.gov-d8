@@ -1,0 +1,21 @@
+uuid: 6ad1e8f9-44a7-4d29-9dc7-4361ef40bd0e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_commission
+    - paragraphs.paragraphs_type.commission_info
+id: paragraph.commission_info.field_commission
+field_name: field_commission
+entity_type: paragraph
+bundle: commission_info
+label: Commission
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings: {  }
+field_type: entity_reference

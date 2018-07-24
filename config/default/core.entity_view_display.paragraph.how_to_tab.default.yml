@@ -1,0 +1,42 @@
+uuid: feaf575a-9868-44db-a491-3e9ab38da975
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.how_to_tab.field_how_to_steps
+    - field.field.paragraph.how_to_tab.field_how_to_title
+    - field.field.paragraph.how_to_tab.field_keep_in_mind
+    - paragraphs.paragraphs_type.how_to_tab
+  module:
+    - entity_reference_revisions
+    - text
+id: paragraph.how_to_tab.default
+targetEntityType: paragraph
+bundle: how_to_tab
+mode: default
+content:
+  field_how_to_steps:
+    label: hidden
+    weight: 1
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_how_to_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_keep_in_mind:
+    label: above
+    weight: 2
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden: {  }

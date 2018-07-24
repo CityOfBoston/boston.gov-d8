@@ -1,0 +1,14 @@
+uuid: 2d1ea553-b071-4143-bcda-cfb649a23c13
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.procurement_editor
+  module:
+    - user
+id: user_add_role_action.procurement_editor
+label: 'Add the Procurement Editor role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: procurement_editor

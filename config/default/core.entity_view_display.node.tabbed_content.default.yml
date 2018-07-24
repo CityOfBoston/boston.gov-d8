@@ -1,0 +1,67 @@
+uuid: 62a591ab-73bb-4008-a562-65266da660a3
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_tabbed_content.default
+    - field.field.node.tabbed_content.comment_node_tabbed_content
+    - field.field.node.tabbed_content.field_intro_image
+    - field.field.node.tabbed_content.field_published_date
+    - field.field.node.tabbed_content.field_tabbed_content
+    - field.field.node.tabbed_content.field_type_of_content
+    - field.field.node.tabbed_content.field_updated_date
+    - node.type.tabbed_content
+  module:
+    - comment
+    - datetime
+    - entity_reference_revisions
+    - image
+    - user
+id: node.tabbed_content.default
+targetEntityType: node
+bundle: tabbed_content
+mode: default
+content:
+  comment_node_tabbed_content:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_intro_image:
+    label: hidden
+    weight: 1
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  field_tabbed_content:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: hidden
+    weight: 3
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_published_date: true
+  field_type_of_content: true
+  published_at: true

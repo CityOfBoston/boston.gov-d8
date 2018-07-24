@@ -1,0 +1,43 @@
+uuid: e8b1c2e5-9282-48af-94f5-9da57ef240be
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_transaction.default
+    - field.field.node.transaction.comment_node_transaction
+    - field.field.node.transaction.field_link
+    - field.field.node.transaction.field_sticky
+    - node.type.transaction
+  module:
+    - comment
+    - entity_reference_revisions
+    - user
+id: node.transaction.default
+targetEntityType: node
+bundle: transaction
+mode: default
+content:
+  comment_node_transaction:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_link:
+    label: hidden
+    weight: 1
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_sticky: true
+  published_at: true

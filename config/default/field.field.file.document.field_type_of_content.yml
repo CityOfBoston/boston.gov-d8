@@ -1,0 +1,30 @@
+uuid: 0750bdad-9e08-431d-90e3-d97ce3e29d0b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.file.field_type_of_content
+    - file_entity.type.document
+    - taxonomy.vocabulary.type_of_content
+id: file.document.field_type_of_content
+field_name: field_type_of_content
+entity_type: file
+bundle: document
+label: 'Type of Content'
+description: 'Please select the type of content this piece of content can be filtered by.  NOTE:  This is currently used for the Hub.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      type_of_content: type_of_content
+field_type: entity_reference

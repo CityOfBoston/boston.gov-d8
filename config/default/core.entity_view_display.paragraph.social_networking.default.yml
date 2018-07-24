@@ -1,0 +1,36 @@
+uuid: 36704fb9-9eb0-44e7-ba0c-0e45ef06d559
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.social_networking.field_external_link
+    - field.field.paragraph.social_networking.field_social_icon
+    - paragraphs.paragraphs_type.social_networking
+  module:
+    - link
+    - options
+id: paragraph.social_networking.default
+targetEntityType: paragraph
+bundle: social_networking
+mode: default
+content:
+  field_external_link:
+    label: hidden
+    weight: 1
+    type: link
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    region: content
+  field_social_icon:
+    label: hidden
+    weight: 0
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden: {  }

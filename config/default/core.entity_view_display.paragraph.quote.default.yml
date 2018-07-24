@@ -1,0 +1,60 @@
+uuid: 26b9da92-2d26-412b-8c57-6cecc75644f0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.quote.field_first_name
+    - field.field.paragraph.quote.field_last_name
+    - field.field.paragraph.quote.field_person_photo
+    - field.field.paragraph.quote.field_quote
+    - field.field.paragraph.quote.field_single_neighborhood
+    - paragraphs.paragraphs_type.quote
+  module:
+    - image
+id: paragraph.quote.default
+targetEntityType: paragraph
+bundle: quote
+mode: default
+content:
+  field_first_name:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_last_name:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_person_photo:
+    label: hidden
+    weight: 2
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  field_quote:
+    label: hidden
+    weight: 3
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_single_neighborhood:
+    label: hidden
+    weight: 4
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+hidden: {  }

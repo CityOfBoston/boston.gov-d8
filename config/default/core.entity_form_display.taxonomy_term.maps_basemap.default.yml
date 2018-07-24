@@ -1,0 +1,46 @@
+uuid: 56e060f0-ffaa-41b0-8cf5-629fbcb798fa
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.maps_basemap.field_basemap_url_
+    - taxonomy.vocabulary.maps_basemap
+  module:
+    - path
+    - text
+id: taxonomy_term.maps_basemap.default
+targetEntityType: taxonomy_term
+bundle: maps_basemap
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_basemap_url_:
+    weight: 41
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

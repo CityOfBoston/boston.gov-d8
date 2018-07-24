@@ -1,0 +1,34 @@
+uuid: a42e75dc-30e4-4302-a4fa-0687abf21253
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.listing
+    - field.field.node.transaction.comment_node_transaction
+    - field.field.node.transaction.field_link
+    - field.field.node.transaction.field_sticky
+    - node.type.transaction
+  module:
+    - entity_reference_revisions
+    - user
+id: node.transaction.listing
+targetEntityType: node
+bundle: transaction
+mode: listing
+content:
+  field_link:
+    label: hidden
+    weight: 1
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: ribbon_link
+      link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_transaction: true
+  field_sticky: true
+  published_at: true
