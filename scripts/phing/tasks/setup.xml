@@ -125,8 +125,18 @@
 
         <phingcall target="update:config:updatedb"
                    description="Run any database updates."/>
-        <!--<phingcall target="update:config:export"-->
-                   <!--description="Export configurations files from database."/>-->
+          <if>
+              <available file="${settings.file}" />
+              <then>
+                  <echo message="/* Content added by Phing &lt;setup:drupal:newdb&gt; */"
+                        append="true" file="${settings.file}"/>
+                  <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
+                        append="true" file="${settings.file}"/>
+              </then>
+          </if>
+
+          <phingcall target="update:config:export"
+                   description="Export configurations files from database."/>
 
       </then>
       <else>
@@ -178,9 +188,6 @@
       <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
       <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
-      <echo message="if (file_exists('${local.settings.file}')) {${line.separator}" append="true" file="${settings.file}"/>
-      <echo message="   include '${local.settings.file}';${line.separator}" append="true" file="${settings.file}"/>
-      <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['file_scan_ignore_directories'] = [${line.separator}" append="true" file="${settings.file}"/>
@@ -196,6 +203,9 @@
       <echo message="  'host' => '${lando.db.host}',${line.separator}" append="true" file="${settings.file}"/>
       <echo message="  'port' => '${lando.db.port}',${line.separator}" append="true" file="${settings.file}"/>
       <echo message=");${line.separator}" append="true" file="${settings.file}"></echo>
+      <echo message="if (file_exists('${local.settings.file}')) {${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="   include '${local.settings.file}';${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
       <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
 
       <echo level="warning" message="Build is now using settings file ${local.settings.file}"/>
