@@ -42,7 +42,7 @@
 <!---->
     <target name="update:config:updatedb"
             description="Update the database with any hook_updates etc.">
-        <echo message="Updates sql database." />
+        <echo message="Updates new Drupal build (checks for module updates and database changes)." />
         <exec description="Update the database with any hook_updates etc."
               dir="${docroot}" command="${drush.cmd} updb --entity-updates -y" logoutput="true"/>
     </target>

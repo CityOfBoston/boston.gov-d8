@@ -43,11 +43,11 @@
       <if>
           <equals arg1="${acquia.site_environment}" arg2="dev"/>
           <then>
-              <echo message="DEVELOPMENT (${acquia.site_environment})"/>
+              <echo message="Creates DEVELOPMENT (${acquia.site_environment}) build"/>
               <property name="flag.dev" value="--dev" description="Sets default dev flag for composer command." />
           </then>
           <else>
-              <exec command='echo "ENVIRONMENT: ${acquia.site_environment}"' passthru="true"/>
+              <exec command='echo "Creates ${acquia.site_environment} build"' passthru="true"/>
               <property name="flag.dev" value="--no-dev" description="Sets default dev flag for composer command." />
           </else>
       </if>
@@ -56,8 +56,8 @@
         <available file="${docroot}/core/lib/Drupal.php" />
       </not>
       <then>
-        <echo message="Using Composer to install Drupal." level="info"/>
-        <echo message=" (see ${project.basedir}/setup/composer.log for output)." level="warning"/>
+        <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
+        <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
         <exec command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
               dir="${project.basedir}/"
               description="when ready, use update:drupal:composer:install"
@@ -77,12 +77,16 @@
       <available file="${docroot}/core/lib/Drupal.php"/>
       <then>
 
-        <echo message="Creating the default database for initial Drupal modules."/>
+        <echo message="Preparing to setup the Drupal database."/>
 
         <phingcall target="setup:drupal:local_settings_php:delete"
                    description="Remove any pre-existing local.settings.php file."/>
         <phingcall target="setup:drupal:local_settings_php:write"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
+
+        <echo message=""/>
+        <echo message="Setup the Drupal database."/>
+        <echo message=" -> see ${project.basedir}/setup/drush_site_install.log for output." level="warning"/>
 
         <resolvepath propertyName="install_config_abs" file="${docroot}/${project.config.install}"/>
         <if>
@@ -135,13 +139,15 @@
 <!-- Define a task to delete the local local.settings.php file. -->
   <target name="setup:drupal:local_settings_php:delete"
           description="Deletes any existing local.settings.php file.">
-    <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
+      <echo message="Delete the ${local.settings.file} file (if exists)."/>
+      <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
   </target>
 
 <!-- Define a task to copy a new local.settings.php file and append initial settings. -->
   <target name="setup:drupal:local_settings_php:write"
           description="Sets the database and any other default values into the local.settings.php file.">
 
+      <echo message="Recreate the ${local.settings.file} file with build settings."/>
       <if>
         <not>
           <available file="${local.settings.file}"/>
