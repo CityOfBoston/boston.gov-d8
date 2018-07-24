@@ -1,0 +1,21 @@
+uuid: 5b976cd9-4c51-4084-bc65-4e1ead7a3fdf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.commission_contact_info.field_commission
+    - paragraphs.paragraphs_type.commission_contact_info
+id: paragraph.commission_contact_info.default
+targetEntityType: paragraph
+bundle: commission_contact_info
+mode: default
+content:
+  field_commission:
+    label: above
+    weight: 0
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+hidden: {  }

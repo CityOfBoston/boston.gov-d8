@@ -1,0 +1,71 @@
+uuid: 81390952-5505-4562-95c9-7d2fd285cb08
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_emergency_alert.default
+    - field.field.node.emergency_alert.comment_node_emergency_alert
+    - field.field.node.emergency_alert.field_link
+    - field.field.node.emergency_alert.field_status_overrides
+    - field.field.node.emergency_alert.field_theme
+    - field.field.node.emergency_alert.field_updated_date
+    - node.type.emergency_alert
+  module:
+    - comment
+    - datetime
+    - entity_reference_revisions
+    - options
+    - user
+id: node.emergency_alert.default
+targetEntityType: node
+bundle: emergency_alert
+mode: default
+content:
+  comment_node_emergency_alert:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_link:
+    label: above
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_status_overrides:
+    label: above
+    weight: 4
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_theme:
+    label: hidden
+    weight: 5
+    type: list_key
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: above
+    weight: 3
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  published_at: true

@@ -1,0 +1,21 @@
+uuid: cc4cf5bc-dd12-49ac-9089-1f3090f3f4a5
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_updated_date
+    - node.type.article
+  module:
+    - datetime
+id: node.article.field_updated_date
+field_name: field_updated_date
+entity_type: node
+bundle: article
+label: 'Updated Date'
+description: 'Use this field to display a date to the user audience indicating when this article was last updated.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

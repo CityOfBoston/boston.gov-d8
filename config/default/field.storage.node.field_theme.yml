@@ -1,0 +1,27 @@
+uuid: ba67913d-dca7-4352-a8be-dfdb4d8aa3bf
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_theme
+field_name: field_theme
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: dark-blue
+      label: 'Dark Blue'
+    -
+      value: red
+      label: Red
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

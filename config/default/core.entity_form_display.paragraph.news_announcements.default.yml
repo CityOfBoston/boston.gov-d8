@@ -1,0 +1,59 @@
+uuid: 3c49077c-30a1-4e74-b9fa-32649f7c5951
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.news_announcements.field_component_title
+    - field.field.paragraph.news_announcements.field_featured_post
+    - field.field.paragraph.news_announcements.field_link
+    - field.field.paragraph.news_announcements.field_short_title
+    - paragraphs.paragraphs_type.news_announcements
+  module:
+    - paragraphs
+    - workbench_moderation
+id: paragraph.news_announcements.default
+targetEntityType: paragraph
+bundle: news_announcements
+mode: default
+content:
+  field_component_title:
+    weight: 6
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_featured_post:
+    weight: 8
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_link:
+    weight: 10
+    type: entity_reference_paragraphs
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 7
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

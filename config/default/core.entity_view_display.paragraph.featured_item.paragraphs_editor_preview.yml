@@ -1,0 +1,15 @@
+uuid: 860476ea-b361-4b24-8d23-36d435c84b71
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.featured_item.field_featured_item
+    - paragraphs.paragraphs_type.featured_item
+id: paragraph.featured_item.paragraphs_editor_preview
+targetEntityType: paragraph
+bundle: featured_item
+mode: paragraphs_editor_preview
+content: {  }
+hidden:
+  field_featured_item: true

@@ -1,0 +1,22 @@
+uuid: ed71f2c3-751d-4d47-ab42-1585888d44e1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.department_profile
+  module:
+    - text
+id: node.department_profile.body
+field_name: body
+entity_type: node
+bundle: department_profile
+label: Body
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

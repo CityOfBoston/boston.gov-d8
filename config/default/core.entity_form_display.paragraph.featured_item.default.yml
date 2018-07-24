@@ -1,0 +1,27 @@
+uuid: 9dfebf8c-5d7f-42e2-8bbc-ff49cce1c8df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.featured_item.field_featured_item
+    - paragraphs.paragraphs_type.featured_item
+  module:
+    - workbench_moderation
+id: paragraph.featured_item.default
+targetEntityType: paragraph
+bundle: featured_item
+mode: default
+content:
+  field_featured_item:
+    weight: 1
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

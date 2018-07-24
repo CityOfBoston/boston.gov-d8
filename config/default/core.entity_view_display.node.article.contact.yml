@@ -1,0 +1,41 @@
+uuid: 7bab02a0-7790-4e72-aeff-54b353b9ca8f
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.contact
+    - field.field.node.article.body
+    - field.field.node.article.comment
+    - field.field.node.article.comment_node_article
+    - field.field.node.article.field_components
+    - field.field.node.article.field_contact
+    - field.field.node.article.field_image
+    - field.field.node.article.field_published_date
+    - field.field.node.article.field_sidebar_components
+    - field.field.node.article.field_tags
+    - field.field.node.article.field_type_of_content
+    - field.field.node.article.field_updated_date
+    - node.type.article
+  module:
+    - user
+id: node.article.contact
+targetEntityType: node
+bundle: article
+mode: contact
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  body: true
+  comment: true
+  comment_node_article: true
+  field_components: true
+  field_contact: true
+  field_image: true
+  field_published_date: true
+  field_sidebar_components: true
+  field_tags: true
+  field_type_of_content: true
+  field_updated_date: true
+  published_at: true

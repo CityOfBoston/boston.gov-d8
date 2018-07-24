@@ -1,0 +1,30 @@
+uuid: 12ca83c5-aea5-49c6-b7d8-8903d39b8993
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_poll
+    - node.type.advpoll
+    - paragraphs.paragraphs_type.feedback
+id: paragraph.feedback.field_poll
+field_name: field_poll
+entity_type: paragraph
+bundle: feedback
+label: Poll
+description: 'Use this field to select the poll to include.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      advpoll: advpoll
+field_type: entity_reference

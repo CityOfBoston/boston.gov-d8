@@ -1,0 +1,159 @@
+uuid: ce1874b7-5501-46d8-b0ee-cf3723a50cf9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.metrolist_affordable_housing.body
+    - field.field.node.metrolist_affordable_housing.field_mah_address
+    - field.field.node.metrolist_affordable_housing.field_mah_contact
+    - field.field.node.metrolist_affordable_housing.field_mah_email
+    - field.field.node.metrolist_affordable_housing.field_mah_household_income_limit
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_deadline
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_indicator
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_type
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_url
+    - field.field.node.metrolist_affordable_housing.field_mah_neighborhood
+    - field.field.node.metrolist_affordable_housing.field_mah_not_active
+    - field.field.node.metrolist_affordable_housing.field_mah_outer_location
+    - field.field.node.metrolist_affordable_housing.field_mah_phone
+    - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
+    - field.field.node.metrolist_affordable_housing.field_mah_zipcode
+    - node.type.metrolist_affordable_housing
+  module:
+    - datetime
+    - link
+    - options
+    - text
+    - user
+id: node.metrolist_affordable_housing.default
+targetEntityType: node
+bundle: metrolist_affordable_housing
+mode: default
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_mah_address:
+    label: above
+    weight: 7
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_contact:
+    label: above
+    weight: 6
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_email:
+    label: above
+    weight: 5
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_household_income_limit:
+    label: above
+    weight: 21
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_lottery_deadline:
+    label: above
+    weight: 11
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_mah_lottery_indicator:
+    label: above
+    weight: 19
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_lottery_type:
+    label: above
+    weight: 18
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_lottery_url:
+    label: above
+    weight: 17
+    type: link
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    region: content
+  field_mah_neighborhood:
+    label: above
+    weight: 3
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_mah_not_active:
+    label: above
+    weight: 20
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_mah_outer_location:
+    label: above
+    weight: 16
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_phone:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_mah_publish_to_metrolist:
+    label: above
+    weight: 14
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_mah_zipcode:
+    label: above
+    weight: 2
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  published_at: true

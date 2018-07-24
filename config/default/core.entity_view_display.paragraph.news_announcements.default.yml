@@ -1,0 +1,52 @@
+uuid: ab69e6c9-1d84-4902-a3d5-76ab47788c70
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.news_announcements.field_component_title
+    - field.field.paragraph.news_announcements.field_featured_post
+    - field.field.paragraph.news_announcements.field_link
+    - field.field.paragraph.news_announcements.field_short_title
+    - paragraphs.paragraphs_type.news_announcements
+  module:
+    - entity_reference_revisions
+id: paragraph.news_announcements.default
+targetEntityType: paragraph
+bundle: news_announcements
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_featured_post:
+    label: hidden
+    weight: 1
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_link:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

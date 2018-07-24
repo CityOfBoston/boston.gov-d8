@@ -1,0 +1,67 @@
+uuid: f9221565-c5f2-4108-a80e-4b9ff52af7bc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.fyi.field_extra_info
+    - field.field.paragraph.fyi.field_icon
+    - field.field.paragraph.fyi.field_link
+    - field.field.paragraph.fyi.field_short_title
+    - field.field.paragraph.fyi.field_title
+    - paragraphs.paragraphs_type.fyi
+  module:
+    - file
+    - paragraphs
+    - workbench_moderation
+id: paragraph.fyi.default
+targetEntityType: paragraph
+bundle: fyi
+mode: default
+content:
+  field_extra_info:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 90
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_icon:
+    weight: 1
+    type: file_generic
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_link:
+    weight: 5
+    type: entity_reference_paragraphs
+    settings:
+      title: link
+      title_plural: Links
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 4
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 40
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

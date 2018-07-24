@@ -1,0 +1,30 @@
+uuid: 51956c52-f091-442f-8b47-dacd6d1f169f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_311_request
+    - paragraphs.paragraphs_type.bos311
+    - taxonomy.vocabulary.311_request
+id: paragraph.bos311.field_311_request
+field_name: field_311_request
+entity_type: paragraph
+bundle: bos311
+label: '311 Link'
+description: 'Control + Click to select a max of 9 links (CMD+Click on a Mac)'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      311_request: 311_request
+field_type: entity_reference

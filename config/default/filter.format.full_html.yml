@@ -1,0 +1,45 @@
+uuid: dfc79f9c-b7cf-43f5-9060-a93fb42c4979
+langcode: en
+status: true
+dependencies:
+  module:
+    - shortcode
+_core:
+  default_config_hash: hewPmBgni9jlDK_IjLxUx1HsTbinK-hdl0lOwjbteIY
+name: 'Full HTML'
+format: full_html
+weight: -9
+filters:
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: -43
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: -45
+    settings:
+      filter_url_length: 72
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: -44
+    settings: {  }
+  shortcode:
+    id: shortcode
+    provider: shortcode
+    status: true
+    weight: -42
+    settings:
+      form: '1'
+      poll: '1'
+  filter_null:
+    id: filter_null
+    provider: filter
+    status: true
+    weight: 2
+    settings: {  }

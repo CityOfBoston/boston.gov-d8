@@ -1,0 +1,81 @@
+uuid: 73499cbd-b6b7-43e3-b151-58918e57b5bc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.group_of_links_list.field_component_title
+    - field.field.paragraph.group_of_links_list.field_contact
+    - field.field.paragraph.group_of_links_list.field_link
+    - field.field.paragraph.group_of_links_list.field_list_links
+    - field.field.paragraph.group_of_links_list.field_short_title
+    - field.field.paragraph.group_of_links_list.field_subheader
+    - paragraphs.paragraphs_type.group_of_links_list
+  module:
+    - paragraphs
+    - workbench_moderation
+id: paragraph.group_of_links_list.default
+targetEntityType: paragraph
+bundle: group_of_links_list
+mode: default
+content:
+  field_component_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 4
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_link:
+    weight: 7
+    type: entity_reference_paragraphs
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_list_links:
+    weight: 6
+    type: entity_reference_paragraphs
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_subheader:
+    weight: 5
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

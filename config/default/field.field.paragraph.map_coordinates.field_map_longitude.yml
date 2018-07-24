@@ -1,0 +1,19 @@
+uuid: e287ffcd-c2ab-4bc0-b4f7-97de39874a90
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_map_longitude
+    - paragraphs.paragraphs_type.map_coordinates
+id: paragraph.map_coordinates.field_map_longitude
+field_name: field_map_longitude
+entity_type: paragraph
+bundle: map_coordinates
+label: Longitude
+description: 'Enter the East/West coordinates. Example: Boston City Hall is -71.0580.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

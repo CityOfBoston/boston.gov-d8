@@ -1,0 +1,24 @@
+uuid: 1bd82dc1-6aa7-468e-aa42-7ab1d5b4d8d7
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.taxonomy_term.popup_icon
+    - field.field.taxonomy_term.features.field_icon
+    - taxonomy.vocabulary.features
+  module:
+    - text
+id: taxonomy_term.features.popup_icon
+targetEntityType: taxonomy_term
+bundle: features
+mode: popup_icon
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_icon: true

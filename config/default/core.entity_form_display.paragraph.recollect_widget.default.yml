@@ -1,0 +1,26 @@
+uuid: 66a7160e-098f-433b-b010-4a8de1c40473
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.recollect_widget.field_short_description
+    - paragraphs.paragraphs_type.recollect_widget
+  module:
+    - workbench_moderation
+id: paragraph.recollect_widget.default
+targetEntityType: paragraph
+bundle: recollect_widget
+mode: default
+content:
+  field_short_description:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

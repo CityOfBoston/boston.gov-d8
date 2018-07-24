@@ -1,0 +1,140 @@
+uuid: 955d6ae6-d78c-42d5-af89-fe3e5aa1675a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_how_to.default
+    - field.field.node.how_to.body
+    - field.field.node.how_to.comment_node_how_to
+    - field.field.node.how_to.field_components
+    - field.field.node.how_to.field_contact
+    - field.field.node.how_to.field_how_to_tabs
+    - field.field.node.how_to.field_intro_image
+    - field.field.node.how_to.field_links
+    - field.field.node.how_to.field_need_to_know
+    - field.field.node.how_to.field_payment_info
+    - field.field.node.how_to.field_published_date
+    - field.field.node.how_to.field_sidebar_components
+    - field.field.node.how_to.field_type_of_content
+    - field.field.node.how_to.field_updated_date
+    - node.type.how_to
+  module:
+    - comment
+    - datetime
+    - entity_reference_revisions
+    - image
+    - text
+    - user
+id: node.how_to.default
+targetEntityType: node
+bundle: how_to
+mode: default
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  comment_node_how_to:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_components:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 4
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_how_to_tabs:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_intro_image:
+    label: hidden
+    weight: 1
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  field_links:
+    label: hidden
+    weight: 5
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_need_to_know:
+    label: hidden
+    weight: 6
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_payment_info:
+    label: hidden
+    weight: 7
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_published_date:
+    label: hidden
+    weight: 8
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    label: above
+    weight: 10
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: sidebar
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: hidden
+    weight: 9
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_type_of_content: true
+  published_at: true

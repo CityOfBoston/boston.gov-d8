@@ -1,0 +1,33 @@
+uuid: 23281fc7-a1a4-4ef4-96dc-daea49ae32c1
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.map.field_component_title
+    - field.field.paragraph.map.field_contact
+    - field.field.paragraph.map.field_extra_info
+    - field.field.paragraph.map.field_hide_title_bar
+    - field.field.paragraph.map.field_map
+    - field.field.paragraph.map.field_map_default_coordinates
+    - field.field.paragraph.map.field_map_options
+    - field.field.paragraph.map.field_map_point_of_interest
+    - field.field.paragraph.map.field_map_type
+    - field.field.paragraph.map.field_short_title
+    - paragraphs.paragraphs_type.map
+id: paragraph.map.paragraphs_editor_preview
+targetEntityType: paragraph
+bundle: map
+mode: paragraphs_editor_preview
+content: {  }
+hidden:
+  field_component_title: true
+  field_contact: true
+  field_extra_info: true
+  field_hide_title_bar: true
+  field_map: true
+  field_map_default_coordinates: true
+  field_map_options: true
+  field_map_point_of_interest: true
+  field_map_type: true
+  field_short_title: true

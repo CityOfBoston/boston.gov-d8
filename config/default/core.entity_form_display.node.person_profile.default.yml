@@ -1,0 +1,203 @@
+uuid: adf7bd25-5566-4fc0-a5bc-d8f394bf2a39
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.person_profile.comment_node_person_profile
+    - field.field.node.person_profile.field_components
+    - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_email
+    - field.field.node.person_profile.field_first_name
+    - field.field.node.person_profile.field_last_name
+    - field.field.node.person_profile.field_person_photo
+    - field.field.node.person_profile.field_phone_number
+    - field.field.node.person_profile.field_political_party
+    - field.field.node.person_profile.field_position_title
+    - field.field.node.person_profile.field_preferred_contact
+    - field.field.node.person_profile.field_profile_type
+    - field.field.node.person_profile.field_sidebar_components
+    - field.field.node.person_profile.field_year_elected
+    - node.type.person_profile
+  module:
+    - comment
+    - file
+    - paragraphs
+    - path
+    - workbench_moderation
+id: node.person_profile.default
+targetEntityType: node
+bundle: person_profile
+mode: default
+content:
+  comment_node_person_profile:
+    type: comment_default
+    weight: 20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_components:
+    weight: 6
+    type: entity_reference_paragraphs
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 8
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_email:
+    weight: 10
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_first_name:
+    weight: -1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_last_name:
+    weight: 0
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_person_photo:
+    weight: -2
+    type: file_generic
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    weight: 9
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_political_party:
+    weight: 7
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_position_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_preferred_contact:
+    weight: 11
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_profile_type:
+    weight: 2
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    weight: 7
+    type: entity_reference_paragraphs
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_year_elected:
+    weight: 6
+    type: string_textfield
+    settings:
+      size: 10
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 15
+    region: content
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+hidden: {  }

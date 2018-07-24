@@ -1,0 +1,30 @@
+uuid: 9402c4b1-92c7-442e-82cc-80715be1a328
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.maps_basemap.field_basemap_url_
+    - taxonomy.vocabulary.maps_basemap
+  module:
+    - text
+id: taxonomy_term.maps_basemap.default
+targetEntityType: taxonomy_term
+bundle: maps_basemap
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_basemap_url_:
+    label: above
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

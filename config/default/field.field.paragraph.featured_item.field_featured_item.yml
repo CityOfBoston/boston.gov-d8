@@ -1,0 +1,32 @@
+uuid: b52a85b5-f66d-435d-9606-c28dd7c63eb6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_featured_item
+    - paragraphs.paragraphs_type.featured_item
+id: paragraph.featured_item.field_featured_item
+field_name: field_featured_item
+entity_type: paragraph
+bundle: featured_item
+label: 'Featured Item'
+description: 'Specify the item to be featured here.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    view:
+      args: {  }
+      display_name: entityreference_1
+      view_name: upcoming_events_featured_event_filter
+    target_bundles: null
+    sort:
+      field: _none
+      direction: ASC
+field_type: entity_reference

@@ -1,0 +1,24 @@
+uuid: ce20f337-a0d4-4494-b6db-7d9615aa155a
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.taxonomy_term.department_listing
+    - field.field.taxonomy_term.features.field_icon
+    - taxonomy.vocabulary.features
+  module:
+    - text
+id: taxonomy_term.features.department_listing
+targetEntityType: taxonomy_term
+bundle: features
+mode: department_listing
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_icon: true
