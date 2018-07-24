@@ -97,8 +97,7 @@ function doitinstall() {
 
     # Clone the repo locally.
     doitcomment "> Make a new clone of the repo." ""
-    git clone -b david-migrate git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
-#    git clone -b develop git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
+    git clone -b develop git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
 
     # Rebuild the containers and run the install scripts
     doitcomment "> Rebuild the containers and run install scripts." ""
