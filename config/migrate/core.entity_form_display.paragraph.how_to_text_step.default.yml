@@ -1,0 +1,36 @@
+uuid: 2cb93b86-7285-436a-81fa-804f741cc23b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.how_to_text_step.field_step_details
+    - field.field.paragraph.how_to_text_step.field_title
+    - paragraphs.paragraphs_type.how_to_text_step
+  module:
+    - text
+    - workbench_moderation
+id: paragraph.how_to_text_step.default
+targetEntityType: paragraph
+bundle: how_to_text_step
+mode: default
+content:
+  field_step_details:
+    weight: 4
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

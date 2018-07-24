@@ -1,0 +1,23 @@
+uuid: 47cd48ea-b02d-44d4-a795-0386ee3dfb12
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_sticky
+    - paragraphs.paragraphs_type.script_embed
+id: paragraph.script_embed.field_sticky
+field_name: field_sticky
+entity_type: paragraph
+bundle: script_embed
+label: 'Async?'
+description: 'Should this load asynchronously?'
+required: true
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

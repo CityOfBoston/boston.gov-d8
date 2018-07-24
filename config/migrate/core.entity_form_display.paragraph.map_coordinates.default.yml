@@ -1,0 +1,44 @@
+uuid: 97256f61-c1be-41ff-ae48-5eeadb370535
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.map_coordinates.field_map_latitude
+    - field.field.paragraph.map_coordinates.field_map_longitude
+    - field.field.paragraph.map_coordinates.field_map_zoom
+    - paragraphs.paragraphs_type.map_coordinates
+  module:
+    - workbench_moderation
+id: paragraph.map_coordinates.default
+targetEntityType: paragraph
+bundle: map_coordinates
+mode: default
+content:
+  field_map_latitude:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_map_longitude:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_map_zoom:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

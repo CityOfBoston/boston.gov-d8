@@ -1,0 +1,23 @@
+uuid: aedb7c86-1958-4ab8-97cc-48461ebf926e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_map_cluster
+    - paragraphs.paragraphs_type.map_esri_feed
+id: paragraph.map_esri_feed.field_map_cluster
+field_name: field_map_cluster
+entity_type: paragraph
+bundle: map_esri_feed
+label: Cluster
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

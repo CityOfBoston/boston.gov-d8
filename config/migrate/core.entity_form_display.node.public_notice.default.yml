@@ -1,0 +1,310 @@
+uuid: 005e6f50-e557-44d9-8a76-3647bbf20663
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.public_notice.body
+    - field.field.node.public_notice.comment_node_public_notice
+    - field.field.node.public_notice.field_cancelled
+    - field.field.node.public_notice.field_city_hall
+    - field.field.node.public_notice.field_components
+    - field.field.node.public_notice.field_contact
+    - field.field.node.public_notice.field_drawer
+    - field.field.node.public_notice.field_email
+    - field.field.node.public_notice.field_event_contact
+    - field.field.node.public_notice.field_extra_info
+    - field.field.node.public_notice.field_featured
+    - field.field.node.public_notice.field_is_there_public_testimony
+    - field.field.node.public_notice.field_links
+    - field.field.node.public_notice.field_multiple_neighborhoods
+    - field.field.node.public_notice.field_people
+    - field.field.node.public_notice.field_phone_number
+    - field.field.node.public_notice.field_place
+    - field.field.node.public_notice.field_program_initiative
+    - field.field.node.public_notice.field_public_notice_date
+    - field.field.node.public_notice.field_related_content
+    - field.field.node.public_notice.field_related_departments
+    - field.field.node.public_notice.field_related_events_notices
+    - field.field.node.public_notice.field_related_guides
+    - field.field.node.public_notice.field_related_posts
+    - field.field.node.public_notice.field_time
+    - field.field.node.public_notice.field_updated_date
+    - node.type.public_notice
+  module:
+    - comment
+    - datetime
+    - paragraphs
+    - path
+    - text
+    - workbench_moderation
+id: node.public_notice.default
+targetEntityType: node
+bundle: public_notice
+mode: default
+content:
+  body:
+    weight: 6
+    type: text_textarea_with_summary
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  comment_node_public_notice:
+    type: comment_default
+    weight: 20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_cancelled:
+    weight: 17
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_city_hall:
+    weight: 36
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_components:
+    weight: 15
+    type: entity_reference_paragraphs
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: closed
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 1
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_drawer:
+    weight: 3
+    type: entity_reference_paragraphs
+    settings:
+      title: Topic
+      title_plural: Topics
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_email:
+    weight: 12
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_event_contact:
+    weight: 11
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_extra_info:
+    weight: 18
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_featured:
+    weight: 4
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_is_there_public_testimony:
+    weight: 17
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_links:
+    weight: 17
+    type: entity_reference_paragraphs
+    settings:
+      title: Download
+      title_plural: Downloads
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_multiple_neighborhoods:
+    weight: 15
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_people:
+    weight: 20
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    weight: 13
+    type: string_textfield
+    settings:
+      size: 20
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_place:
+    weight: 21
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_program_initiative:
+    weight: 23
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_public_notice_date:
+    weight: 33
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_related_content:
+    weight: 24
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_departments:
+    weight: 17
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_events_notices:
+    weight: 18
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_guides:
+    weight: 19
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_posts:
+    weight: 22
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_time:
+    weight: 18
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    weight: 12
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 15
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+hidden: {  }

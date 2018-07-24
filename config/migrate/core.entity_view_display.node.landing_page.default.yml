@@ -1,0 +1,48 @@
+uuid: 72cf3e53-b77c-4cc4-9462-e01c4bd941e7
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_landing_page.default
+    - field.field.node.landing_page.comment_node_landing_page
+    - field.field.node.landing_page.field_components
+    - field.field.node.landing_page.field_contacts
+    - field.field.node.landing_page.field_published_date
+    - field.field.node.landing_page.field_type_of_content
+    - field.field.node.landing_page.field_updated_date
+    - node.type.landing_page
+  module:
+    - comment
+    - entity_reference_revisions
+    - user
+id: node.landing_page.default
+targetEntityType: node
+bundle: landing_page
+mode: default
+content:
+  comment_node_landing_page:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_components:
+    label: hidden
+    weight: 0
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_contacts: true
+  field_published_date: true
+  field_type_of_content: true
+  field_updated_date: true

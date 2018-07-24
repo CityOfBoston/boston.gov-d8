@@ -1,0 +1,22 @@
+uuid: 05f1e482-a093-408c-a9f3-4fc4d9ce1ed3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.how_to
+  module:
+    - text
+id: node.how_to.body
+field_name: body
+entity_type: node
+bundle: how_to
+label: 'Intro Text'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

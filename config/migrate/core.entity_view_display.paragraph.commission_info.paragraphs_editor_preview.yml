@@ -1,0 +1,17 @@
+uuid: f4e5b30f-928b-4bfc-9cad-d22cbfc0f760
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.commission_info.field_commission
+    - field.field.paragraph.commission_info.field_show_contact_info
+    - paragraphs.paragraphs_type.commission_info
+id: paragraph.commission_info.paragraphs_editor_preview
+targetEntityType: paragraph
+bundle: commission_info
+mode: paragraphs_editor_preview
+content: {  }
+hidden:
+  field_commission: true
+  field_show_contact_info: true

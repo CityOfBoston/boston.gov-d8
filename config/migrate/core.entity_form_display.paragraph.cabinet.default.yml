@@ -1,0 +1,55 @@
+uuid: 3d831915-c1b4-4595-a54e-718970c7a42e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_person
+    - field.field.paragraph.cabinet.field_short_title
+    - field.field.paragraph.cabinet.field_title
+    - paragraphs.paragraphs_type.cabinet
+  module:
+    - workbench_moderation
+id: paragraph.cabinet.default
+targetEntityType: paragraph
+bundle: cabinet
+mode: default
+content:
+  field_contacts:
+    weight: 2
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_person:
+    weight: 6
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 5
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 4
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

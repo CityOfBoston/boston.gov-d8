@@ -1,0 +1,62 @@
+uuid: ce847aff-3f39-4f4a-b72f-38308e86060b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.grid_of_people.field_component_theme
+    - field.field.paragraph.grid_of_people.field_component_title
+    - field.field.paragraph.grid_of_people.field_contact
+    - field.field.paragraph.grid_of_people.field_people
+    - field.field.paragraph.grid_of_people.field_short_title
+    - paragraphs.paragraphs_type.grid_of_people
+  module:
+    - workbench_moderation
+id: paragraph.grid_of_people.default
+targetEntityType: paragraph
+bundle: grid_of_people
+mode: default
+content:
+  field_component_theme:
+    weight: 4
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_people:
+    weight: 2
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -1,0 +1,25 @@
+uuid: e5b7e72f-8da1-437d-b4c4-61fab1e0c8b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_emergency_alert
+    - field.field.comment.comment_node_emergency_alert.comment_body
+  module:
+    - text
+id: comment.comment_node_emergency_alert.default
+targetEntityType: comment
+bundle: comment_node_emergency_alert
+mode: default
+content:
+  comment_body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden: {  }

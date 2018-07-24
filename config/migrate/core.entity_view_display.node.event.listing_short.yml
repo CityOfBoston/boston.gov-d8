@@ -1,0 +1,202 @@
+uuid: 9c755904-4979-4310-928d-55eec50ede4e
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.listing_short
+    - field.field.node.event.body
+    - field.field.node.event.comment_node_event
+    - field.field.node.event.field_cancel_event
+    - field.field.node.event.field_city_hall
+    - field.field.node.event.field_city_sponsored
+    - field.field.node.event.field_components
+    - field.field.node.event.field_contact
+    - field.field.node.event.field_cost
+    - field.field.node.event.field_details_link
+    - field.field.node.event.field_email
+    - field.field.node.event.field_event_contact
+    - field.field.node.event.field_event_dates
+    - field.field.node.event.field_event_type
+    - field.field.node.event.field_extra_info_event
+    - field.field.node.event.field_featured
+    - field.field.node.event.field_intro_image
+    - field.field.node.event.field_links
+    - field.field.node.event.field_multiple_neighborhoods
+    - field.field.node.event.field_people
+    - field.field.node.event.field_phone_number
+    - field.field.node.event.field_place
+    - field.field.node.event.field_program_initiative
+    - field.field.node.event.field_published_date
+    - field.field.node.event.field_related_content
+    - field.field.node.event.field_related_departments
+    - field.field.node.event.field_related_events_notices
+    - field.field.node.event.field_related_guides
+    - field.field.node.event.field_related_posts
+    - field.field.node.event.field_sidebar_components
+    - field.field.node.event.field_thumbnail
+    - field.field.node.event.field_type_of_content
+    - field.field.node.event.field_updated_date
+    - node.type.event
+  module:
+    - datetime
+    - entity_reference_revisions
+    - options
+    - text
+    - user
+id: node.event.listing_short
+targetEntityType: node
+bundle: event
+mode: listing_short
+content:
+  body:
+    label: hidden
+    weight: 1
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_components:
+    label: hidden
+    weight: 15
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_event_contact:
+    label: inline
+    weight: 3
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_event_dates:
+    label: hidden
+    weight: 9
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_event_type:
+    label: hidden
+    weight: 21
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_featured:
+    label: hidden
+    weight: 10
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_links:
+    label: hidden
+    weight: 17
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_multiple_neighborhoods:
+    label: hidden
+    weight: 22
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_people:
+    label: hidden
+    weight: 26
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    label: hidden
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_place:
+    label: hidden
+    weight: 24
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_program_initiative:
+    label: hidden
+    weight: 25
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_published_date:
+    label: hidden
+    weight: 13
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  field_related_content:
+    label: above
+    weight: 29
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    label: hidden
+    weight: 23
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: hidden
+    weight: 12
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_event: true
+  field_cancel_event: true
+  field_city_hall: true
+  field_city_sponsored: true
+  field_contact: true
+  field_cost: true
+  field_details_link: true
+  field_email: true
+  field_extra_info_event: true
+  field_intro_image: true
+  field_related_departments: true
+  field_related_events_notices: true
+  field_related_guides: true
+  field_related_posts: true
+  field_thumbnail: true
+  field_type_of_content: true

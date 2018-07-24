@@ -1,0 +1,45 @@
+uuid: fef6d292-d6e3-4e08-b256-ed1febaf3dfc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.feedback.field_component_title
+    - field.field.paragraph.feedback.field_poll
+    - field.field.paragraph.feedback.field_question
+    - paragraphs.paragraphs_type.feedback
+  module:
+    - workbench_moderation
+id: paragraph.feedback.default
+targetEntityType: paragraph
+bundle: feedback
+mode: default
+content:
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_poll:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_question:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  created: true
+  status: true
+  uid: true

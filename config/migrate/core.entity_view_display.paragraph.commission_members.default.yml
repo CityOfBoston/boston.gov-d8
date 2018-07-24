@@ -1,0 +1,32 @@
+uuid: cb1a0a98-ce01-48e8-a279-4694846c5b2d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.commission_members.field_commission
+    - field.field.paragraph.commission_members.field_component_title
+    - field.field.paragraph.commission_members.field_short_title
+    - paragraphs.paragraphs_type.commission_members
+id: paragraph.commission_members.default
+targetEntityType: paragraph
+bundle: commission_members
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: above
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_commission: true

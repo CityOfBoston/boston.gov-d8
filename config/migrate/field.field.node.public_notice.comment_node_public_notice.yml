@@ -1,0 +1,33 @@
+uuid: 17cea360-c70b-43cb-902b-e66e3dae0b20
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.comment_node_public_notice
+    - node.type.public_notice
+  module:
+    - comment
+id: node.public_notice.comment_node_public_notice
+field_name: comment_node_public_notice
+entity_type: node
+bundle: public_notice
+label: Comments
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    status: 1
+    cid: 0
+    last_comment_timestamp: 0
+    last_comment_name: null
+    last_comment_uid: 0
+    comment_count: 0
+default_value_callback: ''
+settings:
+  default_mode: 1
+  per_page: 50
+  anonymous: 0
+  form_location: false
+  preview: 0
+field_type: comment

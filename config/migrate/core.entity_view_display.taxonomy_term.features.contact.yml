@@ -1,0 +1,24 @@
+uuid: 79b5ed56-aebd-4063-9c56-21e894e0efdc
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.taxonomy_term.contact
+    - field.field.taxonomy_term.features.field_icon
+    - taxonomy.vocabulary.features
+  module:
+    - text
+id: taxonomy_term.features.contact
+targetEntityType: taxonomy_term
+bundle: features
+mode: contact
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_icon: true
