@@ -20,7 +20,10 @@
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <phingcall target="update:user:loginadmin" description="display the welcome screen."/>
-    <exec output='${project.basedir}/setup/.uli' command="${drush.cmd} uli" description="Login the admin user" logoutput="true"/>
+      <exec description="Login the admin user." output='${project.basedir}/setup/.uli'  logoutput="true"
+            dir="${docroot}" command="${drush.cmd} uli"/>
+      <exec description="Allow users outside the container access to the .uli file." logoutput="true"
+            dir="${docroot}" command="chmod 777 ${project.basedir}/setup/.uli"/>
   </target>
 
   <!-- Define the build task used by travis. -->
