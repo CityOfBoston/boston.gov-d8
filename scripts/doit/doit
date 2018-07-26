@@ -20,9 +20,8 @@ White='\033[1;37m'
 NC='\033[0m' # No Color
 
 # Define paths (relative to this script)
-cd ../../
 
-REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && cd ../../ && pwd )"
 SCRIPTS_PATH="$REPO_ROOT/scripts"
 DOIT_SCRIPTS_PATH="${SCRIPTS_PATH}/doit"
 
@@ -93,13 +92,16 @@ function doitinstall() {
     fi
 
     # Completely remove the existing repo contents.
+    REPO="develop"
+    if [ ${2} ]; then REPO=${2}; fi
     doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo) - requires elevated permissions."
+    doitcomment "" "NOTE: repo will be removed from, and (branch ${REPO}) re-cloned to $REPO_ROOT"
     cd $REPO_ROOT && cd ../
     sudo rm -rf $REPO_ROOT
 
     # Clone the repo locally.
-    doitcomment "> Make a new clone of the repo." ""
-    git clone -b develop git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
+    doitcomment "> Make a new clone of the repo branch ${REPO}." ""
+    git clone -b $REPO git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
 
     # Rebuild the containers and run the install scripts
     doitcomment "> Rebuild the containers and run install scripts." ""
@@ -122,6 +124,7 @@ function doitrefresh() {
     # remove the key existing drupal files and folders
     doitcomment "> Removing key Drupal files and folders." " - requires elevated permissions."
     doitcomment "" "NOTE: does not pull the repo and keeps custom modules, initial config files and installed user files."
+    doitcomment "" "NOTE: will operate on repo located at: $REPO_ROOT"
     cd $REPO_ROOT && cd ../
     sudo rm -rf $REPO_ROOT/docroot/core
     sudo rm -f $REPO_ROOT/docroot/sites/default/settings*.php
