@@ -90,7 +90,31 @@ function doitinstall() {
             exit 1
         fi
     fi
-
+    # remove the apache (appserver) image
+    if [ "$(docker images -a | grep devwithlando)" ]; then
+        docker images -a | grep "devwithlando" | awk '{print $3}' | xargs docker rmi
+        if [ $? -ne 0 ]; then
+            doitcomment "FAILED:" "The appserver image could not be deleted."
+            exit 1
+        fi
+    fi
+    # remove the proxy if it exists
+    if [ "$(docker images -a | grep traefik)" ]; then
+        # Stop and delete the proxy container
+        if [ "$(docker ps -a | grep landoproxy)" ]; then
+            docker ps -a | grep "landoproxy" | awk '{print $1}' | xargs docker stop
+            docker ps -a | grep "landoproxy" | awk '{print $1}' | xargs docker rm
+            if [ $? -ne 0 ]; then
+                doitcomment "FAILED:" "The proxy service image could not be removed."
+                exit 1
+            fi
+        fi
+        docker images -a | grep "traefik" | awk '{print $3}' | xargs docker rmi
+        if [ $? -ne 0 ]; then
+            doitcomment "FAILED:" "The proxy image could not be deleted."
+            exit 1
+        fi
+    fi
     # Completely remove the existing repo contents.
     REPO="develop"
     if [ ${2} ]; then REPO=${2}; fi
