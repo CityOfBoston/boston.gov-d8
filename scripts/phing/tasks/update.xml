@@ -45,6 +45,8 @@
         <echo message="Updates new Drupal build (checks for module updates and database changes)." />
         <exec description="Update the database with any hook_updates etc."
               dir="${docroot}" command="${drush.cmd} updb --entity-updates -y" logoutput="true"/>
+        <exec description="Rebuild the user permissions"  logoutput="true"
+              dir="${docroot}" command="${drush.cmd} eval 'node_access_rebuild()'"/>
     </target>
 
     <target name="update:user:loginadmin"
