@@ -84,7 +84,6 @@
         <phingcall target="setup:drupal:local_settings_php:write"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
 
-        <echo message=""/>
         <exec command="echo -e '${line.separator}\033[0;32m(resuming) > setup:drupal:newdb\033[0m${line.separator}'" logoutput="true" passthru="true"/>
         <echo message="Install the Drupal 8 database."/>
         <echo message=" -> see ${project.basedir}/setup/drush_site_install.log for output." level="warning"/>
