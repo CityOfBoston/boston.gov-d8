@@ -1,0 +1,16 @@
+Index: modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d7/FieldGroup.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d7/FieldGroup.php	(date 1532538230000)
++++ modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d7/FieldGroup.php	(date 1532538230000)
+@@ -15,6 +15,8 @@
+  *
+  * @MigrateSource(
+  *   id = "d7_field_group"
++ *   source_module = "field_group",
++ *   destination_module = "field_group"
+  * )
+  */
+ class FieldGroup extends DrupalSqlBase {

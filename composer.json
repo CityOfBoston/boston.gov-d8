@@ -162,11 +162,12 @@
       "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
       "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
       "drush/Commands/{$name}": ["type:drupal-drush"]
-    }
-  },
-  "patches": {
-    "drupal/field_group": {
-      "Patch field_group_migrations with file annotations.": "https://www.drupal.org/files/issues/address_syncing.patch"
+    },
+    "patches": {
+      "drupal/field_group": {
+        "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
+        "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
+      }
     }
   }
 }

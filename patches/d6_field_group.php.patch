@@ -1,0 +1,21 @@
+diff --git
+Index: modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d6/FieldGroup.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d6/FieldGroup.php	(date 1532538230000)
++++ modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d6/FieldGroup.php	(date 1532538230000)
+@@ -9,8 +9,10 @@
+  * Drupal 6 field_group source.
+  *
+  * @MigrateSource(
+- *   id = "d6_field_group"
+- * )
++ *   id = "d6_field_group",
++ *   source_module = "field_group",
++ *   destination_module = "field_group"
++ *
+  */
+ class FieldGroup extends DrupalSqlBase {
+ 
