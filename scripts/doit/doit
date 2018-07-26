@@ -20,9 +20,11 @@ White='\033[1;37m'
 NC='\033[0m' # No Color
 
 # Define paths (relative to this script)
-SCRIPTS_PATH="$(pwd)/scripts"
+cd ../../
+
+REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+SCRIPTS_PATH="$REPO_ROOT/scripts"
 DOIT_SCRIPTS_PATH="${SCRIPTS_PATH}/doit"
-LANDO_SCRIPTS_PATH="${SCRIPTS_PATH}/lando"
 
 # Draws "DoIT" in CLI block letters.
 function doitbrand() {
@@ -82,7 +84,7 @@ function doitinstall() {
     # Check if the containers exist, and if they do, destroy them
     if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
         doitcomment "> Removing (destroying) the existing containers." ""
-        cd ~/sources/drupal8/boston.gov-d8/
+        cd $REPO_ROOT
         lando destroy -y
         if [ $? -ne 0 ]; then
             doitcomment "FAILED:" "The container could not be deleted."
@@ -92,8 +94,8 @@ function doitinstall() {
 
     # Completely remove the existing repo contents.
     doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo) - requires elevated permissions."
-    cd ~/sources/drupal8/
-    sudo rm -rf ./boston.gov-d8
+    cd $REPO_ROOT && cd ../
+    sudo rm -rf $REPO_ROOT
 
     # Clone the repo locally.
     doitcomment "> Make a new clone of the repo." ""
@@ -101,7 +103,7 @@ function doitinstall() {
 
     # Rebuild the containers and run the install scripts
     doitcomment "> Rebuild the containers and run install scripts." ""
-    cd ~/sources/drupal8/boston.gov-d8/
+    cd $REPO_ROOT
     lando start
     retVal=$?
     if [ $retVal -ne 0 ]; then
@@ -109,7 +111,7 @@ function doitinstall() {
     else
         doitcomment "SUCCESS:" "Container is now built and started."
     fi
-    cd ~/sources/drupal8/boston.gov-d8/
+    cd $REPO_ROOT
     exit $retVal
 }
 
@@ -120,19 +122,19 @@ function doitrefresh() {
     # remove the key existing drupal files and folders
     doitcomment "> Removing key Drupal files and folders." " - requires elevated permissions."
     doitcomment "" "NOTE: does not pull the repo and keeps custom modules, initial config files and installed user files."
-    cd ~/sources/drupal8/
-    sudo rm -rf ./boston.gov-d8/docroot/core
-    sudo rm -f ./boston.gov-d8/docroot/sites/default/settings*.php
-    sudo rm -rf ./boston.gov-d8/docroot/modules/contrib/*
-    sudo rm -rf ./boston.gov-d8/config/sync/*
-    sudo rm -f ./boston.gov-d8/setup/*
-    sudo rm -f ./boston.gov-d8/composer.lock
-    sudo chmod -R 777 ./boston.gov-d8/docroot/sites/default/
+    cd $REPO_ROOT && cd ../
+    sudo rm -rf $REPO_ROOT/docroot/core
+    sudo rm -f $REPO_ROOT/docroot/sites/default/settings*.php
+    sudo rm -rf $REPO_ROOT/docroot/modules/contrib/*
+    sudo rm -rf $REPO_ROOT/config/sync/*
+    sudo rm -f $REPO_ROOT/setup/*
+    sudo rm -f $REPO_ROOT/composer.lock
+    sudo chmod -R 777 $REPO_ROOT/docroot/sites/default/
 
     # Rebuild the Drupal site.
-    cd ~/sources/drupal8/boston.gov-d8/
+    cd $REPO_ROOT
     lando phing setup:docker:drupal-local
-    cd ~/sources/drupal8/boston.gov-d8/
+    cd $REPO_ROOT
 }
 
 function doitrebuild() {
