@@ -35,9 +35,9 @@ function doitbrand() {
 function doithelp() {
   echo $'\r'
   echo -e "${Yellow}Community Commands:${NC}"
-  echo -e "${LightBlue}  install${NC}        Creates and starts containers for first time."
-  echo -e "${LightBlue}  rebuild full${NC}   Destroys, rebuilds and starts containers."
-  echo -e "${LightBlue}  rebuild quick${NC}  Rebuilds Drupal site but does not change customisations."
+  echo -e "${LightBlue}  install <branch>${NC}        Creates and starts containers for first time using <branch>."
+  echo -e "${LightBlue}  rebuild full <branch>${NC}   Destroys, rebuilds and starts containers using <branch>."
+  echo -e "${LightBlue}  rebuild quick${NC}           Rebuilds Drupal site but does not change customisations."
   echo $'\r'
   echo -e "${Yellow}Staff Commands:${NC}"
   echo $'\r'
@@ -117,7 +117,7 @@ function doitinstall() {
     fi
     # Completely remove the existing repo contents.
     REPO="develop"
-    if [ ${2} ]; then REPO=${2}; fi
+    if [ ${1} ]; then REPO=${1}; fi
     doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo) - requires elevated permissions."
     doitcomment "" "NOTE: repo will be removed from, and (branch ${REPO}) re-cloned to $REPO_ROOT"
     cd $REPO_ROOT && cd ../
@@ -168,7 +168,7 @@ function doitrebuild() {
     if [ $1 == "quick" ]; then
         doitrefresh
     elif [ $1 == "full" ]; then
-        doitinstall
+        doitinstall $2
     else
         echo "Rebuild not specified, execute [q]uick or [f]ast ?"
         read -p "" qf
@@ -195,7 +195,7 @@ args=${@:2}
 # Run a function based on the command the user supplied.
 if [[ -n "$command" ]]; then
   if [[ $command == "install" ]]; then
-    doitinstall
+    doitinstall $args
   elif [[ $command == "rebuild" ]]; then
     doitrebuild $args
   elif [[ $command == "welcome" ]]; then
