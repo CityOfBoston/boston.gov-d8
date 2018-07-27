@@ -16,7 +16,7 @@
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a drupal environment in docker for local development."
-          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config">
+          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config, update:config:updatedb, setup:cleanup">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec description="Login the admin user." output='${project.basedir}/setup/.uli'  logoutput="true"
@@ -84,7 +84,10 @@
         <phingcall target="setup:drupal:local_settings_php:write"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
 
-        <exec command="echo -e '${line.separator}\033[0;32m(resuming) > setup:drupal:newdb\033[0m${line.separator}'" logoutput="true" passthru="true"/>
+        <echo level="warning" message="Build is now using settings file ${local.settings.file}"/>
+        <echo level="warning" message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
+
+        <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:newdb\033[0m${line.separator}'" logoutput="true" passthru="true"/>
         <echo message="Install the Drupal 8 database."/>
         <echo message=" -> see ${project.basedir}/setup/drush_site_install.log for output." level="warning"/>
 
@@ -122,11 +125,6 @@
               dir="${docroot}"
               command="${si.command} >> ${project.basedir}/setup/drush_site_install.log "
               logoutput="true"/>
-
-        <phingcall target="update:config:updatedb"
-                   description="Run any database updates."/>
-          <!--<phingcall target="update:config:export"-->
-                   <!--description="Export configurations files from database."/>-->
 
       </then>
       <else>
@@ -198,9 +196,6 @@
       <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
       <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
 
-      <echo level="warning" message="Build is now using settings file ${local.settings.file}"/>
-      <echo level="warning" message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
-
   </target>
 
   <target name="setup:drush:local-config"
@@ -212,4 +207,14 @@
     <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
   </target>
 
+    <target name="setup:cleanup"
+            description="Final cleanup after the install process.">
+        <resolvepath propertyName="install_config_abs" file="${docroot}/${project.config.sync}"/>
+        <delete description="Removes the config files used during installation."
+                dir="${install_config_abs}" failonerror="true" includeemptydirs="true" />
+        <exec description="Exports the configs into the config folder.."
+                dir="${docroot}" command="${drush.cmd} cex -y" logoutput="true"/>
+    </target>
+
 </project>
+
