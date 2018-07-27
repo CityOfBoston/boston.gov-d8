@@ -13,7 +13,7 @@
   // set an enviroment variable to denote the environment status.
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
     $envvar = getenv('AH_SITE_ENVIRONMENT');
-    if (isset($envvar)) {
+    if (!empty($envvar)) {
       $_ENV['AH_SITE_ENVIRONMENT'] = $envvar;
     }
     else {

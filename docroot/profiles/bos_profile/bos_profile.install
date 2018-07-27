@@ -11,15 +11,20 @@ function bos_profile_install() {
   // Override certain modules which are installed by default.
 
   // Be sure an environment indicator is set.
+
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
     $envvar = getenv('AH_SITE_ENVIRONMENT');
-    if (isset($envvar)) {
+    if (!empty($envvar)) {
       $_ENV['AH_SITE_ENVIRONMENT'] = $envvar;
     }
     else {
       $_ENV['AH_SITE_ENVIRONMENT'] = 'dev';
     }
   }
+
+  \Drupal::logger('profile')->info("bos_profile install started. Using @env.", array(
+    '@env' => $_ENV['AH_SITE_ENVIRONMENT'],
+  ));
 
   // Disable modules enabled by core by default.
   $disabled_modules = array(
@@ -33,16 +38,7 @@ function bos_profile_install() {
   if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prod' || $_ENV['AH_SITE_ENVIRONMENT'] === 'test') {
     // Make sure certain modules are disabled in prod.
     $disabled_modules += [
-      'devel'
-    ];
-  }
-
-  else {
-    // enable development modules in develop environments.
-    $enabled_modules += [
       'devel',
-      'diff',
-      'help',
       'masquerade',
       'twig_xdebug',
       'stage_file_proxy',
@@ -52,7 +48,24 @@ function bos_profile_install() {
       'migrate_drupal',
       'migrate_drupal_ui',
       'migrate_upgrade',
+      'dblog',
+      'syslog',
+    ];
+  }
+
+  else {
+    // enable development modules in develop environments.
+    $enabled_modules += [
+      'devel',
+      'masquerade',
+      'twig_xdebug',
       'stage_file_proxy',
+      'migrate',
+      'migrate_tools',
+      'migrate_plus',
+      'migrate_drupal',
+      'migrate_drupal_ui',
+      'migrate_upgrade',
       'dblog',
       'syslog',
     ];
