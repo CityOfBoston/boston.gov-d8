@@ -1,0 +1,21 @@
+id: external_link
+label: Paragraphs type configuration
+migration_group: bos
+migration_tags:
+  - Drupal 7
+source:
+  plugin: d7_paragraphs_type
+  add_description: true
+  track_changes: false
+process:
+  id: bundle
+  label: name
+  description: description
+  field_external_link: field_external_link
+destination:
+  # plugin: 'entity:paragraphs_type'
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: your_paragraph_machine_name
+migration_dependencies:
+  required: {  }
+  optional: {  }
