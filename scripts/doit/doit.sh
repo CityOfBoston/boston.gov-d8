@@ -170,7 +170,7 @@ function doitrebuild() {
     elif [ $1 == "full" ]; then
         doitinstall $2
     else
-        echo "Rebuild not specified, execute [q]uick or [f]ast ?"
+        echo "Rebuild not specified, execute [q]uick or [f]ull ?"
         read -p "" qf
             case $qf in
                 [Qq]* ) doitrefresh; break;;
