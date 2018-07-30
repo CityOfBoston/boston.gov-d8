@@ -1,3 +1,3 @@
 #!/bin/bash
-
-./doit.sh "$@"
+THISDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+${THISDIR}/doit.sh "$@"
