@@ -130,6 +130,7 @@ function doitinstall() {
     # Rebuild the containers and run the install scripts
     doitcomment "> Rebuild the containers and run install scripts." ""
     cd $REPO_ROOT
+    cp ./scripts/phing/files/lando.config.yml ~/.lando/config.yml
     lando start
     retVal=$?
     if [ $retVal -ne 0 ]; then
