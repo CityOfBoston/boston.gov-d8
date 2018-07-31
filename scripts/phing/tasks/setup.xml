@@ -151,16 +151,20 @@
           <available file="${local.settings.file}"/>
         </not>
         <then>
+
           <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
           <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml" tofile="${local.services.file}" haltonerror="false" overwrite="false" verbose="true"/>
-          <echo message="${line.separator}/*${line.separator}" append="true" file="${local.settings.file}"/>
+
+          <echo description="Adds local settings to settings.local.php file."
+                message="${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="/*${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
         </then>
         <else>
-          <echo message="local.settings.php already exists, ignoring."/>
+          <echo message="The local.settings.php already exists, did not update with local settings."/>
         </else>
       </if>
 
@@ -173,7 +177,9 @@
         </then>
       </if>
 
-      <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
+      <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
+            message="${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="/*${line.separator}" append="true" file="${settings.file}"/>
       <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
@@ -197,25 +203,27 @@
       <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
 
       <if>
-        <isset property="git.boston_private"/>
+        <isset property="git.private_settings"/>
         <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
           <property name="private.repo" value="${docroot}/sites/default/settings/boston"/>
           <property name="private.repo.settings" value="${docroot}/sites/default/settings/boston/private.settings.php"/>
-          <if>
-            <available filepath="${private.repo}"/>
-            <then>
-              <delete description="Completely delete the private repo." includeemptydirs="true" dir="${private.repo}" failonerror="false"/>
-            </then>
-          </if>
-          <gitclone description="Clone a private repo which has confidential settings (passwords etc)."
-                    branch="master"
-                    repository="${git.boston_private}"
-                    targetPath="${private.repo}"
-                    depth="1"/>
-          <gitpull repository="${private.repo}"/>
 
-          <echo message="${line.separator}if (file_exists('${private.repo.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="> Cloning the prive repo at ${git.private_settings}." level="warning"/>
+
+          <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
+                  includeemptydirs="true" dir="${private.repo}" failonerror="false" quiet="true"/>
+
+          <exec description="Clone a private repo which has confidential settings (passwords etc)."
+                command="git clone ${git.private_settings} ${private.repo} --depth 1 -b master" returnProperty="repoOK" logoutput="true"/>
+          <exec description="redundant, but pull the repo to be sure it is up-to-date."
+                dir="${private.repo}"
+                command="git pull"
+                logoutput="false"/>
+
+          <echo description="Adds a directive to settings file to include contents of settings file in repo."
+                message="${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="if (file_exists('${private.repo.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="   include '${private.repo.settings}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="}${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
@@ -242,8 +250,6 @@
         <exec description="Exports the configs into the config folder.."
                 dir="${docroot}" command="${drush.cmd} cex -y" logoutput="true"/>
     </target>
-
-
 
 </project>
 
