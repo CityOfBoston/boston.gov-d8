@@ -30,6 +30,7 @@
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
+    <property file="${custom.phing.files.dir}/lando.config.yml" prefix="lando" override="true" logoutput="false"/>
 
 <!-- Read the LANDO_INFO environment variablt to get the correct hostname and port for the database -->
     <php expression="json_decode('${env.LANDO_INFO}')->database->internal_connection->host;" returnProperty="lando.db.host" level="verbose"/>
@@ -44,7 +45,8 @@
     <property file="${custom.phing.dir}/phing-boston.yml"  override="true" logoutput="false"/>
 
     <property name="lando.url.domain" value="${env.LANDO_DOMAIN}" override="true"/>
-    <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}:${env.LANDO_PROXY_HTTPS_PORT}" override="true"/>
+
+    <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}:${lando.proxyHttpsPort}" override="true"/>
     <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
 
 <!-- set path for local.settings.php file. -->
