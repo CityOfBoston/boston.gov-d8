@@ -14,16 +14,16 @@ function bos_profile_install() {
 
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
     $envvar = getenv('AH_SITE_ENVIRONMENT');
-    if (!empty($envvar)) {
-      $_ENV['AH_SITE_ENVIRONMENT'] = $envvar;
-    }
-    else {
-      $_ENV['AH_SITE_ENVIRONMENT'] = 'dev';
-    }
+  }
+  else {
+    $envvar = $_ENV['AH_SITE_ENVIRONMENT'];
+  }
+  if (empty($envvar)) {
+    $envvar = 'dev';
   }
 
   \Drupal::logger('profile')->info("bos_profile install started. Using @env.", array(
-    '@env' => $_ENV['AH_SITE_ENVIRONMENT'],
+    '@env' => $envvar,
   ));
 
   // Disable modules enabled by core by default.
@@ -36,7 +36,7 @@ function bos_profile_install() {
   // Don't set defaults here - use the .info file instead.
   $enabled_modules = array();
 
-  if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prod' || $_ENV['AH_SITE_ENVIRONMENT'] === 'test') {
+  if ($envvar === 'prod' || $envvar === 'test') {
     // Make sure certain modules are disabled in prod.
     $disabled_modules += [
       'automated_cron',
