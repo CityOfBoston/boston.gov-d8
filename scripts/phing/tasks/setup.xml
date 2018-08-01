@@ -23,7 +23,7 @@
             dir="${docroot}" command="${drush.cmd} uli"/>
     <exec description="Allow users outside the container access to the .uli file." logoutput="true"
             dir="${docroot}" command="chmod 777 ${project.basedir}/setup/.uli"/>
-    <echo message="To access the site off-line, add the following to your hosts file:${line.separator}127.0.0.1 ${lando.name}.lndo.site" file="${project.basedir}/setup/.uli" append="true" level="verbose"/>
+    <echo message="${line.separator} > To access the site off-line, add the following to your hosts file:${line.separator} >   127.0.0.1 ${lando.name}.lndo.site${line.separator}" file="${project.basedir}/setup/.uli" append="true" level="verbose"/>
   </target>
 
   <!-- Define the build task used by travis. -->
