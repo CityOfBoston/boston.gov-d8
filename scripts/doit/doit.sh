@@ -81,7 +81,7 @@ function doitinstall() {
     doitcomment "Install container from scratch."
 
     # Check if the containers exist, and if they do, destroy them
-    if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
+    if [ "$(docker ps -a -q -f name=${lando_name}_appserver_*)" ]; then
         doitcomment "> Removing (destroying) the existing containers." ""
         cd $REPO_ROOT
         lando destroy -y
