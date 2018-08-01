@@ -23,7 +23,7 @@
             dir="${docroot}" command="${drush.cmd} uli"/>
     <exec description="Allow users outside the container access to the .uli file." logoutput="true"
             dir="${docroot}" command="chmod 777 ${project.basedir}/setup/.uli"/>
-    <echo message="To access the site off-line, add the following to your hosts file:${line.separator}127.0.0.1 ${lando.name}.lndo.site" file="${project.basedir}/setup/.uli" append="true" level="verbose"/>
+    <echo message="${line.separator} > To access the site off-line, add the following to your hosts file:${line.separator} >   127.0.0.1 ${lando.name}.lndo.site${line.separator}" file="${project.basedir}/setup/.uli" append="true" level="verbose"/>
   </target>
 
   <!-- Define the build task used by travis. -->
@@ -207,9 +207,6 @@
         <isset property="git.private_settings"/>
         <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
-          <property name="private.repo" value="${docroot}/sites/default/settings/boston"/>
-          <property name="private.repo.settings" value="${docroot}/sites/default/settings/boston/private.settings.php"/>
-
           <echo message="> Cloning the prive repo at ${git.private_settings}." level="warning"/>
 
           <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
@@ -236,10 +233,12 @@
   <target name="setup:drush:local-config"
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Update the drush config with the container url"/>
-    <echo message="options:${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="${line.separator}options:${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
+
+    <exec description="Move any drush alias files to the drush folder in the repo root."
+      command="mv -f ${private.repo}/*drush*.* ${repo.root}/drush/" passthru="true" logoutput="false" checkreturn="false"/>
 
   </target>
 

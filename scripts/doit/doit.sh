@@ -81,7 +81,7 @@ function doitinstall() {
     doitcomment "Install container from scratch."
 
     # Check if the containers exist, and if they do, destroy them
-    if [ "$(docker ps -q -f name=${lando_name}_appserver_*)" ]; then
+    if [ "$(docker ps -a -q -f name=${lando_name}_appserver_*)" ]; then
         doitcomment "> Removing (destroying) the existing containers." ""
         cd $REPO_ROOT
         lando destroy -y
@@ -130,6 +130,7 @@ function doitinstall() {
     # Rebuild the containers and run the install scripts
     doitcomment "> Rebuild the containers and run install scripts." ""
     cd $REPO_ROOT
+    cp ./scripts/phing/files/lando.config.yml ~/.lando/config.yml
     lando start
     retVal=$?
     if [ $retVal -ne 0 ]; then
