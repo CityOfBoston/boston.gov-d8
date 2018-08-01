@@ -39,6 +39,7 @@ function bos_profile_install() {
   if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prod' || $_ENV['AH_SITE_ENVIRONMENT'] === 'test') {
     // Make sure certain modules are disabled in prod.
     $disabled_modules += [
+      'automated_cron',
       'devel',
       'masquerade',
       'twig_xdebug',
@@ -57,6 +58,7 @@ function bos_profile_install() {
   else {
     // enable development modules in develop environments.
     $enabled_modules += [
+      'automated_cron',
       'devel',
       'masquerade',
       'twig_xdebug',
@@ -68,7 +70,6 @@ function bos_profile_install() {
       'migrate_drupal_ui',
       'migrate_upgrade',
       'dblog',
-      'syslog',
     ];
     // disable annoying modules in develop environments.
     $disabled_modules += [
