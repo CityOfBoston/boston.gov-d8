@@ -73,6 +73,13 @@ function load_lando_yml() {
     eval $(parse_yaml ".lando.yml" "lando_")
 }
 
+# find the current git branch
+function get_branch() {
+    cd ${REPO_ROOT}
+    git branch | grep "\*" | awk '{print $2}'
+
+}
+
 #################################
 # START CUSTOM SCRIPTS
 #################################
@@ -144,12 +151,14 @@ function doitinstall() {
 
 # Wrapper to re-install the drupal site into existing containers.
 function doitrefresh() {
-    doitcomment "Re-install Drupal into existing container."
+    BRANCH=$(get_branch)
+    doitcomment "Re-install Drupal (using current branch ${BRANCH}) into existing container."
 
     # remove the key existing drupal files and folders
-    doitcomment "> Removing key Drupal files and folders." " - requires elevated permissions."
-    doitcomment "" "NOTE: does not pull the repo and keeps custom modules, initial config files and installed user files."
-    doitcomment "" "NOTE: will operate on repo located at: $REPO_ROOT"
+    doitcomment "> Removing key Drupal files and folders." " - On an installed Drupal site this requires elevated permissions."
+    doitcomment "" "NOTE: 1. This process does not pull or otherwise refresh the repo
+                 \n       2. This process does keep any custom modules, the initial config files and any installed user files.
+                 \n       3. This process will operate on repo (branch ${BRANCH}) located at: $REPO_ROOT"
     cd $REPO_ROOT && cd ../
     sudo rm -rf $REPO_ROOT/docroot/core
     sudo rm -f $REPO_ROOT/docroot/sites/default/settings*.php
