@@ -233,6 +233,7 @@
   <target name="setup:drush:local-config"
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Update the drush config with the container url"/>
+    <echo message="# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="${line.separator}options:${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
