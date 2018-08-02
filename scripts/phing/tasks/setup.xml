@@ -211,15 +211,14 @@
           <property name="private.repo.settings" value="${git.private_settings.local_dir}/${settings_file}"/>
           <property name="private.docroot.settings" value="${docroot}/sites/${drupal.multisite.name}/settings/${settings_file}"/>
 
-          <echo message="> Cloning the prive repo at ${git.private_settings.repo}." level="warning"/>
+          <echo message="> Cloning the prive repo at ${git.private_settings.repo} into ${git.private_settings.local_dir}." level="warning"/>
 
           <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
                   includeemptydirs="true" dir="${git.private_settings.local_dir}" failonerror="false" quiet="true"/>
 
           <exec description="Clone a private repo which has confidential settings (passwords etc)."
-                command="git --git-dir=/dev/null clone ${git.private_settings.repo} ${git.private_settings.local_dir} --depth 1 -b master"
-                dir="${repo.root}"
-                returnProperty="repoOK" logoutput="true"/>
+                command="git --git-dir=/dev/null clone ${git.private_settings.repo} ${git.private_settings.local_dir} --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
+                returnProperty="repoOK" logoutput="true" passthru="true"/>
 
           <exec description="Move the private settings file to the settings folder."
                 command="mv -f ${private.repo.settings} ${private.docroot.settings}"
