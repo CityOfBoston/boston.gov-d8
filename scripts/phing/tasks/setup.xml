@@ -212,6 +212,7 @@
       <isset property="git.private_settings.repo"/>
       <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
+        <!-- Define local variables. -->
         <property description="Location of the private settings file in the private repo after cloning."
                   name="private.repo.settings"
                   value="${git.private_settings.local_dir}/${git.private_settings.settings_file}"/>
@@ -221,30 +222,37 @@
 
         <echo message="> Cloning the private repo at ${git.private_settings.repo} into ${git.private_settings.local_dir}." level="warning"/>
 
+        <!-- Clone the private repo. -->
         <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
                 includeemptydirs="true" dir="${git.private_settings.local_dir}" failonerror="false" quiet="true"/>
-
         <mkdir dir="${git.private_settings.local_dir}" />
-
         <exec description="Clone a private repo which has confidential settings (passwords etc)."
               command="git clone ${git.private_settings.repo} ${git.private_settings.local_dir} -q --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
               dir="${git.private_settings.local_dir}"
               returnProperty="repoOK" logoutput="false" passthru="true"/>
-
         <delete description="Remove .git so folder is no longer a repo."
               dir="${git.private_settings.local_dir}/.git" quiet="true" failonerror="false" includeemptydirs="true"/>
 
-        <exec description="Move the private settings file to the settings folder."
-              command="mv -f ${private.repo.settings} ${private.docroot.settings}"
-              passthru="true" logoutput="false" checkreturn="false"/>
+        <!-- Move private settings file, if found, and add include directive so it is loaded on bootstrap. -->
+        <if>
+          <available file="${private.repo.settings}"/>
+          <then>
+            <exec description="Move the private settings file to the settings folder."
+                  command="mv -f ${private.repo.settings} ${private.docroot.settings}"
+                  passthru="true" logoutput="false" checkreturn="false"/>
+            <echo description="Adds a directive to settings file to include contents of settings file in repo."
+                  message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="if (file_exists('${private.docroot.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="   include '${private.docroot.settings}';${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="}${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
+          </then>
+        </if>
 
-        <echo description="Adds a directive to settings file to include contents of settings file in repo."
-              message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
-              append="true" file="${local.settings.file}"/>
-        <echo message="if (file_exists('${private.docroot.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
-        <echo message="   include '${private.docroot.settings}';${line.separator}" append="true" file="${local.settings.file}"/>
-        <echo message="}${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
-        <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
+        <!-- Move drush files to drush folder.-->
+        <exec description="Move any drush alias files from private repo to the drush folder in the main repo root."
+              command="mv -f ${git.private_settings.local_dir}/*drush*.* ${repo.root}/drush/" passthru="true" logoutput="false" checkreturn="false"/>
 
       </then>
     </if>
@@ -257,9 +265,6 @@
     <echo message="${line.separator}options:${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
-
-    <exec description="Move any drush alias files from private repo to the drush folder in the main repo root."
-      command="mv -f ${git.private_settings.local_dir}/*drush*.* ${repo.root}/drush/" passthru="true" logoutput="false" checkreturn="false"/>
 
   </target>
 
