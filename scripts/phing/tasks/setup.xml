@@ -217,7 +217,7 @@
                   includeemptydirs="true" dir="${git.private_settings.local_dir}" failonerror="false" quiet="true"/>
 
           <exec description="Clone a private repo which has confidential settings (passwords etc)."
-                command="git clone ${git.private_settings.repo} ${git.private_settings.local_dir} --depth 1 -b master --git-dir=/dev/null"
+                command="git --git-dir=/dev/null clone ${git.private_settings.repo} ${git.private_settings.local_dir} --depth 1 -b master"
                 dir="${repo.root}"
                 returnProperty="repoOK" logoutput="true"/>
 
