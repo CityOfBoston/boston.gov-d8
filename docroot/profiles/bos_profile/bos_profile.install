@@ -10,8 +10,19 @@
 function bos_profile_install() {
   // Override certain modules which are installed by default.
 
-  // Be sure an environment indicator is set.
+  /*
+   *  Modules defined in  ../config/default/core.extension.yml are enabled during
+   *  the config_import process (triggered by drush si command).
+   *  This module is installed after the confir_import process and therefore can
+   *  override the modules enabled/disabled by core.extension.yml.
+   *  Note: Since the config may be exported in dev or prod and find its way into
+   *        the git repo, it is best to use a toggle here to ensure that we at
+   *        least start with the modules appropriate to the environment.   */
+  /* @see https://docs.acquia.com/acquia-cloud/develop/config-d8 */
 
+  // Be sure an environment indicator is set.
+  // Note: on Acquia servers this will be one of prod / test / dev as per
+  /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable/ */
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
     $envvar = getenv('AH_SITE_ENVIRONMENT');
   }
@@ -26,7 +37,7 @@ function bos_profile_install() {
     '@env' => $envvar,
   ));
 
-  // Disable modules enabled by core by default.
+  // Disable modules which are enabled in core by default.
   $disabled_modules = array(
     'config_translation',
     'content_translation',
@@ -36,53 +47,47 @@ function bos_profile_install() {
   // Don't set defaults here - use the .info file instead.
   $enabled_modules = array();
 
-  if ($envvar === 'prod' || $envvar === 'test') {
-    // Make sure certain modules are disabled in prod.
-    $disabled_modules += [
-      'automated_cron',
-      'devel',
-      'masquerade',
-      'twig_xdebug',
-      'stage_file_proxy',
-      'migrate',
-      'migrate_tools',
-      'migrate_plus',
-      'migrate_drupal',
-      'migrate_drupal_ui',
-      'migrate_upgrade',
-      'dblog',
-      'syslog',
-    ];
-  }
+  // Specify modules used in dev environments
+  $dev_only_modules = array(
+    'automated_cron',
+    'devel',
+    'masquerade',
+    'twig_xdebug',
+    'stage_file_proxy',
+    'migrate',
+    'migrate_tools',
+    'migrate_plus',
+    'migrate_drupal',
+    'migrate_drupal_ui',
+    'migrate_upgrade',
+    'dblog',
+    'syslog',
+  );
 
+  // Specify modules used in prod-only environments
+  $prod_only_modules = array(
+    'autologout',
+    'acquia_connector',
+    'acquia_purge',
+  );
+
+  if ($envvar == 'prod' || $envvar == 'test') {
+    // Enable the production modules in prod / test
+    $enabled_modules += $prod_only_modules;
+    // Make sure dev-only modules are disabled in prod / test.
+    $disabled_modules += $dev_only_modules;
+  }
   else {
-    // enable development modules in develop environments.
-    $enabled_modules += [
-      'automated_cron',
-      'devel',
-      'masquerade',
-      'twig_xdebug',
-      'stage_file_proxy',
-      'migrate',
-      'migrate_tools',
-      'migrate_plus',
-      'migrate_drupal',
-      'migrate_drupal_ui',
-      'migrate_upgrade',
-      'dblog',
-    ];
-    // disable annoying modules in develop environments.
-    $disabled_modules += [
-      'autologout',
-      'acquia_connector',
-      'acquia_purge',
-    ];
+    // Enable development modules in develop environments.
+    $enabled_modules += $dev_only_modules;
+    // Disable annoying modules in develop environments.
+    $disabled_modules += $prod_only_modules;
   }
 
-  // do the disabling.
+  // Do the disabling.
   \Drupal::service('module_installer')->uninstall($disabled_modules);
 
-  // do the enabling.
+  // Do the enabling.
   \Drupal::service('module_installer')->install($enabled_modules);
 
 }

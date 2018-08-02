@@ -12,9 +12,6 @@ behat:
   # If true, PhantomJS GhostDriver will be launched with Behat.
 #  launch-phantom: true
 
-#multisite:
-#  name: default
-
 project:
   profile:
     name: 'bos_profile'
@@ -25,7 +22,8 @@ project:
     - bos_theme
   config:
     # define the folder, relative to the project root, for config files to be synchronised, no trailing slash.
-    # aquia require ./config/default: https://docs.acquia.com/acquia-cloud/develop/config-d8/
+    # aquia require ./config/default:
+    #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
     sync: "../config/default"
 
   # Set this to 'initialize' to start a fresh install.

@@ -10,7 +10,9 @@
   */
   $settings['hash_salt'] = 'ivciasdbopasvbdcpasdiv';
 
-  // set an enviroment variable to denote the environment status.
+  // Be sure an environment indicator is set.
+  // Note: on Acquia servers this will be one of prod / test / dev as per
+  /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable/ */
   global $envvar;
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
     $envvar = getenv('AH_SITE_ENVIRONMENT');
