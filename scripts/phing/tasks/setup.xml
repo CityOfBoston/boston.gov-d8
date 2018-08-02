@@ -223,11 +223,16 @@
 
         <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
                 includeemptydirs="true" dir="${git.private_settings.local_dir}" failonerror="false" quiet="true"/>
+
         <mkdir dir="${git.private_settings.local_dir}" />
+
         <exec description="Clone a private repo which has confidential settings (passwords etc)."
-              command="git --git-dir=/dev/null clone ${git.private_settings.repo} ${git.private_settings.local_dir} --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
+              command="git clone ${git.private_settings.repo} ${git.private_settings.local_dir} -q --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
               dir="${git.private_settings.local_dir}"
               returnProperty="repoOK" logoutput="false" passthru="true"/>
+
+        <delete description="Remove .git so folder is no longer a repo."
+              dir="${git.private_settings.local_dir}/.git" quiet="true" failonerror="false" includeemptydirs="true"/>
 
         <exec description="Move the private settings file to the settings folder."
               command="mv -f ${private.repo.settings} ${private.docroot.settings}"
