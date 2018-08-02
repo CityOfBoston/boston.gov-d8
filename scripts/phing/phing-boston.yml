@@ -64,10 +64,13 @@ php:
 # Configuration settings for new git repository.
 git:
   # Set this node if there is a private repo that needs to be included as part of the build
-  # - The repo should contain a file private.settings.php
+  # - The repo should contain a settings file (e.g. private.settings.php)
   # - The development machine *must* have a valid ssh key for this remote repo.
   # - It is expected that the repo is hosted on GitHub.
-  private_settings: git@github.com:CityOfBoston/boston.gov-d8-private.git
+  private_settings:
+    repo: git@github.com:CityOfBoston/boston.gov-d8-private.git
+    local_dir: ${repo.root}/setup/private
+    settings_file: private.settings.php
 
   # Defining git remotes allows builds deployed via CI.
   remotes:
