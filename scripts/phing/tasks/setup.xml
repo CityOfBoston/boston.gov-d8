@@ -16,7 +16,7 @@
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a drupal environment in docker for local development."
-          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config, update:config:updatedb">
+          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config, setup:drupal:clone_private_repo, update:config:updatedb">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec description="Login the admin user." output='${project.basedir}/setup/.uli'  logoutput="true"
@@ -203,42 +203,68 @@
       <echo message="}${line.separator}${line.separator}" append="true" file="${settings.file}"/>
       <echo message="/* End of additions. */${line.separator}" append="true" file="${settings.file}"/>
 
-      <if>
-        <isset property="git.private_settings"/>
-        <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
+  </target>
 
-          <echo message="> Cloning the prive repo at ${git.private_settings}." level="warning"/>
+  <target name="setup:drupal:clone_private_repo"
+          description="Clones the private repo, and moves files around (i.e. installs) as needed.">
 
-          <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
-                  includeemptydirs="true" dir="${private.repo}" failonerror="false" quiet="true"/>
+    <if>
+      <isset property="git.private_settings.repo"/>
+      <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
-          <exec description="Clone a private repo which has confidential settings (passwords etc)."
-                command="git clone ${git.private_settings} ${private.repo} --depth 1 -b master" returnProperty="repoOK" logoutput="true"/>
-          <exec description="redundant, but pull the repo to be sure it is up-to-date."
-                dir="${private.repo}"
-                command="git pull"
-                logoutput="false"/>
+        <!-- Define local variables. -->
+        <property description="Location of the private settings file in the private repo after cloning."
+                  name="private.repo.settings"
+                  value="${git.private_settings.local_dir}/${git.private_settings.settings_file}"/>
+        <property description="Location of settings files for this Drupal intallation."
+                  name="private.docroot.settings"
+                  value="${docroot}/sites/${drupal.multisite.name}/settings/${git.private_settings.settings_file}"/>
 
-          <echo description="Adds a directive to settings file to include contents of settings file in repo."
-                message="${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="if (file_exists('${private.repo.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="   include '${private.repo.settings}';${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="}${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
+        <echo message="> Cloning the private repo at ${git.private_settings.repo} into ${git.private_settings.local_dir}." level="warning"/>
 
-        </then>
-      </if>
+        <!-- Clone the private repo. -->
+        <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
+                includeemptydirs="true" dir="${git.private_settings.local_dir}" failonerror="false" quiet="true"/>
+        <mkdir dir="${git.private_settings.local_dir}" />
+        <exec description="Clone a private repo which has confidential settings (passwords etc)."
+              command="git clone ${git.private_settings.repo} ${git.private_settings.local_dir} -q --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${git.private_settings.local_dir}"
+              returnProperty="repoOK" logoutput="false" passthru="true"/>
+        <delete description="Remove .git so folder is no longer a repo."
+              dir="${git.private_settings.local_dir}/.git" quiet="true" failonerror="false" includeemptydirs="true"/>
+
+        <!-- Move private settings file, if found, and add include directive so it is loaded on bootstrap. -->
+        <if>
+          <available file="${private.repo.settings}"/>
+          <then>
+            <exec description="Move the private settings file to the settings folder."
+                  command="mv -f ${private.repo.settings} ${private.docroot.settings}"
+                  passthru="true" logoutput="false" checkreturn="false"/>
+            <echo description="Adds a directive to settings file to include contents of settings file in repo."
+                  message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="if (file_exists('${private.docroot.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="   include '${private.docroot.settings}';${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="}${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
+          </then>
+        </if>
+
+        <!-- Move drush files to drush folder.-->
+        <exec description="Move any drush alias files from private repo to the drush folder in the main repo root."
+              command="mv -f ${git.private_settings.local_dir}/*drush*.* ${repo.root}/drush/" passthru="true" logoutput="false" checkreturn="false"/>
+
+      </then>
+    </if>
   </target>
 
   <target name="setup:drush:local-config"
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Update the drush config with the container url"/>
+    <echo message="# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="${line.separator}options:${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
     <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
-
-    <exec description="Move any drush alias files to the drush folder in the repo root."
-      command="mv -f ${private.repo}/*drush*.* ${repo.root}/drush/" passthru="true" logoutput="false" checkreturn="false"/>
 
   </target>
 

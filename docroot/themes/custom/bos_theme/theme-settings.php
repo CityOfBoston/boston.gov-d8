@@ -98,6 +98,25 @@ function bos_theme_form_system_theme_settings_alter(&$form,  \Drupal\Core\Form\F
       '#description'   => t('IE 6-8 require a JavaScript polyfill solution to add basic support of HTML5. Mobile devices require a few meta tags for responsive designs.'),
     ),
   );
+
+  $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
+  $opts = array();
+  foreach($libs as $libname => $lib) {
+    $opts[$libname] = $lib['data']['name'];
+  }
+
+  $form['style'] = array(
+    '#type'          => 'fieldset',
+    '#title'         => t('Defines location of the core style assets.'),
+
+    'asset_source'      => array(
+      '#type'          => 'select',
+      '#title'         => t('Core css source'),
+      '#default_value' => theme_get_setting('asset_source'),
+      '#options'       => $opts,
+    ),
+  );
+
   if ($form['var']['#value'] == 'theme_boston_settings') {
     $form['support']['boston_layout'] = array(
       '#type'          => 'radios',
