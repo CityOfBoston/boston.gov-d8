@@ -14,10 +14,6 @@
     <property name="custom.phing.files.dir" value="${custom.phing.dir}/files" />
     <property name="custom.phing.tasks.dir" value="${custom.phing.dir}/tasks" />
 
-    <!-- Define private repo-->
-    <property name="private.repo" value="${docroot}/sites/default/settings/boston"/>
-    <property name="private.repo.settings" value="${docroot}/sites/default/settings/boston/private.settings.php"/>
-
     <!-- Include custom task classes. -->
     <includepath classpath="${custom.phing.dir}" />
     <taskdef name="behat" classname="phingcludes.BehatTask"/>
