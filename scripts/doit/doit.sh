@@ -143,6 +143,7 @@ function doitinstall() {
     doitcomment "> Make a new clone of the repo branch ${REPO}." ""
     if [ -d  $REPO_ROOT ]; then
         # Folder is not empty, so force a rebuild of the repo
+	cd $REPO_ROOT
         git init
         git remote add origin $REPO_ROOT
         git fetch
