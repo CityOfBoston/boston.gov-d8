@@ -125,10 +125,19 @@ function doitinstall() {
     # Completely remove the existing repo contents.
     REPO="develop"
     if [ ${1} ]; then REPO=${1}; fi
-    doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo) - requires elevated permissions."
-    doitcomment "" "NOTE: repo will be removed from, and (branch ${REPO}) re-cloned to $REPO_ROOT"
     cd $REPO_ROOT && cd ../
-    sudo rm -rf $REPO_ROOT
+
+    # check if sudo command is required/available ...
+    sudo -v > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo)."
+        doitcomment "" "NOTE: repo (branch ${REPO}) will be removed and re-cloned to $REPO_ROOT"
+	    rm -rf $REPO_ROOT
+    else
+        doitcomment "> Removing the existing drupal files and folders." "(i.e. the repo) - may require elevated permissions."
+        doitcomment "" "NOTE: repo (branch ${REPO}) will be removed and re-cloned to $REPO_ROOT"
+	    sudo rm -rf $REPO_ROOT
+    fi
 
     # Clone the repo locally.
     doitcomment "> Make a new clone of the repo branch ${REPO}." ""
