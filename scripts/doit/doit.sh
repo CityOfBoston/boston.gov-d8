@@ -141,7 +141,17 @@ function doitinstall() {
 
     # Clone the repo locally.
     doitcomment "> Make a new clone of the repo branch ${REPO}." ""
-    git clone -b $REPO git@github.com:CityOfBoston/boston.gov-d8.git boston.gov-d8
+    if [ -d  $REPO_ROOT ]; then
+        # Folder is not empty, so force a rebuild of the repo
+        git init
+        git remote add origin $REPO_ROOT
+        git fetch
+        git reset origin/master
+        git checkout -t origin/$REPO
+    else
+        # Managed to delete the folder, so just re-clone back into the folder
+        git clone -b $REPO git@github.com:CityOfBoston/boston.gov-d8.git $REPO_ROOT
+    fi
 
     # Rebuild the containers and run the install scripts
     doitcomment "> Rebuild the containers and run install scripts." ""
