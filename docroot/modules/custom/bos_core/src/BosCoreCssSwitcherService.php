@@ -24,7 +24,14 @@ class BosCoreCssSwitcherService {
     }
     if (!empty($opts[$ord])) {
       \Drupal::logger('bos-core')->info("Switching CSS source to: '@this'", ["@this" => $opts[$ord]]);
-      \Drupal::configFactory()->getEditable("bos_theme.settings")->set("asset_source", $opts[$ord])->save();
+      try {
+        \Drupal::configFactory()
+          ->getEditable("bos_theme.settings")
+          ->set("asset_source", $opts[$ord])
+          ->save();
+        return TRUE;
+      }
+      catch (\Exception $e) {return FALSE;}
     }
     else {
       return FALSE;
