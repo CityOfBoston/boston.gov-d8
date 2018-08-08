@@ -1,0 +1,79 @@
+# Edit or remove this file as needed.
+# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.site.yml
+
+ci:
+  root: /var/www/html/boston.ci/docroot
+  ac-site: boston
+  ac-env: ci
+  ac-realm: prod
+  uri: bostonci.prod.acquia-sites.com
+  remote-host: staging-15139.prod.hosting.acquia.com
+  remote-user: boston.ci
+
+ci.livedev:
+  parent: "@boston.ci"
+  root: "/mnt/gfs/boston.ci/livedev/docroot"
+
+dev:
+  root: /var/www/html/boston.dev/docroot
+  ac-site: boston
+  ac-env: dev
+  ac-realm: prod
+  uri: bostondev.prod.acquia-sites.com
+  remote-host: staging-15139.prod.hosting.acquia.com
+  remote-user: boston.dev
+
+dev.livedev:
+  parent: "@boston.dev"
+  root: "/mnt/gfs/boston.dev/livedev/docroot"
+
+prod:
+  root: /var/www/html/boston.prod/docroot
+  ac-site: boston
+  ac-env: prod
+  ac-realm: prod
+  uri: boston.prod.acquia-sites.com
+  remote-host: web-15135.prod.hosting.acquia.com
+  remote-user: boston.test
+
+prod.livedev:
+  parent: "@boston.prod"
+  root: "/mnt/gfs/boston.prod/livedev/docroot"
+
+ra:
+  root: /var/www/html/boston.ra/docroot
+  ac-site: boston
+  ac-env: ra
+  ac-realm: prod
+  uri: bostonra.prod.acquia-sites.com
+  remote-host: staging-14794.prod.hosting.acquia.com
+  remote-user: boston.ra
+
+ra.livedev:
+  parent: "@boston.ra"
+  root: "/mnt/gfs/boston.ra/livedev/docroot"
+
+test:
+  root: /var/www/html/boston.test/docroot
+  ac-site: boston
+  ac-env: test
+  ac-realm: prod
+  uri: bostonstg.prod.acquia-sites.com
+  remote-host: staging-15139.prod.hosting.acquia.com
+  remote-user: boston.test
+
+test.livedev:
+  parent: "@boston.test"
+  root: "/mnt/gfs/boston.test/livedev/docroot"
+
+uat:
+  root: /var/www/html/boston.uat/docroot
+  ac-site: boston
+  ac-env: uat
+  ac-realm: prod
+  uri: bostonstg.prod.acquia-sites.com
+  remote-host: staging-15139.prod.hosting.acquia.com
+  remote-user: boston.uat
+uat.livedev:
+    parent: "@boston.uat"
+    root: "/mnt/gfs/boston.uat/livedev/docroot"
