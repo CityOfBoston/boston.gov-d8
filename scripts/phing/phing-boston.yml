@@ -70,7 +70,8 @@ git:
   private_settings:
     repo: git@github.com:CityOfBoston/boston.gov-d8-private.git
     local_dir: ${repo.root}/setup/private
-    settings_file: private.settings.php
+    # provide the path to the settings file, relative to the private repo root.
+    settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
 
   # Defining git remotes allows builds deployed via CI.
   remotes:
