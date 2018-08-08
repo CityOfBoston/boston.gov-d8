@@ -212,15 +212,12 @@
       <isset property="git.private_settings.repo"/>
       <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
-        <!-- Define local variables. -->
-        <property description="Location of the private settings file in the private repo after cloning."
-                  name="private.repo.settings"
-                  value="${git.private_settings.local_dir}/${git.private_settings.settings_file}"/>
-        <property description="Location of settings files for this Drupal intallation."
-                  name="private.docroot.settings"
-                  value="${docroot}/sites/${drupal.multisite.name}/settings/${git.private_settings.settings_file}"/>
+      <!-- Define local variables. -->
+      <property description="Location of settings files for this Drupal intallation."
+                name="private.docroot.settings"
+                value="${docroot}/${git.private_settings.settings_file}"/>
 
-        <echo message="> Cloning the private repo at ${git.private_settings.repo} into ${git.private_settings.local_dir}." level="warning"/>
+      <echo message="> Merging the private repo from ${git.private_settings.repo}." level="warning"/>
 
         <!-- Clone the private repo. -->
         <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
@@ -233,13 +230,17 @@
         <delete description="Remove .git so folder is no longer a repo."
               dir="${git.private_settings.local_dir}/.git" quiet="true" failonerror="false" includeemptydirs="true"/>
 
-        <!-- Move private settings file, if found, and add include directive so it is loaded on bootstrap. -->
+        <!-- Move files from private repo into main repo, and add include directive so it is loaded on bootstrap. -->
         <if>
-          <available file="${private.repo.settings}"/>
+          <available file="${git.private_settings.local_dir}/README.md"/>
           <then>
-            <exec description="Move the private settings file to the settings folder."
-                  command="mv -f ${private.repo.settings} ${private.docroot.settings}"
+            <exec description="Move the private repo files to the docroot folder."
+                  command="rsync -a ${git.private_settings.local_dir}/ ${repo.root}/"
                   passthru="true" logoutput="false" checkreturn="false"/>
+            <exec description="Delete the private repo files."
+                  command="rm -rf ${git.private_settings.local_dir}"
+                  passthru="true" logoutput="false" checkreturn="false"/>
+
             <echo description="Adds a directive to settings file to include contents of settings file in repo."
                   message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
                   append="true" file="${local.settings.file}"/>
@@ -249,10 +250,6 @@
             <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
           </then>
         </if>
-
-        <!-- Move drush files to drush folder.-->
-        <exec description="Move any drush alias files from private repo to the drush folder in the main repo root."
-              command="mv -f ${git.private_settings.local_dir}/*drush*.* ${repo.root}/drush/" passthru="true" logoutput="false" checkreturn="false"/>
 
       </then>
     </if>
