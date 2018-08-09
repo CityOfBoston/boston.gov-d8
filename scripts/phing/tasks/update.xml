@@ -23,7 +23,10 @@
     <target name="update:drupal:composer:drupal_scaffold"
             description="Update the drupal scaffold (core config and command) files.">
         <echo message="Updating the drupal scaffold files." />
-        <exec command="composer"  dir="${repo.root}"/>
+        <exec description="Updates the scaffold files using composer command."
+            command="composer drupal:scaffold"
+            dir="${repo.root}"
+            logoutput="true"/>
     </target>
 
 <!--Drupal Database commands-->
@@ -37,7 +40,8 @@
             description="Update the database with any hook_updates etc.">
         <echo message="Updating Drupal database (checks for module updates and database changes)." />
         <exec description="Update the database with any hook_updates etc."
-              dir="${docroot}" command="${drush.cmd} updb --entity-updates -y" logoutput="true"/>
+              dir="${docroot}" command="${drush.cmd} updb -vvv --entity-updates -y" logoutput="true"
+              output="${repo.root}/setup/drush_site_install.log"/>
         <exec description="Rebuild the user permissions"  logoutput="true"
               dir="${docroot}" command="${drush.cmd} eval 'node_access_rebuild()'"/>
     </target>

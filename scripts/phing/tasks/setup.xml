@@ -59,10 +59,14 @@
         <else>
             <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
             <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
-            <exec command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                description="when ready, use update:drupal:composer:install"
-                logoutput="true"/>
+            <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
+                  command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
+                  dir="${project.basedir}/"
+                  logoutput="true"/>
+            <exec description="Installs the drupal scaffold files, and logs to composer.log"
+                  command="composer install drupal:scaffold >> ${project.basedir}/setup/composer.log"
+                  dir="${project.basedir}/"
+                  logoutput="true"/>
         </else>
     </if>
   </target>
