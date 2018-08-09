@@ -23,7 +23,7 @@
     <target name="update:drupal:composer:drupal_scaffold"
             description="Update the drupal scaffold (core config and command) files.">
         <echo message="Updating the drupal scaffold files." />
-        <exec command="composer  dir="${repo.root}"" dir="${repo.root}"/>
+        <exec command="composer"  dir="${repo.root}"/>
     </target>
 
 <!--Drupal Database commands-->
