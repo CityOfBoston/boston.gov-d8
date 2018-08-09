@@ -64,7 +64,7 @@
                   dir="${project.basedir}/"
                   logoutput="true"/>
             <exec description="Installs the drupal scaffold files, and logs to composer.log"
-                  command="composer install drupal:scaffold >> ${project.basedir}/setup/composer.log"
+                  command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
                   dir="${project.basedir}/"
                   logoutput="true"/>
         </else>
