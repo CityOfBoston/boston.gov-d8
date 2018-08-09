@@ -115,7 +115,7 @@
           --account-pass=${drupal.account.password}
           --account-mail=${drupal.account.mail}
           --sites-subdir=${drupal.multisite.name}
-          --verbose -y"/>
+          -vvv -y"/>
         <echo file="${project.basedir}/setup/drush_site_install.log" message="exec: ${si.command}"/>
         <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
