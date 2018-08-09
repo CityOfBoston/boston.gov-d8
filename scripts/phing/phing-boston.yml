@@ -63,14 +63,20 @@ php:
 
 # Configuration settings for new git repository.
 git:
-  # Set this node if there is a private repo that needs to be included as part of the build
-  # - The repo should contain a settings file (e.g. private.settings.php)
-  # - The development machine *must* have a valid ssh key for this remote repo.
+  # [Optional] Set this node (private_repo) if there is a private repo that needs to
+  # be included as part of the build:
   # - It is expected that the repo is hosted on GitHub.
-  private_settings:
+  # - The development machine *must* have a valid ssh key for this remote repo.
+  # - The repo can contain a settings file (e.g. private.settings.php)
+  # - The folder structure of the private repo must exactly match the folder structure
+  #   of the main repo so that files can be copied across to the correct folders.
+  private_repo:
     repo: git@github.com:CityOfBoston/boston.gov-d8-private.git
+    # Where the repo will be cloned to.
     local_dir: ${repo.root}/setup/private
-    # provide the path to the settings file, relative to the private repo root.
+    # [optional] Provide the path to a settings script (relative to the private repo root),
+    # which will be copied to the main repo and then set up to be called from (i.e. extend)
+    # the sites main settings.php script.
     settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
 
   # Defining git remotes allows builds deployed via CI.

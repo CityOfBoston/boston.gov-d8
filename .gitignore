@@ -57,9 +57,5 @@
 /setup/*
 /setup/private/*
 
-# Ignore drush alias and config files
-/drush/*/*.site.yml
-/drush/*drush*
-
-# Ignore scripts from private repo
-/scripts/doit/*
+# ignore gitignore files, principally from private repo files copied across.
+/**/.gitignore

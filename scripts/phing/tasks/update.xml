@@ -61,13 +61,18 @@
             description="Create a link which logs the user in on the uid=1 account.">
         <echo message="Use this link to login to the ${lando.name} website at ${lando.url.url}." level="warning" />
         <exec description="Login the admin user."
-              dir="${docroot}" command="${drush.cmd} uli" logoutput="true"/>
+              dir="${docroot}"
+              command="${drush.cmd} uli"
+              logoutput="false"
+              outputProperty="uli"/>
+        <echo message="${uli}" level="warning" />
     </target>
     <target name="update:user:setadminpwd"
             description="Set the password on the uid=1 account.">
-        <echo message="The ${drupal.account.name} account password is set to: ${drupal.account.password}." level="warning" />
+        <echo message="The ${drupal.account.name} account password is reset to: ${drupal.account.password}." level="warning" />
         <exec description="Change admin user password."
-              dir="${docroot}" command="${drush.cmd} upwd admin --password=${drupal.account.password}" logoutput="true"/>
+              dir="${docroot}"
+              command='${drush.cmd} upwd admin --password="${drupal.account.password}"'/>
     </target>
 
 </project>
