@@ -4,10 +4,10 @@
 
   <echo message="Building ${custom.phing.tasks.dir}/setup.xml" level="verbose"/>
 
-<!-- Define the default task for the setup project. -->
+  <!-- Define the default task for the setup project. -->
   <target name="setup"
           description="Install dependencies, builds docroot, installs Drupal."
-          depends="setup:drupal, setup:drupal:newdb">
+          depends="setup:drupal:download-modules, setup:drupal:site-install">
     <echo message="For a full list of available Phing targets, run:"/>
     <echo message="from host: lando phing -l"/>
     <echo message="from container: phing -l"/>
@@ -16,7 +16,7 @@
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a drupal environment in docker for local development."
-          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config, setup:drupal:clone_private_repo, update:config:updatedb">
+          depends="setup:drupal:download-modules, setup:drupal:site-install, setup:drush:local-config, setup:drupal:clone_private_repo, update:database:update">
     <phingcall target="build:info" description="display the welcome screen."/>
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
     <exec description="Login the admin user." output='${project.basedir}/setup/.uli'  logoutput="true"
@@ -39,7 +39,7 @@
   </target>
 
 <!-- Define the Drupal setup task -->
-  <target name="setup:drupal"
+  <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
       <if>
           <equals arg1="${acquia.site_environment}" arg2="dev"/>
@@ -53,26 +53,24 @@
           </else>
       </if>
     <if>
-      <not>
         <available file="${docroot}/core/lib/Drupal.php" />
-      </not>
-      <then>
-        <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
-        <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
-        <exec command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
-              dir="${project.basedir}/"
-              description="when ready, use update:drupal:composer:install"
-              logoutput="true"/>
-      </then>
-      <else>
-        <fail message="Drupal is already installed."/>
-      </else>
+        <then>
+            <fail message="Drupal is already installed."/>
+        </then>
+        <else>
+            <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
+            <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
+            <exec command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
+                dir="${project.basedir}/"
+                description="when ready, use update:drupal:composer:install"
+                logoutput="true"/>
+        </else>
     </if>
   </target>
 
-<!-- Define the task to create a new Drupal 8 Database. -->
-  <target name="setup:drupal:newdb"
-          description="Uses Composer to install drupal in the container attaching to database in Lando-controlled container.">
+<!-- Define the task to build a new Drupal 8 Database. -->
+  <target name="setup:drupal:site-install"
+          description="Uses Drush to install Drupal in the container attaching to database in Lando-controlled container.">
 
     <if>
       <available file="${docroot}/core/lib/Drupal.php"/>
@@ -80,15 +78,13 @@
 
         <echo message="Preparing to setup the Drupal database."/>
 
-        <phingcall target="setup:drupal:local_settings_php:delete"
-                   description="Remove any pre-existing local.settings.php file."/>
-        <phingcall target="setup:drupal:local_settings_php:write"
+        <phingcall target="setup:drupal:local_settings_php"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
 
         <echo level="warning" message="Build is now using settings file ${local.settings.file}"/>
         <echo level="warning" message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
 
-        <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:newdb\033[0m${line.separator}'" logoutput="true" passthru="true"/>
+        <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true" passthru="true"/>
         <echo message="Install the Drupal 8 database."/>
         <echo message=" -> see ${project.basedir}/setup/drush_site_install.log for output." level="warning"/>
 
@@ -135,17 +131,15 @@
     </if>
   </target>
 
-<!-- Define a task to delete the local local.settings.php file. -->
-  <target name="setup:drupal:local_settings_php:delete"
-          description="Deletes any existing local.settings.php file.">
+<!-- Define a task to copy a new local.settings.php file and append initial settings. -->
+  <target name="setup:drupal:local_settings_php"
+          description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
+
+      <!-- Firstly delete the local settings file -->
       <echo message="Delete the ${local.settings.file} file (if exists)."/>
       <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
-  </target>
 
-<!-- Define a task to copy a new local.settings.php file and append initial settings. -->
-  <target name="setup:drupal:local_settings_php:write"
-          description="Sets the database and any other default values into the local.settings.php file.">
-
+      <!-- Now recreate the settings file -->
       <echo message="Recreate the ${local.settings.file} file with build settings."/>
       <if>
         <not>
@@ -159,7 +153,7 @@
           <echo description="Adds local settings to settings.local.php file."
                 message="${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="/*${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php&gt;${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
@@ -181,7 +175,7 @@
       <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
             message="${line.separator}" append="true" file="${settings.file}"/>
       <echo message="/*${line.separator}" append="true" file="${settings.file}"/>
-      <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php&gt;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
