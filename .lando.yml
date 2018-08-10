@@ -71,7 +71,7 @@ services:
       - cd $LANDO_MOUNT && phing -S -f ${LANDO_MOUNT}/build.xml build:info >> ${LANDO_MOUNT}/setup/uli.log
       - cd $LANDO_MOUNT && phing -S -f ${LANDO_MOUNT}/build.xml update:user:setadminpwd >> ${LANDO_MOUNT}/setup/uli.log
       - cd $LANDO_MOUNT && phing -S -f ${LANDO_MOUNT}/build.xml update:user:loginadmin >> ${LANDO_MOUNT}/setup/uli.log
-      - chmod 777 ${LANDO_MOUNT}/setup/*.log
+#      - chmod 777 ${LANDO_MOUNT}/setup/*.log
       # Now setup the node container.
       - echo "\033[1;32m[lando]\033[1;33m Verify linux node library/extensions in node container...\033[0m"
 
