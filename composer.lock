@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0634b635f77eab6f6ff7699fefec057",
+    "content-hash": "22c88ec4fb27cda29128f88385af8c82",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -4791,6 +4791,72 @@
             "homepage": "https://www.drupal.org/project/file_entity",
             "support": {
                 "source": "http://cgit.drupalcode.org/file_entity"
+            }
+        },
+        {
+            "name": "drupal/genpass",
+            "version": "1.0.0-beta2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/genpass",
+                "reference": "8.x-1.0-beta2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/genpass-8.x-1.0-beta2.zip",
+                "reference": "8.x-1.0-beta2",
+                "shasum": "ec600e65941f5cbdc511c98fc927d5fb84105728"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-beta2",
+                    "datestamp": "1531164521",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Beta releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Kris77",
+                    "homepage": "https://www.drupal.org/u/kris77",
+                    "role": "contributor"
+                },
+                {
+                    "name": "greggles",
+                    "homepage": "https://www.drupal.org/user/36762"
+                },
+                {
+                    "name": "japanitrat",
+                    "homepage": "https://www.drupal.org/user/268715"
+                },
+                {
+                    "name": "joelstein",
+                    "homepage": "https://www.drupal.org/user/36598"
+                },
+                {
+                    "name": "starbow",
+                    "homepage": "https://www.drupal.org/user/33290"
+                }
+            ],
+            "description": "Great utility module which makes the password field optional (or hidden) on the add new user page (admin & registration). If the password field is not set during registration, the system will generate a password. You can optionally display this password at the time it's created.",
+            "homepage": "http://drupal.org/project/genpass",
+            "support": {
+                "source": "https://github.com/luksak/genpass",
+                "issues": "http://drupal.org/project/issues/genpass",
+                "irc": "irc://irc.freenode.org/drupal-contribute"
             }
         },
         {
