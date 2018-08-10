@@ -226,14 +226,14 @@
                 name="private.docroot.settings"
                 value="${docroot}/${git.private_repo.settings_file}"/>
 
-      <echo message="> Merging the private repo from ${git.private_repo.repo}." level="warning"/>
+      <echo message="> Merging the private repo from ${git.private_repo.repo} (${git.private_repo.branch})." level="warning"/>
 
         <!-- Clone the private repo. -->
         <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
                 includeemptydirs="true" dir="${git.private_repo.local_dir}" failonerror="false" quiet="true"/>
         <mkdir dir="${git.private_repo.local_dir}" />
         <exec description="Clone a private repo which has confidential settings (passwords etc)."
-              command="git clone ${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
+              command="git clone -b ${git.private_repo.branch} ${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
               dir="${git.private_repo.local_dir}"
               returnProperty="repoOK" logoutput="false" passthru="true"/>
 
