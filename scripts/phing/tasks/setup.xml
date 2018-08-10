@@ -22,7 +22,7 @@
                     setup:drupal:clone_private_repo,
                     update:database:update">
     <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
-    <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}" file="${project.basedir}/setup/.uli" append="true" level="verbose"/>
+    <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}" file="${project.basedir}/setup/uli.log" append="true" level="verbose"/>
   </target>
 
   <!-- Define the build task used by travis. -->
@@ -59,10 +59,14 @@
         <else>
             <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
             <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
+            <echo message="${line.separator} > composer install ${flag.dev}"
+                  file="${project.basedir}/setup/composer.log" append="true"/>
             <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-                  command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
+                  command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
                   dir="${project.basedir}/"
                   logoutput="true"/>
+            <echo message="${line.separator} > composer drupal:scaffold"
+                  file="${project.basedir}/setup/composer.log" append="true"/>
             <exec description="Installs the drupal scaffold files, and logs to composer.log"
                   command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
                   dir="${project.basedir}/"
