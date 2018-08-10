@@ -137,6 +137,6 @@ tooling:
 
 events:
   post-start:
-    - echo "\033[1;32m[lando]\033[0m Docker containers are now started."
+    - echo -e "\033[1;32m[lando]\033[0m Docker containers are now started."
     - cd $LANDO_MOUNT && $LANDO_MOUNT/scripts/doit/branding.sh
     - if [ ! -d $LANDO_MOUNT/setup ]; then mkdir $LANDO_MOUNT/setup; fi
