@@ -36,6 +36,8 @@
   <target name="setup:docker:drupal-terraform"
           description="Creates a drupal environment in docker (command run by terraform)."
           depends="build:info">
+    <exec description="Enable the limit-apache-children module for terraform."
+        command="a2enconf limit-apache-children" dir="${repo.root}" logoutput="true"/>
   </target>
 
 <!-- Define the Drupal setup task -->
