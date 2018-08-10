@@ -42,8 +42,8 @@ services:
   appserver:
 
     run_as_root:
-      - echo "\033[1;32m[lando]\033[1;33m Verify linux packages in appserver container...\033[0m"
-      - echo "\033[1;32m[lando]\033[1;34m  -> Container build actions will be logged to files in ${LANDO_MOUNT}/setup\033[0m"
+      - echo "\033[1;32m[lando]\033[1;33m Building; Installing Linux packages in appserver container...\033[0m"
+      - echo "\033[1;32m[lando]\033[1;33m  -> Container build actions will be logged to files in ${LANDO_MOUNT}/setup\033[0m"
       # Updates apt, creates and pipes output to setup/lando.log
       - apt-get update -y  > ${LANDO_MOUNT}/setup/lando.log
       # Installs linux apps and extensions into the appserver container.
@@ -57,14 +57,15 @@ services:
       - printf "\nxdebug.remote_host=${LANDO_HOST_IP}\n" >>/usr/local/etc/php/conf.d/boston.xdebug.ini
 
     run:
-      - echo "\033[1;32m[lando]\033[1;33m Verify Drupal and dependencies are installed in appserver & database containers ...\033[0m"
+      - echo "\033[1;32m[lando]\033[1;33m Building; Installing Drupal and dependencies in appserver & database containers ...\033[0m"
       # Install Phing so we can use it to run balance of build scripts.
       # Note: we want to build this from the home folder so it does not install composer.json/lock just yet.
-      - echo "\033[1;32m[lando]\033[0m  -> Installing phing ..."
+      - echo "\033[1;32m[lando]\033[1;33m  -> Installing phing ...\033[0m"
       - echo "composer require phing/phing:2.* --no-suggest --no-scripts -q" > ${LANDO_MOUNT}/setup/composer.log
       - cd ~ && composer require phing/phing:2.* --no-suggest --no-scripts -q >> ${LANDO_MOUNT}/setup/composer.log
       # Next command hands off to Phing to complete the initial setup.
       - cd $LANDO_MOUNT && ~/vendor/phing/phing/bin/phing -f ${LANDO_MOUNT}/build.xml setup:docker:drupal-local
+      - echo "\033[1;32m[lando]\033[1;33m  -> Executing phing scripts (\033[0;32mphing tasks annotated green\033[1;33m)...\033[0m"
       # Next command creates a link to enable a cli alias for phing. (Assumes Phing is in the repo's composer.json/lock file)
       - if [ ! -e  /usr/local/bin/phing ]; then ln -s ${LANDO_MOUNT}/vendor/phing/phing/bin/phing /usr/local/bin/ >> ${LANDO_MOUNT}/setup/lando.log; fi
       # Phing commands to complete the initial setup.  Output redirect so it can be printed at the end.
@@ -134,6 +135,6 @@ tooling:
 
 events:
   post-start:
-    - echo "\033[1;32m[lando]\033[0m Containers started."
+    - echo "\033[1;32m[lando]\033[0m Docker containers are now started."
     - cd $LANDO_MOUNT && $LANDO_MOUNT/scripts/doit/branding.sh
     - if [ ! -d $LANDO_MOUNT/setup ]; then mkdir $LANDO_MOUNT/setup; fi
