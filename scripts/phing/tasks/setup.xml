@@ -21,8 +21,9 @@
                     setup:drush:local-config,
                     setup:drupal:clone_private_repo,
                     update:database:update">
-    <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
-    <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}" file="${project.basedir}/setup/uli.log" append="true" level="verbose"/>
+    <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
+    <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
+          file="${project.basedir}/setup/uli.log" append="true"/>
   </target>
 
   <!-- Define the build task used by travis. -->
