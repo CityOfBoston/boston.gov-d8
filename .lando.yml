@@ -49,14 +49,14 @@ services:
       # Installs linux apps and extensions into the appserver container.
       - apt-get install -y --no-install-recommends apt-utils zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq >> ${LANDO_MOUNT}/setup/lando.log
       - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ >> ${LANDO_MOUNT}/setup/lando.log
-      # this is for on-demand containers, limits the apache children to preserve memory.
-      - cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${LANDO_MOUNT}/setup/lando.log
-      - docker-php-ext-install limit-apache-children  >> ${LANDO_MOUNT}/setup/lando.log
       # Change the permissions on the log file so that non-root user can add to log.
       - chmod 777 ${LANDO_MOUNT}/setup/lando.log >> ${LANDO_MOUNT}/setup/lando.log
       # [Optional]  Do not need the next 2 statements on stage or production servers.
       #             Here because needs root permissions to copy file to /usr/local/etc/conf.d/.
       - cp ${LANDO_MOUNT}/scripts/phing/files/xdebug.ini /usr/local/etc/php/conf.d/boston.xdebug.ini  >> ${LANDO_MOUNT}/setup/lando.log
+      # Install a custom apache config file for on-demand containers -> limits the apache children to preserve memory.
+      #     (Config loaded and enabled by Phing in setup:docker:drupal-terraform)
+      - cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${LANDO_MOUNT}/setup/lando.log
       - printf "\nxdebug.remote_host=${LANDO_HOST_IP}\n" >>/usr/local/etc/php/conf.d/boston.xdebug.ini
 
     run:
