@@ -23,7 +23,7 @@ services:
     run:
       # this container builds after appserver, so in order to get useful info to the
       # console, print previously executed utilities here.
-      - cat ${LANDO_MOUNT}/setup/.uli && rm -f ${LANDO_MOUNT}/setup/uli.log
+      - cat ${LANDO_MOUNT}/setup/uli.log && rm -f ${LANDO_MOUNT}/setup/uli.log
 
     globals:
       gulp-cli: "latest"
