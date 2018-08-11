@@ -7,7 +7,99 @@
 /**
  * Implements hook_preprocess_html.
  */
-function bos_theme_preprocess_html(&$variables) {
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * Implements theme.api.php hook_theme.
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ *
+ * @return array
+ *
+ *  @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_theme/8.2.x
+ */
+function bos_theme_theme($existing, $type, $theme, $path) {
+  return array(
+    'page_contacts' => array(
+      'variables' => array(
+        'title' => NULL,
+        'short_title' => NULL,
+        'contacts' => NULL,
+      ),
+      'template' => 'templates/snippets/page-contacts',
+    ),
+    'detail_item' => array(
+      'variables' => array(
+        'label' => NULL,
+        'body' => NULL,
+        'image' => NULL,
+        'classes' => array(
+          'detail' => '',
+          'icon' => '',
+          'label' => '',
+          'body' => '',
+        ),
+      ),
+      'template' => 'templates/snippets/detail-item',
+    ),
+    'grid_card' => array(
+      'variables' => array(
+        'title' => NULL,
+        'link' => NULL,
+        'subtitle' => NULL,
+        'image' => NULL,
+        'description' => NULL,
+        'classes' => '',
+      ),
+      'template' => 'templates/snippets/grid-card',
+    ),
+    'user_login' => array(
+      'render element' => 'form',
+      'template' => 'templates/snippets/user_login',
+    ),
+    'alert_js' => array(
+      'template' => 'templates/snippets/alert-js',
+    ),
+    'logo' => array(
+      'template' => 'templates/snippets/logo',
+    ),
+    'burger' => array(
+      'template' => 'templates/snippets/burger',
+    ),
+    'seal' => array(
+      'template' => 'templates/snippets/seal',
+    ),
+    'search' => array(
+      'template' => 'templates/snippets/search',
+    ),
+    'secondary_nav' => array(
+      'template' => 'templates/snippets/secondary-nav',
+    ),
+    'profile_address' => array(
+      'variables' => array(
+        'address' => NULL,
+        'address_type' => NULL,
+      ),
+      'template' => 'templates/snippets/profile-address',
+    ),
+  );
+}
+
+
+/**
+ * Override or insert variables into the html template.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered. This is usually "html", but can
+ *   also be "maintenance_page" since boston_preprocess_maintenance_page() calls
+ *   this function to have consistent variables.
+ */
+function bos_theme_preprocess_html(&$variables, $hook) {
+  // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
   $theme = theme_get_setting('asset_source');
   if (empty($theme)) {
     $theme = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
@@ -15,7 +107,58 @@ function bos_theme_preprocess_html(&$variables) {
     $theme = $theme[0];
   }
   $variables['#attached']['library'][] = "bos_theme/" . $theme;
+
+  // Define instance: hub (intranet) or public (Boston.gov).
+  $variables['asset_name'] = $GLOBALS['theme'] == 'boston_hub' ? 'hub' : 'public';
+
+  // Send X-UA-Compatible HTTP header to force IE to use the most recent
+  // rendering engine or use Chrome's frame rendering engine if available.
+  // This also prevents the IE compatibility mode button to appear when using
+  // conditional classes on the html tag.
+  $response = new response();
+  if (is_null($response->headers->get('X-UA-Compatible'))) {
+    $response->headers->set('X-UA-Compatible', 'IE=edge,chrome=1');
+  }
+
+  // Return early, so the maintenance page does not call any of the code below.
+  if ($hook != 'html') {
+    return;
+  }
+
+  $variables['skip_link_anchor'] = \Drupal\Component\Utility\Html::escape(theme_get_setting('boston_skip_link_anchor'));
+  $variables['skip_link_text']   = \Drupal\Component\Utility\HTML::escape(theme_get_setting('boston_skip_link_text'));
+
+  // Store the menu item since it has some useful information.
+  $variables['menu_item'] = \Drupal::routeMatch()->getParameter('menu');
+  if (isset($variables['menu_item'])) {
+    switch ($variables['menu_item']['page_callback']) {
+      case 'views_page':
+        // Is this a Views page?
+        $variables['classes_array'][] = 'page-views';
+        break;
+
+      case 'page_manager_blog':
+      case 'page_manager_blog_user':
+      case 'page_manager_contact_site':
+      case 'page_manager_contact_user':
+      case 'page_manager_node_add':
+      case 'page_manager_node_edit':
+      case 'page_manager_node_view_page':
+      case 'page_manager_page_execute':
+      case 'page_manager_poll':
+      case 'page_manager_search_page':
+      case 'page_manager_term_view_page':
+      case 'page_manager_user_edit_page':
+      case 'page_manager_user_view_page':
+        // Is this a Panels page?
+        $variables['classes_array'][] = 'page-panels';
+        break;
+    }
+  }
+
 }
+
+
 
 /**
  * Implements hook_preprocess_node.
