@@ -39,3 +39,11 @@
   }
 
   $settings['file_private_path'] = 'sites/default/files/private';
+
+  // toggle config_split status
+  if ( $env == "dev") {
+    $config['config_split.config_split.development']['status'] = TRUE;
+  }
+  else {
+    $config['config_split.config_split.development']['status'] = FALSE;
+  }
