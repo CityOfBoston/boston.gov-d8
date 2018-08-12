@@ -295,14 +295,15 @@
 
     <!-- Development Modules Strategy -->
     <!--
-        Config_split module is used to maintain a set of configurations suitable to development environments
+        - Config_split module is used to maintain a set of configurations suitable to development environments
         only.  Any config-export activities for modules defined in the "development" 'Configuration Split Setting'
-        at /admin/config/development/configuration/config-split/development/edit will be exported to app/config/develop.
-        The "development" settings are marked active so that development environments will import configs from the
+        (at /admin/config/development/configuration/config-split/development/edit) will be exported to app/config/develop.
+        - The "development" settings are marked active so that development environments will import configs from the
         config/develop folder on build and export configs to that folder on drush config-export etc.
-        local.settings.php has a switch to make the "development" settings active/inactive based on the AH_ENVIROMENT
-        variables, but this is only implemented after the site is installed.
-        Therefore, when installing on non-dev environments the contents of the ../config/develop folder are removed.
+        - local.settings.php has a switch to make the "development" settings active/inactive based on the AH_ENVIROMENT
+        variables, but this is only implemented after the site is installed...
+        .. Therefore, when installing on non-dev environments the contents of the ../config/develop folder need to be
+        removed.
      -->
   <target name="setup:drupal:remove_dev_config"
             description="Removes the develop configs from non-dev environments.">
