@@ -23,8 +23,12 @@ function bos_profile_install() {
   // Be sure an environment indicator is set.
   // Note: on Acquia servers this will be one of prod / test / dev as per
   /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable/ */
+  global $envvar;
+
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
-    $envvar = getenv('AH_SITE_ENVIRONMENT');
+    if (!empty(getenv('AH_SITE_ENVIRONMENT'))) {
+      $envvar = getenv('AH_SITE_ENVIRONMENT');
+    }
   }
   else {
     $envvar = $_ENV['AH_SITE_ENVIRONMENT'];
@@ -95,5 +99,10 @@ function bos_profile_install() {
 
   // Do the enabling.
   \Drupal::service('module_installer')->install($enabled_modules, TRUE);
+
+  // Now set some variables based on environment.
+  \Drupal::configFactory('system.performance')->getEditable()->set('css', ['preprocess' => !($envvar == "dev")]);
+  \Drupal::configFactory('system.performance')->getEditable()->set('js', ['preprocess' => !($envvar == "dev")]);
+  \Drupal::configFactory('config_split.config_split.development')->getEditable()->set('status', ($envvar == "dev"));
 
 }

@@ -182,6 +182,15 @@
         </then>
       </if>
 
+      <!-- Remove unwanted and confusing template config files. -->
+      <delete file="${docroot}/sites/default/default.settings.php" quiet="true"/>
+      <delete file="${docroot}/sites/example.settings.local.php" quiet="true"/>
+      <delete file="${docroot}/sites/example.sites.php" quiet="true"/>
+      <delete file="${docroot}/sites/default/default.services.yml" quiet="true"/>
+      <delete file="${docroot}/sites/development.services.yml" quiet="true"
+              description="Redundant file as we have this in the sites/default folder."/>
+
+      <!-- Append code to (fresh) settings.php file -->
       <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
             message="${line.separator}" append="true" file="${settings.file}"/>
       <echo message="/*${line.separator}" append="true" file="${settings.file}"/>
