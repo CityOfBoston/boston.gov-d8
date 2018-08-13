@@ -10,20 +10,22 @@ use Drupal\Core\Extension\ModuleInstaller;
  * Implements hook_install().
  */
 function bos_profile_install() {
-  // Override certain modules which are installed by default.
-
+  // DO NOT ADD MODULES TO ENABLE/DISABLE HERE.  Read on ...
   /*
    * Modules defined in  ../config/default/core.extension.yml are enabled during
-   * the config_import process (triggered by drush si command).
-   * The repo also contains a config:
-   *     "/config/default/config_split.config_split.development.yml
-   * which defines development
-   * - if the $envvar != dev then the
+   * the config_import process (triggered by drush si command in Phing).
+   *
+   * The repo also contains config_split configuration files:
+   *     "/config/default/config_split.config_split.development.yml", and
+   *     "/config/default/config_split.config_split.production.yml"
+   * which defines development-only and production-only modules.
+   * These are switched on and off by the Phing script during the site-install
+   * process.
+   *
    * This module is installed after the config_import process and therefore will
-   * override the modules enabled/disabled by core.extension.yml.
-   * Note: Since the config may be exported in dev or prod and find its way into
-   *       the git repo, it is best to use a toggle here to ensure that we at
-   *       least start with the modules appropriate to the environment.   */
+   * override the modules enabled/disabled by core.extension.yml and
+   * config_splits, but will then be added back in when the next drush cex
+   * command is run, so use care!. */
   /* @see https://docs.acquia.com/acquia-cloud/develop/config-d8 */
 
   // Be sure an environment indicator is set.
@@ -43,81 +45,14 @@ function bos_profile_install() {
     $envvar = 'dev';
   }
 
-  // Disable modules which are enabled in core by default.
-  $disabled_modules = array(
-//    'config_translation',
-//    'content_translation',
-    'history',
-    'search',
-  );
-  $disabled_modules = [];
-
-  // Don't set defaults here - use the .info file instead.
-  $enabled_modules = array();
-
-  // Specify modules used in dev environments
-  $dev_only_modules = array(
-    'automated_cron',
-    'devel',
-    'masquerade',
-    'twig_xdebug',
-    'stage_file_proxy',
-    'migrate',
-    'migrate_tools',
-    'migrate_plus',
-    'migrate_drupal',
-    'migrate_drupal_ui',
-    'migrate_upgrade',
-    'dblog',
-    'syslog',
-  );
-  $dev_only_modules=[];
-
-  // Specify modules used in prod-only environments
-  $prod_only_modules = array(
-    'autologout',
-    'acquia_connector',
-    'acquia_purge',
-  );
-  $prod_only_modules=[];
-
-  $current = \Drupal::moduleHandler()->getModuleList();
-  $current = array_keys($current);
-
-  if ($envvar == 'prod' || $envvar == 'test') {
-    // Enable the production modules in prod / test
-    $enabled_modules = array_merge($prod_only_modules, $enabled_modules);
-    // Make sure dev-only modules are disabled in prod / test.
-    $disabled_modules = array_merge($dev_only_modules, $disabled_modules);
-  }
-  else {
-    // Enable development modules in develop environments.
-    $enabled_modules = array_merge($dev_only_modules, $enabled_modules);
-    // Disable annoying modules in develop environments.
-    $disabled_modules = array_merge($prod_only_modules, $disabled_modules);
-  }
-
-  \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.<br/><h3>Currently Installed:</h3><pre>@current</pre><br>
-      <h3>To be disabled</h3><pre>@disable</pre><br><h3>To be enabled</h3><pre>@enable</pre><br>", array(
+  \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.", array(
     '@env' => $envvar,
-    '@current' => print_r($current, true),
-    '@disable' => print_r($disabled_modules, true),
-    '@enable' => print_r($enabled_modules, true),
   ));
-
-  // select only mods we need to process (speeds up Drupal::service command).
-  $enabled_modules = array_diff($enabled_modules, $current);
-  $disabled_modules = array_intersect($disabled_modules, $current);
-
-  // Do the disabling.
-  \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
-
-  // Do the enabling.
-  \Drupal::service('module_installer')->install($enabled_modules, FALSE);
 
   // Now set some variables based on environment.
   \Drupal::state()->set("system.performance.css.preprocess", !($envvar == "dev"));
   \Drupal::state()->set("system.performance.js.preprocess", !($envvar == "dev"));
+
   if ($envvar == "dev") {
     \Drupal::state()->set("config_split.config_split.development.status", TRUE);
   }
