@@ -69,6 +69,7 @@ function bos_profile_install() {
     'dblog',
     'syslog',
   );
+  $dev_only_modules=[];
 
   // Specify modules used in prod-only environments
   $prod_only_modules = array(
@@ -76,6 +77,7 @@ function bos_profile_install() {
     'acquia_connector',
     'acquia_purge',
   );
+  $prod_only_modules=[];
 
   $current = \Drupal::moduleHandler()->getModuleList();
   $current = array_keys($current);
@@ -110,7 +112,7 @@ function bos_profile_install() {
 //  \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
 
   // Do the enabling.
-  ModuleInstaller::install($disabled_modules, FALSE);
+  ModuleInstaller::install($enabled_modules, FALSE);
 //  \Drupal::service('module_installer')->install($enabled_modules, TRUE);
 
   // Now set some variables based on environment.

@@ -3,6 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_last_password_reset
+    - field.field.user.user.field_password_expiration
     - field.field.user.user.user_picture
   module:
     - image
@@ -32,4 +34,5 @@ content:
 hidden:
   field_last_password_reset: true
   field_password_expiration: true
+  langcode: true
   realname: true
