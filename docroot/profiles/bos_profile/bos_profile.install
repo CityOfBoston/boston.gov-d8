@@ -50,6 +50,8 @@ function bos_profile_install() {
     'history',
     'search',
   );
+  $disabled_modules = [];
+
   // Don't set defaults here - use the .info file instead.
   $enabled_modules = array();
 
