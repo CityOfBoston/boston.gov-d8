@@ -4,6 +4,8 @@
  * Install file for Boston.gov.
  */
 
+use Drupal\Core\Extension\ModuleInstaller;
+
 /**
  * Implements hook_install().
  */
@@ -11,13 +13,17 @@ function bos_profile_install() {
   // Override certain modules which are installed by default.
 
   /*
-   *  Modules defined in  ../config/default/core.extension.yml are enabled during
-   *  the config_import process (triggered by drush si command).
-   *  This module is installed after the confir_import process and therefore can
-   *  override the modules enabled/disabled by core.extension.yml.
-   *  Note: Since the config may be exported in dev or prod and find its way into
-   *        the git repo, it is best to use a toggle here to ensure that we at
-   *        least start with the modules appropriate to the environment.   */
+   * Modules defined in  ../config/default/core.extension.yml are enabled during
+   * the config_import process (triggered by drush si command).
+   * The repo also contains a config:
+   *     "/config/default/config_split.config_split.development.yml
+   * which defines development
+   * - if the $envvar != dev then the
+   * This module is installed after the config_import process and therefore will
+   * override the modules enabled/disabled by core.extension.yml.
+   * Note: Since the config may be exported in dev or prod and find its way into
+   *       the git repo, it is best to use a toggle here to ensure that we at
+   *       least start with the modules appropriate to the environment.   */
   /* @see https://docs.acquia.com/acquia-cloud/develop/config-d8 */
 
   // Be sure an environment indicator is set.
@@ -100,10 +106,12 @@ function bos_profile_install() {
   $disabled_modules = array_intersect($disabled_modules, $current);
 
   // Do the disabling.
-  \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
+  ModuleInstaller::uninstall($disabled_modules, TRUE);
+//  \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
 
   // Do the enabling.
-  \Drupal::service('module_installer')->install($enabled_modules, TRUE);
+  ModuleInstaller::install($disabled_modules, FALSE);
+//  \Drupal::service('module_installer')->install($enabled_modules, TRUE);
 
   // Now set some variables based on environment.
   \Drupal::configFactory('system.performance')->getEditable()->set('css', ['preprocess' => !($envvar == "dev")]);
