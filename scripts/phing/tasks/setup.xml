@@ -21,7 +21,8 @@
                     setup:drupal:site-install,
                     setup:drush:local-config,
                     setup:drupal:clone_private_repo,
-                    update:database:update">
+                    update:database:update,
+                    setup:drupal:reset_config">
     <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
     <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
           file="${project.basedir}/setup/uli.log" append="true"/>
@@ -36,7 +37,8 @@
   <!-- Define the build task used by terraform-->
   <target name="setup:docker:drupal-terraform"
           description="Creates a drupal environment in docker (command run by terraform)."
-          depends=" setup:drupal:set_prod_config">
+          depends=" setup:drupal:set_prod_config,
+                    setup:drupal:reset_config">
     <exec description="Enable the limit-apache-children module for terraform."
         command="a2enconf limit-apache-children" dir="${repo.root}" logoutput="true"/>
   </target>
@@ -345,7 +347,7 @@
         removed.
      -->
     <target name="setup:drupal:set_dev_config"
-            description="Disables the productiob configs from non-prod environments.">
+            description="Disables the production configs from non-prod environments.">
         <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
         <echo message="Disabling production-only config settings." level="info"/>
         <exec description="Rename the config_split yml file which contains the modules to be implemented only in production."
@@ -360,6 +362,22 @@
             passthru="true"
             logoutput="true"/>
     </target>
+
+  <target name="setup:drupal:reset_config"
+          description="Re-enables the configs from both environments.">
+    <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
+    <echo message="Enabling config_split settings." level="info"/>
+    <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+          command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+          dir="${install_config_abs}"
+          passthru="true"
+          logoutput="true"/>
+    <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+          command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+          dir="${install_config_abs}"
+          passthru="true"
+          logoutput="true"/>
+  </target>
 
 </project>
 
