@@ -109,7 +109,7 @@ function bos_theme_preprocess_html(&$variables, $hook) {
   $variables['#attached']['library'][] = "bos_theme/" . $theme;
 
   // Define instance: hub (intranet) or public (Boston.gov).
-  $variables['asset_name'] = $GLOBALS['theme'] == 'boston_hub' ? 'hub' : 'public';
+  $variables['asset_name'] = (!empty($GLOBALS['theme']) && $GLOBALS['theme'] == 'boston_hub' ? 'hub' : 'public');
 
   // Send X-UA-Compatible HTTP header to force IE to use the most recent
   // rendering engine or use Chrome's frame rendering engine if available.
