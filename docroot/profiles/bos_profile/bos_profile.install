@@ -73,15 +73,15 @@ function bos_profile_install() {
 
   if ($envvar == 'prod' || $envvar == 'test') {
     // Enable the production modules in prod / test
-    $enabled_modules += $prod_only_modules;
+    $enabled_modules = array_merge($prod_only_modules, $enabled_modules);
     // Make sure dev-only modules are disabled in prod / test.
-    $disabled_modules += $dev_only_modules;
+    $disabled_modules = array_merge($dev_only_modules, $disabled_modules);
   }
   else {
     // Enable development modules in develop environments.
-    $enabled_modules += $dev_only_modules;
+    $enabled_modules = array_merge($dev_only_modules, $enabled_modules);
     // Disable annoying modules in develop environments.
-    $disabled_modules += $prod_only_modules;
+    $disabled_modules = array_merge($prod_only_modules, $disabled_modules);
   }
 
   $current = \Drupal::moduleHandler()->getModuleList();
