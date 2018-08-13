@@ -17,7 +17,7 @@
   <target name="setup:docker:drupal-local"
           description="Creates a Drupal environment in Docker Containers for local development."
           depends=" setup:drupal:download-modules,
-                    setup:drupal:remove_prod_config,
+                    setup:drupal:set_dev_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
                     setup:drupal:clone_private_repo,
@@ -36,7 +36,7 @@
   <!-- Define the build task used by terraform-->
   <target name="setup:docker:drupal-terraform"
           description="Creates a drupal environment in docker (command run by terraform)."
-          depends=" setup:drupal:remove_dev_config">
+          depends=" setup:drupal:set_prod_config">
     <exec description="Enable the limit-apache-children module for terraform."
         command="a2enconf limit-apache-children" dir="${repo.root}" logoutput="true"/>
   </target>
@@ -315,14 +315,21 @@
         .. Therefore, when installing on non-dev environments the contents of the ../config/develop folder need to be
         removed.
      -->
-    <target name="setup:drupal:remove_dev_config"
-            description="Removes the develop configs from non-dev environments.">
-        <resolvepath propertyName="config.develop" file="${project.config.develop}" dir="${docroot}"/>
-
-        <echo message="Removing development config settings." level="info"/>
-        <delete description="Removes the config files used during installation."
-                dir="${config.develop}" failonerror="true" includeemptydirs="true"/>
-        <mkdir dir="${config.develop}" description="Recreate the folder so config activities don't fail." />
+    <target name="setup:drupal:set_prod_config"
+            description="Disables the develop configs from non-dev environments.">
+        <resolvepath propertyName="install_config_abs" file="${project.config.sync}" dir="${docroot}"/>
+        <echo message="Disabling development-only config settings." level="info"/>
+        <exec description="Rename the config_split yml file which contains the modules to be implemented only in development."
+              command="mv config_split.config_split.development.yml config_split.config_split.development.yml.disabled"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+        <echo message="Enabling production-only config settings." level="info"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
     </target>
 
     <!-- Production-only Modules Strategy -->
@@ -337,14 +344,21 @@
         .. Therefore, when installing on non-dev environments the contents of the ../config/prod folder need to be
         removed.
      -->
-    <target name="setup:drupal:remove_prod_config"
-            description="Removes the develop configs from non-dev environments.">
-        <resolvepath propertyName="config.prod" file="${project.config.prod}" dir="${docroot}"/>
-
-        <echo message="Removing production-only config settings." level="info"/>
-        <delete description="Removes the config files used during installation."
-                dir="${config.prod}" failonerror="true" includeemptydirs="true"/>
-        <mkdir dir="${config.prod}" description="Recreate the folder so config activities don't fail." />
+    <target name="setup:drupal:set_dev_config"
+            description="Disables the productiob configs from non-prod environments.">
+        <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
+        <echo message="Disabling production-only config settings." level="info"/>
+        <exec description="Rename the config_split yml file which contains the modules to be implemented only in production."
+            command="mv config_split.config_split.production.yml config_split.config_split.production.yml.disabled"
+            dir="${install_config_abs}"
+            passthru="true"
+            logoutput="true"/>
+        <echo message="Enabling development-only config settings." level="info"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+            command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+            dir="${install_config_abs}"
+            passthru="true"
+            logoutput="true"/>
     </target>
 
 </project>

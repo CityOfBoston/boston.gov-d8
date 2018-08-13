@@ -108,20 +108,19 @@ function bos_profile_install() {
   $disabled_modules = array_intersect($disabled_modules, $current);
 
   // Do the disabling.
-//  ModuleInstaller::uninstall($disabled_modules, TRUE);
   \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
 
   // Do the enabling.
-//  ModuleInstaller::install($enabled_modules, FALSE);
   \Drupal::service('module_installer')->install($enabled_modules, FALSE);
 
   // Now set some variables based on environment.
   \Drupal::state()->set("system.performance.css.preprocess", !($envvar == "dev"));
   \Drupal::state()->set("system.performance.js.preprocess", !($envvar == "dev"));
-  \Drupal::state()->set("config_split.config_split.development.status", ($envvar == "dev"));
-  \Drupal::state()->set("config_split.config_split.production.status", !($envvar == "dev"));
-//  \Drupal::configFactory('system.performance')->getEditable()->set('css', ['preprocess' => !($envvar == "dev")]);
-//  \Drupal::configFactory('system.performance')->getEditable()->set('js', ['preprocess' => !($envvar == "dev")]);
-//  \Drupal::configFactory('config_split.config_split.development')->getEditable()->set('status', ($envvar == "dev"));
+  if ($envvar == "dev") {
+    \Drupal::state()->set("config_split.config_split.development.status", TRUE);
+  }
+  else {
+    \Drupal::state()->set("config_split.config_split.production.status", TRUE);
+  }
 
 }
