@@ -377,6 +377,15 @@
           dir="${install_config_abs}"
           passthru="true"
           logoutput="true"/>
+<!--    <exec description="Sets the active status for the settings."
+          dir="${docroot}"
+          command="${drush.cmd} eval '\Drupal::state()->set(''config_split.config_split.development.status'', TRUE);'"
+          logoutput="true"/>
+    <exec description="Sets the active status for the settings."
+          dir="${docroot}"
+          command="${drush.cmd} eval '\Drupal::state()->set(''config_split.config_split.production.status'', TRUE);'"
+          logoutput="true"/>-->
+    <!-- eval '\Drupal::configFactory('config_split')->getEditable('config_split.production')->set('status', true)'-->
   </target>
 
 </project>
