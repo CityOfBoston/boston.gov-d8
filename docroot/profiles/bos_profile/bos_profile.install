@@ -96,8 +96,8 @@ function bos_profile_install() {
   ));
 
   // select only mods we need to process (speeds up Drupal::service command).
-  $enabled_modules = array_diff($current, $enabled_modules);
-  $disabled_modules = array_intersect($current, $disabled_modules);
+  $enabled_modules = array_diff($enabled_modules, $current);
+  $disabled_modules = array_intersect($disabled_modules, $current);
 
   // Do the disabling.
   \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
