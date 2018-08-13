@@ -17,6 +17,7 @@
   <target name="setup:docker:drupal-local"
           description="Creates a Drupal environment in Docker Containers for local development."
           depends=" setup:drupal:download-modules,
+                    setup:drupal:remove_prod_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
                     setup:drupal:clone_private_repo,
@@ -314,14 +315,35 @@
         .. Therefore, when installing on non-dev environments the contents of the ../config/develop folder need to be
         removed.
      -->
-  <target name="setup:drupal:remove_dev_config"
+    <target name="setup:drupal:remove_dev_config"
             description="Removes the develop configs from non-dev environments.">
-      <resolvepath propertyName="config.develop" file="${project.config.develop}" dir="${docroot}"/>
+        <resolvepath propertyName="config.develop" file="${project.config.develop}" dir="${docroot}"/>
 
-      <echo message="Removing development config settings." level="info"/>
-      <delete description="Removes the config files used during installation."
+        <echo message="Removing development config settings." level="info"/>
+        <delete description="Removes the config files used during installation."
                 dir="${config.develop}" failonerror="true" includeemptydirs="true"/>
-      <mkdir dir="${config.develop}" description="Recreate the folder so config activities don't fail." />
+        <mkdir dir="${config.develop}" description="Recreate the folder so config activities don't fail." />
+    </target>
+    <!-- Production-only Modules Strategy -->
+    <!--
+        - Config_split module is used to maintain a set of configurations suitable to production environments
+        only.  Any config-export activities for modules defined in the "production" 'Configuration Split Setting'
+        (at /admin/config/development/configuration/config-split/production/edit) will be exported to app/config/prod.
+        - The "production" settings are marked active so that development environments will import configs from the
+        config/prod folder on build and export configs to that folder on drush config-export etc.
+        - local.settings.php has a switch to make the "production" settings active/inactive based on the AH_ENVIROMENT
+        variables, but this is only implemented after the site is installed...
+        .. Therefore, when installing on non-dev environments the contents of the ../config/prod folder need to be
+        removed.
+     -->
+    <target name="setup:drupal:remove_prod_config"
+            description="Removes the develop configs from non-dev environments.">
+        <resolvepath propertyName="config.prod" file="${project.config.prod}" dir="${docroot}"/>
+
+        <echo message="Removing production-only config settings." level="info"/>
+        <delete description="Removes the config files used during installation."
+                dir="${config.prod}" failonerror="true" includeemptydirs="true"/>
+        <mkdir dir="${config.prod}" description="Recreate the folder so config activities don't fail." />
     </target>
 
 </project>
