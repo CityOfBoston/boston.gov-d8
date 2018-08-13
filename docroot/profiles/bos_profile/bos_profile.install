@@ -71,6 +71,9 @@ function bos_profile_install() {
     'acquia_purge',
   );
 
+  $current = \Drupal::moduleHandler()->getModuleList();
+  $current = array_keys($current);
+
   if ($envvar == 'prod' || $envvar == 'test') {
     // Enable the production modules in prod / test
     $enabled_modules = array_merge($prod_only_modules, $enabled_modules);
@@ -84,8 +87,6 @@ function bos_profile_install() {
     $disabled_modules = array_merge($prod_only_modules, $disabled_modules);
   }
 
-  $current = \Drupal::moduleHandler()->getModuleList();
-  $current = array_keys($current);
   \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.<br/><h3>Currently Installed:</h3><pre>@current</pre><br>
       <h3>To be disabled</h3><pre>@disable</pre><br><h3>To be enabled</h3><pre>@enable</pre><br>", array(
     '@env' => $envvar,
@@ -93,6 +94,10 @@ function bos_profile_install() {
     '@disable' => print_r($disabled_modules, true),
     '@enable' => print_r($enabled_modules, true),
   ));
+
+  // select only mods we need to process (speeds up Drupal::service command).
+  $enabled_modules = array_diff($current, $enabled_modules);
+  $disabled_modules = array_intersect($current, $disabled_modules);
 
   // Do the disabling.
   \Drupal::service('module_installer')->uninstall($disabled_modules, TRUE);
