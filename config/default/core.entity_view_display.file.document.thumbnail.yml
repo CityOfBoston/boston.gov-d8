@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.file.thumbnail
+    - field.field.file.document.field_type_of_content
+    - field.field.file.document.field_updated_date
     - file_entity.type.document
 _core:
   default_config_hash: zlB0VonOjJywsH9sIrMlYt9bIpPdi3QysmBkBUaV1YY
@@ -25,5 +27,6 @@ hidden:
   field_updated_date: true
   filemime: true
   filesize: true
+  langcode: true
   uid: true
   uri: true

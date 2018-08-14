@@ -10,6 +10,8 @@ dependencies:
     - field.field.file.image.field_image_caption
     - field.field.file.image.field_image_title_text
     - file_entity.type.image
+  module:
+    - path
 _core:
   default_config_hash: HYzof_QiEoo7449yRhD_uJoLXMEAmSafqexxGS9OmjQ
 id: file.image.default
@@ -73,6 +75,13 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
     third_party_settings: {  }
   path:
     type: path

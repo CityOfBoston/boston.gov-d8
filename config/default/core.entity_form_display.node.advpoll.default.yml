@@ -20,6 +20,7 @@ dependencies:
     - comment
     - datetime
     - path
+    - publication_date
     - text
     - workbench_moderation
 id: node.advpoll.default
@@ -114,6 +115,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
   path:
     type: path
     weight: 30

@@ -17,10 +17,12 @@
   <target name="setup:docker:drupal-local"
           description="Creates a Drupal environment in Docker Containers for local development."
           depends=" setup:drupal:download-modules,
+                    setup:drupal:set_dev_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
                     setup:drupal:clone_private_repo,
-                    update:database:update">
+                    update:database:update,
+                    setup:drupal:reset_config">
     <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
     <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
           file="${project.basedir}/setup/uli.log" append="true"/>
@@ -35,7 +37,8 @@
   <!-- Define the build task used by terraform-->
   <target name="setup:docker:drupal-terraform"
           description="Creates a drupal environment in docker (command run by terraform)."
-          depends="build:info">
+          depends=" setup:drupal:set_prod_config,
+                    setup:drupal:reset_config">
     <exec description="Enable the limit-apache-children module for terraform."
         command="a2enconf limit-apache-children" dir="${repo.root}" logoutput="true"/>
   </target>
@@ -182,6 +185,15 @@
         </then>
       </if>
 
+      <!-- Remove unwanted and confusing template config files. -->
+      <delete file="${docroot}/sites/default/default.settings.php" quiet="true"/>
+      <delete file="${docroot}/sites/example.settings.local.php" quiet="true"/>
+      <delete file="${docroot}/sites/example.sites.php" quiet="true"/>
+      <delete file="${docroot}/sites/default/default.services.yml" quiet="true"/>
+      <delete file="${docroot}/sites/development.services.yml" quiet="true"
+              description="Redundant file as we have this in the sites/default folder."/>
+
+      <!-- Append code to (fresh) settings.php file -->
       <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
             message="${line.separator}" append="true" file="${settings.file}"/>
       <echo message="/*${line.separator}" append="true" file="${settings.file}"/>
@@ -235,7 +247,7 @@
                 includeemptydirs="true" dir="${git.private_repo.local_dir}" failonerror="false" quiet="true"/>
         <mkdir dir="${git.private_repo.local_dir}" />
         <exec description="Clone a private repo which has confidential settings (passwords etc)."
-              command="git clone -b ${git.private_repo.branch} ${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b master  >> ${project.basedir}/setup/drush_site_install.log"
+              command="git clone ${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
               dir="${git.private_repo.local_dir}"
               returnProperty="repoOK" logoutput="false" passthru="true"/>
 
@@ -292,6 +304,97 @@
         <exec description="Exports the configs into the config folder.."
                 dir="${docroot}" command="${drush.cmd} cex -y" logoutput="true"/>
     </target>
+
+    <!-- Development Modules Strategy -->
+    <!--
+        - Config_split module is used to maintain a set of configurations suitable to development environments
+        only.  Any config-export activities for modules defined in the "development" 'Configuration Split Setting'
+        (at /admin/config/development/configuration/config-split/development/edit) will be exported to app/config/develop.
+        - The "development" settings are marked active so that development environments will import configs from the
+        config/develop folder on build and export configs to that folder on drush config-export etc.
+        - local.settings.php has a switch to make the "development" settings active/inactive based on the AH_ENVIROMENT
+        variables, but this is only implemented after the site is installed...
+        .. Therefore, when installing on non-dev environments the contents of the ../config/develop folder need to be
+        removed.
+     -->
+    <target name="setup:drupal:set_prod_config"
+            description="Disables the develop configs from non-dev environments.">
+        <resolvepath propertyName="install_config_abs" file="${project.config.sync}" dir="${docroot}"/>
+        <echo message="Disabling development-only config settings." level="info"/>
+        <exec description="Rename the config_split yml file which contains the modules to be implemented only in development."
+              command="mv config_split.config_split.development.yml config_split.config_split.development.yml.disabled"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+        <echo message="Enabling production-only config settings." level="info"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+    </target>
+
+    <!-- Production-only Modules Strategy -->
+    <!--
+        - Config_split module is used to maintain a set of configurations suitable to production environments
+        only.  Any config-export activities for modules defined in the "production" 'Configuration Split Setting'
+        (at /admin/config/development/configuration/config-split/production/edit) will be exported to app/config/prod.
+        - The "production" settings are marked active so that development environments will import configs from the
+        config/prod folder on build and export configs to that folder on drush config-export etc.
+        - local.settings.php has a switch to make the "production" settings active/inactive based on the AH_ENVIROMENT
+        variables, but this is only implemented after the site is installed...
+        .. Therefore, when installing on non-dev environments the contents of the ../config/prod folder need to be
+        removed.
+     -->
+    <target name="setup:drupal:set_dev_config"
+            description="Disables the production configs from non-prod environments.">
+        <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
+        <echo message="Disabling production-only config settings." level="info"/>
+        <exec description="Rename the config_split yml file which contains the modules to be implemented only in production."
+            command="mv config_split.config_split.production.yml config_split.config_split.production.yml.disabled"
+            dir="${install_config_abs}"
+            passthru="true"
+            logoutput="true"/>
+        <echo message="Enabling development-only config settings." level="info"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+            command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+            dir="${install_config_abs}"
+            passthru="true"
+            logoutput="true"/>
+    </target>
+
+  <target name="setup:drupal:reset_config"
+          description="Re-enables the configs from both environments.">
+    <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
+    <echo message="Enabling config_split settings." level="info"/>
+    <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+          command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+          dir="${install_config_abs}"
+          passthru="true"
+          logoutput="true"/>
+    <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+          command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+          dir="${install_config_abs}"
+          passthru="true"
+          logoutput="true"/>
+    <if>
+      <equals arg1="acquia.site_environment" arg2="dev" casesensitive="true"/>
+      <then>
+        <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.production')->set('status', false)->save();"/>
+        <exec description="Sets the active status for the settings."
+              dir="${docroot}"
+              command="${drush.cmd} eval '${cfg.php}'"
+              logoutput="true"/>
+      </then>
+      <else>
+        <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.development')->set('status', false)->save()"/>
+        <exec description="Sets the active status for the settings."
+              dir="${docroot}"
+              command="${drush.cmd} eval '${cfg.php}'"
+              logoutput="true"/>
+      </else>
+    </if>
+  </target>
 
 </project>
 

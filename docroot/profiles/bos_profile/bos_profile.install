@@ -4,27 +4,39 @@
  * Install file for Boston.gov.
  */
 
+use Drupal\Core\Extension\ModuleInstaller;
+
 /**
  * Implements hook_install().
  */
 function bos_profile_install() {
-  // Override certain modules which are installed by default.
-
+  // DO NOT ADD MODULES TO ENABLE/DISABLE HERE.  Read on ...
   /*
-   *  Modules defined in  ../config/default/core.extension.yml are enabled during
-   *  the config_import process (triggered by drush si command).
-   *  This module is installed after the confir_import process and therefore can
-   *  override the modules enabled/disabled by core.extension.yml.
-   *  Note: Since the config may be exported in dev or prod and find its way into
-   *        the git repo, it is best to use a toggle here to ensure that we at
-   *        least start with the modules appropriate to the environment.   */
+   * Modules defined in  ../config/default/core.extension.yml are enabled during
+   * the config_import process (triggered by drush si command in Phing).
+   *
+   * The repo also contains config_split configuration files:
+   *     "/config/default/config_split.config_split.development.yml", and
+   *     "/config/default/config_split.config_split.production.yml"
+   * which defines development-only and production-only modules.
+   * These are switched on and off by the Phing script during the site-install
+   * process.
+   *
+   * This module is installed after the config_import process and therefore will
+   * override the modules enabled/disabled by core.extension.yml and
+   * config_splits, but will then be added back in when the next drush cex
+   * command is run, so use care!. */
   /* @see https://docs.acquia.com/acquia-cloud/develop/config-d8 */
 
   // Be sure an environment indicator is set.
   // Note: on Acquia servers this will be one of prod / test / dev as per
   /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable/ */
+  global $envvar;
+
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
-    $envvar = getenv('AH_SITE_ENVIRONMENT');
+    if (!empty(getenv('AH_SITE_ENVIRONMENT'))) {
+      $envvar = getenv('AH_SITE_ENVIRONMENT');
+    }
   }
   else {
     $envvar = $_ENV['AH_SITE_ENVIRONMENT'];
@@ -33,61 +45,18 @@ function bos_profile_install() {
     $envvar = 'dev';
   }
 
-  \Drupal::logger('profile')->info("bos_profile install started. Using @env.", array(
+  \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.", array(
     '@env' => $envvar,
   ));
 
-  // Disable modules which are enabled in core by default.
-  $disabled_modules = array(
-    'config_translation',
-    'content_translation',
-    'history',
-    'search',
-  );
-  // Don't set defaults here - use the .info file instead.
-  $enabled_modules = array();
+  // Now set some variables based on environment.
+  \Drupal::state()->set("system.performance.css.preprocess", !($envvar == "dev"));
+  \Drupal::state()->set("system.performance.js.preprocess", !($envvar == "dev"));
 
-  // Specify modules used in dev environments
-  $dev_only_modules = array(
-    'automated_cron',
-    'devel',
-    'masquerade',
-    'twig_xdebug',
-    'stage_file_proxy',
-    'migrate',
-    'migrate_tools',
-    'migrate_plus',
-    'migrate_drupal',
-    'migrate_drupal_ui',
-    'migrate_upgrade',
-    'dblog',
-    'syslog',
-  );
-
-  // Specify modules used in prod-only environments
-  $prod_only_modules = array(
-    'autologout',
-    'acquia_connector',
-    'acquia_purge',
-  );
-
-  if ($envvar == 'prod' || $envvar == 'test') {
-    // Enable the production modules in prod / test
-    $enabled_modules += $prod_only_modules;
-    // Make sure dev-only modules are disabled in prod / test.
-    $disabled_modules += $dev_only_modules;
+  if ($envvar == "dev") {
+    \Drupal::state()->set("config_split.config_split.development.status", TRUE);
   }
   else {
-    // Enable development modules in develop environments.
-    $enabled_modules += $dev_only_modules;
-    // Disable annoying modules in develop environments.
-    $disabled_modules += $prod_only_modules;
+    \Drupal::state()->set("config_split.config_split.production.status", TRUE);
   }
-
-  // Do the disabling.
-  \Drupal::service('module_installer')->uninstall($disabled_modules);
-
-  // Do the enabling.
-  \Drupal::service('module_installer')->install($enabled_modules);
-
 }

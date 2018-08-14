@@ -14,6 +14,7 @@ dependencies:
     - comment
     - paragraphs
     - path
+    - publication_date
     - workbench_moderation
 id: node.script_page.default
 targetEntityType: node
@@ -86,6 +87,13 @@ content:
       default_paragraph_type: ''
     third_party_settings: {  }
     region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
   path:
     type: path
     weight: 30
