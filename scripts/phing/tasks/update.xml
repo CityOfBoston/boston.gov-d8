@@ -46,7 +46,7 @@
         <exec description="Rebuild the user permissions"
               logoutput="true"
               dir="${docroot}"
-              command="${drush.cmd} eval 'node_access_rebuild()' >> ${repo.root}/setup/drush_site_install.log "/>
+              command='${drush.cmd} eval "node_access_rebuild();" >> ${repo.root}/setup/drush_site_install.log '/>
     </target>
 
 <!--Configuration commands-->

@@ -14,6 +14,7 @@ dependencies:
     - datetime
     - paragraphs
     - path
+    - publication_date
     - workbench_moderation
 id: node.emergency_alert.default
 targetEntityType: node
@@ -68,6 +69,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
   path:
     type: path
     weight: 30

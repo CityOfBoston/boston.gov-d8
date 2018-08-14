@@ -29,3 +29,16 @@ global-styling.patterns:
       https://patterns.boston.gov/css/public.css: {type:external, minified:true}
   data:
     name: 'Patterns (fleet)'
+
+global-styling.heroku-patterns:
+  remote: https://cob-patterns-staging.herokuapp.com/
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  css:
+    theme:
+      https://cob-patterns-staging.herokuapp.com/css/public.css: {type:external, minified:true}
+  data:
+    name: 'Patterns (staging)'
