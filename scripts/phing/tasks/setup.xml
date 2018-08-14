@@ -24,6 +24,11 @@
                     update:database:update,
                     setup:drupal:reset_config">
     <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
+    <exec description="Establish drupal command in path."
+          command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/"
+          logoutput="true"
+          passthru="true"
+          />
     <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
           file="${project.basedir}/setup/uli.log" append="true"/>
   </target>
