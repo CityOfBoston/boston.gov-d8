@@ -79,7 +79,7 @@
                   logoutput="true"/>
 
             <exec description="Establish drupal command in path."
-                command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/"
+                command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/; fi"
                 logoutput="true"
                 passthru="true"
             />
@@ -333,12 +333,17 @@
               dir="${install_config_abs}"
               passthru="true"
               logoutput="true"/>
-        <echo message="Enabling production-only config settings." level="info"/>
-        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
-              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
-              dir="${install_config_abs}"
-              passthru="true"
-              logoutput="true"/>
+        <if>
+          <available file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
+          <then>
+            <echo message="Enabling production-only config settings." level="info"/>
+              <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+                    command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+                    dir="${install_config_abs}"
+                    passthru="true"
+                    logoutput="true"/>
+          </then>
+        </if>
     </target>
 
     <!-- Production-only Modules Strategy -->
@@ -362,32 +367,51 @@
             dir="${install_config_abs}"
             passthru="true"
             logoutput="true"/>
-        <echo message="Enabling development-only config settings." level="info"/>
-        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
-            command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
-            dir="${install_config_abs}"
-            passthru="true"
-            logoutput="true"/>
+        <if>
+          <available file="${install_config_abs}/config_split.config_split.development.yml.disabled"/>
+          <then>
+            <echo message="Enabling development-only config settings." level="info"/>
+            <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+                command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+                dir="${install_config_abs}"
+                passthru="true"
+                logoutput="true"/>
+          </then>
+        </if>
     </target>
 
   <target name="setup:drupal:reset_config"
           description="Re-enables the configs from both environments.">
     <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
     <echo message="Enabling config_split settings." level="info"/>
-    <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
-          command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
-          dir="${install_config_abs}"
-          passthru="true"
-          logoutput="true"/>
-    <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
-          command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
-          dir="${install_config_abs}"
-          passthru="true"
-          logoutput="true"/>
     <if>
-      <equals arg1="acquia.site_environment" arg2="dev" casesensitive="true"/>
+      <available file="${install_config_abs}/config_split.config_split.development.yml.disabled"/>
       <then>
-        <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.production')->set('status', false)->save();"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+              command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+      </then>
+    </if>
+    <if>
+      <available file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
+      <then>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+      </then>
+    </if>
+    <if>
+      <and>
+        <equals arg1="${acquia.site_environment}" arg2="dev" casesensitive="true"/>
+        <available file="${install_config_abs}/config_split.config_split.production.yml"/>
+      </and>
+      <then>
+        <echo message="Imports prod config."/>
+        <property name="cfg.php" value="\Drupal::service(&quot;config.factory&quot;)->getEditable(&quot;config_split.config_split.production&quot;)->set(&quot;status&quot;, false)->save();"/>
         <resolvepath propertyName="cfg.prod" file="${project.config.prod}"  dir="${docroot}"/>
         <exec description="Use drupal console to re-import the production yml config_split file."
               dir="${docroot}"
