@@ -24,11 +24,6 @@
                     update:database:update,
                     setup:drupal:reset_config">
     <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
-    <exec description="Establish drupal command in path."
-          command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/"
-          logoutput="true"
-          passthru="true"
-          />
     <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
           file="${project.basedir}/setup/uli.log" append="true"/>
   </target>
@@ -82,6 +77,13 @@
                   command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
                   dir="${project.basedir}/"
                   logoutput="true"/>
+
+            <exec description="Establish drupal command in path."
+                command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/"
+                logoutput="true"
+                passthru="true"
+            />
+
         </else>
     </if>
   </target>
@@ -386,18 +388,20 @@
       <equals arg1="acquia.site_environment" arg2="dev" casesensitive="true"/>
       <then>
         <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.production')->set('status', false)->save();"/>
+        <resolvepath propertyName="cfg.prod" file="${project.config.prod}"  dir="${docroot}"/>
+        <exec description="Use drupal console to re-import the production yml config_split file."
+              dir="${docroot}"
+              command="drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
+              logoutput="true"/>
         <exec description="Sets the active status for the settings."
               dir="${docroot}"
               command="${drush.cmd} eval '${cfg.php}'"
+              logoutput="true"/>
+        <exec description="Make git ignore the changes to the config/prod folder because we did not use the production config."
+              dir="${cfg.prod}"
+              command="git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')"
               logoutput="true"/>
       </then>
-      <else>
-        <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.development')->set('status', false)->save()"/>
-        <exec description="Sets the active status for the settings."
-              dir="${docroot}"
-              command="${drush.cmd} eval '${cfg.php}'"
-              logoutput="true"/>
-      </else>
     </if>
   </target>
 
