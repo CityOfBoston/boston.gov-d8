@@ -108,7 +108,13 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
-      - drush
+    - drush
+
+  drupal:
+    service: appserver
+    description: "Run drupal-console commands in app container: lando drupal <command>"
+    cmd:
+    - drupal
 
   npm:
     service: node
