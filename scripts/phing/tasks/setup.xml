@@ -377,15 +377,23 @@
           dir="${install_config_abs}"
           passthru="true"
           logoutput="true"/>
-<!--    <exec description="Sets the active status for the settings."
-          dir="${docroot}"
-          command="${drush.cmd} eval '\Drupal::state()->set(''config_split.config_split.development.status'', TRUE);'"
-          logoutput="true"/>
-    <exec description="Sets the active status for the settings."
-          dir="${docroot}"
-          command="${drush.cmd} eval '\Drupal::state()->set(''config_split.config_split.production.status'', TRUE);'"
-          logoutput="true"/>-->
-    <!-- eval '\Drupal::configFactory('config_split')->getEditable('config_split.production')->set('status', true)'-->
+    <if>
+      <equals arg1="acquia.site_environment" arg2="dev" casesensitive="true"/>
+      <then>
+        <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.production')->set('status', false)->save();"/>
+        <exec description="Sets the active status for the settings."
+              dir="${docroot}"
+              command="${drush.cmd} eval '${cfg.php}'"
+              logoutput="true"/>
+      </then>
+      <else>
+        <property name="cfg.php" value="\Drupal::service('config.factory')->getEditable('config_split.config_split.development')->set('status', false)->save()"/>
+        <exec description="Sets the active status for the settings."
+              dir="${docroot}"
+              command="${drush.cmd} eval '${cfg.php}'"
+              logoutput="true"/>
+      </else>
+    </if>
   </target>
 
 </project>
