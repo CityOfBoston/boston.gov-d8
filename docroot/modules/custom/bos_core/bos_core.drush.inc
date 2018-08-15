@@ -30,7 +30,9 @@ function drush_bos_core_bos_css_source($ord = NULL) {
 
   $opts = ["Cancel"];
   foreach($libs as $libname => $lib) {
-    $opts[] = $lib['data']['name'];
+    if (!empty($lib['data']['name'])) {
+      $opts[] = $lib['data']['name'];
+    }
   }
   $type = drush_choice($opts, dt('Boston CSS Source Switcher:\n Select server to switch to:\n\n'));
   \Drupal\bos_core\BosCoreCssSwitcherService::switchSource($type);
