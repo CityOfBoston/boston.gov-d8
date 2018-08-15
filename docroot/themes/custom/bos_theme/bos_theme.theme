@@ -171,25 +171,29 @@ function bos_theme_preprocess_page(array &$variables) {
 
 //  $variables['cache_buster'] = variable_get('css_js_query_string', '0');
   $variables['cache_buster'] =  \Drupal::state()->get('system.css_js_query_string');
-//  $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
-//  $variables['asset_url'] = $lib['remote'];
+  $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
+  $variables['asset_url'] = $lib['remote'];
 //  $variables['asset_name'] = 'public';
 
   // Find the title of the menu used by the secondary links.
-  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
-  if ($secondary_links) {
-    $menus = function_exists('menu_get_menus') ? menu_get_menus() : menu_list_system_menus();
-    $variables['secondary_menu_heading'] = isset($menus[$secondary_links]) ? $menus[$secondary_links] : '';
-  }
-  else {
-    $variables['secondary_menu_heading'] = '';
+  // Todo: revisit this.  There may be a variable set once we have the menus better defined.
+//  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
+  $secondary_links = 'menu-secondary-menu';
+  $variables['secondary_menu_heading'] = '';
+  if (function_exists('menu_ui_get_menus')) {
+    $menus = menu_ui_get_menus();
+    if (!empty($menus[$secondary_links])) {
+      $variables['secondary_menu_heading'] = $menus[$secondary_links];
+    }
   }
 
   // This is done to bring the hero image rendered output to the page level
   // of rendering. Hero image styling fits more naturally at the page level
   // as opposed to the rendered node output in the system block.
-  $nid = arg(1);
-  if (arg(0) == 'node' && is_numeric($nid)) {
+  $current_path = \Drupal::service('path.current')->getPath();
+  $path_args = explode('/', $current_path);
+  $nid = $path_args[2];
+  if ($path_args[1] == 'node' && is_numeric($nid)) {
     if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
       $has_hero = true;
       $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
@@ -210,55 +214,59 @@ function bos_theme_preprocess_page(array &$variables) {
   }
   // Removes breadcrumbs on node types specified in the array.
   $dont_show_breadcrumbs = array('topic_page', 'landing_page');
-  if (isset($variables['node']) && in_array($variables['node']->type, $dont_show_breadcrumbs)) {
+  if (isset($variables['node']) && in_array($variables['node']->getType(), $dont_show_breadcrumbs)) {
     $variables['breadcrumb'] = '';
   }
 
   // Get the HTTP header so we can have custom 404/403 pages.
-  $header = drupal_get_http_header("status");
-  if ($header == "404 Not Found") {
-    $variables['theme_hook_suggestions'][] = 'page__404';
-    $block = module_invoke('bos_blocks', 'block_view', 'search');
-    $variables['search_block'] = $block;
-  }
+  $response = new Response();
+  if (!empty($response)) {
+    $header = $response->headers->get("status");
+    if ($header == "404 Not Found") {
+      $variables['theme_hook_suggestions'][] = 'page__404';
+      $block = module_invoke('bos_blocks', 'block_view', 'search');
+      $variables['search_block'] = $block;
+    }
 
-  if ($header == "403 Forbidden") {
-    $variables['theme_hook_suggestions'][] = 'page__403';
-  }
+    if ($header == "403 Forbidden") {
+      $variables['theme_hook_suggestions'][] = 'page__403';
+    }
 
-  $no_type_needed = array(
-    'listing_page',
-    'landing_page',
-  );
+    $no_type_needed = [
+      'listing_page',
+      'landing_page',
+    ];
 
-  // some content types aren't special
-  if (isset($variables['node']) && !in_array($variables['node']->type, $no_type_needed)) {
-    $type_element = array(
+    // some content types aren't special
+    if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+      $type_element = [
+        '#tag' => 'meta', // The #tag is the html tag -
+        '#attributes' => [ // Set up an array of attributes inside the tag
+          'class' => 'swiftype',
+          'name' => 'type',
+          'data-type' => 'enum',
+          'content' => $variables['node']->getType(),
+        ],
+      ];
+      $variables['#attached']['html_head'][] = [$type_element, "swiftype_type"];
+
+    }
+
+    // Add a site priority meta tag for swiftype
+    $priority_element = [
       '#tag' => 'meta', // The #tag is the html tag -
-      '#attributes' => array( // Set up an array of attributes inside the tag
+      '#attributes' => [ // Set up an array of attributes inside the tag
         'class' => 'swiftype',
-        'name' => 'type',
-        'data-type' => 'enum',
-        'content' => $variables['node']->type,
-      ),
-    );
-    drupal_add_html_head($type_element, 'swiftype_type');
+        'name' => 'site-priority',
+        'data-type' => 'integer',
+        'content' => 5,
+      ],
+    ];
+    $variables['#attached']['html_head'][] = [$priority_element, "swiftype_priority"];
   }
-
-  // Add a site priority meta tag for swiftype
-  $priority_element = array(
-    '#tag' => 'meta', // The #tag is the html tag -
-    '#attributes' => array( // Set up an array of attributes inside the tag
-      'class' => 'swiftype',
-      'name' => 'site-priority',
-      'data-type' => 'integer',
-      'content' => 5,
-    ),
-  );
-  drupal_add_html_head($priority_element, 'swiftype_priority');
 
   // Create necessary page classes
-  if ($variables['node']->type !== 'tabbed_content' && $variables['node']->type !== 'how_to' && !$has_hero) {
+  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$has_hero) {
     $page_class = 'page';
   } else {
     $page_class = NULL;
@@ -268,14 +276,14 @@ function bos_theme_preprocess_page(array &$variables) {
   $target_id = NULL;
 
   if (isset($variables['node'])) {
-    $target_id = $variables['node']->nid;
+    $target_id = $variables['node']->nid->value;
 
-    if ($variables['node']->type == 'topic_page') {
+    if ($variables['node']->getType() == 'topic_page') {
       $page_class = 'page';
     }
 
-    if ($variables['node']->type !== 'landing_page') {
-      if ($variables['node']->type !== 'tabbed_content' && $variables['node']->type !== 'how_to') {
+    if ($variables['node']->getType() !== 'landing_page') {
+      if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to') {
         $page_class_alert = 'page page--wa';
       } else {
         $page_class_alert = 'page page--wa page--nm';
@@ -284,13 +292,12 @@ function bos_theme_preprocess_page(array &$variables) {
       $page_class_alert = 'page';
     }
 
-    if (drupal_is_front_page()) {
+    if ($variables['is_front']) {
       $page_class_alert = 'page page--wa page--fp';
     }
   }
 
   // If we are on the employee directory page, change the title.
-  $current_path = current_path();
   if (strpos($current_path, 'user') === 0) {
     $page_class_alert = 'page page--wa';
   }
@@ -298,14 +305,13 @@ function bos_theme_preprocess_page(array &$variables) {
   $variables['target_id'] = $target_id;
   $variables['page_class'] = $page_class;
   $variables['page_class_alert'] = $page_class_alert;
+  $variables['site_name'] = \Drupal::configFactory()->get('system.site')->get('name');
 
   $variables['site_info'] = array(
     'front_page' => $variables['front_page'],
-    'asset_url' => $variables['asset_url'],
-    'asset_name' => $variables['asset_name'],
     'cache_buster' => $variables['cache_buster'],
     'site_name' => $variables['site_name'],
-    'hide_logo' => $GLOBALS['theme'] == 'boston_hub',
+    'hide_logo' => false,
   );
 }
 
