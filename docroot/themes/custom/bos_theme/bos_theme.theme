@@ -60,19 +60,19 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'template' => 'templates/snippets/user_login',
     ),
     'logo' => array(
-      'template' => 'templates/snippets/logo',
+      'template' => 'snippets/logo',
     ),
     'burger' => array(
-      'template' => 'templates/snippets/burger',
+      'template' => 'snippets/burger',
     ),
     'seal' => array(
-      'template' => 'templates/snippets/seal',
+      'template' => 'snippets/seal',
     ),
     'search' => array(
-      'template' => 'templates/snippets/search',
+      'template' => 'snippets/search',
     ),
     'secondary_nav' => array(
-      'template' => 'templates/snippets/secondary-nav',
+      'template' => 'snippets/secondary-nav',
     ),
     'profile_address' => array(
       'variables' => array(
@@ -170,7 +170,7 @@ function bos_theme_preprocess_page(array &$variables) {
 
   $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
   $variables['asset_url'] = $lib['remote'];
-//  $variables['asset_name'] = 'public';
+  $variables['asset_name'] = 'public';
 
   // Find the title of the menu used by the secondary links.
   // Todo: revisit this.  There may be a variable set once we have the menus better defined.
@@ -282,7 +282,8 @@ function bos_theme_preprocess_page(array &$variables) {
       } else {
         $variables['page_class_alert'] = 'page page--wa page--nm';
       }
-    } else {
+    }
+    else {
       $variables['page_class_alert'] = 'page';
     }
 
@@ -297,7 +298,6 @@ function bos_theme_preprocess_page(array &$variables) {
   }
 
   $variables['site_name'] = \Drupal::configFactory()->get('system.site')->get('name');
-
   $variables['title'] = $variables["page"]["#title"];
 
   $variables['site_info'] = array(
@@ -306,6 +306,19 @@ function bos_theme_preprocess_page(array &$variables) {
     'site_name' => $variables['site_name'],
     'hide_logo' => false,
   );
+
+//  $header_component = [];
+//  $header_component = ['#theme' => 'burger'];
+//  $variables['burger'] = \Drupal::service('renderer')->render($header_component);
+//  $header_component['#theme'] = 'logo';
+//  $variables['logo'] = \Drupal::service('renderer')->render($header_component);
+//  $header_component['#theme'] = 'seal';
+//  $variables['seal'] = \Drupal::service('renderer')->render($header_component);
+//  $header_component['#theme'] = 'secondary_nav';
+//  $variables['secondary_nav'] = \Drupal::service('renderer')->render($header_component);
+//  $header_component['#theme'] = 'search';
+//  $variables['search'] = \Drupal::service('renderer')->render($header_component);
+
 }
 
 

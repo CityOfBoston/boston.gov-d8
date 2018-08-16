@@ -62,13 +62,13 @@
 <div {% if page_class %}class="{{ page_class }} mn"{% endif %} id="page">
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
-{#
-    {{ theme('burger') }}
-    {{ theme('logo', $site_info) }}
-    {{ theme('seal', $site_info) }}
-    {{ theme('secondary_nav', array('secondary_menu' => $secondary_menu)) }}
-    {{ theme('search', array('search_form_url' => '/search')) }}
-#}
+
+      {% include 'themes/custom/bos_theme/templates/snippets/burger.html.twig' %}
+      {% include 'themes/custom/bos_theme/templates/snippets/logo.html.twig' %}
+      {% include 'themes/custom/bos_theme/templates/snippets/seal.html.twig' %}
+      {% include 'themes/custom/bos_theme/templates/snippets/secondary-nav.html.twig' %}
+      {% include 'themes/custom/bos_theme/templates/snippets/search.html.twig' %}
+
   </header>
 
   <div id="sa" data-target="{{ target_id }}" data-classes="{{ page_class_alert }}  mn" class="d--n"></div>
