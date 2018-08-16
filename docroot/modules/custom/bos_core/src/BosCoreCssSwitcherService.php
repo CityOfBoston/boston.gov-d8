@@ -20,7 +20,9 @@ class BosCoreCssSwitcherService {
     $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
     $opts = array("Cancel");
     foreach ($libs as $libname => $lib) {
-      $opts[] = $libname;
+      if (!empty($lib['data']['name'])) {
+        $opts[] = $libname;
+      }
     }
     if (!empty($opts[$ord])) {
       \Drupal::logger('bos-core')->info("Switching CSS source to: '@this'", ["@this" => $opts[$ord]]);

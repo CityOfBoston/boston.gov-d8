@@ -1,12 +1,11 @@
-{#
 /**
  * @file
  * Javascript to check for alerts
  *
  */
-#}
-<script id="alert_script">
-  'use strict'
+
+// <script id="alert_script">
+  'use strict';
 
   var BostonAlert = (function () {
     var el = document.getElementById('sa');
@@ -57,7 +56,7 @@
     return {
       getAlert: getAlert
     }
-  })()
+  })();
 
-  BostonAlert.getAlert()
-</script>
+  BostonAlert.getAlert();
+// </script>
