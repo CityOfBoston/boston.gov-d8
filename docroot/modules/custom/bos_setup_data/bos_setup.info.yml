@@ -1,0 +1,19 @@
+name: Boston Initial Content
+description: "Allows the addition of initial site data."
+type: module
+version: 8.x.1.0
+core: 8.x
+package: City of Boston
+
+dependencies:
+- default_content
+
+# @see https://www.drupal.org/docs/8/modules/default-content
+# enable this module to import the data in the content folders.
+
+# create export files using
+#     drush dcem bos_setup
+
+default_content:
+  node:
+    - 29809c29-6a39-48fb-ab60-559065d6938e
