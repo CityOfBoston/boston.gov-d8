@@ -43,7 +43,7 @@
  * @see html.html.twig
  */
 #}
-
+{{ breakpoint() }}
 <input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
 
 <nav class="nv-m">
@@ -83,13 +83,13 @@
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false">Back to top</a>
         {% if not header_image or (node and node.type == 'tabbed_content') or node.type == 'how_to' %}
-          {% if breadcrumb %}
-            <div id="breadcrumb" data-swiftype-index="false">{{ breadcrumb }}</div>
+          {% if page.breadcrumb %}
+            <div id="breadcrumb" data-swiftype-index="false">{{ page.breadcrumb }}</div>
           {% endif %}
         {%  endif %}
         {{ title_prefix }}
-        {%  if title and not hide_page_title %}
-          <h1 class="page-title">{{ title }}</h1>
+        {%  if page.title and not hide_page_title %}
+          <h1 class="page-title">{{ page.title }}</h1>
         {%  endif %}
         {{ title_suffix }}
         {{ messages }}
@@ -136,7 +136,7 @@
             {% endif %}
           {% endif %}
           {% if node and not node.type == 'tabbed_content' and not node.type == 'how_to' %}
-            {% if breadcrumb %}
+            {% if page.breadcrumb %}
               <div{% if header_image %} class="brc--wh"{% endif %} data-swiftype-index="false">{{ breadcrumb}}</div>
             {% endif %}
           {% endif %}
