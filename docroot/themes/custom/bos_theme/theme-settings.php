@@ -102,7 +102,9 @@ function bos_theme_form_system_theme_settings_alter(&$form,  \Drupal\Core\Form\F
   $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
   $opts = array();
   foreach($libs as $libname => $lib) {
-    $opts[$libname] = $lib['data']['name'];
+    if (!empty($lib['data']['name'])) {
+      $opts[$libname] = $lib['data']['name'];
+    }
   }
 
   $form['style'] = array(
