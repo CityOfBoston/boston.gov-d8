@@ -72,31 +72,33 @@
   </header>
 
   <div id="sa" data-target="{{ target_id }}" data-classes="{{ page_class_alert }}  mn" class="d--n"></div>
-{#
-  {{ theme('alert_js') }}
-#}
 
   <div class="main">
     <div class="container">
       <section class="main-content" id="content" role="main">
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false">Back to top</a>
-        {% if not header_image or (node and node.type == 'tabbed_content') or node.type == 'how_to' %}
+
+          {% if not header_image or (node and node.type == 'tabbed_content') or node.type == 'how_to' %}
           {% if page.breadcrumb %}
             <div id="breadcrumb" data-swiftype-index="false">{{ page.breadcrumb }}</div>
           {% endif %}
         {%  endif %}
+
         {{ title_prefix }}
-        {%  if page.title and not hide_page_title %}
-          <h1 class="page-title">{{ page.title }}</h1>
+        {%  if title %}
+          {{ title }}
         {%  endif %}
         {{ title_suffix }}
+
         {{ messages }}
         {{ tabs }}
         {{ page.help }}
+
         {% if action_links %}
           <ul class="action-links">{{ action_links }}</ul>
         {%  endif %}
+
         {% if header_image %}
           {% if node and not node.type == 'tabbed_content' and not node.type == 'how_to' %}
             {% if not node.type == 'topic_page' %}

@@ -161,23 +161,20 @@ function bos_theme_preprocess_page(array &$variables) {
   // Add in the js required by each page.
   $variables['#attached']['library'][] = "bos_theme/page.assets" ;
 
-  $has_hero = false;
-
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
     $variables['theme_hook_suggestions'][] = 'page__embed';
   }
 
   // A variable to define the cache buster
-
-//  $variables['cache_buster'] = variable_get('css_js_query_string', '0');
   $variables['cache_buster'] =  \Drupal::state()->get('system.css_js_query_string');
+
   $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
   $variables['asset_url'] = $lib['remote'];
 //  $variables['asset_name'] = 'public';
 
   // Find the title of the menu used by the secondary links.
   // Todo: revisit this.  There may be a variable set once we have the menus better defined.
-//  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
+  //  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
   if (function_exists('menu_ui_get_menus')) {
@@ -193,9 +190,9 @@ function bos_theme_preprocess_page(array &$variables) {
   $current_path = \Drupal::service('path.current')->getPath();
   $path_args = explode('/', $current_path);
   $nid = $path_args[2];
+  $variables['header_image'] = false;
   if ($path_args[1] == 'node' && is_numeric($nid)) {
     if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
-      $has_hero = true;
       $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
       $uri = $background_image[0]['#item']['uri'];
 
@@ -205,7 +202,7 @@ function bos_theme_preprocess_page(array &$variables) {
       $small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
 
       $variables['background_image'] = $background_image;
-      $variables['header_image'] = $has_hero;
+      $variables['header_image'] = TRUE;
       $variables['xlarge_image'] = $xlarge_image;
       $variables['large_image'] = $large_image;
       $variables['medium_image'] = $medium_image;
@@ -231,81 +228,77 @@ function bos_theme_preprocess_page(array &$variables) {
     if ($header == "403 Forbidden") {
       $variables['theme_hook_suggestions'][] = 'page__403';
     }
+  }
 
-    $no_type_needed = [
-      'listing_page',
-      'landing_page',
-    ];
-
-    // some content types aren't special
-    if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
-      $type_element = [
-        '#tag' => 'meta', // The #tag is the html tag -
-        '#attributes' => [ // Set up an array of attributes inside the tag
-          'class' => 'swiftype',
-          'name' => 'type',
-          'data-type' => 'enum',
-          'content' => $variables['node']->getType(),
-        ],
-      ];
-      $variables['#attached']['html_head'][] = [$type_element, "swiftype_type"];
-
-    }
-
-    // Add a site priority meta tag for swiftype
-    $priority_element = [
-      '#tag' => 'meta', // The #tag is the html tag -
+  // some content types aren't special
+  $no_type_needed = [
+    'listing_page',
+    'landing_page',
+  ];
+  if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+    $variables['#attached']['html_head'][] = array(
+      ['#tag' => 'meta', // The #tag is the html tag -
       '#attributes' => [ // Set up an array of attributes inside the tag
         'class' => 'swiftype',
-        'name' => 'site-priority',
-        'data-type' => 'integer',
-        'content' => 5,
+        'name' => 'type',
+        'data-type' => 'enum',
+        'content' => $variables['node']->getType()],
       ],
-    ];
-    $variables['#attached']['html_head'][] = [$priority_element, "swiftype_priority"];
+      "swiftype_type");
   }
+
+  // Add a site priority meta tag for swiftype
+  $variables['#attached']['html_head'][] = array(
+    ['#tag' => 'meta', // The #tag is the html tag -
+    '#attributes' => [ // Set up an array of attributes inside the tag
+      'class' => 'swiftype',
+      'name' => 'site-priority',
+      'data-type' => 'integer',
+      'content' => 5,],
+    ],
+    "swiftype_priority");
 
   // Create necessary page classes
-  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$has_hero) {
-    $page_class = 'page';
-  } else {
-    $page_class = NULL;
+  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
+    $variables['page_class'] = 'page';
+  }
+  else {
+    $variables['page_class'] = NULL;
   }
 
-  $page_class_alert = $page_class;
-  $target_id = NULL;
+  $variables['page_class_alert'] = $variables['page_class'];
+  $variables['target_id'] = NULL;
 
   if (isset($variables['node'])) {
-    $target_id = $variables['node']->nid->value;
+    $variables['target_id'] = $variables['node']->nid->value;
 
     if ($variables['node']->getType() == 'topic_page') {
-      $page_class = 'page';
+      $variables['page_class'] = 'page';
     }
 
     if ($variables['node']->getType() !== 'landing_page') {
       if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to') {
-        $page_class_alert = 'page page--wa';
+        $variables['page_class_alert'] = 'page page--wa';
       } else {
-        $page_class_alert = 'page page--wa page--nm';
+        $variables['page_class_alert'] = 'page page--wa page--nm';
       }
     } else {
-      $page_class_alert = 'page';
+      $variables['page_class_alert'] = 'page';
     }
 
     if ($variables['is_front']) {
-      $page_class_alert = 'page page--wa page--fp';
+      $variables['page_class_alert'] = 'page page--wa page--fp';
     }
   }
 
   // If we are on the employee directory page, change the title.
   if (strpos($current_path, 'user') === 0) {
-    $page_class_alert = 'page page--wa';
+    $variables['page_class_alert'] = 'page page--wa';
   }
 
-  $variables['target_id'] = $target_id;
-  $variables['page_class'] = $page_class;
-  $variables['page_class_alert'] = $page_class_alert;
   $variables['site_name'] = \Drupal::configFactory()->get('system.site')->get('name');
+
+  $variables['title'] = $variables["page"]["#title"];
 
   $variables['site_info'] = array(
     'front_page' => $variables['front_page'],
@@ -332,6 +325,7 @@ function bos_theme_preprocess_node(&$variables) {
     'boston_meta' => theme_get_setting('boston_meta'),
     'boston_layout' => theme_get_setting('boston_layout'),
   );
+  return;
 }
 
 /**
