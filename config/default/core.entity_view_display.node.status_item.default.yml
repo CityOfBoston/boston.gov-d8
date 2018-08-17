@@ -12,7 +12,7 @@ dependencies:
   module:
     - comment
     - entity_reference_revisions
-    - image
+    - image_url_formatter
     - user
 id: node.status_item.default
 targetEntityType: node
@@ -57,4 +57,5 @@ content:
     weight: 100
     region: content
 hidden:
+  langcode: true
   published_at: true

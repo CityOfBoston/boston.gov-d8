@@ -4,10 +4,10 @@
 
   <echo message="Building ${custom.phing.tasks.dir}/setup.xml" level="verbose"/>
 
-<!-- Define the default task for the setup project. -->
+  <!-- Define the default task for the setup project. -->
   <target name="setup"
           description="Install dependencies, builds docroot, installs Drupal."
-          depends="setup:drupal, setup:drupal:newdb">
+          depends="setup:drupal:download-modules, setup:drupal:site-install">
     <echo message="For a full list of available Phing targets, run:"/>
     <echo message="from host: lando phing -l"/>
     <echo message="from container: phing -l"/>
@@ -15,14 +15,17 @@
 
   <!-- Define the build task for normal developer local builds. -->
   <target name="setup:docker:drupal-local"
-          description="Creates a drupal environment in docker for local development."
-          depends="setup:drupal, setup:drupal:newdb, setup:drush:local-config, update:config:updatedb">
-    <phingcall target="build:info" description="display the welcome screen."/>
-    <echo message="The admin account is: ${drupal.account.name} and password is ${drupal.account.password}" level="warning"/>
-    <exec description="Login the admin user." output='${project.basedir}/setup/.uli'  logoutput="true"
-            dir="${docroot}" command="${drush.cmd} uli"/>
-    <exec description="Allow users outside the container access to the .uli file." logoutput="true"
-            dir="${docroot}" command="chmod 777 ${project.basedir}/setup/.uli"/>
+          description="Creates a Drupal environment in Docker Containers for local development."
+          depends=" setup:drupal:download-modules,
+                    setup:drupal:set_dev_config,
+                    setup:drupal:site-install,
+                    setup:drush:local-config,
+                    setup:drupal:clone_private_repo,
+                    update:database:update,
+                    setup:drupal:reset_config">
+    <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
+    <echo message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
+          file="${project.basedir}/setup/uli.log" append="true"/>
   </target>
 
   <!-- Define the build task used by travis. -->
@@ -34,11 +37,14 @@
   <!-- Define the build task used by terraform-->
   <target name="setup:docker:drupal-terraform"
           description="Creates a drupal environment in docker (command run by terraform)."
-          depends="build:info">
+          depends=" setup:drupal:set_prod_config,
+                    setup:drupal:reset_config">
+    <exec description="Enable the limit-apache-children module for terraform."
+        command="a2enconf limit-apache-children" dir="${repo.root}" logoutput="true"/>
   </target>
 
 <!-- Define the Drupal setup task -->
-  <target name="setup:drupal"
+  <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
       <if>
           <equals arg1="${acquia.site_environment}" arg2="dev"/>
@@ -52,26 +58,39 @@
           </else>
       </if>
     <if>
-      <not>
         <available file="${docroot}/core/lib/Drupal.php" />
-      </not>
-      <then>
-        <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
-        <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
-        <exec command="composer install ${flag.dev} > ${project.basedir}/setup/composer.log"
-              dir="${project.basedir}/"
-              description="when ready, use update:drupal:composer:install"
-              logoutput="true"/>
-      </then>
-      <else>
-        <fail message="Drupal is already installed."/>
-      </else>
+        <then>
+            <fail message="Drupal is already installed."/>
+        </then>
+        <else>
+            <echo message="Using Composer to install Drupal core and the required contrib modules." level="info"/>
+            <echo message=" -> see ${project.basedir}/setup/composer.log for output." level="warning"/>
+            <echo message="${line.separator} > composer install ${flag.dev}"
+                  file="${project.basedir}/setup/composer.log" append="true"/>
+            <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
+                  command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
+                  dir="${project.basedir}/"
+                  logoutput="true"/>
+            <echo message="${line.separator} > composer drupal:scaffold"
+                  file="${project.basedir}/setup/composer.log" append="true"/>
+            <exec description="Installs the drupal scaffold files, and logs to composer.log"
+                  command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
+                  dir="${project.basedir}/"
+                  logoutput="true"/>
+
+            <exec description="Establish drupal command in path."
+                command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/; fi"
+                logoutput="true"
+                passthru="true"
+            />
+
+        </else>
     </if>
   </target>
 
-<!-- Define the task to create a new Drupal 8 Database. -->
-  <target name="setup:drupal:newdb"
-          description="Uses Composer to install drupal in the container attaching to database in Lando-controlled container.">
+<!-- Define the task to build a new Drupal 8 Database. -->
+  <target name="setup:drupal:site-install"
+          description="Uses Drush to install Drupal in the container attaching to database in Lando-controlled container.">
 
     <if>
       <available file="${docroot}/core/lib/Drupal.php"/>
@@ -79,15 +98,13 @@
 
         <echo message="Preparing to setup the Drupal database."/>
 
-        <phingcall target="setup:drupal:local_settings_php:delete"
-                   description="Remove any pre-existing local.settings.php file."/>
-        <phingcall target="setup:drupal:local_settings_php:write"
+        <phingcall target="setup:drupal:local_settings_php"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
 
         <echo level="warning" message="Build is now using settings file ${local.settings.file}"/>
         <echo level="warning" message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
 
-        <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:newdb\033[0m${line.separator}'" logoutput="true" passthru="true"/>
+        <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true" passthru="true"/>
         <echo message="Install the Drupal 8 database."/>
         <echo message=" -> see ${project.basedir}/setup/drush_site_install.log for output." level="warning"/>
 
@@ -102,7 +119,7 @@
                         description="Sets the location of a previous installation Drupal configs to import to this installation."/>
                 <property name="si_site_profile" value="${project.profile.name}"
                         description="Defines the profile to be applied after the import is performed."/>
-                <echo level="info" message="Build is migrating configs from ${install_config_abs} during install (takes a while)."/>
+                <echo level="info" message="Build is importing configs from ${install_config_abs} during install (takes a while)."/>
             </then>
             <else>
               <property name="si_install_profile" value="${project.profile.name}"/>
@@ -119,7 +136,7 @@
           --account-pass=${drupal.account.password}
           --account-mail=${drupal.account.mail}
           --sites-subdir=${drupal.multisite.name}
-          --verbose -y"/>
+          -vvv -y"/>
         <echo file="${project.basedir}/setup/drush_site_install.log" message="exec: ${si.command}"/>
         <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
@@ -134,33 +151,35 @@
     </if>
   </target>
 
-<!-- Define a task to delete the local local.settings.php file. -->
-  <target name="setup:drupal:local_settings_php:delete"
-          description="Deletes any existing local.settings.php file.">
+<!-- Define a task to copy a new local.settings.php file and append initial settings. -->
+  <target name="setup:drupal:local_settings_php"
+          description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
+
+      <!-- Firstly delete the local settings file -->
       <echo message="Delete the ${local.settings.file} file (if exists)."/>
       <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
-  </target>
 
-<!-- Define a task to copy a new local.settings.php file and append initial settings. -->
-  <target name="setup:drupal:local_settings_php:write"
-          description="Sets the database and any other default values into the local.settings.php file.">
-
+      <!-- Now recreate the settings file -->
       <echo message="Recreate the ${local.settings.file} file with build settings."/>
       <if>
         <not>
           <available file="${local.settings.file}"/>
         </not>
         <then>
+
           <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php" tofile="${local.settings.file}" haltonerror="false" overwrite="false" verbose="true"/>
           <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml" tofile="${local.services.file}" haltonerror="false" overwrite="false" verbose="true"/>
-          <echo message="${line.separator}/*${line.separator}" append="true" file="${local.settings.file}"/>
-          <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${local.settings.file}"/>
+
+          <echo description="Adds local settings to settings.local.php file."
+                message="${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="/*${line.separator}" append="true" file="${local.settings.file}"/>
+          <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php&gt;${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="*/${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}" append="true" file="${local.settings.file}"/>
           <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
         </then>
         <else>
-          <echo message="local.settings.php already exists, ignoring."/>
+          <echo message="The local.settings.php already exists, did not update with local settings."/>
         </else>
       </if>
 
@@ -173,8 +192,19 @@
         </then>
       </if>
 
-      <echo message="${line.separator}/*${line.separator}" append="true" file="${settings.file}"/>
-      <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php:write&gt;${line.separator}" append="true" file="${settings.file}"/>
+      <!-- Remove unwanted and confusing template config files. -->
+      <delete file="${docroot}/sites/default/default.settings.php" quiet="true"/>
+      <delete file="${docroot}/sites/example.settings.local.php" quiet="true"/>
+      <delete file="${docroot}/sites/example.sites.php" quiet="true"/>
+      <delete file="${docroot}/sites/default/default.services.yml" quiet="true"/>
+      <delete file="${docroot}/sites/development.services.yml" quiet="true"
+              description="Redundant file as we have this in the sites/default folder."/>
+
+      <!-- Append code to (fresh) settings.php file -->
+      <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
+            message="${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="/*${line.separator}" append="true" file="${settings.file}"/>
+      <echo message="  Content added by Phing &lt;setup:drupal:local_settings_php&gt;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['update_free_access'] = FALSE;${line.separator}" append="true" file="${settings.file}"/>
       <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}" append="true" file="${settings.file}"/>
@@ -198,16 +228,82 @@
 
   </target>
 
+  <!-- Define a task to include files from a private repo (defined in phing-boston.yml). -->
+  <!--
+       Usage Note: The file structure in the private repo, must exactly mirror the main
+       repo to enable files to copy across to the correct locations.
+       Use .gitignore files in the private repo folders to ignore copied files in
+       the main repo.
+  -->
+  <target name="setup:drupal:clone_private_repo"
+          description="Clones the private repo, and moves files around (i.e. installs) as needed.">
+
+    <if>
+      <isset property="git.private_repo.repo"/>
+      <then description="If the Private Repo flag is set, then allow loading of the private settings file.">
+
+      <!-- Define local variables. -->
+      <property description="Location of settings files for this Drupal intallation."
+                name="private.docroot.settings"
+                value="${docroot}/${git.private_repo.settings_file}"/>
+
+      <echo message="> Merging the private repo from ${git.private_repo.repo} (${git.private_repo.branch})." level="warning"/>
+
+        <!-- Clone the private repo. -->
+        <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
+                includeemptydirs="true" dir="${git.private_repo.local_dir}" failonerror="false" quiet="true"/>
+        <mkdir dir="${git.private_repo.local_dir}" />
+        <exec description="Clone a private repo which has confidential settings (passwords etc)."
+              command="git clone ${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${git.private_repo.local_dir}"
+              returnProperty="repoOK" logoutput="false" passthru="true"/>
+
+        <!-- Move files from private repo into main repo, and add include directive so it is loaded on bootstrap. -->
+        <if>
+          <available file="${git.private_repo.local_dir}/.git/config"/>
+          <then>
+            <delete description="Remove .git so folder is no longer a repo (and doesn't get copied)."
+                    dir="${git.private_repo.local_dir}/.git"
+                    quiet="true" verbose="false" failonerror="false" includeemptydirs="true"/>
+            <exec description="Remove markdown files so they dont get copied."
+                    command="rm -f ${git.private_repo.local_dir}/*.md"
+                    passthru="true" logoutput="false" checkreturn="false"/>
+            <exec description="Move the private repo files to the docroot folder."
+                  command="rsync -a ${git.private_repo.local_dir}/ ${repo.root}/"
+                  passthru="true" logoutput="false" checkreturn="false"/>
+            <exec description="Delete the private repo files."
+                  command="rm -rf ${git.private_repo.local_dir}"
+                  passthru="true" logoutput="false" checkreturn="false"/>
+          </then>
+        </if>
+
+        <if>
+          <available file="${private.docroot.settings}"/>
+          <then>
+            <echo description="Adds a directive to settings file to include contents of settings file in repo."
+                  message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="if (file_exists('${private.docroot.settings}')) {${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="   include '${private.docroot.settings}';${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="}${line.separator}${line.separator}" append="true" file="${local.settings.file}"/>
+            <echo message="/* End of additions. */${line.separator}" append="true" file="${local.settings.file}"/>
+          </then>
+        </if>
+
+      </then>
+    </if>
+  </target>
+
   <target name="setup:drush:local-config"
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Update the drush config with the container url"/>
-    <echo message="options:${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
-    <echo message="  root: '${lando.db.container}'${line.separator}" append="true" file="${docroot}/sites/all/drush/drush.yml"/>
+    <echo message="# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="${line.separator}options:${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="  uri: '${lando.url.url}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="  root: '${lando.url.localpath}'${line.separator}" append="true" file="${repo.root}/drush/drush.yml"/>
   </target>
 
-    <target name="setup:cleanup"
+  <target name="setup:cleanup"
             description="Final cleanup after the install process.">
         <resolvepath propertyName="install_config_abs" file="${docroot}/${project.config.sync}"/>
         <delete description="Removes the config files used during installation."
@@ -215,6 +311,123 @@
         <exec description="Exports the configs into the config folder.."
                 dir="${docroot}" command="${drush.cmd} cex -y" logoutput="true"/>
     </target>
+
+    <!-- Development Modules Strategy -->
+    <!--
+        - Config_split module is used to maintain a set of configurations suitable to development environments
+        only.  Any config-export activities for modules defined in the "development" 'Configuration Split Setting'
+        (at /admin/config/development/configuration/config-split/development/edit) will be exported to app/config/develop.
+        - The "development" settings are marked active so that development environments will import configs from the
+        config/develop folder on build and export configs to that folder on drush config-export etc.
+        - local.settings.php has a switch to make the "development" settings active/inactive based on the AH_ENVIROMENT
+        variables, but this is only implemented after the site is installed...
+        .. Therefore, when installing on non-dev environments the contents of the ../config/develop folder need to be
+        removed.
+     -->
+    <target name="setup:drupal:set_prod_config"
+            description="Disables the develop configs from non-dev environments.">
+        <resolvepath propertyName="install_config_abs" file="${project.config.sync}" dir="${docroot}"/>
+        <echo message="Disabling development-only config settings." level="info"/>
+        <exec description="Rename the config_split yml file which contains the modules to be implemented only in development."
+              command="mv config_split.config_split.development.yml config_split.config_split.development.yml.disabled"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+        <if>
+          <available file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
+          <then>
+            <echo message="Enabling production-only config settings." level="info"/>
+              <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+                    command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+                    dir="${install_config_abs}"
+                    passthru="true"
+                    logoutput="true"/>
+          </then>
+        </if>
+    </target>
+
+    <!-- Production-only Modules Strategy -->
+    <!--
+        - Config_split module is used to maintain a set of configurations suitable to production environments
+        only.  Any config-export activities for modules defined in the "production" 'Configuration Split Setting'
+        (at /admin/config/development/configuration/config-split/production/edit) will be exported to app/config/prod.
+        - The "production" settings are marked active so that development environments will import configs from the
+        config/prod folder on build and export configs to that folder on drush config-export etc.
+        - local.settings.php has a switch to make the "production" settings active/inactive based on the AH_ENVIROMENT
+        variables, but this is only implemented after the site is installed...
+        .. Therefore, when installing on non-dev environments the contents of the ../config/prod folder need to be
+        removed.
+     -->
+    <target name="setup:drupal:set_dev_config"
+            description="Disables the production configs from non-prod environments.">
+        <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
+        <echo message="Disabling production-only config settings." level="info"/>
+        <exec description="Rename the config_split yml file which contains the modules to be implemented only in production."
+            command="mv config_split.config_split.production.yml config_split.config_split.production.yml.disabled"
+            dir="${install_config_abs}"
+            passthru="true"
+            logoutput="true"/>
+        <if>
+          <available file="${install_config_abs}/config_split.config_split.development.yml.disabled"/>
+          <then>
+            <echo message="Enabling development-only config settings." level="info"/>
+            <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+                command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+                dir="${install_config_abs}"
+                passthru="true"
+                logoutput="true"/>
+          </then>
+        </if>
+    </target>
+
+  <target name="setup:drupal:reset_config"
+          description="Re-enables the configs from both environments.">
+    <resolvepath propertyName="install_config_abs" file="${project.config.sync}"  dir="${docroot}"/>
+    <echo message="Enabling config_split settings." level="info"/>
+    <if>
+      <available file="${install_config_abs}/config_split.config_split.development.yml.disabled"/>
+      <then>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+              command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+      </then>
+    </if>
+    <if>
+      <available file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
+      <then>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
+      </then>
+    </if>
+    <if>
+      <and>
+        <equals arg1="${acquia.site_environment}" arg2="dev" casesensitive="true"/>
+        <available file="${install_config_abs}/config_split.config_split.production.yml"/>
+      </and>
+      <then>
+        <echo message="Imports prod config."/>
+        <property name="cfg.php" value="\Drupal::service(&quot;config.factory&quot;)->getEditable(&quot;config_split.config_split.production&quot;)->set(&quot;status&quot;, false)->save();"/>
+        <resolvepath propertyName="cfg.prod" file="${project.config.prod}"  dir="${docroot}"/>
+        <exec description="Use drupal console to re-import the production yml config_split file."
+              dir="${docroot}"
+              command="drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
+              logoutput="true"/>
+        <exec description="Sets the active status for the settings."
+              dir="${docroot}"
+              command="${drush.cmd} eval '${cfg.php}'"
+              logoutput="true"/>
+        <exec description="Make git ignore the changes to the config/prod folder because we did not use the production config."
+              dir="${cfg.prod}"
+              command="git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')"
+              logoutput="true"/>
+      </then>
+    </if>
+  </target>
 
 </project>
 

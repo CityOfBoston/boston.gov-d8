@@ -5,6 +5,318 @@
  */
 
 /**
+ * Implements hook_preprocess_html.
+ */
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * Implements theme.api.php hook_theme.
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ *
+ * @return array
+ *
+ *  @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_theme/8.2.x
+ */
+function bos_theme_theme($existing, $type, $theme, $path) {
+  return array(
+    'page_contacts' => array(
+      'variables' => array(
+        'title' => NULL,
+        'short_title' => NULL,
+        'contacts' => NULL,
+      ),
+      'template' => 'templates/snippets/page-contacts',
+    ),
+    'detail_item' => array(
+      'variables' => array(
+        'label' => NULL,
+        'body' => NULL,
+        'image' => NULL,
+        'classes' => array(
+          'detail' => '',
+          'icon' => '',
+          'label' => '',
+          'body' => '',
+        ),
+      ),
+      'template' => 'templates/snippets/detail-item',
+    ),
+    'grid_card' => array(
+      'variables' => array(
+        'title' => NULL,
+        'link' => NULL,
+        'subtitle' => NULL,
+        'image' => NULL,
+        'description' => NULL,
+        'classes' => '',
+      ),
+      'template' => 'templates/snippets/grid-card',
+    ),
+    'user_login' => array(
+      'render element' => 'form',
+      'template' => 'templates/snippets/user_login',
+    ),
+    'logo' => array(
+      'template' => 'templates/snippets/logo',
+    ),
+    'burger' => array(
+      'template' => 'templates/snippets/burger',
+    ),
+    'seal' => array(
+      'template' => 'templates/snippets/seal',
+    ),
+    'search' => array(
+      'template' => 'templates/snippets/search',
+    ),
+    'secondary_nav' => array(
+      'template' => 'templates/snippets/secondary-nav',
+    ),
+    'profile_address' => array(
+      'variables' => array(
+        'address' => NULL,
+        'address_type' => NULL,
+      ),
+      'template' => 'templates/snippets/profile-address',
+    ),
+  );
+}
+
+
+/**
+ * Override or insert variables into the html template.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered. This is usually "html", but can
+ *   also be "maintenance_page" since boston_preprocess_maintenance_page() calls
+ *   this function to have consistent variables.
+ */
+function bos_theme_preprocess_html(&$variables, $hook) {
+  // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
+  $theme = theme_get_setting('asset_source');
+  if (empty($theme)) {
+    $theme = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
+    $theme = array_keys($theme);
+    $theme = $theme[0];
+  }
+  $variables['#attached']['library'][] = "bos_theme/global-styling.always";
+  $variables['#attached']['library'][] = "bos_theme/" . $theme;
+
+  // Send X-UA-Compatible HTTP header to force IE to use the most recent
+  // rendering engine or use Chrome's frame rendering engine if available.
+  // This also prevents the IE compatibility mode button to appear when using
+  // conditional classes on the html tag.
+  $response = new response();
+  if (is_null($response->headers->get('X-UA-Compatible'))) {
+    $response->headers->set('X-UA-Compatible', 'IE=edge,chrome=1');
+  }
+
+  // Return early, so the maintenance page does not call any of the code below.
+  if ($hook != 'html') {
+    return;
+  }
+
+  // Grab some bos_theme specific settings
+  $variables['skip_link_anchor'] = \Drupal\Component\Utility\Html::escape(theme_get_setting('boston_skip_link_anchor'));
+  $variables['skip_link_text']   = \Drupal\Component\Utility\HTML::escape(theme_get_setting('boston_skip_link_text'));
+
+  // Store the menu item since it has some useful information.
+  $variables['menu_item'] = \Drupal::routeMatch()->getParameter('menu');
+  if (isset($variables['menu_item'])) {
+    switch ($variables['menu_item']['page_callback']) {
+      case 'views_page':
+        // Is this a Views page?
+        $variables['classes_array'][] = 'page-views';
+        break;
+
+      case 'page_manager_blog':
+      case 'page_manager_blog_user':
+      case 'page_manager_contact_site':
+      case 'page_manager_contact_user':
+      case 'page_manager_node_add':
+      case 'page_manager_node_edit':
+      case 'page_manager_node_view_page':
+      case 'page_manager_page_execute':
+      case 'page_manager_poll':
+      case 'page_manager_search_page':
+      case 'page_manager_term_view_page':
+      case 'page_manager_user_edit_page':
+      case 'page_manager_user_view_page':
+        // Is this a Panels page?
+        $variables['classes_array'][] = 'page-panels';
+        break;
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function bos_theme_preprocess_page(array &$variables) {
+  // Add in the js required by each page.
+  $variables['#attached']['library'][] = "bos_theme/page.assets" ;
+
+  $has_hero = false;
+
+  if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
+    $variables['theme_hook_suggestions'][] = 'page__embed';
+  }
+
+  // A variable to define the cache buster
+
+//  $variables['cache_buster'] = variable_get('css_js_query_string', '0');
+  $variables['cache_buster'] =  \Drupal::state()->get('system.css_js_query_string');
+  $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
+  $variables['asset_url'] = $lib['remote'];
+//  $variables['asset_name'] = 'public';
+
+  // Find the title of the menu used by the secondary links.
+  // Todo: revisit this.  There may be a variable set once we have the menus better defined.
+//  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
+  $secondary_links = 'menu-secondary-menu';
+  $variables['secondary_menu_heading'] = '';
+  if (function_exists('menu_ui_get_menus')) {
+    $menus = menu_ui_get_menus();
+    if (!empty($menus[$secondary_links])) {
+      $variables['secondary_menu_heading'] = $menus[$secondary_links];
+    }
+  }
+
+  // This is done to bring the hero image rendered output to the page level
+  // of rendering. Hero image styling fits more naturally at the page level
+  // as opposed to the rendered node output in the system block.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $path_args = explode('/', $current_path);
+  $nid = $path_args[2];
+  if ($path_args[1] == 'node' && is_numeric($nid)) {
+    if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
+      $has_hero = true;
+      $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
+      $uri = $background_image[0]['#item']['uri'];
+
+      $xlarge_image = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $uri);
+      $large_image = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $uri);
+      $medium_image = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $uri);
+      $small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
+
+      $variables['background_image'] = $background_image;
+      $variables['header_image'] = $has_hero;
+      $variables['xlarge_image'] = $xlarge_image;
+      $variables['large_image'] = $large_image;
+      $variables['medium_image'] = $medium_image;
+      $variables['small_image'] = $small_image;
+    }
+  }
+  // Removes breadcrumbs on node types specified in the array.
+  $dont_show_breadcrumbs = array('topic_page', 'landing_page');
+  if (isset($variables['node']) && in_array($variables['node']->getType(), $dont_show_breadcrumbs)) {
+    $variables['breadcrumb'] = '';
+  }
+
+  // Get the HTTP header so we can have custom 404/403 pages.
+  $response = new Response();
+  if (!empty($response)) {
+    $header = $response->headers->get("status");
+    if ($header == "404 Not Found") {
+      $variables['theme_hook_suggestions'][] = 'page__404';
+      $block = module_invoke('bos_blocks', 'block_view', 'search');
+      $variables['search_block'] = $block;
+    }
+
+    if ($header == "403 Forbidden") {
+      $variables['theme_hook_suggestions'][] = 'page__403';
+    }
+
+    $no_type_needed = [
+      'listing_page',
+      'landing_page',
+    ];
+
+    // some content types aren't special
+    if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+      $type_element = [
+        '#tag' => 'meta', // The #tag is the html tag -
+        '#attributes' => [ // Set up an array of attributes inside the tag
+          'class' => 'swiftype',
+          'name' => 'type',
+          'data-type' => 'enum',
+          'content' => $variables['node']->getType(),
+        ],
+      ];
+      $variables['#attached']['html_head'][] = [$type_element, "swiftype_type"];
+
+    }
+
+    // Add a site priority meta tag for swiftype
+    $priority_element = [
+      '#tag' => 'meta', // The #tag is the html tag -
+      '#attributes' => [ // Set up an array of attributes inside the tag
+        'class' => 'swiftype',
+        'name' => 'site-priority',
+        'data-type' => 'integer',
+        'content' => 5,
+      ],
+    ];
+    $variables['#attached']['html_head'][] = [$priority_element, "swiftype_priority"];
+  }
+
+  // Create necessary page classes
+  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$has_hero) {
+    $page_class = 'page';
+  } else {
+    $page_class = NULL;
+  }
+
+  $page_class_alert = $page_class;
+  $target_id = NULL;
+
+  if (isset($variables['node'])) {
+    $target_id = $variables['node']->nid->value;
+
+    if ($variables['node']->getType() == 'topic_page') {
+      $page_class = 'page';
+    }
+
+    if ($variables['node']->getType() !== 'landing_page') {
+      if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to') {
+        $page_class_alert = 'page page--wa';
+      } else {
+        $page_class_alert = 'page page--wa page--nm';
+      }
+    } else {
+      $page_class_alert = 'page';
+    }
+
+    if ($variables['is_front']) {
+      $page_class_alert = 'page page--wa page--fp';
+    }
+  }
+
+  // If we are on the employee directory page, change the title.
+  if (strpos($current_path, 'user') === 0) {
+    $page_class_alert = 'page page--wa';
+  }
+
+  $variables['target_id'] = $target_id;
+  $variables['page_class'] = $page_class;
+  $variables['page_class_alert'] = $page_class_alert;
+  $variables['site_name'] = \Drupal::configFactory()->get('system.site')->get('name');
+
+  $variables['site_info'] = array(
+    'front_page' => $variables['front_page'],
+    'cache_buster' => $variables['cache_buster'],
+    'site_name' => $variables['site_name'],
+    'hide_logo' => false,
+  );
+}
+
+
+/**
  * Implements hook_preprocess_node.
  */
 function bos_theme_preprocess_node(&$variables) {

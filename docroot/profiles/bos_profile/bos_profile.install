@@ -4,83 +4,59 @@
  * Install file for Boston.gov.
  */
 
+use Drupal\Core\Extension\ModuleInstaller;
+
 /**
  * Implements hook_install().
  */
 function bos_profile_install() {
-  // Override certain modules which are installed by default.
+  // DO NOT ADD MODULES TO ENABLE/DISABLE HERE.  Read on ...
+  /*
+   * Modules defined in  ../config/default/core.extension.yml are enabled during
+   * the config_import process (triggered by drush si command in Phing).
+   *
+   * The repo also contains config_split configuration files:
+   *     "/config/default/config_split.config_split.development.yml", and
+   *     "/config/default/config_split.config_split.production.yml"
+   * which defines development-only and production-only modules.
+   * These are switched on and off by the Phing script during the site-install
+   * process.
+   *
+   * This module is installed after the config_import process and therefore will
+   * override the modules enabled/disabled by core.extension.yml and
+   * config_splits, but will then be added back in when the next drush cex
+   * command is run, so use care!. */
+  /* @see https://docs.acquia.com/acquia-cloud/develop/config-d8 */
 
   // Be sure an environment indicator is set.
+  // Note: on Acquia servers this will be one of prod / test / dev as per
+  /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable/ */
+  global $envvar;
 
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
-    $envvar = getenv('AH_SITE_ENVIRONMENT');
-    if (!empty($envvar)) {
-      $_ENV['AH_SITE_ENVIRONMENT'] = $envvar;
-    }
-    else {
-      $_ENV['AH_SITE_ENVIRONMENT'] = 'dev';
+    if (!empty(getenv('AH_SITE_ENVIRONMENT'))) {
+      $envvar = getenv('AH_SITE_ENVIRONMENT');
     }
   }
+  else {
+    $envvar = $_ENV['AH_SITE_ENVIRONMENT'];
+  }
+  if (empty($envvar)) {
+    $envvar = 'dev';
+  }
 
-  \Drupal::logger('profile')->info("bos_profile install started. Using @env.", array(
-    '@env' => $_ENV['AH_SITE_ENVIRONMENT'],
+  \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.", array(
+    '@env' => $envvar,
   ));
 
-  // Disable modules enabled by core by default.
-  $disabled_modules = array(
-    'config_translation',
-    'content_translation',
-    'search',
-  );
-  // Don't set defaults here - use the .info file instead.
-  $enabled_modules = array();
+  // Now set some variables based on environment.
+  \Drupal::state()->set("system.performance.css.preprocess", !($envvar == "dev"));
+  \Drupal::state()->set("system.performance.js.preprocess", !($envvar == "dev"));
 
-  if ($_ENV['AH_SITE_ENVIRONMENT'] === 'prod' || $_ENV['AH_SITE_ENVIRONMENT'] === 'test') {
-    // Make sure certain modules are disabled in prod.
-    $disabled_modules += [
-      'devel',
-      'masquerade',
-      'twig_xdebug',
-      'stage_file_proxy',
-      'migrate',
-      'migrate_tools',
-      'migrate_plus',
-      'migrate_drupal',
-      'migrate_drupal_ui',
-      'migrate_upgrade',
-      'dblog',
-      'syslog',
-    ];
+  if ($envvar == "dev") {
+    \Drupal::state()->set("config_split.config_split.development.status", TRUE);
   }
-
   else {
-    // enable development modules in develop environments.
-    $enabled_modules += [
-      'devel',
-      'masquerade',
-      'twig_xdebug',
-      'stage_file_proxy',
-      'migrate',
-      'migrate_tools',
-      'migrate_plus',
-      'migrate_drupal',
-      'migrate_drupal_ui',
-      'migrate_upgrade',
-      'dblog',
-      'syslog',
-    ];
-    // disable annoying modules in develop environments.
-    $disabled_modules += [
-      'autologout',
-      'acquia_connector',
-      'acquia_purge',
-    ];
+    \Drupal::state()->set("config_split.config_split.production.status", TRUE);
   }
-
-  // do the disabling.
-  \Drupal::service('module_installer')->uninstall($disabled_modules);
-
-  // do the enabling.
-  \Drupal::service('module_installer')->install($enabled_modules);
-
 }

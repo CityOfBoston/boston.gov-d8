@@ -6,8 +6,15 @@ dependencies:
     - core.entity_view_mode.node.rss
     - field.field.node.article.body
     - field.field.node.article.comment
+    - field.field.node.article.comment_node_article
+    - field.field.node.article.field_components
+    - field.field.node.article.field_contact
     - field.field.node.article.field_image
+    - field.field.node.article.field_published_date
+    - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_tags
+    - field.field.node.article.field_type_of_content
+    - field.field.node.article.field_updated_date
     - node.type.article
   module:
     - user
@@ -33,4 +40,5 @@ hidden:
   field_tags: true
   field_type_of_content: true
   field_updated_date: true
+  langcode: true
   published_at: true

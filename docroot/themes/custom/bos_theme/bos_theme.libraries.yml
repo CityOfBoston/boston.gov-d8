@@ -1,14 +1,75 @@
-global-styling:
+global-styling.always:
+  js:
+    dist/ie/flexibility.js: { browsers: { IE: 'IE 9', '!IE': FALSE  } }
+    dist/ie/classList.js: { browsers: { IE: 'IE 9', '!IE': FALSE  } }
+    dist/ie/cors.js: { browsers: { IE: 'IE 9', '!IE': FALSE  } }
+  dependencies:
+  - core/jquery
+
+global-styling.default:
   css:
     theme:
-#      system.base.css: {}
-#      system.menus.css: {}
-#      system.messages.css: {}
-#      system.theme.css: {}
-#      comment.css: {}
-#      node.css: {}
+      css/bos_theme.css: {}
+  data:
+    name: 'Default (bos_theme)'
 
+global-styling.local:
+  remote: https://127.0.0.1:3030
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://127.0.0.1:3030/scripts/all.js: {type:external, minified:true }
   dependencies:
-    - core/drupal
-    - core/jquery
-    - core/jquery.once
+  - core/jquery
+  css:
+    theme:
+      https://127.0.0.1:3030/css/public.css: {type:external, minified:true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://127.0.0.1:3030/legacy/public.css: {type:external, minified:true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://127.0.0.1:3030/css/ie.css: {type:external, minified:true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+  data:
+    name: 'Local CSS Server'
+
+global-styling.patterns:
+  remote: https://patterns.boston.gov
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://patterns.boston.gov/scripts/all.js: {type:external, minified:true }
+  dependencies:
+  - core/jquery
+  css:
+    theme:
+      https://patterns.boston.gov/css/public.css: {type:external, minified:true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://patterns.boston.gov/legacy/public.css: {type:external, minified:true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }. weight: -9 }
+      https://patterns.boston.gov/css/ie.css: {type:external, minified:true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+  data:
+    name: 'Patterns (fleet)'
+
+global-styling.heroku-patterns:
+  remote: https://cob-patterns-staging.herokuapp.com/
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://cob-patterns-staging.herokuapp.com/scripts/all.js: {type:external, minified:true }
+  dependencies:
+  - core/jquery
+  css:
+    theme:
+      https://cob-patterns-staging.herokuapp.com/css/public.css: {type:external, minified:true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://cob-patterns-staging.herokuapp.com/legacy/public.css: {type:external, minified:true,  browsers: { IE: 'lte IE 9', '!IE': TRUE } }
+      https://cob-patterns-staging.herokuapp.com/css/ie.css: {type:external, minified:true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+  data:
+    name: 'Patterns (staging)'
+
+page.assets:
+  header: TRUE
+  js:
+    js/alert-js.boston.js: {}

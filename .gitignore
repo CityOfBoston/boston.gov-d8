@@ -15,6 +15,7 @@
 /docroot/sites/*/*/*settings.php
 /docroot/sites/*/*services.yml
 /docroot/sites/*services.yml
+/docroot/sites/settings/boston*
 
 # Ignore example settings and services config files
 /docroot/sites/example.*.php
@@ -54,3 +55,7 @@
 
 # Ignore logfiles from setup
 /setup/*
+/setup/private/*
+
+# ignore gitignore files, principally from private repo files copied across.
+/**/.gitignore
