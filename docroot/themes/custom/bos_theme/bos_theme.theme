@@ -104,6 +104,7 @@ function bos_theme_preprocess_html(&$variables, $hook) {
     $theme = $theme[0];
   }
   $variables['#attached']['library'][] = "bos_theme/global-styling.always";
+  $variables['#attached']['library'][] = "bos_theme/page.assets";
   $variables['#attached']['library'][] = "bos_theme/" . $theme;
 
   // Send X-UA-Compatible HTTP header to force IE to use the most recent
