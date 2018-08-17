@@ -84,6 +84,35 @@ function bos_theme_theme($existing, $type, $theme, $path) {
   );
 }
 
+/**
+ * Override or insert variables into the maintenance page template.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered ("maintenance_page" in this case).
+ */
+function bos_theme_process_maintenance_page(array &$variables, $hook) {
+  bos_theme_process_html($variables, $hook);
+  // Ensure default regions get a variable. Theme authors often forget to remove
+  // a deleted region's variable in maintenance-page.tpl.
+  $regions = array(
+    'header',
+    'navigation',
+    'highlighted',
+    'help',
+    'content',
+    'sidebar_first',
+    'sidebar_second',
+    'footer',
+    'bottom',
+  );
+  foreach ($regions as $region) {
+    if (!isset($variables[$region])) {
+      $variables[$region] = '';
+    }
+  }
+}
 
 /**
  * Override or insert variables into the html template.
@@ -95,7 +124,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
  *   also be "maintenance_page" since boston_preprocess_maintenance_page() calls
  *   this function to have consistent variables.
  */
-function bos_theme_preprocess_html(&$variables, $hook) {
+function bos_theme_preprocess_html(array &$variables, $hook) {
   // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
   $theme = theme_get_setting('asset_source');
   if (empty($theme)) {
@@ -153,6 +182,20 @@ function bos_theme_preprocess_html(&$variables, $hook) {
     }
   }
 
+}
+
+/**
+ * Override or insert variables into the html templates.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered ("html" in this case).
+ */
+function bos_theme_process_html(array &$variables, $hook) {
+  // Flatten out html_attributes.
+  // Todo: Use the new \Drupal\Core\Template\Attribute class ... ??
+  $variables['html_attributes'] = drupal_attributes($variables['html_attributes_array']);
 }
 
 /**
@@ -322,11 +365,39 @@ function bos_theme_preprocess_page(array &$variables) {
 
 }
 
+function bos_theme_preprocess_menu(array &$variables, $hook) {
+  if ($hook == "menu" && $variables['menu_name'] == "main") {
+    $first = TRUE;
+    foreach ($variables['items'] as $id => &$item) {
+      if ($first) {
+        $item['class-array'][] = 'first';
+      }
+      $id = explode(':', $id);
+      $menu = \Drupal::service('entity.repository')->loadEntityByUuid($id[0], $id[1]);
+      $item['class-array'][] = 'menu-mlid-' . $menu->id();
+      if (stripos($item['title'],'311') !== false) {
+        $item['class-array'][] = "nv-m-c-a--y";
+        $item['linkclass'] = "three-one-one";
+      }
+      $item['classes'] = implode(" ", $item['class-array']);
+      $first = false;
+
+    }
+    // for the last element
+    $item['class-array'][] = 'last';
+    $item['classes'] = implode(" ", $item['class-array']);
+
+  }
+  if ($hook == "menu" && $variables['menu_name'] == "secondary_menu") {
+    return;
+  }
+}
+
 
 /**
  * Implements hook_preprocess_node.
  */
-function bos_theme_preprocess_node(&$variables) {
+function bos_theme_preprocess_node(array &$variables) {
   // Place theme settings into the variable object so they can be used in twig.
   $variables['bos_theme'] = array(
     'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
@@ -347,7 +418,7 @@ function bos_theme_preprocess_node(&$variables) {
  *    @see templates/misc/status-messages.html.twig
  * @param $variables
  */
-function bos_theme_preprocess_status_messages(&$variables) {
+function bos_theme_preprocess_status_messages(array &$variables) {
   // Allow a preprocess function to override the default SVG icons.
   if (!isset($variables['status_icon'])) {
     $variables['status_icon'] = array();
