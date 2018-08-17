@@ -4,7 +4,11 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.file.thumbnail
+    - field.field.file.image.field_file_image_alt_text
+    - field.field.file.image.field_file_image_title_text
+    - field.field.file.image.field_icon_category
     - field.field.file.image.field_image_alt_text
+    - field.field.file.image.field_image_caption
     - field.field.file.image.field_image_title_text
     - file_entity.type.image
     - image.style.thumbnail
@@ -43,4 +47,5 @@ hidden:
   field_image_title_text: true
   filemime: true
   filesize: true
+  langcode: true
   uid: true

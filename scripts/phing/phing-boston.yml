@@ -12,9 +12,6 @@ behat:
   # If true, PhantomJS GhostDriver will be launched with Behat.
 #  launch-phantom: true
 
-#multisite:
-#  name: default
-
 project:
   profile:
     name: 'bos_profile'
@@ -24,9 +21,12 @@ project:
   themes:
     - bos_theme
   config:
-    # define the folder, relative to the project root, for config files to be synchronised, no trailing slash.
-    # aquia require ./config/default: https://docs.acquia.com/acquia-cloud/develop/config-d8/
+    # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+    # aquia require ./config/default:
+    #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
     sync: "../config/default"
+    develop: "../config/develop"
+    prod: "../config/prod"
 
   # Set this to 'initialize' to start a fresh install.
   # Otherwise set it to sync to sync from the stg environment.
@@ -65,8 +65,25 @@ php:
 
 # Configuration settings for new git repository.
 git:
+  # [Optional] Set this node (private_repo) if there is a private repo that needs to
+  # be included as part of the build:
+  # - It is expected that the repo is hosted on GitHub.
+  # - The development machine *must* have a valid ssh key for this remote repo.
+  # - The repo can contain a settings file (e.g. private.settings.php)
+  # - The folder structure of the private repo must exactly match the folder structure
+  #   of the main repo so that files can be copied across to the correct folders.
+  private_repo:
+    repo: git@github.com:CityOfBoston/boston.gov-d8-private.git
+    branch: develop
+    # Where the repo will be cloned to.
+    local_dir: ${repo.root}/setup/private
+    # [optional] Provide the path to a settings script (relative to the private repo root),
+    # which will be copied to the main repo and then set up to be called from (i.e. extend)
+    # the sites main settings.php script.
+    settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
+
+  # Defining git remotes allows builds deployed via CI.
   remotes:
-    # Defining git remotes allows builds deployed via CI.
     - boston@svn-14671.prod.hosting.acquia.com:boston.git
     - thehub@svn-14671.prod.hosting.acquia.com:thehub.git
 

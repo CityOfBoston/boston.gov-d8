@@ -8,51 +8,78 @@
             description="Update apps and services in docker containers.">
         <echo message="Project defines tragets to update apps and services in docker containers."/>
     </target>
-<!---->
+
+<!--Composer commands-->
     <target name="update:drupal:composer:install"
             description="Install composer.json in repo root.">
-        <echo message="Using Composer to install Drupal" />
-        <exec command="composer install" />
+        <echo message="Installing the files defined in composer.lock, or composer.json." />
+        <exec command="composer install" dir="${repo.root}" />
     </target>
-<!---->
     <target name="update:drupal:composer:update"
             description="Update/install composer.json and replace composer.lock in repo root.">
-        <echo message="Using Composer to install Drupal" />
-        <exec command="composer install" />
+        <echo message="Updating the files in the repo based on rules in composer.json then rewriting composer.lock." />
+        <exec command="composer update" dir="${repo.root}"/>
     </target>
-<!---->
-    <target name="update:drupal:db"
-            description="Export configurations to the sync location.">
-        <echo message="Updates sql database" />
+    <target name="update:drupal:composer:drupal_scaffold"
+            description="Update the drupal scaffold (core config and command) files.">
+        <echo message="Updating the drupal scaffold files." />
+        <exec description="Updates the scaffold files using composer command."
+            command="composer drupal:scaffold"
+            dir="${repo.root}"
+            logoutput="true"/>
     </target>
-<!---->
+
+<!--Drupal Database commands-->
+    <target name="update:database:sync"
+            description="Syncronise the development database with staging.">
+        <echo message="Synchronizing local database with copy from staging" />
+        <exec description="Make the db sync."
+              dir="${docroot}" command="${drush.cmd} sql-sync @boston.test --create-db  -y" logoutput="true"/>
+    </target>
+    <target name="update:database:update"
+            description="Update the database with any hook_updates etc.">
+        <echo message="Updating Drupal database (checks for module updates and database changes)." />
+        <exec description="Update the database with any hook_updates etc."
+              dir="${docroot}"
+              command="${drush.cmd} updb --entity-updates -y >> ${repo.root}/setup/drush_site_install.log "
+              logoutput="true" />
+        <exec description="Rebuild the user permissions"
+              logoutput="true"
+              dir="${docroot}"
+              command='${drush.cmd} eval "node_access_rebuild();" >> ${repo.root}/setup/drush_site_install.log '/>
+    </target>
+
+<!--Configuration commands-->
     <target name="update:config:import"
             description="Import configurations from sync location into the DB.">
         <echo message="Import configuration from sync folder: '${project.sync}' into database" />
         <exec description="Imports the config files in the sync folder at ${project.sync}."
               dir="${docroot}" command="${drush.cmd} cim sync -y" logoutput="true"/>
     </target>
-<!---->
     <target name="update:config:export"
             description="Export configurations in DB to files in sync location.">
         <echo message="Export database configuration to sync folder: '${project.sync}'" />
         <exec description="Exports database configuration settings to files in the sync folder at ${project.sync}."
               dir="${docroot}" command="${drush.cmd} cex sync -y" logoutput="true"/>
     </target>
-<!---->
-    <target name="update:config:updatedb"
-            description="Update the database with any hook_updates etc.">
-        <echo message="Updates new Drupal build (checks for module updates and database changes)." />
-        <exec description="Update the database with any hook_updates etc."
-              dir="${docroot}" command="${drush.cmd} updb --entity-updates -y" logoutput="true"/>
-        <exec description="Rebuild the user permissions"  logoutput="true"
-              dir="${docroot}" command="${drush.cmd} eval 'node_access_rebuild()'"/>
-    </target>
 
+<!--Utility commands-->
     <target name="update:user:loginadmin"
             description="Create a link which logs the user in on the uid=1 account.">
+        <echo message="Use this link to login to the ${lando.name} website at ${lando.url.url}." level="warning" />
         <exec description="Login the admin user."
-              dir="${docroot}" command="${drush.cmd} uli" logoutput="true"/>
+              dir="${docroot}"
+              command="${drush.cmd} uli"
+              logoutput="false"
+              outputProperty="uli"/>
+        <echo message="${uli}" level="warning" />
+    </target>
+    <target name="update:user:setadminpwd"
+            description="Set the password on the uid=1 account.">
+        <echo message="The ${drupal.account.name} account password is reset to: ${drupal.account.password}." level="warning" />
+        <exec description="Change admin user password."
+              dir="${docroot}"
+              command='${drush.cmd} upwd admin --password="${drupal.account.password}"'/>
     </target>
 
 </project>
