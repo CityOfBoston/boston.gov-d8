@@ -44,6 +44,7 @@
  * @see html.html.twig
  */
 #}
+{#{{ breakpoint() }}#}
 <input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
 
 <nav class="nv-m">
@@ -64,11 +65,11 @@
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
 
-      {% include 'themes/custom/bos_theme/templates/snippets/burger.html.twig' %}
-      {% include 'themes/custom/bos_theme/templates/snippets/logo.html.twig' %}
-      {% include 'themes/custom/bos_theme/templates/snippets/seal.html.twig' %}
-      {% include 'themes/custom/bos_theme/templates/snippets/secondary-nav.html.twig' %}
-      {% include 'themes/custom/bos_theme/templates/snippets/search.html.twig' %}
+      {{ burger }}
+      {{ logo }}
+      {{ seal }}
+      {{ secondary_nav }}
+      {{ search }}
 
   </header>
 

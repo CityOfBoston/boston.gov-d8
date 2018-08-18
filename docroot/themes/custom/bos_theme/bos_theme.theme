@@ -61,18 +61,39 @@ function bos_theme_theme($existing, $type, $theme, $path) {
     ),
     'logo' => array(
       'template' => 'snippets/logo',
+      'variables' => [
+        'site_name' => '',
+        'front_page' => '',
+        'asset_url' => '',
+        'asset_name' => '',
+        'cache_buster' => '',
+        'hide_logo' => '',
+      ],
     ),
     'burger' => array(
       'template' => 'snippets/burger',
+      'variables' => [],
     ),
     'seal' => array(
       'template' => 'snippets/seal',
+      'variables' => [
+        'front_page' => '',
+        'asset_url' => '',
+        'asset_name' => '',
+        'cache_buster' => '',
+      ],
     ),
     'search' => array(
       'template' => 'snippets/search',
+      'variables' => [
+        'search_form_url' => '/search',
+      ],
     ),
     'secondary_nav' => array(
       'template' => 'snippets/secondary-nav',
+      'variables' => [
+        'secondary_menu' => [],
+      ],
     ),
     'profile_address' => array(
       'variables' => array(
@@ -351,17 +372,37 @@ function bos_theme_preprocess_page(array &$variables) {
     'hide_logo' => false,
   );
 
-//  $header_component = [];
-//  $header_component = ['#theme' => 'burger'];
-//  $variables['burger'] = \Drupal::service('renderer')->render($header_component);
-//  $header_component['#theme'] = 'logo';
-//  $variables['logo'] = \Drupal::service('renderer')->render($header_component);
-//  $header_component['#theme'] = 'seal';
-//  $variables['seal'] = \Drupal::service('renderer')->render($header_component);
-//  $header_component['#theme'] = 'secondary_nav';
-//  $variables['secondary_nav'] = \Drupal::service('renderer')->render($header_component);
-//  $header_component['#theme'] = 'search';
-//  $variables['search'] = \Drupal::service('renderer')->render($header_component);
+  $menu_tree = \Drupal::menuTree();
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
+  $tree = $menu_tree->load("menu-secondary-menu", $parameters);
+  $manipulators = array(
+    // Only show links that are accessible for the current user.
+    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
+    // Use the default sorting of menu links.
+    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
+  );
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $variables['secondary_menu'] = $menu_tree->build($tree);
+
+  $arr_base = [
+    '#site_name' => $variables['site_name'],
+    '#front_page' => $variables['front_page'],
+    '#asset_url' => $variables['asset_url'],
+    '#asset_name' => $variables['asset_name'],
+    '#cache_buster' => $variables['cache_buster'],
+    '#hide_logo' => !empty($variables['hide_logo'])?$variables['hide_logo']:'',
+    '#secondary_menu' => $variables['secondary_menu'],
+  ];
+  $arr = $arr_base + ['#theme' => 'burger'];
+  $variables['burger'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'logo'];
+  $variables['logo'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'seal'];
+  $variables['seal'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'secondary_nav'];
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'search'];
+  $variables['search'] = \Drupal::service('renderer')->render($arr);
 
 }
 
