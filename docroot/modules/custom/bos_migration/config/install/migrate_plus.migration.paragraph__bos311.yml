@@ -1,15 +1,13 @@
-id: paragraph__list
-label: 'List Paragraph'
+id: paragraph__bos311
+label: 'Bos311 Paragraph'
 migration_group: bos_paragraphs
 source:
   plugin: d7_paragraphs_item
-  bundle: list
+  bundle: bos311
 process:
-  field_component_theme: field_component_theme
-  field_contact: field_contact
-  field_short_title: field_short_title
   field_component_title: field_component_title
-  #Revisit: Missing Viewfield field_list
+  field_short_title: field_short_title
+  field_311_request: field_311_request
 destination:
   plugin: entity:paragraph
   default_bundle: list

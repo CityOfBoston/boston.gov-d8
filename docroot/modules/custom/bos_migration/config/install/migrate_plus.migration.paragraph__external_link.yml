@@ -5,7 +5,13 @@ source:
   plugin: d7_paragraphs_item
   bundle: external_link
 process:
-  field_external_link: field_external_link
+  field_external_link:
+    plugin: iterator
+    source: field_external_link
+    process:
+      uri: url
+      title: title
+      options: attributes
 destination:
   plugin: entity:paragraph
   default_bundle: external_link
