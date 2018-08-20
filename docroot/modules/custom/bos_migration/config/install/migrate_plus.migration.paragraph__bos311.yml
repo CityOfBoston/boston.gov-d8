@@ -1,0 +1,17 @@
+id: paragraph__bos311
+label: 'Bos311 Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: bos311
+process:
+  field_component_title: field_component_title
+  field_short_title: field_short_title
+  field_311_request: field_311_request
+destination:
+  plugin: entity:paragraph
+  default_bundle: list
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
