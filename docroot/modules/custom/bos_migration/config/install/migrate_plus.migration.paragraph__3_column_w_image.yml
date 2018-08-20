@@ -1,0 +1,18 @@
+id: paragraph__3_column_w_image
+label: '3 Column w/ Image Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: 3_column_w_image
+process:
+  field_component_title: field_component_title
+  field_short_title: field_short_title
+  field_contact: field_contact
+  field_columns: field_columns #Revisit: Field collection
+destination:
+  plugin: entity:paragraph
+  default_bundle: 3_column_w_image
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
