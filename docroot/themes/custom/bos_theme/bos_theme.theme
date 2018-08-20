@@ -60,19 +60,40 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'template' => 'templates/snippets/user_login',
     ),
     'logo' => array(
-      'template' => 'templates/snippets/logo',
+      'template' => 'snippets/logo',
+      'variables' => [
+        'site_name' => '',
+        'front_page' => '',
+        'asset_url' => '',
+        'asset_name' => '',
+        'cache_buster' => '',
+        'hide_logo' => '',
+      ],
     ),
     'burger' => array(
-      'template' => 'templates/snippets/burger',
+      'template' => 'snippets/burger',
+      'variables' => [],
     ),
     'seal' => array(
-      'template' => 'templates/snippets/seal',
+      'template' => 'snippets/seal',
+      'variables' => [
+        'front_page' => '',
+        'asset_url' => '',
+        'asset_name' => '',
+        'cache_buster' => '',
+      ],
     ),
     'search' => array(
-      'template' => 'templates/snippets/search',
+      'template' => 'snippets/search',
+      'variables' => [
+        'search_form_url' => '/search',
+      ],
     ),
     'secondary_nav' => array(
-      'template' => 'templates/snippets/secondary-nav',
+      'template' => 'snippets/secondary-nav',
+      'variables' => [
+        'secondary_menu' => [],
+      ],
     ),
     'profile_address' => array(
       'variables' => array(
@@ -84,6 +105,35 @@ function bos_theme_theme($existing, $type, $theme, $path) {
   );
 }
 
+/**
+ * Override or insert variables into the maintenance page template.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered ("maintenance_page" in this case).
+ */
+function bos_theme_process_maintenance_page(array &$variables, $hook) {
+  bos_theme_process_html($variables, $hook);
+  // Ensure default regions get a variable. Theme authors often forget to remove
+  // a deleted region's variable in maintenance-page.tpl.
+  $regions = array(
+    'header',
+    'navigation',
+    'highlighted',
+    'help',
+    'content',
+    'sidebar_first',
+    'sidebar_second',
+    'footer',
+    'bottom',
+  );
+  foreach ($regions as $region) {
+    if (!isset($variables[$region])) {
+      $variables[$region] = '';
+    }
+  }
+}
 
 /**
  * Override or insert variables into the html template.
@@ -95,7 +145,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
  *   also be "maintenance_page" since boston_preprocess_maintenance_page() calls
  *   this function to have consistent variables.
  */
-function bos_theme_preprocess_html(&$variables, $hook) {
+function bos_theme_preprocess_html(array &$variables, $hook) {
   // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
   $theme = theme_get_setting('asset_source');
   if (empty($theme)) {
@@ -104,6 +154,7 @@ function bos_theme_preprocess_html(&$variables, $hook) {
     $theme = $theme[0];
   }
   $variables['#attached']['library'][] = "bos_theme/global-styling.always";
+  $variables['#attached']['library'][] = "bos_theme/page.assets";
   $variables['#attached']['library'][] = "bos_theme/" . $theme;
 
   // Send X-UA-Compatible HTTP header to force IE to use the most recent
@@ -155,29 +206,40 @@ function bos_theme_preprocess_html(&$variables, $hook) {
 }
 
 /**
+ * Override or insert variables into the html templates.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered ("html" in this case).
+ */
+function bos_theme_process_html(array &$variables, $hook) {
+  // Flatten out html_attributes.
+  // Todo: Use the new \Drupal\Core\Template\Attribute class ... ??
+  $variables['html_attributes'] = drupal_attributes($variables['html_attributes_array']);
+}
+
+/**
  * Implements hook_preprocess_page().
  */
 function bos_theme_preprocess_page(array &$variables) {
   // Add in the js required by each page.
   $variables['#attached']['library'][] = "bos_theme/page.assets" ;
 
-  $has_hero = false;
-
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
     $variables['theme_hook_suggestions'][] = 'page__embed';
   }
 
   // A variable to define the cache buster
-
-//  $variables['cache_buster'] = variable_get('css_js_query_string', '0');
   $variables['cache_buster'] =  \Drupal::state()->get('system.css_js_query_string');
+
   $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
   $variables['asset_url'] = $lib['remote'];
-//  $variables['asset_name'] = 'public';
+  $variables['asset_name'] = 'public';
 
   // Find the title of the menu used by the secondary links.
   // Todo: revisit this.  There may be a variable set once we have the menus better defined.
-//  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
+  //  $secondary_links = variable_get('menu_secondary_links_source', 'menu-secondary-menu');
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
   if (function_exists('menu_ui_get_menus')) {
@@ -193,9 +255,9 @@ function bos_theme_preprocess_page(array &$variables) {
   $current_path = \Drupal::service('path.current')->getPath();
   $path_args = explode('/', $current_path);
   $nid = $path_args[2];
+  $variables['header_image'] = false;
   if ($path_args[1] == 'node' && is_numeric($nid)) {
     if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
-      $has_hero = true;
       $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
       $uri = $background_image[0]['#item']['uri'];
 
@@ -205,7 +267,7 @@ function bos_theme_preprocess_page(array &$variables) {
       $small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
 
       $variables['background_image'] = $background_image;
-      $variables['header_image'] = $has_hero;
+      $variables['header_image'] = TRUE;
       $variables['xlarge_image'] = $xlarge_image;
       $variables['large_image'] = $large_image;
       $variables['medium_image'] = $medium_image;
@@ -231,81 +293,77 @@ function bos_theme_preprocess_page(array &$variables) {
     if ($header == "403 Forbidden") {
       $variables['theme_hook_suggestions'][] = 'page__403';
     }
+  }
 
-    $no_type_needed = [
-      'listing_page',
-      'landing_page',
-    ];
-
-    // some content types aren't special
-    if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
-      $type_element = [
-        '#tag' => 'meta', // The #tag is the html tag -
-        '#attributes' => [ // Set up an array of attributes inside the tag
-          'class' => 'swiftype',
-          'name' => 'type',
-          'data-type' => 'enum',
-          'content' => $variables['node']->getType(),
-        ],
-      ];
-      $variables['#attached']['html_head'][] = [$type_element, "swiftype_type"];
-
-    }
-
-    // Add a site priority meta tag for swiftype
-    $priority_element = [
-      '#tag' => 'meta', // The #tag is the html tag -
+  // some content types aren't special
+  $no_type_needed = [
+    'listing_page',
+    'landing_page',
+  ];
+  if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+    $variables['#attached']['html_head'][] = array(
+      ['#tag' => 'meta', // The #tag is the html tag -
       '#attributes' => [ // Set up an array of attributes inside the tag
         'class' => 'swiftype',
-        'name' => 'site-priority',
-        'data-type' => 'integer',
-        'content' => 5,
+        'name' => 'type',
+        'data-type' => 'enum',
+        'content' => $variables['node']->getType()],
       ],
-    ];
-    $variables['#attached']['html_head'][] = [$priority_element, "swiftype_priority"];
+      "swiftype_type");
   }
+
+  // Add a site priority meta tag for swiftype
+  $variables['#attached']['html_head'][] = array(
+    ['#tag' => 'meta', // The #tag is the html tag -
+    '#attributes' => [ // Set up an array of attributes inside the tag
+      'class' => 'swiftype',
+      'name' => 'site-priority',
+      'data-type' => 'integer',
+      'content' => 5,],
+    ],
+    "swiftype_priority");
 
   // Create necessary page classes
-  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$has_hero) {
-    $page_class = 'page';
-  } else {
-    $page_class = NULL;
+  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
+    $variables['page_class'] = 'page';
+  }
+  else {
+    $variables['page_class'] = NULL;
   }
 
-  $page_class_alert = $page_class;
-  $target_id = NULL;
+  $variables['page_class_alert'] = $variables['page_class'];
+  $variables['target_id'] = NULL;
 
   if (isset($variables['node'])) {
-    $target_id = $variables['node']->nid->value;
+    $variables['target_id'] = $variables['node']->nid->value;
 
     if ($variables['node']->getType() == 'topic_page') {
-      $page_class = 'page';
+      $variables['page_class'] = 'page';
     }
 
     if ($variables['node']->getType() !== 'landing_page') {
       if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to') {
-        $page_class_alert = 'page page--wa';
+        $variables['page_class_alert'] = 'page page--wa';
       } else {
-        $page_class_alert = 'page page--wa page--nm';
+        $variables['page_class_alert'] = 'page page--wa page--nm';
       }
-    } else {
-      $page_class_alert = 'page';
+    }
+    else {
+      $variables['page_class_alert'] = 'page';
     }
 
     if ($variables['is_front']) {
-      $page_class_alert = 'page page--wa page--fp';
+      $variables['page_class_alert'] = 'page page--wa page--fp';
     }
   }
 
   // If we are on the employee directory page, change the title.
   if (strpos($current_path, 'user') === 0) {
-    $page_class_alert = 'page page--wa';
+    $variables['page_class_alert'] = 'page page--wa';
   }
 
-  $variables['target_id'] = $target_id;
-  $variables['page_class'] = $page_class;
-  $variables['page_class_alert'] = $page_class_alert;
   $variables['site_name'] = \Drupal::configFactory()->get('system.site')->get('name');
+  $variables['title'] = $variables["page"]["#title"];
 
   $variables['site_info'] = array(
     'front_page' => $variables['front_page'],
@@ -313,13 +371,74 @@ function bos_theme_preprocess_page(array &$variables) {
     'site_name' => $variables['site_name'],
     'hide_logo' => false,
   );
+
+  $menu_tree = \Drupal::menuTree();
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
+  $tree = $menu_tree->load("menu-secondary-menu", $parameters);
+  $manipulators = array(
+    // Only show links that are accessible for the current user.
+    array('callable' => 'menu.default_tree_manipulators:checkAccess'),
+    // Use the default sorting of menu links.
+    array('callable' => 'menu.default_tree_manipulators:generateIndexAndSort'),
+  );
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $variables['secondary_menu'] = $menu_tree->build($tree);
+
+  $arr_base = [
+    '#site_name' => $variables['site_name'],
+    '#front_page' => $variables['front_page'],
+    '#asset_url' => $variables['asset_url'],
+    '#asset_name' => $variables['asset_name'],
+    '#cache_buster' => $variables['cache_buster'],
+    '#hide_logo' => !empty($variables['hide_logo'])?$variables['hide_logo']:'',
+    '#secondary_menu' => $variables['secondary_menu'],
+  ];
+  $arr = $arr_base + ['#theme' => 'burger'];
+  $variables['burger'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'logo'];
+  $variables['logo'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'seal'];
+  $variables['seal'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'secondary_nav'];
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr);
+  $arr = $arr_base + ['#theme' => 'search'];
+  $variables['search'] = \Drupal::service('renderer')->render($arr);
+
+}
+
+function bos_theme_preprocess_menu(array &$variables, $hook) {
+  if ($hook == "menu" && $variables['menu_name'] == "main") {
+    $first = TRUE;
+    foreach ($variables['items'] as $id => &$item) {
+      if ($first) {
+        $item['class-array'][] = 'first';
+      }
+      $id = explode(':', $id);
+      $menu = \Drupal::service('entity.repository')->loadEntityByUuid($id[0], $id[1]);
+      $item['class-array'][] = 'menu-mlid-' . $menu->id();
+      if (stripos($item['title'],'311') !== false) {
+        $item['class-array'][] = "nv-m-c-a--y";
+        $item['linkclass'] = "three-one-one";
+      }
+      $item['classes'] = implode(" ", $item['class-array']);
+      $first = false;
+
+    }
+    // for the last element
+    $item['class-array'][] = 'last';
+    $item['classes'] = implode(" ", $item['class-array']);
+
+  }
+  if ($hook == "menu" && $variables['menu_name'] == "secondary_menu") {
+    return;
+  }
 }
 
 
 /**
  * Implements hook_preprocess_node.
  */
-function bos_theme_preprocess_node(&$variables) {
+function bos_theme_preprocess_node(array &$variables) {
   // Place theme settings into the variable object so they can be used in twig.
   $variables['bos_theme'] = array(
     'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
@@ -332,4 +451,37 @@ function bos_theme_preprocess_node(&$variables) {
     'boston_meta' => theme_get_setting('boston_meta'),
     'boston_layout' => theme_get_setting('boston_layout'),
   );
+  return;
+}
+
+/**
+ * Implements hook_status_messages
+ *    @see templates/misc/status-messages.html.twig
+ * @param $variables
+ */
+function bos_theme_preprocess_status_messages(array &$variables) {
+  // Allow a preprocess function to override the default SVG icons.
+  if (!isset($variables['status_icon'])) {
+    $variables['status_icon'] = array();
+    foreach (array('status', 'warning', 'error') as $type) {
+      // Add a GPL-licensed icon from IcoMoon. https://icomoon.io/#preview-free
+      $icon_size = 'width="24" height="24"';
+      // All of the IcoMoon SVGs have the same header.
+      $variables['status_icon'][$type] = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' . $icon_size . ' viewBox="0 0 64 64">';
+      switch ($type) {
+        case 'error':
+          $variables['status_icon'][$type] .= '<path d="M63.416 51.416c-0-0-0.001-0.001-0.001-0.001l-19.415-19.416 19.415-19.416c0-0 0.001-0 0.001-0.001 0.209-0.209 0.36-0.453 0.457-0.713 0.265-0.711 0.114-1.543-0.458-2.114l-9.172-9.172c-0.572-0.572-1.403-0.723-2.114-0.458-0.26 0.097-0.504 0.248-0.714 0.457 0 0-0 0-0.001 0.001l-19.416 19.416-19.416-19.416c-0-0-0-0-0.001-0.001-0.209-0.209-0.453-0.36-0.713-0.457-0.711-0.266-1.543-0.114-2.114 0.457l-9.172 9.172c-0.572 0.572-0.723 1.403-0.458 2.114 0.097 0.26 0.248 0.505 0.457 0.713 0 0 0 0 0.001 0.001l19.416 19.416-19.416 19.416c-0 0-0 0-0 0.001-0.209 0.209-0.36 0.453-0.457 0.713-0.266 0.711-0.114 1.543 0.458 2.114l9.172 9.172c0.572 0.572 1.403 0.723 2.114 0.458 0.26-0.097 0.504-0.248 0.713-0.457 0-0 0-0 0.001-0.001l19.416-19.416 19.416 19.416c0 0 0.001 0 0.001 0.001 0.209 0.209 0.453 0.36 0.713 0.457 0.711 0.265 1.543 0.114 2.114-0.458l9.172-9.172c0.572-0.572 0.723-1.403 0.458-2.114-0.097-0.26-0.248-0.504-0.457-0.713z" fill="#000000"></path>';
+          break;
+
+        case 'warning':
+          $variables['status_icon'][$type] .= '<path d="M26,64l12,0c1.105,0 2,-0.895 2,-2l0,-9c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,9c0,1.105 0.895,2 2,2Z" fill="#000000"></path><path d="M26,46l12,0c1.105,0 2,-0.895 2,-2l0,-42c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,42c0,1.105 0.895,2 2,2Z" fill="#000000"></path>';
+          break;
+
+        default:
+          $variables['status_icon'][$type] .= '<path d="M54 8l-30 30-14-14-10 10 24 24 40-40z" fill="#000000"></path>';
+      }
+      $variables['status_icon'][$type] .= '</svg>';
+    }
+  }
+
 }

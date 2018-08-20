@@ -1,6 +1,6 @@
 <nav class="nv-h">
   <ul class="nv-h-l">
-    {% if logged_in && $GLOBALS['theme'] == 'boston_hub' %}
+    {% if logged_in and asset_name == 'hub' %}
       <li class="nv-h-l-i nv-dd">
         <input type="checkbox" name="nv-dd-tr" id="nv-tr[0]" class="nv-dd-tr">
         <label class="nv-h-l-a nv-h-l-a--k nv-dd-l" for="nv-tr[0]"> {% if first_name %}Hello, {{ first_name }}{% else %}My Account{% endif %}</label>
