@@ -254,24 +254,21 @@ function bos_theme_preprocess_page(array &$variables) {
   // as opposed to the rendered node output in the system block.
   $current_path = \Drupal::service('path.current')->getPath();
   $path_args = explode('/', $current_path);
-  $nid = $path_args[2];
-  $variables['header_image'] = false;
-  if ($path_args[1] == 'node' && is_numeric($nid)) {
-    if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
-      $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
-      $uri = $background_image[0]['#item']['uri'];
+  $variables['header_image'] = FALSE;
+  if(!empty($path_args[2])) {
+    $nid = $path_args[2];
+    if ($path_args[1] == 'node' && is_numeric($nid)) {
+      if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
+        $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
+        $uri = $background_image[0]['#item']['uri'];
 
-      $xlarge_image = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $uri);
-      $large_image = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $uri);
-      $medium_image = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $uri);
-      $small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
-
-      $variables['background_image'] = $background_image;
-      $variables['header_image'] = TRUE;
-      $variables['xlarge_image'] = $xlarge_image;
-      $variables['large_image'] = $large_image;
-      $variables['medium_image'] = $medium_image;
-      $variables['small_image'] = $small_image;
+        $variables['header_image'] = TRUE;
+        $variables['background_image'] = $background_image;
+        $variables['xlarge_image'] = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $uri);
+        $variables['large_image'] = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $uri);
+        $variables['medium_image'] = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $uri);
+        $variables['small_image'] = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
+      }
     }
   }
   // Removes breadcrumbs on node types specified in the array.
