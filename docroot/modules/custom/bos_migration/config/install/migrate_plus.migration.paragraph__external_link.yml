@@ -9,7 +9,9 @@ process:
     plugin: iterator
     source: field_external_link
     process:
-      uri: url
+      uri:
+        plugin: fix_uri
+        source: url
       title: title
       options: attributes
 destination:
