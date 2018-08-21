@@ -117,7 +117,8 @@
     "drupal/workflow": "^1.1_",
     "drupal/xmlsitemap": "^1.0",
     "drush/drush": "^9.0",
-    "harvesthq/chosen": "^1.6",
+    "harvesthq/chosen": "^1.8",
+    "oomphinc/composer-installers-extender": "^1.1",
     "phing/phing": "2.*",
     "sainsburys/guzzle-oauth2-plugin": "^3.0",
     "vlucas/phpdotenv": "^2.4",
@@ -159,6 +160,7 @@
     ]
   },
   "extra": {
+    "installer-types": ["library"],
     "installer-paths": {
       "docroot/core": ["type:drupal-core"],
       "docroot/libraries/{$name}": ["type:drupal-library"],
