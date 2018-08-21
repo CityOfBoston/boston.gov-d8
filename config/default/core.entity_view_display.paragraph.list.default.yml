@@ -6,10 +6,12 @@ dependencies:
     - field.field.paragraph.list.field_component_theme
     - field.field.paragraph.list.field_component_title
     - field.field.paragraph.list.field_contact
+    - field.field.paragraph.list.field_list
     - field.field.paragraph.list.field_short_title
     - paragraphs.paragraphs_type.list
   module:
     - options
+    - viewfield
 id: paragraph.list.default
 targetEntityType: paragraph
 bundle: list
@@ -38,6 +40,16 @@ content:
       view_mode: default
       link: false
     third_party_settings: {  }
+    region: content
+  field_list:
+    weight: 5
+    label: above
+    settings:
+      view_title: hidden
+      always_build_output: 0
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
     region: content
   field_short_title:
     label: above
