@@ -10,6 +10,7 @@ dependencies:
   module:
     - datetime
     - image
+    - imce
     - path
     - user
 _core:
@@ -22,6 +23,8 @@ content:
   account:
     weight: -10
     region: content
+    settings: {  }
+    third_party_settings: {  }
   contact:
     weight: 5
     region: content
@@ -41,6 +44,8 @@ content:
   language:
     weight: 0
     region: content
+    settings: {  }
+    third_party_settings: {  }
   path:
     type: path
     weight: 30
@@ -52,11 +57,13 @@ content:
     region: content
   user_picture:
     settings:
-      progress_indicator: throbber
       preview_image_style: thumbnail
+      progress_indicator: throbber
     type: image_image
     weight: 7
-    third_party_settings: {  }
+    third_party_settings:
+      imce:
+        enabled: true
     region: content
 hidden:
   langcode: true
