@@ -40,7 +40,7 @@ class FixUri extends ProcessPluginBase {
         // desired form, and then return that value.
 
         // if uri is valid, then do nothing
-        // if uri is valid, then fix it
+        // if uri is invalid, then fix it
 
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             // return valid URL
