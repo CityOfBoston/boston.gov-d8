@@ -6,9 +6,11 @@ dependencies:
     - field.field.paragraph.list.field_component_theme
     - field.field.paragraph.list.field_component_title
     - field.field.paragraph.list.field_contact
+    - field.field.paragraph.list.field_list
     - field.field.paragraph.list.field_short_title
     - paragraphs.paragraphs_type.list
   module:
+    - viewfield
     - workbench_moderation
 id: paragraph.list.default
 targetEntityType: paragraph
@@ -37,6 +39,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_list:
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
     region: content
   field_short_title:
     weight: 3
