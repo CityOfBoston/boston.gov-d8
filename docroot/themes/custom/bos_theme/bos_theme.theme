@@ -224,18 +224,13 @@ function bos_theme_process_html(array &$variables, $hook) {
  */
 function bos_theme_preprocess_page(array &$variables) {
   // Add in the js required by each page.
+  _bos_theme_default_variables($variables);
+
   $variables['#attached']['library'][] = "bos_theme/page.assets" ;
 
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
     $variables['theme_hook_suggestions'][] = 'page__embed';
   }
-
-  // A variable to define the cache buster
-  $variables['cache_buster'] =  \Drupal::state()->get('system.css_js_query_string');
-
-  $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
-  $variables['asset_url'] = $lib['remote'];
-  $variables['asset_name'] = 'public';
 
   // Find the title of the menu used by the secondary links.
   // Todo: revisit this.  There may be a variable set once we have the menus better defined.
@@ -403,6 +398,9 @@ function bos_theme_preprocess_page(array &$variables) {
 
 }
 
+/**
+ * Implements hook_preprocess_menu()
+ */
 function bos_theme_preprocess_menu(array &$variables, $hook) {
   if ($hook == "menu" && $variables['menu_name'] == "main") {
     $first = TRUE;
@@ -431,23 +429,32 @@ function bos_theme_preprocess_menu(array &$variables, $hook) {
   }
 }
 
-
 /**
  * Implements hook_preprocess_node.
  */
 function bos_theme_preprocess_node(array &$variables) {
-  // Place theme settings into the variable object so they can be used in twig.
-  $variables['bos_theme'] = array(
-    'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
-    'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
-    'boston_breadcrumb_home' => theme_get_setting('boston_breadcrumb_home'),
-    'boston_breadcrumb_trailing' => theme_get_setting('boston_breadcrumb_trailing'),
-    'boston_breadcrumb_title' => theme_get_setting('boston_breadcrumb_title'),
-    'boston_skip_link_anchor' => theme_get_setting('boston_skip_link_anchor'),
-    'boston_skip_link_text' => theme_get_setting('boston_skip_link_text'),
-    'boston_meta' => theme_get_setting('boston_meta'),
-    'boston_layout' => theme_get_setting('boston_layout'),
-  );
+  _bos_theme_default_variables($variables);
+
+  $variables['title'] = $variables["node"]->title->view();
+  $variables['nid'] = $variables['node']->id();
+  $variables['unpublished'] = (!$variables['node']->status) ? TRUE : FALSE;
+  $variables['preview'] = isset($variables['preview']) ? $variables['preview'] : FALSE;
+
+  // Add pubdate to submitted variable.
+  $variables['pubdate'] = '<time pubdate datetime="' . format_date($variables['node']->created->value, 'custom', 'c') . '">' . $variables['date'] . '</time>';
+  if ($variables['display_submitted']) {
+    $variables['submitted'] = t('Submitted by !username on !datetime', array('!username' => $variables['name'], '!datetime' => $variables['pubdate']));
+  }
+
+  // If the node is unpublished, add the "unpublished" watermark class.
+  if ($variables['unpublished'] || $variables['preview']) {
+    $variables['classes_array'][] = 'watermark__wrapper';
+  }
+
+
+}
+
+function bos_theme_form_node_form_alter(&$form, &$form_state, $form_id) {
   return;
 }
 
@@ -480,5 +487,29 @@ function bos_theme_preprocess_status_messages(array &$variables) {
       $variables['status_icon'][$type] .= '</svg>';
     }
   }
+
+}
+
+/**
+ * Returns a standard set of variables needed by major page elements.
+ * @param $variables
+ */
+function _bos_theme_default_variables(&$variables) {
+  $variables['bos_theme'] = array(
+    'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
+    'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
+    'boston_breadcrumb_home' => theme_get_setting('boston_breadcrumb_home'),
+    'boston_breadcrumb_trailing' => theme_get_setting('boston_breadcrumb_trailing'),
+    'boston_breadcrumb_title' => theme_get_setting('boston_breadcrumb_title'),
+    'boston_skip_link_anchor' => theme_get_setting('boston_skip_link_anchor'),
+    'boston_skip_link_text' => theme_get_setting('boston_skip_link_text'),
+    'boston_meta' => theme_get_setting('boston_meta'),
+    'boston_layout' => theme_get_setting('boston_layout'),
+  );
+  // A variable to define the cache buster
+  $variables['cache_buster'] =  \Drupal::state()->get('system.css_js_query_string');
+  $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
+  $variables['asset_url'] = $lib['remote'];
+  $variables['asset_name'] = 'public';
 
 }
