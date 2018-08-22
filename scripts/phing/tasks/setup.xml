@@ -17,10 +17,10 @@
   <target name="setup:docker:drupal-local"
           description="Creates a Drupal environment in Docker Containers for local development."
           depends=" setup:drupal:download-modules,
-                    setup:drupal:clone_private_repo,
                     setup:drupal:set_dev_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
+                    setup:drupal:clone_private_repo,
                     update:database:update,
                     setup:drupal:reset_config">
     <echo message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'." level="warning"/>
