@@ -72,26 +72,30 @@
 #}
 <article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }}>
 
-  {{ title_prefix }}
-  {% if not page %}
-    <h2{{ title_attributes }}>
-      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-    </h2>
-  {% endif %}
-  {{ title_suffix }}
+  {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
+    <header>
 
-  {% if display_submitted %}
-    <footer>
-      {{ author_picture }}
-      <div{{ author_attributes }}>
-        {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
-        {{ metadata }}
-      </div>
-    </footer>
+      {{  title_prefix  }}
+
+      {% if (not page) and title %}
+        <h2{{ title_attributes  }}><a href="{{ node_url }}">{{ title }}</a></h2>
+      {% endif %}
+
+        {{ title_suffix  }}
+
+      {% if unpublished %}
+        <mark class="watermark">Unpublished</mark>
+      {% elseif preview %}
+        <mark class="watermark">Preview</mark>
+      {% endif %}
+
+    </header>
   {% endif %}
 
-  <div{{ content_attributes }}>
-    {{ content }}
-  </div>
+  {# We hide the comments and links now so that we can render them later. #}
+  {{ content }}
+
+  {{ content['links']  }}
+  {{ content['comments']  }}
 
 </article>
