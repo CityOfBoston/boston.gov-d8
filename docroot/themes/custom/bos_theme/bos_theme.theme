@@ -147,15 +147,28 @@ function bos_theme_process_maintenance_page(array &$variables, $hook) {
  */
 function bos_theme_preprocess_html(array &$variables, $hook) {
   // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
+  $variables['#attached']['library'][] = "bos_theme/global-styling.always";
+  $variables['#attached']['library'][] = "bos_theme/page.assets";
   $theme = theme_get_setting('asset_source');
   if (empty($theme)) {
     $theme = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
     $theme = array_keys($theme);
     $theme = $theme[0];
   }
-  $variables['#attached']['library'][] = "bos_theme/global-styling.always";
-  $variables['#attached']['library'][] = "bos_theme/page.assets";
   $variables['#attached']['library'][] = "bos_theme/" . $theme;
+
+  // detect 400-status pages.
+  _bos_theme_default_variables($variables);
+  switch ($variables['status_code']) {
+    case 403:
+      $variables['classes'] = "html not-front not-logged-in page-node page-node- page-node-1326 node-type-article body-sidebars-none section-403-forbidden";
+      break;
+    case 404:
+      $variables['classes'] = "html not-front not-logged-in page-node page-node- page-node-1321 node-type-article body-sidebars-none section-404-not-found";
+      break;
+    default:
+      break;
+  }
 
   // Send X-UA-Compatible HTTP header to force IE to use the most recent
   // rendering engine or use Chrome's frame rendering engine if available.
@@ -222,7 +235,7 @@ function bos_theme_process_html(array &$variables, $hook) {
 /**
  * Implements hook_preprocess_page().
  */
-function bos_theme_preprocess_page(array &$variables) {
+function bos_theme_preprocess_page(array &$variables, $hook) {
   // Add in the js required by each page.
   _bos_theme_default_variables($variables);
 
@@ -491,6 +504,29 @@ function bos_theme_preprocess_status_messages(array &$variables) {
 }
 
 /**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook) {
+  /**
+   * 401/3/4 template suggestions.
+   */
+  _bos_theme_default_variables($variables);
+  switch ($variables['status_code']) {
+    case 401:
+    case 403:
+    case 404: {
+      $suggestions[] = 'page__' . $variables['status_code'];
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+/***************************************************************
+ * Helper functions
+ */
+/**
  * Returns a standard set of variables needed by major page elements.
  * @param $variables
  */
@@ -511,5 +547,8 @@ function _bos_theme_default_variables(&$variables) {
   $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme','global-styling.patterns');
   $variables['asset_url'] = $lib['remote'];
   $variables['asset_name'] = 'public';
-
+  $variables['status_code'] = "200";
+  if (!is_null(Drupal::requestStack()->getCurrentRequest()->attributes->get('exception'))) {
+    $variables['status_code'] =  (string) Drupal::requestStack()->getCurrentRequest()->attributes->get('exception')->getStatusCode();
+  }
 }
