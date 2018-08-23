@@ -46,20 +46,7 @@
   }
 
   /**
-  * Toggle the development settings in config_split
-   * (Now in profile_install)
-  */
-//  $config['config_split.config_split.development']['status'] = ($envvar == "dev");
-
-  /**
   * Set the error trapping level.
   *   options: hide | some | all | verbose
   */
   $config['system.logging']['error_level'] = ($envvar == "dev" ? 'verbose' : 'hide');
-
-  /**
-   * Disable CSS and JS aggregation.
-   * (Now in profile_install)
-   */
-//  $config['system.performance']['css']['preprocess'] = !($envvar == "dev");
-//  $config['system.performance']['js']['preprocess'] = !($envvar == "dev");
