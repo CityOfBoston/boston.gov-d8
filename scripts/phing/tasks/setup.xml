@@ -321,7 +321,7 @@
       </not>
       <then>
         <property description="Set the default value of the git repo if not provided as argument from CLI."
-                  name="git.private_repo.user" value="git" />
+                  name="git.private_repo.user" value="git@github.com:" />
       </then>
     </if>
 
@@ -348,7 +348,7 @@
         <mkdir dir="${git.private_repo.local_dir}"/>
         <exec
           description="Clone a private repo which has confidential settings (passwords etc)."
-          command="git clone ${git.private_repo.user}@${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
+          command="git clone https://${git.private_repo.user}@${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
           dir="${git.private_repo.local_dir}"
           returnProperty="repoOK" logoutput="false" passthru="true"/>
 

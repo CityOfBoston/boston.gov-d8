@@ -27,6 +27,8 @@
             description="Contains targets relevant to the execution of tests. E.g., Behat, jMeter."/>
     <import file="${custom.phing.tasks.dir}/update.xml"
             description="Contains targets used to maintain/update a Drupal 8 installation."/>
+    <import file="${custom.phing.tasks.dir}/validate.xml"
+            description="Contains targets used to validate custom-written code against coding standards."/>
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
