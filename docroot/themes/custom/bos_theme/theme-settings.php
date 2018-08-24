@@ -79,7 +79,7 @@ function bos_theme_form_system_theme_settings_alter(&$form,  \Drupal\Core\Form\F
       '#title'         => t('Anchor ID for the “skip link”'),
       '#default_value' => theme_get_setting('boston_skip_link_anchor'),
       '#field_prefix'  => '#',
-      '#description'   => t('Specify the HTML ID of the element that the accessible-but-hidden “skip link” should link to. Note: that element should have the <code>tabindex="-1"</code> attribute to prevent an accessibility bug in webkit browsers. (<a href="!link">Read more about skip links</a>.)', array('!link' => 'https://drupal.org/node/467976')),
+      '#description'   => t('Specify the HTML ID of the element that the accessible-but-hidden “skip link” should link to. Note: that element should have the <code>tabindex="-1"</code> attribute to prevent an accessibility bug in webkit browsers. (<a href="@link">Read more about skip links</a>.)', array('@link' => 'https://drupal.org/node/467976')),
     ),
     'boston_skip_link_text' => array(
       '#type'          => 'textfield',
@@ -131,9 +131,33 @@ function bos_theme_form_system_theme_settings_alter(&$form,  \Drupal\Core\Form\F
     );
   }
 
+  $form['error-pages'] = array(
+    '#type'          => 'fieldset',
+    '#title'         => t('Site Error Page Settings'),
+    '403-page' => array(
+      '#type'          => 'textarea',
+      '#title'         => t('403-Page (Permission Denied)'),
+      '#description'   => t('Adds text for the themes 403 page. <br/>(<i>page is defined in themes/custom/bos_theme/templates/misc/page--403.html.twig</i>)'),
+      '#default_value' => theme_get_setting('403-page'),
+      '#rows'          => 5,
+      '#theme'         => 'textarea',
+      '#resizable'     => 'vertical'
+    ),
+    '404-page' => array(
+      '#type'          => 'textarea',
+      '#title'         => t('404-Page (Page Not Found)'),
+      '#description'   => t('Adds text for the themes 404 page. <br/>(<i>page is defined in themes/custom/bos_theme/templates/misc/page--404.html.twig</i>)'),
+      '#default_value' => theme_get_setting('404-page'),
+      '#rows'          => 5,
+      '#theme'         => 'textarea',
+      '#resizable'     => 'vertical'
+    ),
+  );
+
   $form['themedev'] = array(
     '#type'          => 'fieldset',
     '#title'         => t('Theme development settings'),
+
   );
 
 }
