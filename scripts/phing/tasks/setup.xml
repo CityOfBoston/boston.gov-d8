@@ -317,7 +317,7 @@
       <not>
         <!-- git.priavte_repo.name comes from -D option on calling phing CLI -->
         <!-- Should be in the format gitusername:token -->
-        <isset property="${git.private_repo.user}"/>
+        <isset property="git.private_repo.user"/>
       </not>
       <then>
         <property description="Set the default value of the git repo if not provided as argument from CLI."
@@ -337,7 +337,7 @@
           value="${docroot}/${git.private_repo.settings_file}"/>
 
         <echo
-          message="> Merging the private repo from ${git.private_repo.repo} (${git.private_repo.branch})."
+          message="> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch})."
           level="warning"/>
 
         <!-- Clone the private repo. -->
@@ -348,7 +348,7 @@
         <mkdir dir="${git.private_repo.local_dir}"/>
         <exec
           description="Clone a private repo which has confidential settings (passwords etc)."
-          command="git clone ${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
+          command="git clone ${git.private_repo.user}@${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
           dir="${git.private_repo.local_dir}"
           returnProperty="repoOK" logoutput="false" passthru="true"/>
 
