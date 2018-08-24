@@ -53,7 +53,7 @@ install:
   - composer install --prefer-source --no-suggest --no-dev
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 2: Build the drupal site using Phing.
-  - phing -Dgit.private_repo.user="${GITHUB_USER}:${GITHUB_TOKEN}"  setup:docker:drupal-travis
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="${GITHUB_USER}:${GITHUB_TOKEN}"  setup:docker:drupal-travis
 
 script:
   # Run basic validation and Behat/PHPUnit tests in parallel.
