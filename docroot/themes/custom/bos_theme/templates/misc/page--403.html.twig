@@ -6,19 +6,6 @@
  *
  * @see https://drupal.org/node/1728148 */
 #}
-<nav class="nv-m">
-  <div class="nv-m-h">
-    <div class="nv-m-h-ic">
-      <a href="/" title="Go to home page">
-        <img src="{{ asset_url }}/images/b-dark.svg" alt="City of Boston" aria-hidden="true" class="nv-m-h-i" />
-      </a>
-    </div>
-    <div id="nv-m-h-t" class="nv-m-h-t">&nbsp;</div>
-  </div>
-  <div class="nv-m-c">
-      {{ page.navigation }}
-  </div>
-</nav>
 <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
 
     {{ logo }}
@@ -30,8 +17,8 @@
   <div class="container">
     <section class="main-content err-content" id="content" role="main">
       <div class="denied-text error-text column desktop-66-left">
-        <h1>{{ title }}</h1>
-        {#{{ token_replace('[boston:403-page-text]') }}#}
+        <h1>{{ status_code }} {{ title }}</h1>
+        <p><em>{{ error_text|raw }}</em></p>
       </div>
     </section>
   </div>

@@ -285,19 +285,22 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     $variables['breadcrumb'] = '';
   }
 
-  // Get the HTTP header so we can have custom 404/403 pages.
-  $response = new Response();
-  if (!empty($response)) {
-    $header = $response->headers->get("status");
-    if ($header == "404 Not Found") {
-      $variables['theme_hook_suggestions'][] = 'page__404';
-      $block = module_invoke('bos_blocks', 'block_view', 'search');
-      $variables['search_block'] = $block;
+  // Custom 404/403 pages.
+  if (!empty($variables['status_code'])) {
+    switch ($variables['status_code']) {
+      case "404":
+//        $block = module_invoke('bos_blocks', 'block_view', 'search');
+//        $variables['search_block'] = $block;
+        $variables['error_text'] = \Drupal::configFactory()->getEditable("bos_theme.settings")->get("404-page");
+
+        break;
+
+      case "403":
+        $variables['error_text'] = \Drupal::configFactory()->getEditable("bos_theme.settings")->get("403-page");
+
+        break;
     }
 
-    if ($header == "403 Forbidden") {
-      $variables['theme_hook_suggestions'][] = 'page__403';
-    }
   }
 
   // some content types aren't special
