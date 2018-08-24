@@ -8,26 +8,18 @@
 #}
 
 <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
-
     {{ logo }}
     {{ seal }}
-
 </header>
 <div class="main err err--404">
   <div class="container">
     <section class="main-content err-content" id="content" role="main">
-      <div class="error-text column desktop-50">
+      <div class="error-text column desktop-66-left">
         <h1>{{ status_code }} {{ title }}</h1>
         <p><em>{{ error_text|raw }}</em></p>
-        {% if (search_id) %}
-          <div id="{{ search_id }}">
-        {% endif %}
         <div class="content bos-search-form">
             {{ search }}
         </div>
-        {% if (search_id) %}
-          </div>
-        {% endif %}
       </div>
     </section>
   </div>
