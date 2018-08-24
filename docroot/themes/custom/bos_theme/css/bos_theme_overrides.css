@@ -21,3 +21,33 @@
 .toolbar-fixed div.dialog-off-canvas-main-canvas {
   position: relative;
 }
+
+/* locates and themes the search block on the 404 page. */
+.error-text .h-s {
+  display: block;
+  position: static;
+  padding: 0;
+  background-color: transparent;
+}
+.error-text .h-s .sf-i-f {
+  color: #091f2f;
+}
+.err.err--403 {
+  top: 69px;
+}
+.err.err--404 {
+  background-image: url('https://patterns.boston.gov/images/global/icons/404.svg');  /* in dev */
+  background-image: url('../images/global/icons/404.svg');  /* in prod */
+  background-color: transparent;
+  background-position: bottom;
+  background-size: 102%;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 69px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.err--404 .bos-search-form {
+  padding-top: 20px;
+}
