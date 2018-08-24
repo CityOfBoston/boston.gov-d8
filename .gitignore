@@ -41,9 +41,6 @@
 # Ignore SQL dumps
 *.sql*
 
-# Ignore lando logfile
-/.lando.log
-
 # Ignore drushrc.local.php
 /docroot/sites/all/drush/drush.yml
 
@@ -60,3 +57,6 @@
 
 # ignore gitignore files, principally from private repo files copied across.
 /**/.gitignore
+
+# ignore configuration files on project root.
+.travis.yml
