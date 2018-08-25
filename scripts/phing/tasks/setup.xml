@@ -216,15 +216,15 @@
         <echo message="/*${line.separator}" append="true"
               file="${local.settings.file}"/>
         <echo
-          message="  Content added by Phing &lt;setup:drupal:local_settings_php&gt;${line.separator}"
+          message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
           append="true" file="${local.settings.file}"/>
-        <echo message="*/${line.separator}" append="true"
+        <echo message=" */${line.separator}" append="true"
               file="${local.settings.file}"/>
         <echo
           message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
           append="true" file="${local.settings.file}"/>
         <echo
-          message="$settings['install_profile'] = '${project.profile.name}';${line.separator}${line.separator}"
+          message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
           append="true" file="${local.settings.file}"/>
       </then>
       <else>
@@ -255,9 +255,9 @@
     <echo
       description="Adds default settings to settings.php and directve to include the settings.local.php file."
       message="${line.separator}" append="true" file="${settings.file}"/>
-    <echo message="/**${line.separator}@file{line.separator}" append="true" file="${settings.file}"/>
+    <echo message="/**${line.separator} * @file${line.separator}" append="true" file="${settings.file}"/>
     <echo
-      message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}*/${line.separator}${line.separator}"
+      message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}${line.separator}"
       append="true" file="${settings.file}"/>
     <echo message="$settings['update_free_access'] = FALSE;${line.separator}"
           append="true" file="${settings.file}"/>
@@ -274,7 +274,7 @@
     <echo message="];${line.separator}" append="true" file="${settings.file}"/>
     <echo message="$settings['entity_update_batch_size'] = 50;${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="$databases['default']['default'] = array (${line.separator}"
+    <echo message="$databases['default']['default'] = [${line.separator}"
           append="true" file="${settings.file}"/>
     <echo message="  'driver' => 'mysql',${line.separator}" append="true"
           file="${settings.file}"/>
@@ -288,12 +288,12 @@
           append="true" file="${settings.file}"/>
     <echo message="  'port' => '${lando.db.port}',${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message=");${line.separator}" append="true"
+    <echo message="];${line.separator}" append="true"
           file="${settings.file}"></echo>
     <echo
       message="if (file_exists('${local.settings.file}')) {${line.separator}"
       append="true" file="${settings.file}"/>
-    <echo message="   include '${local.settings.file}';${line.separator}"
+    <echo message="  include '${local.settings.file}';${line.separator}"
           append="true" file="${settings.file}"/>
     <echo message="}${line.separator}${line.separator}" append="true"
           file="${settings.file}"/>
