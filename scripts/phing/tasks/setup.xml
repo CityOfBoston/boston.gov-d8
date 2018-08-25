@@ -255,11 +255,10 @@
     <echo
       description="Adds default settings to settings.php and directve to include the settings.local.php file."
       message="${line.separator}" append="true" file="${settings.file}"/>
-    <echo message="/*${line.separator}" append="true" file="${settings.file}"/>
+    <echo message="/**${line.separator}@file{line.separator}" append="true" file="${settings.file}"/>
     <echo
-      message="  Content added by Phing &lt;setup:drupal:local_settings_php&gt;${line.separator}"
+      message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}*/${line.separator}${line.separator}"
       append="true" file="${settings.file}"/>
-    <echo message="*/${line.separator}" append="true" file="${settings.file}"/>
     <echo message="$settings['update_free_access'] = FALSE;${line.separator}"
           append="true" file="${settings.file}"/>
     <echo
