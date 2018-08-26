@@ -6,7 +6,15 @@
     <phplint level="verbose" errorproperty="lint.error">
       <fileset refid="files.php"/>
     </phplint>
-    <fail if="lint.error" message="PHP linting failed: ${lint.error}" status="1"/>
+    <if>
+      <not>
+        <equals arg1="${lint.error}" arg2=""/>
+      </not>
+      <then>
+        <echo message="PHP linting failed: ${lint.error}" level="error"/>
+        <fail message="PHP linting failed: ${lint.error}" status="1"/>
+      </then>
+    </if>
   </target>
 
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
