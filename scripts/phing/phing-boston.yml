@@ -1,17 +1,3 @@
-behat:
-  # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
-  config: ${repo.root}/tests/behat/local.yml
-  # An array of paths with behat tests that should be executed.
-  tags: ~@hub
-  # This is used for ad-hoc creation of a server via `drush rs`.
-  profile: local
-  # This needs to match a site entry in docroot/sites/sites.php.
-  server-url: http://127.0.0.1:8888
-  # If true, `drush runserver` will be used for executing tests.
-#  run-server: false
-  # If true, PhantomJS GhostDriver will be launched with Behat.
-#  launch-phantom: true
-
 project:
   profile:
     name: 'bos_profile'
@@ -55,13 +41,15 @@ project:
     # set one of dev, test or prod based on host
     site_environment: dev
 
-php:
-  xdebug:
-    # Provide absolute path and filename on the drupal server for the xdebug.ini file.
-    remote_file: '/usr/local/etc/php/conf.d/boston.xdebug.ini'
-    # Provide the filename of the xdebug.ini
-    default_file: 'xdebug.ini'
-
+# Drupal Account Credentials. These are used for installing Drupal.
+drupal:
+  account:
+    name: admin
+    password: admin
+    mail: no-reply@acquia.com
+  multisite:
+    # Use 'default' as the name if there are no multisites.
+    name: default
 
 # Configuration settings for new git repository.
 git:
@@ -73,7 +61,7 @@ git:
   # - The folder structure of the private repo must exactly match the folder structure
   #   of the main repo so that files can be copied across to the correct folders.
   private_repo:
-    repo: git@github.com:CityOfBoston/boston.gov-d8-private.git
+    repo: CityOfBoston/boston.gov-d8-private.git
     branch: develop
     # Where the repo will be cloned to.
     local_dir: ${repo.root}/setup/private
@@ -83,25 +71,12 @@ git:
     settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
 
   # Defining git remotes allows builds deployed via CI.
-  remotes:
+  x-remotes:
     - boston@svn-14671.prod.hosting.acquia.com:boston.git
     - thehub@svn-14671.prod.hosting.acquia.com:thehub.git
 
-docroot.relative: ${repo.root.relative}/docroot
-docroot: ${repo.root}/docroot
-
 composer:
   bin: ${repo.root}/vendor/bin
-
-# Drupal Account Credentials. These are used for installing Drupal.
-drupal:
-  account:
-    name: admin
-    password: admin
-    mail: no-reply@acquia.com
-  multisite:
-    # Use 'default' as the name if there are no multisites.
-    name: default
 
 drush:
   bin: ${composer.bin}/drush
@@ -110,17 +85,10 @@ drush:
 
 # deploy:
   # includes-file: ${core.phing.dir}/../files/deploy-include-files.txt
-deploy:
-  dir: ${repo.root}/deploy
-  includes-file: ${custom.phing.dir}/../files/deploy-includes.txt
-  excludes-file: ${custom.phing.dir}/../files/deploy-excludes.txt
 
 reports:
   localDir: ${repo.root}/reports
   remoteDir: reports
-
-doit:
-  cmd: ${repo.root}/scripts/doit/doit
 
 # The testing framework is limited to the `tests` directory, and includes
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
@@ -128,3 +96,28 @@ doit:
 testing_framework:
   behat:
     javascript_driver: 'selenium2'
+    # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
+    config: ${repo.root}/tests/behat/local.yml
+    # An array of paths with behat tests that should be executed.
+    tags: ~@hub
+    # This is used for ad-hoc creation of a server via `drush rs`.
+    profile: local
+    # This needs to match a site entry in docroot/sites/sites.php.
+    server-url: http://127.0.0.1:8888
+    # If true, `drush runserver` will be used for executing tests.
+    #  run-server: false
+    # If true, PhantomJS GhostDriver will be launched with Behat.
+    #  launch-phantom: true
+  phpunit:
+
+x-php:
+  xdebug:
+    # Provide absolute path and filename on the drupal server for the xdebug.ini file.
+    remote_file: '/usr/local/etc/php/conf.d/boston.xdebug.ini'
+    # Provide the filename of the xdebug.ini
+    default_file: 'xdebug.ini'
+
+x-deploy:
+  dir: ${repo.root}/deploy
+  includes-file: ${custom.phing.dir}/../files/deploy-includes.txt
+  excludes-file: ${custom.phing.dir}/../files/deploy-excludes.txt

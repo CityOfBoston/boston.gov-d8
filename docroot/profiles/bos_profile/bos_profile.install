@@ -1,10 +1,9 @@
 <?php
+
 /**
  * @file
  * Install file for Boston.gov.
  */
-
-use Drupal\Core\Extension\ModuleInstaller;
 
 /**
  * Implements hook_install().
@@ -28,32 +27,32 @@ function bos_profile_install() {
    * command is run, so use care!. */
   /* @see https://docs.acquia.com/acquia-cloud/develop/config-d8 */
 
-  // Be sure an environment indicator is set.
-  // Note: on Acquia servers this will be one of prod / test / dev as per
-  /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable/ */
-  global $envvar;
+  /* Be sure an environment indicator is set.
+   * Note: on Acquia servers this will be one of prod / test / dev as per: */
+  /*  @see https://docs.acquia.com/acquia-cloud/develop/env-variable . */
+  global $_envvar;
 
   if (empty($_ENV['AH_SITE_ENVIRONMENT'])) {
     if (!empty(getenv('AH_SITE_ENVIRONMENT'))) {
-      $envvar = getenv('AH_SITE_ENVIRONMENT');
+      $_envvar = getenv('AH_SITE_ENVIRONMENT');
     }
   }
   else {
-    $envvar = $_ENV['AH_SITE_ENVIRONMENT'];
+    $_envvar = $_ENV['AH_SITE_ENVIRONMENT'];
   }
-  if (empty($envvar)) {
-    $envvar = 'dev';
+  if (empty($_envvar)) {
+    $_envvar = 'dev';
   }
 
-  \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.", array(
-    '@env' => $envvar,
-  ));
+  \Drupal::logger('profile')->info("bos_profile install started. Using <b>@env</b>.", [
+    '@env' => $_envvar,
+  ]);
 
   // Now set some variables based on environment.
-  \Drupal::state()->set("system.performance.css.preprocess", !($envvar == "dev"));
-  \Drupal::state()->set("system.performance.js.preprocess", !($envvar == "dev"));
+  \Drupal::state()->set("system.performance.css.preprocess", !($_envvar == "dev"));
+  \Drupal::state()->set("system.performance.js.preprocess", !($_envvar == "dev"));
 
-  if ($envvar == "dev") {
+  if ($_envvar == "dev") {
     \Drupal::state()->set("config_split.config_split.development.status", TRUE);
   }
   else {

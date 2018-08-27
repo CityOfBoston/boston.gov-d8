@@ -2,19 +2,32 @@
 
   <target name="tests:info"
           description="Tests project contains all PHPUnit and Behat testing for CI."
-          depends="build:info"/>
+          depends="build:info">
+    <echo message="Boston build installation uses CodeSniffer to check that minimum coding
+    standards have been met, and both PHPUnit and Behat tests to verify the build complies with
+    basic functional requirements."/>
+  </target>
 
   <echo message="Building ${custom.phing.tasks.dir}/tests.xml" level="verbose"/>
 
   <target name="tests:all" description="Runs all tests, including Behat, PHPUnit, and Security Update check."
-          depends="tests:security-updates, tests:behat, tests:phpunit"/>
+          depends="tests:security-updates"/>
+
+  <!-- Do a basic syntax check using Phing wrapper for "php -l"  -->
+  <target name="tests:phplinting" description="Duplicate for linting run in validate project.">
+    <phingcall target="validate:lint"/>
+  </target>
 
   <!-- Ensure Drupal doesn't have any modules requiring security updates.
        Requires Drush v9+. -->
   <target name="tests:security-updates"
           description="Check local Drupal installation for security updates.">
-    <exec description="Look for Drupal security updates." outputProperty="ups.output" passthru="true"
-          dir="${docroot}" command="! ${drush.cmd} sec 2>/dev/null | grep 'success'" logoutput="true"/>
+    <exec description="Look for Drupal security updates."
+          outputProperty="ups.output"
+          passthru="true"
+          dir="${docroot}"
+          command="! ${drush.cmd} sec 2>/dev/null | grep 'success'"
+          logoutput="true"/>
     <if>
       <and>
         <isset property="ups.output"/>
@@ -30,31 +43,12 @@
     </if>
   </target>
 
-  <!-- Do a basic syntax check using Phing wrapper for "php -l"  -->
-  <target name="tests:phplinting" description="Runs PHP Linting tests on PHP fileset">
-    <mkdir dir="${reports.localDir}"/>
-    <delete file="${reports.localDir}/linting.err" quiet="true" failonerror="false" verbose="false"/>
-    <phplint haltonfailure="true" tofile="${reports.localDir}/linting.err" errorproperty="linting.error">
-      <fileset refid="files.php"/>
-    </phplint>
-    <if>
-      <equals arg1="${linting.error}" arg2=""/>
-      <then>
-        <delete file="${reports.localDir}/linting.err" quiet="true" failonerror="false" verbose="false"/>
-        <echo message="PHP Syntax Linting OK." level="info"/>
-      </then>
-      <else>
-        <echo message="PHP Syntax Linting [FAILED]: .${linting.error}. See ${reports.localDir}/linting.err for details." level="error"/>
-      </else>
-    </if>
-  </target>
-
   <!-- NOT VERIFIED FOR D8 BELOW HERE -->
 
   <!-- If you experience 'Maximum function nesting level' errors in your PHP
        error log, set 'xdebug.max_nesting_level=1000' in php.ini. -->
   <!--<target name="tests:behat" depends="tests:run-server, tests:phantomjs:launch" description="Executes Behat all behat tests in behat.paths.">-->
-  <target name="tests:behat" depends="" description="Executes Behat all behat tests in behat.paths.">
+  <target name="tests:behat" description="Executes Behat all behat tests in behat.paths.">
     <mkdir dir="${reports.localDir}/behat"/>
     <phingcall target="tests:behat:execute"/>
     <!--<phingcall target="tests:phantomjs:kill"/>-->
@@ -110,11 +104,5 @@
       </then>
     </if>
   </target>
-
-<target name="show">
-  <echo message="Bin: ${composer.bin}"/>
-  <echo message="Config: ${behat.config}"/>
-  <echo message="Profile: ${behat.profile}"/>
-</target>
 
 </project>
