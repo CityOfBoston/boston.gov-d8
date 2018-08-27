@@ -3,7 +3,7 @@ language: php
 
 env:
   - TASK="vendor/bin/phing -f build.xml validate:all"
-  - TASK="vendor/bin/phing -f build.xml -Dbehat.run-server=true -Dproject.build_db_from=initialize build:local tests:all"
+#  - TASK="vendor/bin/phing -f build.xml -Dbehat.run-server=true -Dproject.build_db_from=initialize build:local tests:all"
 
 branches:
   only:
