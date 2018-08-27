@@ -11,14 +11,14 @@
   <!-- Run linter against all php files in repository. -->
   <target name="validate:lint" description="Runs a PHP Lint against all code.">
     <echo message="Using PHP 7 native linting to check for PHP compile errors." level="info"/>
-    <delete file="${docroot}/err.linting.txt" quiet="true" failonerror="false" verbose="false"/>
-    <phplint haltonfailure="true" tofile="${docroot}/err.linting.txt" level="verbose" errorproperty="lint.error">
+    <delete file="${reports.localDir}/err.linting.txt" quiet="true" failonerror="false" verbose="false"/>
+    <phplint haltonfailure="true" tofile="${reports.localDir}/err.linting.txt" level="verbose" errorproperty="lint.error">
       <fileset refid="files.php"/>
     </phplint>
     <if>
       <equals arg1="${lint.error}" arg2=""/>
       <then>
-        <delete file="${docroot}/err.linting.txt" quiet="true" failonerror="false" verbose="false"/>
+        <delete file="${reports.localDir}/err.linting.txt" quiet="true" failonerror="false" verbose="false"/>
         <echo message="PHP linting OK." level="info"/>
       </then>
       <else>
@@ -35,7 +35,7 @@
     <if>
       <equals arg1="${acquia.site_environment}" arg2="dev"/>
       <then>
-        <echo message="Note: Any warnings/errors found will be detailed in the file: ${lando.url.url}/err.code_sniffer.txt." level="warning"/>
+        <echo message="Note: Any warnings/errors found will be detailed in the file: ${lando.url.url}/${reports.remoteDir}/err.code_sniffer.txt." level="warning"/>
         <phpcodesniffer
           description="DEV: Sniff custom modules for Drupal coding standards compliance."
           standard="${phpcs.ruleset}"
@@ -45,7 +45,7 @@
           haltonerror="false"
           haltonwarning="false">
           <fileset refid="files.codesniffer" description="Use the combined PHP and JS filesets." />
-          <formatter type="full" usefile="true" outfile="${docroot}/err.code_sniffer.txt"/>
+          <formatter type="full" usefile="true" outfile="${reports.localDir}/err.code_sniffer.txt"/>
           <formatter type="summary" usefile="false"/>
         </phpcodesniffer>
         <exec
@@ -57,11 +57,11 @@
             <equals arg1="${validate.result}" arg2=""/>
           </not>
           <then>
-            <echo message="ERRORS Found: Please check the file: ${lando.url.url}/err.code_sniffer.txt" level="error"/>
+            <echo message="ERRORS Found: Please check the file: ${lando.url.url}/${reports.remoteDir}/err.code_sniffer.txt" level="error"/>
           </then>
 
           <else>
-            <delete file="${docroot}/err.code_sniffer.txt" quiet="true" failonerror="false" verbose="false"/>
+            <delete file="${reports.localDir}/err.code_sniffer.txt" quiet="true" failonerror="false" verbose="false"/>
             <echo message="Coding standards OK." level="info"/>
           </else>
         </if>
