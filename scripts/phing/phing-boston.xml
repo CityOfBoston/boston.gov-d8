@@ -61,27 +61,35 @@
 
 <!-- This defines generic, reusable file sets that are used by other targets -->
     <fileset dir="${docroot}" id="files.php" description="All docroot PHP files which are not core or contributed.">
-        <include name="**/*.inc"/>
-        <include name="**/*.php"/>
-        <include name="**/*.module"/>
-        <include name="**/*.install"/>
-        <include name="**/*.profile"/>
-        <include name="**/*.test"/>
-        <include name="**/*.theme"/>
-        <exclude name="**/core/**/*"/>
-        <exclude name="**/contrib/**/*"/>
-        <exclude name="*.php"/>
+        <readable/>
+        <patternset id="files.php.id">
+            <include name="**/*.inc"/>
+            <include name="**/*.php"/>
+            <include name="**/*.module"/>
+            <include name="**/*.install"/>
+            <include name="**/*.profile"/>
+            <include name="**/*.test"/>
+            <include name="**/*.theme"/>
+            <exclude name="**/core/**/*"/>
+            <exclude name="**/contrib/**/*"/>
+            <exclude name="*.php"/>
+        </patternset>
     </fileset>
     <fileset dir="${docroot}" id="files.js" description="All non-minified custom module js files.">
-        <include name="modules/custom/**/*.js"/>
-        <include name="themes/custom/**/*.js"/>
-        <!--<include name="**/*.js"/>-->
-        <exclude name="**/core/**/*"/>
-        <exclude name="**/contrib/**/*"/>
-        <!--<exclude name="**/themes/**/dist/**/*"/>-->
-        <!--<exclude name="**/libraries/**/*"/>-->
-        <!--<exclude name="**/default/files/**/*"/>-->
-        <exclude name="**/*.min.*"/>
+        <readable/>
+        <patternset id="files.js.id">
+            <include name="modules/custom/**/*.js"/>
+            <include name="themes/custom/**/*.js"/>
+            <exclude name="**/core/**/*"/>
+            <exclude name="**/contrib/**/*"/>
+            <exclude name="**/themes/**/dist/**/*"/>
+            <exclude name="**/*.min.*"/>
+        </patternset>
+    </fileset>
+    <fileset dir="${docroot}" id="files.codesniffer" description="Drupal and js files for codesniffer.">
+        <readable/>
+        <patternset refid="files.php.id"/>
+        <patternset refid="files.js.id"/>
     </fileset>
 
 <!-- ================================================================= -->

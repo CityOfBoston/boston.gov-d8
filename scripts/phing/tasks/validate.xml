@@ -30,30 +30,52 @@
   <!-- Run code sniffer against all custom code. -->
   <target name="validate:phpcs" description="Runs PHP Code Sniffer against only custom modules.">
 
-    <echo message="Using CodeSniffer (default ruleset) to check for js coding standards conformity." level="info"/>
-    <!-- Sniff custom modules for JS coding standards compliance. -->
-    <!--<phpcodesniffer-->
-            <!--description="Sniff custom modules for JS coding standards compliance."-->
-            <!--showSniffs="false"-->
-            <!--showWarnings="true"-->
-            <!--haltonerror="true"-->
-            <!--haltonwarning="false">-->
-      <!--<fileset refid="files.js"/>-->
-      <!--<formatter type="full" usefile="false"/>-->
-    <!--</phpcodesniffer>-->
+    <echo message="Using CodeSniffer (default ruleset) to check for php and js coding standards conformity." level="info"/>
+    <!-- Sniff custom modules for Drupal and generic JS coding standards compliance. -->
+    <if>
+      <equals arg1="${acquia.site_environment}" arg2="dev"/>
+      <then>
+        <echo message="Note: Any warnings/errors found will be detailed in the file: ${lando.url.url}/validate.txt." level="warning"/>
+        <phpcodesniffer
+          description="DEV: Sniff custom modules for Drupal coding standards compliance."
+          standard="${phpcs.ruleset}"
+          showSniffs="false"
+          showWarnings="true"
+          reportWidth="500"
+          haltonerror="false"
+          haltonwarning="false">
+          <fileset refid="files.codesniffer" description="Use the combined PHP and JS filesets." />
+          <formatter type="full" usefile="true" outfile="${docroot}/validate.txt"/>
+          <formatter type="summary" usefile="false"/>
+        </phpcodesniffer>
+        <exec
+          description="Grep file to see if it contains any errors."
+          command="cat docroot/validate.txt | grep ERROR"
+          outputProperty="hello"/>
+        <if>
+          <not>
+            <equals arg1="${hello}" arg2=""/>
+          </not>
+        <then>
+          <echo message="ERRORS Found: Please check the file: ${lando.url.url}/validate.txt" level="error"/>
+        </then>
+        </if>
 
-    <echo message="Using PHP CodeSniffer (Drupal ruleset) to check for coding standards conformity." level="info"/>
-    <!-- Sniff custom modules for drupal coding standards compliance. -->
-    <phpcodesniffer
-            description="Sniff custom modules for Drupal coding standards compliance."
-            standard="${phpcs.ruleset}"
-            showSniffs="false"
-            showWarnings="true"
-            haltonerror="true"
-            haltonwarning="true">
-      <fileset refid="files.php" description="Use the PHP fileset def, but exclude PHP files on docroot." />
-      <formatter type="full" usefile="false"/>
-    </phpcodesniffer>
+      </then>
+
+      <else>
+        <phpcodesniffer
+          description="PROD/STAGE: Sniff custom modules for Drupal coding standards compliance."
+          standard="${phpcs.ruleset}"
+          showSniffs="false"
+          showWarnings="true"
+          haltonerror="true"
+          haltonwarning="true">
+          <fileset refid="files.codesniffer" description="Use the combined PHP and JS filesets." />
+          <formatter type="full" usefile="false"/>
+        </phpcodesniffer>
+      </else>
+    </if>
 
   </target>
 
