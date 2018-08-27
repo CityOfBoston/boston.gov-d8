@@ -72,6 +72,17 @@
         <exclude name="**/contrib/**/*"/>
         <exclude name="*.php"/>
     </fileset>
+    <fileset dir="${docroot}" id="files.js" description="All non-minified custom module js files.">
+        <include name="modules/custom/**/*.js"/>
+        <include name="themes/custom/**/*.js"/>
+        <!--<include name="**/*.js"/>-->
+        <exclude name="**/core/**/*"/>
+        <exclude name="**/contrib/**/*"/>
+        <!--<exclude name="**/themes/**/dist/**/*"/>-->
+        <!--<exclude name="**/libraries/**/*"/>-->
+        <!--<exclude name="**/default/files/**/*"/>-->
+        <exclude name="**/*.min.*"/>
+    </fileset>
 
 <!-- ================================================================= -->
 
