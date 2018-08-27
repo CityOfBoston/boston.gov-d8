@@ -22,8 +22,12 @@
        Requires Drush v9+. -->
   <target name="tests:security-updates"
           description="Check local Drupal installation for security updates.">
-    <exec description="Look for Drupal security updates." outputProperty="ups.output" passthru="true"
-          dir="${docroot}" command="! ${drush.cmd} sec 2>/dev/null | grep 'success'" logoutput="true"/>
+    <exec description="Look for Drupal security updates."
+          outputProperty="ups.output"
+          passthru="true"
+          dir="${docroot}"
+          command="! ${drush.cmd} sec 2>/dev/null | grep 'success'"
+          logoutput="true"/>
     <if>
       <and>
         <isset property="ups.output"/>
