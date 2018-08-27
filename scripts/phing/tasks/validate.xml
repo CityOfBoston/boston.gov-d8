@@ -55,7 +55,7 @@
         </phpcodesniffer>
         <exec
           description="Grep file to see if it contains any errors."
-          command="cat docroot/err.code_sniffer.txt | grep ERROR"
+          command="cat ${reports.localDir}/err.code_sniffer.txt | grep ERROR"
           outputProperty="validate.result"/>
         <if>
           <not>
@@ -63,6 +63,7 @@
           </not>
           <then>
             <echo message="ERRORS Found: Please check the file: ${lando.url.url}/${reports.remoteDir}/err.code_sniffer.txt" level="error"/>
+            <fail message="" status="1"
           </then>
 
           <else>
