@@ -45,6 +45,15 @@
     </if>
   </target>
 
+  <target name="tests:phantomjs:start">
+    <exec
+          description="Start the PhantomJS server."
+          dir="${project.basedir}"
+          command="./tests/phantomjs/bin/phantomjs vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768 "
+          passthru="true"
+          checkreturn="true"/>
+  </target>
+
   <!-- NOT VERIFIED FOR D8 BELOW HERE -->
 
   <!-- If you experience 'Maximum function nesting level' errors in your PHP
@@ -80,14 +89,14 @@
 
   <!-- Execute PHPUnit tests. -->
   <target name="tests:phpunit" description="Executes PHPUnit tests against custom code.">
-    <delete dir="${reports.localDir}/phpunit" quiet="true"/>
+    <delete dir="${reports.localDir}/phpunit" quiet="true" verbose="false"/>
     <mkdir dir="${reports.localDir}/phpunit"/>
 
     <phpunit
       printsummary="true"
       failureproperty="phpunit.failures"
       errorproperty="phpunit.errors"
-      configuration="${project.basedir}/tests/phpunit/phpunit.xml"
+      pharlocation="/usr/local/bin/phpunit"
     >
       <formatter type="plain" usefile="false"/>
       <formatter type="xml" todir="${reports.localDir}/phpunit"/>
