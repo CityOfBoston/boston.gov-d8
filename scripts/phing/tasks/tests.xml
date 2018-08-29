@@ -10,7 +10,7 @@
 
   <echo message="Building ${custom.phing.tasks.dir}/tests.xml" level="verbose"/>
 
-  <autoloader autoloaderpath="${project.basedir}/vendor/autoload.php"/>
+  <!-- <autoloader autoloaderpath="${project.basedir}/vendor/autoload.php"/> -->
 
   <target name="tests:all" description="Runs all tests, including Behat, PHPUnit, and Security Update check."
           depends="tests:security-updates"/>
