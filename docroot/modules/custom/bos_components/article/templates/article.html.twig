@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present an article entity.
+ *
+ * This template is used when viewing a registered article's page,
+ * e.g., /admin/content/article)/123. 123 being the article's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.title'.
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_article()
+ */
+#}
+<article{{ attributes }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</article>
