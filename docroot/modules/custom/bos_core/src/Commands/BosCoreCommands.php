@@ -3,6 +3,7 @@
 namespace Drupal\bos_core\Commands;
 
 use Drush\Commands\DrushCommands;
+use Drupal\bos_core\BosCoreCssSwitcherService;
 
 /**
  * A Drush commandfile.
@@ -20,15 +21,17 @@ class BosCoreCommands extends DrushCommands {
   /**
    * Boston CSS Source Switcher. Set the source for the main public.css file.
    *
-   * @param $ord The ordinal for the server (use 'drush bcss' for list)
+   * @param string $ord
+   *   The ordinal for the server (use 'drush bcss' for list)
+   *
    * @validate-module-enabled bos_core
    *
    * @command bos:css-source
    * @aliases bcss,bos-css-source
    */
   public function cssSource($ord = NULL) {
-    // See bottom of https://weitzman.github.io/blog/port-to-drush9 for details on what to change when porting a
-    // legacy command.
+    // See bottom of https://weitzman.github.io/blog/port-to-drush9 for details
+    // on what to change when porting a legacy command.
     $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
 
     if (!isset($ord)) {
@@ -54,13 +57,19 @@ class BosCoreCommands extends DrushCommands {
     if ($ord == 0) {
       $this->output()->writeln("Cancelled.");
     }
-    elseif (\Drupal\bos_core\BosCoreCssSwitcherService::switchSource($ord)) {
+    elseif (BosCoreCssSwitcherService::switchSource($ord)) {
       \Drupal::service('asset.css.collection_optimizer')
         ->deleteAll();
-      $this->output()->writeln("Success: Changed source to '" . $libArray[$ord][0]  . "' (" . $libArray[$ord][1] . ").");
+      $this->output()->writeln(t("Success: Changed source to '@source' (@sourcePath)."), [
+        '@source' => $libArray[$ord][0],
+        '@sourcePath' => $libArray[$ord][1],
+      ]);
     }
     else {
-      $this->output()->writeln(t("FAILED: Counld not change source to '" . $libArray[$ord][0] . "' (" . $libArray[$ord][1] . ")."));
+      $this->output()->writeln(t("FAILED: Could not change source to '@source' (@sourcePath)."), [
+        '@source' => $libArray[$ord][0],
+        '@sourcePath' => $libArray[$ord][1],
+      ]);
     }
   }
 

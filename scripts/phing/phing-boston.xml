@@ -27,6 +27,8 @@
             description="Contains targets relevant to the execution of tests. E.g., Behat, jMeter."/>
     <import file="${custom.phing.tasks.dir}/update.xml"
             description="Contains targets used to maintain/update a Drupal 8 installation."/>
+    <import file="${custom.phing.tasks.dir}/validate.xml"
+            description="Contains targets used to validate custom-written code against coding standards."/>
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
@@ -59,15 +61,39 @@
 
 <!-- This defines generic, reusable file sets that are used by other targets -->
     <fileset dir="${docroot}" id="files.php" description="All docroot PHP files which are not core or contributed.">
-        <include name="**/*.inc"/>
-        <include name="**/*.php"/>
-        <include name="**/*.module"/>
-        <include name="**/*.install"/>
-        <include name="**/*.profile"/>
-        <include name="**/*.test"/>
-        <include name="**/*.theme"/>
-        <exclude name="**/core/**/*"/>
-        <exclude name="**/contrib/**/*"/>
+        <readable/>
+        <patternset id="files.php.id">
+            <include name="**/*.inc"/>
+            <include name="**/*.php"/>
+            <include name="**/*.module"/>
+            <include name="**/*.install"/>
+            <include name="**/*.profile"/>
+            <include name="**/*.test"/>
+            <include name="**/*.theme"/>
+            <exclude name="**/core/**/*"/>
+            <exclude name="**/contrib/**/*"/>
+            <exclude name="**/preConversion/**/*"/>
+            <exclude name="*.php"/>
+        </patternset>
+    </fileset>
+    <fileset dir="${docroot}" id="files.js" description="All non-minified custom module js files.">
+        <readable/>
+        <patternset id="files.js.id">
+            <include name="modules/custom/**/*.js"/>
+            <include name="themes/custom/**/*.js"/>
+            <exclude name="**/core/**/*"/>
+            <exclude name="**/contrib/**/*"/>
+            <exclude name="**/themes/**/dist/**/*"/>
+            <exclude name="**/*.min.*"/>
+        </patternset>
+    </fileset>
+    <fileset dir="${docroot}" id="files.codesniffer" description="Drupal and js files for codesniffer.">
+        <readable/>
+        <patternset refid="files.php.id"/>
+        <patternset refid="files.js.id"/>
+        <exclude name="**/drupal7/**/*"/>
+        <exclude name="**/*.tpl.php"/>
+        <exclude name="**/modules/custom/**/modules/**/*"/>
     </fileset>
 
 <!-- ================================================================= -->
