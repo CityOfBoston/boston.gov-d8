@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present a script page entity.
+ *
+ * This template is used when viewing a registered script page's page,
+ * e.g., /admin/content/script-page)/123. 123 being the script page's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.title'.
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_script_page()
+ */
+#}
+<article{{ attributes }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</article>

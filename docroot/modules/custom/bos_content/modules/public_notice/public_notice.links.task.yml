@@ -1,0 +1,26 @@
+entity.public_notice.view:
+  title: View
+  route_name: entity.public_notice.canonical
+  base_route: entity.public_notice.canonical
+entity.public_notice.edit_form:
+  title: Edit
+  route_name: entity.public_notice.edit_form
+  base_route: entity.public_notice.canonical
+entity.public_notice.delete_form:
+  title: Delete
+  route_name: entity.public_notice.delete_form
+  base_route: entity.public_notice.canonical
+  weight: 10
+entity.public_notice.collection:
+  title: Public Notice
+  route_name: entity.public_notice.collection
+  base_route: system.admin_content
+  weight: 10
+entity.public_notice_type.edit_form:
+  title: Edit
+  route_name: entity.public_notice_type.edit_form
+  base_route: entity.public_notice_type.edit_form
+entity.public_notice_type.collection:
+  title: List
+  route_name: entity.public_notice_type.collection
+  base_route: entity.public_notice_type.collection

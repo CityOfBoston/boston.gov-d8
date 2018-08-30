@@ -72,6 +72,7 @@
             <include name="**/*.theme"/>
             <exclude name="**/core/**/*"/>
             <exclude name="**/contrib/**/*"/>
+            <exclude name="**/preConversion/**/*"/>
             <exclude name="*.php"/>
         </patternset>
     </fileset>
@@ -90,6 +91,9 @@
         <readable/>
         <patternset refid="files.php.id"/>
         <patternset refid="files.js.id"/>
+        <exclude name="**/drupal7/**/*"/>
+        <exclude name="**/*.tpl.php"/>
+        <exclude name="**/modules/custom/**/modules/**/*"/>
     </fileset>
 
 <!-- ================================================================= -->
