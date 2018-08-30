@@ -3,22 +3,35 @@
 namespace Drupal\bos_core;
 
 /**
- * Class BosCoreCssSwitcherService
+ * Class BosCoreCssSwitcherService.
  *
- *    Switches the source for the main site css file(s)
- *    The library selection is from: themes/custom/bos_theme/bos_theme.libraries.yml
+ *    Switches the source for the main site css file(s).
+ *    The library selection is from:
+ *        themes/custom/bos_theme/bos_theme.libraries.yml
  *    Drush command to switch is: drush bos:css-source (alias bcss)
- *                                modules/custom/bos_core/src/Commands/BosCoreCommands.php
+ *
+ * @see modules/custom/bos_core/src/Commands/BosCoreCommands.php
  *
  * @package Drupal\bos_core
  */
 class BosCoreCssSwitcherService {
 
-  static function switchSource($ord = 0) {
-    if ($ord == 0) return TRUE;
+  /**
+   * Save the requested asset source to bos_theme config.
+   *
+   * @param int $ord
+   *   The library ordinal from bos_theme.libraries.yml.
+   *
+   * @return bool
+   *   Whether the change was sucessfully saved to the bos_theme configuration.
+   */
+  public static  function switchSource(int $ord = 0) {
+    if ($ord == 0) {
+      return TRUE;
+    }
 
     $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
-    $opts = array("Cancel");
+    $opts = ["Cancel"];
     foreach ($libs as $libname => $lib) {
       if (!empty($lib['data']['name'])) {
         $opts[] = $libname;
@@ -33,7 +46,9 @@ class BosCoreCssSwitcherService {
           ->save();
         return TRUE;
       }
-      catch (\Exception $e) {return FALSE;}
+      catch (\Exception $e) {
+        return FALSE;
+      }
     }
     else {
       return FALSE;

@@ -1,9 +1,7 @@
-uuid: 5967b84e-bfd8-4b0d-9038-7b96cf72fc1c
+uuid: 7838c779-0a7d-4f5b-aa2a-513774a541a6
 langcode: en
 status: true
 dependencies:
-  config:
-    - workflows.workflow.editorial
   module:
     - content_moderation
     - node
@@ -800,8 +798,7 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:workflow_list'
+      tags: {  }
   moderated_content:
     display_plugin: page
     id: moderated_content
@@ -820,5 +817,4 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:workflow_list'
+      tags: {  }

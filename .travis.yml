@@ -1,0 +1,61 @@
+sudo: false
+language: php
+
+env:
+  - TASK="vendor/bin/phing -f build.xml validate:all"
+  - TASK="vendor/bin/phing -f build.xml tests:all"
+#  - TASK="vendor/bin/phing -f build.xml -Dbehat.run-server=true -Dproject.build_db_from=initialize build:local tests:all"
+
+branches:
+  only:
+    - develop
+    - master
+    - settings
+
+php:
+  - 7.1
+
+addons:
+  apt:
+    update: true
+    packages:
+      - libssl1.0.0
+  ssh_known_hosts:
+    - svn-14671.prod.hosting.acquia.com
+    - staging-15139.prod.hosting.acquia.com
+    - staging-15142.prod.hosting.acquia.com
+    - staging-19375.prod.hosting.acquia.com
+    - 54.205.51.146
+    - 54.80.38.136
+
+cache:
+  bundler: true
+  apt: true
+  directories:
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$HOME/.nvm"
+    - vendor
+    - node_modules
+
+notifications:
+  slack:
+    secure: b2UX5FnE2/C5MDNK47EP0GZIRmfwX+18HES0Q/uSwt6t7+ogKCtIjWCp1sIPd7jqRak0VmLoM0OHy6MBjz6x+1MQMNUqPEiO1f2APgBJ48c6rzeWQKTVfrKsUvPYIA+gxQ7jq7Gn0zPYQ5/+KXkxac+NrVoH85sI0xIL2BhFgQu1W4OlLLFKT11U7zJtCi3bcYhF7/eyCcrs3+IBGGp9sldjWvaVLDqUnFjz3c5AXwxlbJ6UTq7GIdIEe5Xw/UOJS9weedhoYH2XSNzFpmqqkAGcvkFpgCeYxf12iiqkmoAq5A0CxWVXqA3vG+imabuQonpbQsGdvtFP71EV9o9DxwATwxaGhBpX+Sw4zN7v25IC6n7rcvcK2F9dtY0CAb8BpWbEbWMDXXmVvFEVAvgARQ/b+L7YOJbNbbJwJQqZkllJp0lAFluyMDwpP2Ncr177S5hR/4Z6rlj1aLK1nhbmi/tK/kSNe+bcashm7/S2KG076hN0b5TB87hsbkvHsnVJDMKXSHwKrrdJiXDAkwZbl2sBp/bbfMTXyEqrINUG4WA70WXP3lR/QJy2pldVEYIU5rRwSzZ0BJ9raF7iiXFgTn3+Yhl0U/UgcDCEKoRvutM/suCy1mQBYP+Gv1uyFNFco37doQbPeyAXNb1vjfJQtyzy8I31gIN/sK590YxLBCA=
+
+before_install:
+  # Add in some required packages (ref: <reporoot>/.lando.yml
+  - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig
+  # ensure composer is on latest version.
+  - composer selfupdate
+
+install:
+  # In this context "install" is the phing build process because we are installing Drupal in order to test it.
+  # Step 1: Download all dependencies.
+  - composer install --prefer-source --no-suggest
+  - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
+  # Step 2: Build the drupal site using Phing.
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+
+script:
+  # Run basic validation and Behat/PHPUnit tests in parallel.
+  - "$TASK"
