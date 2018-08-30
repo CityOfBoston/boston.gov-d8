@@ -1,0 +1,26 @@
+entity.transaction.view:
+  title: View
+  route_name: entity.transaction.canonical
+  base_route: entity.transaction.canonical
+entity.transaction.edit_form:
+  title: Edit
+  route_name: entity.transaction.edit_form
+  base_route: entity.transaction.canonical
+entity.transaction.delete_form:
+  title: Delete
+  route_name: entity.transaction.delete_form
+  base_route: entity.transaction.canonical
+  weight: 10
+entity.transaction.collection:
+  title: Transaction
+  route_name: entity.transaction.collection
+  base_route: system.admin_content
+  weight: 10
+entity.transaction_type.edit_form:
+  title: Edit
+  route_name: entity.transaction_type.edit_form
+  base_route: entity.transaction_type.edit_form
+entity.transaction_type.collection:
+  title: List
+  route_name: entity.transaction_type.collection
+  base_route: entity.transaction_type.collection
