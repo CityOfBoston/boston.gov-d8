@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present a place profile entity.
+ *
+ * This template is used when viewing a registered place profile's page,
+ * e.g., /admin/content/place-profile)/123. 123 being the place profile's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.title'.
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_place_profile()
+ */
+#}
+<article{{ attributes }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</article>

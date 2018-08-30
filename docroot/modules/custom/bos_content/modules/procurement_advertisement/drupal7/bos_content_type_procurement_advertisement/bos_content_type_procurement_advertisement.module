@@ -1,0 +1,181 @@
+<?php
+
+/**
+ * @file
+ * Code for the Boston Content Type Procurement Advertisement feature.
+ */
+
+include_once 'bos_content_type_procurement_advertisement.features.inc';
+
+/**
+ * Implements hook_preprocess_views_exposed_form().
+ */
+function bos_content_type_procurement_advertisement_preprocess_views_exposed_form(&$vars) {
+  if ($vars['form']['#id'] == 'views-exposed-form-bids-rfps-landing' || $vars['form']['#id'] == 'views-exposed-form-bids-rfps-archive') {
+    $vars['widget_groups'] = array(
+      'search by project or bid name' => array(),
+      'search by department' => array(),
+    );
+
+    foreach ($vars['widgets'] as $id => $widget) {
+      switch ($id) {
+        case 'filter-title':
+          $vars['widget_groups']['search by project or bid name'][$id] = $widget;
+          break;
+
+        case 'filter-field_contact_target_id':
+          $vars['widget_groups']['search by department'][$id] = $widget;
+          break;
+      }
+    }
+  }
+}
+
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_content_type_procurement_advertisement_form_procurement_advertisement_node_form_alter(&$form, &$form_state, $form_id) {
+  // Only show Contract Length field if Multi-year option is selected.
+  $form['field_contract_length']['#states'] = array(
+    'visible' => array(
+      ':input[name="field_multi_year_contract[und]"]' => array('checked' => TRUE),
+    ),
+    // TO-DO need to actually validate to make required.
+    // https://drupal.stackexchange.com/questions/14173/how-to-make-a-form-required-with-states
+    'required' => array(
+      ':input[name="field_multi_year_contract[und]"]' => array('checked' => TRUE),
+    ),
+  );
+
+  // Since Term ID might differ between environments, we'll look it up here.
+  $terms = taxonomy_get_term_by_name('Electronic', 'bid_type');
+  // Get the actual TID from the term object.
+  foreach ($terms as $term) {
+    // Assign TID to variable to be used in #state.
+    $electronic_tid = $term->tid;
+  }
+  // Only show Supplier Portal Link if the Bid Type is set to Electronic.
+  $form['field_url']['#states'] = array(
+    'visible' => array(
+      ':input[name="field_bid_type[und]"]' => array('value' => $electronic_tid),
+    ),
+  );
+  $terms = taxonomy_get_term_by_name('Paper', 'bid_type');
+  // Get the actual TID from the term object.
+  foreach ($terms as $term) {
+    // Assign TID to variable to be used in #state.
+    $paper_tid = $term->tid;
+  }
+  // Only show Document field if the Bid Type is set to Paper.
+  $form['field_document']['#states'] = array(
+    'visible' => array(
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+  // Only show Delivery Address field if the Bid Type is set to Paper.
+  $form['field_delivery_address']['#states'] = array(
+    'visible' => array(
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+    'required' => array(
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+  // Address 1.
+  // Remove default required validation so form saves if Paper is not selected.
+  $form['field_delivery_address']['und'][0]['street_block']['thoroughfare']['#required'] = FALSE;
+  // Add asterisk to visually show user what is required before form submission.
+  $form['field_delivery_address']['und'][0]['street_block']['thoroughfare']['#states'] = array(
+    'required' => array(
+      // Check that Paper is selected for Bid Type.
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+  // City.
+  // Remove default required validation so form saves if Paper is not selected.
+  $form['field_delivery_address']['und'][0]['locality_block']['locality']['#required'] = FALSE;
+  // Add asterisk to visually show user what is required before form submission.
+  $form['field_delivery_address']['und'][0]['locality_block']['locality']['#states'] = array(
+    'required' => array(
+      // Check that Paper is selected for Bid Type.
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+  // ZIP code.
+  // Remove default required validation so form saves if Paper is not selected.
+  $form['field_delivery_address']['und'][0]['locality_block']['postal_code']['#required'] = FALSE;
+  // Add asterisk to visually show user what is required before form submission.
+  $form['field_delivery_address']['und'][0]['locality_block']['postal_code']['#states'] = array(
+    'required' => array(
+      // Check that Paper is selected for Bid Type.
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+  // State.
+  // Remove default required validation so form saves if Paper is not selected.
+  $form['field_delivery_address']['und'][0]['locality_block']['administrative_area']['#required'] = FALSE;
+  // Add asterisk to visually show user what is required before form submission.
+  $form['field_delivery_address']['und'][0]['locality_block']['administrative_area']['#states'] = array(
+    'required' => array(
+      // Check that Paper is selected for Bid Type.
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+  // Country.
+  // Remove default required validation so form saves if Paper is not selected.
+  $form['field_delivery_address']['und'][0]['country']['#required'] = FALSE;
+  // Add asterisk to visually show user what is required before form submission.
+  $form['field_delivery_address']['und'][0]['country']['#states'] = array(
+    'required' => array(
+      // Check that Paper is selected for Bid Type.
+      ':input[name="field_bid_type[und]"]' => array('value' => $paper_tid),
+    ),
+  );
+
+  // Add custom validation since above required states are client-side only.
+  $form['#validate'][] = 'bos_content_type_procurement_advertisement_form_validate';
+
+}
+
+/**
+ * Form validate callback.
+ */
+function bos_content_type_procurement_advertisement_form_validate($form, $form_state) {
+  $terms = taxonomy_get_term_by_name('Paper', 'bid_type');
+  // Get the actual TID from the term object.
+  foreach ($terms as $term) {
+    // Assign TID to variable to be checked in Bid Type.
+    $paper_tid = $term->tid;
+  }
+  // Make sure 'Paper' is selected in Bid Type field.
+  if ($form_state['values']['field_bid_type']['und'][0]['target_id'] == $paper_tid) {
+    // Created variables for user inputted values.
+    $address_1 = $form_state['values']['field_delivery_address']['und'][0]['thoroughfare'];
+    $city = $form_state['values']['field_delivery_address']['und'][0]['locality'];
+    $state = $form_state['values']['field_delivery_address']['und'][0]['administrative_area'];
+    $zip_code = $form_state['values']['field_delivery_address']['und'][0]['postal_code'];
+    $country = $form_state['values']['field_delivery_address']['und'][0]['country'];
+    // Assign readable titles to each user inputted value.
+    $required_fields = array(
+      "Address 1" => $address_1,
+      "City" => $city,
+      "State" => $state,
+      "ZIP code" => $zip_code,
+      "Country" => $country,
+    );
+    // Create a placeholder array for all required fields without values.
+    $empty_required_fields = [];
+    foreach ($required_fields as $field_name => $field_value) {
+      if (!$field_value) {
+        // Compose error message for required fields that are missing values.
+        $empty_required_fields[] = "Please fill out the '$field_name' field when selecting 'Paper' as Bid Type";
+      }
+    }
+    // Make sure there are required fields missing input.
+    if (count($empty_required_fields) > 0) {
+      // Block form submission and display help text to user about empty fields.
+      form_set_error('Paper Bid Type Address Errors', theme('item_list', array('items' => $empty_required_fields)));
+    }
+  }
+}
