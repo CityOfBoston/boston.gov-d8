@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default template for a user is not eligible to vote.
  *
@@ -25,8 +24,7 @@
  *   electoral:       Boolean - voting restricted to users in an electoral list.
  *   write_in:        Boolean - all write-in voting.
  *   block:           Boolean - Poll can be displayed as a block.
- */
-?>
+ #}
 <div class="poll">
-    <div class="ineligible"><p><?php print t('You are not eligible to vote in this poll.'); ?></p></div>
+    <div class="ineligible"><p>{# TODO: Review this: t('You are not eligible to vote in this poll.') #}</p></div>
 </div>

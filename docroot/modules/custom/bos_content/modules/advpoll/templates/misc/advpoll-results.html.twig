@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default template for wrapping bar results - includes count of votes.
  *
@@ -12,15 +10,14 @@
  * - $total: Total number of votes.
  * - $voted: An array indicating which unique choice ids were selected by the
  * user.
- */
-?>
-<div class="poll" id="advpoll-<?php print $nid; ?>">
+ #}
+<div class="poll" id="advpoll-{{ nid }}">
 
-    <?php print $bars; ?>
+    {{ bars }}
 
-    <?php if ($voted): ?>
-    <div class="poll-message"><?php print t('Thank you for voting.'); ?></div>
-    <?php endif; ?>
+    {% if voted %}
+    <div class="poll-message">{# TODO: Review this: t('Thank you for voting.') #}</div>
+    {% endif %}
 
-    <?php print $cancel_form; ?>
+    {{ cancel_form }}
 </div>

@@ -1,0 +1,23 @@
+<?php
+{#
+ * @file
+ * Downloads Field template.
+ #}
+{# TODO: review variable assignment: item_list = array( #}
+  '#theme': 'item_list',
+  '#type': 'ul',
+  '#items': ),
+
+foreach (items as $item) {
+  $item_list['#items[] = $item
+}
+{# TODO: review variable assignment: detail_item_variables = array( #}
+  'label': 'Downloads:',
+  'body': $item_list,
+  'classes': array(
+    'detail': 'detail-item',
+    'icon': 'icon-download',
+    'body': 'detail-item__body--secondary download-list uppercase-sm-list',
+  ),
+)
+theme('detail_item', $detail_item_variables)

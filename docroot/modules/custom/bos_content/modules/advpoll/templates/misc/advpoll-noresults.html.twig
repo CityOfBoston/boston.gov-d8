@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default template for an advanced poll when results are not available.
  *
@@ -38,22 +37,20 @@
  *   electoral:       Boolean - voting restricted to users in an electoral list.
  *   write_in:        Boolean - all write-in voting.
  *   block:           Boolean - Poll can be displayed as a block.
- */
-?>
+ #}
+<div class="poll-noresult" id="advpoll-{{ nid }}">
+    {% if data.show_results == 'never' %}
+    <p>{# TODO: Review this: t('The results of this poll are not available.') #}</p>
+    {% endif %}
 
-<div class="poll-noresult" id="advpoll-<?php print $nid; ?>">
-    <?php if ($data->show_results == 'never'): ?>
-    <p><?php print t('The results of this poll are not available.'); ?></p>
-    <?php endif; ?>
+    {% if data.show_results == 'afterclose' %}
+{# TODO: (move variable assignment) {{ date = format_date(data >end_date, 'long') }} #}
+        <p>{# TODO: Review this: t('The results of this poll will be available after @date.', '@date': $date) #}</p>
+    {% endif %}
 
-    <?php if ($data->show_results == 'afterclose'): ?>
-        <?php $date = format_date($data->end_date, 'long'); ?>
-        <p><?php print t('The results of this poll will be available after @date.', array('@date' => $date)); ?></p>
-    <?php endif; ?>
+    {% if votes %}
+    <div class="poll-message">{# TODO: Review this: t('Thank you for voting.') #}</div>
+    {% endif %}
 
-    <?php if ($votes): ?>
-    <div class="poll-message"><?php print t('Thank you for voting.'); ?></div>
-    <?php endif; ?>
-
-    <?php print $cancel_form; ?>
+    {{ cancel_form }}
 </div>

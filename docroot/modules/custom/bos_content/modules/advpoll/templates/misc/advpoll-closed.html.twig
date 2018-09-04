@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default template for a user is not eligible to vote because poll is closed.
  *
@@ -25,15 +24,14 @@
  *   electoral:       Boolean - voting restricted to users in an electoral list.
  *   write_in:        Boolean - all write-in voting.
  *   block:           Boolean - Poll can be displayed as a block.
- */
-?>
+ #}
 <div class="poll">
     <div class="poll-closed">
-    <?php if ($data->start_date && $data->start_date > time()): ?>
-        <?php $date = format_date($data->start_date, 'long'); ?>
-       <p><?php print t('This poll will open on @date.', array('@date' => $date)); ?></p>
-    <?php else: ?>
-       <p><?php print t('Thank you for participating.  The poll is now closed.'); ?></p>
-    <?php endif; ?>
+    {% if data.start_date and data >start_date > time() %}
+{# TODO: (move variable assignment) {{ date = format_date(data >start_date, 'long') }} #}
+       <p>{# TODO: Review this: t('This poll will open on @date.', '@date': $date) #}</p>
+    {% else %}
+       <p>{# TODO: Review this: t('Thank you for participating.  The poll is now closed.') #}</p>
+    {% endif %}
     </div>
 </div>

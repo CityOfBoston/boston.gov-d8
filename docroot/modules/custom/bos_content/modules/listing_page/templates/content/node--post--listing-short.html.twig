@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -78,17 +76,28 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
-?>
-<div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
+ #}
+{# TODO: Review this: hide($content.comments) #}
+{# TODO: Review this: hide($content.links) #}
 
-  <div class="content poll-content"<?php print $content_attributes; ?>>
-    <?php
-      // We hide the comments and links now so that we can render them later.
-      hide($content['comments']);
-      hide($content['links']);
-      hide($content['field_thanks']);
-      print render($content);
-    ?>
+<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing">
+  <a href="{{ node_url }}" class="item-link"></a>
+  <div class="news-item-wrapper">
+      <div class="thumb-wrapper float-left">
+        {% if content.field_thumbnail %}
+          {{ content.field_thumbnail }}
+        {% else %}
+          <div class="news-item-default-image" style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
+            <span>Default News image</span>
+          </div>
+        {% endif %}
+        <div class="date-flag">{{ content.field_published_date }}</div>
+      </div>
+      <div class="text-wrapper">
+        <h3 class="title">
+          {{ truncate_utf8($title, 97, TRUE, TRUE) }}
+        </h3>
+        <div class="department-title">{{ content.field_contact }}</div>
+      </div>
   </div>
 </div>
