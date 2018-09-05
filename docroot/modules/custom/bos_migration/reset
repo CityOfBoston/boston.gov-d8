@@ -1,0 +1,17 @@
+#!/bin/bash
+
+lando drush pmu bos_migration
+
+lando drush config-delete migrate_plus.migration_group.bos_paragraphs
+
+lando drush config-delete migrate_plus.migration.paragraph__3_column_w_image
+lando drush config-delete migrate_plus.migration.paragraph__bid
+lando drush config-delete migrate_plus.migration.paragraph__bos311
+lando drush config-delete migrate_plus.migration.paragraph__bos_signup_emergency_alerts
+lando drush config-delete migrate_plus.migration.paragraph__cabinet
+lando drush config-delete migrate_plus.migration.paragraph__external_link
+lando drush config-delete migrate_plus.migration.paragraph__list
+
+lando drush en bos_migration
+
+lando drush ms --group=bos_paragraphs
