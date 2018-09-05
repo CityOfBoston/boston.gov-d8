@@ -172,6 +172,9 @@
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
     "patches": {
+      "drupal/core": {
+        "https://www.drupal.org/project/drupal/issues/2981225": "https://www.drupal.org/files/issues/2018-07-13/2981225-11.patch"
+      },
       "drupal/field_group": {
         "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
         "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
