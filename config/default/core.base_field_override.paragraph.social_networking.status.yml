@@ -1,0 +1,22 @@
+uuid: 462c29ff-b20c-4791-b032-8ec00853a76e
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.social_networking
+id: paragraph.social_networking.status
+field_name: status
+entity_type: paragraph
+bundle: social_networking
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

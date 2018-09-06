@@ -1,0 +1,20 @@
+uuid: 9bda2877-d7e5-4fd6-b733-638113d34040
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.featured_item
+id: paragraph.featured_item.moderation_state
+field_name: moderation_state
+entity_type: paragraph
+bundle: featured_item
+label: 'Moderation state'
+description: 'The moderation state of this piece of content.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference
