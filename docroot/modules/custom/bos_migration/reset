@@ -15,3 +15,13 @@ lando drush config-delete migrate_plus.migration.paragraph__list
 lando drush en bos_migration
 
 lando drush ms --group=bos_paragraphs
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo $'\r'
+echo -e "${RED}###${NC} Did you remember to ${GREEN}lando ssh${NC} into the appserver and run:"
+echo -e "${RED}###${NC} ${YELLOW}ssh -4 -L 3336:127.0.0.1:3306 boston.dev@staging-15139.prod.hosting.acquia.com -N${NC}"
+echo $'\r'
