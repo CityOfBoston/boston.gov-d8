@@ -1,0 +1,51 @@
+<?php
+
+/**
+ * @file
+ * Provides a test component page entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\test_component_page\Entity;
+
+/**
+ * Implements hook_theme().
+ */
+function test_component_page_theme() {
+  return [
+    'node__test_component_page' => [
+      'render element' => 'elements',
+      'base_hook' => 'node'
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for test component page templates.
+ *
+ * Default template: test-component-page.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the test component page information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__test_component_page(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function test_component_page_preprocess_field(&$variables) {
+  if (!isset($variables["element"]['#bundle'])) {
+    return;
+  }
+  if ( $variables["element"]['#bundle']  == 'test_component_page' && $variables["field_type"] == "entity_reference_revisions") {
+    $variables["label_hidden"] = true;
+  }
+  return;
+}
