@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default template implementation to display the value of a field.
  *
@@ -42,8 +41,7 @@
  * @see theme_field()
  *
  * @ingroup themeable
- */
-?>
-<?php foreach ($items as $delta => $item): ?>
-  <?php print render($item); ?>
-<?php endforeach; ?>
+ #}
+<span class="{{ classes }} component-short-title">
+	{{ items }}
+</span>

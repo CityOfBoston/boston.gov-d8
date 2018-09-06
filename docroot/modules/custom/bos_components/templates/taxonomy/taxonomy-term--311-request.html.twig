@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default theme implementation to display a term.
  *
@@ -44,9 +43,8 @@
 /**
  * @file
  * Features taxonomy term 311Requests.
- */
+ #}
 
- if (isset($content['field_external_link'])) {
-   print render($content['field_external_link']);
- }
- ?>
+ {% if content.field_external_link %}
+   {{ content.field_external_link }}
+ {%  endif %}
