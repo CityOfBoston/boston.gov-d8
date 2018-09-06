@@ -42,6 +42,9 @@
  *
  * @ingroup themeable
  #}
-<span class="{{ classes }} component-short-title">
-	{{ items }}
-</span>
+{% set class = "component-short-title" %}
+{% for item in items %}
+	<span{{ item.attributes.addClass(class) }}>
+		{{ item.content }}
+	</span>
+{% endfor %}
