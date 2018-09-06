@@ -23,5 +23,26 @@ NC='\033[0m'
 
 echo $'\r'
 echo -e "${RED}###${NC} Did you remember to ${GREEN}lando ssh${NC} into the appserver and run:"
-echo -e "${RED}###${NC} ${YELLOW}ssh -4 -L 3336:127.0.0.1:3306 boston.dev@staging-15139.prod.hosting.acquia.com -N${NC}"
+echo $'\r'
+echo -e "     ${YELLOW}ssh -i /user/.ssh/id_rsa -4 -L 3336:127.0.0.1:3306 boston.dev@staging-15139.prod.hosting.acquia.com -N${NC}"
+echo $'\r'
+echo -e "${RED}###${NC} Test connection when tunnel is running with: ${GREEN}mysql -us1**** -p -P 3307 -h 127.0.0.1${NC}"
+echo $'\r'
+echo -e "${RED}###${NC} Add real username ^^^ ${GREEN}drush @boston.test sql-connect${NC}:"
+
+echo $'\r'
+echo -e "${RED}###${NC} Did you remember to add the following to ${GREEN}docroot/sites/default/settings.php${NC}:"
+echo -e "${YELLOW}"
+echo "     $databases['legacy']['default'] = array("
+echo "       'database' => 'bostondev',"
+echo "       'username' => 's1****',"
+echo "       'password' => '**************',"
+echo "       'prefix' => '',"
+echo "       'host' => '127.0.0.1',"
+echo "       'port' => '3336',"
+echo "       'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',"
+echo "       'driver' => 'mysql',"
+echo "     );"
+echo -e "${NC}"
+echo -e "${RED}###${NC} Add real username / pw ^^^ ${GREEN}drush @boston.test sql-connect${NC}:"
 echo $'\r'
