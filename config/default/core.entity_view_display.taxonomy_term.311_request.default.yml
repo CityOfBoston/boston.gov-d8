@@ -6,6 +6,7 @@ dependencies:
     - field.field.taxonomy_term.311_request.field_external_link
     - taxonomy.vocabulary.311_request
   module:
+    - fences
     - link
     - text
 id: taxonomy_term.311_request.default
@@ -16,10 +17,17 @@ content:
   description:
     label: hidden
     type: text_default
-    weight: 0
+    weight: 1
     region: content
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
   field_external_link:
     label: hidden
     weight: 0
