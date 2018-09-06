@@ -1,0 +1,44 @@
+uuid: fbc6be05-0e5d-46e5-9f51-71dd6740aeb9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.311_request.field_external_link
+    - taxonomy.vocabulary.311_request
+  module:
+    - fences
+    - link
+    - text
+id: taxonomy_term.311_request.default
+targetEntityType: taxonomy_term
+bundle: 311_request
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+  field_external_link:
+    label: hidden
+    weight: 0
+    type: link
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true

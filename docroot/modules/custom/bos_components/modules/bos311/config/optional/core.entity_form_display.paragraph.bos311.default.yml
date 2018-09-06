@@ -1,0 +1,64 @@
+uuid: afe15f0b-823b-4d83-abe3-34feb3707265
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.bos311.field_311_request
+    - field.field.paragraph.bos311.field_component_title
+    - field.field.paragraph.bos311.field_short_title
+    - paragraphs.paragraphs_type.bos311
+  module:
+    - field_group
+    - workbench_moderation
+third_party_settings:
+  field_group:
+    group_311_info:
+      children:
+        - field_component_title
+        - field_short_title
+        - field_311_request
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: '311 Info'
+id: paragraph.bos311.default
+targetEntityType: paragraph
+bundle: bos311
+mode: default
+content:
+  field_311_request:
+    weight: 3
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  translation:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
