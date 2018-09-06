@@ -13,23 +13,6 @@
  * Implements hook_theme().
  */
 function bos_components_theme() {
-  $theme['paragraph__bos311__default'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/templates/paragraphs'
-  ];
-  $theme['field__field_311_request'] = [
-    'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/templates/field'
-  ];
-  $theme['taxonomy_term__311_request'] = [
-    'base hook' => 'taxonomy_term',
-    'path' => 'modules/custom/bos_components/templates/taxonomy'
-  ];
-  $theme['field__field_external_link__311_request'] = [
-    'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/templates/field'
-  ];
-  return $theme;
 }
 
 /**

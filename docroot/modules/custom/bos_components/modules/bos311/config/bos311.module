@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function bos311_theme() {
+  $theme['paragraph__bos311__default'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos311/templates/paragraphs'
+  ];
+  $theme['field__field_311_request'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos311/templates/field'
+  ];
+  $theme['taxonomy_term__311_request'] = [
+    'base hook' => 'taxonomy_term',
+    'path' => 'modules/custom/bos_components/modules/bos311/templates/taxonomy'
+  ];
+  $theme['field__field_external_link__311_request'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos311/templates/field'
+  ];
+  return $theme;
+}
