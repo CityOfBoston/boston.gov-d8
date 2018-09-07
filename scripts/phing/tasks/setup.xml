@@ -300,34 +300,6 @@
     <echo message="/* End of additions. */${line.separator}" append="true"
           file="${settings.file}"/>
 
-    <!-- Add in directive for private settings file if needed -->
-    <property
-            description="Location of settings files for this Drupal intallation."
-            name="private.docroot.settings"
-            value="${docroot}/${git.private_repo.settings_file}"/>
-    <if>
-      <and>
-        <available file="${private.docroot.settings}"/>
-        <isset property="git.private_repo.settings_file"/>
-      </and>
-      <then>
-        <echo
-                description="Adds a directive to settings file to include contents of settings file in repo."
-                message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="   include '${private.docroot.settings}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo message="}${line.separator}${line.separator}" append="true"
-              file="${local.settings.file}"/>
-        <echo message="/* End of additions. */${line.separator}"
-              append="true" file="${local.settings.file}"/>
-      </then>
-    </if>
-
   </target>
 
   <!-- Define a task to include files from a private repo (defined in phing-boston.yml). -->
@@ -356,6 +328,12 @@
       <isset property="git.private_repo.repo"/>
       <then
         description="If the Private Repo flag is set, then allow loading of the private settings file.">
+
+        <!-- Define local variables. -->
+        <property
+          description="Location of settings files for this Drupal intallation."
+          name="private.docroot.settings"
+          value="${docroot}/${git.private_repo.settings_file}"/>
 
         <echo
           message="> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch})."
@@ -402,6 +380,26 @@
               level="warning" append="true"
               file="${project.basedir}/setup/drush_site_install.log"/>
           </else>
+        </if>
+
+        <if>
+          <available file="${private.docroot.settings}"/>
+          <then>
+            <echo
+              description="Adds a directive to settings file to include contents of settings file in repo."
+              message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+              append="true" file="${local.settings.file}"/>
+            <echo
+              message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
+              append="true" file="${local.settings.file}"/>
+            <echo
+              message="   include '${private.docroot.settings}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
+            <echo message="}${line.separator}${line.separator}" append="true"
+                  file="${local.settings.file}"/>
+            <echo message="/* End of additions. */${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+          </then>
         </if>
 
       </then>
