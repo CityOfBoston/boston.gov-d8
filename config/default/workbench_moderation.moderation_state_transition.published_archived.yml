@@ -1,0 +1,14 @@
+uuid: f80c920b-3afd-4706-a890-920e546a0f45
+langcode: en
+status: true
+dependencies:
+  config:
+    - workbench_moderation.moderation_state.archived
+    - workbench_moderation.moderation_state.published
+_core:
+  default_config_hash: n1R8yl6YLhQY2aPEXy5LQCU77k6ZfU2nRhHS3POl1fA
+id: published_archived
+label: Archive
+stateFrom: published
+stateTo: archived
+weight: -3
