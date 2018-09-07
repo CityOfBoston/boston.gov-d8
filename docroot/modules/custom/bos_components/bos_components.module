@@ -27,7 +27,7 @@ function bos_components_preprocess_field(&$variables) {
       case 'field_component_title':
         if ($variables['is_component_field']) {
           $component = $variables['element']['#object'];
-          $short_title = $component->getTranslation('en')->get('field_short_title')->getValue();
+          $short_title = $component->getTranslation('und')->get('field_short_title')->getValue();
           if ($short_title !== FALSE) {
             $variables['short_title'] = $short_title[0]['value'];
             $short_title_link = preg_replace('@^[0-9\s]+@','', strtolower($short_title[0]['value']));
@@ -130,15 +130,18 @@ function bos_components_preprocess_field_field_component_title(&$variables) {
  */
 function _bos_component_embed_level(&$variables) {
   $variables['is_component_field'] = $variables['is_subcomponent_field'] = FALSE;
-  $componentParents = ['node', 'taxonomy_term', 'user'];
   if (isset($variables['element']['#entity_type'])) {
+    $componentParents = ['node', 'taxonomy_term', 'user'];
     $variables['entity_type'] = $variables['element']['#entity_type'];
     if (isset($variables["element"]["#object"]) && !in_array($variables["element"]["#object"]->getEntityType()->id(), $componentParents)) {
-      if (!empty($variables["element"]["#object"]->getParentEntity())) {
+      try {
         $parentEntity = $variables["element"]["#object"]->getParentEntity();
-        $variables['is_component_field'] = in_array($parentEntity->getEntityType()->id(), $componentParents);
-        $variables['is_subcomponent_field'] = !($variables['is_component_field']);
+        if (!empty($parentEntity)) {
+          $variables['is_component_field'] = in_array($parentEntity->getEntityType()->id(), $componentParents);
+          $variables['is_subcomponent_field'] = !($variables['is_component_field']);
+        }
       }
+      catch (Error $e){}
     }
   }
 }
