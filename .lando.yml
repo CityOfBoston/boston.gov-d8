@@ -34,7 +34,7 @@ services:
     type: mysql
     portforward: 3307
     host: localhost
-    run-as-root:
+    run_as_root:
       - apt-get update -y  > ${LANDO_MOUNT}/setup/lando_db.log
       - apt-get install -y --no-install-recommends vim less mycli >> ${LANDO_MOUNT}/setup/lando_db.log
 
