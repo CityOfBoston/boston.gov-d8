@@ -393,7 +393,7 @@
               message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
               append="true" file="${local.settings.file}"/>
             <echo
-              message="   include '${private.docroot.settings}';${line.separator}"
+              message="  include '${private.docroot.settings}';${line.separator}"
               append="true" file="${local.settings.file}"/>
             <echo message="}${line.separator}${line.separator}" append="true"
                   file="${local.settings.file}"/>
