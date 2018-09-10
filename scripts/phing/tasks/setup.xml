@@ -163,6 +163,9 @@
           --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database}
           --site-name=${lando.name}
           --site-mail=${drupal.account.mail}
+          --account-name=${drupal.account.name}
+          --account-pass=${drupal.account.password}
+          --account-mail=${drupal.account.mail}
           --sites-subdir=${drupal.multisite.name}
           -vvv -y"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
