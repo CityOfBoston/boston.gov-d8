@@ -9,7 +9,19 @@ process:
   field_contact: field_contact
   field_short_title: field_short_title
   field_component_title: field_component_title
-  #Revisit: Missing Viewfield field_list
+  field_list:
+    plugin: iterator
+    source: field_list
+    process:
+      field_list_arguments: field_list_vargs
+      field_list_display_id: field_list_vname
+      field_list_target_id: entity_type
+      bundle: bundle
+      entity_id: entity_id
+      revision_id: revision_id
+      deleted: deleted
+      langcode: language
+      delta: delta
 destination:
   plugin: entity:paragraph
   default_bundle: list
