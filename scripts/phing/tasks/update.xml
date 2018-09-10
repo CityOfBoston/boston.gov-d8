@@ -69,7 +69,7 @@
         <echo message="Use this link to login to the ${lando.name} website at ${lando.url.url}." level="warning" />
         <exec description="Login the admin user."
               dir="${docroot}"
-              command="${drush.cmd} uli"
+              command="${drush.cmd} user-login"
               logoutput="false"
               outputProperty="uli"/>
         <echo message="${uli}" level="warning" />
@@ -79,7 +79,8 @@
         <echo message="The ${drupal.account.name} account password is reset to: ${drupal.account.password}." level="warning" />
         <exec description="Change admin user password."
               dir="${docroot}"
-              command='${drush.cmd} upwd admin --password="${drupal.account.password}"'/>
+              command='${drush.cmd} user:password admin "${drupal.account.password}"'
+              checkreturn="true"/>
     </target>
 
 </project>
