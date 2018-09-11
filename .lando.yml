@@ -142,9 +142,9 @@ tooling:
 
   mycli:
     service: database
-    description: "Open mycli prompt in db container: lando phing <task>"
+    description: "Open mycli prompt in db container: lando mycli"
     cmd:
-      - mycli
+      - mycli -udrupal -pdrupal
 
   # Add in routes to the varnish cli tools
 #  varnishadm:
