@@ -6,9 +6,7 @@ dependencies:
     - field.field.file.image.field_file_image_alt_text
     - field.field.file.image.field_file_image_title_text
     - field.field.file.image.field_icon_category
-    - field.field.file.image.field_image_alt_text
     - field.field.file.image.field_image_caption
-    - field.field.file.image.field_image_title_text
     - file_entity.type.image
   module:
     - file_entity
@@ -19,20 +17,6 @@ targetEntityType: file
 bundle: image
 mode: default
 content:
-  field_image_alt_text:
-    type: string
-    weight: 0
-    settings: {  }
-    third_party_settings: {  }
-    label: above
-    region: content
-  field_image_title_text:
-    type: string
-    weight: 0
-    settings: {  }
-    third_party_settings: {  }
-    label: above
-    region: content
   filemime:
     type: string
     weight: 2

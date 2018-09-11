@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.file.field_icon_category
     - file_entity.type.image
+    - taxonomy.vocabulary.icons
 id: file.image.field_icon_category
 field_name: field_icon_category
 entity_type: file
@@ -17,5 +18,12 @@ default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
-  handler_settings: {  }
+  handler_settings:
+    target_bundles:
+      icons: icons
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

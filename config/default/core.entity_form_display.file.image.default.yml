@@ -6,9 +6,7 @@ dependencies:
     - field.field.file.image.field_file_image_alt_text
     - field.field.file.image.field_file_image_title_text
     - field.field.file.image.field_icon_category
-    - field.field.file.image.field_image_alt_text
     - field.field.file.image.field_image_caption
-    - field.field.file.image.field_image_title_text
     - file_entity.type.image
   module:
     - path
@@ -44,25 +42,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_image_alt_text:
-    type: string_textfield
-    weight: 0
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_image_caption:
     weight: 5
     type: string_textfield
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_image_title_text:
-    type: string_textfield
-    weight: 0
     settings:
       size: 60
       placeholder: ''

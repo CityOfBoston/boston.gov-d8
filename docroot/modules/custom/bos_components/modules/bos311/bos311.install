@@ -1,0 +1,38 @@
+<?php
+
+function bos311_uninstall() {
+
+  $configs = [
+    "core.base_field_override.taxonomy_term.311_request.changed",
+    "core.base_field_override.taxonomy_term.311_request.description",
+    "core.base_field_override.taxonomy_term.311_request.metatag",
+    "core.base_field_override.taxonomy_term.311_request.name",
+    "core.base_field_override.taxonomy_term.311_request.path",
+    "core.entity_form_display.taxonomy_term.311_request.default",
+    "core.entity_form_display.paragraph.bos311.default",
+    "core.entity_view_display.paragraph.bos311.default",
+    "core.entity_view_display.paragraph.bos311.paragraphs_editor_preview",
+    "core.entity_view_display.taxonomy_term.311_request.default",
+    "field.field.paragraph.bos311.field_311_request",
+    "field.field.paragraph.bos311.field_component_title",
+    "field.field.paragraph.bos311.field_short_title",
+    "field.field.taxonomy_term.311_request.field_external_link",
+    "field.storage.paragraph.field_311_request",
+    "paragraphs.paragraphs_type.bos311",
+    "taxonomy.vocabulary.311_request",
+    "language.content_settings.taxonomy_term.311_request",
+    "language.content_settings.paragraph.bos311",
+  ];
+
+  foreach ($configs as $config) {
+    try {
+      $_config = Drupal::configFactory()->get($config);
+      if (!empty($_config)) {
+        Drupal::configFactory()->getEditable($config)->delete();
+      }
+    }
+    catch (ErrorException $e) {
+      Drupal::logger("City of Boston")->notice("Could not find @elem.", ["@elem"]);
+    }
+  }
+}

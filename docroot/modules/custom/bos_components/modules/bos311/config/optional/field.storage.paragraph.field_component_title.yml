@@ -1,19 +1,20 @@
-uuid: 806df572-dbd4-4e8d-938f-d684da61e520
+uuid: 019ca636-a751-4f6d-9c1b-843eea563e21
 langcode: und
 status: true
 dependencies:
   module:
     - paragraphs
-    - taxonomy
-id: paragraph.field_311_request
-field_name: field_311_request
+id: paragraph.field_component_title
+field_name: field_component_title
 entity_type: paragraph
-type: entity_reference
+type: string
 settings:
-  target_type: taxonomy_term
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
 module: core
 locked: false
-cardinality: 9
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
