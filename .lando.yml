@@ -36,7 +36,8 @@ services:
     host: localhost
     run_as_root:
       - apt-get update -y  > ${LANDO_MOUNT}/setup/lando_db.log
-      - apt-get install -y --no-install-recommends vim less mycli >> ${LANDO_MOUNT}/setup/lando_db.log
+      - apt-get install -y --no-install-recommends less python-pip python-setuptools >> ${LANDO_MOUNT}/setup/lando_db.log
+      - pip install mycli
 
     creds:
       user: drupal
@@ -138,6 +139,12 @@ tooling:
     description: "Run Phing tasks in app container: lando phing <task>"
     cmd:
       - phing
+
+  mycli:
+    service: database
+    description: "Open mycli prompt in db container: lando phing <task>"
+    cmd:
+      - mycli
 
   # Add in routes to the varnish cli tools
 #  varnishadm:
