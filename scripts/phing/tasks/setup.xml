@@ -115,19 +115,25 @@
       <available file="${docroot}/core/lib/Drupal.php"/>
       <then>
 
-        <echo message="Preparing to setup the Drupal database."/>
-
-        <phingcall target="setup:drupal:local_settings_php"
+        <if>
+          <not>
+            <isset property="no-settings"/>
+          </not>
+          <then>
+            <echo message="Preparing to setup the Drupal database."/>
+            <phingcall target="setup:drupal:local_settings_php"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
+            <echo level="warning"
+                  message="Build is now using settings file ${local.settings.file}"/>
+            <echo level="warning"
+                  message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
 
-        <echo level="warning"
-              message="Build is now using settings file ${local.settings.file}"/>
-        <echo level="warning"
-              message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
+            <exec
+                    command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'"
+                    logoutput="true" passthru="true"/>
+          </then>
+        </if>
 
-        <exec
-                command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'"
-                logoutput="true" passthru="true"/>
         <echo message="Install the Drupal 8 database."/>
         <echo
                 message=" -> see ${project.basedir}/setup/drush_site_install.log for output."
@@ -572,8 +578,40 @@
     </if>
   </target>
 
-  <target name="test">
-    <echo message="${this.one}"/>
+  <!-- Used to set a flag which inhibits settings.php file rewrites. -->
+  <target name="setup:fast_build:prep" hidden=""
+          description="Used to set a flag which inhibits settings.php file rewrites.">
+    <property name="no-settings" value="true"/>
+    <echo message="Creates ${acquia.site_environment} build." level="warning"/>
+    <echo message="Rebuilds Drupal into existing container using files and settings already in the container."/>
+    <phingcall target="setup:wait-prompt"/>
+  </target>
+
+  <!-- Just rebuild Drupal using settings and files already on server. -->
+  <target name="setup:local_rebuild"
+          depends=" setup:fast_build:prep,
+                    setup:drupal:set_dev_config,
+                    setup:wait-prompt,
+                    setup:drupal:site-install,
+                    setup:drupal:reset_config,
+                    update:database:update,
+                    update:user:loginadmin">
+    <echo message="Done"/>
+  </target>
+
+  <target name="setup:wait-prompt">
+    <propertyprompt propertyName="someprop" defaultValue="n"
+                    promptText="OK to continue"/>
+    <if>
+      <or>
+        <equals arg1="${someprop}" arg2="y"/>
+        <equals arg1="${someprop}" arg2="Y"/>
+      </or>
+      <then/>
+      <else>
+        <fail message="Cancelled ${someprop}" status="0"/>
+      </else>
+    </if>
   </target>
 
 </project>
