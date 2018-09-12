@@ -232,6 +232,20 @@
         <echo
                 message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
                 append="true" file="${local.settings.file}"/>
+        <if>
+          <equals arg1="${acquia.site_environment}" arg2="dev"/>
+          <then>
+            <echo
+                    message="error_reporting(E_ALL);${line.separator}"
+                    append="true" file="${local.settings.file}"/>
+            <echo
+                    message="ini_set('display_errors', TRUE);${line.separator}"
+                    append="true" file="${local.settings.file}"/>
+            <echo
+                    message="ini_set('display_startup_errors', TRUE);${line.separator}"
+                    append="true" file="${local.settings.file}"/>
+          </then>
+        </if>
       </then>
       <else>
         <echo
