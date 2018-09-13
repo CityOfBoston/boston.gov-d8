@@ -1,0 +1,17 @@
+id: paragraph__how_to_contact_step
+label: 'How to Contact Step Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: how_to_contact_step
+process:
+  field_step_details: field_step_details
+  field_operation_hours: field_operation_hours
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: how_to_contact_step
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
