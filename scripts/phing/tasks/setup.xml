@@ -165,17 +165,11 @@
           </else>
         </if>
 
-        <property name="si.command" value="${drush.cmd} si ${si_install_profile} ${si_flag_install}
-          --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database}
-          --site-name=${lando.name}
-          --site-mail=${drupal.account.mail}
-          --account-name=${drupal.account.name}
-          --account-pass=${drupal.account.password}
-          --account-mail=${drupal.account.mail}
-          --sites-subdir=${drupal.multisite.name}
-          -vvv -y"/>
+        <property name="si.command" value="${drush.cmd} si ${si_install_profile} ${si_flag_install} --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database} --site-name=${lando.name} --site-mail=${drupal.account.mail} --account-name=${drupal.account.name} --account-pass=${drupal.account.password} --account-mail=${drupal.account.mail} --sites-subdir=${drupal.multisite.name} -vvv -y"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
-              message="exec: ${si.command}" append="true"/>
+              message="==== Installing Drupal ====${line.separator}"  append="true"/>
+        <echo file="${project.basedir}/setup/drush_site_install.log"
+              message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
         <exec
                 description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
                 dir="${docroot}"
@@ -540,8 +534,9 @@
               file="${install_config_abs}/config_split.config_split.development.yml.disabled"/>
       <then>
         <echo message="Installing production-only modules." level="info"/>
+        <echo message="==== production-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
         <exec   description="Install production modules if not installed already."
-                command="drupal csim --split=production -y"
+                command="drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
                 dir="${install_config_abs}"
                 passthru="true"
                 logoutput="true"/>
@@ -559,11 +554,12 @@
               file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
       <then>
         <echo message="Installing development-only modules." level="info"/>
+        <echo message="==== development-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
         <exec   description="Install development modules if not installed already."
-                command="drupal csim --split=development -y"
+                command="drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
                 dir="${install_config_abs}"
                 passthru="true"
-                logoutput="true"/>
+                logoutput="true" />
         <echo message="Enabling production-only config settings for developers to maintain." level="info"/>
         <exec
                 description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
