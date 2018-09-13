@@ -554,7 +554,7 @@
       <then>
         <echo message="Enabling development-only modules." level="info"/>
         <exec   description="Install development modules if not installed already."
-                command="drupal csim --split=development"
+                command="drupal csim --split=development -y"
                 dir="${install_config_abs}"
                 passthru="true"
                 logoutput="true"/>
