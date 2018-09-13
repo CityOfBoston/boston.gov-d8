@@ -23,6 +23,7 @@
                     setup:drush:local-config,
                     update:database:update,
                     setup:drupal:reset_config">
+    <symlink link="${project.basedir}/docroot/sites/all/files/setup" target="${project.basedir}/setup" overwrite="false"/>
     <echo
             message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'."
             level="warning"/>
@@ -80,7 +81,7 @@
                 message="Using Composer to install Drupal core and the required contrib modules."
                 level="info"/>
         <echo
-                message=" -> see ${project.basedir}/setup/composer.log for output."
+                message=" -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output."
                 level="warning"/>
         <echo message="${line.separator} > composer install ${flag.dev}"
               file="${project.basedir}/setup/composer.log" append="true"/>
@@ -136,7 +137,7 @@
 
         <echo message="Install the Drupal 8 database."/>
         <echo
-                message=" -> see ${project.basedir}/setup/drush_site_install.log for output."
+                message=" -> see ${lando.url.url}/sites/default/files/setup/drush_site_install.log for output."
                 level="warning"/>
 
         <resolvepath propertyName="install_config_abs"
