@@ -3,8 +3,18 @@
 /**
  * Implements hook_uninstall().
  */
-function change_uninstall() {
+function test_component_page_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
+}
+
+/**
+ * Implements HOOK_install().
+ */
+function test_component_page_install() {
+  // Ensure the translation fields are created in the database.
+  // @see: https://www.drupal.org/project/drupal/issues/2599228
+  // patch is in place - this is just to be sure ...
+  \Drupal::service('entity.definition_update_manager')->applyUpdates();
 }
