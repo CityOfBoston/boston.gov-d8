@@ -1,0 +1,17 @@
+id: paragraph__drawer
+label: 'Drawer Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: drawer
+process:
+  field_short_description: field_short_description
+  field_text_blocks: field_text_blocks
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: drawer
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
