@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * Implements hook_uninstall().
+ */
+function bid_uninstall() {
+  if (function_exists("_bos_core_uninstall_boston")) {
+    _bos_core_uninstall_boston(basename(__FILE__, ".install"));
+  }
+}
