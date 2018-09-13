@@ -611,7 +611,6 @@
   <target name="setup:local_rebuild"
           depends=" setup:fast_build:prep,
                     setup:drupal:set_dev_config,
-                    setup:wait-prompt,
                     setup:drupal:site-install,
                     setup:drupal:reset_config,
                     update:database:update,
