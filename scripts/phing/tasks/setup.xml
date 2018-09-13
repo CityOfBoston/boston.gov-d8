@@ -552,7 +552,13 @@
       <available
               file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
       <then>
-        <echo message="Enabling production-only config settings" level="info"/>
+        <echo message="Enabling development-only modules." level="info"/>
+        <exec   description="Install development modules if not installed already."
+                command="drupal csim --split=development"
+                dir="${install_config_abs}"
+                passthru="true"
+                logoutput="true"/>
+        <echo message="Enabling production-only config settings for developers to maintain." level="info"/>
         <exec
                 description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
                 command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
