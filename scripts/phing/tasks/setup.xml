@@ -607,6 +607,7 @@
     <echo message="Creates ${acquia.site_environment} build." level="warning"/>
     <echo message="Rebuilds Drupal into existing container using files and settings already in the container."/>
     <phingcall target="setup:wait-prompt"/>
+    <delete file="*.*" dir="${project.basedir}/setup" quiet="true" includeemptydirs="true" failonerror="false"/>
   </target>
 
   <!-- Just rebuild Drupal using settings and files already on server. -->
