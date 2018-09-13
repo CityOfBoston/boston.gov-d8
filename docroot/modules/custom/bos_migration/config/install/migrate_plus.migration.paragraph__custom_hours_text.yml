@@ -1,0 +1,17 @@
+id: paragraph__custom_hours_text
+label: 'Custom Hours Text Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: custom_hours_text
+process:
+  field_custom_hours_text: field_custom_hours_text
+  field_hours_icon: field_hours_icon
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: custom_hours_text
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
