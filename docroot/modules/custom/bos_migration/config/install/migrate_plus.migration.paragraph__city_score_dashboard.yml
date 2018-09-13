@@ -1,0 +1,18 @@
+id: paragraph__city_score_dashboard
+label: 'City Score Dashboard Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: city_score_dashboard
+process:
+  field_component_title: field_component_title
+  field_short_description: field_short_description
+  field_short_title: field_short_title
+  field_extra_info: field_extra_info
+destination:
+  plugin: entity:paragraph
+  default_bundle: city_score_dashboard
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
