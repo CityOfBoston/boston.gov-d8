@@ -23,7 +23,7 @@
                     setup:drush:local-config,
                     update:database:update,
                     setup:drupal:reset_config">
-    <symlink link="${project.basedir}/docroot/sites/all/files/setup" target="${project.basedir}/setup" overwrite="true"/>
+    <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
     <echo
             message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'."
             level="warning"/>
@@ -633,6 +633,10 @@
         <fail message="Cancelled ${someprop}" status="0"/>
       </else>
     </if>
+  </target>
+
+  <target name="test">
+    <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
   </target>
 
 </project>
