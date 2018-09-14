@@ -1,0 +1,16 @@
+id: paragraph__social_networking
+label: 'Social Networking Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: social_networking
+process:
+  field_external_link: field_external_link
+  field_social_icon: field_social_icon
+destination:
+  plugin: entity:paragraph
+  default_bundle: social_networking
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
