@@ -1,0 +1,36 @@
+uuid: e5ae4943-d4bc-40f9-905b-d24eb6f55654
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.commission_info.field_commission
+    - field.field.paragraph.commission_info.field_show_contact_info
+    - paragraphs.paragraphs_type.commission_info
+id: paragraph.commission_info.default
+targetEntityType: paragraph
+bundle: commission_info
+mode: default
+content:
+  field_commission:
+    weight: 2
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_show_contact_info:
+    weight: 3
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

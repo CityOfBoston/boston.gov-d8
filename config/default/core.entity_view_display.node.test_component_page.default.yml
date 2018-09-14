@@ -1,0 +1,43 @@
+uuid: 4ef51229-1421-4bb2-b751-3a0cabb5839a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.test_component_page.body
+    - field.field.node.test_component_page.field_test_paragraph
+    - node.type.test_component_page
+  module:
+    - entity_reference_revisions
+    - text
+    - user
+_core:
+  default_config_hash: kTdP2zs44dLaGVF769PKqEx97GZInyv-6Z3bxtddNjc
+id: node.test_component_page.default
+targetEntityType: node
+bundle: test_component_page
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_test_paragraph:
+    type: entity_reference_revisions_entity_view
+    weight: 102
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  published_at: true

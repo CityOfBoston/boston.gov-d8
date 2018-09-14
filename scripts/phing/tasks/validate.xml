@@ -40,7 +40,7 @@
       <equals arg1="${acquia.site_environment}" arg2="dev"/>
       <then>
         <mkdir dir="${reports.localDir}" description="Directory for linting report."/>
-        <echo message="Note: Any warnings/errors found will be detailed in the file: ${lando.url.url}/${reports.remoteDir}/err.code_sniffer.txt." level="warning"/>
+        <exec command="echo '\033[1;33mNote: Any warnings/errors found will be detailed in the file: ${lando.url.url}/${reports.remoteDir}/err.code_sniffer.txt.\033[0m'" logoutput="true"/>
         <phpcodesniffer
           description="DEV: Sniff custom modules for Drupal coding standards compliance."
           standard="${phpcs.ruleset}"

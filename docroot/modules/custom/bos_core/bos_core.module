@@ -11,3 +11,52 @@
 function bos_core_theme($existing, $type, $theme, $path) {
   return [];
 }
+
+/**
+ * Helper to uninstall original configs when not in config/default folder.
+ *
+ * @param string $module
+ *   The module name.
+ */
+function _bos_core_uninstall_boston($module) {
+
+  Drupal::logger("City of Boston")->notice("Removing config for: @module.", ["@module" => $module]);
+
+  $configs = [];
+  $path = drupal_get_path("module", $module);
+
+  // Get a full list of .yml files defined by this module.
+  foreach (["install", "optional", "required"] as $sub) {
+    $fullpath = DRUPAL_ROOT . "/" . $path . "/config/" . $sub;
+    if (is_dir($fullpath)) {
+      $_configs = array_diff(scandir($fullpath), ['.', '..']);
+      foreach ($_configs as $key => &$_config) {
+        if (stripos($_config, ".yml") === FALSE) {
+          unset($_configs[$key]);
+          $_config = str_replace(".yml", "", $_config);
+        }
+      }
+      if (!empty($_configs)) {
+        $configs = array_merge($configs, $_configs);
+      }
+    }
+  }
+
+  // Now uninstall those configs.
+  foreach ($configs as $config) {
+    try {
+      if (is_string($config)) {
+        $_config = Drupal::configFactory()->get($config);
+        if (!empty($_config)) {
+          Drupal::configFactory()->getEditable($config)->delete();
+        }
+      }
+    }
+    catch (ErrorException $e) {
+      Drupal::logger("City of Boston")->notice("Could not find @elem.", ["@elem" => $config]);
+      Drupal::messenger()->addWarning(t("Could not find @elem to uninstall.", ["@elem" => $config]), FALSE);
+    }
+  }
+  Drupal::logger("City of Boston")->notice("Done.", ["@module" => $module]);
+
+}

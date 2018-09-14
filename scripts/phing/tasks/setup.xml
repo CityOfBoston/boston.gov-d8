@@ -23,9 +23,8 @@
                     setup:drush:local-config,
                     update:database:update,
                     setup:drupal:reset_config">
-    <echo
-            message="The user-1 account (${drupal.account.name}) is created with password '${drupal.account.password}'."
-            level="warning"/>
+    <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
+    <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password `${drupal.account.password}`.\033[0m'" logoutput="true"/>
     <echo
             message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
             file="${project.basedir}/setup/uli.log" append="true"/>
@@ -79,10 +78,8 @@
         <echo
                 message="Using Composer to install Drupal core and the required contrib modules."
                 level="info"/>
-        <echo
-                message=" -> see ${project.basedir}/setup/composer.log for output."
-                level="warning"/>
-        <echo message="${line.separator} > composer install ${flag.dev}"
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m'" logoutput="true"/>
+        <echo message="Executes: > composer install ${flag.dev}${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
         <exec
                 description="Installs the modules per composer.lock (or composer.json if no .lock file)."
@@ -115,24 +112,25 @@
       <available file="${docroot}/core/lib/Drupal.php"/>
       <then>
 
-        <echo message="Preparing to setup the Drupal database."/>
+        <if>
+          <not>
+            <isset property="no-settings"/>
+          </not>
+          <then>
+            <echo message="Preparing to setup the Drupal database."/>
+            <phingcall target="setup:drupal:local_settings_php"
+                  description="Recreate the local.settings.php file from default and load DB and any other settings."/>
+            <exec command="echo '\033[1;33mBuild is now using settings file ${local.settings.file}\033[0m'" logoutput="true"
+                  passthru="true"/>
+            <exec command="echo '\033[1;33m... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'" logoutput="true"
+                  passthru="true"/>
+            <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"
+                  passthru="true"/>
+          </then>
+        </if>
 
-        <phingcall target="setup:drupal:local_settings_php"
-                   description="Recreate the local.settings.php file from default and load DB and any other settings."/>
-
-        <echo level="warning"
-              message="Build is now using settings file ${local.settings.file}"/>
-        <echo level="warning"
-              message='... with "${lando.db.database}" database (${lando.db.type}) at "${lando.db.host}:${lando.db.port}" in container "${lando.db.container}"'/>
-
-        <exec
-                command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'"
-                logoutput="true" passthru="true"/>
         <echo message="Install the Drupal 8 database."/>
-        <echo
-                message=" -> see ${project.basedir}/setup/drush_site_install.log for output."
-                level="warning"/>
-
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/drush_site_install.log for output.\033[0m'" logoutput="true"/>
         <resolvepath propertyName="install_config_abs"
                      file="${docroot}/${project.config.sync}"/>
         <if>
@@ -159,17 +157,11 @@
           </else>
         </if>
 
-        <property name="si.command" value="${drush.cmd} si ${si_install_profile} ${si_flag_install}
-          --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database}
-          --site-name=${lando.name}
-          --site-mail=${drupal.account.mail}
-          --account-name=${drupal.account.name}
-          --account-pass=${drupal.account.password}
-          --account-mail=${drupal.account.mail}
-          --sites-subdir=${drupal.multisite.name}
-          -vvv -y"/>
+        <property name="si.command" value="${drush.cmd} si ${si_install_profile} ${si_flag_install} --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database} --site-name=${lando.name} --site-mail=${drupal.account.mail} --account-name=${drupal.account.name} --account-pass=${drupal.account.password} --account-mail=${drupal.account.mail} --sites-subdir=${drupal.multisite.name} -vvv -y"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
-              message="exec: ${si.command}" append="true"/>
+              message="==== Installing Drupal ====${line.separator}"  append="true"/>
+        <echo file="${project.basedir}/setup/drush_site_install.log"
+              message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
         <exec
                 description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
                 dir="${docroot}"
@@ -178,7 +170,7 @@
 
       </then>
       <else>
-        <echo message="Drupal core is not found."/>
+        <echo message="Drupal core is not found." level="error"/>
         <fail message="Setup is incomplete." status="1"/>
       </else>
     </if>
@@ -226,6 +218,20 @@
         <echo
                 message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
                 append="true" file="${local.settings.file}"/>
+        <if>
+          <equals arg1="${acquia.site_environment}" arg2="dev"/>
+          <then>
+            <echo
+                    message="error_reporting(E_ALL);${line.separator}"
+                    append="true" file="${local.settings.file}"/>
+            <echo
+                    message="ini_set('display_errors', TRUE);${line.separator}"
+                    append="true" file="${local.settings.file}"/>
+            <echo
+                    message="ini_set('display_startup_errors', TRUE);${line.separator}"
+                    append="true" file="${local.settings.file}"/>
+          </then>
+        </if>
       </then>
       <else>
         <echo
@@ -357,9 +363,7 @@
       <then
               description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
-        <echo
-                message="> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch})."
-                level="warning"/>
+        <exec command="echo '\033[1;33m> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch}).\033[0m'" logoutput="true"/>
 
         <!-- Clone the private repo. -->
         <delete
@@ -394,9 +398,7 @@
                   passthru="true" logoutput="false" checkreturn="false"/>
           </then>
           <else>
-            <echo
-                    message="Private repo was not cloned.  Build process will continue."
-                    level="warning"/>
+            <exec command="echo '\033[1;33mPrivate repo was not cloned.  Build process will continue.\033[0m'" logoutput="true"/>
             <echo
                     message="Private repo was not cloned.  Build process will continue."
                     level="warning" append="true"
@@ -519,6 +521,14 @@
       <available
               file="${install_config_abs}/config_split.config_split.development.yml.disabled"/>
       <then>
+        <echo message="Installing production-only modules." level="info"/>
+        <echo message="==== production-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
+        <exec   description="Install production modules if not installed already."
+                command="drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
+                dir="${install_config_abs}"
+                passthru="true"
+                logoutput="true"/>
+        <echo message="Enabling development-only config settings" level="info"/>
         <exec
                 description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
                 command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
@@ -531,6 +541,14 @@
       <available
               file="${install_config_abs}/config_split.config_split.production.yml.disabled"/>
       <then>
+        <echo message="Installing development-only modules." level="info"/>
+        <echo message="==== development-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
+        <exec   description="Install development modules if not installed already."
+                command="drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
+                dir="${install_config_abs}"
+                passthru="true"
+                logoutput="true" />
+        <echo message="Enabling production-only config settings for developers to maintain." level="info"/>
         <exec
                 description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
                 command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
@@ -570,8 +588,41 @@
     </if>
   </target>
 
+  <!-- Used to set a flag which inhibits settings.php file rewrites. -->
+  <target name="setup:fast_build:prep" hidden=""
+          description="Used to set a flag which inhibits settings.php file rewrites.">
+    <property name="no-settings" value="true"/>
+    <exec command="echo '\033[1;33mCreates ${acquia.site_environment} build.\033[0m'" logoutput="true"/>
+    <echo message="Rebuilds Drupal into existing container using files and settings already in the container."/>
+    <delete file="*.*" dir="${project.basedir}/setup" quiet="true" includeemptydirs="true" failonerror="false"/>
+    <mkdir dir="${project.basedir}/setup"/>
+  </target>
+
+  <!-- Just rebuild Drupal using settings and files already on server. -->
+  <target name="setup:local_rebuild"
+          depends=" setup:fast_build:prep,
+                    setup:drupal:set_dev_config,
+                    setup:drupal:site-install,
+                    setup:drupal:reset_config,
+                    update:database:update,
+                    update:user:loginadmin">
+    <echo message="Done"/>
+  </target>
+
+  <target name="setup:wait-prompt">
+    <propertyprompt propertyName="someprop" defaultValue="n"
+                    promptText="OK to continue y/n"/>
+    <if>
+      <equals arg1="${someprop}" arg2="y" casesensitive="true"/>
+      <then/>
+      <else>
+        <fail message="Cancelled ${someprop}" status="0"/>
+      </else>
+    </if>
+  </target>
+
   <target name="test">
-    <echo message="${this.one}"/>
+    <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
   </target>
 
 </project>

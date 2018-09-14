@@ -1,0 +1,20 @@
+uuid: 70b0f244-ddfb-405c-a7d6-55c4aaa577b9
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.election_results
+id: paragraph.election_results.uid
+field_name: uid
+entity_type: paragraph
+bundle: election_results
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

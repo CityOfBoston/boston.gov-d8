@@ -1,0 +1,63 @@
+uuid: 3f0384ca-62e1-458f-b191-38210cdb0ead
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.bos_signup_emergency_alerts.field_component_theme
+    - field.field.paragraph.bos_signup_emergency_alerts.field_component_title
+    - field.field.paragraph.bos_signup_emergency_alerts.field_contact
+    - field.field.paragraph.bos_signup_emergency_alerts.field_icon
+    - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
+    - paragraphs.paragraphs_type.bos_signup_emergency_alerts
+  module:
+    - file
+id: paragraph.bos_signup_emergency_alerts.default
+targetEntityType: paragraph
+bundle: bos_signup_emergency_alerts
+mode: default
+content:
+  field_component_theme:
+    weight: 2
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_icon:
+    weight: 4
+    type: file_generic
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 5
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

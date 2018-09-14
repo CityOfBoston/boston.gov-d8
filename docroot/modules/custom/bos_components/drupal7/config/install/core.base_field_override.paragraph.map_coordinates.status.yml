@@ -1,0 +1,22 @@
+uuid: 84aa9775-b646-449b-9476-7b789c465090
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.map_coordinates
+id: paragraph.map_coordinates.status
+field_name: status
+entity_type: paragraph
+bundle: map_coordinates
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

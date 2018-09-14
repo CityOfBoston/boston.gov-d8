@@ -1,0 +1,22 @@
+uuid: ab720705-10db-417e-bce8-6da626cea669
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.script_embed
+id: paragraph.script_embed.status
+field_name: status
+entity_type: paragraph
+bundle: script_embed
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

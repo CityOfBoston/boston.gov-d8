@@ -1,0 +1,22 @@
+uuid: def42e91-09ac-43f3-bdc7-aeb063ee9916
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_advpoll
+id: comment.comment_node_advpoll.uid
+field_name: uid
+entity_type: comment
+bundle: comment_node_advpoll
+label: 'User ID'
+description: 'The user ID of the comment author.'
+required: false
+translatable: false
+default_value:
+  -
+    target_id: '0'
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

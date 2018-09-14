@@ -1,0 +1,20 @@
+uuid: 158e638c-37ed-40dc-8c7a-a3bfc50a147a
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.city_score_dashboard
+id: paragraph.city_score_dashboard.uid
+field_name: uid
+entity_type: paragraph
+bundle: city_score_dashboard
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

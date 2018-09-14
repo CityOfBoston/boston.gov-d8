@@ -1,0 +1,18 @@
+uuid: c4383736-870c-4e30-be64-6f9d9dcae07a
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.commission_members
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: paragraph.commission_members
+target_entity_type_id: paragraph
+target_bundle: commission_members
+default_langcode: site_default
+language_alterable: false

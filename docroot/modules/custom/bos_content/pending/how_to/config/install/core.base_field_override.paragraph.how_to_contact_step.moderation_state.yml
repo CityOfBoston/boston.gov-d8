@@ -1,0 +1,20 @@
+uuid: 303f1507-4589-4d06-a919-43851fedf1b2
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.how_to_contact_step
+id: paragraph.how_to_contact_step.moderation_state
+field_name: moderation_state
+entity_type: paragraph
+bundle: how_to_contact_step
+label: 'Moderation state'
+description: 'The moderation state of this piece of content.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

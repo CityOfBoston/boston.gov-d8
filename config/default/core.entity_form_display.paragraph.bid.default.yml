@@ -8,7 +8,9 @@ dependencies:
     - field.field.paragraph.bid.field_company_name
     - paragraphs.paragraphs_type.bid
   module:
-    - workbench_moderation
+    - content_moderation
+_core:
+  default_config_hash: p9p1KR5uG0nrFZDv8kh_sOH0PUGKS_Hs-230Etme9fY
 id: paragraph.bid.default
 targetEntityType: paragraph
 bundle: bid
@@ -36,6 +38,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
 hidden:
   created: true
   status: true

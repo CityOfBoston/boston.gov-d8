@@ -1,0 +1,64 @@
+uuid: 93aa9de6-f391-4e7e-afdd-ddfecf510e0b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.drawers.field_component_title
+    - field.field.paragraph.drawers.field_contact
+    - field.field.paragraph.drawers.field_drawer
+    - field.field.paragraph.drawers.field_short_title
+    - paragraphs.paragraphs_type.drawers
+  module:
+    - paragraphs
+id: paragraph.drawers.default
+targetEntityType: paragraph
+bundle: drawers
+mode: default
+content:
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_drawer:
+    weight: 4
+    type: entity_reference_paragraphs
+    settings:
+      title: Drawer
+      title_plural: Drawers
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
