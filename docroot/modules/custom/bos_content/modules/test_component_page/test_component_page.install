@@ -17,4 +17,20 @@ function test_component_page_install() {
   // @see: https://www.drupal.org/project/drupal/issues/2599228
   // patch is in place - this is just to be sure ...
   \Drupal::service('entity.definition_update_manager')->applyUpdates();
+
+  // Using content_access module to hide this page from all but authenticated
+  // users.
+  if (function_exists("content_access_set_settings")) {
+    $settings = [
+      'view' => ["authenticated"],
+      'view own' => ["authenticated"]
+    ];
+    try {
+      content_access_set_settings($settings, basename(__FILE__, ".install"));
+    }
+    catch(ErrorException $e) {
+      \Drupal::logger('test_component_page')
+        ->warning("Could not update content_access settings during module installation.");
+    }
+  }
 }
