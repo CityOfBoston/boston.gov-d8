@@ -35,15 +35,21 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_test_paragraph:
-    type: entity_reference_paragraphs
+    type: paragraphs
     weight: 2
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
+      title: Component
+      title_plural: Components
       edit_mode: open
+      closed_mode: preview
+      autocollapse: none
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   langcode:
@@ -95,9 +101,9 @@ content:
     third_party_settings: {  }
   translation:
     weight: 10
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 4
