@@ -1,0 +1,42 @@
+uuid: c459d45d-fd26-477e-ad25-12aaa1904495
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_change.default
+    - field.field.node.change.body
+    - field.field.node.change.comment_node_change
+    - node.type.change
+  module:
+    - comment
+    - text
+    - user
+_core:
+  default_config_hash: Siy5scjrTeIErduvCaBE1feotDoQp7nArZnfp9Xbez0
+id: node.change.default
+targetEntityType: node
+bundle: change
+mode: default
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  comment_node_change:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true

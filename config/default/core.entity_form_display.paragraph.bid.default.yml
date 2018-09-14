@@ -1,34 +1,36 @@
-uuid: afe15f0b-823b-4d83-abe3-34feb3707265
+uuid: 0800ce04-5a92-447f-baca-264198f9f6a6
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.bos311.field_311_request
-    - field.field.paragraph.bos311.field_component_title
-    - field.field.paragraph.bos311.field_short_title
-    - paragraphs.paragraphs_type.bos311
+    - field.field.paragraph.bid.field_awarded
+    - field.field.paragraph.bid.field_bid_amount
+    - field.field.paragraph.bid.field_company_name
+    - paragraphs.paragraphs_type.bid
   module:
     - content_moderation
-id: paragraph.bos311.default
+_core:
+  default_config_hash: p9p1KR5uG0nrFZDv8kh_sOH0PUGKS_Hs-230Etme9fY
+id: paragraph.bid.default
 targetEntityType: paragraph
-bundle: bos311
+bundle: bid
 mode: default
 content:
-  field_311_request:
-    weight: 2
-    type: options_select
-    settings: {  }
+  field_awarded:
+    weight: 3
+    type: boolean_checkbox
+    settings:
+      display_label: true
     third_party_settings: {  }
     region: content
-  field_component_title:
-    weight: 0
-    type: string_textfield
+  field_bid_amount:
+    weight: 2
+    type: number
     settings:
-      size: 60
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_short_title:
+  field_company_name:
     weight: 1
     type: string_textfield
     settings:
@@ -39,10 +41,9 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 100
-    settings: { }
+    settings: {  }
     region: content
-    third_party_settings: { }
-
+    third_party_settings: {  }
 hidden:
   created: true
   status: true

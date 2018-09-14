@@ -1,0 +1,21 @@
+uuid: cb782c65-adc5-4f80-a8d1-359a5ee4e932
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.bid.field_awarded
+    - field.field.paragraph.bid.field_bid_amount
+    - field.field.paragraph.bid.field_company_name
+    - paragraphs.paragraphs_type.bid
+_core:
+  default_config_hash: 5zSaynvtAH67H4ONtaO7WIU2XujuJWRDbH1Z2EQKMM8
+id: paragraph.bid.paragraphs_editor_preview
+targetEntityType: paragraph
+bundle: bid
+mode: paragraphs_editor_preview
+content: {  }
+hidden:
+  field_awarded: true
+  field_bid_amount: true
+  field_company_name: true

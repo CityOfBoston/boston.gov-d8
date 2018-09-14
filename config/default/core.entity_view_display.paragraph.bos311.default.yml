@@ -1,4 +1,4 @@
-uuid: afe15f0b-823b-4d83-abe3-34feb3707265
+uuid: 0b130b09-f276-48d5-ac65-e8e372249296
 langcode: en
 status: true
 dependencies:
@@ -7,43 +7,36 @@ dependencies:
     - field.field.paragraph.bos311.field_component_title
     - field.field.paragraph.bos311.field_short_title
     - paragraphs.paragraphs_type.bos311
-  module:
-    - content_moderation
+_core:
+  default_config_hash: zxZO8xf4jgAe0TkSyf4dyr_x0Eu118KwNxADJ6Re-84
 id: paragraph.bos311.default
 targetEntityType: paragraph
 bundle: bos311
 mode: default
 content:
   field_311_request:
+    label: hidden
     weight: 2
-    type: options_select
-    settings: {  }
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
     third_party_settings: {  }
     region: content
   field_component_title:
+    label: hidden
     weight: 0
-    type: string_textfield
+    type: string
     settings:
-      size: 60
-      placeholder: ''
+      link_to_entity: false
     third_party_settings: {  }
     region: content
   field_short_title:
+    label: hidden
     weight: 1
-    type: string_textfield
+    type: string
     settings:
-      size: 60
-      placeholder: ''
+      link_to_entity: false
     third_party_settings: {  }
     region: content
-  moderation_state:
-    type: moderation_state_default
-    weight: 100
-    settings: { }
-    region: content
-    third_party_settings: { }
-
-hidden:
-  created: true
-  status: true
-  uid: true
+hidden: {  }

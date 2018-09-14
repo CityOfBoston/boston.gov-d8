@@ -1,4 +1,4 @@
-uuid: 0800ce04-5a92-447f-baca-264198f9f6a6
+uuid: 3c76a76e-a15f-40d6-8373-f1b30292b854
 langcode: en
 status: true
 dependencies:
@@ -8,41 +8,38 @@ dependencies:
     - field.field.paragraph.bid.field_company_name
     - paragraphs.paragraphs_type.bid
   module:
-    - content_moderation
+    - options
+_core:
+  default_config_hash: wtPdjO3ItzA8Csjjh7_DzgZVq5njbwwxy9qu6yxvid4
 id: paragraph.bid.default
 targetEntityType: paragraph
 bundle: bid
 mode: default
 content:
   field_awarded:
-    weight: 3
-    type: boolean_checkbox
-    settings:
-      display_label: true
+    label: above
+    weight: 2
+    type: list_default
+    settings: {  }
     third_party_settings: {  }
     region: content
   field_bid_amount:
-    weight: 2
-    type: number
+    label: above
+    weight: 1
+    type: number_decimal
     settings:
-      placeholder: ''
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
     third_party_settings: {  }
     region: content
   field_company_name:
-    weight: 1
-    type: string_textfield
+    label: above
+    weight: 0
+    type: string
     settings:
-      size: 60
-      placeholder: ''
+      link_to_entity: false
     third_party_settings: {  }
     region: content
-  moderation_state:
-    type: moderation_state_default
-    weight: 100
-    settings: {  }
-    region: content
-    third_party_settings: {  }
-hidden:
-  created: true
-  status: true
-  uid: true
+hidden: {  }

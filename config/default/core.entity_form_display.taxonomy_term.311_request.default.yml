@@ -1,15 +1,19 @@
-uuid: 1e6d821e-4291-43bb-b39e-1c4a29c92877
+uuid: bd0f0b5f-4c49-4024-a0f8-293b23be2f65
 langcode: en
 status: true
 dependencies:
   config:
-    - taxonomy.vocabulary.bid_offering
+    - field.field.taxonomy_term.311_request.field_external_link
+    - taxonomy.vocabulary.311_request
   module:
+    - link
     - path
     - text
-id: taxonomy_term.bid_offering.default
+_core:
+  default_config_hash: TdLEo0vMX3qL3eryc9W_MrN5NGxP5lT_pmZXn0mtD-k
+id: taxonomy_term.311_request.default
 targetEntityType: taxonomy_term
-bundle: bid_offering
+bundle: 311_request
 mode: default
 content:
   description:
@@ -20,6 +24,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_external_link:
+    weight: 1
+    type: link_default
+    settings:
+      placeholder_url: ''
+      placeholder_title: ''
+    third_party_settings: {  }
+    region: content
   langcode:
     type: language_select
     weight: 2
