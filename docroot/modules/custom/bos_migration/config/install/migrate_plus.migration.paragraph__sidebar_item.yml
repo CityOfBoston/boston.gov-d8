@@ -1,0 +1,16 @@
+id: paragraph__sidebar_item
+label: 'Sidebar Item Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: sidebar_item
+process:
+  field_sidebar_text: field_sidebar_text
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: sidebar_item
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
