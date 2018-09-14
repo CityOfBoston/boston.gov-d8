@@ -1,0 +1,20 @@
+uuid: a15d49af-7d3d-462e-9132-90fc3621c8ff
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.feedback
+id: paragraph.feedback.moderation_state
+field_name: moderation_state
+entity_type: paragraph
+bundle: feedback
+label: 'Moderation state'
+description: 'The moderation state of this piece of content.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

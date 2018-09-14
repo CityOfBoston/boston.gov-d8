@@ -1,0 +1,20 @@
+uuid: db5b252b-e20e-4d4d-a8c5-22bd852a9c61
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - paragraphs
+id: paragraph.field_internal_link
+field_name: field_internal_link
+entity_type: paragraph
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,20 @@
+uuid: 31722e8e-a23a-4f29-9310-340b40616604
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.map_coordinates
+id: paragraph.map_coordinates.uid
+field_name: uid
+entity_type: paragraph
+bundle: map_coordinates
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

@@ -1,0 +1,20 @@
+uuid: 51279d93-b3c4-4779-822d-87d6bccd942d
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.transaction
+id: node.transaction.moderation_state
+field_name: moderation_state
+entity_type: node
+bundle: transaction
+label: 'Moderation state'
+description: 'The moderation state of this piece of content.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

@@ -1,0 +1,36 @@
+uuid: 21bb0d23-c892-4b20-bbb5-9959f6b686b1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_test_paragraph
+    - node.type.test_component_page
+    - paragraphs.paragraphs_type.bos311
+  module:
+    - entity_reference_revisions
+_core:
+  default_config_hash: Dh5woQgYzBUxN5pMNpOuXH5gBUNfjt8WCHfIE2djIbk
+id: node.test_component_page.field_test_paragraph
+field_name: field_test_paragraph
+entity_type: node
+bundle: test_component_page
+label: 'Paragraph Components'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      bos311: bos311
+    target_bundles_drag_drop:
+      bid:
+        weight: 74
+        enabled: false
+      bos311:
+        enabled: true
+        weight: 75
+field_type: entity_reference_revisions

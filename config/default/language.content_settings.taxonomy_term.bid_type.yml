@@ -4,6 +4,15 @@ status: true
 dependencies:
   config:
     - taxonomy.vocabulary.bid_type
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+_core:
+  default_config_hash: fyQ1QSfg8Oh8xVRKc03J7tRYbWJNI-tEwjDzLC6aHAU
 id: taxonomy_term.bid_type
 target_entity_type_id: taxonomy_term
 target_bundle: bid_type

@@ -1,0 +1,40 @@
+uuid: 8cb31a48-79d0-4195-888a-d5e41ecca90c
+langcode: en
+status: true
+dependencies:
+  module:
+    - content_moderation
+    - paragraphs_library
+id: published_from_draft
+label: 'Published from Draft'
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Draft
+      published: false
+      default_revision: false
+      weight: 0
+    published:
+      label: Published
+      published: true
+      default_revision: true
+      weight: 1
+  transitions:
+    create_new_draft:
+      label: 'Create New Draft'
+      to: draft
+      weight: 0
+      from:
+        - draft
+        - published
+    publish:
+      label: Publish
+      to: published
+      weight: 1
+      from:
+        - draft
+        - published
+  entity_types:
+    paragraphs_library_item:
+      - paragraphs_library_item

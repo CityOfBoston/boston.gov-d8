@@ -1,0 +1,22 @@
+uuid: 5c0dca1f-9ffd-483d-afbb-6ce4a4f87582
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.map_esri_feed
+id: paragraph.map_esri_feed.status
+field_name: status
+entity_type: paragraph
+bundle: map_esri_feed
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

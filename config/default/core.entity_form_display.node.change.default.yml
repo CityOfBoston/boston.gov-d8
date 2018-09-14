@@ -8,10 +8,12 @@ dependencies:
     - node.type.change
   module:
     - comment
+    - content_moderation
     - path
     - publication_date
     - text
-    - workbench_moderation
+_core:
+  default_config_hash: iFGoxG5JztvIs_GGNnBLCyDd6LKtxxFRU2BKRCR_lJo
 id: node.change.default
 targetEntityType: node
 bundle: change
@@ -44,6 +46,12 @@ content:
     region: content
     settings:
       include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
     third_party_settings: {  }
   path:
     type: path
