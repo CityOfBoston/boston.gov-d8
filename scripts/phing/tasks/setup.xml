@@ -119,10 +119,13 @@
           <then>
             <echo message="Preparing to setup the Drupal database."/>
             <phingcall target="setup:drupal:local_settings_php"
-                   description="Recreate the local.settings.php file from default and load DB and any other settings."/>
-            <exec command="echo '\033[1;33Build is now using settings file ${local.settings.file}\033[0m'" logoutput="true"/>
-            <exec command="echo '\033[1;33... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'" logoutput="true"/>
-            <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"/>
+                  description="Recreate the local.settings.php file from default and load DB and any other settings."/>
+            <exec command="echo '\033[1;33mBuild is now using settings file ${local.settings.file}\033[0m'" logoutput="true"
+                  passthru="true"/>
+            <exec command="echo '\033[1;33m... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'" logoutput="true"
+                  passthru="true"/>
+            <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"
+                  passthru="true"/>
           </then>
         </if>
 

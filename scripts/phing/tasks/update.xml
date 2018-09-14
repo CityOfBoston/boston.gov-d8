@@ -74,11 +74,12 @@
               command="${drush.cmd} user-login"
               logoutput="false"
               outputProperty="uli"/>
-        <exec command="echo '\033[1;33m${uli}\033[0m'" logoutput="true"/>
+        <exec command="echo '\033[1;33m${uli}\033[0m'" logoutput="true" passthru="true"/>
     </target>
     <target name="update:user:setadminpwd"
-            description="Set the password on the uid=1 account.">
-        <exec command="echo '\033[1;33mThe ${drupal.account.name} account password is reset to: ${drupal.account.password}.\033[0m'" logoutput="true"/>
+              description="Set the password on the uid=1 account.">
+        <exec command="echo '\033[1;33mThe ${drupal.account.name} account password is reset to: ${drupal.account.password}.\033[0m'" logoutput="true"
+              passthru="true"/>
         <exec description="Change admin user password."
               dir="${docroot}"
               command='${drush.cmd} user:password admin "${drupal.account.password}"'
