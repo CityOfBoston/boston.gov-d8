@@ -1,0 +1,18 @@
+id: paragraph__upcoming_events
+label: 'Upcoming Events Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: upcoming_events
+process:
+  field_link: field_link
+  field_featured_item: field_featured_item
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: upcoming_events
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
