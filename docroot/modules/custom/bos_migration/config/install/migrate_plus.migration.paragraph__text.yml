@@ -1,0 +1,20 @@
+id: paragraph__text
+label: 'Text Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: text
+process:
+  field_background_image: field_background_image
+  field_contact: field_contact
+  field_hide_title_bar: field_hide_title_bar
+  field_short_title: field_short_title
+  field_text_blocks: field_text_blocks
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: text
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
