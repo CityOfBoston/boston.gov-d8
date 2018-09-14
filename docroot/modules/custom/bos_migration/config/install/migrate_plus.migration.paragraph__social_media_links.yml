@@ -1,0 +1,15 @@
+id: paragraph__social_media_links
+label: 'Social Media Links Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: social_media_links
+process:
+  field_social_media_link: field_social_media_link
+destination:
+  plugin: entity:paragraph
+  default_bundle: social_media_links
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
