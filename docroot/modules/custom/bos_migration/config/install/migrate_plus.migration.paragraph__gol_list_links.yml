@@ -1,0 +1,15 @@
+id: paragraph__gol_list_links
+label: 'List Links Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: gol_list_links
+process:
+  field_link: field_link
+destination:
+  plugin: entity:paragraph
+  default_bundle: gol_list_links
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
