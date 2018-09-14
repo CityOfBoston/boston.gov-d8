@@ -68,17 +68,17 @@
 <!--Utility commands-->
     <target name="update:user:loginadmin"
             description="Create a link which logs the user in on the uid=1 account.">
-        <echo message="Use this link to login to the ${lando.name} website at ${lando.url.url}." level="warning" />
+        <exec command="echo '\033[1;33mUse this link to login to the ${lando.name} website at ${lando.url.url}.\033[0m'" logoutput="true"/>
         <exec description="Login the admin user."
               dir="${docroot}"
               command="${drush.cmd} user-login"
               logoutput="false"
               outputProperty="uli"/>
-        <echo message="${uli}" level="warning" />
+        <exec command="echo '\033[1;33m${uli}\033[0m'" logoutput="true"/>
     </target>
     <target name="update:user:setadminpwd"
             description="Set the password on the uid=1 account.">
-        <echo message="The ${drupal.account.name} account password is reset to: ${drupal.account.password}." level="warning" />
+        <exec command="echo '\033[1;33mThe ${drupal.account.name} account password is reset to: ${drupal.account.password}.\033[0m'" logoutput="true"/>
         <exec description="Change admin user password."
               dir="${docroot}"
               command='${drush.cmd} user:password admin "${drupal.account.password}"'

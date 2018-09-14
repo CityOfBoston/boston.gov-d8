@@ -24,7 +24,7 @@
                     update:database:update,
                     setup:drupal:reset_config">
     <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
-    <exec command="echo -e '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password \'${drupal.account.password}\'.\033[0m'" logoutput="true"/>
+    <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password \'${drupal.account.password}\'.\033[0m'" logoutput="true"/>
     <echo
             message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
             file="${project.basedir}/setup/uli.log" append="true"/>
@@ -78,7 +78,7 @@
         <echo
                 message="Using Composer to install Drupal core and the required contrib modules."
                 level="info"/>
-        <exec command="echo -e '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m'" logoutput="true"/>
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m'" logoutput="true"/>
         <echo message="Executes: > composer install ${flag.dev}${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
         <exec
@@ -120,14 +120,14 @@
             <echo message="Preparing to setup the Drupal database."/>
             <phingcall target="setup:drupal:local_settings_php"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
-            <exec command="echo -e '\033[1;33Build is now using settings file ${local.settings.file}\033[0m'" logoutput="true"/>
-            <exec command="echo -e '\033[1;33... with \'${lando.db.database}/' database (${lando.db.type}) at \'${lando.db.host}:${lando.db.port}\' in container \'${lando.db.container}\'\033[0m'" logoutput="true"/>
-            <exec command="echo -e '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"/>
+            <exec command="echo '\033[1;33Build is now using settings file ${local.settings.file}\033[0m'" logoutput="true"/>
+            <exec command="echo '\033[1;33... with \'${lando.db.database}/' database (${lando.db.type}) at \'${lando.db.host}:${lando.db.port}\' in container \'${lando.db.container}\'\033[0m'" logoutput="true"/>
+            <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"/>
           </then>
         </if>
 
         <echo message="Install the Drupal 8 database."/>
-        <exec command="echo -e '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/drush_site_install.log for output.\033[0m'" logoutput="true"/>
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/drush_site_install.log for output.\033[0m'" logoutput="true"/>
         <resolvepath propertyName="install_config_abs"
                      file="${docroot}/${project.config.sync}"/>
         <if>
@@ -360,7 +360,7 @@
       <then
               description="If the Private Repo flag is set, then allow loading of the private settings file.">
 
-        <exec command="echo -e '\033[1;33m> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch}).\033[0m'" logoutput="true"/>
+        <exec command="echo '\033[1;33m> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch}).\033[0m'" logoutput="true"/>
 
         <!-- Clone the private repo. -->
         <delete
@@ -395,7 +395,7 @@
                   passthru="true" logoutput="false" checkreturn="false"/>
           </then>
           <else>
-            <exec command="echo -e '\033[1;33mPrivate repo was not cloned.  Build process will continue.\033[0m'" logoutput="true"/>
+            <exec command="echo '\033[1;33mPrivate repo was not cloned.  Build process will continue.\033[0m'" logoutput="true"/>
             <echo
                     message="Private repo was not cloned.  Build process will continue."
                     level="warning" append="true"
@@ -589,7 +589,7 @@
   <target name="setup:fast_build:prep" hidden=""
           description="Used to set a flag which inhibits settings.php file rewrites.">
     <property name="no-settings" value="true"/>
-    <exec command="echo -e '\033[1;33mCreates ${acquia.site_environment} build.\033[0m'" logoutput="true"/>
+    <exec command="echo '\033[1;33mCreates ${acquia.site_environment} build.\033[0m'" logoutput="true"/>
     <echo message="Rebuilds Drupal into existing container using files and settings already in the container."/>
     <delete file="*.*" dir="${project.basedir}/setup" quiet="true" includeemptydirs="true" failonerror="false"/>
     <mkdir dir="${project.basedir}/setup"/>
