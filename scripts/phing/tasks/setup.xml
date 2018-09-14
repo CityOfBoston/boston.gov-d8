@@ -24,7 +24,7 @@
                     update:database:update,
                     setup:drupal:reset_config">
     <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
-    <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password \'${drupal.account.password}\'.\033[0m'" logoutput="true"/>
+    <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password `${drupal.account.password}`.\033[0m'" logoutput="true"/>
     <echo
             message="${line.separator}To access the site off-line, add the following to your hosts file:${line.separator}    127.0.0.1 ${lando.name}.lndo.site${line.separator}"
             file="${project.basedir}/setup/uli.log" append="true"/>
@@ -121,7 +121,7 @@
             <phingcall target="setup:drupal:local_settings_php"
                    description="Recreate the local.settings.php file from default and load DB and any other settings."/>
             <exec command="echo '\033[1;33Build is now using settings file ${local.settings.file}\033[0m'" logoutput="true"/>
-            <exec command="echo '\033[1;33... with \'${lando.db.database}/' database (${lando.db.type}) at \'${lando.db.host}:${lando.db.port}\' in container \'${lando.db.container}\'\033[0m'" logoutput="true"/>
+            <exec command="echo '\033[1;33... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'" logoutput="true"/>
             <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"/>
           </then>
         </if>
