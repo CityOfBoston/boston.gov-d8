@@ -81,9 +81,9 @@
                 message="Using Composer to install Drupal core and the required contrib modules."
                 level="info"/>
         <echo
-                message=" -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output."
+                message="\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m"
                 level="warning"/>
-        <echo message="${line.separator} > composer install ${flag.dev}"
+        <echo message="Executes: > composer install ${flag.dev}${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
         <exec
                 description="Installs the modules per composer.lock (or composer.json if no .lock file)."
