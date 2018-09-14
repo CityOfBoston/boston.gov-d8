@@ -1,0 +1,16 @@
+id: paragraph__transactions
+label: 'Transactions Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: transactions
+process:
+  field_icon: field_icon
+  field_grid_link: field_grid_link
+destination:
+  plugin: entity:paragraph
+  default_bundle: transactions
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
