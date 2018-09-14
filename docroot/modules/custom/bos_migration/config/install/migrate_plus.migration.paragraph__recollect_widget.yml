@@ -1,0 +1,15 @@
+id: paragraph__recollect_widget
+label: 'Recollect Widget Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: recollect_widget
+process:
+  field_short_description: field_short_description
+destination:
+  plugin: entity:paragraph
+  default_bundle: recollect_widget
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
