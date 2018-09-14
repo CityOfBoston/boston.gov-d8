@@ -12,7 +12,12 @@ function bos_core_theme($existing, $type, $theme, $path) {
   return [];
 }
 
-
+/**
+ * Helper to uninstall original configs when not in config/default folder.
+ *
+ * @param string $module
+ *   The module name.
+ */
 function _bos_core_uninstall_boston($module) {
 
   Drupal::logger("City of Boston")->notice("Removing config for: @module.", ["@module" => $module]);

@@ -58,19 +58,4 @@ function bos_profile_install() {
   else {
     \Drupal::state()->set("config_split.config_split.production.status", TRUE);
   }
-
-  // Ensure uid 1 user (admin) realname is admin regardless of realname config.
-//  if (function_exists("realname_update")) {
-//    \Drupal::logger('bos_profile')->info("Fired realname rewrite");
-//    if ($account = \Drupal\user\Entity\User::load(1) && !empty($account)) {
-//      \Drupal::database()->merge('realname')
-//        ->key(['uid' => 1])
-//        ->fields([
-//          'realname' => $account->getUsername(),
-//          'created' => REQUEST_TIME,
-//        ])
-//        ->execute();
-//      \Drupal::logger('bos_profile')->info("Executed Realname rewrite");
-//    }
-//  }
 }
