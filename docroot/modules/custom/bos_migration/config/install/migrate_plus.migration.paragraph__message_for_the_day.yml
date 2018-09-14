@@ -1,0 +1,18 @@
+id: paragraph__message_for_the_day
+label: 'Message for the Day Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: message_for_the_day
+process:
+  field_date: field_date
+  field_link: field_link
+  field_message: field_message
+  field_use_alert: field_use_alert
+destination:
+  plugin: entity:paragraph
+  default_bundle: message_for_the_day
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
