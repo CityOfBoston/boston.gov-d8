@@ -1,0 +1,15 @@
+id: paragraph__seamless_doc
+label: 'Seamless Doc Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: seamless_doc
+process:
+  field_document_id: field_document_id
+destination:
+  plugin: entity:paragraph
+  default_bundle: seamless_doc
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
