@@ -1,0 +1,21 @@
+id: taxonomy__311_request
+label: '311 Request (taxonomy)'
+migration_group: bos_taxonomy
+source:
+  plugin: d7_taxonomy_term
+  bundle: 311_request
+process:
+  name: name
+  description_value: description
+  description_format: format
+  rh_action: rh_action
+  rh_redirect: rh_redirect
+  rh_redirect_response: rh_redirect_response
+  field_external_link: field_external_link
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: 311_request
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
