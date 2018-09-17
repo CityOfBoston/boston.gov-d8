@@ -97,18 +97,19 @@ function bos_components_theme_suggestions_paragraph_alter(array &$suggestions, a
   if (!isset($variables['elements']['#paragraph'])) {
     return;
   }
+  if ($variables['elements']['#paragraph']->getParentEntity() && $parent = $variables['elements']['#paragraph']->getParentEntity()->bundle()) {
 
-  $parent = $variables['elements']['#paragraph']->getParentEntity()->bundle();
-  $paragraphType = $variables['elements']['#paragraph']->bundle();
+    $paragraphType = $variables['elements']['#paragraph']->bundle();
 
-  switch ($paragraphType) {
-    case "bos311":
-      $suggestions[] = 'paragraph__' . $parent . '__' . $paragraphType;
-      $suggestions[] = 'paragraph__node__' . $paragraphType;
-      break;
+    switch ($paragraphType) {
+      case "bos311":
+        $suggestions[] = 'paragraph__' . $parent . '__' . $paragraphType;
+        $suggestions[] = 'paragraph__node__' . $paragraphType;
+        break;
 
-    default:
-      return;
+      default:
+        return;
+    }
   }
 
 }
