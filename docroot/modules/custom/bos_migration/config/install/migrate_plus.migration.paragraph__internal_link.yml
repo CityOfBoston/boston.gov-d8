@@ -1,0 +1,16 @@
+id: paragraph__internal_link
+label: 'Internal Link Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: internal_link
+process:
+  field_internal_link: field_internal_link
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: internal_link
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

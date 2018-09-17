@@ -1,0 +1,18 @@
+id: paragraph__transaction_grid
+label: 'Transaction Grid Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: transaction_grid
+process:
+  field_contact: field_contact
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+  field_transactions: field_transactions
+destination:
+  plugin: entity:paragraph
+  default_bundle: transaction_grid
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

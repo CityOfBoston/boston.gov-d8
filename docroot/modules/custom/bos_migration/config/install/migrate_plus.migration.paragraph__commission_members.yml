@@ -1,0 +1,17 @@
+id: paragraph__commission_members
+label: 'Commission Members Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: commission_members
+process:
+  field_commission: field_commission
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: commission_members
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

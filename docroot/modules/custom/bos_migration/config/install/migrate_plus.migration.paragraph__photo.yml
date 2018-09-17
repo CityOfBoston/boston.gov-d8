@@ -1,0 +1,21 @@
+id: paragraph__photo
+label: 'Photo Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: photo
+process:
+  field_link: field_link
+  field_photo_caption: field_photo_caption
+  field_contacts: field_contacts
+  field_image: field_image
+  field_photo_credit: field_photo_credit
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: photo
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
