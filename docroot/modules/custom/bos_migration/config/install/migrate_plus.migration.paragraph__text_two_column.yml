@@ -1,0 +1,17 @@
+id: paragraph__text_two_column
+label: 'Two Column Text Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: text_two_column
+process:
+  field_column_configuration: field_column_configuration
+  field_left_column: field_left_column
+  field_right_column: field_right_column
+destination:
+  plugin: entity:paragraph
+  default_bundle: text_two_column
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

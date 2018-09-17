@@ -1,0 +1,18 @@
+id: paragraph__grid_of_topics
+label: 'Grid of Topics Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: grid_of_topics
+process:
+  field_contact: field_contact
+  field_topics: field_topics
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: grid_of_topics
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

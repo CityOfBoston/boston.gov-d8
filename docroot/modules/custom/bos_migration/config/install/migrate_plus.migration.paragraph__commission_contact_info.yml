@@ -1,0 +1,15 @@
+id: paragraph__commission_contact_info
+label: 'Commission Contact Info Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: commission_contact_info
+process:
+  field_commission: field_commission
+destination:
+  plugin: entity:paragraph
+  default_bundle: commission_contact_info
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
