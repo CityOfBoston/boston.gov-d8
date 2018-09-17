@@ -1,0 +1,62 @@
+<project name="migrate" default="migrate:info">
+
+  <property description="Defines a Drupal-specific PHP Ruleset."
+            name="phpcs.ruleset"
+            value="${repo.root}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"/>
+
+  <!-- Run migration status. -->
+  <target name="migrate:info" description="Gives migration status.">
+    <exec dir="${project.basedir}"
+          command="drush migrate:status --tag='Drupal 7,Content'"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+
+  <!-- Run all migration targets. -->
+  <target name="migrate:all:specified" description="Runs all migration tasks defined here."
+          depends=" migrate:user,
+                    migrate:taxonomy"
+  />
+
+  <target name="migrate:all:migrate" description="Runs full migration.">
+    <exec dir="${project.basedir}"
+          command="drush --all --force --tag='Content,Drupal 7'"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+
+  <target name="migrate:user" description="Runs all user migration tasks."
+          depends=" migrate:user:config,
+                    migrate:user:content"
+  />
+  <target name="migrate:user:content">
+    <exec dir="${project.basedir}"
+          command="drush mim d7_user --force"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+  <target name="migrate:user:config">
+    <exec dir="${project.basedir}"
+          command="drush mim user_picture_field,user_picture_field_instance,user_picture_entity_display,user_picture_entity_form_display,d7_user_role,d7_user_maild7_user_flood --force"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+
+  <target name="migrate:taxonomy" description="Runs all taxonomy migration tasks."
+          depends=" migrate:taxonomy:config,
+                    migrate:taxonomy:content"
+  />
+  <target name="migrate:taxonomy:content">
+    <exec dir="${project.basedir}"
+          command="drush mim d7_taxonomy_vocabulary,d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:maps_basemap,d7_taxonomy_term:maps_esri_feed,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:type_of_content,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact --force"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+  <target name="migrate:taxonomy:config">
+    <exec dir="${project.basedir}"
+          command="drush mim taxonomy_settings,d7_taxonomy_vocabulary --force"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+
+</project>
