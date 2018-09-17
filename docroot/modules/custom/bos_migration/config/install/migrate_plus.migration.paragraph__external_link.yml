@@ -1,6 +1,10 @@
 id: paragraph__external_link
 label: 'External Link Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+    - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: external_link

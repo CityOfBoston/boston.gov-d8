@@ -1,6 +1,10 @@
 id: taxonomy__311_request
 label: '311 Request (taxonomy)'
 migration_group: bos_taxonomy
+dependencies:
+  enforced:
+    module:
+    - bos_migration
 source:
   plugin: d7_taxonomy_term
   bundle: 311_request
