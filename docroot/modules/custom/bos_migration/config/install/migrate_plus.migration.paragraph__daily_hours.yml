@@ -1,0 +1,17 @@
+id: paragraph__daily_hours
+label: 'Daily Hours Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: daily_hours
+process:
+  field_daily_hours: field_daily_hours
+  field_hours_icon: field_hours_icon
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: daily_hours
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

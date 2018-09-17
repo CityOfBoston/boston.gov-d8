@@ -1,0 +1,16 @@
+id: paragraph__how_to_text_step
+label: 'How to Text Step Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: how_to_text_step
+process:
+  field_step_details: field_step_details
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: how_to_text_step
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

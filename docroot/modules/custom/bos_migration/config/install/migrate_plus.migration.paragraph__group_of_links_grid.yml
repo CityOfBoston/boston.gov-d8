@@ -1,0 +1,20 @@
+id: paragraph__group_of_links_grid
+label: 'Group of Links Grid Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: group_of_links_grid
+process:
+  field_link: field_link
+  field_contact: field_contact
+  field_grid_links: field_grid_links
+  field_short_title: field_short_title
+  field_subheader: field_subheader
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: group_of_links_grid
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

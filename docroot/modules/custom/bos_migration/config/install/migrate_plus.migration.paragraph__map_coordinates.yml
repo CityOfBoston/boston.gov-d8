@@ -1,0 +1,17 @@
+id: paragraph__map_coordinates
+label: 'Map Coordinates Paragraph'
+migration_group: bos_paragraphs
+source:
+  plugin: d7_paragraphs_item
+  bundle: map_coordinates
+process:
+  field_map_latitude: field_map_latitude
+  field_map_longitude: field_map_longitude
+  field_map_zoom: field_map_zoom
+destination:
+  plugin: entity:paragraph
+  default_bundle: map_coordinates
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
