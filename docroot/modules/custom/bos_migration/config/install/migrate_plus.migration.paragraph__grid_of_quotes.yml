@@ -1,6 +1,10 @@
 id: paragraph__grid_of_quotes
 label: 'Grid of Quotes Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: grid_of_quotes

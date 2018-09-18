@@ -1,6 +1,10 @@
 id: paragraph__recollect_widget
 label: 'Recollect Widget Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: recollect_widget

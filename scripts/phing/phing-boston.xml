@@ -29,6 +29,8 @@
             description="Contains targets used to maintain/update a Drupal 8 installation."/>
     <import file="${custom.phing.tasks.dir}/validate.xml"
             description="Contains targets used to validate custom-written code against coding standards."/>
+    <import file="${custom.phing.tasks.dir}/migrate.xml"
+            description="Contains targets used to migrate d7 content into d8."/>
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>

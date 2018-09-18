@@ -1,6 +1,10 @@
 id: paragraph__sidebar_item
 label: 'Sidebar Item Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: sidebar_item

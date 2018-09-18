@@ -1,6 +1,10 @@
 id: paragraph__city_score_dashboard
 label: 'City Score Dashboard Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: city_score_dashboard

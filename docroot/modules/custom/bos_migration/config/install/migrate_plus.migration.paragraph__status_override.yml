@@ -1,6 +1,10 @@
 id: paragraph__status_override
 label: 'Status Override Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: status_override
