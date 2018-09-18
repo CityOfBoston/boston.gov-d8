@@ -1,6 +1,10 @@
 id: paragraph__commission_contact_info
 label: 'Commission Contact Info Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: commission_contact_info

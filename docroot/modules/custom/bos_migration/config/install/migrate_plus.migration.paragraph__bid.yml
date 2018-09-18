@@ -1,6 +1,12 @@
 id: paragraph__bid
 label: 'Bid Paragraph'
 migration_group: bos_paragraphs
+migration_tags:
+  - bid
+dependencies:
+  enforced:
+    module:
+    - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: bid

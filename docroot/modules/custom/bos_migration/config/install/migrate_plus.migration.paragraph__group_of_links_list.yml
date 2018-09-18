@@ -1,6 +1,10 @@
 id: paragraph__group_of_links_list
 label: 'Group of Links List Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: group_of_links_list

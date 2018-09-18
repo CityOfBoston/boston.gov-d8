@@ -1,6 +1,10 @@
 id: paragraph__tabbed_content_tab
 label: 'Tabbed Content Tab Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: tabbed_content_tab

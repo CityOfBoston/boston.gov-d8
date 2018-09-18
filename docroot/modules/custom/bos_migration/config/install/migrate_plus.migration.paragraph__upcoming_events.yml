@@ -1,6 +1,10 @@
 id: paragraph__upcoming_events
 label: 'Upcoming Events Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: upcoming_events

@@ -1,6 +1,10 @@
 id: paragraph__script_embed
 label: 'Recollect Widget Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: script_embed

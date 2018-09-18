@@ -1,6 +1,10 @@
 id: paragraph__how_to_contact_step
 label: 'How to Contact Step Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: how_to_contact_step

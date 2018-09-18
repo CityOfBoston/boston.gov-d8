@@ -1,0 +1,44 @@
+id: taxonomy__bid
+label: 'Boston bid module (taxonomy)'
+migration_group: bos_taxonomy
+migration_tags:
+  - bid
+dependencies:
+  required:
+    module:
+      - bos_components
+      - taxonomy
+  enforced:
+    module:
+    - bos_migration
+source:
+  plugin: d7_taxonomy_term
+  bundle:
+    - bid_offering
+    - bid_type
+process:
+  tid: tid
+  vid:
+    plugin: migration_lookup
+    migration: taxonomy__vocab
+    source: vid
+  name: name
+  description: description
+  weight: weight
+  parent:
+    -
+      plugin: skip_on_empty
+      source: parent
+      method: row
+    -
+      plugin: migration_lookup
+      migration: taxonomy__bid
+      source: style_parent
+  changed: timestamp
+destination:
+  plugin: entity:taxonomy_term
+  default_bundle: bid_offering
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

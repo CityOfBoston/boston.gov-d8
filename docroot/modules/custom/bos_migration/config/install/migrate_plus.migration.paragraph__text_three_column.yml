@@ -1,6 +1,10 @@
 id: paragraph__text_three_column
 label: 'Three Column Text Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: text_three_column
