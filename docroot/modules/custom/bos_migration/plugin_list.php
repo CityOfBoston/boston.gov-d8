@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Provides an array with the currently available process plugins for migrate.
+ */
+
 $plugin_list = [
   "d7_blocked_ips" => [
     "requirements_met" => TRUE,
@@ -11,18 +16,6 @@ $plugin_list = [
       1 => "migrate_drupal",
       2 => "migrate",
       4 => "core",
-    ],
-  ],
-  "d6_block_translation" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_block_translation",
-    "source_module" => "i18nblocks",
-    "class" => "Drupal\block\Plugin\migrate\source\d6\BlockTranslation",
-    "provider" => [
-      0 => "block",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
     ],
   ],
   "block" => [
@@ -42,30 +35,6 @@ $plugin_list = [
     "id" => "d7_block_custom",
     "source_module" => "block",
     "class" => "Drupal\block_content\Plugin\migrate\source\d7\BlockCustom",
-    "provider" => [
-      0 => "block_content",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_box_translation" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_box_translation",
-    "source_module" => "i18nblocks",
-    "class" => "Drupal\block_content\Plugin\migrate\source\d6\BoxTranslation",
-    "provider" => [
-      0 => "block_content",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_box" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_box",
-    "source_module" => "block",
-    "class" => "Drupal\block_content\Plugin\migrate\source\d6\Box",
     "provider" => [
       0 => "block_content",
       1 => "migrate_drupal",
@@ -102,42 +71,6 @@ $plugin_list = [
     "id" => "d7_comment_type",
     "source_module" => "comment",
     "class" => "Drupal\comment\Plugin\migrate\source\d7\CommentType",
-    "provider" => [
-      0 => "comment",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_comment_variable_per_comment_type" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_comment_variable_per_comment_type",
-    "source_module" => "comment",
-    "class" => "Drupal\comment\Plugin\migrate\source\d6\CommentVariablePerCommentType",
-    "provider" => [
-      0 => "comment",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
-  "d6_comment" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_comment",
-    "source_module" => "comment",
-    "class" => "Drupal\comment\Plugin\migrate\source\d6\Comment",
-    "provider" => [
-      0 => "comment",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_comment_variable" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_comment_variable",
-    "source_module" => "comment",
-    "class" => "Drupal\comment\Plugin\migrate\source\d6\CommentVariable",
     "provider" => [
       0 => "comment",
       1 => "migrate_drupal",
@@ -217,74 +150,12 @@ $plugin_list = [
       4 => "core",
     ],
   ],
-  "d6_field_instance" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_field_instance",
-    "source_module" => "content",
-    "class" => "Drupal\field\Plugin\migrate\source\d6\FieldInstance",
-    "provider" => [
-      0 => "field",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_field_instance_per_form_display" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_field_instance_per_form_display",
-    "source_module" => "content",
-    "class" => "Drupal\field\Plugin\migrate\source\d6\FieldInstancePerFormDisplay",
-    "provider" => [
-      0 => "field",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_field_instance_per_view_mode" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_field_instance_per_view_mode",
-    "source_module" => "content",
-    "class" => "Drupal\field\Plugin\migrate\source\d6\FieldInstancePerViewMode",
-    "provider" => [
-      0 => "field",
-      1 => "node",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
-  "d6_field" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_field",
-    "source_module" => "content",
-    "class" => "Drupal\field\Plugin\migrate\source\d6\Field",
-    "provider" => [
-      0 => "field",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
   "d7_field_group" => [
     "requirements_met" => TRUE,
     "id" => "d7_field_group",
     "source_module" => "field_group",
     "destination_module" => "field_group",
     "class" => "Drupal\field_group_migrate\Plugin\migrate\source\d7\FieldGroup",
-    "provider" => [
-      0 => "field_group_migrate",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_field_group" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_field_group",
-    "source_module" => "field_group",
-    "destination_module" => "field_group",
-    "class" => "Drupal\field_group_migrate\Plugin\migrate\source\d6\FieldGroup",
     "provider" => [
       0 => "field_group_migrate",
       1 => "migrate_drupal",
@@ -304,59 +175,11 @@ $plugin_list = [
       4 => "core",
     ],
   ],
-  "d6_file" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_file",
-    "source_module" => "system",
-    "class" => "Drupal\file\Plugin\migrate\source\d6\File",
-    "provider" => [
-      0 => "file",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_upload_instance" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_upload_instance",
-    "source_module" => "upload",
-    "class" => "Drupal\file\Plugin\migrate\source\d6\UploadInstance",
-    "provider" => [
-      0 => "file",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_upload" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_upload",
-    "source_module" => "upload",
-    "class" => "Drupal\file\Plugin\migrate\source\d6\Upload",
-    "provider" => [
-      0 => "file",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
   "d7_filter_format" => [
     "requirements_met" => TRUE,
     "id" => "d7_filter_format",
     "source_module" => "filter",
     "class" => "Drupal\filter\Plugin\migrate\source\d7\FilterFormat",
-    "provider" => [
-      0 => "filter",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_filter_format" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_filter_format",
-    "source_module" => "filter",
-    "class" => "Drupal\filter\Plugin\migrate\source\d6\FilterFormat",
     "provider" => [
       0 => "filter",
       1 => "migrate_drupal",
@@ -376,35 +199,11 @@ $plugin_list = [
       4 => "core",
     ],
   ],
-  "d6_imagecache_presets" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_imagecache_presets",
-    "source_module" => "imagecache",
-    "class" => "Drupal\image\Plugin\migrate\source\d6\ImageCachePreset",
-    "provider" => [
-      0 => "image",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
   "d7_language_content_settings" => [
     "requirements_met" => TRUE,
     "id" => "d7_language_content_settings",
     "source_module" => "locale",
     "class" => "Drupal\language\Plugin\migrate\source\d7\LanguageContentSettings",
-    "provider" => [
-      0 => "language",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_language_content_settings" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_language_content_settings",
-    "source_module" => "locale",
-    "class" => "Drupal\language\Plugin\migrate\source\d6\LanguageContentSettings",
     "provider" => [
       0 => "language",
       1 => "migrate_drupal",
@@ -841,71 +640,11 @@ $plugin_list = [
       4 => "core",
     ],
   ],
-  "d6_node" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_node",
-    "source_module" => "node",
-    "class" => "Drupal\node\Plugin\migrate\source\d6\Node",
-    "provider" => [
-      0 => "node",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_node_revision" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_node_revision",
-    "source_module" => "node",
-    "class" => "Drupal\node\Plugin\migrate\source\d6\NodeRevision",
-    "provider" => [
-      0 => "node",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
-  "d6_node_type" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_node_type",
-    "source_module" => "node",
-    "class" => "Drupal\node\Plugin\migrate\source\d6\NodeType",
-    "provider" => [
-      0 => "node",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_view_mode" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_view_mode",
-    "source_module" => "content",
-    "class" => "Drupal\node\Plugin\migrate\source\d6\ViewMode",
-    "provider" => [
-      0 => "node",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
   "d7_url_alias" => [
     "requirements_met" => TRUE,
     "id" => "d7_url_alias",
     "source_module" => "path",
     "class" => "Drupal\path\Plugin\migrate\source\d7\UrlAlias",
-    "provider" => [
-      0 => "path",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
-  "d6_url_alias" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_url_alias",
-    "source_module" => "path",
-    "class" => "Drupal\path\Plugin\migrate\source\d6\UrlAlias",
     "provider" => [
       0 => "path",
       2 => "migrate_drupal",
@@ -930,18 +669,6 @@ $plugin_list = [
     "id" => "d7_path_redirect",
     "source_module" => "redirect",
     "class" => "Drupal\redirect\Plugin\migrate\source\d7\PathRedirect",
-    "provider" => [
-      0 => "redirect",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_path_redirect" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_path_redirect",
-    "source_module" => "path_redirect",
-    "class" => "Drupal\redirect\Plugin\migrate\source\PathRedirect",
     "provider" => [
       0 => "redirect",
       1 => "migrate_drupal",
@@ -1057,78 +784,6 @@ $plugin_list = [
       4 => "core",
     ],
   ],
-  "d6_taxonomy_vocabulary_translation" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_taxonomy_vocabulary_translation",
-    "source_module" => "i18ntaxonomy",
-    "class" => "Drupal\taxonomy\Plugin\migrate\source\d6\VocabularyTranslation",
-    "provider" => [
-      0 => "taxonomy",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_taxonomy_term" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_taxonomy_term",
-    "source_module" => "taxonomy",
-    "class" => "Drupal\taxonomy\Plugin\migrate\source\d6\Term",
-    "provider" => [
-      0 => "taxonomy",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_term_node" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_term_node",
-    "source_module" => "taxonomy",
-    "class" => "Drupal\taxonomy\Plugin\migrate\source\d6\TermNode",
-    "provider" => [
-      0 => "taxonomy",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_taxonomy_vocabulary" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_taxonomy_vocabulary",
-    "source_module" => "taxonomy",
-    "class" => "Drupal\taxonomy\Plugin\migrate\source\d6\Vocabulary",
-    "provider" => [
-      0 => "taxonomy",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_taxonomy_vocabulary_per_type" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_taxonomy_vocabulary_per_type",
-    "source_module" => "taxonomy",
-    "class" => "Drupal\taxonomy\Plugin\migrate\source\d6\VocabularyPerType",
-    "provider" => [
-      0 => "taxonomy",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
-  "d6_term_node_revision" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_term_node_revision",
-    "source_module" => "taxonomy",
-    "class" => "Drupal\taxonomy\Plugin\migrate\source\d6\TermNodeRevision",
-    "provider" => [
-      0 => "taxonomy",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
-    ],
-  ],
   "profile_field" => [
     "requirements_met" => TRUE,
     "id" => "profile_field",
@@ -1177,66 +832,6 @@ $plugin_list = [
       5 => "core",
     ],
   ],
-  "d6_user" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_user",
-    "source_module" => "user",
-    "class" => "Drupal\user\Plugin\migrate\source\d6\User",
-    "provider" => [
-      0 => "user",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_user_role" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_user_role",
-    "source_module" => "user",
-    "class" => "Drupal\user\Plugin\migrate\source\d6\Role",
-    "provider" => [
-      0 => "user",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_user_picture" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_user_picture",
-    "source_module" => "user",
-    "class" => "Drupal\user\Plugin\migrate\source\d6\UserPicture",
-    "provider" => [
-      0 => "user",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_profile_field_values" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_profile_field_values",
-    "source_module" => "profile",
-    "class" => "Drupal\user\Plugin\migrate\source\d6\ProfileFieldValues",
-    "provider" => [
-      0 => "user",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
-  "d6_user_picture_file" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_user_picture_file",
-    "source_module" => "user",
-    "class" => "Drupal\user\Plugin\migrate\source\d6\UserPictureFile",
-    "provider" => [
-      0 => "user",
-      1 => "migrate_drupal",
-      2 => "migrate",
-      4 => "core",
-    ],
-  ],
   "user_picture_instance" => [
     "requirements_met" => TRUE,
     "id" => "user_picture_instance",
@@ -1271,18 +866,6 @@ $plugin_list = [
       1 => "migrate_drupal",
       2 => "migrate",
       4 => "core",
-    ],
-  ],
-  "d6_menu_link_translation" => [
-    "requirements_met" => TRUE,
-    "id" => "d6_menu_link_translation",
-    "source_module" => "i18nmenu",
-    "class" => "Drupal\menu_link_content\Plugin\migrate\source\d6\MenuLinkTranslation",
-    "provider" => [
-      0 => "menu_link_content",
-      2 => "migrate_drupal",
-      3 => "migrate",
-      5 => "core",
     ],
   ],
   "menu_link" => [
