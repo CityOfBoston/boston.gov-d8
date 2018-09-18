@@ -1,6 +1,10 @@
 id: paragraph__text_two_column
 label: 'Two Column Text Paragraph'
 migration_group: bos_paragraphs
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: d7_paragraphs_item
   bundle: text_two_column

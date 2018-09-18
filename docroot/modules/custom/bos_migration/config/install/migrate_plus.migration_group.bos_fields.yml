@@ -3,7 +3,11 @@ label: Bos Fields
 description: Legacy field content to be migrated to Drupal 8.
 source_type: Drupal 7
 shared_configuration:
-  source:
+  dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
     key: migrate
 dependencies:
   enforced:
