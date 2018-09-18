@@ -15,6 +15,7 @@
                     migrate:taxonomy,
                     migrate:paragraphs,
                     migrate:nodes,
+                    migrate:blocks,
                     migrate:comments,
                     migrate:system,
                     migrate:finalize"
@@ -204,7 +205,6 @@
               value="d7_custom_block,block_content_type,block_content_body_field,block_content_entity_form_display,block_content_entity_display"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
-
 
   <!-- Migrate sundry elements -->
   <target name="migrate:system" description="Runs all system migration tasks."
