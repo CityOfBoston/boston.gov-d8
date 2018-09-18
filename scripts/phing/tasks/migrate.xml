@@ -91,12 +91,12 @@
   </target>
   <target name="migrate:field:config">
     <property name="migration.configs"
-              value="d7_field,d7_field_instance,d7_field_formatter_settings,d7_field_instance_widget_settings,d7_view_modes,d7_field_group"/>
+              value="d7_field,d7_field_instance,d7_field_formatter_settings,d7_field_instance_widget_settings,d7_view_modes,d7_field_group,d7_image_settings,d7_image_styles"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:field:settings">
     <property name="migration.configs"
-              value="file_settings"/>
+              value="file_settings,text_settings"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 
@@ -165,7 +165,7 @@
   />
   <target name="migrate:nodes:content">
     <property name="migration.configs"
-              value="d7_node:advpoll,d7_node:article,d7_node:change,d7_node:department_profile,d7_node:emergency_alert,d7_node:event,d7_node:how_to,d7_node:landing_page,d7_node:listing_page,d7_node:metrolist_affordable_housing,d7_node:person_profile,d7_node:place_profile,d7_node:post,d7_node:procurement_advertisement,d7_node:program_initiative_profile,d7_node:public_notice,d7_node:script_page,d7_node:site_alert,d7_node:status_item,d7_node:tabbed_content,d7_node:topic_page,d7_node:transaction"/>
+              value="d7_node:advpoll,d7_node:article,d7_node:change,d7_node:department_profile,d7_node:emergency_alert,d7_node:event,d7_node:how_to,d7_node:landing_page,d7_node:listing_page,d7_node:metrolist_affordable_housing,d7_node:person_profile,d7_node:place_profile,d7_node:post,d7_node:procurement_advertisement,d7_node:program_initiative_profile,d7_node:public_notice,d7_node:script_page,d7_node:site_alert,d7_node:status_item,d7_node:tabbed_content,d7_node:topic_page,d7_node:transaction,node_translation_menu_links,d7_vote"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:nodes:content_revision">
@@ -189,6 +189,23 @@
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 
+  <!-- Migrate blocks -->
+  <target name="migrate:blocks" description="Runs all block migration tasks."
+          depends=" migrate:blocks:config,
+                    migrate:blocks:content"
+  />
+  <target name="migrate:blocks:content">
+    <property name="migration.configs"
+              value="d7_block"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:blocks:config">
+    <property name="migration.configs"
+              value="d7_custom_block,block_content_type,block_content_body_field,block_content_entity_form_display,block_content_entity_display"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+
   <!-- Migrate sundry elements -->
   <target name="migrate:system" description="Runs all system migration tasks."
           depends=" migrate:system:config,
@@ -196,12 +213,12 @@
   />
   <target name="migrate:system:settings">
     <property name="migration.configs"
-              value="d7_syslog_settings,d7_dblog_settings,update_settings,d7_language_negotiation_settings,d7_language_types,default_language,d7_filter_settings"/>
+              value="d7_syslog_settings,d7_dblog_settings,update_settings,d7_language_negotiation_settings,d7_language_types,default_language,d7_filter_settings,d7_global_theme_settings,d7_theme_settings"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:system:config">
     <property name="migration.configs"
-              value="d7_color,d7_filter_format"/>
+              value="d7_color,d7_filter_format,d7_system_authorize,d7_system_cron,d7_system_date,d7_system_file,d7_system_mail,d7_system_performance,system_image,system_image_gd,system_logging,system_maintenance,system_rss,system_site,d7_rdf_mapping"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 
@@ -217,7 +234,7 @@
   </target>
   <target name="migrate:finalize:config">
     <property name="migration.configs"
-              value="d7_url_alias,d7_blocked_ips"/>
+              value="d7_url_alias,d7_blocked_ips,d7_path_redirect"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 
