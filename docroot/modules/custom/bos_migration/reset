@@ -13,7 +13,12 @@ lando drush config-delete migrate_plus.migration.paragraph__list &&
 lando drush config-delete migrate_plus.migration.taxonomy__311_request &&
 lando drush en bos_migration
 
+echo $'\r'
+echo "Waiting for migrate:status on group 'bos_paragraphs' ..."
+echo $'\r'
+
 count="$(lando drush ms --group=bos_paragraphs | wc -l)"
+
 if (( "$count" > 3 )); then
 
   lando drush ms --group=bos_paragraphs
