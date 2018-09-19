@@ -44,12 +44,69 @@
 
   <!-- Define the build task used by terraform-->
   <target name="setup:docker:drupal-terraform"
-          description="Creates a drupal environment in docker (command run by terraform)."
-          depends=" setup:drupal:set_prod_config,
-                    setup:drupal:reset_config">
-    <exec description="Enable the limit-apache-children module for terraform."
-          command="a2enconf limit-apache-children" dir="${repo.root}"
-          logoutput="true"/>
+          description="Creates a drupal environment in docker (command run by terraform).">
+    <!-- Work out what sort of database handling is to be done. -->
+    <if>
+      <isset property="build_db_from"/>
+      <then>
+        <property description="will be one of 'sync', 'build' or 'dump'."
+          name="build_db_from" value="build"/>
+      </then>
+    </if>
+    <!-- Download any missing files -->
+    <if>
+      <not>
+        <available description="This file only exists if core has been downloaded, and therefore composer has been run."
+                   property="${docroot}/core/lib/Drupal.php"/>
+      </not>
+      <then>
+        <phingcall description="Run composer" target="setup:drupal:download-modules"/>
+        <if>
+          <not>
+            <available description="This file only exists if the private repo has been cloned already."
+                       property="${project.basedir}/.private"/>
+          </not>
+          <then>
+            <phingcall description="Bring across the private repo" target="setup:drupal:clone_private_repo"/>
+          </then>
+        </if>
+        <phingcall description="Run composer" target="setup:drupal:set_dev_config"/>
+        <phingcall description="Update settings files" target="setup:drush:local-config"/>
+        <if>
+          <equals arg1="${build_db_from}" arg2="build" casesensitive="true"/>
+          <then description="In build mode, so build the database.">
+            <phingcall description="Install drupal" target="setup:drupal:site-install"/>
+            <phingcall description="Update database" target="update:database:update"/>
+          </then>
+        </if>
+        <phingcall description="Reset configs" target="setup:drupal:reset_config"/>
+      </then>
+    </if>
+    <!-- Restore or sync the database. -->
+    <if>
+      <!-- Restore database. -->
+      <equals arg1="${build_db_from}" arg2="dump" casesensitive="true"/>
+      <then description="Recover the database from a previous dump.">
+        <!-- Set default dump location if necessary. -->
+        <if>
+          <not>
+            <isset property="dbdump.path"/>
+          </not>
+          <then>
+            <property name="dbdump.path" value="/tmp/dump.sql"/>
+          </then>
+        </if>
+        <!-- Restore the database. -->
+        <phingcall description="restore database" target="update:database:restore"/>
+      </then>
+    </if>
+    <if>
+      <!-- Sync database. -->
+      <equals arg1="${build_db_from}" arg2="sync" casesensitive="true"/>
+      <then description="Sync the database with a remote instance.">
+        <phingcall description="restore database" target="update:database:sync"/>
+      </then>
+    </if>
   </target>
 
   <!-- Define the Drupal setup task -->
