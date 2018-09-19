@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * bos_component_cabinet.features.inc

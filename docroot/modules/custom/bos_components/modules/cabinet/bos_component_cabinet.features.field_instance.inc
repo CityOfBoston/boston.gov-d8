@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * bos_component_cabinet.features.field_instance.inc
@@ -295,7 +296,7 @@ function bos_component_cabinet_field_default_field_instances() {
   t('Description');
   t('Enter a description for this Cabinet.');
   t('Enter any Departments, Boards or Agencies for this Cabinet.');
-  t('Enter the name of this Cabinet\'s chief.');
+  t("Enter the name of this Cabinet's chief.");
   t('Enter the name of this Cabinet.');
   t('Short Title');
   t('The short title is used to populate the in-page navigation. Please keep it short: one to three words is ideal. Example can be found on boston.gov/winter/.');
