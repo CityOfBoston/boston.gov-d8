@@ -26,34 +26,46 @@ else
 fi
 
 # Implement the Drupa database according to the methodology indicated by ${BOSTON_DATABASE_MODE}.
-if [ -z "${BOSTON_DATABASE_MODE}" ]; then
-    BOSTON_DATABASE_MODE=auto
-fi
-if [ "${BOSTON_DATABASE_MODE}" = "restore" ];then
-    # Get any previously saved database dump.
-    ./scripts/doit/doit stash-db fetch
-    if [ -f /tmp/dump.sql ]; then
-      # If there is a previous dump, then use it rather than from a sync from staging.
-      phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
-    else
-      BOSTON_DATABASE_MODE=sync
+if [ -z "${BOSTON_BUILD}" ]; then
+    if [ -z "${BOSTON_DATABASE_MODE}" ]; then
+        BOSTON_DATABASE_MODE=auto
+    fi
+    if [ !"${BOSTON_DATABASE_MODE}" = "none" ];then
+        if [ "${BOSTON_DATABASE_MODE}" = "restore" ];then
+            # Get any previously saved database dump.
+            ./scripts/doit/doit stash-db fetch
+            if [ -f /tmp/dump.sql ]; then
+              # If there is a previous dump, then use it rather than from a sync from staging.
+              phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
+            else
+              BOSTON_DATABASE_MODE=sync
+            fi
+        fi
+        if [ "${BOSTON_DATABASE_MODE}" = "build" ];then
+              phing -f /app/build.xml -Dproject.build_db_from=build setup:docker:drupal-terraform
+        elif [ "${BOSTON_DATABASE_MODE}" = "sync" ];then
+              phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
+        elif [ "${BOSTON_DATABASE_MODE}" = "auto" ]; then
+            # Get any previously saved database dump.
+            /app/scripts/doit/doit stash-db fetch
+            if [ -f /tmp/dump.sql ]; then
+              # If there is a previous dump, then use it rather than from a sync from staging.
+              phing -f /app/build.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
+            else
+              # The default, which pulls from staging.
+              phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
+            fi
+        fi
     fi
 fi
-if [ "${BOSTON_DATABASE_MODE}" = "build" ];then
-      phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=build setup:docker:drupal-terraform
-elif [ "${BOSTON_DATABASE_MODE}" = "sync" ];then
-      phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
-elif [ "${BOSTON_DATABASE_MODE}" = "auto" ]; then
-    # Get any previously saved database dump.
-    ./scripts/doit/doit stash-db fetch
-    if [ -f /tmp/dump.sql ]; then
-      # If there is a previous dump, then use it rather than from a sync from staging.
-      phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
-    else
-      # The default, which pulls from staging.
-      phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
-    fi
-fi
+
+# Drush mapping - wont be there until build is finished ...
+ln -sf /app/vendor/drush/drush/drush /usr/local/bin/
+chmod a+rx /usr/local/bin/drush
+
+# Drush mapping - wont be there until build is finished ...
+ln -sf /app/vendor/phing/phing/bin/phing /usr/local/bin/
+chmod a+rx /usr/local/bin/phing
 
 # Necessary so that Apache can write proxied assets to the filesystem.
 chown -R www-data /app/docroot/sites/default/files
