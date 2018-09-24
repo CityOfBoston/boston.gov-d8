@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.test_component_page.body
-    - field.field.node.test_component_page.field_test_paragraph
+    - field.field.node.test_component_page.field_components
     - node.type.test_component_page
   module:
     - content_moderation
@@ -34,7 +34,7 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_test_paragraph:
+  field_components:
     type: paragraphs
     weight: 2
     settings:

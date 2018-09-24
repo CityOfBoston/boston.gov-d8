@@ -5,7 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.test_component_page.body
-    - field.field.node.test_component_page.field_test_paragraph
+    - field.field.node.test_component_page.field_components
     - node.type.test_component_page
   module:
     - text
@@ -27,6 +27,6 @@ content:
     weight: 100
     region: content
 hidden:
-  field_test_paragraph: true
+  field_components: true
   langcode: true
   published_at: true

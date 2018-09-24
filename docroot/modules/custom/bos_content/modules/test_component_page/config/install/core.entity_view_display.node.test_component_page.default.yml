@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.test_component_page.body
-    - field.field.node.test_component_page.field_test_paragraph
+    - field.field.node.test_component_page.field_components
     - node.type.test_component_page
   module:
     - entity_reference_revisions
@@ -22,7 +22,7 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_test_paragraph:
+  field_components:
     type: entity_reference_revisions_entity_view
     weight: 102
     label: hidden
