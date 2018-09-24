@@ -46,4 +46,5 @@ function test_component_page_preprocess_field(&$variables) {
   if ($variables["element"]['#bundle'] == 'test_component_page' && $variables["field_type"] == "entity_reference_revisions") {
     $variables["label_hidden"] = TRUE;
   }
+  $variables['#attached']['library'][] = "bos_components/field.style";
 }

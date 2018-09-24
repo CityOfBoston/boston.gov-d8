@@ -564,3 +564,18 @@ function _bos_theme_default_variables(array &$variables) {
       ->getCurrentRequest()->attributes->get('exception')->getStatusCode();
   }
 }
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * This overrides the fences default field.html.twig template with our own.
+ * We do this because the fences class naming does not align with the legacy
+ * classes we have defined in patterns library.
+ * Allowing fences to control field class naming would require overriding each
+ * field in the paragraphs defined in this webite, or redefining the boston
+ * templates defined in the patterns library.
+ */
+function  bos_theme_theme_registry_alter(&$theme_registry) {
+  $module_path = drupal_get_path('theme', 'bos_theme'). "/templates/field";
+  $theme_registry['field']['path'] = $module_path;
+}
