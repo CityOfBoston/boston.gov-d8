@@ -90,6 +90,7 @@ chmod 777 /app/docroot/sites/default/settings.local.php
 
 # Necessary to allow ssh activities
 chmod 400 /app/.ssh/id_rsa
+chmod 400 /home/digital/.ssh/id_rsa
 
 # Since we’re overriding the default Apache/PHP container’s command, we run this
 # ourselves.
