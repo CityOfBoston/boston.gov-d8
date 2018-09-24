@@ -9,6 +9,23 @@ dependencies:
     - paragraphs.paragraphs_type.sidebar_item_w_icon
   module:
     - text
+    - field_group
+third_party_settings:
+  field_group:
+    group_sidebar_item_w_icon:
+      children:
+        - field_sidebar_icon
+        - field_sidebar_text
+        - field_title
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Sidebar Item w/ Icon'
 id: paragraph.sidebar_item_w_icon.default
 targetEntityType: paragraph
 bundle: sidebar_item_w_icon

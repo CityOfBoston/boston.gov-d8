@@ -8,6 +8,22 @@ dependencies:
     - paragraphs.paragraphs_type.sidebar_item
   module:
     - text
+    - field_group
+third_party_settings:
+  field_group:
+    group_sidebar_item:
+      children:
+      - field_sidebar_text
+      - field_title
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Sidebar Item'
 id: paragraph.sidebar_item.default
 targetEntityType: paragraph
 bundle: sidebar_item

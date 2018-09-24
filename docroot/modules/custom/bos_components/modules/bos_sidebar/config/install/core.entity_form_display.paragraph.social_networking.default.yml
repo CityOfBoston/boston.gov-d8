@@ -8,6 +8,22 @@ dependencies:
     - paragraphs.paragraphs_type.social_networking
   module:
     - link
+    - field_group
+third_party_settings:
+  field_group:
+    group_social_network_info:
+      children:
+      - field_external_link
+      - field_social_icon
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Social Networking Info'
 id: paragraph.social_networking.default
 targetEntityType: paragraph
 bundle: social_networking

@@ -7,6 +7,21 @@ dependencies:
     - paragraphs.paragraphs_type.social_media_links
   module:
     - paragraphs
+    - field_group
+third_party_settings:
+  field_group:
+    group_social_media_links:
+      children:
+      - field_social_media_link
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Social Media Links'
 id: paragraph.social_media_links.default
 targetEntityType: paragraph
 bundle: social_media_links
