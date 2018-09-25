@@ -1,0 +1,58 @@
+uuid: 0dba73c8-f861-4dfc-b3f5-4ae6252878ac
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.test_component_page
+    - paragraphs.paragraphs_type.bid
+    - paragraphs.paragraphs_type.bos311
+    - paragraphs.paragraphs_type.sidebar_item
+    - paragraphs.paragraphs_type.sidebar_item_w_icon
+    - paragraphs.paragraphs_type.social_media_links
+    - paragraphs.paragraphs_type.social_networking
+  module:
+    - entity_reference_revisions
+_core:
+  default_config_hash: zI-Xz6kqoFcJ0_Tdj54axwixZJAI88-alnpERRJOCNg
+id: node.test_component_page.field_components
+field_name: field_components
+entity_type: node
+bundle: test_component_page
+label: 'Paragraph Components'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      sidebar_item: sidebar_item
+      sidebar_item_w_icon: sidebar_item_w_icon
+      social_media_links: social_media_links
+      social_networking: social_networking
+      bid: bid
+      bos311: bos311
+    target_bundles_drag_drop:
+      sidebar_item:
+        enabled: true
+        weight: 9
+      sidebar_item_w_icon:
+        enabled: true
+        weight: 10
+      social_media_links:
+        enabled: true
+        weight: 11
+      social_networking:
+        enabled: true
+        weight: 12
+      bid:
+        enabled: true
+        weight: 74
+      bos311:
+        enabled: true
+        weight: 75
+field_type: entity_reference_revisions
