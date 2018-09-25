@@ -66,7 +66,9 @@ ENV LANDO_INFO '{"appserver":{"type":"php","version":"7.1","hostnames":["appserv
 # Set and enable the webconsole home directory which is not created by default.
 # This folder is required to be set in HOME envar (see next) which is in turn required by
 # Drush bootstrap.  (NOTE: this home folder is also set in the webconsole.php file).
-RUN mkdir /home/digital && chmod 777 /home/digital && cp -rf /app/.ssh /home/digital/ && chown -Rf www-data:www-data /home/digital
+RUN mkdir /home/digital && chmod 777 /home/digital && \
+		rm -f /app/.ssh/known_hosts && rm -f /app/.ssh/config && \
+		cp -rf /app/.ssh /home/digital/ && chown -Rf www-data:www-data /home/digital
 ENV HOME /home/digital
 
 # Add HOME environment variable manually to apache environment variables as apache ignores the
