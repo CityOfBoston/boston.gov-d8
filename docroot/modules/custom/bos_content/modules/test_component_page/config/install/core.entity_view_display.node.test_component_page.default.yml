@@ -5,11 +5,14 @@ dependencies:
   config:
     - field.field.node.test_component_page.body
     - field.field.node.test_component_page.field_components
+    - field.field.node.test_component_page.field_sidebar_components
     - node.type.test_component_page
   module:
     - entity_reference_revisions
     - text
     - user
+_core:
+  default_config_hash: i6-1nKw4U9y4yLn0OeUE15vGKIvVubPU3dHmDGDY-QQ
 id: node.test_component_page.default
 targetEntityType: node
 bundle: test_component_page
@@ -30,6 +33,15 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    weight: 103
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
     region: content
   links:
     weight: 100

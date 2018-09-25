@@ -5,15 +5,17 @@ dependencies:
   config:
     - field.field.node.test_component_page.body
     - field.field.node.test_component_page.field_components
+    - field.field.node.test_component_page.field_sidebar_components
     - node.type.test_component_page
   module:
     - content_moderation
+    - entity_reference_revisions
     - paragraphs
     - path
     - publication_date
     - text
 _core:
-  default_config_hash: sfOD6jhbsQJylyKGmBCZxUsfIkf-NAhkt70RhxQ8OfA
+  default_config_hash: 2j6ZI0MOaL6VTpC941E2WREICW2cR1QzMD0esBwJR84
 id: node.test_component_page.default
 targetEntityType: node
 bundle: test_component_page
@@ -51,6 +53,15 @@ content:
         collapse_edit_all: collapse_edit_all
         add_above: '0'
     third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    weight: 101
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_autocomplete
     region: content
   langcode:
     type: language_select

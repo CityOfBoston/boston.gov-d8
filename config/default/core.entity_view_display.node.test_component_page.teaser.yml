@@ -5,13 +5,13 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.test_component_page.body
-    - field.field.node.test_component_page.field_test_paragraph
+    - field.field.node.test_component_page.field_components
     - node.type.test_component_page
   module:
     - text
     - user
 _core:
-  default_config_hash: eaYtjJtLkqdv1FPS03zTAYPCEqdIdlLdbdXQfMccrEw
+  default_config_hash: jwop0-CKBzYjSfiinUlGDBYAiF2aH6LTFKhkbEMl2Zk
 id: node.test_component_page.teaser
 targetEntityType: node
 bundle: test_component_page
@@ -29,6 +29,6 @@ content:
     weight: 100
     region: content
 hidden:
-  field_test_paragraph: true
+  field_components: true
   langcode: true
   published_at: true
