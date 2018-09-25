@@ -1,0 +1,312 @@
+[00;36mBuildfile: /app/build.xml[0m
+[00;32m
+bostongov > migrate:field:content:
+[0m
+[00;36m     [echo] Migrates field content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_file,d7_file_private --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_0p1hla --database=drupal --host=database --port=3306 --silent  < /tmp/drush_vppKLN > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_0H78xT --database=drupal --host=database --port=3306 --silent  < /tmp/drush_EJQGWw > /dev/null
+ [notice] Processed 35 items (0 created, 0 updated, 35 failed, 0 ignored) - done with 'd7_file_private'
+
+In MigrateToolsCommands.php line 697:
+                                          
+  [Exception]                             
+  d7_file_private Migration - 35 failed.  
+                                          
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:field:custom:content:
+[0m
+[00;36m     [echo] Migrates custom field content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import --group=bos_fields --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_Jb9NTI --database=drupal --host=database --port=3306 --silent  < /tmp/drush_Xiwdth > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_SWtiNB --database=drupal --host=database --port=3306 --silent  < /tmp/drush_Rr5wla > /dev/null
+ [error]  No migrations found. 
+[00;32m
+bostongov > migrate:user:content:
+[0m
+[00;36m     [echo] Migrates user accounts into site.[0m
+[00;36m     [exec] Executing command: /app/vendor/bin/drush eval '\Drupal\Core\Database\Database::getConnection("default", "migrate")->update("users")->fields(["init" => "anon"])->condition("uid", 101, "=")->execute();' 2>&1[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_user,d7_authmap --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_kOrjWv --database=drupal --host=database --port=3306 --silent  < /tmp/drush_1V6rgq > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_V0kelH --database=drupal --host=database --port=3306 --silent  < /tmp/drush_YNOKDB > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_user_role'
+ [error]  Drupal\Core\Database\IntegrityConstraintViolationException: SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'ANONYMOUS-en' for key 'user__name': INSERT INTO {users_field_data} (uid, langcode, preferred_langcode, preferred_admin_langcode, name, pass, mail, timezone, status, created, changed, access, login, init, default_langcode) VALUES (:db_insert_placeholder_0, :db_insert_placeholder_1, :db_insert_placeholder_2, :db_insert_placeholder_3, :db_insert_placeholder_4, :db_insert_placeholder_5, :db_insert_placeholder_6, :db_insert_placeholder_7, :db_insert_placeholder_8, :db_insert_placeholder_9, :db_insert_placeholder_10, :db_insert_placeholder_11, :db_insert_placeholder_12, :db_insert_placeholder_13, :db_insert_placeholder_14); Array
+(
+    [:db_insert_placeholder_0] => 101
+    [:db_insert_placeholder_1] => en
+    [:db_insert_placeholder_2] => en
+    [:db_insert_placeholder_3] => en
+    [:db_insert_placeholder_4] => ANONYMOUS
+    [:db_insert_placeholder_5] => $S$Dl9Ifn4OrN9hdCl9zblURY9KtLk50XQudUb.66I4vliXunH6kGr9
+    [:db_insert_placeholder_6] => fatima.khalid@boston.gov
+    [:db_insert_placeholder_7] => 
+    [:db_insert_placeholder_8] => 0
+    [:db_insert_placeholder_9] => 1467727867
+    [:db_insert_placeholder_10] => 1537402889
+    [:db_insert_placeholder_11] => 1536846155
+    [:db_insert_placeholder_12] => 1536846155
+    [:db_insert_placeholder_13] => anon
+    [:db_insert_placeholder_14] => 1
+)
+ in Drupal\Core\Database\Connection->handleQueryException() (line 683 of /app/docroot/core/lib/Drupal/Core/Database/Connection.php). 
+ [error]  SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'ANONYMOUS-en' for key 'user__name': INSERT INTO {users_field_data} (uid, langcode, preferred_langcode, preferred_admin_langcode, name, pass, mail, timezone, status, created, changed, access, login, init, default_langcode) VALUES (:db_insert_placeholder_0, :db_insert_placeholder_1, :db_insert_placeholder_2, :db_insert_placeholder_3, :db_insert_placeholder_4, :db_insert_placeholder_5, :db_insert_placeholder_6, :db_insert_placeholder_7, :db_insert_placeholder_8, :db_insert_placeholder_9, :db_insert_placeholder_10, :db_insert_placeholder_11, :db_insert_placeholder_12, :db_insert_placeholder_13, :db_insert_placeholder_14); Array
+(
+    [:db_insert_placeholder_0] => 101
+    [:db_insert_placeholder_1] => en
+    [:db_insert_placeholder_2] => en
+    [:db_insert_placeholder_3] => en
+    [:db_insert_placeholder_4] => ANONYMOUS
+    [:db_insert_placeholder_5] => $S$Dl9Ifn4OrN9hdCl9zblURY9KtLk50XQudUb.66I4vliXunH6kGr9
+    [:db_insert_placeholder_6] => fatima.khalid@boston.gov
+    [:db_insert_placeholder_7] => 
+    [:db_insert_placeholder_8] => 0
+    [:db_insert_placeholder_9] => 1467727867
+    [:db_insert_placeholder_10] => 1537402889
+    [:db_insert_placeholder_11] => 1536846155
+    [:db_insert_placeholder_12] => 1536846155
+    [:db_insert_placeholder_13] => anon
+    [:db_insert_placeholder_14] => 1
+)
+ (/app/docroot/core/lib/Drupal/Core/Entity/Sql/SqlContentEntityStorage.php:783) 
+ [notice] Processed 421 items (420 created, 0 updated, 1 failed, 0 ignored) - done with 'd7_user'
+
+In MigrateToolsCommands.php line 697:
+                                 
+  [Exception]                    
+  d7_user Migration - 1 failed.  
+                                 
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:taxonomy:content:
+[0m
+[00;36m     [echo] Migrates taxonomy content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_taxonomy_vocabulary,d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:maps_basemap,d7_taxonomy_term:maps_esri_feed,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:type_of_content,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_ZAqB0B --database=drupal --host=database --port=3306 --silent  < /tmp/drush_GoafCW > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_l7koTW --database=drupal --host=database --port=3306 --silent  < /tmp/drush_rviXrh > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_vocabulary'
+ [notice] Processed 62 items (62 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:commissions'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:procurement_footer'
+ [notice] Processed 5 items (5 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:procurement_type'
+ [notice] Processed 9 items (9 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:massachusetts_general_law'
+ [notice] Processed 2 items (2 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:bid_type'
+ [notice] Processed 2 items (2 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:bid_offering'
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:maps_basemap'
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:maps_esri_feed'
+ [notice] Processed 65 items (65 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:newsletters'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:public_notice_type'
+ [notice] Processed 15 items (15 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:holidays'
+ [notice] Processed 98 items (98 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:311_request'
+ [notice] Processed 33 items (33 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:type_of_content'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:topic_category'
+ [notice] Processed 20 items (20 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:icons'
+ [notice] Processed 32 items (32 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:features'
+ [notice] Processed 8 items (8 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:place_type'
+ [notice] Processed 12 items (12 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:program_type'
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:profile_type'
+ [notice] Processed 2 items (2 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:political_party'
+ [notice] Processed 23 items (23 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:neighborhoods'
+ [notice] Processed 14 items (14 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:event_type'
+ [notice] Processed 62 items (62 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:news_tags'
+ [notice] Processed 74 items (74 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_term:contact'
+[00;32m
+bostongov > migrate:menu:content:
+[0m
+[00;36m     [echo] Migrates menu content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_menu_links --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_zsuXqr --database=drupal --host=database --port=3306 --silent  < /tmp/drush_Q6VOV5 > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_1Pvtt8 --database=drupal --host=database --port=3306 --silent  < /tmp/drush_Cm6bXM > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_menu'
+ [notice] Processed 47 items (11 created, 0 updated, 31 failed, 5 ignored) - done with 'd7_menu_links'
+
+In MigrateToolsCommands.php line 697:
+                                        
+  [Exception]                           
+  d7_menu_links Migration - 31 failed.  
+                                        
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:paragraphs:content:
+[0m
+[00;36m     [echo] Migrates paragraph content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import --group=bos_paragraphs --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_CoUXqV --database=drupal --host=database --port=3306 --silent  < /tmp/drush_oCLtav > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_TsJa0L --database=drupal --host=database --port=3306 --silent  < /tmp/drush_xnZxIl > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'paragraph__bid'
+ [notice] Processed 27 items (27 created, 0 updated, 0 failed, 0 ignored) - done with 'paragraph__bos311'
+[00;32m
+bostongov > migrate:nodes:content:
+[0m
+[00;36m     [echo] Migrates node content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_node:advpoll,d7_node:article,d7_node:change,d7_node:department_profile,d7_node:emergency_alert,d7_node:event,d7_node:how_to,d7_node:landing_page,d7_node:listing_page,d7_node:metrolist_affordable_housing,d7_node:person_profile,d7_node:place_profile,d7_node:post,d7_node:procurement_advertisement,d7_node:program_initiative_profile,d7_node:public_notice,d7_node:script_page,d7_node:site_alert,d7_node:status_item,d7_node:tabbed_content,d7_node:topic_page,d7_node:transaction,node_translation_menu_links,d7_vote --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_ogemH1 --database=drupal --host=database --port=3306 --silent  < /tmp/drush_ctljmM > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_VKALpw --database=drupal --host=database --port=3306 --silent  < /tmp/drush_LGNx3g > /dev/null
+ [notice] Processed 377 items (377 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_vote'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node_type'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_user_role'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_user'
+ [notice] Processed 8 items (8 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:advpoll'
+ [notice] Processed 712 items (712 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:article'
+ [notice] Processed 28 items (28 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:change'
+ [notice] Processed 76 items (76 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:department_profile'
+ [notice] Processed 4 items (4 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:emergency_alert'
+ [notice] Processed 1543 items (1543 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:event'
+ [notice] Processed 168 items (168 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:how_to'
+ [notice] Processed 6 items (6 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:landing_page'
+ [notice] Processed 14 items (14 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:listing_page'
+ [notice] Processed 554 items (554 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:metrolist_affordable_housing'
+ [notice] Processed 379 items (379 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:person_profile'
+ [notice] Processed 101 items (101 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:place_profile'
+ [notice] Processed 2663 items (2663 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:post'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:procurement_advertisement'
+ [notice] Processed 235 items (235 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:program_initiative_profile'
+ [notice] Processed 2503 items (2503 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:public_notice'
+ [notice] Processed 144 items (144 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:script_page'
+ [notice] Processed 7 items (7 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:site_alert'
+ [notice] Processed 38 items (38 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:status_item'
+ [notice] Processed 4 items (4 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:tabbed_content'
+ [notice] Processed 21 items (21 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:topic_page'
+ [notice] Processed 46 items (46 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:transaction'
+ [notice] Processed 47 items (0 created, 0 updated, 0 failed, 47 ignored) - done with 'node_translation_menu_links'
+[00;32m
+bostongov > migrate:blocks:content:
+[0m
+[00;36m     [echo] Migrates block content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_block --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_a181Kc --database=drupal --host=database --port=3306 --silent  < /tmp/drush_Abcd8U > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_Wugz4L --database=drupal --host=database --port=3306 --silent  < /tmp/drush_YQ4Lpu > /dev/null
+ [warning] The "search_form_block" was not found
+ [warning] The "search_form_block" was not found
+ [notice] Processed 321 items (13 created, 0 updated, 0 failed, 308 ignored) - done with 'd7_block'
+[00;32m
+bostongov > migrate:comments:content:
+[0m
+[00;36m     [echo] Migrates comments content into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_comment --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_U8tjtu --database=drupal --host=database --port=3306 --silent  < /tmp/drush_QH8Jay > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_S2dD7m --database=drupal --host=database --port=3306 --silent  < /tmp/drush_czfsNq > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_comment_type'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_user_role'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_user'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node_type'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:advpoll'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:article'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:change'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:department_profile'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:emergency_alert'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:event'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:how_to'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:landing_page'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:listing_page'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:metrolist_affordable_housing'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:person_profile'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:place_profile'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:post'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:procurement_advertisement'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:program_initiative_profile'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:public_notice'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:script_page'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:site_alert'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:status_item'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:tabbed_content'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:topic_page'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node:transaction'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_comment'
+[00;32m
+bostongov > migrate:all:content:
+[0m
+[00;32m
+BUILD FINISHED
+
+Total time: 189 minutes  50.48 seconds
+[0m

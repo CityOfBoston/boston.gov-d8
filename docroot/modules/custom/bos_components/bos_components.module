@@ -13,7 +13,12 @@
  * Implements hook_theme().
  */
 function bos_components_theme() {
-  return [];
+  $theme['field__field_components'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'paragraphs-items--field-components'
+  ];
+  return $theme;
 }
 
 /**
