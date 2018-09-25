@@ -79,7 +79,10 @@ function test_component_page_preprocess_field__field_components(&$variables) {
  */
 function test_component_page_theme_suggestions_region_alter(array &$suggestions, array $variables) {
   if ($variables["elements"]["#region"] == "content") {
-    $suggestions[] = "region__no_wrapper";
+    $active_theme = \Drupal::service('theme.manager')->getActiveTheme();
+    if ($active_theme->getName() == "bos_theme") {
+      $suggestions[] = "region__no_wrapper";
+    }
   }
 }
 
