@@ -7,7 +7,6 @@ dependencies:
     - node.type.test_component_page
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
-    - paragraphs.paragraphs_type.sidebar_item_w_icon
   module:
     - entity_reference_revisions
 _core:
@@ -27,7 +26,6 @@ settings:
   handler_settings:
     negate: 0
     target_bundles:
-      sidebar_item_w_icon: sidebar_item_w_icon
       bid: bid
       bos311: bos311
     target_bundles_drag_drop:
@@ -35,8 +33,8 @@ settings:
         weight: 9
         enabled: false
       sidebar_item_w_icon:
-        enabled: true
         weight: 10
+        enabled: false
       social_media_links:
         weight: 11
         enabled: false
