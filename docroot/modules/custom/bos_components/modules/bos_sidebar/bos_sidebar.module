@@ -16,5 +16,70 @@
  * Implements hook_theme().
  */
 function bos_sidebar_theme() {
-  return [];
+  $theme['field__field_sidebar_components'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+    'template' => 'field--field-sidebar-components'
+  ];
+  $theme['paragraph__sidebar_item'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+    'template' => 'paragraph--sidebar-item'
+  ];
+  $theme['paragraph__sidebar_item_w_icon'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+    'template' => 'paragraph--sidebar-item-w-icon'
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_sidebar_preprocess_paragraph(&$variables) {
+
+  /**
+   * Add paragraph names (to be processed by this function) to this array.
+   */
+  $eligible = ["sidebar_item", "sidebar_item_w_icon"];
+  if (isset($variables["paragraph"]) && !in_array($variables["paragraph"]->getType(), $eligible)) {
+    return;
+  }
+
+  $variables["use_left"] = FALSE;
+  $variables["left_content"] = NULL;
+
+  /**
+   * This array can be overwritten by various paragraph types in the switch
+   * below in order to pass specific class vars to the twig.
+   */
+  $variables["classes"] = [
+    'detail' => [],
+    'icon' => [],
+    'label' => [],
+    'body' => [],
+  ];
+
+  // This switch is used mainly to set custom classes.
+  switch ($variables["paragraph"]->getType()) {
+    case "sidebar_item":
+      break;
+    case "sidebar_item_w_icon":
+      break;
+    default:
+  }
+
+  /**
+   * Now set the left gutter value dependent on the content of the paragraph.
+   */
+  if (!empty($variables["content"]["field_sidebar_icon"])) {
+    $variables["left_content"] = '<div class="icon ' . $variables["paragraph"]->get('field_sidebar_icon')->value . '"></div>';
+  }
+  elseif (in_array('detail-item--secondary', $variables["classes"]["detail"])) {
+    $variables["left_content"] = '<div>' . $variables["classes"]["icon"] . '</div>';
+  }
+  elseif (isset($variables["image"])) {
+    $variables["left_content"] = '<div>' . $variables["image"] . '</div>';
+  }
 }

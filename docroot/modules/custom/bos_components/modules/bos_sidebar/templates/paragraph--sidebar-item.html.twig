@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * @file
  * Default theme implementation for a single paragraph item.
@@ -23,19 +23,27 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
-$detail_item_variables = array(
-  'label' => NULL,
-  'body' => NULL,
-  'classes' => array(
-    'icon' => render($content['field_sidebar_icon']),
-  ),
-);
-if (isset($content['field_title'])) {
-  $detail_item_variables['label'] = render($content['field_title']);
-}
-if (isset($content['field_sidebar_text'])) {
-  $detail_item_variables['body'] = render($content['field_sidebar_text']);
-}
-print theme('detail_item', $detail_item_variables);
-?>
+ */#}
+<div class="detail-item {{ classes.detail }}"{{ attributes }}>
+   {% if left_content %}
+      <div class="detail-item__left">
+         {{ left_content }}
+      </div>
+   {% endif %}
+   <div class="detail-item__content">
+      {#{% if label and !in_array('detail-item--secondary', $detail_classes)) %}#}
+      <div class="detail-item__label {{ classes.label }}">
+         {{ content.field_title }}
+      </div>
+      {#{%  endif %}#}
+      {% if content.field_sidebar_text %}
+         <div class="detail-item__body {{ classes.body }}">
+            {% if phone  %}
+               <a href="tel:{{ content.field_sidebar_text }}">{{ content.field_sidebar_text }}</a>
+            {% else %}
+               {{ content.field_sidebar_text }}
+            {% endif %}
+         </div>
+      {% endif %}
+   </div>
+</div>

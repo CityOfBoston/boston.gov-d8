@@ -18,16 +18,6 @@ function bos_components_theme() {
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--field-components'
   ];
-  $theme['field__field_sidebar_components'] = [
-    'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/templates',
-    'template' => 'field--field-sidebar-components'
-  ];
-  $theme['paragraph__sidebar_item'] = [
-    'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/templates',
-    'template' => 'paragraph--sidebar-item'
-  ];
   return $theme;
 }
 
@@ -59,30 +49,30 @@ function bos_components_preprocess_field(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_components_preprocess_paragraph(&$variables) {
-  if($variables["paragraph"]->getType() != "sidebar_item") {
-    return;
-  }
-  $variables['detail_item_variables'] = [
-    '#type' => 'detail_item',
-    '#theme' => 'detail_item',
-    '#label' => NULL,
-    '#body' => NULL,
-  ];
-  if (isset($variables["paragraph"])) {
-//    if (isset($variables['content']['field_title'])) {
-//      $variables['content']['field_title']['#theme'] = "detail_item";
-//      $variables['detail_item_variables']['#label'] = $variables['content']['field_title'];
+//  if($variables["paragraph"]->getType() != "sidebar_item") {
+//    return;
+//  }
+//  $variables['detail_item_variables'] = [
+//    '#type' => 'detail_item',
+//    '#theme' => 'detail_item',
+//    '#label' => NULL,
+//    '#body' => NULL,
+//  ];
+//  if (isset($variables["paragraph"])) {
+////    if (isset($variables['content']['field_title'])) {
+////      $variables['content']['field_title']['#theme'] = "detail_item";
+////      $variables['detail_item_variables']['#label'] = $variables['content']['field_title'];
+////    }
+//    if (is_object($variables["paragraph"]->get('field_title'))) {
+//      $variables['detail_item_variables']['#label'] = $variables["paragraph"]->get('field_title')
+//        ->getValue()[0]['value'];
 //    }
-    if (is_object($variables["paragraph"]->get('field_title'))) {
-      $variables['detail_item_variables']['#label'] = $variables["paragraph"]->get('field_title')
-        ->getValue()[0]['value'];
-    }
-    if (is_object($variables["paragraph"]->get('field_sidebar_text'))) {
-      $variables['detail_item_variables']['#body'] = str_replace("\r\n", "", $variables["paragraph"]->get('field_sidebar_text')
-        ->getValue()[0]['value']);
-    }
-  }
-  $variables['content']['field_sidebar_text']['#theme'] = "detail_item";
+//    if (is_object($variables["paragraph"]->get('field_sidebar_text'))) {
+//      $variables['detail_item_variables']['#body'] = str_replace("\r\n", "", $variables["paragraph"]->get('field_sidebar_text')
+//        ->getValue()[0]['value']);
+//    }
+//  }
+//  $variables['content']['field_sidebar_text']['#theme'] = "detail_item";
 }
 
 /**
