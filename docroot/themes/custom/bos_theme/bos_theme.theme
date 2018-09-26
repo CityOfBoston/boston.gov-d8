@@ -27,20 +27,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'templates/snippets/page-contacts',
     ],
-//    'detail_item' => [
-//      'variables' => [
-//        'label' => NULL,
-//        'body' => NULL,
-//        'image' => NULL,
-//        'classes' => [
-//          'detail' => '',
-//          'icon' => '',
-//          'label' => '',
-//          'body' => '',
-//        ],
-//      ],
-//      'template' => 'snippets/detail-item',
-//    ],
     'grid_card' => [
       'variables' => [
         'title' => NULL,
@@ -99,12 +85,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       ],
       'template' => 'templates/snippets/profile-address',
     ],
-//    'node' => [
-//      'variables' => [
-//        'test' => null,
-//      ],
-//      'template' => 'templates/content/node',
-//    ]
   ];
 }
 
@@ -139,7 +119,7 @@ function bos_theme_process_maintenance_page(array &$variables, $hook) {
 }
 
 /**
- * Implements theme_preprocess();
+ * Implements theme_preprocess().
  *
  * Returns a standard set of variables needed by major page elements.
  *
@@ -147,7 +127,7 @@ function bos_theme_process_maintenance_page(array &$variables, $hook) {
  *   The variables to be passed to the twig template.
  */
 function bos_theme_preprocess(array &$variables, $hook) {
-  if (in_array($hook, ['html','page','node'])) {
+  if (in_array($hook, ['html', 'page', 'node'])) {
     $variables['bos_theme'] = [
       'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
       'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
@@ -513,7 +493,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
 
     // Add pubdate to submitted variable.
-    // TODO: display_submitted not set
+    // TODO: display_submitted not set.
     if (!empty($variables['display_submitted'])) {
       $variables['submitted'] = t('Submitted by !username on !datetime', [
         '!username' => isset($variables['name']) ? $variables['name'] : '',
@@ -602,8 +582,8 @@ function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook
  * field in the paragraphs defined in this webite, or redefining the boston
  * templates defined in the patterns library.
  */
-function  bos_theme_theme_registry_alter(&$theme_registry) {
-  $module_path = drupal_get_path('theme', 'bos_theme'). "/templates/field";
+function bos_theme_theme_registry_alter(&$theme_registry) {
+  $module_path = drupal_get_path('theme', 'bos_theme') . "/templates/field";
   $theme_registry['field']['path'] = $module_path;
 }
 
@@ -612,22 +592,23 @@ function  bos_theme_theme_registry_alter(&$theme_registry) {
  */
 
 /**
- * Helper to find the svg images from the correct /dist/img/ in the theme or base_themes.
+ * Helper to find svg img from the correct /dist/img/ in theme or base_themes.
  *
- * @param $theme_info
- * @param $image
+ * @param string $image
+ *   The image filename to use.
  *
  * @return bool|string
+ *   Returns a string containing the svg image definition.
  */
 function _bos_theme_findsvg($image) {
   $theme_info = \Drupal::service('theme.manager')->getActiveTheme();
   $svg = "";
-  if( file_exists(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
+  if (file_exists(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
     $svg = file_get_contents(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image);
   }
   else {
-    foreach($theme_info->getBaseThemes() as $base_theme) {
-      if( file_exists(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image)) {
+    foreach ($theme_info->getBaseThemes() as $base_theme) {
+      if (file_exists(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image)) {
         $svg = file_get_contents(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image);
         break;
       }

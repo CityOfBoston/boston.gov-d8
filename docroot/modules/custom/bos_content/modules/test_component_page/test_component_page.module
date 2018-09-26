@@ -18,12 +18,12 @@ function test_component_page_theme() {
     ],
     'field__node__body__test_component_page' => [
       'base_hook' => 'field',
-      'path' => 'modules/custom/bos_content/modules/test_component_page/templates'
+      'path' => 'modules/custom/bos_content/modules/test_component_page/templates',
     ],
     'region__no_wrapper' => [
       'base_hook' => 'region',
-      'path' => 'themes/custom/bos_theme/templates/layout'
-    ]
+      'path' => 'themes/custom/bos_theme/templates/layout',
+    ],
   ];
 }
 
@@ -31,7 +31,7 @@ function test_component_page_theme() {
  * Implements hook_preprocess_HOOK().
  */
 function test_component_page_preprocess_page(&$variables) {
-  $variables['hide_page_title'] = true;
+  $variables['hide_page_title'] = TRUE;
 }
 
 /**

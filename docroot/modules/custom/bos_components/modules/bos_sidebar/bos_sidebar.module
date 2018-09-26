@@ -6,45 +6,38 @@
  */
 
 /**
- * Created by PhpStorm.
- * User: david
- * Date: 9/20/18
- * Time: 9:01 AM
- */
-
-/**
  * Implements hook_theme().
  */
 function bos_sidebar_theme() {
   $theme['field__field_sidebar_components'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'field--field-sidebar-components'
+    'template' => 'field--field-sidebar-components',
   ];
   $theme['field__field_social_media_link'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'field--field-social-media-link'
+    'template' => 'field--field-social-media-link',
   ];
   $theme['paragraph__sidebar_item'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--sidebar-item'
+    'template' => 'paragraph--sidebar-item',
   ];
   $theme['paragraph__sidebar_item_w_icon'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--sidebar-item-w-icon'
+    'template' => 'paragraph--sidebar-item-w-icon',
   ];
   $theme['paragraph__social_media_links'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--social-media-links'
+    'template' => 'paragraph--social-media-links',
   ];
   $theme['paragraph__social_networking'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--social-networking'
+    'template' => 'paragraph--social-networking',
   ];
   return $theme;
 }
@@ -54,10 +47,15 @@ function bos_sidebar_theme() {
  */
 function bos_sidebar_preprocess_paragraph(&$variables) {
 
-  /**
+  /*
    * Add paragraph names (to be processed by this function) to this array.
    */
-  $eligible = ["sidebar_item", "sidebar_item_w_icon", "social_media_links", "social_networking"];
+  $eligible = [
+    "sidebar_item",
+    "sidebar_item_w_icon",
+    "social_media_links",
+    "social_networking",
+  ];
   if (isset($variables["paragraph"]) && !in_array($variables["paragraph"]->getType(), $eligible)) {
     return;
   }
@@ -65,7 +63,7 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
   $variables["use_left"] = FALSE;
   $variables["left_content"] = NULL;
 
-  /**
+  /*
    * This array can be overwritten by various paragraph types in the switch
    * below in order to pass specific class vars to the twig.
    */
@@ -80,12 +78,15 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
   switch ($variables["paragraph"]->getType()) {
     case "sidebar_item":
       break;
+
     case "sidebar_item_w_icon":
       break;
+
     case "social_media_links":
       break;
+
     case "social_networking":
-      $variables['icon'] =$variables["content"]["field_social_icon"]["#items"]->getString();
+      $variables['icon'] = $variables["content"]["field_social_icon"]["#items"]->getString();
       $variables['link'] = $variables["content"]["field_external_link"]["#items"]->getString();
       $variables['link_options'] = [
         'target' => "_blank",
@@ -94,10 +95,11 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
         $variables['link_options'] += $variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'];
       }
       break;
+
     default:
   }
 
-  /**
+  /*
    * Now set the left gutter value dependent on the content of the paragraph.
    */
   if (!empty($variables["content"]["field_sidebar_icon"])) {
