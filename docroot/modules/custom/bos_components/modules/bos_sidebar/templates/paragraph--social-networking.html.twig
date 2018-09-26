@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * @file
  * Default theme implementation for a single paragraph item.
@@ -24,12 +24,10 @@
  * @see template_preprocess_entity()
  * @see template_process()
  */
-?>
+#}
 
-<?php
-  $icon_name = $content['field_social_icon']['#items'][0]['value'];
-?>
-<a href="<?php print $content['field_external_link'][0]['#element']['url'];?>"
-   class="<?php print $icon_name;?> icon-common icon-social sidebar-social-icon">
-  <?php print $icon_name;?>
+{{ breakpoint() }}
+<a href="{{ link }} {{ link.options }}"
+   class="{{ icon }} icon-common icon-social sidebar-social-icon">
+  {{ icon }}
 </a>

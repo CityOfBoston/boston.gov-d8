@@ -21,6 +21,11 @@ function bos_sidebar_theme() {
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
     'template' => 'field--field-sidebar-components'
   ];
+  $theme['field__field_social_media_link'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+    'template' => 'field--field-social-media-link'
+  ];
   $theme['paragraph__sidebar_item'] = [
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
@@ -30,6 +35,16 @@ function bos_sidebar_theme() {
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
     'template' => 'paragraph--sidebar-item-w-icon'
+  ];
+  $theme['paragraph__social_media_links'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+    'template' => 'paragraph--social-media-links'
+  ];
+  $theme['paragraph__social_networking'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+    'template' => 'paragraph--social-networking'
   ];
   return $theme;
 }
@@ -42,7 +57,7 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
   /**
    * Add paragraph names (to be processed by this function) to this array.
    */
-  $eligible = ["sidebar_item", "sidebar_item_w_icon"];
+  $eligible = ["sidebar_item", "sidebar_item_w_icon", "social_media_links", "social_networking"];
   if (isset($variables["paragraph"]) && !in_array($variables["paragraph"]->getType(), $eligible)) {
     return;
   }
@@ -66,6 +81,19 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
     case "sidebar_item":
       break;
     case "sidebar_item_w_icon":
+      break;
+    case "social_media_links":
+      break;
+    case "social_networking":
+      $variables['icon'] =$variables["content"]["field_social_icon"]["#items"]->getString();
+      $variables['link'] = $variables["content"]["field_external_link"]["#items"]->getString();
+      $variables['link_options'] = [
+        'target' => "_blank",
+      ];
+      if (!empty($variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'])) {
+        $variables['link_options'] += $variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'];
+      }
+//      $variables["#attributes"] =
       break;
     default:
   }
