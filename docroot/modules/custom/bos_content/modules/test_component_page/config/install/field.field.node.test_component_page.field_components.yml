@@ -1,0 +1,50 @@
+uuid: 0dba73c8-f861-4dfc-b3f5-4ae6252878ac
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_components
+    - node.type.test_component_page
+    - paragraphs.paragraphs_type.bid
+    - paragraphs.paragraphs_type.bos311
+  module:
+    - entity_reference_revisions
+_core:
+  default_config_hash: zI-Xz6kqoFcJ0_Tdj54axwixZJAI88-alnpERRJOCNg
+id: node.test_component_page.field_components
+field_name: field_components
+entity_type: node
+bundle: test_component_page
+label: 'Paragraph Components'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      bid: bid
+      bos311: bos311
+    target_bundles_drag_drop:
+      sidebar_item:
+        weight: 9
+        enabled: false
+      sidebar_item_w_icon:
+        weight: 10
+        enabled: false
+      social_media_links:
+        weight: 11
+        enabled: false
+      social_networking:
+        weight: 12
+        enabled: false
+      bid:
+        enabled: true
+        weight: 74
+      bos311:
+        enabled: true
+        weight: 75
+field_type: entity_reference_revisions

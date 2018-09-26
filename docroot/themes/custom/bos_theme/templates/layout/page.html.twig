@@ -61,7 +61,7 @@
   </div>
 </nav>
 
-<div {% if page_class %}class="{{ page_class }} mn"{% endif %} id="page">
+<div {% if page_class %}class="{{ page_class }} mn"{% endif %} id="page"{{ attributes }}>
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
 
@@ -88,7 +88,7 @@
         {%  endif %}
 
         {{ title_prefix }}
-        {%  if title %}
+        {%  if title and not hide_page_title %}
           {{ title }}
         {%  endif %}
         {{ title_suffix }}
@@ -144,8 +144,9 @@
             {% endif %}
           {% endif %}
         {% endif %}
-
+        <!-- page content starts -->
         {{ page.content }}
+        <!-- page content ends -->
         {{ feed_icons }}
       </section>
     </div>
