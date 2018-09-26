@@ -93,7 +93,6 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
       if (!empty($variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'])) {
         $variables['link_options'] += $variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'];
       }
-//      $variables["#attributes"] =
       break;
     default:
   }
