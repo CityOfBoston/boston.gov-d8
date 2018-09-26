@@ -1,0 +1,19 @@
+uuid: 509e876f-edd4-4bc3-9636-60d19e1149d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.social_networking.field_external_link
+    - field.field.paragraph.social_networking.field_social_icon
+    - paragraphs.paragraphs_type.social_networking
+_core:
+  default_config_hash: VFZd1TIJrzvRUaMVGP0wgEwudmkzKEfJ3If9Dxb4xBM
+id: paragraph.social_networking.paragraphs_editor_preview
+targetEntityType: paragraph
+bundle: social_networking
+mode: paragraphs_editor_preview
+content: {  }
+hidden:
+  field_external_link: true
+  field_social_icon: true

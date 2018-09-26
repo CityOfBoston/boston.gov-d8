@@ -2,64 +2,47 @@
 /**
  * @file
  * Theme override for a field.
- *
- * To override output, copy the "field.html.twig" from the templates directory
- * to your theme's directory and customize it, just like customizing other
- * Drupal templates such as page.html.twig or node.html.twig.
- *
- * Instead of overriding the theming for all fields, you can also just override
- * theming for a subset of fields using
- * @link themeable Theme hook suggestions. @endlink For example,
- * here are some theme hook suggestions that can be used for a field_foo field
- * on an article node type:
- * - field--node--field-foo--article.html.twig
- * - field--node--field-foo.html.twig
- * - field--node--article.html.twig
- * - field--field-foo.html.twig
- * - field--text-with-summary.html.twig
- * - field.html.twig
- *
- * Available variables:
- * - attributes: HTML attributes for the containing element.
- * - label_hidden: Whether to show the field label or not.
- * - title_attributes: HTML attributes for the title.
- * - label: The label for the field.
- * - multiple: TRUE if a field can contain multiple items.
- * - items: List of all the field items. Each item contains:
- *   - attributes: List of HTML attributes for each item.
- *   - content: The field item's content.
- * - entity_type: The entity type to which the field belongs.
- * - field_name: The name of the field.
- * - field_type: The type of the field.
- * - label_display: The display settings for the label.
- *
- * @see template_preprocess_field()
  */
 #}
-
-{% if label_hidden %}
-  {% if multiple %}
-    <div{{ attributes }}>
-      {% for item in items %}
-        <div{{ item.attributes }}>{{ item.content }}</div>
-      {% endfor %}
-    </div>
-  {% else %}
-    {% for item in items %}
-      <div{{ attributes }}>{{ item.content }}</div>
-    {% endfor %}
+{#
+  Note: this template overrides the template provided by fences at
+  modules/contrib/fences/field.html.twig because hook_theme_registry_alter in
+  bos_theme re-assigns this template after the fences modules theme_registry_alter()
+  assigns its custom template.
+  (Because the registry->build() function processes hook_theme_registry_alter()
+  functions in themes run *after* any functions defined in modules).
+  @see notes in bos_theme_theme_registry_alter().
+  This template is customized from the template lifted out of fences v8.x.2.0-alpha1.
+#}
+{%
+  set classes = [
+    'field',
+    'field-name-' ~ field_name|clean_class,
+    'field-type-' ~ field_type|clean_class,
+    'field-label-' ~ label_display,
+  ]
+%}
+{%
+  set title_classes = [
+    'field-label',
+    label_display == 'visually_hidden' ? 'visually-hidden',
+  ]
+%}
+{% if display_field_tag %}
+    <{{ field_tag|default('div') }}{{ attributes.addClass(classes, 'field-items') }}>
+{% endif %}
+  {% if not label_hidden and display_label_tag %}
+    <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag|default('div') }}>
   {% endif %}
-{% else %}
-  <div{{ attributes }}>
-    <div{{ title_attributes }}>{{ label }}</div>
-    {% if multiple %}
-      <div>
+  {% for item in items %}
+    {% if display_item_tag %}
+        <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field-item') }}>
     {% endif %}
-    {% for item in items %}
-      <div{{ item.attributes }}>{{ item.content }}</div>
-    {% endfor %}
-    {% if multiple %}
-      </div>
+    {{ item.content }}
+    {% if display_item_tag %}
+        </{{ field_item_tag|default('div') }}>
     {% endif %}
-  </div>
+  {% endfor %}
+{% if display_field_tag %}
+    </{{ field_tag|default('div') }}>
 {% endif %}
