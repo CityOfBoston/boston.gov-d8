@@ -1,0 +1,42 @@
+uuid: 1bc41f27-e52f-451b-a0fe-ca4ed1c02553
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.sidebar_item_w_icon.field_sidebar_icon
+    - field.field.paragraph.sidebar_item_w_icon.field_sidebar_text
+    - field.field.paragraph.sidebar_item_w_icon.field_title
+    - paragraphs.paragraphs_type.sidebar_item_w_icon
+  module:
+    - options
+    - text
+_core:
+  default_config_hash: 2FFAgBP_A32S8Ne5knfzCu5XOITNmjvxSOiGUJwL820
+id: paragraph.sidebar_item_w_icon.default
+targetEntityType: paragraph
+bundle: sidebar_item_w_icon
+mode: default
+content:
+  field_sidebar_icon:
+    label: hidden
+    weight: 0
+    type: list_key
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_sidebar_text:
+    label: hidden
+    weight: 2
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 3
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

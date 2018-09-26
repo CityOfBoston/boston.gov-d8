@@ -1,0 +1,65 @@
+uuid: 873ecf0a-0336-48a6-be9e-69cafe59ce84
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.sidebar_item_w_icon.field_sidebar_icon
+    - field.field.paragraph.sidebar_item_w_icon.field_sidebar_text
+    - field.field.paragraph.sidebar_item_w_icon.field_title
+    - paragraphs.paragraphs_type.sidebar_item_w_icon
+  module:
+    - text
+    - field_group
+third_party_settings:
+  field_group:
+    group_sidebar_item_w_icon:
+      children:
+        - field_sidebar_icon
+        - field_sidebar_text
+        - field_title
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Sidebar Item w/ Icon'
+id: paragraph.sidebar_item_w_icon.default
+targetEntityType: paragraph
+bundle: sidebar_item_w_icon
+mode: default
+content:
+  field_sidebar_icon:
+    weight: 6
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_sidebar_text:
+    weight: 7
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 5
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

@@ -1,0 +1,54 @@
+uuid: 6302d977-730e-4776-9282-3a70e5256685
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.social_media_links.field_social_media_link
+    - paragraphs.paragraphs_type.social_media_links
+  module:
+    - content_moderation
+    - field_group
+    - paragraphs
+third_party_settings:
+  field_group:
+    group_social_media_links:
+      children:
+        - field_social_media_link
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Social Media Links'
+_core:
+  default_config_hash: 5bzPrtl8KcRAfXsUFw_PRVGuNTxDagDcBkV_GkEQqJw
+id: paragraph.social_media_links.default
+targetEntityType: paragraph
+bundle: social_media_links
+mode: default
+content:
+  field_social_media_link:
+    weight: 1
+    type: entity_reference_paragraphs
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
