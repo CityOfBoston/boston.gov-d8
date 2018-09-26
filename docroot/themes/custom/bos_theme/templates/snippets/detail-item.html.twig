@@ -29,24 +29,25 @@
   {#$left_content = "<div>$image</div>";#}
 {#}#}
 {#?>#}
-<div class="detail-item {{ classes.detail }}">
+{#{{  breakpoint() }}#}
+<div class="detail-item {{ classes.detail }}"{{ attributes }}>
   {% if left_content %}
     <div class="detail-item__left">
       {{ left_content }}
     </div>
   {% endif %}
   <div class="detail-item__content">
-    {% if label && !in_array('detail-item--secondary', $detail_classes)) %}
+    {#{% if label and !in_array('detail-item--secondary', $detail_classes)) %}#}
       <div class="detail-item__label {{ classes.label }}">
         {{ label }}
       </div>
-    {%  endif %}
-    {% if $body %}
+    {#{%  endif %}#}
+    {% if body %}
       <div class="detail-item__body {{ classes.body }}">
         {% if phone  %}
-          <a href="tel:{{ body }}">{{ body }}</a>
+          <a href="tel:{{ body|raw }}">{{ body|raw }}</a>
         {% else %}
-          {{ body }}
+          {{ body|raw }}
         {% endif %}
       </div>
     {% endif %}

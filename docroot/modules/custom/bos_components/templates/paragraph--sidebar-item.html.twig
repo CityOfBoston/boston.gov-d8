@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * @file
  * Default theme implementation for a single paragraph item.
@@ -23,15 +23,7 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
-$detail_item_variables = array(
-  'label' => NULL,
-  'body' => NULL,
-);
-if (isset($content['field_title'])) {
-  $detail_item_variables['label'] = render($content['field_title']);
-}
-if (isset($content['field_sidebar_text'])) {
-  $detail_item_variables['body'] = render($content['field_sidebar_text']);
-}
-print theme('detail_item', $detail_item_variables);
+ */#}
+{#{{  breakpoint() }}#}
+{#print theme('detail_item', $detail_item_variables);#}
+{{ detail_item_variables }}

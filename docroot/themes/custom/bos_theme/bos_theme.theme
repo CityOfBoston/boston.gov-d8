@@ -39,7 +39,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
           'body' => '',
         ],
       ],
-      'template' => 'templates/snippets/detail-item',
+      'template' => 'snippets/detail-item',
     ],
     'grid_card' => [
       'variables' => [
@@ -590,26 +590,6 @@ function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook
     default:
       break;
   }
-}
-
-/**
- * Implements hook_theme_suggestions_HOOK_alter().
- */
-function bos_theme_theme_suggestions_field_alter(&$suggestions, $variables, $hook) {
-  if ($variables["element"]["#field_type"] == "entity_reference_revisions") {
-    if (isset($variables["element"]["#items"]) && $variables["element"]["#items"]->getSetting('target_type') == "paragraph") {
-      $suggestions[] = "paragraphs-items";
-      $suggestions[] = "paragraphs-items--" . $variables["element"]["#field_name"];
-      $suggestions[] = "paragraphs-items--" . $variables["element"]["#field_name"] . '--'. $variables["element"]["#view_mode"];
-    }
-  }
-//  if ($variables["element"]["#entity_type"] == "paragraph") {
-//    $suggestions[] = "paragraphs-item";
-//    $suggestions[] = "paragraphs-item--" . $variables["element"]["#field_name"];
-//    $suggestions[] = "paragraphs-item--" . $variables["element"]["#bundle"];
-//    $suggestions[] = "paragraphs-item--" . $variables["element"]["#field_name"] . '--'. $variables["element"]["#view_mode"];
-//  }
-
 }
 
 /**
