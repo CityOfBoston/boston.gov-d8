@@ -1,0 +1,26 @@
+uuid: 56d26ddc-92eb-414d-9415-661cf85b1355
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_transaction
+    - field.field.comment.comment_node_transaction.comment_body
+  module:
+    - text
+id: comment.comment_node_transaction.default
+targetEntityType: comment
+bundle: comment_node_transaction
+mode: default
+content:
+  comment_body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true

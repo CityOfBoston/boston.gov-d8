@@ -1,0 +1,33 @@
+uuid: ccb70f03-4976-46de-8104-f4fa38d654c7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_intro_image
+    - node.type.tabbed_content
+  module:
+    - image
+id: node.tabbed_content.field_intro_image
+field_name: field_intro_image
+entity_type: node
+bundle: tabbed_content
+label: 'Intro Image'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  alt_field: false
+  default_image: 0
+  file_directory: 'tabbed-intro-image-[current-date:file_directory_storage_date]'
+  file_extensions: 'png gif jpg jpeg svg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  title_field: false
+  alt_field_required: true
+  title_field_required: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image
