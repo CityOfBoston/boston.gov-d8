@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install linux and php packages that are required but not in (devwithlando) base-image.
 RUN apt-get update && \
-		apt-get install -y --no-install-recommends jq zip libvpx-dev libxpm-dev libgd-dev  \
+		apt-get install -y --no-install-recommends jq zip libvpx-dev libxpm-dev libgd-dev \
     vim && \
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
     docker-php-ext-install pdo_mysql gd bz2
@@ -70,6 +70,21 @@ RUN mkdir /home/digital && chmod 777 /home/digital && \
 		rm -f /app/.ssh/known_hosts && rm -f /app/.ssh/config && \
 		cp -rf /app/.ssh /home/digital/ && chown -Rf www-data:www-data /home/digital
 ENV HOME /home/digital
+
+# Setup ssh for migrate.
+# Autossh allows a "permenant ssh tunnel"
+# --see: https://erik.torgesta.com/2013/12/creating-a-persistent-ssh-tunnel-in-ubuntu/
+# --see: https://thomas-barthelemy.github.io/2016/05/02/permanent-ssh-tunnel/
+# NOTE: to kill autossh find the pid 'ps ax | grep ssh' and kill it 'kill -KILL pid'
+RUN apt-get -y --no-install-recommends install autossh
+# SSS_ON = remove this ENV_VAR to stop ssh tunnel being built
+# SSH_LP = The port to expose locally.
+# SSH_RP = The port to connect to on remote mysql.
+# SSH_RH = The address of the remote host.
+ENV SSS_ON yes
+ENV SSH_LP 3336
+ENV SSH_RP 3306
+ENV SSH_RH boston.dev@staging-15139.prod.hosting.acquia.com
 
 # Add HOME environment variable manually to apache environment variables as apache ignores the
 # HOME var by default.  The HOME var is required by later versions of webmozart packages used

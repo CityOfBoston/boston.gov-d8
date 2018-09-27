@@ -92,6 +92,19 @@ chmod 777 /app/docroot/sites/default/settings.local.php
 chmod 400 /app/.ssh/id_rsa
 chmod 400 /home/digital/.ssh/id_rsa
 
+# Now create the ssh tunnel for migrate versions.
+if [ -n ${SSS_ON+x} ]; then
+	autossh -M 0 -f -N -L ${SSH_LP}:127.0.0.1:${SSH_RP} -i /app/.ssh/id_rsa -4 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" ${SSH_RH}
+	if [ $? -ne 0 ]; then
+		echo "WARNING: The SSH tunnel could not be initialized."
+		echo "COMMAND: ssh -i /app/.ssh/id_rsa ${SSH_LP}:127.0.0.1:${SSH_RP} ${SSH_RH}"
+	else
+		echo "Migrate SSH tunnel has been initialized on port ${SSH_LP} to ${SSH_RH}."
+		echo "Tunnel should remain up and connected while container is active."
+		echo "Restart container to re-connect the tunnel."
+	fi
+fi
+
 # Since we’re overriding the default Apache/PHP container’s command, we run this
 # ourselves.
 apache2-foreground
