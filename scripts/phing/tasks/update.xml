@@ -31,10 +31,20 @@
 
 <!--Drupal Database commands-->
     <target name="update:database:sync"
-            description="Syncronise the development database with staging.">
+            description="Syncronise the database with staging.">
         <echo message="Synchronizing local database with copy from staging" />
         <exec description="Make the db sync."
-              dir="${docroot}" command="${drush.cmd} sql-sync @boston.test --create-db  -y" logoutput="true"/>
+              dir="${docroot}"
+              command="${drush.cmd} sql-sync @boston.test --create-db  -y"
+              logoutput="true"/>
+    </target>
+    <target name="update:database:restore"
+            description="Restore the database from a dump.">
+        <echo message="Restoring the Drupal databse from a previous dump." />
+        <exec description="Restore dump."
+              dir="${docroot}"
+              command="${drush.cmd} sql-cli &gt; ${dbdump.path}"
+              logoutput="true" escape="true"/>
     </target>
     <target name="update:database:update"
             description="Update the database with any hook_updates etc.">

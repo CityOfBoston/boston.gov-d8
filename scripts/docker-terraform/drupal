@@ -1,0 +1,81 @@
+FROM devwithlando/php:7.1-apache
+
+# Define the name of the working directory in the container.
+WORKDIR /app
+
+# Install linux and php packages that are required but not in (devwithlando) base-image.
+RUN apt-get update && \
+		apt-get install -y --no-install-recommends jq zip libvpx-dev libxpm-dev libgd-dev  \
+    vim && \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+    docker-php-ext-install pdo_mysql gd bz2
+
+# AWS command so we can sync files from the S3 config bucket.
+RUN cd /tmp \
+  && curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" \
+  && unzip awscli-bundle.zip \
+  && ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws \
+  && rm awscli-bundle.zip \
+  && rm -rf awscli-bundle
+
+# Add composer and phing so we can use them later
+RUN curl --silent --show-error https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer && \
+    composer global require phing/phing --no-suggest --no-scripts -q
+RUN ln -sf /root/.composer/vendor/phing/phing/bin/phing /usr/local/bin/ && \
+    chmod a+rx /usr/local/bin/phing
+
+# Add (copy) php.ini and apache.conf files into the container
+ADD scripts/phing/files/php_aws.ini /usr/local/etc/php/conf.d/boston-php-ext-drupal8.ini
+ADD scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/
+RUN a2enconf -q limit-apache-children
+
+# Setup apache vhosts
+ENV APACHE_DOCUMENT_ROOT /app/docroot
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
+    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
+    a2enmod rewrite
+
+# Add (copy) into the container the (working copy) of the repo
+ADD . /app
+
+# Copy the container scripts around within the container
+RUN cp -f /app/scripts/docker-terraform/drupal-entrypoint.sh /app/scripts/drupal-entrypoint.sh && \
+    cp -f /app/scripts/docker-terraform/run-staging-container.sh /app/scripts/run-staging-container.sh && \
+    chmod a+rx /app/scripts/*.sh
+
+# Adds a web console to run drush commands on staging.
+ADD scripts/docker-terraform/vendor/webconsole/webconsole.php /app/docroot/
+RUN chmod a+rx /app/docroot/webconsole.php
+
+ENTRYPOINT ["/app/scripts/drupal-entrypoint.sh"]
+
+# NOTE: The container content will be "built" (or updated) in ./run-staging-container.sh which is
+#       called by an AWS script.
+# (in digital-terraform https://github.com/CityOfBoston/digital-terraform/blob/production/apps/modules/boston_gov_deploy/main.tf)
+
+# This environment variable overrides the "auto" mode in run-staging-container.sh which decides if the database should
+# be built, restored or synchronised.
+# -> Use one of none, auto, build, sync or restore.
+ENV BOSTON_DATABASE_MODE build
+
+# Add LANDO_INFO to allow correct db selection by Phing build scripts.
+# Emulates the variables passed during a local build.
+ENV LANDO_INFO '{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"/home/david/.lando/services/config/drupal8/php.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["mysql"],"creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"mysql","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}'
+
+# Set and enable the webconsole home directory which is not created by default.
+# This folder is required to be set in HOME envar (see next) which is in turn required by
+# Drush bootstrap.  (NOTE: this home folder is also set in the webconsole.php file).
+RUN mkdir /home/digital && chmod 777 /home/digital && \
+		rm -f /app/.ssh/known_hosts && rm -f /app/.ssh/config && \
+		cp -rf /app/.ssh /home/digital/ && chown -Rf www-data:www-data /home/digital
+ENV HOME /home/digital
+
+# Add HOME environment variable manually to apache environment variables as apache ignores the
+# HOME var by default.  The HOME var is required by later versions of webmozart packages used
+# by drush bootstrap.
+RUN echo "\nexport HOME=/home/digital\n" >> /etc/apache2/envvars
+
+ # Default from the base Dockerfile, but when you override ENTRYPOINT you need
+ # to override this as well.
+CMD ["apache2-foreground"]
