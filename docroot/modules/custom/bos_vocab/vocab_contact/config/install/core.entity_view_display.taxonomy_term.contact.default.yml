@@ -8,6 +8,8 @@ dependencies:
     - taxonomy.vocabulary.contact
   module:
     - text
+_core:
+  default_config_hash: Mjh9kGHiffJB2Q3tBG5WPHYu1zMUR0NYdreCGlybttk
 id: taxonomy_term.contact.default
 targetEntityType: taxonomy_term
 bundle: contact
@@ -16,13 +18,13 @@ content:
   description:
     label: hidden
     type: text_default
-    weight: 0
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   field_department_legacy_id:
     label: above
-    weight: 1
+    weight: 2
     type: string
     settings:
       link_to_entity: false
