@@ -30,46 +30,46 @@ else
 fi
 
 # Implement the Drupal database according to the methodology indicated by ${BOSTON_DATABASE_MODE}.
-echo -ne "${Yellow}Will build DB using ${BOSTON_DATABASE_MODE} model.${NC}\n${LightPurple}${NC}\n"
-if [ -z "${BOSTON_BUILD}" ]; then
-    if [ -z "${BOSTON_DATABASE_MODE}" ]; then
-        BOSTON_DATABASE_MODE=auto
-    fi
-    if [ !"${BOSTON_DATABASE_MODE}" == "none" ];then
-        if [ "${BOSTON_DATABASE_MODE}" == "restore" ];then
-            # Get any previously saved database dump.
-            ./scripts/doit/doit stash-db fetch
-            if [ -f /tmp/dump.sql ]; then
-              # If there is a previous dump, then use it rather than from a sync from staging.
-              echo -ne "${LightPurple}None(restore): phing setup:docker:drupal-terraform (dump)${NC}\n"
-              phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
-            else
-              echo -ne "${LightPurple}None: resets mode=sync${NC}\n"
-              BOSTON_DATABASE_MODE=sync
-            fi
-        fi
-        if [ "${BOSTON_DATABASE_MODE}" == "build" ];then
-            echo -ne "${LightPurple}Restore: phing setup:docker:drupal-terraform (build)${NC}\n"
-            phing -f /app/build.xml -Dproject.build_db_from=build setup:docker:drupal-terraform
-        elif [ "${BOSTON_DATABASE_MODE}" == "sync" ];then
-            echo -ne "${LightPurple}Sync: phing setup:docker:drupal-terraform (sync)${NC}\n"
-            phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
-        elif [ "${BOSTON_DATABASE_MODE}" == "auto" ]; then
-            # Get any previously saved database dump.
-            echo -ne "${LightPurple}Retrieve database${NC}\n"
-            /app/scripts/doit/doit stash-db fetch
-            if [ -f /tmp/dump.sql ]; then
-              # If there is a previous dump, then use it rather than from a sync from staging.
-              echo -ne "${LightPurple}Database found.${NC}\n"
-              echo -ne "${LightPurple}Auto(restore): phing setup:docker:drupal-terraform (dump)${NC}\n"
-              phing -f /app/build.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
-            else
-              # The default, which pulls from staging.
-              echo -ne "${LightPurple}Auto(sync): phing setup:docker:drupal-terraform (sync)${NC}\n"
-              phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
-            fi
-        fi
-    fi
+echo -ne "${Yellow}Will build DB using ${BOSTON_DATABASE_MODE} model.${NC}\n"
+if [ -z ${BOSTON_DATABASE_MODE+x} ]; then
+		BOSTON_DATABASE_MODE=auto
+		echo -ne "${Yellow}<Re-assigned> Will build DB using ${BOSTON_DATABASE_MODE} model.${NC}\n"
+fi
+if [ "${BOSTON_DATABASE_MODE}" != "none" ];then
+		if [ "${BOSTON_DATABASE_MODE}" == "restore" ];then
+				# Get any previously saved database dump.
+				./scripts/doit/doit stash-db fetch
+				if [ -f /tmp/dump.sql ]; then
+					# If there is a previous dump, then use it rather than from a sync from staging.
+					echo -ne "${LightPurple}Restore: phing setup:docker:drupal-terraform (dump)${NC}\n"
+					phing -f ./scripts/phing/phing-boston.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
+				else
+					echo -ne "${LightPurple}Restore: No backup found -> resets mode to sync${NC}\n"
+					BOSTON_DATABASE_MODE=sync
+				fi
+		fi
+		if [ "${BOSTON_DATABASE_MODE}" == "build" ];then
+				echo -ne "${LightPurple}Build: phing setup:docker:drupal-terraform (build)${NC}\n"
+				phing -f /app/build.xml -Dproject.build_db_from=build setup:docker:drupal-terraform
+		elif [ "${BOSTON_DATABASE_MODE}" == "sync" ];then
+				echo -ne "${LightPurple}Sync: phing setup:docker:drupal-terraform (sync)${NC}\n"
+				phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
+		elif [ "${BOSTON_DATABASE_MODE}" == "auto" ]; then
+				# Get any previously saved database dump.
+				echo -ne "${LightPurple}Auto: Retrieve database${NC}\n"
+				/app/scripts/doit/doit stash-db fetch
+				if [ -f /tmp/dump.sql ]; then
+					# If there is a previous dump, then use it rather than from a sync from staging.
+					echo -ne "${LightPurple}Auto: Database found.${NC}\n"
+					echo -ne "${LightPurple}Auto(restore): phing setup:docker:drupal-terraform (dump)${NC}\n"
+					phing -f /app/build.xml -Dproject.build_db_from=dump -Ddbdump.path='/tmp/dump.sql' setup:docker:drupal-terraform
+				else
+					# The default, which pulls from staging.
+					echo -ne "${LightPurple}Auto: No Database found.${NC}\n"
+					echo -ne "${LightPurple}Auto(sync): phing setup:docker:drupal-terraform (sync)${NC}\n"
+					phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
+				fi
+		fi
 fi
 
 # Drush mapping - wont be there until build is finished ...
