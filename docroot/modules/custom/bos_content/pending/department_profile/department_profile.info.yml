@@ -1,8 +1,12 @@
 name: Department Profile
 type: module
-description: '(Unconverted) Provides a department profile entity.'
+description: '<b><span style="color:red">[incomplete - enabled for vocab_contact only]</span></b> Provides a department profile entity.'
 package: City of Boston (content)
 core: 8.x
+version: 8.x.1.0
 dependencies:
-  - bos_components
-configure: entity.department_profile_type.collection
+#  - not-yet-ready
+  - bos_content
+  - taxonomy
+  - node
+  - user

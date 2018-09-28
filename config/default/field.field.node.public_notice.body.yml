@@ -1,0 +1,22 @@
+uuid: b23d0b55-4a64-4b81-8359-e4af1786501e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.public_notice
+  module:
+    - text
+id: node.public_notice.body
+field_name: body
+entity_type: node
+bundle: public_notice
+label: Body
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

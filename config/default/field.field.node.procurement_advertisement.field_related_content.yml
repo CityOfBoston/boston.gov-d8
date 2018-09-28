@@ -1,0 +1,38 @@
+uuid: 000fd3c6-2279-4ddd-a6d1-809fd5b89b1e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_content
+    - node.type.article
+    - node.type.how_to
+    - node.type.landing_page
+    - node.type.procurement_advertisement
+    - node.type.script_page
+    - node.type.tabbed_content
+id: node.procurement_advertisement.field_related_content
+field_name: field_related_content
+entity_type: node
+bundle: procurement_advertisement
+label: 'Other related content'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      article: article
+      how_to: how_to
+      landing_page: landing_page
+      script_page: script_page
+      tabbed_content: tabbed_content
+field_type: entity_reference

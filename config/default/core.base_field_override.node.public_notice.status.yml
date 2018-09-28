@@ -1,0 +1,22 @@
+uuid: 50fe5018-e9cd-4310-a3db-6eabc4854c54
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.public_notice
+id: node.public_notice.status
+field_name: status
+entity_type: node
+bundle: public_notice
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

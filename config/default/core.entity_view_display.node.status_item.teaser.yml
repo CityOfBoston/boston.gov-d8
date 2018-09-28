@@ -1,0 +1,53 @@
+uuid: c1ede271-d09b-47a3-b590-a1980ba0cb77
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.status_item.comment_node_status_item
+    - field.field.node.status_item.field_icon
+    - field.field.node.status_item.field_messages
+    - field.field.node.status_item.field_title
+    - node.type.status_item
+  module:
+    - entity_reference_revisions
+    - image
+    - user
+id: node.status_item.teaser
+targetEntityType: node
+bundle: status_item
+mode: teaser
+content:
+  field_icon:
+    label: above
+    weight: 2
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
+  field_messages:
+    label: above
+    weight: 4
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: above
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  comment_node_status_item: true
+  langcode: true
+  published_at: true

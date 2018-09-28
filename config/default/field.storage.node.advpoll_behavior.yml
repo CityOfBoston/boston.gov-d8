@@ -1,0 +1,27 @@
+uuid: 9a8cef33-d71d-4247-b2d2-379336191500
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.advpoll_behavior
+field_name: advpoll_behavior
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: approval
+      label: 'Approval voting'
+    -
+      value: pool
+      label: 'Pool votes and choices'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
