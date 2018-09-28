@@ -94,7 +94,7 @@ chmod 400 /app/.ssh/id_rsa
 chmod 400 /home/digital/.ssh/id_rsa
 
 # Now create the ssh tunnel for migrate versions.
-if [ -n ${SSS_ON+x} ]; then
+if [ -n ${SSH_ON+x} ]; then
 	autossh -M 0 -f -N -L ${SSH_LP}:127.0.0.1:${SSH_RP} -i /app/.ssh/id_rsa -4 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" ${SSH_RH}
 	if [ $? -ne 0 ]; then
 		echo "WARNING: The SSH tunnel could not be initialized."

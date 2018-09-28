@@ -62,6 +62,8 @@ ENV BOSTON_DATABASE_MODE build
 # Add LANDO_INFO to allow correct db selection by Phing build scripts.
 # Emulates the variables passed during a local build.
 ENV LANDO_INFO '{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"/home/david/.lando/services/config/drupal8/php.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["mysql"],"creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"mysql","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}'
+ENV LANDO_APP_NAME ${LANDO_APP_NAME}
+ENV LANDO_DOMAIN ${LANDO_DOMAIN}
 
 # Set and enable the webconsole home directory which is not created by default.
 # This folder is required to be set in HOME envar (see next) which is in turn required by
@@ -72,7 +74,7 @@ RUN mkdir /home/digital && chmod 777 /home/digital && \
 ENV HOME /home/digital
 
 # Setup ssh for migrate.
-# Autossh allows a "permenant ssh tunnel"
+# Autossh allows a "permanent ssh tunnel"
 # --see: https://erik.torgesta.com/2013/12/creating-a-persistent-ssh-tunnel-in-ubuntu/
 # --see: https://thomas-barthelemy.github.io/2016/05/02/permanent-ssh-tunnel/
 # NOTE: to kill autossh find the pid 'ps ax | grep ssh' and kill it 'kill -KILL pid'
@@ -81,7 +83,7 @@ RUN apt-get -y --no-install-recommends install autossh
 # SSH_LP = The port to expose locally.
 # SSH_RP = The port to connect to on remote mysql.
 # SSH_RH = The address of the remote host.
-ENV SSS_ON yes
+ENV SSH_ON yes
 ENV SSH_LP 3336
 ENV SSH_RP 3306
 ENV SSH_RH boston.dev@staging-15139.prod.hosting.acquia.com
