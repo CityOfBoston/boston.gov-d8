@@ -3,6 +3,8 @@
          phingVersion="2.8.2"
          description="Defines main entry points for build processes required for docker containers.">
 
+    <property name="custom.phing.dir" value="${project.basedir}/scripts/phing" />
+
     <echo message="Building ${custom.phing.dir}/phing-boston.xml" level="verbose"/>
 
     <property name="repo.root" value="${project.basedir}" description="repo.root is an alias for the project.basedir"/>
