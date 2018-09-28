@@ -48,7 +48,9 @@
     <exec command="echo 'Build Mode: ${project.build_db_from}'" logoutput="true"/>
     <!-- Work out what sort of database handling is to be done. -->
     <if>
-      <isset property="project.build_db_from"/>
+      <not>
+        <isset property="project.build_db_from"/>
+      </not>
       <then>
         <property description="will be one of 'sync', 'build' or 'dump'."
           name="project.build_db_from" value="build"/>
@@ -61,7 +63,7 @@
                    file="${docroot}/core/lib/Drupal.php"/>
       </not>
       <then>
-        <phingcall description="Run composer" target="setup:drupal:download-modules"/>
+        <!--<phingcall description="Run composer" target="setup:drupal:download-modules"/>-->
         <if>
           <not>
             <available description="This file only exists if the private repo has been cloned already."
