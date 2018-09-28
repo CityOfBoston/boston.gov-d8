@@ -70,6 +70,7 @@ if [ "${BOSTON_DATABASE_MODE}" != "none" ];then
 					phing -f /app/build.xml -Dproject.build_db_from=sync setup:docker:drupal-terraform
 				fi
 		fi
+		export BOSTON_DATABASE_MODE=none
 fi
 
 # Drush mapping - wont be there until build is finished ...
