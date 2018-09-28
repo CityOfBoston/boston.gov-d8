@@ -1,0 +1,30 @@
+uuid: de2e0caa-2cbd-4100-a5c7-c489f69c644d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_departments
+    - node.type.department_profile
+    - node.type.public_notice
+id: node.public_notice.field_related_departments
+field_name: field_related_departments
+entity_type: node
+bundle: public_notice
+label: 'Related departments'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      department_profile: department_profile
+field_type: entity_reference

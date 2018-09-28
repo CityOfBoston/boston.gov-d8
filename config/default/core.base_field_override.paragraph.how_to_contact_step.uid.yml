@@ -1,0 +1,20 @@
+uuid: fa6043e6-3764-4cc2-a58d-83bd60a52fac
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.how_to_contact_step
+id: paragraph.how_to_contact_step.uid
+field_name: uid
+entity_type: paragraph
+bundle: how_to_contact_step
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference
