@@ -69,6 +69,36 @@ global-styling.heroku-patterns:
   data:
     name: 'Patterns (staging)'
 
+fleet-components.local:
+  remote: https://127.0.0.1:3030
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://127.0.0.1:3030/web-components/fleetcomponents.js: {type:external, minified:true }
+
+fleet-components.patterns:
+  remote: https://patterns.boston.gov
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://patterns.boston.gov/web-components/fleetcomponents.js: {type:external, minified:true }
+
+fleet-components.heroku-patterns:
+  remote: https://cob-patterns-staging.herokuapp.com/
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://cob-patterns-staging.herokuapp.com/web-components/fleetcomponents.js: {type:external, minified:true }
+
 page.assets:
   js:
     js/alert-js.boston.js: {attributes: {id: "alert_script"}}

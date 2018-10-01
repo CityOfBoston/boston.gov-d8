@@ -174,14 +174,8 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
   $variables['#attached']['library'][] = "bos_theme/global-styling.always";
   $variables['#attached']['library'][] = "bos_theme/page.assets";
-  $theme = theme_get_setting('asset_source');
-  if (empty($theme)) {
-    $theme = \Drupal::service('library.discovery')
-      ->getLibrariesByExtension('bos_theme');
-    $theme = array_keys($theme);
-    $theme = $theme[0];
-  }
-  $variables['#attached']['library'][] = "bos_theme/" . $theme;
+  $mode = _bos_theme_library();
+  $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
 
   // Detect 400-status pages.
   switch ($variables['status_code']) {
@@ -517,6 +511,14 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
 }
 
 /**
+ * Implements hook_preprocess_hook()
+ */
+function bos_theme_preprocess_paragraph(&$variables) {
+  $mode = _bos_theme_library();
+  $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
+}
+
+/**
  * Implements hook_status_messages().
  */
 function bos_theme_preprocess_status_messages(array &$variables) {
@@ -615,4 +617,17 @@ function _bos_theme_findsvg($image) {
     }
   }
   return $svg;
+}
+
+function _bos_theme_library() {
+  $theme = theme_get_setting('asset_source');
+  if (empty($theme)) {
+    $theme = \Drupal::service('library.discovery')
+      ->getLibrariesByExtension('bos_theme');
+    $theme = array_keys($theme);
+    $theme = $theme[0];
+  }
+  $mode = explode(".", $theme);
+  $mode = array_reverse($mode);
+  return $mode[0];
 }
