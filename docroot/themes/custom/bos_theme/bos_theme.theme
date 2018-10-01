@@ -511,7 +511,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
 }
 
 /**
- * Implements hook_preprocess_hook()
+ * Implements hook_preprocess_hook().
  */
 function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
@@ -619,6 +619,12 @@ function _bos_theme_findsvg($image) {
   return $svg;
 }
 
+/**
+ * Helper function to determine which patterns library is being used.
+ *
+ * @return string
+ *   Returns one of 'local' | 'patterns' | 'heroku-patterns'.
+ */
 function _bos_theme_library() {
   $theme = theme_get_setting('asset_source');
   if (empty($theme)) {
