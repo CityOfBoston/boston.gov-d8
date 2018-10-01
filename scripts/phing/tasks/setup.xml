@@ -48,76 +48,156 @@
     <exec command="echo 'Build Mode: ${project.build_db_from}'" logoutput="true"/>
     <!-- Work out what sort of database handling is to be done. -->
     <if>
-      <isset property="project.build_db_from"/>
+      <not>
+        <isset property="project.build_db_from"/>
+      </not>
       <then>
         <property description="will be one of 'sync', 'build' or 'dump'."
           name="project.build_db_from" value="build"/>
       </then>
     </if>
-    <!-- Download any missing files -->
+
     <if>
-      <not>
-        <available description="This file only exists if core has been downloaded, and therefore composer has been run."
-                   file="${docroot}/core/lib/Drupal.php"/>
-      </not>
+      <!-- Only run the build process if ${project.build_db_from} is not "none" -->
+      <not><equals arg1="${project.build_db_from}" arg2="none" casesensitive="true"/></not>
       <then>
-        <phingcall description="Run composer" target="setup:drupal:download-modules"/>
+
+        <!-- Download any missing files -->
         <if>
           <not>
-            <available description="This file only exists if the private repo has been cloned already."
-                       file="${project.basedir}/.private"/>
+            <available description="This file only exists if core has been downloaded, and therefore composer has been run."
+                       file="${docroot}/core/lib/Drupal.php"/>
           </not>
           <then>
-            <phingcall description="Bring across the private repo" target="setup:drupal:clone_private_repo"/>
+            <phingcall description="Use composer to download files" target="setup:drupal:download-modules"/>
+
+            <!-- Import the private settings repo contents -->
+            <if>
+              <not>
+                <available description="This file only exists if the private repo has been cloned already."
+                           file="${project.basedir}/.private"/>
+              </not>
+              <then>
+                <phingcall description="Import the private repo" target="setup:drupal:clone_private_repo"/>
+              </then>
+            </if>
+
+            <!-- Create the correct settings files. -->
+            <phingcall description="Update settings files" target="setup:drush:local-config"/>
+
           </then>
         </if>
-        <phingcall description="Run composer" target="setup:drupal:set_dev_config"/>
-        <phingcall description="Update settings files" target="setup:drush:local-config"/>
+
+        <!-- If in auto or recovery mode, then try to fetch a previous database dump -->
         <if>
-          <equals arg1="${project.build_db_from}" arg2="build" casesensitive="true"/>
-          <then description="In build mode, so build the database.">
-            <phingcall description="Install drupal" target="setup:drupal:site-install"/>
-            <property name="project.build_db_from" value="none"
-                      description="Unset the property so we dont build twice ..."/>
+          <or>
+            <equals arg1="${project.build_db_from}" arg2="auto" casesensitive="true"/>
+            <equals arg1="${project.build_db_from}" arg2="dump" casesensitive="true"/>
+          </or>
+          <then>
+            <!-- Set default dump location if necessary. -->
+            <if>
+              <not>
+                <isset property="dbdump.path"/>
+              </not>
+              <then>
+                <property name="dbdump.path" value="/tmp/dump.sql"/>
+              </then>
+            </if>
+            <!-- Fetch a previous dump -->
+            <exec description="Attempts to retrieve a previously stashed database."
+                  dir="${project.basedir}/scripts/doit"
+                  command="doit stash-db fetch"
+                  passthru="true"
+                  logoutput="true"/>
+            <!-- Check if dump was fetched OK. -->
+            <available file="${dbdump.path}" property="dbdump.found"/>
+
+            <!-- Switch auto mode -->
+            <if>
+              <equals arg1="${project.build_db_from}" arg2="auto" casesensitive="true"/>
+              <then>
+                <if>
+                  <isset property="dbdump.found"/>
+                  <then><property name="${project.build_db_from}" value="dump"/></then>
+                  <else><property name="${project.build_db_from}" value="sync"/></else>
+                </if>
+              </then>
+            </if>
+          </then>
+        </if>
+
+        <!-- Build, Restore or sync the database. -->
+        <switch value="${project.build_db_from}" caseinsensitive="true">
+
+          <!-- Restore database. -->
+          <case value="dump">
+            <!-- Restore the database. -->
+            <phingcall description="restore database" target="update:database:restore"/>
+            <!-- Import the current configs -->
+            <phingcall description="Import Configs" target="update:config:import"/>
+            <!-- Run any module update routines -->
             <phingcall description="Update database" target="update:database:update"/>
-          </then>
-        </if>
-        <phingcall description="Reset configs" target="setup:drupal:reset_config"/>
+          </case>
+
+          <!-- Sync database with remote server. -->
+          <case value="sync">
+            <!-- Sync with remote -->
+            <phingcall description="restore database" target="update:database:sync"/>
+            <!-- Import the current configs -->
+            <phingcall description="import configs" target="update:config:import"/>
+            <!-- Run any module update routines -->
+            <phingcall description="Update database" target="update:database:update"/>
+          </case>
+
+          <!-- Build a new database. -->
+          <case value="build">
+            <!-- Manage configs. -->
+            <phingcall description="Disable production-only modules" target="setup:drupal:set_dev_config"/>
+            <!-- Build the new database -->
+            <phingcall description="Install drupal" target="setup:drupal:site-install"/>
+            <phingcall description="Update database" target="update:database:update"/>
+            <!-- Manage configs -->
+            <phingcall description="Reset configs" target="setup:drupal:reset_config"/>
+          </case>
+        </switch>
+
       </then>
     </if>
-    <!-- Build, Restore or sync the database. -->
-    <if>
-      <!-- Restore database. -->
-      <equals arg1="${project.build_db_from}" arg2="dump" casesensitive="true"/>
-      <then description="Recover the database from a previous dump.">
-        <!-- Set default dump location if necessary. -->
-        <if>
-          <not>
-            <isset property="dbdump.path"/>
-          </not>
-          <then>
-            <property name="dbdump.path" value="/tmp/dump.sql"/>
-          </then>
-        </if>
-        <!-- Restore the database. -->
-        <phingcall description="restore database" target="update:database:restore"/>
-      </then>
-    </if>
-    <if>
-      <!-- Sync database. -->
-      <equals arg1="${project.build_db_from}" arg2="sync" casesensitive="true"/>
-      <then description="Sync the database with a remote instance.">
-        <phingcall description="restore database" target="update:database:sync"/>
-      </then>
-    </if>
-    <if>
-      <!-- Build DB -->
-      <equals arg1="${project.build_db_from}" arg2="build" casesensitive="true"/>
-      <then>
-        <phingcall description="Install drupal" target="setup:drupal:site-install"/>
-        <phingcall description="Update database" target="update:database:update"/>
-      </then>
-    </if>
+
+    <!-- Change owner of ../config tree -->
+    <chown user="www-data" description="Ensure configs tree is available." quiet="true" verbose="false">
+      <fileset dir="${project.basedir}/config">
+        <include name="**/*"></include>
+      </fileset>
+    </chown>
+
+    <!-- Change owner of site/default/settings tree -->
+    <chown user="www-data" description="Ensure configs tree is available." quiet="true" verbose="false">
+      <fileset dir="${project.basedir}/docroot/sites/default">
+        <include name="files/*"/>
+        <include name="settings.php"/>
+        <include name="settings.local.php"/>
+      </fileset>
+    </chown>
+
+    <!-- Change permissions on the actual settings files -->
+    <chmod mode="0777" description="Change permissions on settings" verbose="false" quiet="true">
+      <fileset dir="${project.basedir}/docroot/sites/default">
+        <include name="*settings*.php"/>
+        <include name="**/*settings*.php"/>
+      </fileset>
+    </chmod>
+
+    <!-- Create symbolic links for tooling -->
+    <symlink link="/usr/local/bin/drush" target="${project.basedir}/vendor/drush/drush/drush" overwrite="true" />
+    <symlink link="/usr/local/bin/phing" target="${project.basedir}/vendor/phing/phing/bin/phing" overwrite="true" />
+    <chmod mode="755" verbose="false" quiet="true">
+      <fileset dir="/usr/local/bin">
+        <include name="drush"/>
+        <include name="phing"/>
+      </fileset>
+    </chmod>
 
   </target>
 
@@ -692,7 +772,11 @@
   </target>
 
   <target name="test">
-    <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
+    <chown user="www-data" description="Ensure configs tree is available." quiet="true" verbose="false">
+      <fileset dir="${project.basedir}/config">
+        <include name="**/*"></include>
+      </fileset>
+    </chown>
   </target>
 
 </project>
