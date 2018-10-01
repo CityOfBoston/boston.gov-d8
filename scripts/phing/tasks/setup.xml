@@ -181,6 +181,15 @@
       </fileset>
     </chown>
 
+    <!-- Change owner of site/default/settings tree -->
+    <chown user="www-data" file="${project.basedir}/.ssh"
+           description="Ensure ssh folder is available to www-data." quiet="true" verbose="false"/>
+    <chown user="www-data" description="Ensure ssh keys are available to www-data." quiet="true" verbose="false">
+      <fileset dir="${project.basedir}/.ssh">
+        <include name="*"/>
+      </fileset>
+    </chown>
+
     <!-- Change permissions on the actual settings files -->
     <chmod mode="0777" description="Change permissions on settings" verbose="false" quiet="true">
       <fileset dir="${project.basedir}/docroot/sites/default">
