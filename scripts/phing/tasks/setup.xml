@@ -189,10 +189,11 @@
             <echo message="Preparing to setup the Drupal database."/>
             <phingcall target="setup:drupal:local_settings_php"
                   description="Recreate the local.settings.php file from default and load DB and any other settings."/>
-            <exec command="echo '\033[1;33mBuild is now using settings file ${local.settings.file}\033[0m'" logoutput="true"
+            <exec command="echo '\033[1;33m\nBuild is now using settings file ${local.settings.file}\033[0m'" logoutput="true"
                   passthru="true"/>
-            <exec command="echo '\033[1;33m... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'" logoutput="true"
+            <exec command="echo '\033[1;33m... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'\n" logoutput="true"
                   passthru="true"/>
+            <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${env.LANDO_DOMAIN}:${lando.proxyHttpsPort}" override="true"/>
             <exec command="echo '${line.separator}\033[0;32m(resuming) > setup:drupal:site-install\033[0m${line.separator}'" logoutput="true"
                   passthru="true"/>
           </then>
@@ -251,7 +252,7 @@
 
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
-    <delete file="${local.settings.file}" failonerror="false" quiet="true"/>
+    <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
 
     <!-- Now recreate the settings file -->
     <echo
@@ -265,11 +266,11 @@
         <copy
                 file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php"
                 tofile="${local.settings.file}" haltonerror="false" overwrite="false"
-                verbose="true"/>
+                verbose="false" />
         <copy
                 file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
                 tofile="${local.services.file}" haltonerror="false" overwrite="false"
-                verbose="true"/>
+                verbose="false"/>
 
         <echo description="Adds local settings to settings.local.php file."
               message="${line.separator}" append="true"
