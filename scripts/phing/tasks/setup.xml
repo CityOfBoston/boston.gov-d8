@@ -208,6 +208,11 @@
       </fileset>
     </chmod>
 
+    <!-- Need to upgrade the memory allocation. -->
+    <echo
+      message="// Terraform Addition.${line.separator}ini_set('memory_limit', '512M');${line.separator}"
+      append="true" file="${local.settings.file}"/>
+
   </target>
 
   <!-- Define the Drupal setup task -->
@@ -333,6 +338,7 @@
         <fail message="Setup is incomplete." status="1"/>
       </else>
     </if>
+    <echo message="Success - Site installed." level="info"/>
   </target>
 
   <!-- Define a task to copy a new local.settings.php file and append initial settings. -->
@@ -409,11 +415,11 @@
     </if>
 
     <!-- Remove unwanted and confusing template config files. -->
-    <delete file="${docroot}/sites/default/default.settings.php" quiet="true"/>
-    <delete file="${docroot}/sites/example.settings.local.php" quiet="true"/>
-    <delete file="${docroot}/sites/example.sites.php" quiet="true"/>
-    <delete file="${docroot}/sites/default/default.services.yml" quiet="true"/>
-    <delete file="${docroot}/sites/development.services.yml" quiet="true"
+    <delete file="${docroot}/sites/default/default.settings.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/default/default.services.yml" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/development.services.yml" quiet="true" verbose="false"
             description="Redundant file as we have this in the sites/default folder."/>
 
     <!-- Append code to (fresh) settings.php file -->
@@ -492,6 +498,7 @@
               append="true" file="${local.settings.file}"/>
       </then>
     </if>
+    <echo message="Success - done." level="info"/>
 
   </target>
 
@@ -630,6 +637,7 @@
                 logoutput="true"/>
       </then>
     </if>
+    <echo message="Done." level="info"/>
   </target>
 
   <!-- Production-only Modules Strategy -->
@@ -669,6 +677,8 @@
                 logoutput="true"/>
       </then>
     </if>
+    <echo message="Done." level="info"/>
+
   </target>
 
   <target name="setup:drupal:reset_config"
