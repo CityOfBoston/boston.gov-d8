@@ -221,3 +221,27 @@ function _remove_master_view_listings_from_view_fields($list_option, $key) {
   }
   return FALSE;
 }
+
+/**
+ * Implements hook_paragraphs_info().
+ */
+function bos_components_text_paragraphs_info() {
+  $items = array(
+    'text_one_column' => array(
+      'name' => 'One Column Text',
+      'bundle' => 'text_one_column',
+      'locked' => '1',
+    ),
+    'text_three_column' => array(
+      'name' => 'Three Column Text',
+      'bundle' => 'text_three_column',
+      'locked' => '1',
+    ),
+    'text_two_column' => array(
+      'name' => 'Two Column Text',
+      'bundle' => 'text_two_column',
+      'locked' => '1',
+    ),
+  );
+  return $items;
+}

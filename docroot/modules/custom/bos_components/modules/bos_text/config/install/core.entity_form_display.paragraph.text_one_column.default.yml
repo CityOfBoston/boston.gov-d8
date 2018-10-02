@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.text_one_column.field_middle_column
+    - paragraphs.paragraphs_type.text_one_column
+  module:
+    - text
+id: paragraph.text_one_column.default
+targetEntityType: paragraph
+bundle: text_one_column
+mode: default
+content:
+  field_middle_column:
+    weight: 1
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+
+hidden:
+  created: true
+  status: true
+  uid: true
