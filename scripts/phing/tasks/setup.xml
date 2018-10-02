@@ -13,7 +13,7 @@
     <echo message="from container: phing -l"/>
   </target>
 
-  <!-- Define the build task for normal developer local builds. -->
+  <!-- Define the build task for normal developerreset_config local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a Drupal environment in Docker Containers for local development."
           depends=" setup:drupal:download-modules,
@@ -713,7 +713,7 @@
         <echo message="Installing development-only modules." level="info"/>
         <echo message="==== development-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
         <exec   description="Install development modules if not installed already."
-                command="drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
+                command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
                 dir="${install_config_abs}"
                 passthru="true"
                 logoutput="true" />
@@ -742,7 +742,7 @@
         <exec
                 description="Use drupal console to re-import the production yml config_split file."
                 dir="${docroot}"
-                command="drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
+                command="${project.basedir}/vendor/drupal/console/bin/drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
                 logoutput="true"/>
         <exec description="Sets the active status for the settings."
               dir="${docroot}"
