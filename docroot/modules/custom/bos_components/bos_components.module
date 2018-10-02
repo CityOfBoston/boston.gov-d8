@@ -225,8 +225,13 @@ function _remove_master_view_listings_from_view_fields($list_option, $key) {
 /**
  * Implements hook_paragraphs_info().
  */
-function bos_components_text_paragraphs_info() {
+function bos_components_paragraphs_info() {
   $items = array(
+    'text' => array(
+      'name' => 'Text',
+      'bundle' => 'text',
+      'locked' => '1',
+    ),
     'text_one_column' => array(
       'name' => 'One Column Text',
       'bundle' => 'text_one_column',
