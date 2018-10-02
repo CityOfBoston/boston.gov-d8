@@ -265,6 +265,7 @@
 
       </else>
     </if>
+    <echo message="Done." level="info"/>
   </target>
 
   <!-- Define the task to build a new Drupal 8 Database. -->
@@ -574,6 +575,8 @@
 
       </then>
     </if>
+    <echo message="Done." level="info"/>
+
   </target>
 
   <target name="setup:drush:local-config"
@@ -588,6 +591,7 @@
           file="${repo.root}/drush/drush.yml"/>
     <echo message="  root: '${lando.url.localpath}'${line.separator}"
           append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="Done." level="info"/>
   </target>
 
   <target name="setup:cleanup"
@@ -755,6 +759,7 @@
                 logoutput="true"/>
       </then>
     </if>
+    <echo message="Done." level="info"/>
   </target>
 
   <!-- Used to set a flag which inhibits settings.php file rewrites. -->
