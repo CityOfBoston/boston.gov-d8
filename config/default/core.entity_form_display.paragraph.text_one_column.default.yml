@@ -6,7 +6,22 @@ dependencies:
     - field.field.paragraph.text_one_column.field_middle_column
     - paragraphs.paragraphs_type.text_one_column
   module:
+    - field_group
     - text
+third_party_settings:
+  field_group:
+    group_column_info:
+      children:
+        - field_middle_column
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Column Info'
 id: paragraph.text_one_column.default
 targetEntityType: paragraph
 bundle: text_one_column
@@ -22,7 +37,7 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: options_buttons
-    weight: 0
+    weight: 1
     settings: {  }
     region: content
     third_party_settings: {  }

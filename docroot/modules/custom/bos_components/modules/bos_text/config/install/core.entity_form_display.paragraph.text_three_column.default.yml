@@ -1,4 +1,3 @@
-uuid: fc5f989b-0772-4add-9f73-c3d9cdd39c61
 langcode: en
 status: true
 dependencies:
@@ -9,21 +8,30 @@ dependencies:
     - field.field.paragraph.text_three_column.field_short_title
     - paragraphs.paragraphs_type.text_three_column
   module:
+    - field_group
     - text
+third_party_settings:
+  field_group:
+    group_column_info:
+      children:
+        - field_left_column
+        - field_middle_column
+        - field_right_column
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Column Info'
 id: paragraph.text_three_column.default
 targetEntityType: paragraph
 bundle: text_three_column
 mode: default
 content:
   field_left_column:
-    weight: 1
-    type: text_textarea
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_middle_column:
     weight: 2
     type: text_textarea
     settings:
@@ -31,8 +39,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_right_column:
+  field_middle_column:
     weight: 3
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_right_column:
+    weight: 4
     type: text_textarea
     settings:
       rows: 5
@@ -49,7 +65,7 @@ content:
     region: content
   moderation_state:
     type: options_buttons
-    weight: 100
+    weight: 5
     settings: {  }
     region: content
     third_party_settings: {  }

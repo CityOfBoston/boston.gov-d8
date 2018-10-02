@@ -8,7 +8,24 @@ dependencies:
     - field.field.paragraph.text_two_column.field_right_column
     - paragraphs.paragraphs_type.text_two_column
   module:
+    - field_group
     - text
+third_party_settings:
+  field_group:
+    group_column_info:
+      children:
+        - field_column_configuration
+        - field_left_column
+        - field_right_column
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Column Info'
 id: paragraph.text_two_column.default
 targetEntityType: paragraph
 bundle: text_two_column
@@ -38,7 +55,7 @@ content:
     region: content
   moderation_state:
     type: options_buttons
-    weight: 100
+    weight: 4
     settings: {  }
     region: content
     third_party_settings: {  }
