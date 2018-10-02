@@ -1,4 +1,4 @@
-uuid: 760077b2-dc10-4d9e-848b-30fb94fa5cdf
+uuid: b1edd906-42c2-40b1-9e37-5e2c0104e282
 langcode: en
 status: true
 dependencies:
@@ -13,16 +13,16 @@ bundle: text_one_column
 mode: default
 content:
   field_middle_column:
-    weight: 1
     type: text_textarea
+    weight: 1
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    region: content
   moderation_state:
-    type: moderation_state_default
-    weight: 100
+    type: options_buttons
+    weight: 0
     settings: {  }
     region: content
     third_party_settings: {  }
