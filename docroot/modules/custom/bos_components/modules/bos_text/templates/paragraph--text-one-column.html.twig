@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * @file
  * Default theme implementation for a single paragraph item.
@@ -24,19 +24,9 @@
  * @see template_preprocess_entity()
  * @see template_process()
  */
-?>
-<div class="<?php print $classes; ?>"<?php print $attributes; ?>>
-  <div class="content"<?php print $content_attributes; ?>>
-    <?php if (!empty($content['field_hide_title_bar']) && !$content['field_hide_title_bar']['#items'][0]['value']): ?>
-  	  <div class="sh">
-        <?php print render($content['field_component_title']); ?>
-        <?php if (isset($content['field_contact'])): ?>
-          <?php print render($content['field_contact']); ?>
-        <?php endif; ?>
-      </div>
-    <?php endif; ?>
-    <?php if (isset($content['field_text_blocks'])): ?>
-      <?php print render($content['field_text_blocks']); ?>
-    <?php endif; ?>
+#}
+<div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
+  <div class="content"{{ content_attributes }}>
+    {{ content }}
   </div>
 </div>

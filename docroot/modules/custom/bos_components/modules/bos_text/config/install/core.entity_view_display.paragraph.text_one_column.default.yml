@@ -1,3 +1,4 @@
+uuid: c69d2890-8b62-44b0-834d-3722c18f7462
 langcode: en
 status: true
 dependencies:
@@ -5,7 +6,10 @@ dependencies:
     - field.field.paragraph.text_one_column.field_middle_column
     - paragraphs.paragraphs_type.text_one_column
   module:
+    - fences
     - text
+_core:
+  default_config_hash: dpbv52WrYMjUEnFiNHeo8OBs9udB7eNpcGcrH1OLCp4
 id: paragraph.text_one_column.default
 targetEntityType: paragraph
 bundle: text_one_column
@@ -16,6 +20,13 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

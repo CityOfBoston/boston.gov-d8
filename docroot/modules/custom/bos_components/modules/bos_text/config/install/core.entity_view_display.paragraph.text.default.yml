@@ -1,3 +1,4 @@
+uuid: 7342056d-1287-45d5-b6eb-7177b519a327
 langcode: en
 status: true
 dependencies:
@@ -11,7 +12,10 @@ dependencies:
     - paragraphs.paragraphs_type.text
   module:
     - entity_reference_revisions
+    - fences
     - options
+_core:
+  default_config_hash: 1aR-buyhnPl-SYcC2UHxyV1ZhyG-ToE_CYICia75Yzs
 id: paragraph.text.default
 targetEntityType: paragraph
 bundle: text
@@ -39,13 +43,23 @@ content:
     settings:
       view_mode: default
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_hide_title_bar:
     label: above
     weight: 6
-    type: list_default
-    settings: {  }
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
     region: content
   field_short_title:
@@ -63,6 +77,13 @@ content:
     settings:
       view_mode: full
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

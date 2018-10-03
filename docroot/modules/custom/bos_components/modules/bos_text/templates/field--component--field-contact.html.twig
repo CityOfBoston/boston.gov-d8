@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * @file
  * Default template implementation to display the value of a field.
@@ -43,9 +43,9 @@
  *
  * @ingroup themeable
  */
-?>
-<div class="sh-contact"<?php print $attributes; ?>>
-  <?php foreach ($items as $delta => $item): ?>
-    Contact: <?php print render($item); ?>
-  <?php endforeach; ?>
+#}
+<div{{ attributes.addClass("sh-contact") }}>
+  {%  for item in items %}
+    {#todo: enable - Contact: {{ item }}#}
+  {% endfor %}
 </div>

@@ -6,8 +6,60 @@
  */
 
 /**
- * Created by PhpStorm.
- * User: david
- * Date: 10/2/18
- * Time: 1:12 PM
+ * Implements hook_theme().
  */
+function bos_text_theme($existing, $type, $theme, $path) {
+  return [
+    'paragraph__text' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text',
+    ],
+    'field__component__field_contact' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'field--component--field-contact',
+    ],
+    'paragraph__text_one_column' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text-one-column',
+    ],
+    'paragraph__text_two_column' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text-two-column',
+    ],
+    'paragraph__text_three_column' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text-three-column',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_text_preprocess_paragraph(&$variables) {
+  if (empty($variables["paragraph"]->bundle()) || !in_array($variables["paragraph"]->bundle(), ["text", "text_one_column", "text_two_column", "text_three_column"])) {
+    return;
+  }
+  $variables['attributes']['class'][] = 'entity';
+  $variables['attributes']['class'][] = 'entity-paragraphs-item';
+  $variables['attributes']['class'][] = 'paragraphs-item-' . $variables['paragraph']->bundle();
+  $variables['attributes']['class'][] = 'component-section';
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_text_preprocess_field(&$variables) {
+  if (empty($variables["element"]["#bundle"]) || $variables["element"]["#bundle"] != "text") {
+    return;
+  }
+  if ($variables["field_name"] == "field_contact") {
+    $first = 0;
+    $variables['contact_name'] = $variables["items"][$first]["content"]["#taxonomy_term"]->name->value;
+  }
+}

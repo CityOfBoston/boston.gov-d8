@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.text_two_column.field_right_column
     - paragraphs.paragraphs_type.text_two_column
   module:
+    - fences
     - text
 _core:
   default_config_hash: KPdTsfHhKaKZ-_sNzT6jLTu8P6sZKSN-3TCEUGaeLLY
@@ -21,14 +22,28 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_right_column:
     label: hidden
     weight: 1
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   field_column_configuration: true
