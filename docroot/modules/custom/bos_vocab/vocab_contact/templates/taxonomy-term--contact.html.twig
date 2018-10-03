@@ -1,5 +1,4 @@
-<?php
-
+{#
 /**
  * @file
  * Default theme implementation to display a term.
@@ -42,8 +41,9 @@
  *
  * @ingroup themeable
  */
-render($content['description']);
-if (isset($content['field_department_profile'])) {
-  print render($content['field_department_profile']);
-}
-?>
+ #}
+a{{ content.description }}a
+{% if content.field_department_profile %}
+  {{ content.field_department_profile }}
+{% endif %}
+
