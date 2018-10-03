@@ -1,20 +1,20 @@
+uuid: ff9133c3-0691-4382-a1b3-a4d29f33d0a4
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.paragraph.field_hide_title_bar
-    - paragraphs.paragraphs_type.text
-id: paragraph.text.field_hide_title_bar
-field_name: field_hide_title_bar
+    - paragraphs.paragraphs_type.text_two_column
+id: paragraph.text_two_column.status
+field_name: status
 entity_type: paragraph
-bundle: text
-label: 'Hide Title Bar'
+bundle: text_two_column
+label: Published
 description: ''
 required: false
 translatable: false
 default_value:
   -
-    value: 0
+    value: 1
 default_value_callback: ''
 settings:
   on_label: 'On'

@@ -1,4 +1,3 @@
-uuid: 9aeb68ef-07cf-4c92-b312-72a99458863a
 langcode: en
 status: true
 dependencies:
@@ -11,6 +10,7 @@ dependencies:
     - field.field.paragraph.text.field_text_blocks
     - paragraphs.paragraphs_type.text
   module:
+    - content_moderation
     - field_group
     - paragraphs
 third_party_settings:
@@ -99,7 +99,7 @@ content:
     third_party_settings: {  }
     region: content
   moderation_state:
-    type: options_buttons
+    type: moderation_state_default
     weight: 8
     settings: {  }
     region: content
