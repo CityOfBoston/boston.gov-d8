@@ -1,4 +1,4 @@
-uuid: 9aeb68ef-07cf-4c92-b312-72a99458863a
+uuid: 246e43e7-dfa3-4aa6-ba46-3bb222e1e53a
 langcode: en
 status: true
 dependencies:
@@ -11,6 +11,7 @@ dependencies:
     - field.field.paragraph.text.field_text_blocks
     - paragraphs.paragraphs_type.text
   module:
+    - content_moderation
     - field_group
     - paragraphs
 third_party_settings:
@@ -43,6 +44,8 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Text Blocks'
+_core:
+  default_config_hash: raTLaIFmzFfFiaCgDcxnKyvcJPhlnIMjl_-Js2hVdww
 id: paragraph.text.default
 targetEntityType: paragraph
 bundle: text
@@ -99,7 +102,7 @@ content:
     third_party_settings: {  }
     region: content
   moderation_state:
-    type: options_buttons
+    type: moderation_state_default
     weight: 8
     settings: {  }
     region: content

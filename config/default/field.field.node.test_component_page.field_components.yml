@@ -8,9 +8,6 @@ dependencies:
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.text
-    - paragraphs.paragraphs_type.text_one_column
-    - paragraphs.paragraphs_type.text_three_column
-    - paragraphs.paragraphs_type.text_two_column
   module:
     - entity_reference_revisions
 _core:
@@ -33,9 +30,6 @@ settings:
       bid: bid
       bos311: bos311
       text: text
-      text_one_column: text_one_column
-      text_three_column: text_three_column
-      text_two_column: text_two_column
     target_bundles_drag_drop:
       sidebar_item:
         weight: 9
@@ -230,14 +224,14 @@ settings:
         enabled: true
         weight: 136
       text_one_column:
-        enabled: true
         weight: 137
+        enabled: false
       text_three_column:
-        enabled: true
         weight: 138
+        enabled: false
       text_two_column:
-        enabled: true
         weight: 139
+        enabled: false
       transaction_grid:
         weight: 140
         enabled: false
