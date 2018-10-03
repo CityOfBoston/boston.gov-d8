@@ -139,6 +139,35 @@ function bos_components_preprocess_field_field_component_title(&$variables) {
 }
 
 /**
+ * Implements hook_paragraphs_info().
+ */
+function bos_components_paragraphs_info() {
+  $items = array(
+    'text' => array(
+      'name' => 'Text',
+      'bundle' => 'text',
+      'locked' => '1',
+    ),
+    'text_one_column' => array(
+      'name' => 'One Column Text',
+      'bundle' => 'text_one_column',
+      'locked' => '1',
+    ),
+    'text_three_column' => array(
+      'name' => 'Three Column Text',
+      'bundle' => 'text_three_column',
+      'locked' => '1',
+    ),
+    'text_two_column' => array(
+      'name' => 'Two Column Text',
+      'bundle' => 'text_two_column',
+      'locked' => '1',
+    ),
+  );
+  return $items;
+}
+
+/**
  * Sets is_component and is_subcomponent variables.
  *
  * Establishes whether the object subject of the variables array is embedded
@@ -223,30 +252,27 @@ function _remove_master_view_listings_from_view_fields($list_option, $key) {
 }
 
 /**
- * Implements hook_paragraphs_info().
+ * Recursive search for a key/value pair and removes said pair from the array.
+ *
+ * @param array $array
+ *   Array being recursively searched on.
+ * @param callable $callback
+ *   Function must return boolean value indicating whether to remove the node.
+ *
+ * @return array
+ *   The array with all values removed based on callback.
  */
-function bos_components_paragraphs_info() {
-  $items = array(
-    'text' => array(
-      'name' => 'Text',
-      'bundle' => 'text',
-      'locked' => '1',
-    ),
-    'text_one_column' => array(
-      'name' => 'One Column Text',
-      'bundle' => 'text_one_column',
-      'locked' => '1',
-    ),
-    'text_three_column' => array(
-      'name' => 'Three Column Text',
-      'bundle' => 'text_three_column',
-      'locked' => '1',
-    ),
-    'text_two_column' => array(
-      'name' => 'Two Column Text',
-      'bundle' => 'text_two_column',
-      'locked' => '1',
-    ),
-  );
-  return $items;
+function walk_recursive_remove(array $array, callable $callback) {
+  foreach ($array as $k => $v) {
+    if (is_array($v)) {
+      $array[$k] = walk_recursive_remove($v, $callback);
+    }
+    else {
+      if ($callback($v, $k)) {
+        unset($array[$k]);
+      }
+    }
+  }
+
+  return $array;
 }
