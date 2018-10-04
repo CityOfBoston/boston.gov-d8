@@ -7,6 +7,7 @@
 
 /**
  * Implements hook_theme().
+ *
  * Register module templates.
  */
 function bos_text_theme($existing, $type, $theme, $path) {
@@ -44,7 +45,12 @@ function bos_text_theme($existing, $type, $theme, $path) {
  */
 function bos_text_preprocess_paragraph(&$variables) {
   // Restrict to bundles from this module only.
-  if (empty($variables["paragraph"]->bundle()) || !in_array($variables["paragraph"]->bundle(), ["text", "text_one_column", "text_two_column", "text_three_column"])) {
+  if (empty($variables["paragraph"]->bundle()) || !in_array($variables["paragraph"]->bundle(), [
+    "text",
+    "text_one_column",
+    "text_two_column",
+    "text_three_column",
+  ])) {
     return;
   }
 
@@ -54,7 +60,7 @@ function bos_text_preprocess_paragraph(&$variables) {
   $variables['attributes']['class'][] = 'paragraphs-item-' . _make_class($variables['paragraph']->bundle());
   $variables['attributes']['class'][] = 'component-section';
 
-  // Manage background images
+  // Manage background images.
   if (isset($variables["paragraph"]->field_background_image->value)) {
     $variables['attributes']['class'][] = _make_class($variables["paragraph"]->field_background_image->value);
   }
@@ -76,11 +82,11 @@ function bos_text_preprocess_paragraph(&$variables) {
 function bos_text_preprocess_field(&$variables) {
   // Restrict to bundles from this module only.
   if (empty($variables["element"]['#bundle']) || !in_array($variables["element"]['#bundle'], [
-      "text",
-      "text_one_column",
-      "text_two_column",
-      "text_three_column"
-    ])) {
+    "text",
+    "text_one_column",
+    "text_two_column",
+    "text_three_column",
+  ])) {
     return;
   }
   $variables['attributes']['class'][] = "field";
@@ -95,6 +101,15 @@ function bos_text_preprocess_field(&$variables) {
   }
 }
 
-function _make_class($class) {
-  return str_replace("_","-", $class);
+/**
+ * Removes reserved chars from class string.
+ *
+ * @param string $class
+ *   The class which is to be standardised.
+ *
+ * @return mixed
+ *   Standardised class where "-" has been replaced with "-".
+ */
+function _make_class(string $class) {
+  return str_replace("_", "-", $class);
 }

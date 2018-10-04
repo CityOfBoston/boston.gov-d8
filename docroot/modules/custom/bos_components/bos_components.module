@@ -49,12 +49,12 @@ function bos_components_preprocess_field(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_components_preprocess_paragraph(&$variables) {
-    if (!empty($variables['is_subcomponent_field'])) {
-      $variables['attributes']['class'][] = "paragraph-subcomponent";
-    }
-    elseif (!empty($variables['is_component_field'])) {
-      $variables['attributes']['class'][] = "paragraph-component";
-    }
+  if (!empty($variables['is_subcomponent_field'])) {
+    $variables['attributes']['class'][] = "paragraph-subcomponent";
+  }
+  elseif (!empty($variables['is_component_field'])) {
+    $variables['attributes']['class'][] = "paragraph-component";
+  }
 }
 
 /**
@@ -148,28 +148,28 @@ function bos_components_preprocess_field_field_component_title(&$variables) {
  * Implements hook_paragraphs_info().
  */
 function bos_components_paragraphs_info() {
-  $items = array(
-    'text' => array(
+  $items = [
+    'text' => [
       'name' => 'Text',
       'bundle' => 'text',
       'locked' => '1',
-    ),
-    'text_one_column' => array(
+    ],
+    'text_one_column' => [
       'name' => 'One Column Text',
       'bundle' => 'text_one_column',
       'locked' => '1',
-    ),
-    'text_three_column' => array(
+    ],
+    'text_three_column' => [
       'name' => 'Three Column Text',
       'bundle' => 'text_three_column',
       'locked' => '1',
-    ),
-    'text_two_column' => array(
+    ],
+    'text_two_column' => [
       'name' => 'Two Column Text',
       'bundle' => 'text_two_column',
       'locked' => '1',
-    ),
-  );
+    ],
+  ];
   return $items;
 }
 
