@@ -1,9 +1,22 @@
 uuid: c06297b8-a1f7-4226-8b73-7d8cba7d2077
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:f640edc2-20b6-4666-8386-62eda3a2ca4f'
+  module:
+    - paragraphs_browser
+    - paragraphs_library
+third_party_settings:
+  paragraphs_browser:
+    description: 'Defines a basic sidebar text item.'
+    image_path: sites/default/files/paragraphs_type_icon/briefcase.svg
+  paragraphs_library:
+    allow_library_conversion: true
+_core:
+  default_config_hash: x1SNoO4J6GPdRC1cfYywfGFrX31nImbJ-pgdGkXHtpc
 id: sidebar_item
 label: 'Sidebar Item'
-icon_uuid: null
-description: 'Migrated from paragraph bundle Sidebar Item'
+icon_uuid: f640edc2-20b6-4666-8386-62eda3a2ca4f
+description: 'Defines a basic sidebar text item.'
 behavior_plugins: {  }

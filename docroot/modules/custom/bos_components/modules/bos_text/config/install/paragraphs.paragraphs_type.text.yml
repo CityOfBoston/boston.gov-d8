@@ -1,11 +1,19 @@
 uuid: d4f15ec2-5bc9-4d42-826b-c269d6fa970f
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:a1ae6069-3930-49ba-99da-96b16f5ba16d'
+  module:
+    - paragraphs_browser
+third_party_settings:
+  paragraphs_browser:
+    image_path: sites/default/files/paragraphs_type_icon/book.svg
+    description: 'Standard layout text components for the site.'
 _core:
   default_config_hash: 5UwUwK5Ki26K2WdBX0T8uhafv6Xv7c44QNJLmskTGSA
 id: text
 label: 'Formatted Text'
-icon_uuid: null
+icon_uuid: a1ae6069-3930-49ba-99da-96b16f5ba16d
 description: 'Standard layout text components for the site.'
 behavior_plugins: {  }
