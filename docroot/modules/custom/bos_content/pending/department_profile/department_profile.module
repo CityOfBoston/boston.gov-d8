@@ -5,3 +5,15 @@
  * Provides a department profile entity type.
  */
 
+/**
+ * Implements hook_theme().
+ */
+function department_profile_theme($existing, $type, $theme, $path) {
+  return [
+    'node__department_profile_contact' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_content/pending/department_profile/templates',
+      'template' => 'node--department-profile-contact',
+    ],
+  ];
+}

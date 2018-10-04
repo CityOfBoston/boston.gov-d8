@@ -83,7 +83,9 @@
   <target name="migrate:field:config">
     <echo message="Migrates field configuration into site." level="info"/>
     <property name="migration.configs" override="true"
-              value="d7_field,d7_field_instance,d7_field_formatter_settings,d7_field_instance_widget_settings,d7_view_modes,d7_field_group,d7_image_settings,d7_image_styles"/>
+              value="d7_field,d7_field_instance,d7_field_formatter_settings,\
+              d7_field_instance_widget_settings,d7_view_modes,d7_field_group,\
+              d7_image_settings,d7_image_styles"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:field:settings">
@@ -115,7 +117,9 @@
   <target name="migrate:user:config">
     <echo message="Migrates user configuration into site." level="info"/>
     <property name="migration.configs" override="true"
-              value="user_picture_field,user_picture_field_instance,user_picture_entity_display,user_picture_entity_form_display,d7_user_role,d7_user_maild7_user_flood"/>
+              value="user_picture_field,user_picture_field_instance,\
+              user_picture_entity_display,user_picture_entity_form_display,\
+              d7_user_role,d7_user_maild7_user_flood"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:user:settings">
@@ -343,14 +347,37 @@
       <isset property="migration.options.add"/>
       <then><php expression="${migration.options} . ' ' . ${migration.options.add}" returnProperty="migration.options"/></then>
     </if>
-    <echo message="Executes migrate:import ${migration.configs} ${migration.options}." level="info"/>
+    <echo message="Executes migrate:import '${migration.configs}' ${migration.options}." level="info"/>
     <exec dir="${project.basedir}"
-          command="drush migrate:import ${migration.configs} ${migration.options} "
+          command='drush migrate:import "${migration.configs}" ${migration.options}'
           passthru="true"
           logoutput="true"
           returnProperty="lastReturn"
     />
   </target>
 
-</project>
+  <target name="migrate:migrate" description="Active migrations.">
+    <echo message="Working Migrations." level="info"/>
+    <property name="php.command" override="true"
+              description="Code to change the uid 101 user init field to 'anon'."
+              value='\Drupal\Core\Database\Database::getConnection("default", "migrate")->update("users")->fields(["init" => "anon", "name" => "anon"])->condition("uid", 101, "=")->execute();'>
+    </property>
+    <exec description="Fixes the init name for uid=101."
+          command="${drush.cmd} eval '${php.command}'" level="info"/>
+    <property name="migration.options" value="--force --execute-dependencies -v"/>
+    <property name="migration.configs" override="true"
+              description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
+              value="d7_node_type,d7_user_role,d7_user,d7_menu,\
+d7_menu_links,node_translation_menu_links,\
+d7_node:department_profile,\
+d7_node:change,\
+d7_taxonomy_vocabulary,d7_taxonomy_term:bid_offering,d7_taxonomy_term:bid_type,\
+d7_taxonomy_term:contact,d7_taxonomy_term:311_request,paragraph__bid,\
+paragraph__bos311,paragraph__sidebar_item,paragraph__sidebar_item_w_icon,\
+paragraph__social_media_links,paragraph__social_networking,\
+paragraph__text,paragraph__text_one_column,paragraph__text_two_column,\
+paragraph__text_three_column"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
 
+</project>

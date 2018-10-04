@@ -1,4 +1,4 @@
-uuid: 9aeb68ef-07cf-4c92-b312-72a99458863a
+uuid: 246e43e7-dfa3-4aa6-ba46-3bb222e1e53a
 langcode: en
 status: true
 dependencies:
@@ -11,20 +11,54 @@ dependencies:
     - field.field.paragraph.text.field_text_blocks
     - paragraphs.paragraphs_type.text
   module:
+    - content_moderation
+    - field_group
     - paragraphs
+third_party_settings:
+  field_group:
+    group_basic_information:
+      children:
+        - field_component_title
+        - field_hide_title_bar
+        - field_short_title
+        - field_contact
+        - field_background_image
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Text Information'
+    group_text_blocks:
+      children:
+        - field_text_blocks
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Text Blocks'
+_core:
+  default_config_hash: raTLaIFmzFfFiaCgDcxnKyvcJPhlnIMjl_-Js2hVdww
 id: paragraph.text.default
 targetEntityType: paragraph
 bundle: text
 mode: default
 content:
   field_background_image:
-    weight: 5
+    weight: 4
     type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_component_title:
-    weight: 1
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -32,7 +66,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 4
+    weight: 3
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -41,14 +75,14 @@ content:
     third_party_settings: {  }
     region: content
   field_hide_title_bar:
-    weight: 2
+    weight: 1
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
   field_short_title:
-    weight: 3
+    weight: 2
     type: string_textfield
     settings:
       size: 60
@@ -56,7 +90,7 @@ content:
     third_party_settings: {  }
     region: content
   field_text_blocks:
-    weight: 4
+    weight: 6
     type: entity_reference_paragraphs
     settings:
       title: Component
@@ -69,7 +103,7 @@ content:
     region: content
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 8
     settings: {  }
     region: content
     third_party_settings: {  }
