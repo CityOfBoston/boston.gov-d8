@@ -1,9 +1,19 @@
 uuid: f75da5cb-f61b-4294-9bc7-5fb3d80eda49
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:a7beac1e-a797-4da1-bc00-f35a862440e8'
+  module:
+    - paragraphs_browser
+third_party_settings:
+  paragraphs_browser:
+    description: 'Defines a single social media item with a link.'
+    image_path: sites/default/files/paragraphs_type_icon/book.svg
+_core:
+  default_config_hash: Ioo9bxd9dCM0b2Sw84b3CuYFwAGiICm0x0gcAdRnxq4
 id: social_networking
 label: 'Social Media Link'
-icon_uuid: null
-description: 'Migrated from paragraph bundle Social Media Link'
+icon_uuid: a7beac1e-a797-4da1-bc00-f35a862440e8
+description: 'Defines a single social media item with a link.'
 behavior_plugins: {  }

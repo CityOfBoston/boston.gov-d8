@@ -13,3 +13,25 @@ function bos_text_uninstall() {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
 }
+
+/**
+ * Implements hook_install().
+ */
+function bos_text_install() {
+  // copy icons into expected location.
+  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon";
+  if (!file_exists($path)) {
+    mkdir($path);
+  }
+  $modulePath = drupal::root() . drupal_get_path("module", "bos_text");
+  $dir = dir($modulePath);
+  $icons = [];
+  while (false !== ($file = $dir->read())) {
+    if (strpos($file, "icon.svg") > 0) {
+      $icons[] = $file;
+    }
+  }
+  foreach ($icons as $icon) {
+    rename($modulePath . "/" . $icon, $path . "/" . $icon);
+  }
+}
