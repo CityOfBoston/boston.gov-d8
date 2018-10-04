@@ -49,6 +49,12 @@ function bos_components_preprocess_field(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_components_preprocess_paragraph(&$variables) {
+    if (!empty($variables['is_subcomponent_field'])) {
+      $variables['attributes']['class'][] = "paragraph-subcomponent";
+    }
+    elseif (!empty($variables['is_component_field'])) {
+      $variables['attributes']['class'][] = "paragraph-component";
+    }
 }
 
 /**

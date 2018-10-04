@@ -68,15 +68,6 @@ function bos_text_preprocess_paragraph(&$variables) {
   if ($variables["paragraph"]->bundle() == "text") {
     $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
   }
-
-// col_one_one_third
-//  if ($variables['label_hidden']) {
-//    $variables['attributes']['class'][] = "field-subcomponent";
-//  }
-//  if ($variables['label_hidden']) {
-//    $variables['attributes']['class'][] = "field-component";
-//  }
-
 }
 
 /**
@@ -93,12 +84,6 @@ function bos_text_preprocess_field(&$variables) {
     return;
   }
   $variables['attributes']['class'][] = "field";
-  if (isset($variables["field_type"])) {
-//    $variables['attributes']['class'][] = "field-type-" . _make_class($variables["field_type"]);
-  }
-  if (isset($variables["field_name"])) {
-//    $variables['attributes']['class'][] = "field-name-" . _make_class($variables["field_name"]);
-  }
   if ($variables['label_hidden']) {
     $variables['attributes']['class'][] = "field-label-hidden";
   }
