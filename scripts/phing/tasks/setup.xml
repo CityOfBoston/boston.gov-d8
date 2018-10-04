@@ -13,7 +13,7 @@
     <echo message="from container: phing -l"/>
   </target>
 
-  <!-- Define the build task for normal developer local builds. -->
+  <!-- Define the build task for normal developerreset_config local builds. -->
   <target name="setup:docker:drupal-local"
           description="Creates a Drupal environment in Docker Containers for local development."
           depends=" setup:drupal:download-modules,
@@ -208,6 +208,11 @@
       </fileset>
     </chmod>
 
+    <!-- Need to upgrade the memory allocation. -->
+    <echo
+      message="// Terraform Addition.${line.separator}ini_set('memory_limit', '512M');${line.separator}"
+      append="true" file="${local.settings.file}"/>
+
   </target>
 
   <!-- Define the Drupal setup task -->
@@ -260,6 +265,7 @@
 
       </else>
     </if>
+    <echo message="Done." level="info"/>
   </target>
 
   <!-- Define the task to build a new Drupal 8 Database. -->
@@ -333,6 +339,7 @@
         <fail message="Setup is incomplete." status="1"/>
       </else>
     </if>
+    <echo message="Success - Site installed." level="info"/>
   </target>
 
   <!-- Define a task to copy a new local.settings.php file and append initial settings. -->
@@ -409,11 +416,11 @@
     </if>
 
     <!-- Remove unwanted and confusing template config files. -->
-    <delete file="${docroot}/sites/default/default.settings.php" quiet="true"/>
-    <delete file="${docroot}/sites/example.settings.local.php" quiet="true"/>
-    <delete file="${docroot}/sites/example.sites.php" quiet="true"/>
-    <delete file="${docroot}/sites/default/default.services.yml" quiet="true"/>
-    <delete file="${docroot}/sites/development.services.yml" quiet="true"
+    <delete file="${docroot}/sites/default/default.settings.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/default/default.services.yml" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/development.services.yml" quiet="true" verbose="false"
             description="Redundant file as we have this in the sites/default folder."/>
 
     <!-- Append code to (fresh) settings.php file -->
@@ -492,6 +499,7 @@
               append="true" file="${local.settings.file}"/>
       </then>
     </if>
+    <echo message="Success - done." level="info"/>
 
   </target>
 
@@ -567,6 +575,8 @@
 
       </then>
     </if>
+    <echo message="Done." level="info"/>
+
   </target>
 
   <target name="setup:drush:local-config"
@@ -581,6 +591,7 @@
           file="${repo.root}/drush/drush.yml"/>
     <echo message="  root: '${lando.url.localpath}'${line.separator}"
           append="true" file="${repo.root}/drush/drush.yml"/>
+    <echo message="Done." level="info"/>
   </target>
 
   <target name="setup:cleanup"
@@ -630,6 +641,7 @@
                 logoutput="true"/>
       </then>
     </if>
+    <echo message="Done." level="info"/>
   </target>
 
   <!-- Production-only Modules Strategy -->
@@ -669,6 +681,8 @@
                 logoutput="true"/>
       </then>
     </if>
+    <echo message="Done." level="info"/>
+
   </target>
 
   <target name="setup:drupal:reset_config"
@@ -703,7 +717,7 @@
         <echo message="Installing development-only modules." level="info"/>
         <echo message="==== development-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
         <exec   description="Install development modules if not installed already."
-                command="drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
+                command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
                 dir="${install_config_abs}"
                 passthru="true"
                 logoutput="true" />
@@ -732,7 +746,7 @@
         <exec
                 description="Use drupal console to re-import the production yml config_split file."
                 dir="${docroot}"
-                command="drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
+                command="${project.basedir}/vendor/drupal/console/bin/drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
                 logoutput="true"/>
         <exec description="Sets the active status for the settings."
               dir="${docroot}"
@@ -745,6 +759,7 @@
                 logoutput="true"/>
       </then>
     </if>
+    <echo message="Done." level="info"/>
   </target>
 
   <!-- Used to set a flag which inhibits settings.php file rewrites. -->

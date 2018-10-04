@@ -49,6 +49,24 @@ function bos_components_preprocess_field(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_components_preprocess_paragraph(&$variables) {
+  if (!empty($variables['is_subcomponent_field'])) {
+    $variables['attributes']['class'][] = "paragraph-subcomponent";
+  }
+  elseif (!empty($variables['is_component_field'])) {
+    $variables['attributes']['class'][] = "paragraph-component";
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_components_form_node_form_alter(&$form, &$form_state, $form_id) {
+  // If the form contains field_address, set default information on it.
+  _set_default_address_field_values($form);
+  // Remove Master view options from List components.
+  if (isset($form['field_components'])) {
+    $form['field_components'] = walk_recursive_remove($form['field_components'], '_remove_master_view_listings_from_view_fields');
+  }
 }
 
 /**
@@ -127,6 +145,35 @@ function bos_components_preprocess_field_field_component_title(&$variables) {
 }
 
 /**
+ * Implements hook_paragraphs_info().
+ */
+function bos_components_paragraphs_info() {
+  $items = [
+    'text' => [
+      'name' => 'Text',
+      'bundle' => 'text',
+      'locked' => '1',
+    ],
+    'text_one_column' => [
+      'name' => 'One Column Text',
+      'bundle' => 'text_one_column',
+      'locked' => '1',
+    ],
+    'text_three_column' => [
+      'name' => 'Three Column Text',
+      'bundle' => 'text_three_column',
+      'locked' => '1',
+    ],
+    'text_two_column' => [
+      'name' => 'Two Column Text',
+      'bundle' => 'text_two_column',
+      'locked' => '1',
+    ],
+  ];
+  return $items;
+}
+
+/**
  * Sets is_component and is_subcomponent variables.
  *
  * Establishes whether the object subject of the variables array is embedded
@@ -154,4 +201,84 @@ function _bos_component_embed_level(array &$variables) {
       }
     }
   }
+}
+
+/**
+ * Set Boston, MA as the default city and state on field_address.
+ *
+ * Walk the form recursively in order to account for nested paragraph forms.
+ *
+ * @param array $form
+ *   Drupal form to modify field_address default values for.
+ */
+function _set_default_address_field_values(array &$form) {
+  // If we're looking at field_address on the current level, set defaults
+  // if applicable.
+  if (array_key_exists('field_address', $form) && is_array($form['field_address'])) {
+    if (!empty($form['field_address'])) {
+      // Set Boston as the default city.
+      if (empty($form['field_address'][LANGUAGE_NONE][0]['#address']['locality'])) {
+        $form['field_address'][LANGUAGE_NONE][0]['#address']['locality'] = "Boston";
+      }
+      // Set Massachusetts as the default state.
+      if (empty($form['field_address'][LANGUAGE_NONE][0]['#address']['administrative_area'])) {
+        $form['field_address'][LANGUAGE_NONE][0]['#address']['administrative_area'] = "MA";
+      }
+    }
+  }
+  // Continue to walk the forms array.
+  foreach ($form as $key => &$value) {
+    if ($key === 'field_address' || !is_array($value)) {
+      continue;
+    }
+    if (is_array($value)) {
+      _set_default_address_field_values($value);
+    }
+  }
+}
+
+/**
+ * Remove master view displays from view form fields.
+ *
+ * Callback to determine if key/value pair should be removed.
+ *
+ * @param mixed $list_option
+ *   Value being checked to determine if it is a master display label.
+ * @param mixed $key
+ *   Value being checked to determine if it is a master display key.
+ *
+ * @return bool
+ *   TRUE if this is a master display listing option, FALSE otherwise.
+ */
+function _remove_master_view_listings_from_view_fields($list_option, $key) {
+  if (strpos($key, '|default') !== FALSE && strpos($list_option, 'Master') !== FALSE) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Recursive search for a key/value pair and removes said pair from the array.
+ *
+ * @param array $array
+ *   Array being recursively searched on.
+ * @param callable $callback
+ *   Function must return boolean value indicating whether to remove the node.
+ *
+ * @return array
+ *   The array with all values removed based on callback.
+ */
+function walk_recursive_remove(array $array, callable $callback) {
+  foreach ($array as $k => $v) {
+    if (is_array($v)) {
+      $array[$k] = walk_recursive_remove($v, $callback);
+    }
+    else {
+      if ($callback($v, $k)) {
+        unset($array[$k]);
+      }
+    }
+  }
+
+  return $array;
 }
