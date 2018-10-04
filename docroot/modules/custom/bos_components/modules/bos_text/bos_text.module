@@ -63,6 +63,12 @@ function bos_text_preprocess_paragraph(&$variables) {
   if ($variables["paragraph"]->bundle() == "text_two_column") {
     $variables['attributes']['class'][] = $variables["paragraph"]->field_column_configuration->value;
   }
+
+  // Set a flag if the title is to be hidden in twig.
+  if ($variables["paragraph"]->bundle() == "text") {
+    $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+  }
+
 // col_one_one_third
 //  if ($variables['label_hidden']) {
 //    $variables['attributes']['class'][] = "field-subcomponent";

@@ -28,10 +28,10 @@
 
 <div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
   <div class="content"{{ content_attributes }}>
-    {% if content.field_hide_title_bar and not content.field_hide_title_bar['#items'][0]['value'] %}
+    {% if content.field_component_title and not hideTitle %}
   	  <div class="sh">
         {{ content.field_component_title }}
-        {%  if content.field_contact %}
+        {% if content.field_contact %}
           {{ content.field_contact }}
         {% endif %}
       </div>
