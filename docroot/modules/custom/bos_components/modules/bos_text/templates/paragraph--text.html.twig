@@ -25,11 +25,8 @@
  * @see template_process()
  */
 #}
-{% if content.field_background_image %}
-{%  set classes = ["city-hall-building-background"] %}
-{% endif %}
 
-<div{{ attributes.addClass(classes).setAttribute('about','').setAttribute('typeof','') }}>
+<div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
   <div class="content"{{ content_attributes }}>
     {% if content.field_hide_title_bar and not content.field_hide_title_bar['#items'][0]['value'] %}
   	  <div class="sh">

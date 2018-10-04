@@ -1,4 +1,4 @@
-<?php
+{#
 /**
  * @file
  * Default theme implementation for a single paragraph item.
@@ -24,9 +24,9 @@
  * @see template_preprocess_entity()
  * @see template_process()
  */
-?>
-<div class="<?php print $classes; ?>"<?php print $attributes; ?>>
-  <div class="content"<?php print $content_attributes; ?>>
-    <?php print render($content); ?>
+#}
+<div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
+  <div class="content"{{ content_attributes }}>
+    {{ content }}
   </div>
 </div>
