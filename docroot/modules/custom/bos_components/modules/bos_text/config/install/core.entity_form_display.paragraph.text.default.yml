@@ -1,3 +1,4 @@
+uuid: 246e43e7-dfa3-4aa6-ba46-3bb222e1e53a
 langcode: en
 status: true
 dependencies:
@@ -38,11 +39,14 @@ third_party_settings:
       weight: 5
       format_type: fieldset
       format_settings:
-        id: ''
-        classes: ''
+        label: 'Formatted Text Blocks'
         description: ''
         required_fields: true
-      label: 'Text Blocks'
+        id: ''
+        classes: ''
+      label: 'Formatted Text Blocks'
+_core:
+  default_config_hash: raTLaIFmzFfFiaCgDcxnKyvcJPhlnIMjl_-Js2hVdww
 id: paragraph.text.default
 targetEntityType: paragraph
 bundle: text
@@ -88,14 +92,20 @@ content:
     region: content
   field_text_blocks:
     weight: 6
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Component
-      title_plural: Components
-      edit_mode: open
+      title: 'Text Block'
+      title_plural: 'Text Blocks'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   moderation_state:

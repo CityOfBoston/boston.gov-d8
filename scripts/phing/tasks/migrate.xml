@@ -367,16 +367,7 @@
     <property name="migration.options" value="--force --execute-dependencies -v"/>
     <property name="migration.configs" override="true"
               description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
-              value="d7_node_type,d7_user_role,d7_user,d7_menu,\
-d7_menu_links,node_translation_menu_links,\
-d7_node:department_profile,\
-d7_node:change,\
-d7_taxonomy_vocabulary,d7_taxonomy_term:bid_offering,d7_taxonomy_term:bid_type,\
-d7_taxonomy_term:contact,d7_taxonomy_term:311_request,paragraph__bid,\
-paragraph__bos311,paragraph__sidebar_item,paragraph__sidebar_item_w_icon,\
-paragraph__social_media_links,paragraph__social_networking,\
-paragraph__text,paragraph__text_one_column,paragraph__text_two_column,\
-paragraph__text_three_column"/>
+              value="d7_node_type,d7_user_role,d7_user,d7_menu,d7_menu_links,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_taxonomy_vocabulary,d7_taxonomy_term:bid_offering,d7_taxonomy_term:bid_type,d7_taxonomy_term:contact,d7_taxonomy_term:311_request,paragraph__bid,paragraph__bos311,paragraph__sidebar_item,paragraph__sidebar_item_w_icon,paragraph__social_media_links,paragraph__social_networking,paragraph__text,paragraph__text_one_column,paragraph__text_two_column,paragraph__text_three_column"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 

@@ -19,11 +19,9 @@ third_party_settings:
   field_group:
     group_main:
       children:
-        - title
-        - body
         - field_components
       parent_name: ''
-      weight: 0
+      weight: 3
       format_type: tab
       format_settings:
         id: ''
@@ -37,7 +35,7 @@ third_party_settings:
         - field_contact
         - field_sidebar_components
       parent_name: ''
-      weight: 1
+      weight: 2
       format_type: tab
       format_settings:
         id: ''
@@ -64,7 +62,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -74,9 +72,9 @@ content:
     settings:
       title: Component
       title_plural: Components
-      edit_mode: open
+      edit_mode: closed
       closed_mode: summary
-      autocollapse: none
+      autocollapse: all
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: _none
@@ -100,9 +98,9 @@ content:
     settings:
       title: 'SB Component'
       title_plural: 'SB Components'
-      edit_mode: open
+      edit_mode: closed
       closed_mode: summary
-      autocollapse: none
+      autocollapse: all
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: _none
@@ -115,20 +113,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 4
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 11
+    weight: 13
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 7
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -136,12 +134,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 8
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 5
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -149,7 +147,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 11
     region: content
     third_party_settings: {  }
   title:
@@ -161,13 +159,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   translation:
-    weight: 10
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 5
     settings:
       match_operator: CONTAINS
       size: 60
@@ -175,7 +173,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }

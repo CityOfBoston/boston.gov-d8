@@ -1,11 +1,19 @@
 uuid: ae020f18-bcfb-4909-83ec-c8e800630f8a
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:f5e5a647-3180-44d0-a49f-be42ad3608a8'
+  module:
+    - paragraphs_browser
+third_party_settings:
+  paragraphs_browser:
+    description: 'Records the status of a Bid for City of Boston service provision.'
+    image_path: sites/default/files/paragraphs_type_icon/doit_400x400.jpg
 _core:
   default_config_hash: QRJExDeUcNfJKJWRf9TfBhKZQsElq9PGQt4esqkdz_0
 id: bid
 label: Bid
-icon_uuid: null
-description: 'Migrated from paragraph bundle Bid'
+icon_uuid: f5e5a647-3180-44d0-a49f-be42ad3608a8
+description: 'Records the status of a Bid for City of Boston service provision.'
 behavior_plugins: {  }
