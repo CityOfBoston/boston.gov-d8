@@ -721,6 +721,13 @@
                 dir="${install_config_abs}"
                 passthru="true"
                 logoutput="true" />
+        <exec description="Re-installs migrate_drupal_ui which for some reason does not install well."
+              command="${drush.cmd} pmu -y migrate_drupal_ui"
+              passthru="true"
+              logoutput="true"/>
+        <exec command="${drush.cmd} en -y migrate_drupal_ui"
+              passthru="true"
+              logoutput="true"/>
         <echo message="Enabling production-only config settings for developers to maintain." level="info"/>
         <exec
                 description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."

@@ -3,13 +3,15 @@ status: true
 dependencies:
   module:
     - paragraphs
-    - text
-id: paragraph.field_right_column
-field_name: field_right_column
+id: paragraph.field_company_name
+field_name: field_company_name
 entity_type: paragraph
-type: text_long
-settings: {  }
-module: text
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true

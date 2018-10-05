@@ -18,15 +18,15 @@ function bos_bid_uninstall() {
  * Implements hook_install().
  */
 function bos_bid_install() {
-  // copy icons into expected location.
-  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon";
+  // Copy icons into expected location.
+  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
   if (!file_exists($path)) {
     mkdir($path);
   }
-  $modulePath = drupal::root() . drupal_get_path("module", "bos_bid");
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", "bos_bid");
   $dir = dir($modulePath);
   $icons = [];
-  while (false !== ($file = $dir->read())) {
+  while (FALSE !== ($file = $dir->read())) {
     if (strpos($file, "icon.svg") > 0) {
       $icons[] = $file;
     }
