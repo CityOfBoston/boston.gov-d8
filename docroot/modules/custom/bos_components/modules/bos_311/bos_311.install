@@ -18,15 +18,15 @@ function bos_311_uninstall() {
  * Implements hook_install().
  */
 function bos_311_install() {
-  // copy icons into expected location.
-  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon";
+  // Copy icons into expected location.
+  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
   if (!file_exists($path)) {
-    mkdir($path);
+    mkdir($path, 0777);
   }
-  $modulePath = drupal::root() . drupal_get_path("module", "bos_311");
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", "bos_311");
   $dir = dir($modulePath);
   $icons = [];
-  while (false !== ($file = $dir->read())) {
+  while (FALSE !== ($file = $dir->read())) {
     if (strpos($file, "icon.svg") > 0) {
       $icons[] = $file;
     }

@@ -3,15 +3,16 @@ status: true
 dependencies:
   module:
     - paragraphs
-    - text
-id: paragraph.field_middle_column
-field_name: field_middle_column
+    - taxonomy
+id: paragraph.field_311_request
+field_name: field_311_request
 entity_type: paragraph
-type: text_long
-settings: {  }
-module: text
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
 locked: false
-cardinality: 1
+cardinality: 9
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

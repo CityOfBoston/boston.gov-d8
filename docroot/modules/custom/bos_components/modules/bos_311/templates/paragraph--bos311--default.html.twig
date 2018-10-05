@@ -31,8 +31,6 @@
         {{ content.field_short_title }}
       {% endif %}
     </div>
-    <div class="g">
-      {{ content|without('field_short_title')|without('field_component_title') }}
-    </div>
+    {{ content|without('field_short_title')|without('field_component_title') }}
   </div>
 </div>

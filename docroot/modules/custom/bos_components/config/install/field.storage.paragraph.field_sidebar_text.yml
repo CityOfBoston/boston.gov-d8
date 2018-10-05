@@ -1,18 +1,15 @@
-uuid: 551961ff-42e2-4303-b347-64af3a2df1f5
 langcode: en
 status: true
 dependencies:
   module:
     - paragraphs
-id: paragraph.field_short_title
-field_name: field_short_title
+    - text
+id: paragraph.field_sidebar_text
+field_name: field_sidebar_text
 entity_type: paragraph
-type: string
-settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
-module: core
+type: text_long
+settings: {  }
+module: text
 locked: false
 cardinality: 1
 translatable: true
