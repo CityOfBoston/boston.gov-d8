@@ -19,11 +19,11 @@ function bos_sidebar_uninstall() {
  */
 function bos_sidebar_install() {
   // copy icons into expected location.
-  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon";
+  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
   if (!file_exists($path)) {
     mkdir($path);
   }
-  $modulePath = drupal::root() . drupal_get_path("module", "bos_sidebar");
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", "bos_sidebar");
   $dir = dir($modulePath);
   $icons = [];
   while (false !== ($file = $dir->read())) {
