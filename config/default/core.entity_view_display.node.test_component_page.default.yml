@@ -10,6 +10,7 @@ dependencies:
     - node.type.test_component_page
   module:
     - entity_reference_revisions
+    - fences
     - text
     - user
 _core:
@@ -39,9 +40,17 @@ content:
     weight: 104
     label: above
     settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
+      view_mode: article
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: entity_reference_entity_view
     region: content
   field_sidebar_components:
     weight: 103

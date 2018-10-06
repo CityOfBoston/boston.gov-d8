@@ -1,4 +1,4 @@
-uuid: 5060a048-7885-49b2-84f7-e9f277b30c81
+uuid: 97a9a567-1ef8-4a2d-8207-9e60c0f0d50e
 langcode: en
 status: true
 dependencies:
@@ -26,6 +26,8 @@ dependencies:
     - options
     - text
     - user
+_core:
+  default_config_hash: tVO8brLXDYZje7t8EdOg20flELYdokdTDRv6NEOaflY
 id: node.department_profile.default
 targetEntityType: node
 bundle: department_profile
@@ -74,8 +76,11 @@ content:
   field_hide_contact_form:
     label: above
     weight: 14
-    type: list_default
-    settings: {  }
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
     region: content
   field_icon:
@@ -134,6 +139,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_type_of_content: true
   langcode: true

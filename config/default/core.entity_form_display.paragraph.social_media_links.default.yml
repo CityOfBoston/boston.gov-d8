@@ -32,14 +32,20 @@ mode: default
 content:
   field_social_media_link:
     weight: 1
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Link
       title_plural: Links
-      edit_mode: open
-      add_mode: select
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: social_networking
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   moderation_state:
