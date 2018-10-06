@@ -1,16 +1,17 @@
-uuid: 98d2e4d6-f9c5-4182-adff-b1ae9871b696
-langcode: und
+uuid: ecb8e744-a4ee-475d-b4fd-5db11545defd
+langcode: en
 status: true
 dependencies:
   module:
-    - node
     - taxonomy
-id: taxonomy_term.field_department_profile
-field_name: field_department_profile
+id: taxonomy_term.field_id
+field_name: field_id
 entity_type: taxonomy_term
-type: entity_reference
+type: string
 settings:
-  target_type: node
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
 module: core
 locked: false
 cardinality: 1
