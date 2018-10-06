@@ -553,6 +553,9 @@
                     dir="${git.private_repo.local_dir}/.git"
                     quiet="true" verbose="false" failonerror="false"
                     includeemptydirs="true"/>
+            <move description="Rename any ..gitignore files to .gitignore so the contents arent saved in main repo"
+                  file="${git.private_repo.local_dir}/**/..gitignore"
+                  tofile="./.gitignore" />
             <exec description="Remove markdown files so they dont get copied."
                   command="rm -f ${git.private_repo.local_dir}/*.md"
                   passthru="true" logoutput="false" checkreturn="false"/>
