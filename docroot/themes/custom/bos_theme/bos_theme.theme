@@ -478,6 +478,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
   if (isset($variables['elements']['#node'])) {
     $node = $variables['elements']['#node'];
     $variables['node_type'] = $node->getType();
+    $variables['node_url'] = $node->url();
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
     $variables['unpublished'] = !empty($node->isPublished()) ? TRUE : FALSE;
