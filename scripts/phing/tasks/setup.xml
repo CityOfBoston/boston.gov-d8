@@ -554,12 +554,11 @@
                     dir="${git.private_repo.local_dir}/.git"
                     quiet="true" verbose="false" failonerror="false"
                     includeemptydirs="true"/>
-            <move description="Rename any ..gitignore files to .gitignore so the contents arent saved in main repo"
-                  tofile="./.gitignore" >
-              <fileset dir="${git.private_repo.local_dir}">
-                <include name="**/..gitignore"/>
-              </fileset>
-            </move>
+            <exec description="Rename any ..gitignore files to .gitignore so the contents arent saved in main repo"
+                  dir="${git.private_repo.local_dir}"
+                  command="find . -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; "
+                  passthru="true" logoutput="true" checkreturn="false"
+            />
             <exec description="Remove markdown files so they dont get copied."
                   command="rm -f ${git.private_repo.local_dir}/*.md"
                   passthru="true" logoutput="false" checkreturn="false"/>
