@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.department_profile.field_email
     - field.field.node.department_profile.field_hide_contact_form
     - field.field.node.department_profile.field_icon
+    - field.field.node.department_profile.field_intro_text
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
@@ -43,15 +44,22 @@ content:
   comment_node_department_profile:
     label: hidden
     type: comment_default
-    weight: 20
+    weight: 13
     settings:
       view_mode: default
       pager_id: 0
     third_party_settings: {  }
     region: content
+  field_address:
+    weight: 5
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_components:
     label: hidden
-    weight: 7
+    weight: 6
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -60,14 +68,14 @@ content:
     region: content
   field_department_type:
     label: above
-    weight: 9
+    weight: 8
     type: list_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_email:
     label: hidden
-    weight: 5
+    weight: 4
     type: string
     settings:
       link_to_entity: false
@@ -75,7 +83,7 @@ content:
     region: content
   field_hide_contact_form:
     label: above
-    weight: 14
+    weight: 12
     type: boolean
     settings:
       format: default
@@ -85,16 +93,23 @@ content:
     region: content
   field_icon:
     label: hidden
-    weight: 3
+    weight: 2
     type: image
     settings:
       image_style: ''
       image_link: ''
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_operation_hours:
     label: hidden
-    weight: 8
+    weight: 7
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -103,7 +118,7 @@ content:
     region: content
   field_phone_number:
     label: hidden
-    weight: 4
+    weight: 3
     type: string
     settings:
       link_to_entity: false
@@ -111,7 +126,7 @@ content:
     region: content
   field_published_date:
     label: above
-    weight: 12
+    weight: 10
     type: datetime_default
     settings:
       format_type: medium
@@ -120,7 +135,7 @@ content:
     region: content
   field_sidebar_components:
     label: hidden
-    weight: 10
+    weight: 9
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: sidebar
@@ -129,7 +144,7 @@ content:
     region: content
   field_updated_date:
     label: above
-    weight: 13
+    weight: 11
     type: datetime_default
     settings:
       format_type: medium
@@ -137,7 +152,7 @@ content:
     third_party_settings: {  }
     region: content
   links:
-    weight: 100
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }

@@ -1,9 +1,9 @@
-uuid: fd116fa4-718c-43f3-bddb-732c1c0fd4d1
+uuid: 4456eeb4-b56d-4096-bea5-f247d647180f
 langcode: en
-status: false
+status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.listing
+    - core.entity_view_display.comment.comment_node_department_profile.default
     - field.field.node.department_profile.body
     - field.field.node.department_profile.comment_node_department_profile
     - field.field.node.department_profile.field_address
@@ -21,17 +21,20 @@ dependencies:
     - field.field.node.department_profile.field_updated_date
     - node.type.department_profile
   module:
+    - address
+    - comment
+    - datetime
     - entity_reference_revisions
     - image
     - options
     - text
     - user
 _core:
-  default_config_hash: Az1RRc7-FnPBomjXFAJwRA6jElNqVeJxjFypxxjcJ-o
-id: node.department_profile.listing
+  default_config_hash: tVO8brLXDYZje7t8EdOg20flELYdokdTDRv6NEOaflY
+id: node.department_profile.default
 targetEntityType: node
 bundle: department_profile
-mode: listing
+mode: default
 content:
   body:
     label: hidden
@@ -40,9 +43,25 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  comment_node_department_profile:
+    label: hidden
+    type: comment_default
+    weight: 13
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_address:
+    weight: 5
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_components:
     label: hidden
-    weight: 7
+    weight: 6
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -51,31 +70,48 @@ content:
     region: content
   field_department_type:
     label: above
-    weight: 9
+    weight: 8
     type: list_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_email:
     label: hidden
-    weight: 5
+    weight: 4
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
+  field_hide_contact_form:
+    label: above
+    weight: 12
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    region: content
   field_icon:
     label: hidden
-    weight: 3
+    weight: 2
     type: image
     settings:
       image_style: ''
       image_link: ''
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_operation_hours:
     label: hidden
-    weight: 8
+    weight: 7
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -84,31 +120,45 @@ content:
     region: content
   field_phone_number:
     label: hidden
-    weight: 4
+    weight: 3
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
+  field_published_date:
+    label: above
+    weight: 10
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
   field_sidebar_components:
     label: hidden
-    weight: 10
+    weight: 9
     type: entity_reference_revisions_entity_view
     settings:
-      view_mode: full
+      view_mode: sidebar
       link: ''
     third_party_settings: {  }
     region: content
-  links:
-    weight: 100
+  field_updated_date:
+    label: above
+    weight: 11
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
     region: content
+  links:
+    weight: 14
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  comment_node_department_profile: true
-  field_address: true
-  field_hide_contact_form: true
-  field_intro_text: true
-  field_published_date: true
   field_type_of_content: true
-  field_updated_date: true
   langcode: true
   published_at: true
