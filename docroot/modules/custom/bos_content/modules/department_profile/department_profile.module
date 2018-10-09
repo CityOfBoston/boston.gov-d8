@@ -59,4 +59,7 @@ function department_profile_preprocess_field(&$variables) {
   if ($variables['field_name'] == "body") {
     $variables["attributes"]['class'][] = "supporting-text";
   }
+  if ($variables['field_name'] == "field_intro_text") {
+    unset($variables["items"][0]['attributes']);
+  }
 }
