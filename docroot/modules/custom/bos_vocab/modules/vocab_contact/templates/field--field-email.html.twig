@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ *   Template for contact info in the sidebar area of a content type.
+ */
+#}
+<div class="detail-item detail-item--middle detail-item__{{ field_name }}">
+    <div class="detail-item__left">
+        <div class="icon icon-email"></div>
+    </div>
+    <div class="detail-item__content">
+        <div class="detail-item__body detail-item__body--secondary">
+            <a href="mailto:{{ items.0.content }}">{{ items.0.content }}</a>
+        </div>
+    </div>
+</div>

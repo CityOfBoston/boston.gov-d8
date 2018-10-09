@@ -237,20 +237,13 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
     }
   }
 
-}
+  // Add in D7 style body classes:
+  if (isset($variables['node_type'])) {
+    $variables["attributes"]['class'][] = "page-node";
+    $variables["attributes"]['class'][] = "node-type-" . str_replace("_", "-", $variables['node_type']);
+  }
+  $variables["attributes"]['class'][] = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
 
-/**
- * Override or insert variables into the html templates.
- *
- * @param array $variables
- *   An array of variables to pass to the theme template.
- * @param string $hook
- *   The name of the template being rendered ("html" in this case).
- */
-function bos_theme_process_html(array &$variables, $hook) {
-  // Flatten out html_attributes.
-  // Todo: Use the new \Drupal\Core\Template\Attribute class ... ??
-  $variables['html_attributes'] = drupal_attributes($variables['html_attributes_array']);
 }
 
 /**

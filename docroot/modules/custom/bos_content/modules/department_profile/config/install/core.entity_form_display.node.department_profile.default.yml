@@ -1,4 +1,3 @@
-uuid: 2fdcad08-db43-4671-9786-3d27cbcd3159
 langcode: en
 status: true
 dependencies:
@@ -18,6 +17,7 @@ dependencies:
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_type_of_content
     - field.field.node.department_profile.field_updated_date
+    - image.style.thumbnail
     - node.type.department_profile
   module:
     - address
@@ -25,7 +25,8 @@ dependencies:
     - content_moderation
     - datetime
     - field_group
-    - file_entity
+    - image
+    - imce
     - paragraphs
     - path
     - publication_date
@@ -135,8 +136,6 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
-_core:
-  default_config_hash: MB9wWJ4vZyHlZ4QAinemp-OZSzX2lZMpkHEO5Hccfx4
 id: node.department_profile.default
 targetEntityType: node
 bundle: department_profile
@@ -211,10 +210,13 @@ content:
     region: content
   field_icon:
     weight: 8
-    type: file_editable
+    type: image_image
     settings:
+      preview_image_style: thumbnail
       progress_indicator: throbber
-    third_party_settings: {  }
+    third_party_settings:
+      imce:
+        enabled: true
     region: content
   field_intro_text:
     weight: 1

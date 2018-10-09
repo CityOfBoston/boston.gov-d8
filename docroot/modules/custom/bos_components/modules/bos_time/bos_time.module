@@ -13,5 +13,11 @@
  * Implements hook_theme().
  */
 function bos_time_theme() {
-  return [];
+  return [
+    'paragraph__custom_hours_text' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_components/modules/bos_time/templates',
+      'template' => 'paragraph--custom-hours-text',
+    ],
+  ];
 }

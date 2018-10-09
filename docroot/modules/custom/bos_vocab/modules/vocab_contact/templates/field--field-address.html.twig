@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ *   Template for contact info in the sidebar area of a content type.
+ */
+#}
+<div class="detail-item detail-item--middle detail-item__{{ field_name }}">
+    <div class="detail-item__left">
+        <div class="icon icon-location"></div>
+    </div>
+    <div class="detail-item__content">
+        <div class="detail-item__content">
+            <div class="detail-item__body detail-item__body--secondary">
+                <div class="street-block">
+                    <div class="thoroughfare">{{ items.0.content.address_line1 }}</div>
+                </div>
+                {% if items.0.address_line2 %}
+                    <div class="street-block">
+                        <div class="premise">{{ items.0.content.address_line2 }}</div>
+                    </div>
+                {% endif %}
+                <div class="addressfield-container-inline locality-block country-US">
+                    <span class="locality">{{ items.0.content.locality }}</span>,&nbsp;<span class="state">{{ items.0.content.administrative_area }}</span>&nbsp;<span class="postal-code">{{ items.0.content.postal_code }}</span>
+                </div>
+                <span class="country">{{ items.0.content.country }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+

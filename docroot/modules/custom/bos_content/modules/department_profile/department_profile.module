@@ -5,15 +5,58 @@
  * Provides a department profile entity type.
  */
 
+use Drupal\Core\Render\Element;
+
 /**
  * Implements hook_theme().
  */
 function department_profile_theme($existing, $type, $theme, $path) {
   return [
+    'node__department_profile' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_content/modules/department_profile/templates',
+      'template' => 'node--department-profile',
+    ],
     'node__department_profile_contact' => [
       'base hook' => 'node',
-      'path' => 'modules/custom/bos_content/pending/department_profile/templates',
+      'path' => 'modules/custom/bos_content/modules/department_profile/templates',
       'template' => 'node--department-profile-contact',
     ],
+    'field__field_intro_text' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_content/modules/department_profile/templates',
+      'template' => 'field--field-intro-text',
+    ],
   ];
+}
+
+/**
+ * Prepares variables for department-profile template.
+ *
+ * Default template: node--department-profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the test component page
+ *     information and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__department_profile(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+  // Replace underscores with dashes to maintain compatability with css library.
+  foreach ($variables['attributes']['class'] as &$class) {
+    $class = str_ireplace('_', '-', $class);
+  }
+  $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function department_profile_preprocess_field(&$variables) {
+  if ($variables['field_name'] == "body") {
+    $variables["attributes"]['class'][] = "supporting-text";
+  }
 }

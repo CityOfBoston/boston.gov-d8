@@ -1,5 +1,4 @@
-<?php
-
+{#
 /**
  * @file
  * Default theme implementation for a single paragraph item.
@@ -25,14 +24,14 @@
  * @see template_preprocess_entity()
  * @see template_process()
  */
-$detail_item_variables = array(
-  'label' => NULL,
-  'body' => render($content['field_custom_hours_text']),
-);
-if (isset($content['field_hours_icon'])) {
-  $detail_item_variables['classes']['icon'] = render($content['field_hours_icon']);
-}
-if (isset($content['field_title'])) {
-  $detail_item_variables['label'] = render($content['field_title']);
-}
-print theme('detail_item', $detail_item_variables);
+ #}
+<div class="detail-item detail-item--middle detail-item__{{ field_name }}">
+  <div class="detail-item__left">
+    <div class="icon icon-time"></div>
+  </div>
+  <div class="detail-item__content">
+    <div class="detail-item__body">
+        {{ content.field_custom_hours_text }}
+    </div>
+  </div>
+</div>
