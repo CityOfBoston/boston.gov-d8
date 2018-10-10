@@ -80,14 +80,7 @@
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
 
-          {#{% if not header_image or (node and node.type == 'tabbed_content') or node.type == 'how_to' %}#}
-             {#{{ drupal_block('breadcrumbs') }}#}
-          {#{% if page.breadcrumb %}#}
-            {#<div id="breadcrumb" data-swiftype-index="false">{{ page.breadcrumb }}</div>#}
-          {#{% endif %}#}
-        {#{%  endif %}#}
-
-         {#{{ drupal_block('block-breadcrumbs') }}#}
+         {{ drupal_block('system_breadcrumb_block') }}
 
          {{ title_prefix }}
         {%  if title and not hide_page_title %}
