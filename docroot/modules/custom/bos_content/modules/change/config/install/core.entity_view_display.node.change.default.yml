@@ -8,6 +8,7 @@ dependencies:
     - node.type.change
   module:
     - comment
+    - fences
     - text
     - user
 id: node.change.default
@@ -20,7 +21,14 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
   comment_node_change:
     label: hidden
@@ -34,6 +42,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   langcode: true
   published_at: true

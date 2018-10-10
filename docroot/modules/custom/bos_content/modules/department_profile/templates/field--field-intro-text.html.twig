@@ -4,11 +4,13 @@
  * Default implementation of field intro text.
  */
 #}
+
 {% set lclasses = ["intro-text", "supporting-text", "squiggle-border-bottom"] %}
+
 {% if classes %}
-    {% set lclasses = lclasses|merge(classes) %}
+   {% set lclasses = lclasses|merge(classes) %}
 {% endif %}
-{{ breakpoint() }}
+
 <div{{ attributes.addClass(lclasses) }}>
-    {{ items }}
+   {{ items }}
 </div>
