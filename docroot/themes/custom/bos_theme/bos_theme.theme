@@ -10,7 +10,9 @@
  */
 
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\Component\Utility\HTML;
+//use Drupal\Component\Utility\HTML;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Xss;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -289,12 +291,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
       }
     }
   }
-  // Removes breadcrumbs on node types specified in the array.
-  $dont_show_breadcrumbs = ['topic_page', 'landing_page'];
-  if (isset($variables['node']) && in_array($variables['node']->getType(), $dont_show_breadcrumbs)) {
-    $variables['breadcrumb'] = '';
-  }
-
   // Custom 404/403 pages.
   if (!empty($variables['status_code'])) {
     switch ($variables['status_code']) {
@@ -430,6 +426,54 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $arr = $arr_base + ['#theme' => 'search'];
   $variables['search'] = \Drupal::service('renderer')->render($arr);
 
+}
+
+/**
+ * Override or insert variables for the breadcrumb theme function.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme function.
+ * @param string $hook
+ *   The name of the theme hook being called ("breadcrumb" in this case).
+ *
+ * @see boston_breadcrumb()
+ */
+function bos_theme_preprocess_breadcrumb(array &$variables, $hook) {
+  // Define variables for the breadcrumb-related theme settings. This is done
+  // here so that sub-themes can dynamically change the settings under
+  // particular conditions in a preprocess function of their own.
+  $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
+  $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
+  $variables['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+
+  // Optionally get rid of the homepage link.
+  if (!theme_get_setting('boston_breadcrumb_home')) {
+    array_shift($variables['breadcrumb']);
+  }
+
+  // Add the title of the page to the end of the breadcrumb list.
+  if (!empty($variables['breadcrumb']) && theme_get_setting('boston_breadcrumb_title')) {
+    $item = menu_get_item();
+    if (!empty($item['tab_parent'])) {
+      // If we are on a non-default tab, use the tab's title.
+      $variables['breadcrumb'][] = Html::escape($item['title']);
+    }
+    else {
+      $variables['breadcrumb'][] = drupal_get_title();
+    }
+    // Turn off the trailing separator.
+    $variables['display_trailing_separator'] = FALSE;
+  }
+
+  // Provide a navigational heading to give context for breadcrumb links to
+  // screen-reader users.
+  if (empty($variables['title'])) {
+    $variables['title'] = t('You are here');
+  }
+}
+function bos_theme_system_breadcrumb_alter(&$breadcrumb, $route_match, $context) {
+  return;
 }
 
 /**
