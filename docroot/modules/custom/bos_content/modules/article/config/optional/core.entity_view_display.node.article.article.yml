@@ -1,9 +1,9 @@
-uuid: 497266f8-6a4c-480b-8e7e-53f43dce30ab
+uuid: 95a88dd2-abcc-4801-ab45-a889cddc653c
 langcode: en
 status: false
 dependencies:
   config:
-    - core.entity_view_mode.node.featured_item
+    - core.entity_view_mode.node.article
     - field.field.node.article.body
     - field.field.node.article.comment
     - field.field.node.article.comment_node_article
@@ -20,11 +20,11 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: q5uYLULEiMg0bZrOY0ytByUsuL7OMd4I4aVLlKeaOhg
-id: node.article.featured_item
+  default_config_hash: IGoLVxr1eeFlfPEgK2Z7xyqTxRUQ8s7rv3_4Yim8v0A
+id: node.article.article
 targetEntityType: node
 bundle: article
-mode: featured_item
+mode: article
 content:
   links:
     weight: 100
