@@ -1,16 +1,18 @@
-uuid: b8567f7c-2aba-4d38-aa17-31c1a7fd6c65
+uuid: 09680b89-7f97-4b3c-96ec-23831cbb72a6
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.listing
     - field.field.node.department_profile.body
     - field.field.node.department_profile.comment_node_department_profile
+    - field.field.node.department_profile.field_address
     - field.field.node.department_profile.field_components
     - field.field.node.department_profile.field_department_type
     - field.field.node.department_profile.field_email
     - field.field.node.department_profile.field_hide_contact_form
     - field.field.node.department_profile.field_icon
+    - field.field.node.department_profile.field_intro_text
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
@@ -24,6 +26,8 @@ dependencies:
     - options
     - text
     - user
+_core:
+  default_config_hash: Az1RRc7-FnPBomjXFAJwRA6jElNqVeJxjFypxxjcJ-o
 id: node.department_profile.listing
 targetEntityType: node
 bundle: department_profile
@@ -100,7 +104,9 @@ content:
     region: content
 hidden:
   comment_node_department_profile: true
+  field_address: true
   field_hide_contact_form: true
+  field_intro_text: true
   field_published_date: true
   field_type_of_content: true
   field_updated_date: true

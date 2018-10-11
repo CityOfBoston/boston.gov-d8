@@ -1,4 +1,4 @@
-uuid: 4ef51229-1421-4bb2-b751-3a0cabb5839a
+uuid: 98c9cc61-f32b-4049-9c0c-c33aad2d25de
 langcode: en
 status: true
 dependencies:
@@ -10,10 +10,11 @@ dependencies:
     - node.type.test_component_page
   module:
     - entity_reference_revisions
+    - fences
     - text
     - user
 _core:
-  default_config_hash: i6-1nKw4U9y4yLn0OeUE15vGKIvVubPU3dHmDGDY-QQ
+  default_config_hash: Kgrw0zB2c3CAkJ9MdTv72WwNAo439kZpdSblk2hTsAA
 id: node.test_component_page.default
 targetEntityType: node
 bundle: test_component_page
@@ -22,21 +23,36 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 101
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     region: content
   field_components:
     type: entity_reference_revisions_entity_view
-    weight: 102
+    weight: 3
     label: hidden
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
     region: content
+  field_contact:
+    type: entity_reference_label
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link: true
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_sidebar_components:
-    weight: 103
+    weight: 4
     label: hidden
     settings:
       view_mode: default
@@ -45,7 +61,7 @@ content:
     type: entity_reference_revisions_entity_view
     region: content
   links:
-    weight: 100
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }

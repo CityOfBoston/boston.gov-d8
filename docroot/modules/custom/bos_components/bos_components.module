@@ -217,12 +217,13 @@ function _set_default_address_field_values(array &$form) {
   if (array_key_exists('field_address', $form) && is_array($form['field_address'])) {
     if (!empty($form['field_address'])) {
       // Set Boston as the default city.
-      if (empty($form['field_address'][LANGUAGE_NONE][0]['#address']['locality'])) {
-        $form['field_address'][LANGUAGE_NONE][0]['#address']['locality'] = "Boston";
+      $language = Drupal::languageManager()->getDefaultLanguage()->getId();
+      if (empty($form['field_address'][$language][0]['#address']['locality'])) {
+        $form['field_address'][$language][0]['#address']['locality'] = "Boston";
       }
       // Set Massachusetts as the default state.
-      if (empty($form['field_address'][LANGUAGE_NONE][0]['#address']['administrative_area'])) {
-        $form['field_address'][LANGUAGE_NONE][0]['#address']['administrative_area'] = "MA";
+      if (empty($form['field_address'][$language][0]['#address']['administrative_area'])) {
+        $form['field_address'][$language][0]['#address']['administrative_area'] = "MA";
       }
     }
   }

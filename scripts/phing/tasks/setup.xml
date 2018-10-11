@@ -538,6 +538,7 @@
                 includeemptydirs="true" dir="${git.private_repo.local_dir}"
                 failonerror="false" quiet="true"/>
         <mkdir dir="${git.private_repo.local_dir}"/>
+        <echo message="Clone the repo."/>
         <exec
                 description="Clone a private repo which has confidential settings (passwords etc)."
                 command="git clone ${git.private_repo.user}${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
@@ -553,9 +554,15 @@
                     dir="${git.private_repo.local_dir}/.git"
                     quiet="true" verbose="false" failonerror="false"
                     includeemptydirs="true"/>
+            <exec description="Rename any ..gitignore files to .gitignore so the contents arent saved in main repo"
+                  dir="${git.private_repo.local_dir}"
+                  command="find . -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; "
+                  passthru="true" logoutput="true" checkreturn="false"
+            />
             <exec description="Remove markdown files so they dont get copied."
                   command="rm -f ${git.private_repo.local_dir}/*.md"
                   passthru="true" logoutput="false" checkreturn="false"/>
+            <echo message="Move private repo files into the main repo."/>
             <exec
                     description="Move the private repo files to the docroot folder."
                     command="rsync -aE ${git.private_repo.local_dir}/ ${repo.root}/"
