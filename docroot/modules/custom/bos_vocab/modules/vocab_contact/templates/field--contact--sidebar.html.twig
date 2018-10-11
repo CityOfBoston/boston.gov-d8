@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ *   Template for contact info in the sidebar area of a content type.
+ *
+ * This template is selected by suggestion in the content type calling this:
+ * e.g. department_profile_theme_suggestions_field_alter()
+ * Variable detail is set in vocab preprocess for vocab_contact:
+ * i.e. vocab_contact_preprocess_field()
+ */
+#}
+<div class="detail-item detail-item--middle detail-item__{{ field_name }}">
+    <div class="detail-item__left">
+        <div class="icon {{ detail.icon }}"></div>
+    </div>
+    <div class="detail-item__content">
+        <div class="detail-item__body detail-item__body--secondary">
+            <a href="tel:{{ detail.text }}">{{ detail.text }}</a>
+        </div>
+    </div>
+</div>

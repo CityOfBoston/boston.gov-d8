@@ -12,7 +12,15 @@ use Drupal\Core\Render\Element;
  */
 function test_component_page_theme() {
   return [
+    'region__no_wrapper' => [
+      'base_hook' => 'region',
+      'path' => 'themes/custom/bos_theme/templates/layout',
+    ],
     'node__test_component_page' => [
+      'render element' => 'elements',
+      'base_hook' => 'node',
+    ],
+    'node__department_profile__article' => [
       'render element' => 'elements',
       'base_hook' => 'node',
     ],
@@ -20,9 +28,9 @@ function test_component_page_theme() {
       'base_hook' => 'field',
       'path' => 'modules/custom/bos_content/modules/test_component_page/templates',
     ],
-    'region__no_wrapper' => [
-      'base_hook' => 'region',
-      'path' => 'themes/custom/bos_theme/templates/layout',
+    'field__node__field_contact__test_component_page' => [
+      'base_hook' => 'field',
+      'path' => 'modules/custom/bos_content/modules/test_component_page/templates',
     ],
   ];
 }
@@ -90,7 +98,7 @@ function test_component_page_theme_suggestions_region_alter(array &$suggestions,
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function test_component_page_theme_suggestions_block_alter(array &$suggestions, array $variables) {
-  if ($variables["elements"]["#id"] == "mainpagecontent") {
+  if (isset($variables["elements"]["#id"]) && $variables["elements"]["#id"] == "mainpagecontent") {
     $suggestions[] = "block__no_wrapper";
   }
 }

@@ -72,22 +72,16 @@
       {{ search }}
 
   </header>
-
   <div id="sa" data-target="{{ target_id }}" data-classes="{{ page_class_alert }}  mn" class="d--n"></div>
-
   <div class="main">
     <div class="container">
       <section class="main-content" id="content" role="main">
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
 
-          {% if not header_image or (node and node.type == 'tabbed_content') or node.type == 'how_to' %}
-          {% if page.breadcrumb %}
-            <div id="breadcrumb" data-swiftype-index="false">{{ page.breadcrumb }}</div>
-          {% endif %}
-        {%  endif %}
+         {{ drupal_block('system_breadcrumb_block') }}
 
-        {{ title_prefix }}
+         {{ title_prefix }}
         {%  if title and not hide_page_title %}
           {{ title }}
         {%  endif %}

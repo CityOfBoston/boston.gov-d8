@@ -1,0 +1,361 @@
+uuid: 2fdcad08-db43-4671-9786-3d27cbcd3159
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.department_profile.body
+    - field.field.node.department_profile.comment_node_department_profile
+    - field.field.node.department_profile.field_address
+    - field.field.node.department_profile.field_components
+    - field.field.node.department_profile.field_department_type
+    - field.field.node.department_profile.field_email
+    - field.field.node.department_profile.field_hide_contact_form
+    - field.field.node.department_profile.field_icon
+    - field.field.node.department_profile.field_intro_text
+    - field.field.node.department_profile.field_operation_hours
+    - field.field.node.department_profile.field_phone_number
+    - field.field.node.department_profile.field_published_date
+    - field.field.node.department_profile.field_sidebar_components
+    - field.field.node.department_profile.field_type_of_content
+    - field.field.node.department_profile.field_updated_date
+    - image.style.thumbnail
+    - node.type.department_profile
+  module:
+    - address
+    - comment
+    - content_moderation
+    - datetime
+    - field_group
+    - image
+    - imce
+    - paragraphs
+    - path
+    - publication_date
+    - text
+third_party_settings:
+  field_group:
+    group_department_profile:
+      children:
+        - group_basic_in
+        - group_page_metadata
+        - group_alternative_display
+        - group_contact_information
+        - group_components
+        - group_sidebar_components
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Department Profile'
+    group_page_metadata:
+      children:
+        - field_published_date
+        - field_updated_date
+        - field_type_of_content
+      parent_name: group_department_profile
+      weight: 21
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
+    group_basic_in:
+      children:
+        - title
+        - field_intro_text
+        - body
+      parent_name: group_department_profile
+      weight: 20
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_alternative_display:
+      children:
+        - field_icon
+      parent_name: group_department_profile
+      weight: 22
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Alternative Display'
+    group_contact_information:
+      children:
+        - field_phone_number
+        - field_email
+        - field_hide_contact_form
+        - field_address
+        - field_department_type
+        - field_operation_hours
+      parent_name: group_department_profile
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Contact Information'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_department_profile
+      weight: 24
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
+    group_sidebar_components:
+      children:
+        - field_sidebar_components
+      parent_name: group_department_profile
+      weight: 25
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+_core:
+  default_config_hash: 5oBvAovQ-qUYkXUR9jhoWOCkrAQ-BKvFTTi2zzSAl4s
+id: node.department_profile.default
+targetEntityType: node
+bundle: department_profile
+mode: default
+content:
+  body:
+    weight: 2
+    type: text_textarea_with_summary
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  comment_node_department_profile:
+    type: comment_default
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_address:
+    weight: 12
+    settings:
+      default_country: US
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_components:
+    weight: 5
+    type: paragraphs
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_department_type:
+    weight: 13
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_email:
+    weight: 10
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_hide_contact_form:
+    weight: 11
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_icon:
+    weight: 8
+    type: image_image
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings:
+      imce:
+        enabled: true
+    region: content
+  field_intro_text:
+    weight: 1
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_operation_hours:
+    weight: 14
+    type: paragraphs
+    settings:
+      title: 'Hours of Operation'
+      title_plural: 'Operation Hours'
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+      closed_mode: summary
+      autocollapse: none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    weight: 9
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_published_date:
+    weight: 8
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    weight: 4
+    type: paragraphs
+    settings:
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_type_of_content:
+    weight: 10
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    weight: 9
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 10
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 6
+    region: content
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 11
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 7
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Main file for the sidebar.module module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function vocab_contact_theme($existing, $type, $theme, $path) {
+  return [
+    'taxonomy_term__contact' => [
+      'base hook' => 'taxonomy_term',
+      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
+      'template' => 'taxonomy-term--contact',
+    ],
+    'field__field_address' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
+      'template' => 'field--field-address',
+    ],
+    'field__field_email' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
+      'template' => 'field--field-email',
+    ],
+    'field__field_phone_number' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
+      'template' => 'field--field-phone-number',
+    ],
+  ];
+}

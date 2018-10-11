@@ -31,7 +31,7 @@
     <css-placeholder token="{{ placeholder_token|raw }}">
     <js-placeholder token="{{ placeholder_token|raw }}">
   </head>
-  <body class="{{ classes }}" {{ attributes }}>
+  <body{{ attributes.addClass(classes) }}>
     {% if skip_link_text and skip_link_anchor %}
       <p class="skip-link__wrapper" data-swiftype-index="false">
         <a href="#{{ skip_link_anchor }}" class="skip-link visually-hidden--focusable" id="skip-link" tabindex="-1">{{ skip_link_text }}</a>
