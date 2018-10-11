@@ -10,7 +10,6 @@
  */
 
 use Symfony\Component\HttpFoundation\Response;
-//use Drupal\Component\Utility\HTML;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 
@@ -431,11 +430,13 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
 }
 
+/**
+ * Implements hook_preprocess_hook().
+ */
 function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-
   $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
   $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
   $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
@@ -451,10 +452,10 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
     $item = \Drupal::routeMatch()->getParameters();
     if (!empty($item->get('tab_parent'))) {
       // If we are on a non-default tab, use the tab's title.
-      $variables['end_point'] = Html::escape($item->get('title'));
+      $variables['breadcrumb_title'] = Html::escape($item->get('title'));
     }
     else {
-      $variables['end_point'] = Html::escape($item->get('node')->title->value);
+      $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
     }
     // Turn off the trailing separator.
     $variables['display_trailing_separator'] = FALSE;
