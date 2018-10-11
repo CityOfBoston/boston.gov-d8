@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_display.comment.comment_node_department_profile.default
     - field.field.node.department_profile.body
     - field.field.node.department_profile.comment_node_department_profile
+    - field.field.node.department_profile.field_address
     - field.field.node.department_profile.field_components
     - field.field.node.department_profile.field_department_type
     - field.field.node.department_profile.field_email
@@ -20,6 +21,7 @@ dependencies:
     - field.field.node.department_profile.field_updated_date
     - node.type.department_profile
   module:
+    - address
     - comment
     - datetime
     - entity_reference_revisions
@@ -29,7 +31,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: tVO8brLXDYZje7t8EdOg20flELYdokdTDRv6NEOaflY
+  default_config_hash: rxpSKcyYQrPe-iWi_1gjPevcz5uA0BT3LmH7LMsQfA8
 id: node.department_profile.default
 targetEntityType: node
 bundle: department_profile
