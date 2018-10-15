@@ -54,7 +54,6 @@ third_party_settings:
       children:
         - field_published_date
         - field_updated_date
-        - field_type_of_content
       parent_name: group_department_profile
       weight: 21
       format_type: tab
@@ -278,12 +277,6 @@ content:
         add_above: '0'
     third_party_settings: {  }
     region: content
-  field_type_of_content:
-    weight: 10
-    type: options_buttons
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_updated_date:
     weight: 9
     type: datetime_default
@@ -358,4 +351,5 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_type_of_content: true
