@@ -3,6 +3,7 @@ global-styling.always:
     dist/ie/flexibility.js: { browsers: { IE: 'IE 9', '!IE': FALSE  } }
     dist/ie/classList.js: { browsers: { IE: 'IE 9', '!IE': FALSE  } }
     dist/ie/cors.js: { browsers: { IE: 'IE 9', '!IE': FALSE  } }
+    dist/js/all.js: {}
   dependencies:
   - core/jquery
 
@@ -105,3 +106,7 @@ page.assets:
   css:
     theme:
       css/bos_theme_overrides.css: {}
+
+page.component_navigation:
+  js:
+    js/component-navigation.boston.js: {attributes: {id: "component_nav_script"}}

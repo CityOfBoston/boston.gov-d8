@@ -16,53 +16,46 @@
  */
 #}
 
-{% set classes = ['clearfix', 'desktop-100'] %}
+{% set lclasses = ['clearfix', 'desktop-100'] %}
+{% if classes %}
+   {% set lclasses = lclasses|merge(classes) %}
+{% endif %}
 
-<article {{ attributes.addClass(classes) }}>
+<article {{ attributes.addClass(lclasses).setAttribute('typeof','sioc:Item foaf:Document') }}>
 
-    {% if (field_updated_date) %}
+    {% if (content.field_updated_date) %}
         <div class="brc-lu">
             Last updated: {{ content.field_updated_date }}
         </div>
     {% endif %}
-
+{#{{ breakpoint() }}#}
     <div class="department-info-wrapper desktop-100">
         <div class="column mobile-100 desktop-66-left">
 
-            {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
-                <header>
+           {{ title_prefix }}
 
-                    {{  title_prefix  }}
+           {% if title %}
+               <h1{{ title_attributes }}>{{ title.0 }}</h1>
+           {%  endif %}
 
-                    {% if (not page) and title %}
-                        <h2{{ title_attributes  }}><a href="{{ node_url }}">{{ title }}</a></h2>
-                    {% endif %}
+            {{ title_suffix }}
 
-                    {{ title_suffix  }}
-
-                    {% if unpublished %}
-                        <mark class="watermark">Unpublished</mark>
-                    {% elseif preview %}
-                        <mark class="watermark">Preview</mark>
-                    {% endif %}
-
-                </header>
-            {% endif %}
-
-            <div class="intro-text supporting-text squiggle-border-bottom">
-                <p>This is a test page for components on the boston.gov Drupal 8 site.</p>
-            </div>
+           {% if content.field_intro_text %}
+              {{ content.field_intro_text }}
+           {% endif %}
 
             <div class="sub-nav-trigger drawer-trigger">
                 <div class="sub-nav-chevron">
-                    {{ sub_nav }}
+                    {{ sub_nav|raw }}
                 </div>
                 Page Sections
             </div>
+
             <nav class="topic-nav topic-nav__left">
                 <ul></ul>
                 <a name="section-nav"></a>
             </nav>
+
             <div class="body">
                 {# We hide the comments and links now so that we can render them later. #}
                 {#{{ content|without('created', 'uid', 'comments', 'links') }}#}

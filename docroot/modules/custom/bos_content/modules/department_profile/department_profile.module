@@ -55,13 +55,56 @@ function template_preprocess_node__department_profile(array &$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
+function department_profile_preprocess_node(&$variables) {
+  if (!isset($variables["node"]) || $variables["node"]->bundle() != 'department_profile') {
+    return;
+  }
+  // Add javascript to enable component_navigation in-page menu (and scroll).
+  $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function department_profile_preprocess_breadcrumb(&$variables) {
+  $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
+  if (count($variables['breadcrumb'] == 1)) {
+    $route = $variables['breadcrumb'][0]['url'];
+
+    $a = array_keys($crumbs);
+    $last_key = end($a);
+    foreach ($crumbs as $key => $crumb) {
+      if ($key == $last_key) {
+        break;
+      }
+
+      $text = new \Drupal\Core\StringTranslation\TranslatableMarkup($crumb);
+      $new_crumb = [
+        'text' => $text,
+        'url' => "",
+      ];
+      if ( \Drupal::pathValidator()->isValid($route . $crumb)) {
+        $new_crumb['url'] = $route . $crumb;
+      }
+      $variables['breadcrumb'][] = $new_crumb;
+      $route .= $crumb . "/";
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function department_profile_preprocess_field(&$variables) {
-  if ($variables["element"]["#bundle"] == "department_profile") {
-    if ($variables['field_name'] == "body") {
-      $variables["attributes"]['class'][] = "supporting-text";
-    }
-    if ($variables['field_name'] == "field_intro_text") {
-      unset($variables["items"][0]['attributes']);
-    }
+  if (!isset($variables["element"]["#bundle"]) || $variables["element"]["#bundle"] != "department_profile") {
+    return;
+  }
+
+  // Addresses twig issue in field--field-intro-text.html.twig where the
+  // twig parser cannot process an attribute where attribute->storage is
+  // empty.
+  if ($variables['field_name'] == "field_intro_text" && count($variables["items"][0]["attributes"]->storage()) == 0) {
+    unset($variables["items"][0]['attributes']);
   }
 }

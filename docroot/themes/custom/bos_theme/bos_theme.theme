@@ -450,13 +450,21 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Add the title of the page to the end of the breadcrumb list.
   if (!empty($variables["links"]) && theme_get_setting('boston_breadcrumb_title')) {
     $item = \Drupal::routeMatch()->getParameters();
-    if (!empty($item->get('tab_parent'))) {
-      // If we are on a non-default tab, use the tab's title.
-      $variables['breadcrumb_title'] = Html::escape($item->get('title'));
+    if (isset($item) && $item->has('node')) {
+      if (!empty($item->get('tab_parent'))) {
+        // If we are on a non-default tab, use the tab's title.
+        $variables['breadcrumb_title'] = Html::escape($item->get('title'));
+      }
+      else {
+        $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
+      }
     }
-    else {
-      $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
-    }
+    elseif ($item->has('view_id')) {
+      $itemType = $item->get('view_id');
+      if ($itemType == 'taxonomy_term') {
+        $variables['breadcrumb_title'] = Html::escape($item->get($itemType)->get("name")->value);
+      }
+  }
     // Turn off the trailing separator.
     $variables['display_trailing_separator'] = FALSE;
   }
