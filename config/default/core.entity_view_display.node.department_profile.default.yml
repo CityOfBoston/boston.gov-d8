@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_department_profile.default
     - field.field.node.department_profile.body
     - field.field.node.department_profile.comment_node_department_profile
     - field.field.node.department_profile.field_address
@@ -22,7 +21,6 @@ dependencies:
     - node.type.department_profile
   module:
     - address
-    - comment
     - datetime
     - entity_reference_revisions
     - fences
@@ -50,15 +48,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    region: content
-  comment_node_department_profile:
-    label: hidden
-    type: comment_default
-    weight: 13
-    settings:
-      view_mode: default
-      pager_id: 0
-    third_party_settings: {  }
     region: content
   field_address:
     type: address_default
@@ -168,7 +157,7 @@ content:
     type: datetime_default
     settings:
       timezone_override: ''
-      format_type: medium
+      format_type: date_format_boston_short
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -192,16 +181,20 @@ content:
     weight: 11
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
-  links:
-    weight: 14
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
+  comment_node_department_profile: true
   field_type_of_content: true
   langcode: true
+  links: true
   published_at: true
