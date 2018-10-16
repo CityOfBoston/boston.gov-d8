@@ -3,29 +3,27 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_article.default
     - field.field.node.article.body
     - field.field.node.article.comment
     - field.field.node.article.comment_node_article
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_image
+    - field.field.node.article.field_intro_text
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_tags
     - field.field.node.article.field_type_of_content
     - field.field.node.article.field_updated_date
-    - image.style.large
     - node.type.article
   module:
-    - comment
     - datetime
     - entity_reference_revisions
-    - image
+    - fences
     - text
     - user
 _core:
-  default_config_hash: ChmU3AVqDKU32A_fyChG0W9dTRKmVBR58B6OClCLvZI
+  default_config_hash: dNBJXcBLBP1QTEdEuUy45vh2I9SeXI3hRm96RAv9940
 id: node.article.default
 targetEntityType: node
 bundle: article
@@ -36,24 +34,6 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  comment:
-    type: comment_default
-    weight: 110
-    region: content
-    label: above
-    settings:
-      view_mode: default
-      pager_id: 0
-    third_party_settings: {  }
-  comment_node_article:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
     third_party_settings: {  }
     region: content
   field_components:
@@ -70,30 +50,42 @@ content:
     weight: 2
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: article
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
-  field_image:
-    type: image
-    weight: -1
+  field_intro_text:
+    type: text_default
+    weight: 1
     region: content
-    settings:
-      image_style: large
-      image_link: ''
+    label: above
+    settings: {  }
     third_party_settings: {  }
-    label: hidden
   field_published_date:
     label: hidden
     weight: 5
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
   field_sidebar_components:
-    label: above
+    label: hidden
     weight: 6
     type: entity_reference_revisions_entity_view
     settings:
@@ -101,29 +93,28 @@ content:
       link: ''
     third_party_settings: {  }
     region: content
-  field_tags:
-    type: entity_reference_label
-    weight: 10
-    region: content
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
   field_updated_date:
     label: hidden
     weight: 4
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
-  links:
-    weight: 100
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
+  comment: true
+  comment_node_article: true
+  field_image: true
+  field_tags: true
   field_type_of_content: true
   langcode: true
+  links: true
   published_at: true

@@ -1,4 +1,4 @@
-uuid: 5c81742d-f5d5-4729-ada4-21a7d29d71c5
+uuid: 3f59210f-1a36-4edf-94ad-0d5c4c0dcb90
 langcode: en
 status: true
 dependencies:
@@ -6,11 +6,13 @@ dependencies:
     - core.entity_view_mode.node.article
     - field.field.node.department_profile.body
     - field.field.node.department_profile.comment_node_department_profile
+    - field.field.node.department_profile.field_address
     - field.field.node.department_profile.field_components
     - field.field.node.department_profile.field_department_type
     - field.field.node.department_profile.field_email
     - field.field.node.department_profile.field_hide_contact_form
     - field.field.node.department_profile.field_icon
+    - field.field.node.department_profile.field_intro_text
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
@@ -19,42 +21,181 @@ dependencies:
     - field.field.node.department_profile.field_updated_date
     - node.type.department_profile
   module:
+    - address
+    - datetime
+    - entity_reference_revisions
+    - fences
+    - image
+    - options
+    - text
     - user
+_core:
+  default_config_hash: rxpSKcyYQrPe-iWi_1gjPevcz5uA0BT3LmH7LMsQfA8
 id: node.department_profile.article
 targetEntityType: node
 bundle: department_profile
 mode: article
 content:
-  field_email:
+  body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_address:
+    type: address_default
+    weight: 5
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_components:
+    label: hidden
+    weight: 6
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_department_type:
     label: above
-    weight: 1
+    weight: 8
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_email:
+    label: hidden
+    weight: 4
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    region: content
+  field_hide_contact_form:
+    label: above
+    weight: 12
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    region: content
+  field_icon:
+    label: hidden
+    weight: 2
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_intro_text:
+    type: text_default
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_operation_hours:
+    label: hidden
+    weight: 7
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_phone_number:
     label: hidden
-    weight: 0
+    weight: 3
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-  links:
-    weight: 100
+  field_published_date:
+    label: above
+    weight: 10
+    type: datetime_default
+    settings:
+      timezone_override: ''
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_sidebar_components:
+    label: hidden
+    weight: 9
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: sidebar
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: above
+    weight: 11
+    type: datetime_default
+    settings:
+      timezone_override: ''
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
 hidden:
-  body: true
   comment_node_department_profile: true
-  field_components: true
-  field_department_type: true
-  field_hide_contact_form: true
-  field_icon: true
-  field_operation_hours: true
-  field_published_date: true
-  field_sidebar_components: true
   field_type_of_content: true
-  field_updated_date: true
   langcode: true
+  links: true
   published_at: true

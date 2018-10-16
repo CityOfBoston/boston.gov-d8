@@ -1,4 +1,4 @@
-uuid: 7f48db4d-846e-457d-82c4-01529cef677b
+uuid: a9770a6a-7d30-4c3c-8b68-940961281320
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   module:
     - image
 _core:
-  default_config_hash: 1avcgU4yjTWElvYoEjRfb8aKUGlZcQ6oJLI4twoX_B0
+  default_config_hash: WRZ2co9b19nUmvafPAx-0JsGdTvYhlNGjWjIlOWlUZo
 id: node.department_profile.field_icon
 field_name: field_icon
 entity_type: node
@@ -20,16 +20,21 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  alt_field: false
-  default_image: 0
-  file_directory: 'department-icon-[current-date:file_directory_storage_date]'
+  file_directory: department-icon
   file_extensions: 'png gif jpg jpeg svg'
   max_filesize: ''
   max_resolution: ''
   min_resolution: ''
-  title_field: false
+  alt_field: true
   alt_field_required: true
-  title_field_required: false
+  title_field: true
+  title_field_required: true
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
   handler: 'default:file'
   handler_settings: {  }
 field_type: image
