@@ -1,5 +1,5 @@
-id: node__department_profile
-label: 'Node: Department Profile'
+id: node__change
+label: 'Node: Change'
 migration_group: bos_nodes
 migration_tags:
   - Drupal 7
@@ -10,7 +10,7 @@ dependencies:
       - bos_migration
 source:
   plugin: d7_node
-  node_type: department_profile
+  node_type: change
   track_changes: true
 process:
   langcode:
@@ -28,23 +28,9 @@ process:
   revision_uid: revision_uid
   revision_log: log
   revision_timestamp: timestamp
-  field_components: field_components
-  field_icon: field_icon
-  field_department_type: field_department_type
-  field_email: field_email
-  field_hide_contact_form: field_hide_contact_form
-  field_intro_text: field_intro_text
-  field_operation_hours: field_operation_hours
-  field_phone_number: field_phone_number
-  field_published_date: field_published_date
-  field_sidebar_components: field_sidebar_components
-  field_updated_date: field_updated_date
-  field_address:
-      plugin: addressfield
-      source: field_address
 destination:
   plugin: 'entity:node'
-  default_bundle: department_profile
+  default_bundle: change
   new_revisions: true
 migration_dependencies:
   required:
