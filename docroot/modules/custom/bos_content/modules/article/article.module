@@ -71,7 +71,7 @@ function template_preprocess_node__article(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 
-  // Find the svg for the sub_nav
+  // Find the svg for the sub_nav.
   $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
 
   // Add javascript to enable component_navigation in-page menu (and scroll).

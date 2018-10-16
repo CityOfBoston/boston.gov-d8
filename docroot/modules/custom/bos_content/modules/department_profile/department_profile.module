@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_theme().
@@ -78,12 +79,12 @@ function department_profile_preprocess_breadcrumb(&$variables) {
         break;
       }
 
-      $text = new \Drupal\Core\StringTranslation\TranslatableMarkup($crumb);
+      $text = new TranslatableMarkup($crumb);
       $new_crumb = [
         'text' => $text,
         'url' => "",
       ];
-      if ( \Drupal::pathValidator()->isValid($route . $crumb)) {
+      if (\Drupal::pathValidator()->isValid($route . $crumb)) {
         $new_crumb['url'] = $route . $crumb;
       }
       $variables['breadcrumb'][] = $new_crumb;
