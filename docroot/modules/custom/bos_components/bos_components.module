@@ -32,7 +32,8 @@ function bos_components_preprocess_field(&$variables) {
       case 'field_component_title':
         if ($variables['is_component_field']) {
           $component = $variables['element']['#object'];
-          //$language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+          // $language = \Drupal::languageManager()
+          // ->getCurrentLanguage()->getId();
           $short_title = $component->getTranslation("und")->get('field_short_title')->getValue();
           if ($short_title !== FALSE) {
             $variables['short_title'] = $short_title[0]['value'];
