@@ -84,7 +84,7 @@
         }, 1);
       });
 
-      // Fade in/out topic nav when .sub-nav-button link is clicked
+      // Fade in/out topic nav when .sub-nav-button link is clicked.
       $('.sub-nav-button, .sub-nav-trigger').on('click', function () {
         $(this).toggleClass('open');
         $('.topic-nav').fadeToggle(300);
@@ -113,13 +113,13 @@
       };
 
       var getScrollTop = function () {
-        if (typeof pageYOffset!= 'undefined') {
+        if (typeof pageYOffset != 'undefined') {
           return pageYOffset;
         }
         else {
-          var B= document.body; // IE 'quirks'
-          var D= document.documentElement; // IE with doctype
-          D= (D.clientHeight)? D: B;
+          var B = document.body; // IE 'quirks'.
+          var D = document.documentElement; // IE with doctype.
+          D = (D.clientHeight) ? D : B;
           return D.scrollTop;
         }
       };
@@ -152,8 +152,9 @@
           var items   = document.querySelectorAll('[name=' + name + ']')[0];
           var itemTop = items ? items.getBoundingClientRect().top + fromTop - 100 : 0;
 
-          if (fromTop >= itemTop)
+          if (fromTop >= itemTop) {
             return item;
+          }
         });
 
         if (currentItems.length) {
@@ -167,7 +168,8 @@
           else if (!currentItem) {
             removeActiveState();
           }
-        } else {
+        }
+        else {
           removeActiveState();
         }
       };

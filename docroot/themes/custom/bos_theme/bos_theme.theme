@@ -464,7 +464,7 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
       if ($itemType == 'taxonomy_term') {
         $variables['breadcrumb_title'] = Html::escape($item->get($itemType)->get("name")->value);
       }
-  }
+    }
     // Turn off the trailing separator.
     $variables['display_trailing_separator'] = FALSE;
   }
