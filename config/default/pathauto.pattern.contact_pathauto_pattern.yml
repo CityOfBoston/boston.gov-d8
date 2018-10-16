@@ -1,0 +1,23 @@
+uuid: 50047da4-00e6-4d34-ba5b-ac4253b50c5c
+langcode: en
+status: true
+dependencies:
+  module:
+    - ctools
+    - taxonomy
+id: contact_pathauto_pattern
+label: 'Contact Pathauto Pattern'
+type: 'canonical_entities:taxonomy_term'
+pattern: 'departments/[term:field_department_profile:entity:title]'
+selection_criteria:
+  53a75e52-fe15-4c9d-b7f3-57d5a1a009d3:
+    id: 'entity_bundle:taxonomy_term'
+    bundles:
+      contact: contact
+    negate: false
+    context_mapping:
+      taxonomy_term: taxonomy_term
+    uuid: 53a75e52-fe15-4c9d-b7f3-57d5a1a009d3
+selection_logic: and
+weight: -5
+relationships: {  }
