@@ -1,6 +1,6 @@
 uuid: 4541baeb-a6e3-4154-99b5-5189057cc917
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.rss
@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_image
+    - field.field.node.article.field_intro_text
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_tags
@@ -19,7 +20,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: 2rIr6K5Q0UQ9khg0zE_CK-PtJH76UL-BDDZcZnZzwCc
+  default_config_hash: MGQG8bNkv8NUHfz0HEBVaVhzECgdPc5n0dFhcDrhq6k
 id: node.article.rss
 targetEntityType: node
 bundle: article
@@ -35,6 +36,7 @@ hidden:
   field_components: true
   field_contact: true
   field_image: true
+  field_intro_text: true
   field_published_date: true
   field_sidebar_components: true
   field_tags: true

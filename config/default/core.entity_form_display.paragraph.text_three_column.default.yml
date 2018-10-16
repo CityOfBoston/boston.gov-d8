@@ -1,4 +1,4 @@
-uuid: 9dc01aa1-1ba0-44d3-a017-30e143421754
+uuid: c39d497c-a953-40b8-997e-ea1fb0741aa5
 langcode: en
 status: true
 dependencies:
@@ -9,6 +9,7 @@ dependencies:
     - field.field.paragraph.text_three_column.field_short_title
     - paragraphs.paragraphs_type.text_three_column
   module:
+    - content_moderation
     - field_group
     - text
 third_party_settings:
@@ -28,7 +29,7 @@ third_party_settings:
         required_fields: true
       label: 'Column Info'
 _core:
-  default_config_hash: Clrw8lixgdcr83JX6gA8bY0pFIk3EvXvOIX1BlUEtXg
+  default_config_hash: kGXFdSWakLZCLWy2vwR4t3v0qiq0iypFpNCKldYryUc
 id: paragraph.text_three_column.default
 targetEntityType: paragraph
 bundle: text_three_column
@@ -67,7 +68,7 @@ content:
     third_party_settings: {  }
     region: content
   moderation_state:
-    type: options_buttons
+    type: moderation_state_default
     weight: 5
     settings: {  }
     region: content

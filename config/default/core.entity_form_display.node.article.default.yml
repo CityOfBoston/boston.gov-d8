@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_image
+    - field.field.node.article.field_intro_text
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_tags
@@ -18,21 +19,97 @@ dependencies:
     - node.type.article
   module:
     - comment
+    - content_moderation
     - datetime
+    - field_group
     - image
     - paragraphs
     - path
     - publication_date
     - text
+third_party_settings:
+  field_group:
+    group_article:
+      children:
+        - group_basic_info
+        - group_page_meta_data
+        - group_sidebar_components
+        - group_components
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        label: Article
+        direction: vertical
+        id: ''
+        classes: ''
+      label: Article
+    group_basic_info:
+      children:
+        - title
+        - field_intro_text
+        - body
+        - field_contact
+      parent_name: group_article
+      weight: 1
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_page_meta_data:
+      children:
+        - field_updated_date
+        - field_published_date
+        - field_type_of_content
+      parent_name: group_article
+      weight: 2
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-page-metadata field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Meta Data'
+    group_sidebar_components:
+      children:
+        - field_sidebar_components
+      parent_name: group_article
+      weight: 3
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_article
+      weight: 4
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
 _core:
-  default_config_hash: vPb_yvhA-xuNoV_yOmOwYxGuHNRIH1CoMK2qi7BSga0
+  default_config_hash: zo4zPPW7rLh-Mn2dazb-Y4GMa2nJ5_gkocuTPejLMtA
 id: node.article.default
 targetEntityType: node
 bundle: article
 mode: default
 content:
   body:
-    weight: 2
+    weight: 3
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -42,24 +119,24 @@ content:
     region: content
   comment:
     type: comment_default
-    weight: 20
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   comment_node_article:
     type: comment_default
-    weight: 20
+    weight: 13
     settings: {  }
     third_party_settings: {  }
     region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 8
+    weight: 13
     type: entity_reference_paragraphs
     settings:
       title: Component
@@ -71,7 +148,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 3
+    weight: 4
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -81,20 +158,28 @@ content:
     region: content
   field_image:
     type: image_image
-    weight: 4
+    weight: 5
     region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
     third_party_settings: {  }
+  field_intro_text:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
   field_published_date:
-    weight: 5
+    weight: 7
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_sidebar_components:
-    weight: 5
+    weight: 9
     type: entity_reference_paragraphs
     settings:
       title: Paragraph
@@ -107,7 +192,7 @@ content:
     region: content
   field_tags:
     type: entity_reference_autocomplete_tags
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
@@ -115,13 +200,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_type_of_content:
-    weight: 6
+    weight: 8
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 4
+    weight: 6
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -135,13 +220,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 17
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -149,12 +234,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 10
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -162,19 +247,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 18
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 11
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 1
     region: content
     settings:
       size: 60
@@ -182,7 +267,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 7
     region: content
     settings:
       match_operator: CONTAINS
@@ -190,6 +275,8 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 16
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

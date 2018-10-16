@@ -1,0 +1,41 @@
+id: node__change
+label: 'Node: Change'
+migration_group: bos_nodes
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_node
+  node_type: change
+  track_changes: true
+process:
+  langcode:
+    plugin: default_value
+    source: language
+    default_value: "en"
+  title: title
+  uid: node_uid
+  status: status
+  body: body
+  created: created
+  changed: changed
+  promote: promote
+  sticky: sticky
+  revision_uid: revision_uid
+  revision_log: log
+  revision_timestamp: timestamp
+destination:
+  plugin: 'entity:node'
+  default_bundle: change
+  new_revisions: true
+migration_dependencies:
+  required:
+  - d7_user
+  - d7_node_type
+  optional:
+  - d7_field_instance
+  - d7_comment_field_instance

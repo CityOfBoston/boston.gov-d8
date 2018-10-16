@@ -1,0 +1,93 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present a component test page entity.
+ *
+ * This template is used when viewing a registered component test page's page,
+ * e.g., /admin/content/component-test-page)/123. 123 being the component test page's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.title'.
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_component_test_page()
+ * @see theme's node.html.php
+ */
+#}
+
+{% set lclasses = ['clearfix', 'desktop-100'] %}
+{% if classes %}
+   {% set lclasses = lclasses|merge(classes) %}
+{% endif %}
+
+<article {{ attributes.addClass(lclasses).setAttribute('typeof','sioc:Item foaf:Document') }}>
+
+    {% if (content.field_updated_date) %}
+        <div class="brc-lu">
+            Last updated: {{ content.field_updated_date }}
+        </div>
+    {% endif %}
+{#{{ breakpoint() }}#}
+    <div class="department-info-wrapper desktop-100">
+        <div class="column mobile-100 desktop-66-left">
+
+           {{ title_prefix }}
+
+           {% if title %}
+               <h1{{ title_attributes }}>{{ title.0 }}</h1>
+           {%  endif %}
+
+            {{ title_suffix }}
+
+           {% if content.field_intro_text %}
+              {{ content.field_intro_text }}
+           {% endif %}
+
+            <div class="sub-nav-trigger drawer-trigger">
+                <div class="sub-nav-chevron">
+                    {{ sub_nav|raw }}
+                </div>
+                Page Sections
+            </div>
+
+            <nav class="topic-nav topic-nav__left">
+                <ul></ul>
+                <a name="section-nav"></a>
+            </nav>
+
+            <div class="body">
+                {# We hide the comments and links now so that we can render them later. #}
+                {#{{ content|without('created', 'uid', 'comments', 'links') }}#}
+                {{ content.body }}
+            </div>
+
+        </div>
+
+        <div class="column mobile-100 desktop-33-right">
+            <div class="contact-info">
+                {% if content.field_contact %}
+                    <div>Still have questions? Contact:</div>
+                    {{ content.field_contact }}
+                {%  endif %}
+            </div>
+            {% if (content.field_sidebar_components) %}
+                <div class="list-item-wrapper">
+                    {{ content.field_sidebar_components }}
+                </div>
+            {% endif %}
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
+
+    {%  if (content.field_components) %}
+        <div class="department-components desktop-100" {{ content_attributes }}>
+            {{ content.field_components }}
+        </div>
+    {% endif %}
+
+    {{ content['links']  }}
+    {{ content['comments']  }}
+
+</article>

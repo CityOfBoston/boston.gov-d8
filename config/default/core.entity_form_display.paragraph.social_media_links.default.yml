@@ -1,4 +1,4 @@
-uuid: 6302d977-730e-4776-9282-3a70e5256685
+uuid: 20562939-a230-47c5-9f5b-f9c8c1c0b3df
 langcode: en
 status: true
 dependencies:
@@ -24,7 +24,7 @@ third_party_settings:
         required_fields: true
       label: 'Social Media Links'
 _core:
-  default_config_hash: 5bzPrtl8KcRAfXsUFw_PRVGuNTxDagDcBkV_GkEQqJw
+  default_config_hash: Ae6IBI_X9yT1ba3K3nbWlZXTew5muQFs7XAXVyX5uQY
 id: paragraph.social_media_links.default
 targetEntityType: paragraph
 bundle: social_media_links
@@ -32,20 +32,14 @@ mode: default
 content:
   field_social_media_link:
     weight: 1
-    type: paragraphs
+    type: entity_reference_paragraphs
     settings:
       title: Link
       title_plural: Links
-      edit_mode: closed
-      closed_mode: summary
-      autocollapse: all
-      add_mode: button
+      edit_mode: open
+      add_mode: select
       form_display_mode: default
-      default_paragraph_type: social_networking
-      features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
-        add_above: '0'
+      default_paragraph_type: ''
     third_party_settings: {  }
     region: content
   moderation_state:
