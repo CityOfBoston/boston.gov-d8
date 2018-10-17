@@ -1,0 +1,23 @@
+uuid: 74ff2046-7c58-46e6-8742-8b88f8840c20
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_date
+    - taxonomy.vocabulary.holidays
+  module:
+    - datetime
+_core:
+  default_config_hash: fXF8ItjdcWgV3mXE0wWgHeVTgkqnwQz4RBJc7zh4cmw
+id: taxonomy_term.holidays.field_date
+field_name: field_date
+entity_type: taxonomy_term
+bundle: holidays
+label: Date
+description: 'The date which this event falls on.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime
