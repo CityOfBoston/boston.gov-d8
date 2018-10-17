@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Main file for the bos_migration module.
+ */
+
+/**
+ * Implements hook_migration_plugins_alter().
+ */
+function bos_migration_migration_plugins_alter(array &$migrations) {
+
+  // Pass array into functions that alter each entity as needed.
+  _node__department_profile($migrations);
+
+  \Drupal::logger('migrate')
+    ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, true)]);
+}
+
+/*
+ * Helper functions.
+ * Typically modify the plugin element in the process node of the config.
+ */
+
+/**
+ * Alters the addressfield field so that the correct plugin is used.
+ *
+ * @param $migration
+ *   The department_proile node of the migration object.
+ */
+function _node__department_profile(array &$migrations) {
+  $migrations["d7_node:department_profile"]["process"]["field_address"]['plugin'] = "addressfield";
+}

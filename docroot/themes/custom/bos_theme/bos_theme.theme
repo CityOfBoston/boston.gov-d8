@@ -447,13 +447,14 @@ function bos_theme_preprocess_menu__toolbar__workbench(array &$variables, $hook)
     return;
   }
 
+  // fetch the primary local tasks.
   $links = $manager->getLocalTasks(\Drupal::routeMatch()->getRouteName(), 0);
 
   foreach ($links['tabs'] as $key => $item) {
     if (strpos($key, "entity.") === 0) {
       $variables['items'][$key] = [
         'attributes' => new Attribute([
-          'class' => ['tab','primary-task-tab'],
+          'class' => ['tab', 'primary-task-tab'],
         ]),
         'below' => [],
         'in_active_trail' => FALSE,
@@ -468,7 +469,7 @@ function bos_theme_preprocess_menu__toolbar__workbench(array &$variables, $hook)
 
   // Note: requires -
   // .toolbar-tray .toolbar-menu li.primary-task-tab a {
-  //    background-color: orange;
+  // background-color: orange;
   // }.
 }
 
