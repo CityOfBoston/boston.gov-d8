@@ -447,7 +447,7 @@ function bos_theme_preprocess_menu__toolbar__workbench(array &$variables, $hook)
     return;
   }
 
-  // fetch the primary local tasks.
+  // Fetch the primary local tasks.
   $links = $manager->getLocalTasks(\Drupal::routeMatch()->getRouteName(), 0);
 
   foreach ($links['tabs'] as $key => $item) {
@@ -466,11 +466,6 @@ function bos_theme_preprocess_menu__toolbar__workbench(array &$variables, $hook)
       ];
     }
   }
-
-  // Note: requires -
-  // .toolbar-tray .toolbar-menu li.primary-task-tab a {
-  // background-color: orange;
-  // }.
 }
 
 /**

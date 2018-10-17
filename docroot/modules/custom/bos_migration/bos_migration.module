@@ -14,7 +14,7 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
   _node__department_profile($migrations);
 
   \Drupal::logger('migrate')
-    ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, true)]);
+    ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, TRUE)]);
 }
 
 /*
@@ -25,7 +25,7 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
 /**
  * Alters the addressfield field so that the correct plugin is used.
  *
- * @param $migration
+ * @param array $migrations
  *   The department_proile node of the migration object.
  */
 function _node__department_profile(array &$migrations) {
