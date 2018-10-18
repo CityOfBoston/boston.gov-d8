@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_event_type
     - node.type.event
+    - taxonomy.vocabulary.event_type
 id: node.event.field_event_type
 field_name: field_event_type
 entity_type: node
@@ -24,5 +25,6 @@ settings:
     sort:
       field: name
       direction: ASC
-    target_bundles: {  }
+    target_bundles:
+      event_type: event_type
 field_type: entity_reference
