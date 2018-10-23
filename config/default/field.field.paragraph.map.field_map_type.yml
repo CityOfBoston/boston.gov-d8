@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.paragraph.field_map_type
     - paragraphs.paragraphs_type.map
+    - taxonomy.vocabulary.maps_basemap
 id: paragraph.map.field_map_type
 field_name: field_map_type
 entity_type: paragraph
@@ -24,5 +25,6 @@ settings:
     sort:
       field: _none
       direction: ASC
-    target_bundles: {  }
+    target_bundles:
+      maps_basemap: maps_basemap
 field_type: entity_reference
