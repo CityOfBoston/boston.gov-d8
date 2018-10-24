@@ -1,22 +1,19 @@
-uuid: 8b357b8f-bc80-4fa5-95b2-211298d79c09
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.taxonomy_term.field_map_esri_feed
-    - paragraphs.paragraphs_type.map_esri_feed
+    - field.storage.taxonomy_term.field_map_default_coordinates
+    - paragraphs.paragraphs_type.map_coordinates
     - taxonomy.vocabulary.maps_esri_feed
   module:
     - entity_reference_revisions
-_core:
-  default_config_hash: 2UMOvDroLmYw0N7ai-rFTMRbhH1btm8xDLrzQQVbDfE
-id: taxonomy_term.maps_esri_feed.field_map_esri_feed
-field_name: field_map_esri_feed
+id: taxonomy_term.maps_esri_feed.field_map_default_coordinates
+field_name: field_map_default_coordinates
 entity_type: taxonomy_term
 bundle: maps_esri_feed
-label: 'Map ESRI Feed'
+label: 'Map Default Coordinates'
 description: ''
-required: false
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
@@ -24,7 +21,7 @@ settings:
   handler_settings:
     negate: 0
     target_bundles:
-      map_esri_feed: map_esri_feed
+      map_coordinates: map_coordinates
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: false
@@ -138,102 +135,102 @@ settings:
         enabled: false
         weight: 38
       map_coordinates:
-        enabled: false
-        weight: 39
-      map_esri_feed:
         enabled: true
-        weight: 40
+        weight: 39
       map_pin:
         enabled: false
-        weight: 41
+        weight: 40
       message_for_the_day:
         enabled: false
-        weight: 42
+        weight: 41
       news_announcements:
         enabled: false
-        weight: 44
+        weight: 43
       newsletter:
         enabled: false
-        weight: 43
+        weight: 42
       photo:
         enabled: false
-        weight: 45
+        weight: 44
       quote:
         enabled: false
-        weight: 46
+        weight: 45
       recollect_widget:
         enabled: false
-        weight: 47
+        weight: 46
       script_embed:
         enabled: false
-        weight: 48
+        weight: 47
       seamless_doc:
         enabled: false
-        weight: 49
+        weight: 48
       sidebar_item:
         enabled: false
-        weight: 50
+        weight: 49
       sidebar_item_w_icon:
         enabled: false
-        weight: 51
+        weight: 50
       social_media_links:
         enabled: false
-        weight: 52
+        weight: 51
       social_networking:
         enabled: false
-        weight: 53
+        weight: 52
       status_override:
         enabled: false
-        weight: 54
+        weight: 53
       tabbed_content_tab:
         enabled: false
-        weight: 55
+        weight: 54
       text:
         enabled: false
-        weight: 56
+        weight: 55
       text_one_column:
         enabled: false
-        weight: 57
+        weight: 56
       text_three_column:
         enabled: false
-        weight: 58
+        weight: 57
       text_two_column:
         enabled: false
-        weight: 59
+        weight: 58
       transaction_grid:
         enabled: false
-        weight: 60
+        weight: 59
       upcoming_events:
         enabled: false
-        weight: 61
+        weight: 60
       user_action:
         enabled: false
-        weight: 62
+        weight: 61
       video:
         enabled: false
-        weight: 63
+        weight: 62
       bid:
         enabled: false
-        weight: 64
+        weight: 63
       columns:
         enabled: false
-        weight: 65
+        weight: 64
       commission_contact_info:
         enabled: false
-        weight: 66
+        weight: 65
       commission_info:
         enabled: false
-        weight: 67
+        weight: 66
       commission_members:
         enabled: false
-        weight: 68
+        weight: 67
       commission_summary:
         enabled: false
-        weight: 69
+        weight: 68
       grid_links:
         enabled: false
-        weight: 70
+        weight: 69
       lightbox_link:
+        enabled: false
+        weight: 70
+      map_esri_feed:
         enabled: false
         weight: 71
       transactions:
