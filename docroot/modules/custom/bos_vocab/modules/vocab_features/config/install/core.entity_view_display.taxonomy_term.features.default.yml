@@ -1,19 +1,16 @@
-uuid: 69de076f-0ff6-40c3-8a2c-210b80084d87
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.taxonomy_term.popup_icon
     - field.field.taxonomy_term.features.field_icon
     - taxonomy.vocabulary.features
   module:
+    - image
     - text
-_core:
-  default_config_hash: 2AI301Q-YZWsJJEZPeQ7ZB5-iIz63VftJVG73S49PsQ
-id: taxonomy_term.features.popup_icon
+id: taxonomy_term.features.default
 targetEntityType: taxonomy_term
 bundle: features
-mode: popup_icon
+mode: default
 content:
   description:
     label: hidden
@@ -22,6 +19,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_icon:
+    label: hidden
+    weight: 0
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    region: content
 hidden:
-  field_icon: true
   langcode: true
