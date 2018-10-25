@@ -79,7 +79,7 @@ function template_preprocess_node__article(array &$variables) {
   // Add javascript to enable component_navigation in-page menu (and scroll).
   $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
 
-  // Add the RDF mappings for this template as needed
+  // Add the RDF mappings for this template as needed.
   $variables['attributes']['typeof'][] = "sioc:Item";
   $variables['attributes']['typeof'][] = "foaf:Document";
 }
