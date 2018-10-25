@@ -21,7 +21,7 @@
    {% set lclasses = lclasses|merge(classes) %}
 {% endif %}
 
-<article {{ attributes.addClass(lclasses).setAttribute('typeof','sioc:Item foaf:Document') }}>
+<article {{ attributes.addClass(lclasses) }}>
 
     {% if (content.field_updated_date) %}
         <div class="brc-lu">
