@@ -12,11 +12,12 @@ id: node.article
 targetEntityType: node
 bundle: article
 types:
-  - 'schema:Article'
+  - 'sioc:Item'
+  - 'foaf:Document'
 fieldMappings:
   title:
     properties:
-      - 'schema:name'
+      - 'dc:title'
   created:
     properties:
       - 'schema:dateCreated'
