@@ -117,9 +117,7 @@
   <target name="migrate:user:config">
     <echo message="Migrates user configuration into site." level="info"/>
     <property name="migration.configs" override="true"
-              value="user_picture_field,user_picture_field_instance,\
-              user_picture_entity_display,user_picture_entity_form_display,\
-              d7_user_role,d7_user_maild7_user_flood"/>
+              value="d7_user_role"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:user:settings">
@@ -139,7 +137,7 @@
   <target name="migrate:taxonomy:content">
     <echo message="Migrates taxonomy content into site." level="info"/>
     <property name="migration.configs" override="true"
-              value="d7_taxonomy_vocabulary,d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:maps_basemap,d7_taxonomy_term:maps_esri_feed,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:type_of_content,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact"/>
+              value="d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:maps_basemap,d7_taxonomy_term:maps_esri_feed,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:type_of_content,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:taxonomy:config">
@@ -340,7 +338,7 @@
     <if>
       <!-- If property migration.options not overridden, use default. -->
       <not><isset property="migration.options"/></not>
-      <then><property name="migration.options" value="--force --execute-dependencies --feedback=100 -v"/></then>
+      <then><property name="migration.options" value="--execute-dependencies --feedback=100 -v --update"/></then>
     </if>
     <if>
       <!-- If additional migration.options provided, then add them here. -->
@@ -364,10 +362,16 @@
     </property>
     <exec description="Fixes the init name for uid=101."
           command="${drush.cmd} eval '${php.command}'" level="info"/>
-    <property name="migration.options" value="--force -v --execute-dependencies --update"/>
+    <property name="migration.options" value="-v --update"/>
+    <phingcall target="migrate:user" inheritAll="true"/>
+    <phingcall target="migrate:taxonomy:config" inheritAll="true"/>
+    <phingcall target="migrate:taxonomy:content" inheritAll="true"/>
+    <!-- Menu should go last -->
+    <phingcall target="migrate:menu:config" inheritAll="true"/>
+    <phingcall target="migrate:menu:content" inheritAll="true"/>
     <property name="migration.configs" override="true"
               description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
-              value="d7_node_type,d7_user_role,d7_user,d7_file,d7_menu,d7_menu_links,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article,d7_taxonomy_vocabulary,d7_taxonomy_term:bid_offering,d7_taxonomy_term:bid_type,d7_taxonomy_term:contact,d7_taxonomy_term:311_request,paragraph__bid,paragraph__bos311,paragraph__sidebar_item,paragraph__sidebar_item_w_icon,paragraph__social_media_links,paragraph__social_networking,paragraph__text,paragraph__text_one_column,paragraph__text_two_column,paragraph__text_three_column,paragraph__custom_hours_text,paragraph__daily_hours,d7_url_alias"/>
+              value="d7_node_type,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article,paragraph__bid,paragraph__bos311,paragraph__sidebar_item,paragraph__sidebar_item_w_icon,paragraph__social_media_links,paragraph__social_networking,paragraph__text,paragraph__text_one_column,paragraph__text_two_column,paragraph__text_three_column,paragraph__custom_hours_text,paragraph__daily_hours,d7_url_alias"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 
