@@ -316,7 +316,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     'listing_page',
     'landing_page',
   ];
-  if (isset($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+  if (isset($variables['node']) && is_object($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
     $variables['#attached']['html_head'][] = [
       [
         '#tag' => 'meta',
@@ -346,7 +346,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   ];
 
   // Create necessary page classes.
-  if (isset($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
+  if (isset($variables['node']) && is_object($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
     $variables['page_class'] = 'page';
   }
   else {
@@ -356,7 +356,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $variables['page_class_alert'] = $variables['page_class'];
   $variables['target_id'] = NULL;
 
-  if (isset($variables['node'])) {
+  if (isset($variables['node']) && is_object($variables['node'])) {
     $variables['target_id'] = $variables['node']->nid->value;
 
     if ($variables['node']->getType() == 'topic_page') {
@@ -494,7 +494,9 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
         $variables['breadcrumb_title'] = Html::escape($item->get('title'));
       }
       else {
-        $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
+        if (is_object($item->get('node'))) {
+          $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
+        }
       }
     }
     elseif ($item->has('view_id')) {
