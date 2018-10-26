@@ -4,7 +4,9 @@ status: true
 dependencies:
   config:
     - node.type.article
+    - node.type.change
     - node.type.department_profile
+    - node.type.event
   module:
     - content_moderation
 id: city_of_boston_workflows
@@ -38,38 +40,40 @@ type_settings:
       from:
         - published
       to: archive
-      weight: 4
+      weight: -1
     draft_from_archived:
       label: 'Draft from Archived'
       from:
         - archive
       to: draft
-      weight: 5
+      weight: 0
     draft_from_published:
       label: 'Draft from Published'
       from:
         - published
       to: draft
-      weight: 3
+      weight: -3
     publish:
       label: Publish
       from:
         - needs_review
       to: published
-      weight: 7
+      weight: 2
     reject:
       label: Reject
       from:
         - needs_review
       to: draft
-      weight: 6
+      weight: 1
     submit_for_review:
       label: 'Submit for Review'
       from:
         - draft
       to: needs_review
-      weight: 2
+      weight: -2
   entity_types:
     node:
       - article
+      - change
       - department_profile
+      - event
