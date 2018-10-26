@@ -4,7 +4,10 @@ description: 'This is the Admin theme for Boston, based on Adminimal.'
 core: 8.x
 screenshot: images/screenshot.png
 # Defines the base theme
-base theme: adminimal_theme
+base theme: seven
+
+libraries:
+  - bos_admin/global-styling
 
 # Regions copied from adminimal_theme.info.yml.
 regions:
@@ -19,4 +22,4 @@ regions:
   sidebar_first: 'First sidebar'
 
 regions_hidden:
-- sidebar_first
+  - sidebar_first
