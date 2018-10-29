@@ -2,7 +2,7 @@
 
   <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
 
-  <target name="deploy:artifact" description="Builds separate artifact and pushes to git.remotes defined project.yml." depends="deploy:artifact:clean">
+  <target name="deploy:artifact" description="Builds separate artifact and pushes to git.remotes defined in scripts/phing/phing-boston.yml." depends="deploy:artifact:clean">
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
     <if>

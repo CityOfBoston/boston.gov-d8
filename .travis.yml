@@ -11,6 +11,7 @@ branches:
     - develop
     - master
     - settings
+    - acquia-deployment
 
 php:
   - 7.1
@@ -21,12 +22,7 @@ addons:
     packages:
       - libssl1.0.0
   ssh_known_hosts:
-    - svn-14671.prod.hosting.acquia.com
-    - staging-15139.prod.hosting.acquia.com
-    - staging-15142.prod.hosting.acquia.com
-    - staging-19375.prod.hosting.acquia.com
-    - 54.205.51.146
-    - 54.80.38.136
+    - svn-29892.prod.hosting.acquia.com
 
 cache:
   bundler: true
@@ -59,3 +55,7 @@ install:
 script:
   # Run basic validation and Behat/PHPUnit tests in parallel.
   - "$TASK"
+after_success:
+  - scripts/deploy/travis-deploy.sh develop develop-build
+  - scripts/deploy/travis-deploy.sh master master-build
+  - scripts/deploy/travis-deploy.sh acquia-deployment acquia-build
