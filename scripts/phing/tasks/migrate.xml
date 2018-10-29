@@ -362,12 +362,17 @@
     </property>
     <exec description="Fixes the init name for uid=101."
           command="${drush.cmd} eval '${php.command}'" level="info"/>
+
     <property name="migration.options" value="-v --update"/>
     <phingcall target="migrate:user" inheritAll="true"/>
     <phingcall target="migrate:taxonomy:config" inheritAll="true"/>
+
+    <property name="migration.options" value="--force -v --update"/>
     <phingcall target="migrate:taxonomy:content" inheritAll="true"/>
+
+
     <!-- Menu should go last -->
-    <phingcall target="migrate:menu:config" inheritAll="true"/>
+    <property name="migration.options" value="--force -v --update"/>
     <phingcall target="migrate:menu:content" inheritAll="true"/>
     <property name="migration.configs" override="true"
               description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
