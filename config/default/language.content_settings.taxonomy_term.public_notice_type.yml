@@ -1,9 +1,16 @@
-uuid: 354a966f-cf8b-46b2-bd1c-705f2b48771f
+uuid: c122c7e9-6ef4-415c-9520-8dfc57ef23b2
 langcode: en
 status: true
 dependencies:
   config:
     - taxonomy.vocabulary.public_notice_type
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+_core:
+  default_config_hash: YPa1CpTecdsfEfdioCRq2HHWBCbfbXYJ9X_auY3yG-I
 id: taxonomy_term.public_notice_type
 target_entity_type_id: taxonomy_term
 target_bundle: public_notice_type

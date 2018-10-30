@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.bid_offering
+  module:
+    - text
+id: taxonomy_term.bid_offering.default
+targetEntityType: taxonomy_term
+bundle: bid_offering
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true

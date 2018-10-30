@@ -1,9 +1,16 @@
-uuid: 4546840a-826d-4c73-a259-25c586a138bd
+uuid: 2f85598d-70c5-4564-9ff8-78bdc2bc6848
 langcode: en
 status: true
 dependencies:
   config:
     - taxonomy.vocabulary.program_type
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+_core:
+  default_config_hash: hRFxiC62l_iR8Z97ygpnv87hgHoXjMaW8JtFJpGepFE
 id: taxonomy_term.program_type
 target_entity_type_id: taxonomy_term
 target_bundle: program_type
