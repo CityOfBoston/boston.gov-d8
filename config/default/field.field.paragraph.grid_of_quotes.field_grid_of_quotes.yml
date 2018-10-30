@@ -5,7 +5,6 @@ dependencies:
   config:
     - field.storage.paragraph.field_grid_of_quotes
     - paragraphs.paragraphs_type.grid_of_quotes
-    - paragraphs.paragraphs_type.quote
   module:
     - entity_reference_revisions
 id: paragraph.grid_of_quotes.field_grid_of_quotes
@@ -21,8 +20,7 @@ default_value_callback: ''
 settings:
   handler_settings:
     negate: 0
-    target_bundles:
-      quote: quote
+    target_bundles: {  }
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: false
