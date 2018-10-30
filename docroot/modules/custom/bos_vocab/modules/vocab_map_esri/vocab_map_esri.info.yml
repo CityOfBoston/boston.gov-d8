@@ -8,3 +8,13 @@ core: 8.x
 dependencies:
   - bos_vocab
   - taxonomy
+
+config_devel:
+  - core.entity_form_display.taxonomy_term.maps_esri_feed.default
+  - core.entity_view_display.taxonomy_term.maps_esri_feed.default
+  - field.field.taxonomy_term.maps_esri_feed.field_map_default_coordinates
+  - field.field.taxonomy_term.maps_esri_feed.field_map_esri_feed
+  - field.storage.taxonomy_term.field_map_default_coordinates
+  - field.storage.taxonomy_term.field_map_esri_feed
+  - language.content_settings.taxonomy_term.maps_esri_feed
+  - taxonomy.vocabulary.maps_esri_feed
