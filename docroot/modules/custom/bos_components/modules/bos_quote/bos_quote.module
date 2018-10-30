@@ -2,20 +2,20 @@
 
 /**
  * @file
- * The Base module file for bos311 module.
+ * The Base module file for bos_quote module.
  */
 
 /**
  * Implements hook_theme().
  */
-function bos_311_theme() {
-  $theme['paragraph__bos311__default'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_311/templates',
-  ];
-  $theme['field__field_311_request'] = [
-    'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_311/templates',
-  ];
-  return $theme;
+function bos_quote_theme() {
+  // $theme['paragraph__bos311__default'] = [
+  //   'base hook' => 'paragraph',
+  //   'path' => 'modules/custom/bos_components/modules/bos_311/templates',
+  // ];
+  // $theme['field__field_311_request'] = [
+  //   'base hook' => 'field',
+  //   'path' => 'modules/custom/bos_components/modules/bos_311/templates',
+  // ];
+  return [];
 }
