@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * The install file for bos_external_link module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function bos_external_link_uninstall() {
+  if (function_exists("_bos_core_uninstall_boston")) {
+    _bos_core_uninstall_boston(basename(__FILE__, ".install"));
+  }
+}
+
+/**
+ * Implements hook_install().
+ */
+function bos_external_link_install() {
+  // Copy icons into expected location.
+  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
+  if (!file_exists($path)) {
+    mkdir($path, 0777);
+  }
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", "bos_311");
+  $dir = dir($modulePath);
+  $icons = [];
+  while (FALSE !== ($file = $dir->read())) {
+    if (strpos($file, "icon.svg") > 0) {
+      $icons[] = $file;
+    }
+  }
+  foreach ($icons as $icon) {
+    rename($modulePath . "/" . $icon, $path . "/" . $icon);
+  }
+}
