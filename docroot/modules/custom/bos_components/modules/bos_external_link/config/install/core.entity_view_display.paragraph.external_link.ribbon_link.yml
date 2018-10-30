@@ -1,30 +1,27 @@
-uuid: cebf3c10-c582-48ee-b118-d49a4b6279c6
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.paragraph.listing
+    - core.entity_view_mode.paragraph.ribbon_link
     - field.field.paragraph.external_link.field_external_link
     - paragraphs.paragraphs_type.external_link
   module:
     - link
-_core:
-  default_config_hash: 7PCvACfsu81HfDNBrLU4PUS2_pHTinR2yYbsSSheHlE
-id: paragraph.external_link.listing
+id: paragraph.external_link.ribbon_link
 targetEntityType: paragraph
 bundle: external_link
-mode: listing
+mode: ribbon_link
 content:
   field_external_link:
     label: hidden
     weight: 0
-    type: link
+    type: link_separate
     settings:
       trim_length: 80
-      url_only: false
-      url_plain: false
       rel: ''
       target: ''
+      url_only: false
+      url_plain: false
     third_party_settings: {  }
     region: content
 hidden: {  }
