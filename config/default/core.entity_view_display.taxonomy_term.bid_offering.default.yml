@@ -4,21 +4,13 @@ status: true
 dependencies:
   config:
     - taxonomy.vocabulary.bid_offering
-  module:
-    - text
 _core:
   default_config_hash: oisxkDH7JBXx6uK2aixQYSkos8nJZnu-3CswehgOSGg
 id: taxonomy_term.bid_offering.default
 targetEntityType: taxonomy_term
 bundle: bid_offering
 mode: default
-content:
-  description:
-    label: hidden
-    type: text_default
-    weight: 0
-    region: content
-    settings: {  }
-    third_party_settings: {  }
+content: {  }
 hidden:
+  description: true
   langcode: true

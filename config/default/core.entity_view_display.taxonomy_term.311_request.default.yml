@@ -7,7 +7,6 @@ dependencies:
     - taxonomy.vocabulary.311_request
   module:
     - link
-    - text
 _core:
   default_config_hash: K1FFbVa6rOIF5oQb-YF5ykt_kqxJGuLiq0oyxPYJ1yQ
 id: taxonomy_term.311_request.default
@@ -15,13 +14,6 @@ targetEntityType: taxonomy_term
 bundle: 311_request
 mode: default
 content:
-  description:
-    label: hidden
-    type: text_default
-    weight: 0
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_external_link:
     label: hidden
     weight: 0
@@ -35,4 +27,5 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  description: true
   langcode: true

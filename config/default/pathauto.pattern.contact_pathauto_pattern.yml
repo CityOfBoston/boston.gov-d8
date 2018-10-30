@@ -6,18 +6,18 @@ dependencies:
     - ctools
     - taxonomy
 id: contact_pathauto_pattern
-label: 'Contact Pathauto Pattern'
+label: 'Contact Term Path'
 type: 'canonical_entities:taxonomy_term'
-pattern: 'departments/[term:field_department_profile:entity:title]'
+pattern: '/departments/[term:field_department_profile:entity:title]'
 selection_criteria:
-  53a75e52-fe15-4c9d-b7f3-57d5a1a009d3:
+  77b706cb-05fd-41a1-af0b-bbfd62d3598c:
     id: 'entity_bundle:taxonomy_term'
     bundles:
       contact: contact
     negate: false
     context_mapping:
       taxonomy_term: taxonomy_term
-    uuid: 53a75e52-fe15-4c9d-b7f3-57d5a1a009d3
+    uuid: 77b706cb-05fd-41a1-af0b-bbfd62d3598c
 selection_logic: and
-weight: -5
+weight: -7
 relationships: {  }
