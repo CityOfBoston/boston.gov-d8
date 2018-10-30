@@ -6,7 +6,6 @@ dependencies:
     - taxonomy.vocabulary.bid_offering
   module:
     - path
-    - text
 _core:
   default_config_hash: 4QnoN1ZVzt8sNk88UR3sXZZ5DeljZ0YszG0LqmUDhnM
 id: taxonomy_term.bid_offering.default
@@ -14,24 +13,16 @@ targetEntityType: taxonomy_term
 bundle: bid_offering
 mode: default
 content:
-  description:
-    type: text_textfield
-    weight: 0
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   name:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
@@ -39,8 +30,14 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+  translation:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  description: true
