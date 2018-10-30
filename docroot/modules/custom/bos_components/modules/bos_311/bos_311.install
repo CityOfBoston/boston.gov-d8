@@ -32,6 +32,6 @@ function bos_311_install() {
     }
   }
   foreach ($icons as $icon) {
-    rename($modulePath . "/" . $icon, $path . "/" . $icon);
+    copy($modulePath . "/" . $icon, $path . "/" . $icon);
   }
 }
