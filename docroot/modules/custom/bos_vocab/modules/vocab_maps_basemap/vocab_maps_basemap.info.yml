@@ -8,3 +8,11 @@ core: 8.x
 dependencies:
   - bos_vocab
   - taxonomy
+
+config_devel:
+  - core.entity_form_display.taxonomy_term.maps_basemap.default
+  - core.entity_view_display.taxonomy_term.maps_basemap.default
+  - field.field.taxonomy_term.maps_basemap.field_basemap_url_
+  - field.storage.taxonomy_term.field_basemap_url_
+  - language.content_settings.taxonomy_term.maps_basemap
+  - taxonomy.vocabulary.maps_basemap
