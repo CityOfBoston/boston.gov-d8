@@ -6,21 +6,21 @@
  *
  * @see https://drupal.org/node/1728148 */
 #}
-
 <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
     {{ logo }}
     {{ seal }}
 </header>
-<div class="main err err--404">
+<div class="main">
   <div class="container">
-    <section class="main-content err-content" id="content" role="main">
-      <div class="error-text column desktop-66-left">
-        <h1>{{ status_code }} {{ title }}</h1>
+    <section class="main-content err-content" id="content" role="main" {{ attributes }}">
+      <div class="not-found-text error-text column desktop-50">
+        {{ title }}
         <p><em>{{ error_text|raw }}</em></p>
         <div class="content bos-search-form">
             {{ search }}
         </div>
       </div>
     </section>
+    <div class="err err--404"></div>
   </div>
 </div>
