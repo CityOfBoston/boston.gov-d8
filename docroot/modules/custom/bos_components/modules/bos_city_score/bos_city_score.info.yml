@@ -1,0 +1,23 @@
+name:  Bos City Score Component
+type: module
+description: Provides theming and config for city score component.
+package: City of Boston (components)
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_components
+  - paragraphs
+config_devel:
+  - config/default/core.base_field_override.paragraph.city_score_dashboard.created.yml
+  - config/default/field.field.paragraph.city_score_dashboard.field_component_title.yml
+  - config/default/core.base_field_override.paragraph.city_score_dashboard.moderation_state.yml
+  - config/default/field.field.paragraph.city_score_dashboard.field_extra_info.yml
+  - config/default/core.base_field_override.paragraph.city_score_dashboard.status.yml
+  - config/default/field.field.paragraph.city_score_dashboard.field_short_description.yml
+  - config/default/core.base_field_override.paragraph.city_score_dashboard.uid.yml
+  - config/default/field.field.paragraph.city_score_dashboard.field_short_title.yml
+  - config/default/core.entity_form_display.paragraph.city_score_dashboard.default.yml
+  - config/default/language.content_settings.paragraph.city_score_dashboard.yml
+  - config/default/core.entity_view_display.paragraph.city_score_dashboard.default.yml
+  - config/default/paragraphs.paragraphs_type.city_score_dashboard.yml
+  - config/default/core.entity_view_display.paragraph.city_score_dashboard.paragraphs_editor_preview.yml
