@@ -1,18 +1,15 @@
-uuid: 5ba657a7-54b9-477e-83da-2ee012478fdd
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.paragraph.ribbon_link
+    - core.entity_view_mode.paragraph.separated_title
     - field.field.paragraph.internal_link.field_internal_link
     - field.field.paragraph.internal_link.field_title
     - paragraphs.paragraphs_type.internal_link
-_core:
-  default_config_hash: Zb1F-5R_-EulBFse0CAohkm6S1INdh1gI8A7ngmcna8
-id: paragraph.internal_link.ribbon_link
+id: paragraph.internal_link.separated_title
 targetEntityType: paragraph
 bundle: internal_link
-mode: ribbon_link
+mode: separated_title
 content:
   field_internal_link:
     label: hidden

@@ -20,11 +20,14 @@ function bos_link_theme() {
  * Implements hook_preprocess_field().
  */
 function bos_link_preprocess_field(&$vars) {
-  if ($vars['element']['#field_name'] == 'field_external_link' && $object = $vars['element']['#object']) {
-    if (is_a($object, 'Drupal\paragraphs\Entity\Paragraph') && $object->bundle() == 'external_link') {
-      if ($object->getParentEntity()->bundle() == 'fyi') {
-        $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l lnk-e';
+  switch ($vars['element']['#field_name']) {
+    case 'field_external_link':
+      $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
+      if ($object = $vars['element']['#object']) {
+        if (is_a($object, 'Drupal\paragraphs\Entity\Paragraph') && $object->bundle() == 'external_link' && $object->getParentEntity()->bundle() == 'fyi') {
+          $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l';
+        }
       }
-    }
+      break;
   }
 }

@@ -1,18 +1,14 @@
-uuid: 5ba657a7-54b9-477e-83da-2ee012478fdd
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.paragraph.ribbon_link
     - field.field.paragraph.internal_link.field_internal_link
     - field.field.paragraph.internal_link.field_title
     - paragraphs.paragraphs_type.internal_link
-_core:
-  default_config_hash: Zb1F-5R_-EulBFse0CAohkm6S1INdh1gI8A7ngmcna8
-id: paragraph.internal_link.ribbon_link
+id: paragraph.internal_link.default
 targetEntityType: paragraph
 bundle: internal_link
-mode: ribbon_link
+mode: default
 content:
   field_internal_link:
     label: hidden
@@ -22,5 +18,12 @@ content:
       link: true
     third_party_settings: {  }
     region: content
-hidden:
-  field_title: true
+  field_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
