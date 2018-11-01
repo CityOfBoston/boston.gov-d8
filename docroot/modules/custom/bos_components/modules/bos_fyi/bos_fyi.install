@@ -14,24 +14,9 @@ function bos_fyi_uninstall() {
   }
 }
 
-// /**
-//  * Implements hook_install().
-//  */
-// function bos_fyi_install() {
-//   // Copy icons into expected location.
-//   $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
-//   if (!file_exists($path)) {
-//     mkdir($path, 0777);
-//   }
-//   $modulePath = drupal::root() . '/' . drupal_get_path("module", "bos_311");
-//   $dir = dir($modulePath);
-//   $icons = [];
-//   while (FALSE !== ($file = $dir->read())) {
-//     if (strpos($file, "icon.svg") > 0) {
-//       $icons[] = $file;
-//     }
-//   }
-//   foreach ($icons as $icon) {
-//     rename($modulePath . "/" . $icon, $path . "/" . $icon);
-//   }
-// }
+/**
+ * Implements hook_install().
+ */
+function bos_fyi_install() {
+// Copy icons into expected location.
+}
