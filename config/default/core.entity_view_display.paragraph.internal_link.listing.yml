@@ -4,8 +4,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.listing
-    - field.field.paragraph.internal_link.field_internal_link
-    - field.field.paragraph.internal_link.field_title
     - paragraphs.paragraphs_type.internal_link
 _core:
   default_config_hash: 0-jSXOCrS3Gr9e3wa0rkcjWG19K8uQdGEQYo2xnjqMA
@@ -13,14 +11,5 @@ id: paragraph.internal_link.listing
 targetEntityType: paragraph
 bundle: internal_link
 mode: listing
-content:
-  field_internal_link:
-    label: hidden
-    weight: 0
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-hidden:
-  field_title: true
+content: {  }
+hidden: {  }

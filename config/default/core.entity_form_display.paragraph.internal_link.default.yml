@@ -4,10 +4,10 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.internal_link.field_internal_link
-    - field.field.paragraph.internal_link.field_title
     - paragraphs.paragraphs_type.internal_link
   module:
     - content_moderation
+    - link
 _core:
   default_config_hash: 85YHVBwKwHJBY3BKiO27gBlMU7LvzY-XgGn-MjkwbHc
 id: paragraph.internal_link.default
@@ -16,21 +16,12 @@ bundle: internal_link
 mode: default
 content:
   field_internal_link:
-    weight: 4
-    type: entity_reference_autocomplete
+    weight: 101
     settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
+      placeholder_url: ''
+      placeholder_title: ''
     third_party_settings: {  }
-    region: content
-  field_title:
-    weight: 3
-    type: string_textfield
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
+    type: link_default
     region: content
   moderation_state:
     type: moderation_state_default

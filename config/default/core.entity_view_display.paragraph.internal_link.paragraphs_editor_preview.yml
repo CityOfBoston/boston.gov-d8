@@ -4,8 +4,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
-    - field.field.paragraph.internal_link.field_internal_link
-    - field.field.paragraph.internal_link.field_title
     - paragraphs.paragraphs_type.internal_link
 _core:
   default_config_hash: yXFacyvJJyCwW6aoUkQLWlq0fCa9x4wxLPW5J-_nSOI
@@ -14,6 +12,4 @@ targetEntityType: paragraph
 bundle: internal_link
 mode: paragraphs_editor_preview
 content: {  }
-hidden:
-  field_internal_link: true
-  field_title: true
+hidden: {  }

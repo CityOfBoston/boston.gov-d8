@@ -3,51 +3,20 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_internal_link
-    - node.type.article
-    - node.type.department_profile
-    - node.type.event
-    - node.type.how_to
-    - node.type.landing_page
-    - node.type.listing_page
-    - node.type.person_profile
-    - node.type.place_profile
-    - node.type.post
-    - node.type.program_initiative_profile
-    - node.type.script_page
-    - node.type.tabbed_content
-    - node.type.topic_page
     - paragraphs.paragraphs_type.internal_link
+  module:
+    - link
 id: paragraph.internal_link.field_internal_link
 field_name: field_internal_link
 entity_type: paragraph
 bundle: internal_link
 label: 'Internal Link'
 description: ''
-required: true
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:node'
-  handler_settings:
-    behaviors:
-      views-select-list:
-        status: 0
-    sort:
-      field: title
-      direction: ASC
-    target_bundles:
-      article: article
-      department_profile: department_profile
-      event: event
-      how_to: how_to
-      landing_page: landing_page
-      listing_page: listing_page
-      person_profile: person_profile
-      place_profile: place_profile
-      post: post
-      program_initiative_profile: program_initiative_profile
-      script_page: script_page
-      tabbed_content: tabbed_content
-      topic_page: topic_page
-field_type: entity_reference
+  link_type: 1
+  title: 2
+field_type: link

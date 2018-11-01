@@ -13,6 +13,10 @@ function bos_link_theme() {
     'base hook' => 'paragraph',
     'path' => 'modules/custom/bos_components/modules/bos_link/templates',
   ];
+  $theme['paragraph__internal_link'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
   return $theme;
 }
 
@@ -23,11 +27,28 @@ function bos_link_preprocess_field(&$vars) {
   switch ($vars['element']['#field_name']) {
     case 'field_external_link':
       $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
-      if ($object = $vars['element']['#object']) {
-        if (is_a($object, 'Drupal\paragraphs\Entity\Paragraph') && $object->bundle() == 'external_link' && $object->getParentEntity()->bundle() == 'fyi') {
-          $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l';
-        }
+      if (_is_child_of_fyi_component($vars['element']['#object'])) {
+        $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l';
+      }
+      break;
+
+    case 'field_internal_link':
+      if (_is_child_of_fyi_component($vars['element']['#object'])) {
+        $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l';
       }
       break;
   }
+}
+
+/**
+ * Determines if current entity is a child of the FYI component.
+ *
+ * @return bool
+ *   If this is a child of FYI.
+ */
+function _is_child_of_fyi_component($entity) {
+  if (!empty($entity) && is_a($entity, 'Drupal\paragraphs\Entity\Paragraph') && $entity->getParentEntity()->bundle() == 'fyi') {
+    return TRUE;
+  }
+  return FALSE;
 }

@@ -2,15 +2,14 @@ langcode: en
 status: true
 dependencies:
   module:
-    - node
+    - link
     - paragraphs
 id: paragraph.field_internal_link
 field_name: field_internal_link
 entity_type: paragraph
-type: entity_reference
-settings:
-  target_type: node
-module: core
+type: link
+settings: {  }
+module: link
 locked: false
 cardinality: 1
 translatable: true
