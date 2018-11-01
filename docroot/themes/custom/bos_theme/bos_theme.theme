@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\core\Template\Attribute;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -182,14 +184,26 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
 
+  $variables['attributes']['class'] = ["html"];
+  $variables['attributes']['class'][] = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
+  $variables['attributes']['class'][] = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
+  if ($node = drupal::request()->get('node')) {
+    $nid = $node->id();
+    $variables['attributes']['class'][] = "page-node-" . (isset($nid) ? $nid : "");
+  }
+
   // Detect 400-status pages.
   switch ($variables['status_code']) {
     case 403:
-      $variables['classes'] = "html not-front not-logged-in page-node page-node- page-node-1326 node-type-article body-sidebars-none section-403-forbidden";
+      $variables['attributes']['class'][] = "page-error page-403-error body-sidebars-none section-403-forbidden";
       break;
 
     case 404:
-      $variables['classes'] = "html not-front not-logged-in page-node page-node- page-node-1321 node-type-article body-sidebars-none section-404-not-found";
+      $variables['attributes']['class'][] = "page-error page-404-error body-sidebars-none section-404-not-found";
+      if (!$variables["page"]["#title"] instanceof Markup) {
+        $string = new TranslatableMarkup("<h1>@title</h1>", ["@title" => $variables["page"]["#title"]->getUntranslatedString()]);
+        $variables["page"]["#title"] = $string;
+      }
       break;
 
     default:
@@ -247,7 +261,6 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
     $variables["attributes"]['class'][] = "page-node";
     $variables["attributes"]['class'][] = "node-type-" . str_replace("_", "-", $variables['node_type']);
   }
-  $variables["attributes"]['class'][] = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
 
 }
 
@@ -301,12 +314,18 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
         $variables['error_text'] = \Drupal::configFactory()
           ->getEditable("bos_theme.settings")
           ->get("404-page");
+        if (isset($variables['node'])) {
+          $variables['attributes']['data-quickedit-entity-id'] = "node/" . $variables['node']->id();
+        }
         break;
 
       case "403":
         $variables['error_text'] = \Drupal::configFactory()
           ->getEditable("bos_theme.settings")
           ->get("403-page");
+        if (isset($variables['node'])) {
+          $variables['attributes']['data-quickedit-entity-id'] = "node/" . $variables['node']->id();
+        }
         break;
     }
   }
