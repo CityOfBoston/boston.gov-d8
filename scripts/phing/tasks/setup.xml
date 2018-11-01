@@ -48,12 +48,36 @@
     <exec command="echo 'Build Mode: ${project.build_db_from}'" logoutput="true"/>
     <!-- Work out what sort of database handling is to be done. -->
     <if>
-      <not>
-        <isset property="project.build_db_from"/>
-      </not>
+      <not><isset property="project.build_db_from"/></not>
       <then>
         <property description="will be one of 'sync', 'build' or 'dump'."
           name="project.build_db_from" value="build"/>
+      </then>
+    </if>
+
+    <!-- Download any missing drupal files -->
+    <if>
+      <not>
+        <available description="This file only exists if core has been downloaded, and therefore composer has been run."
+                   file="${docroot}/core/lib/Drupal.php"/>
+      </not>
+      <then>
+        <phingcall description="Use composer to download files" target="setup:drupal:download-modules"/>
+
+        <!-- Import the private settings repo contents -->
+        <if>
+          <not>
+            <available description="This file only exists if the private repo has been cloned already."
+                       file="${project.basedir}/.private"/>
+          </not>
+          <then>
+            <phingcall description="Import the private repo" target="setup:drupal:clone_private_repo"/>
+          </then>
+        </if>
+
+        <!-- Create the correct settings files. -->
+        <phingcall description="Update settings files" target="setup:drush:local-config"/>
+
       </then>
     </if>
 
@@ -62,37 +86,11 @@
       <not><equals arg1="${project.build_db_from}" arg2="none" casesensitive="true"/></not>
       <then>
 
-        <!-- Download any missing files -->
-        <if>
-          <not>
-            <available description="This file only exists if core has been downloaded, and therefore composer has been run."
-                       file="${docroot}/core/lib/Drupal.php"/>
-          </not>
-          <then>
-            <phingcall description="Use composer to download files" target="setup:drupal:download-modules"/>
-
-            <!-- Import the private settings repo contents -->
-            <if>
-              <not>
-                <available description="This file only exists if the private repo has been cloned already."
-                           file="${project.basedir}/.private"/>
-              </not>
-              <then>
-                <phingcall description="Import the private repo" target="setup:drupal:clone_private_repo"/>
-              </then>
-            </if>
-
-            <!-- Create the correct settings files. -->
-            <phingcall description="Update settings files" target="setup:drush:local-config"/>
-
-          </then>
-        </if>
-
         <!-- If in auto or recovery mode, then try to fetch a previous database dump -->
         <if>
           <or>
             <equals arg1="${project.build_db_from}" arg2="auto" casesensitive="true"/>
-            <equals arg1="${project.build_db_from}" arg2="dump" casesensitive="true"/>
+            <equals arg1="${project.build_db_from}" arg2="restore" casesensitive="true"/>
           </or>
           <then>
             <!-- Set default dump location if necessary. -->
@@ -119,7 +117,7 @@
               <then>
                 <if>
                   <isset property="dbdump.found"/>
-                  <then><property name="${project.build_db_from}" value="dump"/></then>
+                  <then><property name="${project.build_db_from}" value="restore"/></then>
                   <else><property name="${project.build_db_from}" value="sync"/></else>
                 </if>
               </then>
@@ -131,7 +129,7 @@
         <switch value="${project.build_db_from}" caseinsensitive="true">
 
           <!-- Restore database. -->
-          <case value="dump">
+          <case value="restore">
             <!-- Restore the database. -->
             <phingcall description="restore database" target="update:database:restore"/>
             <!-- Import the current configs -->
