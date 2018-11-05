@@ -18,6 +18,12 @@ function bos_components_theme() {
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--field-components',
   ];
+  $theme['field__component__field_component_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--component--field-component-title',
+  ];
+
   return $theme;
 }
 
@@ -35,7 +41,7 @@ function bos_components_preprocess_field(&$variables) {
           // $language = \Drupal::languageManager()
           // ->getCurrentLanguage()->getId();
           $short_title = $component->getTranslation("und")->get('field_short_title')->getValue();
-          if ($short_title !== FALSE) {
+          if (!empty($short_title)) {
             $variables['short_title'] = $short_title[0]['value'];
             $short_title_link = preg_replace('@^[0-9\s]+@', '', strtolower($short_title[0]['value']));
             $variables['short_title_link'] = preg_replace('@[^a-z0-9-]+@', '-', $short_title_link);
