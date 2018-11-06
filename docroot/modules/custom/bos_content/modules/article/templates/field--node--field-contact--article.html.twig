@@ -44,9 +44,10 @@
  * @ingroup themeable
  */
 #}
-{#{{ breakpoint() }}#}
 
 {% set classes = ['field', 'field-name-field-contact', 'field-type-entityreference', 'field-label-hidden'] %}
+
+{#{{ breakpoint() }}#}
 
 <span{{ attributes.addClass(classes) }}>
   {% if element.label %}
