@@ -4,21 +4,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.ribbon_link
-    - field.field.paragraph.internal_link.field_internal_link
-    - field.field.paragraph.internal_link.field_title
     - paragraphs.paragraphs_type.internal_link
+_core:
+  default_config_hash: Zb1F-5R_-EulBFse0CAohkm6S1INdh1gI8A7ngmcna8
 id: paragraph.internal_link.ribbon_link
 targetEntityType: paragraph
 bundle: internal_link
 mode: ribbon_link
-content:
-  field_internal_link:
-    label: hidden
-    weight: 0
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-hidden:
-  field_title: true
+content: {  }
+hidden: {  }

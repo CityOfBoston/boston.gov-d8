@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module file for bos_fyi.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_fyi_theme() {
+  $theme['paragraph__fyi'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_fyi/templates',
+  ];
+  return $theme;
+}

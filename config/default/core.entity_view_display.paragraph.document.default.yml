@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.document.field_title
     - paragraphs.paragraphs_type.document
   module:
+    - fences
     - file
 id: paragraph.document.default
 targetEntityType: paragraph
@@ -18,7 +19,14 @@ content:
     weight: 1
     type: file_url_plain
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_title:
     label: hidden
@@ -26,6 +34,13 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

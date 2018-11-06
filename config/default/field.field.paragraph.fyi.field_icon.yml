@@ -1,4 +1,4 @@
-uuid: 4465cf6f-a647-429e-9f52-882ccf0864aa
+uuid: e847cbaf-e562-4b12-b99c-35f1ee07f1c1
 langcode: en
 status: true
 dependencies:
@@ -7,6 +7,8 @@ dependencies:
     - paragraphs.paragraphs_type.fyi
   module:
     - image
+_core:
+  default_config_hash: KXZ1Ft9fIELtxPdHFcCD_uTfzB4iM5k8zAbfPZRwwvY
 id: paragraph.fyi.field_icon
 field_name: field_icon
 entity_type: paragraph
@@ -18,9 +20,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  alt_field: false
-  default_image: 0
-  file_directory: 'fyi-icon-[current-date:file_directory_storage_date]'
+  file_directory: 'fyi-icon-[current-date:date_format_file_directory_storage_date]'
   file_extensions: svg
   max_filesize: ''
   max_resolution: ''
@@ -30,4 +30,11 @@ settings:
   title_field_required: false
   handler: 'default:file'
   handler_settings: {  }
+  alt_field: true
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
 field_type: image
