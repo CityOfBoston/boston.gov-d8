@@ -1,11 +1,16 @@
-var CityScore = (function( window, undefined ) {
+/**
+ * @file
+ * Retrieves/updates the city score data.
+ */
+
+var CityScore = (function (window, undefined) {
   var numberDisplay = document.querySelector('.cs--chartAmount--value');
   var numberContainer = document.querySelector('.cs--chartAmount');
   var dateContainer = document.querySelector('.brc-lu');
   var dateDisplay = document.querySelector('.date-display-single');
   var todaysScore = false;
 
-  // Hide the date container
+  // Hide the date container.
   dateContainer.style.display = 'none';
 
   function handleResize() {
@@ -30,32 +35,33 @@ var CityScore = (function( window, undefined ) {
   function loadScores() {
     jQuery.ajax({
       url: "//cob-cityscore.herokuapp.com/scores/latest",
-      type:'GET',
+      type: 'GET',
       contentType: 'text/plain',
       dataType: "html",
-      success: function( html ){
-        jQuery('#scoreTable').html( html );
+      success: function (html) {
+        jQuery('#scoreTable').html(html);
       }
     });
   }
 
   function loadTodaysScore() {
-    jQuery.getJSON( "//cob-cityscore.herokuapp.com/totals/latest" )
-      .done(function( json ) {
+    jQuery.getJSON("//cob-cityscore.herokuapp.com/totals/latest")
+      .done(function (json) {
         if (json.day) {
           todaysScore = json.day;
           renderDateUpdated(json.date_posted);
           renderTodaysScore(json.day);
 
-          // Then start to load other scores
+          // Then start to load other scores.
           loadScores();
-        } else {
+        }
+        else {
           renderError("The day value is missing from the total response");
         }
       })
-      .fail(function( jqxhr, textStatus, error ) {
+      .fail(function (jqxhr, textStatus, error) {
         var err = textStatus + ", " + error;
-        console.log( "Request Failed: " + err );
+        console.log("Request Failed: " + err);
         dateContainer.style.display = 'block';
       });
   }
@@ -65,9 +71,11 @@ var CityScore = (function( window, undefined ) {
 
     if (num > 1) {
       num = "100%";
-    } else if (num < 0) {
+    }
+    else if (num < 0) {
       num = "0%";
-    } else {
+    }
+    else {
       num = (num * 100) + "%";
     }
 
@@ -88,7 +96,8 @@ var CityScore = (function( window, undefined ) {
     if (document.body.clientWidth > 767) {
       numberContainer.style.top = 'auto';
       numberContainer.style.left = percentage;
-    } else {
+    }
+    else {
       numberContainer.style.left = '50px';
       numberContainer.style.top = percentage;
     }
@@ -113,7 +122,7 @@ var CityScore = (function( window, undefined ) {
     handleResize: handleResize
   };
 
-})( window );
+})(window);
 
 jQuery(document).ready(CityScore.init);
 jQuery(window).resize(CityScore.handleResize);
