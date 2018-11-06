@@ -38,9 +38,13 @@ function bos_components_preprocess_field(&$variables) {
       case 'field_component_title':
         if ($variables['is_component_field']) {
           $component = $variables['element']['#object'];
-          // $language = \Drupal::languageManager()
-          // ->getCurrentLanguage()->getId();
-          $short_title = $component->getTranslation("und")->get('field_short_title')->getValue();
+          $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+          if (empty($language)) {
+            $language = "und";
+          }
+          $short_title = $component->getTranslation($language)
+            ->get('field_short_title')
+            ->getValue();
           if (!empty($short_title)) {
             $variables['short_title'] = $short_title[0]['value'];
             $short_title_link = preg_replace('@^[0-9\s]+@', '', strtolower($short_title[0]['value']));
@@ -199,7 +203,8 @@ function _bos_component_embed_level(array &$variables) {
       try {
         $parentEntity = $variables["element"]["#object"]->getParentEntity();
         if (!empty($parentEntity)) {
-          $variables['is_component_field'] = in_array($parentEntity->getEntityType()->id(), $componentParents);
+          $variables['is_component_field'] = in_array($parentEntity->getEntityType()
+            ->id(), $componentParents);
           $variables['is_subcomponent_field'] = !($variables['is_component_field']);
         }
       }
