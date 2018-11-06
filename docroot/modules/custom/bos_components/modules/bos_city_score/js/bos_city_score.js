@@ -11,7 +11,9 @@ var CityScore = (function (window, undefined) {
   var todaysScore = false;
 
   // Hide the date container.
-  dateContainer.style.display = 'none';
+  if (typeof dateContainer !== "undefined" && dateContainer != null) {
+    dateContainer.style.display = 'none';
+  }
 
   function handleResize() {
     renderTodaysScore(todaysScore);
@@ -22,7 +24,7 @@ var CityScore = (function (window, undefined) {
       jQuery(".department-components").append(
         jQuery("<div>").addClass("brc-lu").css("display", "block").addClass("hidden")
       );
-      dateContainer = document.querySelector('.date-display-single');
+      dateContainer = document.querySelector('.brc-lu');
     }
     if (typeof dateDisplay === "undefined" || dateDisplay == null) {
       jQuery(".department-components").append(
