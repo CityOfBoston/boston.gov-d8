@@ -19,19 +19,5 @@ function bos_text_uninstall() {
  */
 function bos_text_install() {
   // Copy icons into expected location.
-  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
-  if (!file_exists($path)) {
-    mkdir($path);
-  }
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", "bos_text");
-  $dir = dir($modulePath);
-  $icons = [];
-  while (FALSE !== ($file = $dir->read())) {
-    if (strpos($file, "icon.svg") > 0) {
-      $icons[] = $file;
-    }
-  }
-  foreach ($icons as $icon) {
-    copy($modulePath . "/" . $icon, $path . "/" . $icon);
-  }
+  _bos_core_install_icons(basename(__FILE__, ".install"));
 }
