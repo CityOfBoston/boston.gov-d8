@@ -5,9 +5,24 @@ package: City of Boston (components)
 core: 8.x
 version: 8.x.1.0
 dependencies:
-- bos_components
-- paragraphs
-- entity_reference_revisions
-- text
-- options
-- field_group
+  - bos_components
+  - paragraphs
+config-devel:
+  - core.entity_form_display.paragraph.custom_hours_text.default
+  - core.entity_form_display.paragraph.daily_hours.default
+  - core.entity_view_display.paragraph.custom_hours_text.default
+  - core.entity_view_display.paragraph.custom_hours_text.paragraphs_editor_preview
+  - core.entity_view_display.paragraph.custom_hours_text.separated_title
+  - core.entity_view_display.paragraph.daily_hours.default
+  - core.entity_view_display.paragraph.daily_hours.paragraphs_editor_preview
+  - core.entity_view_display.paragraph.daily_hours.separated_title
+  - field.field.paragraph.custom_hours_text.field_custom_hours_text
+  - field.field.paragraph.custom_hours_text.field_hours_icon
+  - field.field.paragraph.custom_hours_text.field_title
+  - field.field.paragraph.daily_hours.field_daily_hours
+  - field.field.paragraph.daily_hours.field_hours_icon
+  - field.field.paragraph.daily_hours.field_title
+  - language.content_settings.paragraph.custom_hours_text
+  - language.content_settings.paragraph.daily_hours
+  - paragraphs.paragraphs_type.custom_hours_text
+  - paragraphs.paragraphs_type.daily_hours
