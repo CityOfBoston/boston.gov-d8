@@ -64,7 +64,9 @@ function _bos_core_uninstall_boston($module) {
 
 /**
  * Helper to copy module-related icons into expected location.
- * @param $module
+ *
+ * @param string $module
+ *   The module name.
  */
 function _bos_core_install_icons($module) {
   $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
