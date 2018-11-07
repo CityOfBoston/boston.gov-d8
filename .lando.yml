@@ -57,8 +57,6 @@ services:
       # Change the permissions on the log file so that non-root user can add to log.
       - chmod 777 ${LANDO_MOUNT}/setup/lando.log >> ${LANDO_MOUNT}/setup/lando.log
       # [Optional]  Do not need the next 2 statements on stage or production servers.
-      #             Here because needs root permissions to copy file to /usr/local/etc/conf.d/.
-      - cp ${LANDO_MOUNT}/scripts/phing/files/xdebug.ini /usr/local/etc/php/conf.d/boston.xdebug.ini  >> ${LANDO_MOUNT}/setup/lando.log
       # Install a custom apache config file for on-demand containers -> limits the apache children to preserve memory.
       #     (Config loaded and enabled by Phing in setup:docker:drupal-terraform)
       - cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${LANDO_MOUNT}/setup/lando.log
@@ -121,7 +119,6 @@ tooling:
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
     - /app/vendor/bin/drush
-    - --root=/app/web
 
   drupal:
     service: appserver
