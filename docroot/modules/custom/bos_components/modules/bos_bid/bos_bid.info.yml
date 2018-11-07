@@ -9,3 +9,21 @@ dependencies:
   - paragraphs
   - taxonomy
 # - procurement_advertisement
+config-devel:
+  - core.entity_form_display.paragraph.bid.default
+  - core.entity_form_display.taxonomy_term.bid_offering.default
+  - core.entity_form_display.taxonomy_term.bid_type.default
+  - core.entity_view_display.paragraph.bid.default
+  - core.entity_view_display.paragraph.bid.paragraphs_editor_preview
+  - core.entity_view_display.taxonomy_term.bid_offering.default
+  - core.entity_view_display.taxonomy_term.bid_type.default
+  - field.field.paragraph.bid.field_awarded
+  - field.field.paragraph.bid.field_bid_amount
+  - field.field.paragraph.bid.field_company_name
+  - language.content_settings.paragraph.bid
+  - language.content_settings.taxonomy_term.bid_offering
+  - language.content_settings.taxonomy_term.bid_type
+  - paragraphs.paragraphs_type.bid
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_bid_type
+  - taxonomy.vocabulary.bid_offering
+  - taxonomy.vocabulary.bid_type
