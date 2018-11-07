@@ -197,8 +197,8 @@
     </chmod>
 
     <!-- Create symbolic links for tooling -->
-    <symlink link="/usr/local/bin/drush" target="${project.basedir}/vendor/drush/drush/drush" overwrite="true" />
-    <symlink link="/usr/local/bin/phing" target="${project.basedir}/vendor/phing/phing/bin/phing" overwrite="true" />
+    <symlink link="/usr/local/bin/drush" target="${project.basedir}/vendor/bin/drush" overwrite="true" />
+    <symlink link="/usr/local/bin/phing" target="${project.basedir}/vendor/bin/phing" overwrite="true" />
     <chmod mode="755" verbose="false" quiet="true">
       <fileset dir="/usr/local/bin">
         <include name="drush"/>

@@ -57,8 +57,6 @@ services:
       # Change the permissions on the log file so that non-root user can add to log.
       - chmod 777 ${LANDO_MOUNT}/setup/lando.log >> ${LANDO_MOUNT}/setup/lando.log
       # [Optional]  Do not need the next 2 statements on stage or production servers.
-      #             Here because needs root permissions to copy file to /usr/local/etc/conf.d/.
-      - cp ${LANDO_MOUNT}/scripts/phing/files/xdebug.ini /usr/local/etc/php/conf.d/boston.xdebug.ini  >> ${LANDO_MOUNT}/setup/lando.log
       # Install a custom apache config file for on-demand containers -> limits the apache children to preserve memory.
       #     (Config loaded and enabled by Phing in setup:docker:drupal-terraform)
       - cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${LANDO_MOUNT}/setup/lando.log
@@ -94,6 +92,12 @@ services:
           LANDO_INFO: LANDO_INFO
           PHP_IDE_CONFIG: 'serverName=lando'
           XDEBUG_CONFIG: 'idekey=PHPSTORM'
+          XDEBUG.REMOTE_AUTOSTART: 'On'
+          XDEBUG.REMOTE_ENABLE: 'On'
+          XDEBUG.REMOTE_PORT: '9000'
+          XDEBUG.VAR_DISPLAY_MAX_DEPTH: '-1'
+          XDEBUG.VAR_DISPLAY_MAX_CHILDREN: '-1'
+          XDEBUG.VAR_DISPLAY_MAX_DATA: '-1'
 
   # set up a Varnish edge
 #  edge:
@@ -114,7 +118,7 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
-    - drush
+    - /app/vendor/bin/drush
 
   drupal:
     service: appserver
