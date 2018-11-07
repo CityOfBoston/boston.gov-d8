@@ -61,3 +61,28 @@ function _bos_core_uninstall_boston($module) {
   }
 
 }
+
+/**
+ * Helper to copy module-related icons into expected location.
+ *
+ * @param string $module
+ *   The module name.
+ */
+function _bos_core_install_icons($module) {
+  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
+  if (!file_exists($path)) {
+    mkdir($path, 0777);
+  }
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", $module);
+  $dir = dir($modulePath);
+  $icons = [];
+  while (FALSE !== ($file = $dir->read())) {
+    if (strpos($file, "icon.svg") > 0) {
+      $icons[] = $file;
+    }
+  }
+  foreach ($icons as $icon) {
+    // Copy rather than move so we dont get git issues.
+    copy($modulePath . "/" . $icon, $path . "/" . $icon);
+  }
+}
