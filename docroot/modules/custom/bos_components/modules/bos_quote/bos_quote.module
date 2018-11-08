@@ -9,13 +9,25 @@
  * Implements hook_theme().
  */
 function bos_quote_theme() {
-  // $theme['paragraph__bos311__default'] = [
-  //   'base hook' => 'paragraph',
-  //   'path' => 'modules/custom/bos_components/modules/bos_311/templates',
-  // ];
-  // $theme['field__field_311_request'] = [
-  //   'base hook' => 'field',
-  //   'path' => 'modules/custom/bos_components/modules/bos_311/templates',
-  // ];
-  return [];
+  $theme['paragraph__quote'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_quote/templates',
+  ];
+  $theme['paragraph__grid_of_quotes'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_quote/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_quote_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph']) && $vars['paragraph']->bundle() == 'quote') {
+    if ($vars['paragraph']->get('field_person_photo')->isEmpty()) {
+      $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme', 'global-styling.patterns');
+      $vars['fallback_image_url'] = $lib['remote'] . '/images/global/icons/quote.svg';
+    }
+  }
 }
