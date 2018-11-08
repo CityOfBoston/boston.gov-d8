@@ -9,6 +9,7 @@ dependencies:
     - paragraphs.paragraphs_type.grid_of_quotes
   module:
     - entity_reference_revisions
+    - fences
 id: paragraph.grid_of_quotes.default
 targetEntityType: paragraph
 bundle: grid_of_quotes
@@ -20,7 +21,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_grid_of_quotes:
     label: hidden
@@ -29,7 +37,14 @@ content:
     settings:
       view_mode: full
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
@@ -37,6 +52,13 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }
