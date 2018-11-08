@@ -9,15 +9,14 @@ dependencies:
     - field.field.paragraph.quote.field_single_neighborhood
     - paragraphs.paragraphs_type.quote
   module:
-    - content_moderation
-    - file
+    - file_entity
 id: paragraph.quote.default
 targetEntityType: paragraph
 bundle: quote
 mode: default
 content:
   field_first_name:
-    weight: 3
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -25,7 +24,7 @@ content:
     third_party_settings: {  }
     region: content
   field_last_name:
-    weight: 4
+    weight: 1
     type: string_textfield
     settings:
       size: 60
@@ -33,14 +32,14 @@ content:
     third_party_settings: {  }
     region: content
   field_person_photo:
-    weight: 3
-    type: file_generic
+    weight: 2
+    type: file_editable
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_quote:
-    weight: 4
+    weight: 3
     type: string_textfield
     settings:
       size: 103
