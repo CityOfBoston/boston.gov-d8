@@ -19,15 +19,15 @@ third_party_settings:
         - field_contact
         - field_columns
       parent_name: ''
-      weight: 0
+      weight: 1
       format_type: fieldset
       format_settings:
-        label: three_column_info
+        label: 'Component Header'
         description: ''
         required_fields: true
         id: ''
         classes: 'group-three-column-info field-group-fieldset'
-      label: three_column_info
+      label: 'Component Header'
 id: paragraph.3_column_w_image.default
 targetEntityType: paragraph
 bundle: 3_column_w_image
@@ -43,7 +43,7 @@ content:
       closed_mode: summary
       autocollapse: all
       closed_mode_threshold: 0
-      add_mode: dropdown
+      add_mode: button
       form_display_mode: default
       default_paragraph_type: columns
       features:
@@ -66,7 +66,7 @@ content:
     settings:
       match_operator: CONTAINS
       size: 60
-      placeholder: ''
+      placeholder: 'Select Department'
     third_party_settings: {  }
     region: content
   field_short_title:
