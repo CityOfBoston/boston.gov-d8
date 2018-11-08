@@ -8,7 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.city_score_dashboard
-    - paragraphs.paragraphs_type.quote
+    - paragraphs.paragraphs_type.grid_of_quotes
     - paragraphs.paragraphs_type.text
   module:
     - entity_reference_revisions
@@ -32,7 +32,7 @@ settings:
       bid: bid
       bos311: bos311
       city_score_dashboard: city_score_dashboard
-      quote: quote
+      grid_of_quotes: grid_of_quotes
       text: text
     target_bundles_drag_drop:
       sidebar_item:
@@ -141,8 +141,8 @@ settings:
         weight: 103
         enabled: false
       grid_of_quotes:
+        enabled: true
         weight: 104
-        enabled: false
       grid_of_topics:
         weight: 105
         enabled: false
@@ -207,8 +207,8 @@ settings:
         weight: 125
         enabled: false
       quote:
-        enabled: true
         weight: 126
+        enabled: false
       recollect_widget:
         weight: 127
         enabled: false
