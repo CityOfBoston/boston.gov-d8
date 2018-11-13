@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_components
     - node.type.test_component_page
+    - paragraphs.paragraphs_type.3_column_w_image
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.city_score_dashboard
@@ -28,6 +29,7 @@ settings:
   handler_settings:
     negate: 0
     target_bundles:
+      3_column_w_image: 3_column_w_image
       bid: bid
       bos311: bos311
       city_score_dashboard: city_score_dashboard
@@ -46,8 +48,8 @@ settings:
         weight: 12
         enabled: false
       3_column_w_image:
+        enabled: true
         weight: 73
-        enabled: false
       bid:
         enabled: true
         weight: 74
