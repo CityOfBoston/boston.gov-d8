@@ -1,0 +1,34 @@
+name:  Bos Quote Component
+type: module
+description: Provides config and theming for quote component.
+package: City of Boston (components)
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_components
+  - paragraphs
+config_devel:
+  - core.base_field_override.paragraph.quote.created
+  - core.base_field_override.paragraph.quote.status
+  - core.base_field_override.paragraph.quote.uid
+  - core.entity_form_display.paragraph.quote.default
+  - core.entity_view_display.paragraph.quote.default
+  - core.entity_view_display.paragraph.quote.paragraphs_editor_preview
+  - field.field.paragraph.quote.field_first_name
+  - field.field.paragraph.quote.field_last_name
+  - field.field.paragraph.quote.field_person_photo
+  - field.field.paragraph.quote.field_quote
+  - field.field.paragraph.quote.field_single_neighborhood
+  - language.content_settings.paragraph.quote
+  - paragraphs.paragraphs_type.quote
+  - core.base_field_override.paragraph.grid_of_quotes.created
+  - core.base_field_override.paragraph.grid_of_quotes.status
+  - core.base_field_override.paragraph.grid_of_quotes.uid
+  - core.entity_form_display.paragraph.grid_of_quotes.default
+  - core.entity_view_display.paragraph.grid_of_quotes.default
+  - core.entity_view_display.paragraph.grid_of_quotes.paragraphs_editor_preview
+  - field.field.paragraph.grid_of_quotes.field_component_title
+  - field.field.paragraph.grid_of_quotes.field_grid_of_quotes
+  - field.field.paragraph.grid_of_quotes.field_short_title
+  - language.content_settings.paragraph.grid_of_quotes
+  - paragraphs.paragraphs_type.grid_of_quotes
