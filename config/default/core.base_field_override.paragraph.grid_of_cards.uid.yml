@@ -1,0 +1,22 @@
+uuid: d113a8ed-572b-4821-a8ec-a031c32a1926
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.grid_of_cards
+_core:
+  default_config_hash: 4_O3awe5LWBgk11fjvHXghuVWKyRktWD3q64Vf1_nKs
+id: paragraph.grid_of_cards.uid
+field_name: uid
+entity_type: paragraph
+bundle: grid_of_cards
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference
