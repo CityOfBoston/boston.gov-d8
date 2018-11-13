@@ -27,6 +27,11 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'paragraph--text-two-column',
     ],
+    'paragraph__3_column_w_image' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--3-column-w-image',
+    ],
     'paragraph__text_three_column' => [
       'base hook' => 'paragraph',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
@@ -36,6 +41,11 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'base hook' => 'field',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'field--component--field-contact',
+    ],
+    'field__paragraph__field_columns' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'field--paragraph--field-columns',
     ],
   ];
 }
@@ -50,6 +60,7 @@ function bos_text_preprocess_paragraph(&$variables) {
     "text_one_column",
     "text_two_column",
     "text_three_column",
+    "3_column_w_image",
   ])) {
     return;
   }
