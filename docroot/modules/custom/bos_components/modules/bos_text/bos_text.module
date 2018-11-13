@@ -86,6 +86,7 @@ function bos_text_preprocess_field(&$variables) {
     "text_one_column",
     "text_two_column",
     "text_three_column",
+    "3_column_w_image",
   ])) {
     return;
   }
@@ -99,17 +100,4 @@ function bos_text_preprocess_field(&$variables) {
   elseif ($variables['is_component_field']) {
     $variables['attributes']['class'][] = "field-component";
   }
-}
-
-/**
- * Removes reserved chars from class string.
- *
- * @param string $class
- *   The class which is to be standardised.
- *
- * @return mixed
- *   Standardised class where "-" has been replaced with "-".
- */
-function _make_class(string $class) {
-  return str_replace("_", "-", $class);
 }
