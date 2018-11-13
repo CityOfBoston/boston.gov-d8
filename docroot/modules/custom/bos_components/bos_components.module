@@ -23,6 +23,11 @@ function bos_components_theme() {
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--component--field-component-title',
   ];
+  $theme['field__component__field_short_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--component--field-short-title',
+  ];
 
   return $theme;
 }
