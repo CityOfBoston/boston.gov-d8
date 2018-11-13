@@ -635,6 +635,17 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
     $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['items'][0]['content']['#view_mode']);
     $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['field_name']) . "-" . _make_class($variables['items'][0]['content']['#view_mode']);
   }
+  else {
+    $variables['attributes']['class'][] = "field";
+    $variables['attributes']['class'][] = "field-name-" . _make_class($variables['field_name']);
+    if ($variables['field_type'] == "string") {
+      $variables['attributes']['class'][] = "field-type-text";
+    }
+    $variables['attributes']['class'][] = "field-type-" . _make_class($variables['field_type']);
+    if (isset($variables["label_display"]) && !$variables["label_display"]) {
+      $variables['attributes']['class'][] = "field-label-hidden";
+    }
+  }
 }
 
 /**
