@@ -628,9 +628,9 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
   // Emulate D7 paragraphs_items class-names.
   if ($variables['field_type'] == "entity_reference_revisions" && isset($variables['items'][0]['content']['#paragraph'])) {
     $variables['attributes']['class'][] = "paragraphs-items";
-    $variables['attributes']['class'][] = "paragraphs-items-" . $variables['field_name'];
-    $variables['attributes']['class'][] = "paragraphs-items-" . $variables['items'][0]['content']['#view_mode'];
-    $variables['attributes']['class'][] = "paragraphs-items-" . $variables['field_name'] . "-" . $variables['items'][0]['content']['#view_mode'];
+    $variables['attributes']['class'][] = "paragraphs-items-" . str_replace('_', '-', $variables['field_name']);
+    $variables['attributes']['class'][] = "paragraphs-items-" . str_replace('_', '-', $variables['items'][0]['content']['#view_mode']);
+    $variables['attributes']['class'][] = "paragraphs-items-" . str_replace('_', '-', $variables['field_name'] . "-" . $variables['items'][0]['content']['#view_mode']);
   }
 }
 
@@ -640,6 +640,10 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
 function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
+  if (!empty($variables['paragraph'])) {
+    $variables['attributes']['class'][] = 'entity entity-paragraphs-item component-section';
+    $variables['attributes']['class'][] = 'paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle());
+  }
 }
 
 /**
