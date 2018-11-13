@@ -5,6 +5,9 @@
  * Main file for the bos_core module.
  */
 
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
 /**
  * Implements hook_theme().
  */
@@ -84,5 +87,57 @@ function _bos_core_install_icons($module) {
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     copy($modulePath . "/" . $icon, $path . "/" . $icon);
+  }
+}
+
+/**
+ * Take a link paragraph and return the URL.
+ */
+function _bos_core_paragraph_extract_url($paragraph) {
+  $url = NULL;
+  if (is_a($paragraph, 'Drupal\paragraphs\Entity\Paragraph')) {
+    switch ($paragraph->bundle()) {
+      case 'lightbox_link':
+        $link = $paragraph->get('field_lightbox_link')->getValue();
+        $url = $link['0']['uri'];
+        break;
+
+      case 'document':
+        $link = $paragraph->get('field_document')->getValue();
+        $url = _bos_core_get_file_link($link['0']['target_id']);
+        break;
+
+      case 'external_link':
+        $link = $paragraph->get('field_external_link')->getValue();
+        $url = $link['0']['uri'];
+        break;
+
+      case 'internal_link':
+        $link = $paragraph->get('field_internal_link')->getValue();
+        preg_match('~/(.*)~', $link['0']['uri'], $match);
+        $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']])->toString();
+        break;
+    }
+  }
+  return $url;
+}
+
+/**
+ * Creates link to file managed by Drupal.
+ *
+ * @param string $fid
+ *   File ID.
+ * @param string $link_text
+ *   Link Text.
+ * @param array $options
+ *   Link options.
+ */
+function _bos_core_get_file_link(string $fid, string $link_text = NULL, array $options = []) {
+  $uri = file_load($fid)->getFileUri();
+  if (!$link_text) {
+    return Url::fromUri(file_create_url($uri, $options))->toString();
+  }
+  else {
+    return Link::fromTextAndUrl($link_text, Url::fromUri(file_create_url($uri), $options))->toString();
   }
 }
