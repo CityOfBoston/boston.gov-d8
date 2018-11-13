@@ -17,7 +17,7 @@ function bos_quote_uninstall() {
 /**
  * Implements hook_install().
  */
-function bos_text_install() {
+function bos_quote_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
 }
