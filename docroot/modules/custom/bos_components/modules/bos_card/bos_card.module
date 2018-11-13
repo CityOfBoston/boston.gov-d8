@@ -9,4 +9,20 @@
  * Implements hook_theme().
  */
 function bos_card_theme() {
+  $theme['paragraph__grid_of_cards'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_card/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_card_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph']) && $vars['paragraph']->bundle() == 'grid_of_cards') {
+    $theme = $vars['paragraph']->get('field_component_theme')->getValue();
+    $variables['component_theme'] = !empty($theme['0']['value']) ? $theme['0']['value'] : 'g';
+    $variables['section_header_theme'] = $theme['0']['value'] === 'b' ? 'sh--w' : '';
+  }
 }
