@@ -1,8 +1,15 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:f81f010e-94b7-46a5-be5b-8dcd363e1b4e'
+  module:
+    - paragraphs_library
+third_party_settings:
+  paragraphs_library:
+    allow_library_conversion: true
 id: grid_of_cards
 label: 'Grid of Cards'
-icon_uuid: null
+icon_uuid: f81f010e-94b7-46a5-be5b-8dcd363e1b4e
 description: 'Migrated from paragraph bundle Grid of Cards'
 behavior_plugins: {  }
