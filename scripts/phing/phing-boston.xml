@@ -33,6 +33,8 @@
             description="Contains targets used to validate custom-written code against coding standards."/>
     <import file="${custom.phing.tasks.dir}/migrate.xml"
             description="Contains targets used to migrate d7 content into d8."/>
+    <import file="${custom.phing.tasks.dir}/deploy.xml"
+            description="Contains targets used to deploy onto acquia."/>
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
