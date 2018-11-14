@@ -25,42 +25,43 @@
  * @see template_process()
  */
 #}
-
-<div class="sh">
-  {% if content.field_component_title %}
-    {{ content.field_component_title }}
-  {% endif %}
-</div>
-<div class="cs">
-   <div class="cs__block--chart cs--block">
-      <ul class="cs--chart">
-         <li class="cs--chartPoint">
-            <span class="cs--large cs--less">&lt;</span>
-            <p>
-               {% if content.field_extra_info %}
-                  {{ content.field_extra_info }}
-               {% endif %}
-            </p>
-         </li>
-         <li class="cs--chartPoint">
-            <span>1.0</span>
-         </li>
-         <li class="cs--chartPoint">
-            <span class="cs--large cs--greater">&gt;</span>
-            <p>
-               {% if content.field_short_description %}
-                  {{ content.field_short_description }}
-               {% endif %}
-            </p>
-         </li>
-         <li class="cs--chartAmount">
-            <span class="cs--chartAmount--label">Today's Score</span>
-            <strong class="cs--chartAmount--value">-</strong>
-         </li>
-      </ul>
+<div{{ attributes }}>
+   <div class="contextual-region">
+       {{ title_suffix }}
    </div>
-   <div id="scoreTable" class="cs--block"></div>
+   <div class="sh">
+     {% if content.field_component_title %}
+       {{ content.field_component_title }}
+     {% endif %}
+   </div>
+   <div class="cs">
+      <div class="cs__block--chart cs--block">
+         <ul class="cs--chart">
+            <li class="cs--chartPoint">
+               <span class="cs--large cs--less">&lt;</span>
+               <p>
+                  {% if content.field_extra_info %}
+                     {{ content.field_extra_info }}
+                  {% endif %}
+               </p>
+            </li>
+            <li class="cs--chartPoint">
+               <span>1.0</span>
+            </li>
+            <li class="cs--chartPoint">
+               <span class="cs--large cs--greater">&gt;</span>
+               <p>
+                  {% if content.field_short_description %}
+                     {{ content.field_short_description }}
+                  {% endif %}
+               </p>
+            </li>
+            <li class="cs--chartAmount">
+               <span class="cs--chartAmount--label">Today's Score</span>
+               <strong class="cs--chartAmount--value">-</strong>
+            </li>
+         </ul>
+      </div>
+      <div id="scoreTable" class="cs--block"></div>
+   </div>
 </div>
-
-<script>
-</script>

@@ -1,5 +1,4 @@
-<?php
-
+{#
 /**
  * @file
  * Default template implementation to display the value of a field.
@@ -44,8 +43,8 @@
  *
  * @ingroup themeable
  */
-?>
+#}
 
 <div class="button cta-button">
-  <?php print render($items); ?>
+  {{ items.0|without("attributes") }}
 </div>
