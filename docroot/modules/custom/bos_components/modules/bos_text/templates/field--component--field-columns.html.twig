@@ -28,23 +28,8 @@
  * @see template_process()
  */
 #}
-<div{{ attributes.addClass(classes).addClass("clearfix column-wrapper") }}>
-  <div{{ content_attributes.addClass("content") }}>
-    {% if content.field_image %}
-      <div class="field-three-col-image">
-        {{ content.field_image }}
-      </div>
-    {% endif %}
-    <div class="field-three-col-title">
-      {{ content.field_column_title }}
-    </div>
-    <div class="field-three-col-description">
-      {{ content.field_column_description }}
-    </div>
-    {% if content.field_link %}
-      <div class="field-three-col-link">
-        {{ content.field_link }}
-      </div>
-    {% endif %}
-  </div>
+<div{{ attributes.addClass("three-column-container") }}>
+    {% for item in items %}
+        {{ item|without("attributes") }}
+    {% endfor %}
 </div>

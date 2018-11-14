@@ -32,15 +32,25 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'paragraph--3-column-w-image',
     ],
+    'paragraph__columns' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--columns',
+    ],
     'paragraph__text_three_column' => [
       'base hook' => 'paragraph',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'paragraph--text-three-column',
     ],
-    'field__paragraph__field_columns' => [
+    'field__component__field_columns' => [
       'base hook' => 'field',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
-      'template' => 'field--paragraph--field-columns',
+      'template' => 'field--component--field-columns',
+    ],
+    'field__field_link' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'field--field-link',
     ],
   ];
 }
@@ -105,5 +115,10 @@ function bos_text_preprocess_field(&$variables) {
   }
   elseif ($variables['is_component_field']) {
     $variables['attributes']['class'][] = "field-component";
+  }
+  if ($variables["element"]['#bundle'] == "3_column_w_image") {
+    foreach ($variables['attributes']['class'] as $key => &$class) {
+      $class = str_replace('field', 'entity', $class);
+    }
   }
 }
