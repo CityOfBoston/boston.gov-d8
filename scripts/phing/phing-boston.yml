@@ -117,8 +117,3 @@ x-php:
     remote_file: '/usr/local/etc/php/conf.d/boston.xdebug.ini'
     # Provide the filename of the xdebug.ini
     default_file: 'xdebug.ini'
-
-x-deploy:
-  dir: ${repo.root}/deploy
-  includes-file: ${custom.phing.dir}/../files/deploy-includes.txt
-  excludes-file: ${custom.phing.dir}/../files/deploy-excludes.txt
