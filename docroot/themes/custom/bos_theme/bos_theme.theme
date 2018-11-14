@@ -654,6 +654,10 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
 function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
+  if (!empty($variables['paragraph'])) {
+    $variables['attributes']['class'][] = 'entity entity-paragraphs-item component-section';
+    $variables['attributes']['class'][] = 'paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle());
+  }
 }
 
 /**
