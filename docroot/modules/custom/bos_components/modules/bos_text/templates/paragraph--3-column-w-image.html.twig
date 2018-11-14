@@ -27,6 +27,9 @@
 #}
 <div{{ attributes.addClass(classes) }}>
   <div{{ content_attributes.addClass("content") }}>
+    <div class="contextual-region">
+        {{ title_suffix }}
+    </div>
     <div class="sh sh--w">
       {{ content.field_component_title }}
       {% if content.field_short_title %}
