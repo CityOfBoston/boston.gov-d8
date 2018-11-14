@@ -44,7 +44,7 @@
  #}
 {% set class = "component-short-title" %}
 {% for item in items %}
-	<span{{ item.attributes.addClass(class) }}>
+	<span{{ attributes.addClass(class) }}>
 		{{ item.content }}
 	</span>
 {% endfor %}
