@@ -54,12 +54,10 @@ install:
   # Step 2: Build the drupal site using Phing.
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
 
-after_install:
-  - $TRAVIS_BUILD_DIR/vendor/bin/phing deploy:artifact:drupal8 -Ddeploy.branch="develop-build" -Ddeploy.commitMsg="Automated commit by Travis CI for Build";
-
 script:
   # Run basic validation and Behat/PHPUnit tests in parallel.
   - "$TASK"
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing deploy:artifact:drupal8 -Ddeploy.branch="develop-build" -Ddeploy.commitMsg="Automated commit by Travis CI for Build";
 
 after_success:
 #  - scripts/deploy/travis-deploy.sh develop develop-build
