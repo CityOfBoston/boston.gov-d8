@@ -71,7 +71,7 @@ git:
     settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
 
   # Defining git remotes allows builds deployed via CI.
-  x-remotes:
+  remotes:
     - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
 composer:
@@ -82,8 +82,10 @@ drush:
   cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
   root: ${docroot}
 
-# deploy:
-  # includes-file: ${core.phing.dir}/../files/deploy-include-files.txt
+deploy:
+  dir: ${repo.root}/deploy
+  includes-file: ${custom.phing.files.dir}/deploy-includes.txt
+  excludes-file: ${custom.phing.files.dir}/deploy-excludes.txt
 
 reports:
   localDir: ${docroot}/testing/reports
