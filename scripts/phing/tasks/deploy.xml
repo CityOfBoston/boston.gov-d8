@@ -1,7 +1,5 @@
 <project name="deploy" default="deploy:repo">
 
-  <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
-
   <target name="deploy:artifact" description="Builds separate artifact and pushes to git.remotes defined in scripts/phing/phing-boston.yml." depends="deploy:artifact:clean">
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
@@ -122,6 +120,12 @@
         <include name="UPGRADE.txt"/>
       </fileset>
     </delete>
+  </target>
+
+  <!-- New Drupal8 Travis-based composer deployment. -->
+  <target name="deploy:drupal8"
+          depends="">
+    <echo message="Deploy..."/>
   </target>
 
 </project>
