@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.paragraph.group_of_links_grid.field_component_title
     - field.field.paragraph.group_of_links_grid.field_contact
+    - field.field.paragraph.group_of_links_grid.field_description
     - field.field.paragraph.group_of_links_grid.field_grid_links
     - field.field.paragraph.group_of_links_grid.field_link
     - field.field.paragraph.group_of_links_grid.field_short_title
@@ -12,6 +13,9 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_grid
   module:
     - entity_reference_revisions
+    - text
+_core:
+  default_config_hash: RmhnX2XlPid715XYGgfEs3U9FVNRygVQl8PFeZAYvfo
 id: paragraph.group_of_links_grid.default
 targetEntityType: paragraph
 bundle: group_of_links_grid
@@ -33,6 +37,13 @@ content:
       view_mode: default
       link: false
     third_party_settings: {  }
+    region: content
+  field_description:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
     region: content
   field_link:
     label: hidden

@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos311 module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_link_collections_theme() {
+  $theme['paragraph__group_of_links_grid'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link_collections/templates',
+  ];
+  $theme['paragraph__grid_links'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link_collections/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_link_collections_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'group_of_links_grid':
+        $cta = _bos_core_paragraph_extract_link($paragraph->get('field_link')->getValue(), ['class' => ['btn']]);
+        $vars['cta'] = !empty($cta['link']) ? $cta['link'] : [];
+        break;
+
+      case 'grid_links':
+        if ($parent = $paragraph->getParentEntity()) {
+          if ($parent->get('field_subheader')->isEmpty() && $parent->get('field_description')->isEmpty() && $parent->get('field_link')->isEmpty()) {
+            $vars['attributes']['class'][] = 'desktop-4-col';
+          }
+          else {
+            $vars['attributes']['class'][] = 'desktop-3-col';
+          }
+        }
+        break;
+    }
+  }
+}

@@ -9,6 +9,8 @@
  * @see https://www.drupal.org/node/2217931
  */
 
+use Drupal\Core\Link;
+
 /**
  * Implements hook_theme().
  */
@@ -32,6 +34,21 @@ function bos_components_theme() {
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--component--field-contact',
+  ];
+  $theme['field__field_external_link__external_link__mode__separated_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'link--mode--separated-title',
+  ];
+  $theme['paragraph__document__separated_title'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'link--mode--separated-title',
+  ];
+  $theme['paragraph__internal_link__separated_title'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'link--mode--separated-title',
   ];
 
   return $theme;
@@ -61,6 +78,23 @@ function bos_components_preprocess_field(&$variables) {
             $variables['short_title_link'] = preg_replace('@[^a-z0-9-]+@', '-', $short_title_link);
           }
         }
+        break;
+
+      case 'field_external_link':
+        if (!empty($variables['element']['#view_mode'] && $variables['element']['#view_mode'] == 'separated_title')) {
+          $url = $variables['element']['0']['#url'];
+          $title = $variables['element']['0']['#title'];
+          $url->setOptions(array_merge($url->getOptions(), [
+            'attributes' => [
+              'title' => "Go to {$title}",
+              'target' => '_blank',
+            ],
+          ]));
+          $variables['link'] = Link::fromTextAndUrl($title, $url)->toString();
+          $variables['title'] = $title;
+          $variables['attributes']['class'][] = 'external-link';
+        }
+        break;
     }
   }
 
@@ -75,6 +109,31 @@ function bos_components_preprocess_paragraph(&$variables) {
   }
   elseif (!empty($variables['is_component_field'])) {
     $variables['attributes']['class'][] = "paragraph-component";
+  }
+  if (!empty($variables['paragraph'])) {
+    $paragraph = $variables['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'document':
+        if ($variables['elements']['#view_mode'] == 'separated_title') {
+          if (!$paragraph->get('field_document')->isEmpty() && !$paragraph->get('field_title')->isEmpty()) {
+            $document = $paragraph->get('field_document')->getValue();
+            $title = $paragraph->get('field_title')->getValue();
+            $attributes = ['attributes' => ['title' => "Go to {$title['0']['value']}", 'target' => '_blank']];
+            $variables['link'] = _bos_core_get_file_link($document['0']['target_id'], $title['0']['value'], $attributes);
+            $variables['title'] = $title['0']['value'];
+            $variables['attributes']['class'][] = 'download-link';
+          }
+        }
+        break;
+
+      case 'internal_link':
+        if ($variables['elements']['#view_mode'] == 'separated_title') {
+          $link = _bos_core_paragraph_extract_link($paragraph);
+          $variables['link'] = $link['link'];
+          $variables['title'] = $link['title'];
+        }
+        break;
+    }
   }
 }
 
