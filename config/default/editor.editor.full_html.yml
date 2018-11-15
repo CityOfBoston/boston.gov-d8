@@ -51,13 +51,20 @@ settings:
             - ShowBlocks
             - Source
   plugins:
+    drupallink:
+      linkit_enabled: false
+      linkit_profile: ''
+    language:
+      language_list: un
     stylescombo:
       styles: ''
+    tokenbrowser:
+      token_types: {  }
 image_upload:
   status: true
   scheme: public
   directory: inline-images
   max_size: ''
   max_dimensions:
-    width: 0
-    height: 0
+    width: null
+    height: null
