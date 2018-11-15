@@ -1,7 +1,12 @@
 uuid: 388d80b1-8372-4553-8642-a52ae21a2e81
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - editor
+    - linkit
+    - shortcode
+    - token_filter
 name: 'Filtered HTML'
 format: filtered_html
 weight: -10
@@ -9,9 +14,93 @@ filters:
   filter_html:
     id: filter_html
     provider: filter
-    status: false
-    weight: -10
+    status: true
+    weight: -50
     settings:
-      allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <img src alt data-entity-type data-entity-uuid>'
+      allowed_html: '<a href hreflang target title rel name class> <em> <i> <strong> <b> <s> <sub> <sup> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <address> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <img src alt data-entity-type data-entity-uuid width height title> <p align class> <div align> <br> <hr> <pre> <code> <span class> <footer> <q> <section> <iframe width height frameborder scrolling src allowfullscreen> <ul> <ol> <li> <dl> <dt> <dd> <table width cellpadding cellspacing border summary> <colgroup> <col> <picture> <source media srcset> <tr align valign rowspan> <td align valign width colspan data-label> <th align valign width> <tbody> <thead> <tfoot>'
       filter_html_help: true
-      filter_html_nofollow: false
+      filter_html_nofollow: true
+  filter_align:
+    id: filter_align
+    provider: filter
+    status: true
+    weight: -45
+    settings: {  }
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: -46
+    settings: {  }
+  filter_htmlcorrector:
+    id: filter_htmlcorrector
+    provider: filter
+    status: true
+    weight: -44
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: -47
+    settings:
+      filter_url_length: 72
+  shortcode:
+    id: shortcode
+    provider: shortcode
+    status: true
+    weight: -49
+    settings:
+      item: '0'
+      random: '0'
+      dropcap: '0'
+      button: '0'
+      clear: '0'
+      link: '0'
+      quote: '0'
+      img: '0'
+      highlight: '0'
+  token_filter:
+    id: token_filter
+    provider: token_filter
+    status: true
+    weight: -48
+    settings:
+      replace_empty: '1'
+  editor_file_reference:
+    id: editor_file_reference
+    provider: editor
+    status: false
+    weight: -42
+    settings: {  }
+  filter_html_image_secure:
+    id: filter_html_image_secure
+    provider: filter
+    status: false
+    weight: -38
+    settings: {  }
+  filter_caption:
+    id: filter_caption
+    provider: filter
+    status: false
+    weight: -41
+    settings: {  }
+  filter_html_escape:
+    id: filter_html_escape
+    provider: filter
+    status: false
+    weight: -43
+    settings: {  }
+  linkit:
+    id: linkit
+    provider: linkit
+    status: false
+    weight: -40
+    settings:
+      title: true
+  shortcode_corrector:
+    id: shortcode_corrector
+    provider: shortcode
+    status: false
+    weight: -39
+    settings: {  }
