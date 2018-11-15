@@ -91,13 +91,9 @@ services:
         environment:
           LANDO_INFO: LANDO_INFO
           PHP_IDE_CONFIG: 'serverName=lando'
-          XDEBUG_CONFIG: 'idekey=PHPSTORM'
-          XDEBUG.REMOTE_AUTOSTART: 'On'
-          XDEBUG.REMOTE_ENABLE: 'On'
-          XDEBUG.REMOTE_PORT: '9000'
-          XDEBUG.VAR_DISPLAY_MAX_DEPTH: '-1'
-          XDEBUG.VAR_DISPLAY_MAX_CHILDREN: '-1'
-          XDEBUG.VAR_DISPLAY_MAX_DATA: '-1'
+
+    config:
+      conf: xdebug.ini
 
   # set up a Varnish edge
 #  edge:
