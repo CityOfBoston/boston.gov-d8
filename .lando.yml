@@ -48,6 +48,7 @@ services:
 
     run_as_root:
       - echo "\033[1;32m[lando]\033[1;33m Building; Installing Linux packages in appserver container...\033[0m"
+      - if [ ! -e  /app/setup ]; then mkdir /app/setup && chown www-data:www-data /app/setup && chmod 777 /app/setup; fi
       - echo "\033[1;32m[lando]\033[1;33m  -> Container build actions will be logged to files in ${LANDO_MOUNT}/setup\033[0m"
       # Updates apt, creates and pipes output to setup/lando.log
       - apt-get update -y  > ${LANDO_MOUNT}/setup/lando.log
