@@ -84,8 +84,8 @@ drush:
 
 deploy:
   dir: ${repo.root}/deploy
-  includes-file: ${custom.phing.files.dir}/deploy-includes.txt
-  excludes-file: ${custom.phing.files.dir}/deploy-excludes.txt
+  includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
+  excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
 
 reports:
   localDir: ${docroot}/testing/reports
