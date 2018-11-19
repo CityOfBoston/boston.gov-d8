@@ -45,6 +45,8 @@
     <!-- Generate and md5 sum of the remote URL to use as remote name. -->
     <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
           outputProperty="remoteName"/>
+    <exec command="git init"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git remote add ${remoteName} ${deploy.remote}"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git fetch ${remoteName}"
