@@ -702,7 +702,7 @@
         <echo message="Installing production-only modules." level="info"/>
         <echo message="==== production-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
         <exec   description="Install production modules if not installed already."
-                command="drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
+                command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
                 dir="${install_config_abs}"
                 passthru="true"
                 logoutput="true"/>

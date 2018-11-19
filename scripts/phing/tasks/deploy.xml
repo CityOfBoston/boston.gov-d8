@@ -1,8 +1,8 @@
 <project name="deploy" default="deploy:repo">
 
-  <!-- CODE BELOW IS NOT VERIFIED FOR D8 -->
-
-  <target name="deploy:artifact" description="Builds separate artifact and pushes to git.remotes defined in scripts/phing/phing-boston.yml." depends="deploy:artifact:clean">
+  <target name="deploy:artifact"
+          description="Builds separate artifact and pushes to git.remotes defined in scripts/phing/phing-boston.yml."
+          depends="deploy:artifact:clean">
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
     <if>
@@ -43,9 +43,14 @@
 
   <target name="deploy:artifact:add-remote" description="Adds a git remote and checks out deploy branch from upstream.">
     <!-- Generate and md5 sum of the remote URL to use as remote name. -->
-    <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2" outputProperty="remoteName"/>
-    <exec command="git remote add ${remoteName} ${deploy.remote}" dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git fetch ${remoteName}" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
+          outputProperty="remoteName"/>
+    <exec command="git init"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git remote add ${remoteName} ${deploy.remote}"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git fetch ${remoteName}"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
     <!-- Create the new branch. -->
     <exec command="git checkout -b ${deploy.branch}" dir="${deploy.dir}" logoutput="true" passthru="true"/>
@@ -57,7 +62,9 @@
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
   </target>
 
-  <target name="deploy:artifact:build" description="Generates a deploy-ready build in deploy.dir." depends="deploy:artifact:make, deploy:artifact:copy, deploy:artifact:sanitize">
+  <target name="deploy:artifact:build"
+          description="Generates a deploy-ready build in deploy.dir."
+          depends="deploy:artifact:make, deploy:artifact:copy, deploy:artifact:sanitize">
   </target>
 
   <!-- Clean the deploy directory. -->
@@ -74,9 +81,16 @@
     <exec command="git commit -m '${deploy.commitMsg}' --quiet" dir="${deploy.dir}" logoutput="true" passthru="true"/>
   </target>
 
+  <target name="deploy:artifact:commitd8">
+    <exec command="git add --all" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git commit -m '${deploy.commitMsg}' --quiet" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+  </target>
+
   <target name="deploy:artifact:copy" description="Copy required files from docroot/sites to deploy/docroot/sites.">
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
-    <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/" logoutput="true"/>
+    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
+    <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
+          logoutput="true"/>
   </target>
 
   <target name="deploy:artifact:make" description="Downloads core and contrib to deploy folder." depends="deploy:artifact:clean">
@@ -93,7 +107,8 @@
     </phingcall>
   </target>
 
-  <target name="deploy:artifact:prepare-dir" description="Delete the existing deploy directory and re-initialize as an empty git repository.">
+  <target name="deploy:artifact:prepare-dir"
+          description="Delete the existing deploy directory and re-initialize as an empty git repository.">
     <delete dir="${deploy.dir}" failonerror="false" quiet="true" />
     <exec command="git init ${deploy.dir}" logoutput="true"/>
   </target>
@@ -102,13 +117,19 @@
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
   </target>
 
-  <target name="deploy:artifact:push-remote" description="Pushes to a git remote.">
-    <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2" outputProperty="remoteName"/>
-    <exec command="git push ${remoteName} ${deploy.branch}" dir="${deploy.dir}" logoutput="true" outputProperty="deploy.push.output" checkreturn="true"/>
+  <target name="deploy:artifact:push-remote"
+          description="Pushes to a git remote.">
+    <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
+          outputProperty="remoteName"/>
+    <exec command="git push ${remoteName} ${deploy.branch}"
+          dir="${deploy.dir}" logoutput="true"
+          outputProperty="deploy.push.output"
+          checkreturn="true"/>
     <exec command="export DEPLOY_UPTODATE=$(echo '${deploy.push.output}' | grep --quiet 'Everything up-to-date')"/>
   </target>
 
-  <target name="deploy:artifact:sanitize" description="Removes sensitive files from the deploy docroot.">
+  <target name="deploy:artifact:sanitize"
+          description="Removes sensitive files from the deploy docroot.">
     <delete>
       <fileset dir="${deploy.dir}/docroot">
         <include name="CHANGELOG.txt"/>
@@ -122,6 +143,97 @@
         <include name="UPGRADE.txt"/>
       </fileset>
     </delete>
+  </target>
+
+  <!-- New Drupal8 Travis-based composer deployment. -->
+  <target name="deploy:artifact:drupal8"
+          description="Runs a modified Drupal 8 deployment.">
+
+    <echo message="Deploying to Acquia ... " level="info"/>
+
+    <!-- This property sync.db controls whether the database is copied (from staging) during post-deploy. -->
+    <!-- (Remove or comment-out the property to disable) -->
+    <property name="drush.copy.db" value="true"/>
+    <property name="deploy.dry-run" value="true"/>
+
+    <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
+    <if>
+      <or>
+        <not><isset property="deploy.branch"/></not>
+        <not><isset property="deploy.commitMsg"/></not>
+      </or>
+      <then>
+        <fail>You must pass deploy.branch and deploy.commitMsg as runtime parameters.</fail>
+        <echo message="Command should match syntax:"/>
+        <echo message="deploy:artifact:drupal8 -Ddeploy.branch=xxxxx -Ddeploy.commitMsg='The commit message.'"/>
+      </then>
+    </if>
+
+    <!-- Copy the existing repo to new location for deployment. -->
+    <phingcall target="deploy:artifact:copy"
+               description="Copy the entire built artifact to the deploy folder."/>
+
+    <!--Sanitize the existing repo - not needed, the eclude file should cope with this. -->
+    <!--<phingcall target="deploy:artifact:sanitize"-->
+               <!--description="Deletes (sensitive/unwanted) files not excluded in copy"/>-->
+
+    <!-- Prepare the existing local repo - assign acquia remote(s). -->
+    <phingcall target="deploy:artifact:add-remotes"
+               description="Add remotes and fetch upstream refs.
+                            Checkout local branch tracking tracking upstream branch, if it exists.
+                            Otherwise create new branch locally."/>
+
+    <!-- Push up changes to remotes. -->
+    <if>
+      <isset property="deploy.dry-run"/>
+      <then>
+        <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
+      </then>
+      <else>
+        <phingcall target="deploy:artifact:commitd8"
+                   description="Commit copied files into the the repo."/>
+        <phingcall target="deploy:artifact:push-all"
+                   description="Push the updated repo branch to Acquia servers."/>
+        <phingcall target="deploy:artifact:post-deploy"
+                   description="Sync database, import configs, run update hooks, reset permissions and clear external caches."/>
+      </else>
+    </if>
+
+    <echo message="Deploy Complete" level="info"/>
+
+  </target>
+
+  <!-- Execute drush commands to finish DB integration and update on remote.-->
+  <target name="deploy:artifact:post-deploy"
+          description="Run commands on the server to complete the deploy.">
+
+    <!-- Logic to switch the environments around. -->
+    <switch value="${deploy.branch}">
+      <case value="develop-deploy">
+        <property name="drush.alias" value="@bostond8.dev"/>
+      </case>
+      <case value="master-deploy">
+        <property name="drush.alias" value="@bostond8.test"/>
+      </case>
+    </switch>
+
+    <if><isset property="drush.copy.db"/><then>
+      <exec passthru="true" dir="${docroot}" logoutput="true"
+            description="Copy the database from staging."
+            command="${drush} ${drush.alias} sql-sync @bostond8.test @self"/>
+    </then></if>
+    <exec passthru="true" dir="${docroot}" logoutput="true"
+          description="Import the configurations."
+          command="${drush} ${drush.alias} cim"/>
+    <exec passthru="true" dir="${docroot}" logoutput="true"
+          description="Run update.php to import update hooks."
+          command="${drush} ${drush.alias} updb"/>
+    <exec passthru="true" dir="${docroot}" logoutput="true"
+          description="Rebuild app permissions."
+          command="${drush} ${drush.alias} acquia-reset-permissions -y"/>
+    <exec passthru="true" dir="${docroot}" logoutput="true"
+          description="Run cron for good measure."
+          command="${drush} ${drush.alias} cron"/>
   </target>
 
 </project>
