@@ -45,8 +45,6 @@
     <!-- Generate and md5 sum of the remote URL to use as remote name. -->
     <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
           outputProperty="remoteName"/>
-    <exec command="git init"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git remote add ${remoteName} ${deploy.remote}"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git fetch ${remoteName}"
@@ -59,6 +57,8 @@
   </target>
 
   <target name="deploy:artifact:add-remotes" description="Add remotes and fetch upstream refs.">
+    <exec command="git init"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
   </target>
 
@@ -88,7 +88,6 @@
 
   <target name="deploy:artifact:copy" description="Copy required files from docroot/sites to deploy/docroot/sites.">
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
-    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
   </target>
@@ -169,6 +168,13 @@
       </then>
     </if>
 
+    <!-- Prepare the existing local repo - assign acquia remote(s). -->
+    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
+    <phingcall target="deploy:artifact:add-remotes"
+               description="Add remotes and fetch upstream refs.
+                            Checkout local branch tracking tracking upstream branch, if it exists.
+                            Otherwise create new branch locally."/>
+
     <!-- Copy the existing repo to new location for deployment. -->
     <phingcall target="deploy:artifact:copy"
                description="Copy the entire built artifact to the deploy folder."/>
@@ -177,11 +183,6 @@
     <!--<phingcall target="deploy:artifact:sanitize"-->
                <!--description="Deletes (sensitive/unwanted) files not excluded in copy"/>-->
 
-    <!-- Prepare the existing local repo - assign acquia remote(s). -->
-    <phingcall target="deploy:artifact:add-remotes"
-               description="Add remotes and fetch upstream refs.
-                            Checkout local branch tracking tracking upstream branch, if it exists.
-                            Otherwise create new branch locally."/>
 
     <!-- Push up changes to remotes. -->
     <if>
