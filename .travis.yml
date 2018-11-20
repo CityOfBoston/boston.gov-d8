@@ -45,12 +45,6 @@ before_install:
   - composer selfupdate
   # emulate a production environment
   - export AH_SITE_ENVIRONMENT=prod
-  # Manage SSH keys for deployment to Acquia.
-  - echo $ACQUIA_KEY > scripts/deploy/acquia_deploy
-  - eval "$(ssh-agent -s)"
-  - chmod 600 scripts/deploy/acquia_deploy
-  - ssh-add scripts/deploy/acquia_deploy
-
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
@@ -59,6 +53,12 @@ install:
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 2: Build the drupal site using Phing.
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+  # Step 3: Manage SSH keys for deployment to Acquia.
+  - echo $ACQUIA_KEY > scripts/deploy/acquia_deploy
+  - cat scripts/deploy/acquia_deploy
+  - eval "$(ssh-agent -s)"
+  - chmod 600 scripts/deploy/acquia_deploy
+  - ssh-add scripts/deploy/acquia_deploy
 
 script:
   # Run basic validation and Behat/PHPUnit tests in parallel.
