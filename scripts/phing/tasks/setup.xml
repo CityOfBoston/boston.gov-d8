@@ -344,6 +344,11 @@
   <target name="setup:drupal:local_settings_php"
           description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
+    <resolvepath propertyName="local.settings.file" path="${local.settings.file}"/>
+    <resolvepath propertyName="settings.file" path="${settings.file}"/>
+    <resolvepath propertyName="local.services.file" path="${local.services.file}"/>
+
+
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
     <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
@@ -357,14 +362,12 @@
       </not>
       <then>
 
-        <copy
-                file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php"
-                tofile="${local.settings.file}" haltonerror="false" overwrite="false"
-                verbose="false" />
-        <copy
-                file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
-                tofile="${local.services.file}" haltonerror="false" overwrite="false"
-                verbose="false"/>
+        <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php"
+              tofile="${local.settings.file}" haltonerror="false" overwrite="false"
+              verbose="false" />
+        <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
+              tofile="${local.services.file}" haltonerror="false" overwrite="false"
+              verbose="false"/>
 
         <echo description="Adds local settings to settings.local.php file."
               message="${line.separator}" append="true"
@@ -422,32 +425,31 @@
             description="Redundant file as we have this in the sites/default folder."/>
 
     <!-- Append code to (fresh) settings.php file -->
-    <echo
-            description="Adds default settings to settings.php and directve to include the settings.local.php file."
-            message="${line.separator}" append="true" file="${settings.file}"/>
-    <echo message="/**${line.separator} * @file${line.separator}" append="true" file="${settings.file}"/>
-    <echo
-            message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}${line.separator}"
-            append="true" file="${settings.file}"/>
+    <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
+          message="${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="/**${line.separator} * @file${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}${line.separator}"
+          append="true" file="${settings.file}"/>
     <echo message="$settings['update_free_access'] = FALSE;${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo
-            message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}"
-            append="true" file="${settings.file}"/>
-    <echo
-            message="$settings['file_scan_ignore_directories'] = [${line.separator}"
-            append="true" file="${settings.file}"/>
-    <echo message="  'node_modules',${line.separator}" append="true"
-          file="${settings.file}"/>
-    <echo message="  'bower_components',${line.separator}" append="true"
-          file="${settings.file}"/>
-    <echo message="];${line.separator}" append="true" file="${settings.file}"/>
+    <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="$settings['file_scan_ignore_directories'] = [${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="  'node_modules',${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="  'bower_components',${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="];${line.separator}"
+          append="true" file="${settings.file}"/>
     <echo message="$settings['entity_update_batch_size'] = 50;${line.separator}"
           append="true" file="${settings.file}"/>
     <echo message="$databases['default']['default'] = [${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="  'driver' => 'mysql',${line.separator}" append="true"
-          file="${settings.file}"/>
+    <echo message="  'driver' => 'mysql',${line.separator}"
+          append="true" file="${settings.file}"/>
     <echo message="  'database' => '${lando.db.database}',${line.separator}"
           append="true" file="${settings.file}"/>
     <echo message="  'username' => '${lando.db.username}',${line.separator}"
@@ -458,39 +460,39 @@
           append="true" file="${settings.file}"/>
     <echo message="  'port' => '${lando.db.port}',${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="];${line.separator}" append="true"
-          file="${settings.file}"></echo>
-    <echo
-            message="if (file_exists('${local.settings.file}')) {${line.separator}"
-            append="true" file="${settings.file}"/>
-    <echo message="  include '${local.settings.file}';${line.separator}"
+    <echo message="];${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="}${line.separator}${line.separator}" append="true"
-          file="${settings.file}"/>
-    <echo message="/* End of additions. */${line.separator}" append="true"
-          file="${settings.file}"/>
+    <echo message='if (file_exists("${local.settings.file.php}")) {${line.separator}'
+          append="true" file="${settings.file}"/>
+    <echo message='  include "${local.settings.file.php}";${line.separator}'
+          append="true" file="${settings.file}"/>
+    <echo message="}${line.separator}${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="/* End of additions. */${line.separator}"
+          append="true" file="${settings.file}"/>
 
     <!-- Add in directive for private settings file if needed -->
     <property
             description="Location of settings files for this Drupal intallation."
             name="private.docroot.settings"
             value="${docroot}/${git.private_repo.settings_file}"/>
+    <property
+            description="Location of settings files for this Drupal intallation using drupal variables (for acquia)."
+            name="private.docroot.settings.php"
+            value="${git.private_repo.settings_file_php}"/>
     <if>
       <and>
         <available file="${private.docroot.settings}"/>
         <isset property="git.private_repo.settings_file"/>
       </and>
       <then>
-        <echo
-                description="Adds a directive to settings file to include contents of settings file in repo."
-                message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="  include '${private.docroot.settings}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo description="Adds a directive to settings file to include contents of settings file in repo."
+              message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message="if (file_exists('${private.docroot.settings.php}')) {${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message="  include '${private.docroot.settings.php}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <echo message="}${line.separator}${line.separator}" append="true"
               file="${local.settings.file}"/>
         <echo message="/* End of additions. */${line.separator}"
@@ -808,11 +810,33 @@
   </target>
 
   <target name="test">
-    <chown user="www-data" description="Ensure configs tree is available." quiet="true" verbose="false">
-      <fileset dir="${project.basedir}/config">
-        <include name="**/*"></include>
-      </fileset>
-    </chown>
+    <property
+            description="Location of settings files for this Drupal intallation."
+            name="private.docroot.settings"
+            value="${docroot}/${git.private_repo.settings_file}"/>
+    <property
+            description="Location of settings files for this Drupal intallation using drupal variables (for acquia)."
+            name="private.docroot.settings.php"
+            value="${git.private_repo.settings_file_php}"/>
+    <if>
+      <and>
+        <available file="${private.docroot.settings}"/>
+        <isset property="git.private_repo.settings_file"/>
+      </and>
+      <then>
+        <echo description="Adds a directive to settings file to include contents of settings file in repo."
+              message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message='if (file_exists("${private.docroot.settings.php}")) {${line.separator}'
+              append="true" file="${local.settings.file}"/>
+        <echo message='  include "${private.docroot.settings.php}";${line.separator}'
+              append="true" file="${local.settings.file}"/>
+        <echo message="}${line.separator}${line.separator}" append="true"
+              file="${local.settings.file}"/>
+        <echo message="/* End of additions. */${line.separator}"
+              append="true" file="${local.settings.file}"/>
+      </then>
+    </if>
   </target>
 
 </project>
