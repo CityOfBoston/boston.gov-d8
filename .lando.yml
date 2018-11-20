@@ -60,7 +60,8 @@ services:
       # Install a custom apache config file for on-demand containers -> limits the apache children to preserve memory.
       #     (Config loaded and enabled by Phing in setup:docker:drupal-terraform)
       - cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${LANDO_MOUNT}/setup/lando.log
-      - ip route | awk 'NR==1 {printf $3}' | xargs echo "xdebug.remote_host=" >>/usr/local/etc/php/conf.d/boston.xdebug.ini
+      - cp ${LANDO_MOUNT}/scripts/phing/files/boston-dev-php.ini /usr/local/etc/php/conf.d/ >> ${LANDO_MOUNT}/setup/lando.log
+      - ip route | awk 'NR==1 {printf $3}' | xargs echo "xdebug.remote_host=" >>/usr/local/etc/php/conf.d/boston-dev-php.ini
       - service apache2 reload >> ${LANDO_MOUNT}/setup/lando.log
 
     run:
