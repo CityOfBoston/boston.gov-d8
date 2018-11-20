@@ -54,7 +54,8 @@ install:
   # Step 2: Build the drupal site using Phing.
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
   # Step 3: Manage SSH keys for deployment to Acquia.
-  - echo $ACQUIA_KEY > scripts/deploy/acquia_deploy
+  - echo $ACQUIA_KEY
+  - openssl enc -aes-256-cbc -k $ACQUIA_KEY -d -in acquia.enc -out acquia_deploy
   - cat scripts/deploy/acquia_deploy
   - eval "$(ssh-agent -s)"
   - chmod 600 scripts/deploy/acquia_deploy
