@@ -41,8 +41,7 @@ notifications:
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
   - sudo apt-get update
-  - sudo apt-get upgrade openssl
-  - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig
+  - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
   # ensure composer is on latest version.
   - composer selfupdate
   # emulate a production environment
