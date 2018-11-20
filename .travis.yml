@@ -57,7 +57,8 @@ install:
   - echo $ACQUIA_KEY
   - ls scripts/deploy
   - cat -A scripts/deploy/acquia.enc
-  - openssl enc -aes-256-cbc -k "$ACQUIA_KEY" -d -in scripts/deploy/acquia.enc -out scripts/deploy/acquia_deploy
+  - openssl version
+  - openssl enc -aes-256-cbc -k $ACQUIA_KEY -d -in scripts/deploy/acquia.enc -out scripts/deploy/acquia_deploy
   - cat scripts/deploy/acquia_deploy
   - eval "$(ssh-agent -s)"
   - chmod 600 scripts/deploy/acquia_deploy
