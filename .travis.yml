@@ -45,6 +45,12 @@ before_install:
   - composer selfupdate
   # emulate a production environment
   - export AH_SITE_ENVIRONMENT=prod
+  # Manage SSH keys for deployment to Acquia.
+  - echo $ACQUIA_KEY > scripts/deploy/acquia_deploy
+  - eval "$(ssh-agent -s)"
+  - chmod 600 scripts/deploy/acquia_deploy
+  - ssh-add scripts/deploy/acquia_deploy
+
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
@@ -57,6 +63,7 @@ install:
 script:
   # Run basic validation and Behat/PHPUnit tests in parallel.
   - "$TASK"
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Ddeploy.branch="develop-deploy" deploy:artifact:add-remotes
 #  - $TRAVIS_BUILD_DIR/vendor/bin/phing deploy:artifact:drupal8 -Ddeploy.branch="develop-deploy" -Ddeploy.commitMsg="Automated commit by Travis CI for Build";
 
 after_success:
