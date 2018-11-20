@@ -225,10 +225,13 @@
     </then></if>
     <exec passthru="true" dir="${docroot}" logoutput="true"
           description="Import the configurations."
-          command="${drush} ${drush.alias} cim"/>
+          command="${drush} ${drush.alias} cim -y"/>
     <exec passthru="true" dir="${docroot}" logoutput="true"
           description="Run update.php to import update hooks."
-          command="${drush} ${drush.alias} updb"/>
+          command="${drush} ${drush.alias} updb -y"/>
+    <exec passthru="true" dir="${docroot}" logoutput="true"
+          description="Update any entities."
+          command="${drush} ${drush.alias} entup -y"/>
     <exec passthru="true" dir="${docroot}" logoutput="true"
           description="Rebuild app permissions."
           command="${drush} ${drush.alias} acquia-reset-permissions -y"/>
