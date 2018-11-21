@@ -57,6 +57,7 @@
   </target>
 
   <target name="deploy:artifact:add-remotes" description="Add remotes and fetch upstream refs.">
+    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
     <exec command="git init"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
