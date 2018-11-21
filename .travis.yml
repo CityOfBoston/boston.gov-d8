@@ -58,7 +58,7 @@ install:
   - ls $TRAVIS_BUILD_DIR/scripts/deploy
   - cat -A $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc
   - openssl version
-  - openssl enc -aes-256-cbc -k $ACQUIA_KEY -d -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
+  - openssl aes-256-cbc -K $AQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
   - cat $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   - eval "$(ssh-agent -s)"
   - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
