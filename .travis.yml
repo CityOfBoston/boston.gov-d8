@@ -56,8 +56,6 @@ install:
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
   # Step 3: Manage SSH keys for deployment to Acquia.
   - ls $TRAVIS_BUILD_DIR/scripts/deploy
-  - cat -A $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc
-  - openssl version
   - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
   - cat $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   - eval "$(ssh-agent -s)"
