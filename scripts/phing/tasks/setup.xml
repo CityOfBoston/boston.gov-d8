@@ -563,20 +563,18 @@
                   command="rm -f ${git.private_repo.local_dir}/*.md"
                   passthru="true" logoutput="false" checkreturn="false"/>
             <echo message="Move private repo files into the main repo."/>
-            <exec
-                    description="Move the private repo files to the docroot folder."
-                    command="rsync -aE ${git.private_repo.local_dir}/ ${repo.root}/"
-                    passthru="true" logoutput="false" checkreturn="false"/>
+            <exec description="Move the private repo files to the docroot folder."
+                  command="rsync -aE ${git.private_repo.local_dir}/ ${repo.root}/ >> ${project.basedir}/setup/drush_site_install.log"
+                  passthru="true" logoutput="false" checkreturn="false"/>
             <exec description="Delete the private repo files."
-                  command="rm -rf ${git.private_repo.local_dir}"
+                  command="rm -rf ${git.private_repo.local_dir} >> ${project.basedir}/setup/drush_site_install.log"
                   passthru="true" logoutput="false" checkreturn="false"/>
           </then>
           <else>
             <exec command="echo '\033[1;33mPrivate repo was not cloned.  Build process will continue.\033[0m'" logoutput="true"/>
-            <echo
-                    message="Private repo was not cloned.  Build process will continue."
-                    level="warning" append="true"
-                    file="${project.basedir}/setup/drush_site_install.log"/>
+            <echo message="Private repo was not cloned.  Build process will continue."
+                  level="warning" append="true"
+                  file="${project.basedir}/setup/drush_site_install.log"/>
           </else>
         </if>
 
