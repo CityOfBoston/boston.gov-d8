@@ -356,9 +356,9 @@
   <target name="setup:drupal:local_settings_php"
           description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
-    <resolvepath propertyName="local.settings.file" path="${local.settings.file}"/>
-    <resolvepath propertyName="settings.file" path="${settings.file}"/>
-    <resolvepath propertyName="local.services.file" path="${local.services.file}"/>
+    <resolvepath propertyName="local.settings.file.rel" path="${docroot}/${local.settings.file}"/>
+    <resolvepath propertyName="settings.file.rel" path="${docroot}/${settings.file}"/>
+    <resolvepath propertyName="local.services.file.rel" path="${docroot}/${local.services.file}"/>
 
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
@@ -471,9 +471,9 @@
           append="true" file="${settings.file}"/>
     <echo message="];${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message='if (file_exists("${local.settings.file}")) {${line.separator}'
+    <echo message='if (file_exists(DRUPAL_ROOT . "/${local.settings.file.rel}")) {${line.separator}'
           append="true" file="${settings.file}"/>
-    <echo message='  include "${local.settings.file}";${line.separator}'
+    <echo message='  include DRUPAL_ROOT . "/${local.settings.file.rel}";${line.separator}'
           append="true" file="${settings.file}"/>
     <echo message="}${line.separator}${line.separator}"
           append="true" file="${settings.file}"/>
@@ -481,26 +481,18 @@
           append="true" file="${settings.file}"/>
 
     <!-- Add in directive for private settings file if needed -->
-    <property
-            description="Location of settings files for this Drupal intallation."
-            name="private.docroot.settings"
-            value="${docroot}/${git.private_repo.settings_file}"/>
-    <property
-            description="Location of settings files for this Drupal intallation using drupal variables (for acquia)."
-            name="private.docroot.settings.php"
-            value="${git.private_repo.settings_file_php}"/>
+    <property description="Location of PRIVATE settings file for this Drupal intallation."
+              name="private.docroot.settings"
+              value="${docroot}/${git.private_repo.settings_file.rel}"/>
     <if>
-      <and>
-        <available file="${private.docroot.settings}"/>
-        <isset property="git.private_repo.settings_file"/>
-      </and>
+      <available file="${private.docroot.settings}"/>
       <then>
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
               message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
+        <echo message='if (file_exists(DRUPALROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
               append="true" file="${local.settings.file}"/>
-        <echo message="  include '${private.docroot.settings}';${line.separator}"
+        <echo message='  include DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}";${line.separator}'
               append="true" file="${local.settings.file}"/>
         <echo message="}${line.separator}${line.separator}" append="true"
               file="${local.settings.file}"/>
