@@ -34,7 +34,7 @@
   <target name="setup:docker:drupal-travis"
           description="Creates a drupal environment in docker (command run by travis)."
           depends=" setup:drupal:clone_private_repo,
-                    setup:drupal:set_prod_config,
+                    setup:drupal:set_dev_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
                     update:database:update,
