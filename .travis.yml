@@ -52,7 +52,7 @@ install:
   # Step 1: Download all dependencies.
   - cd $TRAVIS_BUILD_DIR
   - composer install
-  - ls $TRAVIS_BUILD_DIR/docroot/*.*
+  - ls -la $TRAVIS_BUILD_DIR/docroot
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 2: Build the drupal site using Phing.
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
