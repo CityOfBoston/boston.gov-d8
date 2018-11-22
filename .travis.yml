@@ -50,7 +50,7 @@ before_install:
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
   # Step 1: Download all dependencies.
-  - composer install --prefer-source --no-suggest --dev
+  - composer install --prefer-source --dev
   - ls $TRAVIS_BUILD_DIR/docroot
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 2: Build the drupal site using Phing.
