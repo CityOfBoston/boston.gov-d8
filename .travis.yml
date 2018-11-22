@@ -46,17 +46,15 @@ before_install:
   - composer selfupdate
   # emulate a production environment
   - export AH_SITE_ENVIRONMENT=dev
-  - echo $LANDO_INFO
+  - export LANDO_INFO="{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"xdebug.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["database"],"creds":{"user":"drupal","password":"drupal","database":"drupal"},"internal_connection":{"host":"localhost","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}"
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
   # Step 1: Download all dependencies.
-  - cd $TRAVIS_BUILD_DIR
-  - composer install
-  - composer drupal:scaffold
-  - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
+
   # Step 2: Build the drupal site using Phing.
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+  - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 3: Manage SSH keys for deployment to Acquia.
   - cat $TRAVIS_BUILD_DIR/setup/drush_site_install.log
   - ls $TRAVIS_BUILD_DIR/scripts/deploy
