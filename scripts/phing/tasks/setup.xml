@@ -326,8 +326,14 @@
               message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
         <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
-              command="${si.command} >> ${project.basedir}/setup/drush_site_install.log "
-              logoutput="true" checkreturn="true"/>
+              command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
+              logoutput="true" outputProperty="install.output"/>
+        <if><not><equals arg1="${install.output}" arg2="1" /></not>
+          <then>
+            <exec command="${project.basedir}/setup/drush_site_install.log"/>
+            <fail message="Fail - Site install failure"/>
+          </then>
+        </if>
       </then>
       <else>
         <echo message="Drupal core is not found." level="error"/>
