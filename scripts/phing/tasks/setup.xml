@@ -330,7 +330,7 @@
               logoutput="true" outputProperty="install.output"/>
         <if><not><equals arg1="${install.output}" arg2="0" /></not>
           <then>
-            <exec command="${project.basedir}/setup/drush_site_install.log"
+            <exec command="cat ${project.basedir}/setup/drush_site_install.log"
                   passthru="true" logoutput="true"/>
             <fail message="Fail - Site install failure"/>
           </then>
