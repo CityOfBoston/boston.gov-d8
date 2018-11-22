@@ -46,7 +46,8 @@ before_install:
   - composer selfupdate
   # emulate a production environment
   - export AH_SITE_ENVIRONMENT=dev
-  - export LANDO_INFO='{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"xdebug.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["database"],"creds":{"user":"drupal","password":"drupal","database":"drupal"},"internal_connection":{"host":"localhost","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}'
+  - export LANDO_INFO='{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"xdebug.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["database"],"creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"localhost","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}'
+  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
