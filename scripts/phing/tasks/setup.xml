@@ -214,6 +214,12 @@
 
   </target>
 
+  <target name="setup:prepare:travis" description="Set travis specific properties etc">
+    <property description="Switch to the deploy branch in the private repo"
+              name="git.private_repo.branch"
+              value="${git.private_repo.deploy-branch}"/>
+  </target>
+
   <!-- Define the Drupal setup task -->
   <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
