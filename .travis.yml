@@ -45,7 +45,7 @@ before_install:
   # ensure composer is on latest version.
   - composer selfupdate
   # emulate a production environment
-  - export AH_SITE_ENVIRONMENT=prod
+  - export AH_SITE_ENVIRONMENT=dev
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
