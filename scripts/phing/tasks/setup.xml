@@ -360,7 +360,6 @@
     <resolvepath propertyName="settings.file" path="${settings.file}"/>
     <resolvepath propertyName="local.services.file" path="${local.services.file}"/>
 
-
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
     <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
@@ -429,10 +428,8 @@
     </if>
 
     <!-- Remove unwanted and confusing template config files. -->
-    <delete file="${docroot}/sites/default/default.settings.php" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
-    <delete file="${docroot}/sites/default/default.services.yml" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/development.services.yml" quiet="true" verbose="false"
             description="Redundant file as we have this in the sites/default folder."/>
 
@@ -474,9 +471,9 @@
           append="true" file="${settings.file}"/>
     <echo message="];${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message='if (file_exists("${local.settings.file.php}")) {${line.separator}'
+    <echo message='if (file_exists("${local.settings.file}")) {${line.separator}'
           append="true" file="${settings.file}"/>
-    <echo message='  include "${local.settings.file.php}";${line.separator}'
+    <echo message='  include "${local.settings.file}";${line.separator}'
           append="true" file="${settings.file}"/>
     <echo message="}${line.separator}${line.separator}"
           append="true" file="${settings.file}"/>
@@ -501,9 +498,9 @@
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
               message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message="if (file_exists('${private.docroot.settings.php}')) {${line.separator}"
+        <echo message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message="  include '${private.docroot.settings.php}';${line.separator}"
+        <echo message="  include '${private.docroot.settings}';${line.separator}"
               append="true" file="${local.settings.file}"/>
         <echo message="}${line.separator}${line.separator}" append="true"
               file="${local.settings.file}"/>
