@@ -315,8 +315,7 @@
             <property name="si_install_profile"
                       value="${project.profile.name}"/>
             <property name="si_site_profile" value="${project.profile.name}"/>
-            <echo
-                    message="${install_config.abs}/system.site.yml does not exist, normal profile-based install performed."/>
+            <echo message="${install_config.abs}/system.site.yml does not exist, normal profile-based install performed."/>
           </else>
         </if>
 
@@ -325,12 +324,10 @@
               message="==== Installing Drupal ====${line.separator}"  append="true"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
               message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
-        <exec
-                description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
-                dir="${docroot}"
-                command="${si.command} >> ${project.basedir}/setup/drush_site_install.log "
-                logoutput="true"/>
-
+        <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
+              dir="${docroot}"
+              command="${si.command} >> ${project.basedir}/setup/drush_site_install.log "
+              logoutput="true" checkreturn="true"/>
       </then>
       <else>
         <echo message="Drupal core is not found." level="error"/>
