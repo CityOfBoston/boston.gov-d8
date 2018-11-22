@@ -217,6 +217,7 @@
   <!-- Define the Drupal setup task -->
   <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
+    <if><not><available file="${project.basedir}/setup"/></not><then><mkdir dir="${project.basedir}/setup"/></then></if>
     <if>
       <equals arg1="${acquia.site_environment}" arg2="dev"/>
       <then>
