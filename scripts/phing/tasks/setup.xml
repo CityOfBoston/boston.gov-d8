@@ -331,7 +331,7 @@
         <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
               command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
-              logoutput="true" outputProperty="install.output"/>
+              logoutput="true" returnProperty="install.output"/>
         <if><not><equals arg1="${install.output}" arg2="0" /></not>
           <then>
             <exec command="cat ${project.basedir}/setup/drush_site_install.log"
@@ -478,7 +478,7 @@
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
               message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message='if (file_exists(DRUPALROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
+        <echo message='if (file_exists(DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
               append="true" file="${local.settings.file}"/>
         <echo message='  include DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}";${line.separator}'
               append="true" file="${local.settings.file}"/>
