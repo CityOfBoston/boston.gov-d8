@@ -244,25 +244,21 @@
         <fail message="Drupal is already installed."/>
       </then>
       <else>
-        <echo
-                message="Using Composer to install Drupal core and the required contrib modules."
-                level="info"/>
+        <echo message="Using Composer to install Drupal core and the required contrib modules."
+              level="info"/>
         <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m'" logoutput="true"/>
         <echo message="Executes: > composer install ${flag.dev}${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec
-                description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-                command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                logoutput="true"/>
+        <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
+              command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <echo message="${line.separator} > composer drupal:scaffold"
               file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec
-                description="Installs the drupal scaffold files, and logs to composer.log"
-                command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                logoutput="true"/>
-
+        <exec description="Installs the drupal scaffold files, and logs to composer.log"
+              command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <exec description="Establish drupal command in path."
               command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/; fi"
               logoutput="true"
@@ -356,17 +352,16 @@
   <target name="setup:drupal:local_settings_php"
           description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
-    <resolvepath propertyName="local.settings.file.rel" path="${docroot}/${local.settings.file}"/>
-    <resolvepath propertyName="settings.file.rel" path="${docroot}/${settings.file}"/>
-    <resolvepath propertyName="local.services.file.rel" path="${docroot}/${local.services.file}"/>
+    <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
+    <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
+    <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
 
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
     <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
 
     <!-- Now recreate the settings file -->
-    <echo
-            message="Recreate the ${local.settings.file} file with build settings."/>
+    <echo message="Recreate the ${local.settings.file} file with build settings."/>
     <if>
       <not>
         <available file="${local.settings.file}"/>
@@ -385,35 +380,28 @@
               file="${local.settings.file}"/>
         <echo message="/*${line.separator}" append="true"
               file="${local.settings.file}"/>
-        <echo
-                message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <echo message=" */${line.separator}" append="true"
               file="${local.settings.file}"/>
-        <echo
-                message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <if>
           <equals arg1="${acquia.site_environment}" arg2="dev"/>
           <then>
-            <echo
-                    message="error_reporting(E_ALL);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
-            <echo
-                    message="ini_set('display_errors', TRUE);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
-            <echo
-                    message="ini_set('display_startup_errors', TRUE);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
+            <echo message="error_reporting(E_ALL);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="ini_set('display_errors', TRUE);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="ini_set('display_startup_errors', TRUE);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
           </then>
         </if>
       </then>
       <else>
-        <echo
-                message="The local.settings.php already exists, did not update with local settings."/>
+        <echo message="The local.settings.php already exists, did not update with local settings."/>
       </else>
     </if>
 

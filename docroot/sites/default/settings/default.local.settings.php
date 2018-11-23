@@ -50,3 +50,9 @@ if ($_envvar == "dev") {
  *   options: hide | some | all | verbose
  */
 $config['system.logging']['error_level'] = ($_envvar == "dev" ? 'verbose' : 'hide');
+
+/*
+ * Add PHP memory limit allocation for this web site.
+ * @see  https://www.drupal.org/docs/7/managing-site-performance-and-scalability/changing-php-memory-limits
+ */
+ini_set('memory_limit', '384M');
