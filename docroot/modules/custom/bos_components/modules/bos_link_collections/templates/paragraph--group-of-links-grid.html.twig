@@ -29,8 +29,8 @@
 
 {% if
   content.field_subheader['#items'].getValue()
-  and content.field_description['#items'].getValue()
-  and content.field_link['#items'].getValue()
+  or content.field_description['#items'].getValue()
+  or content.field_link['#items'].getValue()
 %}
   {% set left_region_classes = left_region_classes|merge(['desktop-25-left']) %}
   {% set right_region_classes = right_region_classes|merge(['desktop-75-right']) %}

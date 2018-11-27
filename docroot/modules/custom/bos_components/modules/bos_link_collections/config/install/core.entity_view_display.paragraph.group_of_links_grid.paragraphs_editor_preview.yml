@@ -1,10 +1,11 @@
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
     - field.field.paragraph.group_of_links_grid.field_component_title
     - field.field.paragraph.group_of_links_grid.field_contact
+    - field.field.paragraph.group_of_links_grid.field_description
     - field.field.paragraph.group_of_links_grid.field_grid_links
     - field.field.paragraph.group_of_links_grid.field_link
     - field.field.paragraph.group_of_links_grid.field_short_title
@@ -18,6 +19,7 @@ content: {  }
 hidden:
   field_component_title: true
   field_contact: true
+  field_description: true
   field_grid_links: true
   field_link: true
   field_short_title: true

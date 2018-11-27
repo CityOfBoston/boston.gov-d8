@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.paragraph.group_of_links_list.field_component_title
     - field.field.paragraph.group_of_links_list.field_contact
+    - field.field.paragraph.group_of_links_list.field_description
     - field.field.paragraph.group_of_links_list.field_link
     - field.field.paragraph.group_of_links_list.field_list_links
     - field.field.paragraph.group_of_links_list.field_short_title
@@ -11,6 +12,8 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_list
   module:
     - entity_reference_revisions
+    - fences
+    - text
 id: paragraph.group_of_links_list.default
 targetEntityType: paragraph
 bundle: group_of_links_list
@@ -22,7 +25,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_contact:
     label: hidden
@@ -30,25 +40,53 @@ content:
     type: entity_reference_label
     settings:
       link: true
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_description:
+    weight: 8
+    label: hidden
+    settings: {  }
     third_party_settings: {  }
+    type: text_default
     region: content
   field_link:
     label: hidden
     weight: 7
     type: entity_reference_revisions_entity_view
     settings:
-      view_mode: full
+      view_mode: default
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_list_links:
     label: hidden
     weight: 4
     type: entity_reference_revisions_entity_view
     settings:
-      view_mode: full
+      view_mode: default
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
@@ -56,7 +94,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_subheader:
     label: hidden
@@ -64,6 +109,13 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

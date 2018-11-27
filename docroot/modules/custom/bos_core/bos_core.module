@@ -119,7 +119,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
         $link = $paragraph->get('field_external_link')->getValue();
         $results['url'] = $link['0']['uri'];
         $results['title'] = $link['0']['title'];
-        $url = Url::fromUri('external:' . $link['0']['uri'], $attributes);
+        $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
         $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
         break;
 
@@ -154,4 +154,16 @@ function _bos_core_get_file_link(string $fid, string $link_text = NULL, array $a
   else {
     return Link::fromTextAndUrl($link_text, Url::fromUri(file_create_url($uri), $attributes))->toString();
   }
+}
+
+/**
+ * Get filename.
+ *
+ * @param string $fid
+ *   File ID.
+ */
+function _bos_core_get_file_name(string $fid) {
+  $file = file_load($fid);
+  $name = $file->get('filename')->getValue();
+  return $name['0']['value'];
 }

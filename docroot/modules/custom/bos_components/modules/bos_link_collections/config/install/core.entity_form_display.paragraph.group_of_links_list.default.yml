@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.paragraph.group_of_links_list.field_component_title
     - field.field.paragraph.group_of_links_list.field_contact
+    - field.field.paragraph.group_of_links_list.field_description
     - field.field.paragraph.group_of_links_list.field_link
     - field.field.paragraph.group_of_links_list.field_list_links
     - field.field.paragraph.group_of_links_list.field_short_title
@@ -11,13 +12,14 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_list
   module:
     - paragraphs
+    - text
 id: paragraph.group_of_links_list.default
 targetEntityType: paragraph
 bundle: group_of_links_list
 mode: default
 content:
   field_component_title:
-    weight: 2
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -25,7 +27,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 4
+    weight: 2
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -33,8 +35,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
+  field_description:
+    weight: 4
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
   field_link:
-    weight: 7
+    weight: 5
     type: entity_reference_paragraphs
     settings:
       title: Link
@@ -58,7 +68,7 @@ content:
     third_party_settings: {  }
     region: content
   field_short_title:
-    weight: 3
+    weight: 1
     type: string_textfield
     settings:
       size: 60
@@ -66,7 +76,7 @@ content:
     third_party_settings: {  }
     region: content
   field_subheader:
-    weight: 5
+    weight: 3
     type: string_textfield
     settings:
       size: 60
