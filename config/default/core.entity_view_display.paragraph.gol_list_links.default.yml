@@ -3,15 +3,45 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.gol_list_links.field_description
     - field.field.paragraph.gol_list_links.field_link
     - paragraphs.paragraphs_type.gol_list_links
   module:
+    - advanced_text_formatter
     - entity_reference_revisions
+    - fences
 id: paragraph.gol_list_links.default
 targetEntityType: paragraph
 bundle: gol_list_links
 mode: default
 content:
+  field_description:
+    weight: 1
+    label: hidden
+    settings:
+      trim_length: '125'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: php
+      format: plain_text
+      allowed_html:
+        - b
+        - em
+        - i
+        - strong
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: advanced_text
+    region: content
   field_link:
     label: hidden
     weight: 0
@@ -19,6 +49,13 @@ content:
     settings:
       view_mode: ribbon_link
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

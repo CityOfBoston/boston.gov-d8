@@ -7,6 +7,7 @@
 
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -91,35 +92,48 @@ function _bos_core_install_icons($module) {
 }
 
 /**
- * Take a link paragraph and return the URL.
+ * Take a link paragraph and return the URL and title.
  */
-function _bos_core_paragraph_extract_url($paragraph) {
-  $url = NULL;
+function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
+  $results = [];
+
+  if (is_array($paragraph) && !empty($paragraph['0']['target_id'])) {
+    $paragraph = Paragraph::load($paragraph['0']['target_id']);
+  }
+
   if (is_a($paragraph, 'Drupal\paragraphs\Entity\Paragraph')) {
     switch ($paragraph->bundle()) {
       case 'lightbox_link':
         $link = $paragraph->get('field_lightbox_link')->getValue();
-        $url = $link['0']['uri'];
+        $results['url'] = $link['0']['uri'];
         break;
 
       case 'document':
         $link = $paragraph->get('field_document')->getValue();
-        $url = _bos_core_get_file_link($link['0']['target_id']);
+        $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
+        $results['title'] = 'TMP';
+        $results['link'] = Link::fromTextAndUrl($results['title'], $url)->toString();
         break;
 
       case 'external_link':
         $link = $paragraph->get('field_external_link')->getValue();
-        $url = $link['0']['uri'];
+        $results['url'] = $link['0']['uri'];
+        $results['title'] = $link['0']['title'];
+        $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
+        $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
         break;
 
       case 'internal_link':
         $link = $paragraph->get('field_internal_link')->getValue();
         preg_match('~/(.*)~', $link['0']['uri'], $match);
-        $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']])->toString();
+        $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
+        $results['url'] = $url->toString();
+        $results['title'] = $link['0']['title'];
+        $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
         break;
     }
   }
-  return $url;
+  return $results;
 }
 
 /**
@@ -129,15 +143,27 @@ function _bos_core_paragraph_extract_url($paragraph) {
  *   File ID.
  * @param string $link_text
  *   Link Text.
- * @param array $options
- *   Link options.
+ * @param array $attributes
+ *   Link attributes.
  */
-function _bos_core_get_file_link(string $fid, string $link_text = NULL, array $options = []) {
+function _bos_core_get_file_link(string $fid, string $link_text = NULL, array $attributes = []) {
   $uri = file_load($fid)->getFileUri();
   if (!$link_text) {
-    return Url::fromUri(file_create_url($uri, $options))->toString();
+    return Url::fromUri(file_create_url($uri, $attributes))->toString();
   }
   else {
-    return Link::fromTextAndUrl($link_text, Url::fromUri(file_create_url($uri), $options))->toString();
+    return Link::fromTextAndUrl($link_text, Url::fromUri(file_create_url($uri), $attributes))->toString();
   }
+}
+
+/**
+ * Get filename.
+ *
+ * @param string $fid
+ *   File ID.
+ */
+function _bos_core_get_file_name(string $fid) {
+  $file = file_load($fid);
+  $name = $file->get('filename')->getValue();
+  return $name['0']['value'];
 }
