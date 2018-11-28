@@ -1,0 +1,60 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.video.field_component_title
+    - field.field.paragraph.video.field_contact
+    - field.field.paragraph.video.field_extra_info
+    - field.field.paragraph.video.field_image
+    - field.field.paragraph.video.field_is_channel
+    - field.field.paragraph.video.field_short_title
+    - paragraphs.paragraphs_type.video
+  module:
+    - image_url_formatter
+    - options
+id: paragraph.video.default
+targetEntityType: paragraph
+bundle: video
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 5
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_image:
+    label: hidden
+    weight: 4
+    type: image_url
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    region: content
+  field_is_channel:
+    label: hidden
+    weight: 6
+    type: list_key
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 2
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_extra_info: true
