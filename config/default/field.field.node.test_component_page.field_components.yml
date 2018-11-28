@@ -9,8 +9,12 @@ dependencies:
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.city_score_dashboard
+    - paragraphs.paragraphs_type.grid_links
     - paragraphs.paragraphs_type.grid_of_cards
     - paragraphs.paragraphs_type.grid_of_quotes
+    - paragraphs.paragraphs_type.group_of_links_grid
+    - paragraphs.paragraphs_type.group_of_links_list
+    - paragraphs.paragraphs_type.group_of_links_mini_grid
     - paragraphs.paragraphs_type.text
   module:
     - entity_reference_revisions
@@ -35,8 +39,12 @@ settings:
       bid: bid
       bos311: bos311
       city_score_dashboard: city_score_dashboard
+      grid_links: grid_links
       grid_of_cards: grid_of_cards
       grid_of_quotes: grid_of_quotes
+      group_of_links_grid: group_of_links_grid
+      group_of_links_list: group_of_links_list
+      group_of_links_mini_grid: group_of_links_mini_grid
       text: text
     target_bundles_drag_drop:
       sidebar_item:
@@ -130,8 +138,8 @@ settings:
         weight: 98
         enabled: false
       grid_links:
+        enabled: true
         weight: 99
-        enabled: false
       grid_of_cards:
         enabled: true
         weight: 100
@@ -151,14 +159,14 @@ settings:
         weight: 105
         enabled: false
       group_of_links_grid:
+        enabled: true
         weight: 106
-        enabled: false
       group_of_links_list:
+        enabled: true
         weight: 107
-        enabled: false
       group_of_links_mini_grid:
+        enabled: true
         weight: 108
-        enabled: false
       header_text:
         weight: 109
         enabled: false
