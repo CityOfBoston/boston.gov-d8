@@ -16,6 +16,7 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_list
     - paragraphs.paragraphs_type.group_of_links_mini_grid
     - paragraphs.paragraphs_type.text
+    - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
 _core:
@@ -46,6 +47,7 @@ settings:
       group_of_links_list: group_of_links_list
       group_of_links_mini_grid: group_of_links_mini_grid
       text: text
+      video: video
     target_bundles_drag_drop:
       sidebar_item:
         weight: 9
@@ -261,6 +263,6 @@ settings:
         weight: 143
         enabled: false
       video:
+        enabled: true
         weight: 144
-        enabled: false
 field_type: entity_reference_revisions

@@ -10,6 +10,7 @@ dependencies:
     - field.field.paragraph.video.field_short_title
     - paragraphs.paragraphs_type.video
   module:
+    - fences
     - image_url_formatter
     - options
 id: paragraph.video.default
@@ -19,42 +20,94 @@ mode: default
 content:
   field_component_title:
     label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_contact:
+    label: hidden
+    weight: 3
+    type: entity_reference_entity_view
+    settings:
+      link: true
+      view_mode: default
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_extra_info:
+    type: string
+    weight: 5
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_image:
+    label: hidden
+    weight: 2
+    type: image_url
+    settings:
+      url_type: '0'
+      image_style: rep_wide_2000x700custom_boston_desktop_1x
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_is_channel:
+    label: hidden
+    weight: 4
+    type: list_key
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_short_title:
+    label: hidden
     weight: 1
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
-  field_contact:
-    label: hidden
-    weight: 5
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_image:
-    label: hidden
-    weight: 4
-    type: image_url
-    settings:
-      image_style: ''
-    third_party_settings: {  }
-    region: content
-  field_is_channel:
-    label: hidden
-    weight: 6
-    type: list_key
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_short_title:
-    label: hidden
-    weight: 2
-    type: string
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    region: content
-hidden:
-  field_extra_info: true
+hidden: {  }
