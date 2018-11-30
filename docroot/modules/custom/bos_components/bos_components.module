@@ -33,7 +33,6 @@ function bos_components_theme() {
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--component--field-contact',
   ];
-
   return $theme;
 }
 
@@ -61,9 +60,9 @@ function bos_components_preprocess_field(&$variables) {
             $variables['short_title_link'] = preg_replace('@[^a-z0-9-]+@', '-', $short_title_link);
           }
         }
+        break;
     }
   }
-
 }
 
 /**

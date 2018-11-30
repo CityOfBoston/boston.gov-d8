@@ -43,7 +43,8 @@ function bos_card_preprocess_paragraph(&$vars) {
         $link = $paragraph->get('field_link')->getValue();
         if (!empty($link['0']['target_id'])) {
           $paragraph = Paragraph::load($link['0']['target_id']);
-          $vars['card_url'] = _bos_core_paragraph_extract_url($paragraph);
+          $link = _bos_core_paragraph_extract_link($paragraph);
+          $vars['card_url'] = $link['url'];
           if ($paragraph->bundle() == 'lightbox_link') {
             $vars['attributes']['data-lity'] = '';
             $vars['#attached']['library'][] = 'bos_lightbox/lity';
