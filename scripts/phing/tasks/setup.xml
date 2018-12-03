@@ -690,18 +690,17 @@
       <then>
         <echo message="Installing production-only modules." level="info"/>
         <echo message="==== production-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
-        <exec   description="Install production modules if not installed already."
-                command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true"/>
+        <exec description="Install production modules if not installed already."
+              command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
         <echo message="Enabling development-only config settings" level="info"/>
-        <exec
-                description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
-                command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+              command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
       </then>
     </if>
     <if>
@@ -710,25 +709,24 @@
       <then>
         <echo message="Installing development-only modules." level="info"/>
         <echo message="==== development-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
-        <exec   description="Install development modules if not installed already."
-                command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true" />
-        <exec description="Re-installs migrate_drupal_ui which for some reason does not install well."
-              command="${drush.cmd} pmu -y migrate_drupal_ui"
+        <exec description="Install development modules if not installed already."
+              command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${install_config_abs}"
               passthru="true"
-              logoutput="true"/>
-        <exec command="${drush.cmd} en -y migrate_drupal_ui"
-              passthru="true"
-              logoutput="true"/>
+              logoutput="true" />
+        <!--<exec description="Re-installs migrate_drupal_ui which for some reason does not install well."-->
+              <!--command="${drush.cmd} pmu -y migrate_drupal_ui"-->
+              <!--passthru="true"-->
+              <!--logoutput="true"/>-->
+        <!--<exec command="${drush.cmd} en -y migrate_drupal_ui"-->
+              <!--passthru="true"-->
+              <!--logoutput="true"/>-->
         <echo message="Enabling production-only config settings for developers to maintain." level="info"/>
-        <exec
-                description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
-                command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
       </then>
     </if>
     <if>
