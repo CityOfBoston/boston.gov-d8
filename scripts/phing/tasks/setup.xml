@@ -38,8 +38,9 @@
                     setup:drupal:set_dev_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
-                    update:database:update,
-                    setup:drupal:reset_config">
+                    update:database:update
+                    ">
+    <!--setup:drupal:reset_config-->
     <!-- Be sure that we produce correct exit codes for travis (0=success) -->
   </target>
 
