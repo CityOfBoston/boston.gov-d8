@@ -214,6 +214,12 @@
 
   </target>
 
+  <target name="setup:prepare:travis" description="Set travis specific properties etc">
+    <property description="Switch to the deploy branch in the private repo"
+              name="git.private_repo.branch"
+              value="${git.private_repo.deploy-branch}"/>
+  </target>
+
   <!-- Define the Drupal setup task -->
   <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
@@ -238,25 +244,21 @@
         <fail message="Drupal is already installed."/>
       </then>
       <else>
-        <echo
-                message="Using Composer to install Drupal core and the required contrib modules."
-                level="info"/>
+        <echo message="Using Composer to install Drupal core and the required contrib modules."
+              level="info"/>
         <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m'" logoutput="true"/>
         <echo message="Executes: > composer install ${flag.dev}${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec
-                description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-                command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                logoutput="true"/>
+        <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
+              command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <echo message="${line.separator} > composer drupal:scaffold"
               file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec
-                description="Installs the drupal scaffold files, and logs to composer.log"
-                command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                logoutput="true"/>
-
+        <exec description="Installs the drupal scaffold files, and logs to composer.log"
+              command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <exec description="Establish drupal command in path."
               command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/; fi"
               logoutput="true"
@@ -329,7 +331,7 @@
         <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
               command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
-              logoutput="true" outputProperty="install.output"/>
+              logoutput="true" returnProperty="install.output"/>
         <if><not><equals arg1="${install.output}" arg2="0" /></not>
           <then>
             <exec command="cat ${project.basedir}/setup/drush_site_install.log"
@@ -350,18 +352,16 @@
   <target name="setup:drupal:local_settings_php"
           description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
-    <resolvepath propertyName="local.settings.file" path="${local.settings.file}"/>
-    <resolvepath propertyName="settings.file" path="${settings.file}"/>
-    <resolvepath propertyName="local.services.file" path="${local.services.file}"/>
-
+    <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
+    <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
+    <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
 
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
     <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
 
     <!-- Now recreate the settings file -->
-    <echo
-            message="Recreate the ${local.settings.file} file with build settings."/>
+    <echo message="Recreate the ${local.settings.file} file with build settings."/>
     <if>
       <not>
         <available file="${local.settings.file}"/>
@@ -380,35 +380,28 @@
               file="${local.settings.file}"/>
         <echo message="/*${line.separator}" append="true"
               file="${local.settings.file}"/>
-        <echo
-                message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <echo message=" */${line.separator}" append="true"
               file="${local.settings.file}"/>
-        <echo
-                message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <if>
           <equals arg1="${acquia.site_environment}" arg2="dev"/>
           <then>
-            <echo
-                    message="error_reporting(E_ALL);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
-            <echo
-                    message="ini_set('display_errors', TRUE);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
-            <echo
-                    message="ini_set('display_startup_errors', TRUE);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
+            <echo message="error_reporting(E_ALL);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="ini_set('display_errors', TRUE);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="ini_set('display_startup_errors', TRUE);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
           </then>
         </if>
       </then>
       <else>
-        <echo
-                message="The local.settings.php already exists, did not update with local settings."/>
+        <echo message="The local.settings.php already exists, did not update with local settings."/>
       </else>
     </if>
 
@@ -423,10 +416,8 @@
     </if>
 
     <!-- Remove unwanted and confusing template config files. -->
-    <delete file="${docroot}/sites/default/default.settings.php" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
-    <delete file="${docroot}/sites/default/default.services.yml" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/development.services.yml" quiet="true" verbose="false"
             description="Redundant file as we have this in the sites/default folder."/>
 
@@ -468,9 +459,9 @@
           append="true" file="${settings.file}"/>
     <echo message="];${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message='if (file_exists("${local.settings.file.php}")) {${line.separator}'
+    <echo message='if (file_exists(DRUPAL_ROOT . "/${local.settings.file.rel}")) {${line.separator}'
           append="true" file="${settings.file}"/>
-    <echo message='  include "${local.settings.file.php}";${line.separator}'
+    <echo message='  include DRUPAL_ROOT . "/${local.settings.file.rel}";${line.separator}'
           append="true" file="${settings.file}"/>
     <echo message="}${line.separator}${line.separator}"
           append="true" file="${settings.file}"/>
@@ -478,26 +469,18 @@
           append="true" file="${settings.file}"/>
 
     <!-- Add in directive for private settings file if needed -->
-    <property
-            description="Location of settings files for this Drupal intallation."
-            name="private.docroot.settings"
-            value="${docroot}/${git.private_repo.settings_file}"/>
-    <property
-            description="Location of settings files for this Drupal intallation using drupal variables (for acquia)."
-            name="private.docroot.settings.php"
-            value="${git.private_repo.settings_file_php}"/>
+    <property description="Location of PRIVATE settings file for this Drupal intallation."
+              name="private.docroot.settings"
+              value="${docroot}/${git.private_repo.settings_file.rel}"/>
     <if>
-      <and>
-        <available file="${private.docroot.settings}"/>
-        <isset property="git.private_repo.settings_file"/>
-      </and>
+      <available file="${private.docroot.settings}"/>
       <then>
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
               message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message="if (file_exists('${private.docroot.settings.php}')) {${line.separator}"
+        <echo message='if (file_exists(DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
               append="true" file="${local.settings.file}"/>
-        <echo message="  include '${private.docroot.settings.php}';${line.separator}"
+        <echo message='  include DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}";${line.separator}'
               append="true" file="${local.settings.file}"/>
         <echo message="}${line.separator}${line.separator}" append="true"
               file="${local.settings.file}"/>

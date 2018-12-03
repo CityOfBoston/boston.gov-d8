@@ -63,13 +63,13 @@ git:
   private_repo:
     repo: CityOfBoston/boston.gov-d8-private.git
     branch: develop
+    deploy-branch: master
     # Where the repo will be cloned to.
     local_dir: ${repo.root}/setup/private
     # [optional] Provide the path to a settings script (relative to the private repo root),
     # which will be copied to the main repo and then set up to be called from (i.e. extend)
     # the sites main settings.php script.
-    settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
-    settings_file_php: "$app_root/$site_path/settings/private.settings.php"
+    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
 
   # Defining git remotes allows builds deployed via CI.
   remotes:
