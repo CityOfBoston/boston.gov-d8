@@ -114,6 +114,8 @@
   </target>
 
   <target name="deploy:artifact:push-all">
+    <exec command="git config gc.pruneExpire 3.days.ago"
+          dir="${deploy.dir}" logoutput="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
   </target>
 
@@ -155,6 +157,7 @@
     <!-- (Remove or comment-out the property to disable) -->
     <!--<property name="drush.copy.db" value="false"/>-->
     <!--<property name="deploy.dry-run" value="false"/>-->
+    <property name="drush" value="${composer.bin}/drush9"/>
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
     <if>
@@ -212,7 +215,7 @@
     <!-- Logic to switch the environments around. -->
     <switch value="${deploy.branch}">
       <case value="develop-deploy">
-        <property name="drush.alias" value="@bostond8.dev"/>
+        <property name="drush.alias" value=""/>
       </case>
       <case value="master-deploy">
         <property name="drush.alias" value="@bostond8.test"/>
