@@ -114,8 +114,10 @@
   </target>
 
   <target name="deploy:artifact:push-all">
+    <exec command="rm -f .git/gc.log"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git config gc.pruneExpire 3.days.ago"
-          dir="${deploy.dir}" logoutput="true"/>
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
   </target>
 
@@ -157,7 +159,7 @@
     <!-- (Remove or comment-out the property to disable) -->
     <!--<property name="drush.copy.db" value="false"/>-->
     <!--<property name="deploy.dry-run" value="false"/>-->
-    <property name="drush" value="${composer.bin}/drush9"/>
+    <property name="drush" value="/usr/local/bin/drush9"/>
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
     <if>
