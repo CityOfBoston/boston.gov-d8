@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for bos_transaction_grid module.
+ *
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_transaction_grid_theme() {
+  return [
+    'paragraph__custom_hours_text' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_components/modules/bos_time/templates',
+      'template' => 'paragraph--custom-hours-text',
+    ],
+  ];
+}
