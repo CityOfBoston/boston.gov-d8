@@ -116,6 +116,8 @@
   <target name="deploy:artifact:push-all">
     <exec command="rm -f .git/gc.log"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git prune"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git config gc.pruneExpire 3.days.ago"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
@@ -159,7 +161,7 @@
     <!-- (Remove or comment-out the property to disable) -->
     <!--<property name="drush.copy.db" value="false"/>-->
     <!--<property name="deploy.dry-run" value="false"/>-->
-    <property name="drush" value="/usr/local/bin/drush9"/>
+    <property name="drush" value="drush9"/>
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
     <if>
@@ -217,7 +219,7 @@
     <!-- Logic to switch the environments around. -->
     <switch value="${deploy.branch}">
       <case value="develop-deploy">
-        <property name="drush.alias" value=""/>
+        <property name="drush.alias" value="@bostond8.dev"/>
       </case>
       <case value="master-deploy">
         <property name="drush.alias" value="@bostond8.test"/>
@@ -229,6 +231,9 @@
             description="Copy the database from staging."
             command="${drush} ${drush.alias} sql-sync @bostond8.test @self"/>
     </then></if>
+    <exec passthru="true" dir="${docroot}" logoutput="false"
+          description="${drush} sa"
+          command="${drush} ${drush.alias} cim -y"/>
     <exec passthru="true" dir="${docroot}" logoutput="true"
           description="Import the configurations."
           command="${drush} ${drush.alias} cim -y"/>
