@@ -227,26 +227,26 @@
     </switch>
 
     <if><isset property="drush.copy.db"/><then>
-      <exec passthru="true" dir="${docroot}" logoutput="true"
+      <exec dir="${docroot}" logoutput="true" level="verbose"
             description="Copy the database from staging."
             command="${drush} ${drush.alias} sql-sync @bostond8.test @self"/>
     </then></if>
-    <exec passthru="true" dir="${docroot}" logoutput="false"
+    <exec dir="${docroot}" logoutput="false"
           description="${drush} sa"
           command="${drush} ${drush.alias} cim -y"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+    <exec dir="${docroot}" logoutput="true"
           description="Import the configurations."
           command="${drush} ${drush.alias} cim -y"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+    <exec dir="${docroot}" logoutput="true"
           description="Run update.php to import update hooks."
           command="${drush} ${drush.alias} updb -y"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+    <exec dir="${docroot}" logoutput="true"
           description="Update any entities."
           command="${drush} ${drush.alias} entup -y"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+    <exec dir="${docroot}" logoutput="true"
           description="Rebuild app permissions."
           command="${drush} ${drush.alias} acquia-reset-permissions -y"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+    <exec dir="${docroot}" logoutput="true"
           description="Run cron for good measure."
           command="${drush} ${drush.alias} cron"/>
   </target>
