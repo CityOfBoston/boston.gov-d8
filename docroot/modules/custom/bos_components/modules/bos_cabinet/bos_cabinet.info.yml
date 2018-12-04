@@ -1,47 +1,24 @@
-name: Boston Component Cabinet
+name: Cabinet Component
 type: module
 description: Boston Component Cabinet
 package: City of Boston (components)
 core: 8.x
+version: 8.x.1.0
 dependencies:
-  #- bos_shared_fields
-  #- entityreference
-  #- features
-  #- field_group
   - paragraphs
-  #- text
 config_devel:
   - core.base_field_override.paragraph.cabinet.created
   - core.base_field_override.paragraph.cabinet.moderation_state
   - core.base_field_override.paragraph.cabinet.status
   - core.base_field_override.paragraph.cabinet.uid
-  - core.base_field_override.taxonomy_term.contact.changed
-  - core.base_field_override.taxonomy_term.contact.description
-  - core.base_field_override.taxonomy_term.contact.metatag
-  - core.base_field_override.taxonomy_term.contact.name
-  - core.base_field_override.taxonomy_term.contact.path
   - core.entity_form_display.paragraph.cabinet.default
-  - core.entity_form_display.taxonomy_term.contact.default
   - core.entity_form_display.paragraph.cabinet.default
   - core.entity_view_display.paragraph.cabinet.listing
   - core.entity_view_display.paragraph.cabinet.paragraphs_editor_preview
   - core.entity_view_display.paragraph.cabinet.separated_title
-  - core.entity_view_mode.paragraph.listing
-  - core.entity_view_mode.paragraph.separated_title
   - field.field.paragraph.cabinet.field_contacts
   - field.field.paragraph.cabinet.field_person
   - field.field.paragraph.cabinet.field_short_title
   - field.field.paragraph.cabinet.field_title
-  - field.field.taxonomy_term.contact.field_department_legacy_id
-  - field.field.taxonomy_term.contact.field_department_profile
-  - field.storage.paragraph.field_contacts
-  - field.storage.paragraph.field_description
-  - field.storage.paragraph.field_person
-  - field.storage.taxonomy_term.field_department_legacy_id
-  - field.storage.taxonomy_term.field_department_profile
   - language.content_settings.paragraph.cabinet
-  - language.content_settings.taxonomy_term.contact
-  - node.type.department_profile
-  - node.type.person_profile
   - paragraphs.paragraphs_type.cabinet
-  - taxonomy.vocabulary.contact
