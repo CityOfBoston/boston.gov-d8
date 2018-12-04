@@ -42,25 +42,21 @@ before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
   - sudo apt-get update
   - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
-  # ensure composer is on latest version.
-  - composer selfupdate
-  - export AH_SITE_ENVIRONMENT=dev
-  - export LANDO_INFO='{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"xdebug.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["database"],"creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"localhost","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}'
-  # Make an account for drupal in MySQL (better than using root a/c).
-  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
   # Step 1: Download all dependencies.
-
+    # ensure composer is on latest version.
+  - composer selfupdate
+  - export AH_SITE_ENVIRONMENT=dev
+  - export LANDO_INFO='{"appserver":{"type":"php","version":"7.1","hostnames":["appserver"],"via":"apache","webroot":"docroot","config":{"conf":"xdebug.ini"}},"database":{"type":"mysql","version":"5.7","hostnames":["database"],"creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"localhost","port":3306},"external_connection":{"host":"localhost","port":3306},"config":{"confd":"/home/david/.lando/services/config/drupal8/mysql"}},"node":{"type":"node","version":"8.9","hostnames":["node"]}}'
   # Step 2: Build the drupal site using Phing.
+    # Make an account for drupal in MySQL (better than using root a/c).
+  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
   - travis_wait 15 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 3: Manage SSH keys for deployment to Acquia.
-  - cat $TRAVIS_BUILD_DIR/setup/drush_site_install.log
-  - ls $TRAVIS_BUILD_DIR/scripts/deploy
   - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
-  - cat $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   - eval "$(ssh-agent -s)"
   - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
@@ -69,8 +65,7 @@ script:
   # Run basic validation and Behat/PHPUnit tests in parallel.
   - "$TASK"
   # remove next line for production when done setting up tooling.
-  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Ddeploy.branch="develop-deploy" deploy:artifact:add-remotes
-#  - $TRAVIS_BUILD_DIR/vendor/bin/phing deploy:artifact:drupal8 -Ddeploy.branch="develop-deploy" -Ddeploy.commitMsg="Automated commit by Travis CI for Build";
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing deploy:artifact:drupal8 -Ddeploy.branch="develop-deploy" -Ddeploy.commitMsg="Automated commit by Travis CI for Build";
 
 after_success:
   - scripts/deploy/travis-deploy.sh develop develop-build

@@ -732,10 +732,8 @@
     </if>
     <if>
       <and>
-        <equals arg1="${acquia.site_environment}" arg2="dev"
-                casesensitive="true"/>
-        <available
-                file="${install_config_abs}/config_split.config_split.production.yml"/>
+        <equals arg1="${acquia.site_environment}" arg2="dev" casesensitive="true"/>
+        <available file="${install_config_abs}/config_split.config_split.production.yml"/>
       </and>
       <then>
         <echo message="Imports prod config."/>
@@ -743,20 +741,18 @@
                   value="\Drupal::service(&quot;config.factory&quot;)->getEditable(&quot;config_split.config_split.production&quot;)->set(&quot;status&quot;, false)->save();"/>
         <resolvepath propertyName="cfg.prod" file="${project.config.prod}"
                      dir="${docroot}"/>
-        <exec
-                description="Use drupal console to re-import the production yml config_split file."
-                dir="${docroot}"
-                command="${project.basedir}/vendor/drupal/console/bin/drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
-                logoutput="true"/>
+        <exec description="Use drupal console to re-import the production yml config_split file."
+              dir="${docroot}"
+              command="${project.basedir}/vendor/drupal/console/bin/drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
+              logoutput="true"/>
         <exec description="Sets the active status for the settings."
               dir="${docroot}"
               command="${drush.cmd} eval '${cfg.php}'"
               logoutput="true"/>
-        <exec
-                description="Make git ignore the changes to the config/prod folder because we did not use the production config."
-                dir="${cfg.prod}"
-                command="git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')"
-                logoutput="true"/>
+        <exec description="Make git ignore the changes to the config/prod folder because we did not use the production config."
+               dir="${cfg.prod}"
+               command="git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')"
+               logoutput="true"/>
       </then>
     </if>
     <echo message="Done." level="info"/>
@@ -796,7 +792,7 @@
   </target>
 
   <target name="test">
-
+    <echo message="Testing." level="info"/>
   </target>
 
 </project>
