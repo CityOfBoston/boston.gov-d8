@@ -1,9 +1,8 @@
-uuid: 8bd86a82-0255-44d8-8f6f-e2152852a60c
 langcode: en
 status: false
 dependencies:
   config:
-    - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - core.entity_view_mode.paragraph.separated_title
     - field.field.paragraph.photo.field_component_title
     - field.field.paragraph.photo.field_contacts
     - field.field.paragraph.photo.field_image
@@ -12,12 +11,10 @@ dependencies:
     - field.field.paragraph.photo.field_photo_credit
     - field.field.paragraph.photo.field_short_title
     - paragraphs.paragraphs_type.photo
-_core:
-  default_config_hash: jaavh1zGDRMs9FCAxxTpHLQlRDWOGvgOWyDz9M7IFrU
-id: paragraph.photo.paragraphs_editor_preview
+id: paragraph.photo.separated_title
 targetEntityType: paragraph
 bundle: photo
-mode: paragraphs_editor_preview
+mode: separated_title
 content: {  }
 hidden:
   field_component_title: true
