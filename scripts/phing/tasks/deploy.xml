@@ -226,17 +226,19 @@
       </case>
     </switch>
 
-    <property name="travis.drush" value="${deploy.dir}/vendor/bin/drush"/>
+    <property name="travis.drush" value="${repo.root}/vendor/bin/drush"/>
 
+    <echo message="Check Drush status on remote (deploy target)." level="info"/>
+    <echo message="Using drush command ${travis.drush} ${drush.alias}." level="info"/>
+    <exec command="echo pwd" passthru="true"/>
+    <exec dir="${docroot}" passthru="true"
+          description="Check if we can reach the remote drush (on deploy target)."
+          command="${travis.drush} ${drush.alias} status"/>
     <if><isset property="drush.copy.db"/><then>
       <exec dir="${docroot}" passthru="true"
             description="Copy the database from staging."
             command="${travis.drush} ${drush.alias} sql-sync @bostond8.test @self"/>
     </then></if>
-    <echo message="Check Status of remote:" level="info"/>
-    <exec dir="${docroot}" passthru="true"
-          description="Check if we can reach the remote drush (on deploy target)."
-          command="${travis.drush} ${drush.alias} status"/>
     <echo message="Import config files into DB on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Import the configurations."
