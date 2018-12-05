@@ -226,29 +226,37 @@
       </case>
     </switch>
 
+    <property name="travis.drush" value="${deploy.dir}/vendor/bin/drush"/>
+
     <if><isset property="drush.copy.db"/><then>
-      <exec dir="${docroot}" logoutput="true" level="verbose"
+      <exec dir="${docroot}" passthru="true"
             description="Copy the database from staging."
-            command="${drush} ${drush.alias} sql-sync @bostond8.test @self"/>
+            command="${travis.drush} ${drush.alias} sql-sync @bostond8.test @self"/>
     </then></if>
-    <exec dir="${docroot}" logoutput="false"
-          description="${drush} sa"
-          command="${drush} ${drush.alias} cim -y"/>
-    <exec dir="${docroot}" logoutput="true"
+    <echo message="Check Status of remote:" level="info"/>
+    <exec dir="${docroot}" passthru="true"
+          description="Check if we can reach the remote drush (on deploy target)."
+          command="${travis.drush} ${drush.alias} status"/>
+    <echo message="Import config files into DB on deploy target." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Import the configurations."
-          command="${drush} ${drush.alias} cim -y"/>
-    <exec dir="${docroot}" logoutput="true"
+          command="${travis.drush} ${drush.alias} cim -y"/>
+    <echo message="Update DB with un-executed hook_updates on deploy target." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Run update.php to import update hooks."
-          command="${drush} ${drush.alias} updb -y"/>
-    <exec dir="${docroot}" logoutput="true"
+          command="${travis.drush} ${drush.alias} updb -y"/>
+    <echo message="Update existing entities on deploy target (poss. redundant)." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Update any entities."
-          command="${drush} ${drush.alias} entup -y"/>
-    <exec dir="${docroot}" logoutput="true"
+          command="${travis.drush} ${drush.alias} entup -y"/>
+    <echo message="Update/reset user permissions on deploy target." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Rebuild app permissions."
-          command="${drush} ${drush.alias} acquia-reset-permissions -y"/>
-    <exec dir="${docroot}" logoutput="true"
+          command="${travis.drush} ${drush.alias} acquia-reset-permissions -y"/>
+    <echo message="Run cron now on deploy target (poss. redundant)." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Run cron for good measure."
-          command="${drush} ${drush.alias} cron"/>
+          command="${travis.drush} ${drush.alias} cron"/>
   </target>
 
 </project>
