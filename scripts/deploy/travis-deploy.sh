@@ -16,8 +16,8 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # Note that the canonical repository is watched. Commits to forked repositories
 # will not trigger deployment unless DEPLOY_PR is true.
-#if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]] || [[ "${DEPLOY_PR}" = "true" ]];
-#  then
+if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]] || [[ "${DEPLOY_PR}" = "true" ]];
+  then
     echo "Deployments will be triggered on the \"${source_branch}\" branch or on any tag."
     echo "Current branch is \"${TRAVIS_BRANCH}\"."
 
@@ -31,6 +31,6 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
       else
         echo "Build artifact will NOT be deployed for this branch."
     fi
-#  else
-#    echo "Build artifacts are not deployed for Pull Requests."
-#fi
+  else
+    echo "Build artifacts are not deployed for Pull Requests."
+fi

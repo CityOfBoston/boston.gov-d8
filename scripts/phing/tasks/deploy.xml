@@ -230,10 +230,6 @@
 
     <echo message="Check Drush status on remote (deploy target)." level="info"/>
     <echo message="Using drush command ${travis.drush} ${drush.alias}." level="info"/>
-    <exec command="echo pwd" passthru="true"/>
-    <exec dir="${docroot}" passthru="true"
-          description="Check if we can reach the remote drush (on deploy target)."
-          command="${travis.drush} ${drush.alias} status"/>
     <if><isset property="drush.copy.db"/><then>
       <exec dir="${docroot}" passthru="true"
             description="Copy the database from staging."
@@ -251,10 +247,10 @@
     <exec dir="${docroot}" passthru="true"
           description="Update any entities."
           command="${travis.drush} ${drush.alias} entup -y"/>
-    <echo message="Update/reset user permissions on deploy target." level="info"/>
+    <echo message="Rebuild user content access permissions on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
-          description="Rebuild app permissions."
-          command="${travis.drush} ${drush.alias} acquia-reset-permissions -y"/>
+          description="Rebuild content access permissions."
+          command="${travis.drush} ${drush.alias} drush php-eval 'node_access_rebuild()' -y"/>
     <echo message="Run cron now on deploy target (poss. redundant)." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Run cron for good measure."
