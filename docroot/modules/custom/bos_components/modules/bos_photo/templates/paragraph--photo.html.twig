@@ -42,6 +42,7 @@
 {% endif %}
 
 <div {{ attributes.addClass('b b--fw') }}>
+  {{ content.contextual_links }}
   <div {{ create_attribute({'class': photo_container_classes}) }}>
     <div {{ create_attribute({'class': 'ph-p'}).addClass(photo_id) }}>
       {{ content.field_image }}
