@@ -139,14 +139,18 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 /**
  * Creates link to file managed by Drupal.
  *
- * @param string $fid
+ * @param mixed $fid
  *   File ID.
  * @param string $link_text
  *   Link Text.
  * @param array $attributes
  *   Link attributes.
  */
-function _bos_core_get_file_link(string $fid, string $link_text = NULL, array $attributes = []) {
+function _bos_core_get_file_link($fid, string $link_text = NULL, array $attributes = []) {
+  if (is_array($fid) && !empty($fid['0']['target_id'])) {
+    $fid = $fid['0']['target_id'];
+  }
+
   $uri = file_load($fid)->getFileUri();
   if (!$link_text) {
     return Url::fromUri(file_create_url($uri, $attributes))->toString();
