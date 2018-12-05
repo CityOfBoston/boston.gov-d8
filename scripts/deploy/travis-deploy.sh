@@ -27,7 +27,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
         echo "Build artifact will be deployed."
         commit_msg="Automated commit by Travis CI for Build #${TRAVIS_BUILD_ID}";
         # Call the `deploy` Phing target, passing in required parameters.
-        ${DIR}/../phing/task.sh deploy:artifact:drupal8 -Ddeploy.branch="${dest_branch}" -Ddeploy.commitMsg="${commit_msg}";
+        ../../vendor/phing/phing/bin/phing deploy:artifact:drupal8 -Ddeploy.branch="${dest_branch}" -Ddeploy.commitMsg="${commit_msg}";
       else
         echo "Build artifact will NOT be deployed for this branch."
     fi
