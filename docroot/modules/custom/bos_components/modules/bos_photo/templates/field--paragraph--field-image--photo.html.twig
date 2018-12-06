@@ -1,0 +1,25 @@
+<style>
+  @media screen and (max-width: 767px) {
+    .{{ photo_id }} {
+      background-image: url({{ small_image }});
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .{{ photo_id }} {
+      background-image: url({{ medium_image }});
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .{{ photo_id }} {
+      background-image: url({{ large_image }});
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    .{{ photo_id }} {
+      background-image: url({{ xlarge_image }});
+    }
+  }
+</style>
