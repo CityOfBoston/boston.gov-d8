@@ -33,6 +33,8 @@
             description="Contains targets used to validate custom-written code against coding standards."/>
     <import file="${custom.phing.tasks.dir}/migrate.xml"
             description="Contains targets used to migrate d7 content into d8."/>
+    <import file="${custom.phing.tasks.dir}/deploy.xml"
+            description="Contains targets used to deploy onto acquia."/>
 
 <!-- Load the lando file to get db locations etc. -->
     <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
@@ -56,9 +58,9 @@
     <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
 
 <!-- set path for local.settings.php file. -->
-    <property name="local.settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.local.php" />
-    <property name="settings.file" value="${docroot}/sites/${drupal.multisite.name}/settings.php" />
-    <property name="local.services.file" value="${docroot}/sites/${drupal.multisite.name}/services.yml" />
+    <property name="local.settings.file.rel" value="sites/${drupal.multisite.name}/settings.local.php" />
+    <property name="settings.file.rel" value="sites/${drupal.multisite.name}/settings.php" />
+    <property name="local.services.file.rel" value="sites/${drupal.multisite.name}/services.yml" />
 
 <!-- Determine the Aquia Cloud Environment variables -->
     <php expression="getenv('AH_SITE_ENVIRONMENT') ? getenv('AH_SITE_ENVIRONMENT') : 'dev'" returnProperty="acquia.site_environment" level="verbose"/>
