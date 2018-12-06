@@ -44,3 +44,14 @@ function bos_cabinet_preprocess_entity(&$variables, $hook) {
     }
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function bos_cabinet_theme() {
+  $theme['paragraphs__cabinet__default'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_cabinet/templates',
+  ];
+  return $theme;
+}
