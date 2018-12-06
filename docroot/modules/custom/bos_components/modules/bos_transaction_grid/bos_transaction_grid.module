@@ -11,10 +11,15 @@
  */
 function bos_transaction_grid_theme() {
   return [
-    'paragraph__custom_hours_text' => [
-      'base hook' => 'node',
-      'path' => 'modules/custom/bos_components/modules/bos_time/templates',
-      'template' => 'paragraph--custom-hours-text',
+    'paragraph__transaction_grid' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_transaction_grid/templates',
+      'template' => 'paragraph--transaction-grid',
+    ],
+    'field__paragraph__field_transactions' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_transaction_grid/templates',
+      'template' => 'field--paragraph--field-transactions',
     ],
   ];
 }
