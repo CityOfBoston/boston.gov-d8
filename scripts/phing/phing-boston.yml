@@ -63,12 +63,13 @@ git:
   private_repo:
     repo: CityOfBoston/boston.gov-d8-private.git
     branch: develop
+    deploy-branch: master
     # Where the repo will be cloned to.
     local_dir: ${repo.root}/setup/private
     # [optional] Provide the path to a settings script (relative to the private repo root),
     # which will be copied to the main repo and then set up to be called from (i.e. extend)
     # the sites main settings.php script.
-    settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
+    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
 
   # Defining git remotes allows builds deployed via CI.
   remotes:
@@ -94,6 +95,22 @@ reports:
 # The testing framework is limited to the `tests` directory, and includes
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
 # this from being copied, remove the 'testing_framework' key.
+testing_framework:
+  behat:
+    javascript_driver: 'selenium2'
+    # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
+    config: ${repo.root}/tests/behat/local.yml
+    # An array of paths with behat tests that should be executed.
+    tags: ~@hub
+    # This is used for ad-hoc creation of a server via `drush rs`.
+    profile: local
+    # This needs to match a site entry in docroot/sites/sites.php.
+    server-url: http://127.0.0.1:8888
+    # If true, `drush runserver` will be used for executing tests.
+    #  run-server: false
+    # If true, PhantomJS GhostDriver will be launched with Behat.
+    #  launch-phantom: true
+  phpunit:
 testing_framework:
   behat:
     javascript_driver: 'selenium2'

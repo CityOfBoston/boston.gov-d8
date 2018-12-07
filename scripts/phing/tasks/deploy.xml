@@ -45,8 +45,6 @@
     <!-- Generate and md5 sum of the remote URL to use as remote name. -->
     <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
           outputProperty="remoteName"/>
-    <exec command="git init"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git remote add ${remoteName} ${deploy.remote}"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git fetch ${remoteName}"
@@ -59,6 +57,9 @@
   </target>
 
   <target name="deploy:artifact:add-remotes" description="Add remotes and fetch upstream refs.">
+    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
+    <exec command="git init"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
   </target>
 
@@ -88,7 +89,6 @@
 
   <target name="deploy:artifact:copy" description="Copy required files from docroot/sites to deploy/docroot/sites.">
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
-    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
   </target>
@@ -114,6 +114,12 @@
   </target>
 
   <target name="deploy:artifact:push-all">
+    <exec command="rm -f .git/gc.log"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git prune"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git config gc.pruneExpire 3.days.ago"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
   </target>
 
@@ -153,8 +159,9 @@
 
     <!-- This property sync.db controls whether the database is copied (from staging) during post-deploy. -->
     <!-- (Remove or comment-out the property to disable) -->
-    <property name="drush.copy.db" value="true"/>
-    <property name="deploy.dry-run" value="true"/>
+    <!--<property name="drush.copy.db" value="false"/>-->
+    <!--<property name="deploy.dry-run" value="false"/>-->
+    <property name="drush" value="drush9"/>
 
     <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
     <if>
@@ -169,6 +176,13 @@
       </then>
     </if>
 
+    <!-- Prepare the existing local repo - assign acquia remote(s). -->
+    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
+    <phingcall target="deploy:artifact:add-remotes"
+               description="Add remotes and fetch upstream refs.
+                            Checkout local branch tracking tracking upstream branch, if it exists.
+                            Otherwise create new branch locally."/>
+
     <!-- Copy the existing repo to new location for deployment. -->
     <phingcall target="deploy:artifact:copy"
                description="Copy the entire built artifact to the deploy folder."/>
@@ -177,11 +191,6 @@
     <!--<phingcall target="deploy:artifact:sanitize"-->
                <!--description="Deletes (sensitive/unwanted) files not excluded in copy"/>-->
 
-    <!-- Prepare the existing local repo - assign acquia remote(s). -->
-    <phingcall target="deploy:artifact:add-remotes"
-               description="Add remotes and fetch upstream refs.
-                            Checkout local branch tracking tracking upstream branch, if it exists.
-                            Otherwise create new branch locally."/>
 
     <!-- Push up changes to remotes. -->
     <if>
@@ -217,23 +226,35 @@
       </case>
     </switch>
 
+    <property name="travis.drush" value="${repo.root}/vendor/bin/drush"/>
+
+    <echo message="Check Drush status on remote (deploy target)." level="info"/>
+    <echo message="Using drush command ${travis.drush} ${drush.alias}." level="info"/>
     <if><isset property="drush.copy.db"/><then>
-      <exec passthru="true" dir="${docroot}" logoutput="true"
+      <exec dir="${docroot}" passthru="true"
             description="Copy the database from staging."
-            command="${drush} ${drush.alias} sql-sync @bostond8.test @self"/>
+            command="${travis.drush} ${drush.alias} sql-sync @bostond8.test @self"/>
     </then></if>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+    <echo message="Import config files into DB on deploy target." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Import the configurations."
-          command="${drush} ${drush.alias} cim"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+          command="${travis.drush} ${drush.alias} cim -y"/>
+    <echo message="Update DB with un-executed hook_updates on deploy target." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Run update.php to import update hooks."
-          command="${drush} ${drush.alias} updb"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
-          description="Rebuild app permissions."
-          command="${drush} ${drush.alias} acquia-reset-permissions -y"/>
-    <exec passthru="true" dir="${docroot}" logoutput="true"
+          command="${travis.drush} ${drush.alias} updb -y"/>
+    <echo message="Update existing entities on deploy target (poss. redundant)." level="info"/>
+    <exec dir="${docroot}" passthru="true"
+          description="Update any entities."
+          command="${travis.drush} ${drush.alias} entup -y"/>
+    <echo message="Rebuild user content access permissions on deploy target." level="info"/>
+    <exec dir="${docroot}" passthru="true"
+          description="Rebuild content access permissions."
+          command="${travis.drush} ${drush.alias} drush php-eval 'node_access_rebuild()' -y"/>
+    <echo message="Run cron now on deploy target (poss. redundant)." level="info"/>
+    <exec dir="${docroot}" passthru="true"
           description="Run cron for good measure."
-          command="${drush} ${drush.alias} cron"/>
+          command="${travis.drush} ${drush.alias} cron"/>
   </target>
 
 </project>
