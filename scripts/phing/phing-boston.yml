@@ -71,10 +71,6 @@ git:
     # the sites main settings.php script.
     settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
 
-  # Defining git remotes allows builds deployed via CI.
-  remotes:
-    - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-
 composer:
   bin: ${repo.root}/vendor/bin
 
@@ -84,9 +80,29 @@ drush:
   root: ${docroot}
 
 deploy:
-  dir: ${repo.root}/deploy
-  includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
-  excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+  # each element of the deploy object is a branch in the main CoB repo.
+  develop:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${repo.root}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy-branch: develop-deploy
+    # Path to the drush command in the Travis container.
+    travis-drush-path: '${repo.root}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush-alias: "@bostond8.dev"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
+    excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit-message: "Automated commit by Travis CI for Build #${TRAVIS_BUILD_ID}"
+    # Dry-run (for testing).
+    dry-run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy-db: false
+    drush-db-source: @bostond8.stage
+    # Array of user:host for (Acquia) git remotes to be used for deployment.
+    remotes:
+      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
 reports:
   localDir: ${docroot}/testing/reports
@@ -95,22 +111,6 @@ reports:
 # The testing framework is limited to the `tests` directory, and includes
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
 # this from being copied, remove the 'testing_framework' key.
-testing_framework:
-  behat:
-    javascript_driver: 'selenium2'
-    # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
-    config: ${repo.root}/tests/behat/local.yml
-    # An array of paths with behat tests that should be executed.
-    tags: ~@hub
-    # This is used for ad-hoc creation of a server via `drush rs`.
-    profile: local
-    # This needs to match a site entry in docroot/sites/sites.php.
-    server-url: http://127.0.0.1:8888
-    # If true, `drush runserver` will be used for executing tests.
-    #  run-server: false
-    # If true, PhantomJS GhostDriver will be launched with Behat.
-    #  launch-phantom: true
-  phpunit:
 testing_framework:
   behat:
     javascript_driver: 'selenium2'
