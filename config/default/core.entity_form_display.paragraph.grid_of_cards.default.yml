@@ -1,4 +1,4 @@
-uuid: ab411883-847d-4db5-b4c0-2178681ca1be
+uuid: a248b134-a905-4663-b810-3cd0ab2e2c4a
 langcode: en
 status: true
 dependencies:
@@ -11,6 +11,8 @@ dependencies:
     - paragraphs.paragraphs_type.grid_of_cards
   module:
     - paragraphs
+_core:
+  default_config_hash: WwefTegZejnFK-OVVmFOAeaFVfTOmz0PNtdFL9II0es
 id: paragraph.grid_of_cards.default
 targetEntityType: paragraph
 bundle: grid_of_cards
@@ -23,7 +25,7 @@ content:
     third_party_settings: {  }
     region: content
   field_component_title:
-    weight: 6
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -31,25 +33,25 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 8
+    weight: 2
     type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_drawer:
-    weight: 2
+    weight: 3
     type: entity_reference_paragraphs
     settings:
       title: Paragraph
       title_plural: Paragraphs
       edit_mode: open
-      add_mode: select
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: card
     third_party_settings: {  }
     region: content
   field_short_title:
-    weight: 7
+    weight: 1
     type: string_textfield
     settings:
       size: 60

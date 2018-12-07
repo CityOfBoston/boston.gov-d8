@@ -8,11 +8,30 @@ dependencies:
     - field.field.paragraph.3_column_w_image.field_contact
     - field.field.paragraph.3_column_w_image.field_short_title
     - paragraphs.paragraphs_type.3_column_w_image
+  module:
+    - entity_reference_revisions
+    - fences
 id: paragraph.3_column_w_image.default
 targetEntityType: paragraph
 bundle: 3_column_w_image
 mode: default
 content:
+  field_columns:
+    type: entity_reference_revisions_entity_view
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_component_title:
     label: hidden
     weight: 0
@@ -26,9 +45,16 @@ content:
     weight: 3
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: link
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
@@ -38,5 +64,4 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-hidden:
-  field_columns: true
+hidden: {  }

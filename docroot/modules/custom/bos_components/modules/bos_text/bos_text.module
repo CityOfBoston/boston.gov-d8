@@ -27,15 +27,30 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'paragraph--text-two-column',
     ],
+    'paragraph__3_column_w_image' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--3-column-w-image',
+    ],
+    'paragraph__columns' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--columns',
+    ],
     'paragraph__text_three_column' => [
       'base hook' => 'paragraph',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'paragraph--text-three-column',
     ],
-    'field__component__field_contact' => [
+    'field__component__field_columns' => [
       'base hook' => 'field',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
-      'template' => 'field--component--field-contact',
+      'template' => 'field--component--field-columns',
+    ],
+    'field__field_link' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'field--field-link',
     ],
   ];
 }
@@ -50,6 +65,7 @@ function bos_text_preprocess_paragraph(&$variables) {
     "text_one_column",
     "text_two_column",
     "text_three_column",
+    "3_column_w_image",
   ])) {
     return;
   }
@@ -86,6 +102,7 @@ function bos_text_preprocess_field(&$variables) {
     "text_one_column",
     "text_two_column",
     "text_three_column",
+    "3_column_w_image",
   ])) {
     return;
   }
@@ -99,17 +116,9 @@ function bos_text_preprocess_field(&$variables) {
   elseif ($variables['is_component_field']) {
     $variables['attributes']['class'][] = "field-component";
   }
-}
-
-/**
- * Removes reserved chars from class string.
- *
- * @param string $class
- *   The class which is to be standardised.
- *
- * @return mixed
- *   Standardised class where "-" has been replaced with "-".
- */
-function _make_class(string $class) {
-  return str_replace("_", "-", $class);
+  if ($variables["element"]['#bundle'] == "3_column_w_image") {
+    foreach ($variables['attributes']['class'] as $key => &$class) {
+      $class = str_replace('field', 'entity', $class);
+    }
+  }
 }

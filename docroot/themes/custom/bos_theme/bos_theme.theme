@@ -92,6 +92,9 @@ function bos_theme_theme($existing, $type, $theme, $path) {
     'breadcrumb' => [
       'template' => 'navigation/breadcrumb',
     ],
+    'node' => [
+      'template' => 'content/node',
+    ],
   ];
 }
 
@@ -259,7 +262,7 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   // Add in D7 style body classes:
   if (isset($variables['node_type'])) {
     $variables["attributes"]['class'][] = "page-node";
-    $variables["attributes"]['class'][] = "node-type-" . str_replace("_", "-", $variables['node_type']);
+    $variables["attributes"]['class'][] = "node-type-" . _make_class($variables['node_type']);
   }
 
 }
@@ -609,7 +612,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['attributes']['id'] = 'node-' . $variables['nid'];
     // Add in the necessary classes.
     $variables['attributes']['class'][] = 'node';
-    $variables['attributes']['class'][] = 'node-' . $variables['node_type'];
+    $variables['attributes']['class'][] = 'node-' . _make_class($variables['node_type']);
     if ($variables['unpublished']) {
       $variables['attributes']['class'][] = 'node-unpublished';
     }
@@ -628,9 +631,20 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
   // Emulate D7 paragraphs_items class-names.
   if ($variables['field_type'] == "entity_reference_revisions" && isset($variables['items'][0]['content']['#paragraph'])) {
     $variables['attributes']['class'][] = "paragraphs-items";
-    $variables['attributes']['class'][] = "paragraphs-items-" . str_replace('_', '-', $variables['field_name']);
-    $variables['attributes']['class'][] = "paragraphs-items-" . str_replace('_', '-', $variables['items'][0]['content']['#view_mode']);
-    $variables['attributes']['class'][] = "paragraphs-items-" . str_replace('_', '-', $variables['field_name'] . "-" . $variables['items'][0]['content']['#view_mode']);
+    $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['field_name']);
+    $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['items'][0]['content']['#view_mode']);
+    $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['field_name']) . "-" . _make_class($variables['items'][0]['content']['#view_mode']);
+  }
+  else {
+    $variables['attributes']['class'][] = "field";
+    $variables['attributes']['class'][] = "field-name-" . _make_class($variables['field_name']);
+    if ($variables['field_type'] == "string") {
+      $variables['attributes']['class'][] = "field-type-text";
+    }
+    $variables['attributes']['class'][] = "field-type-" . _make_class($variables['field_type']);
+    if (isset($variables["label_display"]) && !$variables["label_display"]) {
+      $variables['attributes']['class'][] = "field-label-hidden";
+    }
   }
 }
 
@@ -764,4 +778,17 @@ function _bos_theme_library() {
   $mode = explode(".", $theme);
   $mode = array_reverse($mode);
   return $mode[0];
+}
+
+/**
+ * Removes reserved chars from class string.
+ *
+ * @param string $class
+ *   The class which is to be standardised.
+ *
+ * @return mixed
+ *   Standardised class where "-" has been replaced with "-".
+ */
+function _make_class(string $class) {
+  return str_replace("_", "-", $class);
 }

@@ -6,16 +6,18 @@ core: 8.x
 dependencies:
   - address
   - bos_core
+  - entity_reference_revisions
   - field_collection
   - field_group
   - file
   - image
   - link
   - office_hours
+  - options
   - paragraphs
   - taxonomy
   - text
-config-devel:
+config_devel:
   - core.entity_view_mode.paragraph.paragraphs_editor_preview
   - core.entity_view_mode.paragraph.separated_title
   - field.storage.paragraph.field_311_request
@@ -82,3 +84,4 @@ config-devel:
   - field.storage.paragraph.field_title
   - field.storage.paragraph.field_topics
   - field.storage.paragraph.field_transactions
+  - field.storage.paragraph.field_description

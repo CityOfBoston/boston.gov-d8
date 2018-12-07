@@ -84,7 +84,8 @@
     <exec command="export DEPLOY_UPTODATE=$(echo '${deploy.push.output}' | grep --quiet 'Everything up-to-date')"/>
   </target>
 
-  <target name="deploy:artifact:sanitize" description="Removes sensitive files from the deploy docroot.">
+  <target name="deploy:artifact:sanitize"
+          description="Removes sensitive files from the deploy docroot.">
     <delete>
       <fileset dir="${deploy.dir}/docroot">
         <include name="CHANGELOG.txt"/>

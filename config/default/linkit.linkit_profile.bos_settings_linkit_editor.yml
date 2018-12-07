@@ -1,8 +1,48 @@
 uuid: c1d1ba52-4290-4977-9abb-bd7c8cdc9331
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - image.style.linkit_result_thumbnail
+  module:
+    - file
+    - image
+    - node
 id: bos_settings_linkit_editor
 label: bos_settings_linkit_editor
 description: 'A content editor profile has the ability to search for and link to internal content in the WYSIWYG w/o having to copy paste the URL in.'
-matchers: {  }
+matchers:
+  6f045b0d-fa16-4539-ae6a-5630cda3f12a:
+    uuid: 6f045b0d-fa16-4539-ae6a-5630cda3f12a
+    id: 'entity:node'
+    weight: 0
+    settings:
+      include_unpublished: false
+      metadata: 'Published Date: [node:field_published_date]'
+      bundles: {  }
+      group_by_bundle: true
+      substitution_type: canonical
+  ec22638a-a815-4bee-8c66-4a75534115bf:
+    uuid: ec22638a-a815-4bee-8c66-4a75534115bf
+    id: 'entity:file'
+    weight: 0
+    settings:
+      file_extensions: ''
+      file_status: 1
+      images:
+        show_dimensions: true
+        show_thumbnail: true
+        thumbnail_image_style: linkit_result_thumbnail
+      substitution_type: file
+      metadata: 'Created Date: [file:created]'
+      bundles: {  }
+      group_by_bundle: true
+  141e9b0b-dcd9-4bd6-bc03-0a31364a5819:
+    uuid: 141e9b0b-dcd9-4bd6-bc03-0a31364a5819
+    id: 'entity:media'
+    weight: 0
+    settings:
+      metadata: '[media:thumbnail]'
+      bundles: {  }
+      group_by_bundle: true
+      substitution_type: canonical

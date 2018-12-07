@@ -7,7 +7,7 @@ dependencies:
     - field.field.taxonomy_term.contact.field_department_profile
     - taxonomy.vocabulary.contact
   module:
-    - text
+    - fences
 _core:
   default_config_hash: CDNvtAiVhoDmaeB8YZg4wa1dz9kayza7stK96hpsQgo
 id: taxonomy_term.contact.default
@@ -15,28 +15,22 @@ targetEntityType: taxonomy_term
 bundle: contact
 mode: default
 content:
-  description:
-    label: hidden
-    type: text_default
-    weight: 0
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_department_legacy_id:
-    label: above
-    weight: 2
-    type: string
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    region: content
   field_department_profile:
-    label: above
-    weight: 1
+    label: hidden
+    weight: 0
     type: entity_reference_label
     settings:
       link: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
+  description: true
+  field_department_legacy_id: true
   langcode: true
