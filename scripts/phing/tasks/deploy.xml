@@ -1,141 +1,90 @@
 <project name="deploy" default="deploy:repo">
 
-  <target name="deploy:artifact"
-          description="Builds separate artifact and pushes to git.remotes defined in scripts/phing/phing-boston.yml."
-          depends="deploy:artifact:clean">
-
-    <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
-    <if>
-      <or>
-        <not><isset property="deploy.branch"/></not>
-        <not><isset property="deploy.commitMsg"/></not>
-      </or>
-      <then>
-        <fail>You must pass deploy.branch and deploy.commitMsg as runtime parameters.</fail>
-        <echo message="Command should match syntax:"/>
-        <echo message="./task.sh deploy:artifact -Ddeploy.branch=7.x-build -Ddeploy.commitMsg='BLT-123: The commit message.'"/>
-      </then>
-    </if>
-
-    <!-- Delete the existing deploy directory and re-initialize as an empty git repository. -->
-    <phingcall target="deploy:artifact:prepare-dir"/>
-
-    <!-- Add remotes and fetch upstream refs. Checkout local branch tracking
-         tracking upstream branch, if it exists. Otherwise create new branch
-         locally. -->
-    <phingcall target="deploy:artifact:add-remotes"/>
-
-    <!-- Build artifact and commit locally. -->
-    <phingcall target="deploy:artifact:build"/>
-    <phingcall target="deploy:artifact:commit"/>
-
-    <!-- Push up changes to remotes. -->
-    <if>
-      <isset property="deploy.dry-run"/>
-      <then>
-        <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
-      </then>
-      <else>
-        <phingcall target="deploy:artifact:push-all"/>
-      </else>
-    </if>
-  </target>
-
-  <target name="deploy:artifact:add-remote" description="Adds a git remote and checks out deploy branch from upstream.">
+  <target name="deploy:artifact:add-remote" description="*Adds a git remote and checks out deploy branch from upstream.">
     <!-- Generate and md5 sum of the remote URL to use as remote name. -->
     <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
           outputProperty="remoteName"/>
+
+    <echo message="Add remote ${remoteName}." level="info"/>
     <exec command="git remote add ${remoteName} ${deploy.remote}"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git fetch ${remoteName}"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+          dir="${deploy.dir}" passthru="true"/>
 
     <!-- Create the new branch. -->
-    <exec command="git checkout -b ${deploy.branch}" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <echo message="Create and checkout the branch ${deploy.branch} in new repo." level="info"/>
+    <exec command="git checkout -b ${deploy.branch}"
+          dir="${deploy.dir}" passthru="true"/>
+
+    <echo message="Fetch from remote." level="info"/>
+    <exec command="git fetch ${remoteName}"
+          dir="${deploy.dir}" passthru="true"/>
+
     <!-- Pull the latest updates (if available). -->
-    <exec command="git merge ${remoteName}/${deploy.branch}" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <echo message="Merge the branch from remote into empty repo." level="info"/>
+    <exec command="git merge ${remoteName}/${deploy.branch}"
+          dir="${deploy.dir}" passthru="true"/>
   </target>
 
-  <target name="deploy:artifact:add-remotes" description="Add remotes and fetch upstream refs.">
-    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
-    <exec command="git init"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
+  <target name="deploy:artifact:add-remotes" description="*Add remotes and fetch upstream refs.">
+    <echo message="Add remote(s) to the new repo (in deploy directory)." level="info"/>
+    <foreach list="${deploy.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
   </target>
 
-  <target name="deploy:artifact:build"
-          description="Generates a deploy-ready build in deploy.dir."
-          depends="deploy:artifact:make, deploy:artifact:copy, deploy:artifact:sanitize">
-  </target>
+  <target name="deploy:artifact:commitd8" description="*Commits deployment files to repo.">
 
-  <!-- Clean the deploy directory. -->
-  <target name="deploy:artifact:clean" description="Cleans the deploy directory.">
-    <delete dir="${deploy.dir}/docroot" failonerror="false" quiet="true" />
-    <delete dir="${deploy.dir}/hooks" failonerror="false" quiet="true" />
-  </target>
-
-  <target name="deploy:artifact:commit">
-    <exec command="git add -A" dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git add docroot/crispus --force" dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git add docroot/sites/all/themes/custom/boston_public/dist --force" dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git add docroot/sites/all/themes/custom/boston_hub/dist --force" dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git commit -m '${deploy.commitMsg}' --quiet" dir="${deploy.dir}" logoutput="true" passthru="true"/>
-  </target>
-
-  <target name="deploy:artifact:commitd8">
+    <echo message="Add modified files to git (git add --all)." level="info"/>
     <exec command="git add --all" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+
+    <echo message="Commit files to git (git commit)." level="info"/>
     <exec command="git commit -m '${deploy.commitMsg}' --quiet" dir="${deploy.dir}" logoutput="true" passthru="true"/>
+
+    <echo message="Git repo now ready to deploy to Acquia." level="info"/>
+
   </target>
 
-  <target name="deploy:artifact:copy" description="Copy required files from docroot/sites to deploy/docroot/sites.">
+  <target name="deploy:artifact:copy" description="*Copy required files from docroot/sites to deploy/docroot/sites.">
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
+    <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
+    <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
   </target>
 
-  <target name="deploy:artifact:make" description="Downloads core and contrib to deploy folder." depends="deploy:artifact:clean">
-    <drush command="make" assume="yes">
-      <param>"${repo.root}/${project.make_file}"</param>
-      <param>"${deploy.dir}/docroot"</param>
-      <option name="concurrency">10</option>
-      <option name="no-gitinfofile"/>
-      <option name="no-patch-txt"/>
-    </drush>
-
-    <phingcall target="frontend:build">
-      <property name="project.themes" value="boston,boston_public,boston_hub"/>
-    </phingcall>
-  </target>
-
-  <target name="deploy:artifact:prepare-dir"
-          description="Delete the existing deploy directory and re-initialize as an empty git repository.">
+  <target name="deploy:artifact:prepare-dir" description="*Delete the existing deploy directory and re-initialize as an empty git repository.">
     <delete dir="${deploy.dir}" failonerror="false" quiet="true" />
-    <exec command="git init ${deploy.dir}" logoutput="true"/>
+    <echo message="Create the deploy directory (${deploy.dir}) - if necessary." level="info"/>
+    <mkdir dir="${deploy.dir}"/>
+    <echo message="Initialize new git repo in deploy directory." level="info"/>
+    <exec command="git init"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
   </target>
 
-  <target name="deploy:artifact:push-all">
+  <target name="deploy:artifact:push-all" description="*Push to all registered remotes.">
+    <echo message="Push (deploy) to all remotes." level="info"/>
     <exec command="rm -f .git/gc.log"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git prune"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <exec command="git config gc.pruneExpire 3.days.ago"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <foreach list="${git.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
+    <foreach list="${deploy.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
+    <echo message="Push complete. Code now deployed to all remotes." level="info"/>
   </target>
 
-  <target name="deploy:artifact:push-remote"
-          description="Pushes to a git remote.">
+  <target name="deploy:artifact:push-remote" description="*Pushes to a git remote.">
     <exec command="echo ${deploy.remote} | openssl md5 | cut -d' ' -f 2"
           outputProperty="remoteName"/>
+    <echo message="Push ${deploy.branch} to ${remoteName} (${deploy.remote})" level="info"/>
     <exec command="git push ${remoteName} ${deploy.branch}"
           dir="${deploy.dir}" logoutput="true"
           outputProperty="deploy.push.output"
           checkreturn="true"/>
+    <echo message="Deployed ${deploy.branch} to ${remoteName}" level="info"/>
+    <echo message="Note: target remote will now have the code built from ${deploy.branch}." level="info"/>
+    <echo message="Note: Acquia hooks will now run." level="info"/>
     <exec command="export DEPLOY_UPTODATE=$(echo '${deploy.push.output}' | grep --quiet 'Everything up-to-date')"/>
   </target>
 
-  <target name="deploy:artifact:sanitize"
-          description="Removes sensitive files from the deploy docroot.">
+  <target name="deploy:artifact:sanitize" description="Removes sensitive files from the deploy docroot.">
     <delete>
       <fileset dir="${deploy.dir}/docroot">
         <include name="CHANGELOG.txt"/>
@@ -152,32 +101,26 @@
   </target>
 
   <!-- New Drupal8 Travis-based composer deployment. -->
-  <target name="deploy:artifact:drupal8"
-          description="Runs a modified Drupal 8 deployment.">
+  <target name="deploy:artifact:drupal8" description="*Runs a modified Drupal 8 deployment.">
 
     <echo message="Deploying to Acquia ... " level="info"/>
 
+    <property name="deploy.dir" value="${deploy.${TRAVIS_BRANCH}.dir}"/>
+    <property name="deploy.remotes" value="${deploy.${TRAVIS_BRANCH}.remotes}"/>
+    <property name="deploy.branch" value="${deploy.${TRAVIS_BRANCH}.deploy-branch}"/>
+    <property name="travis.drush" value="${deploy.${TRAVIS_BRANCH}.travis-drush-path}"/>
+    <property name="drush.alias" value="${deploy.${TRAVIS_BRANCH}.drush-alias}"/>
+    <property name="deploy.commitMsg" value="${deploy.${TRAVIS_BRANCH}.commit-message}"/>
     <!-- This property sync.db controls whether the database is copied (from staging) during post-deploy. -->
-    <!-- (Remove or comment-out the property to disable) -->
-    <!--<property name="drush.copy.db" value="false"/>-->
-    <!--<property name="deploy.dry-run" value="false"/>-->
-    <property name="drush" value="drush9"/>
+    <property name="deploy.copy-db" value="${deploy.${TRAVIS_BRANCH}.copy-db}"/>
+    <property name="drush.db-source" value="${deploy.${TRAVIS_BRANCH}.drush-db-source}"/>
+    <property name="deploy.dry-run" value="${deploy.${TRAVIS_BRANCH}.dry-run}"/>
 
-    <!-- deploy.branch and deploy.commitMsg must be passed as params at runtime. -->
-    <if>
-      <or>
-        <not><isset property="deploy.branch"/></not>
-        <not><isset property="deploy.commitMsg"/></not>
-      </or>
-      <then>
-        <fail>You must pass deploy.branch and deploy.commitMsg as runtime parameters.</fail>
-        <echo message="Command should match syntax:"/>
-        <echo message="deploy:artifact:drupal8 -Ddeploy.branch=xxxxx -Ddeploy.commitMsg='The commit message.'"/>
-      </then>
-    </if>
+    <!-- Delete the existing deploy directory and re-initialize as an empty git repository. -->
+    <phingcall target="deploy:artifact:prepare-dir"
+               description="Creates the deployment directory, and initialzes git."/>
 
     <!-- Prepare the existing local repo - assign acquia remote(s). -->
-    <if><not><available file="${deploy.dir}"/></not><then><mkdir dir="${deploy.dir}"/></then></if>
     <phingcall target="deploy:artifact:add-remotes"
                description="Add remotes and fetch upstream refs.
                             Checkout local branch tracking tracking upstream branch, if it exists.
@@ -194,7 +137,7 @@
 
     <!-- Push up changes to remotes. -->
     <if>
-      <isset property="deploy.dry-run"/>
+      <isfalse value="${deploy.dry-run}"/>
       <then>
         <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
       </then>
@@ -213,28 +156,24 @@
   </target>
 
   <!-- Execute drush commands to finish DB integration and update on remote.-->
-  <target name="deploy:artifact:post-deploy"
-          description="Run commands on the server to complete the deploy.">
+  <target name="deploy:artifact:post-deploy" description="*Run commands on the server to complete the deploy.">
 
-    <!-- Logic to switch the environments around. -->
-    <switch value="${deploy.branch}">
-      <case value="develop-deploy">
-        <property name="drush.alias" value="@bostond8.dev"/>
-      </case>
-      <case value="master-deploy">
-        <property name="drush.alias" value="@bostond8.test"/>
-      </case>
-    </switch>
-
-    <property name="travis.drush" value="${repo.root}/vendor/bin/drush"/>
+    <echo message="Finishing deployment to Acquia ... " level="info"/>
 
     <echo message="Check Drush status on remote (deploy target)." level="info"/>
     <echo message="Using drush command ${travis.drush} ${drush.alias}." level="info"/>
-    <if><isset property="drush.copy.db"/><then>
-      <exec dir="${docroot}" passthru="true"
-            description="Copy the database from staging."
-            command="${travis.drush} ${drush.alias} sql-sync @bostond8.test @self"/>
-    </then></if>
+    <if><istrue value="${deploy.copy-db}"/>
+      <then>
+        <echo message="Sync'ing database ... " level="info"/>
+        <exec dir="${docroot}" passthru="true"
+              description="Copy the database from staging."
+              command="${travis.drush} ${drush.alias} sql-sync ${drush.db-source} @self"/>
+        <echo message="Note: This will cause Acquia hooks to run." level="info"/>
+      </then>
+      <else>
+        <echo message="Note: Database on target remote not overwritten. " level="info"/>
+      </else>
+    </if>
     <echo message="Import config files into DB on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Import the configurations."
