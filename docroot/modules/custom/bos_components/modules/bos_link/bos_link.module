@@ -5,9 +5,6 @@
  * The Base module file for bos_link module.
  */
 
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-
 /**
  * Implements hook_theme().
  */
@@ -36,15 +33,17 @@ function bos_link_preprocess_paragraph(&$vars) {
     $document = $paragraph->get('field_document')->getValue();
     $title = $paragraph->get('field_title')->getValue();
     if (!empty($document['0']['target_id']) && !empty($title['0']['value'])) {
-      $uri = file_load($document['0']['target_id'])->getFileUri();
-      $options = [
-        'attributes' => [
-          'class' => [
-            'fyi-l',
+      $vars['link'] = _bos_core_get_file_link(
+        $document['0']['target_id'],
+        $title['0']['value'],
+        [
+          'attributes' => [
+            'class' => [
+              'fyi-l',
+            ],
           ],
-        ],
-      ];
-      $vars['link'] = Link::fromTextAndUrl($title['0']['value'], Url::fromUri(file_create_url($uri), $options))->toString();
+        ]
+      );
     }
   }
 }

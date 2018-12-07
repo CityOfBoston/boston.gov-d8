@@ -13,7 +13,11 @@ dependencies:
     - paragraphs.paragraphs_type.photo
   module:
     - entity_reference_revisions
+    - fences
+    - svg_image
     - text
+_core:
+  default_config_hash: 8UqUolHsLBveEUMlc0r5zORdGpoa9GqXd_s5DBub2g4
 id: paragraph.photo.default
 targetEntityType: paragraph
 bundle: photo
@@ -25,23 +29,57 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
+  field_image:
+    type: image
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
   field_link:
     label: hidden
     weight: 3
     type: entity_reference_revisions_entity_view
     settings:
-      view_mode: button_link
+      view_mode: default
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_photo_caption:
     label: hidden
     weight: 1
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_photo_credit:
     label: inline
@@ -49,9 +87,15 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: ''
     region: content
 hidden:
   field_contacts: true
-  field_image: true
   field_short_title: true

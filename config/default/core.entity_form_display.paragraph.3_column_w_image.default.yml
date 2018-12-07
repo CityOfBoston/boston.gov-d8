@@ -9,7 +9,26 @@ dependencies:
     - field.field.paragraph.3_column_w_image.field_short_title
     - paragraphs.paragraphs_type.3_column_w_image
   module:
+    - field_group
     - paragraphs
+third_party_settings:
+  field_group:
+    group_three_column_info:
+      children:
+        - field_component_title
+        - field_short_title
+        - field_contact
+        - field_columns
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        label: 'Component Header'
+        description: ''
+        required_fields: true
+        id: ''
+        classes: 'group-three-column-info field-group-fieldset'
+      label: 'Component Header'
 id: paragraph.3_column_w_image.default
 targetEntityType: paragraph
 bundle: 3_column_w_image
@@ -17,14 +36,21 @@ mode: default
 content:
   field_columns:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
+      title: Column
+      title_plural: Columns
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: columns
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_component_title:
@@ -41,7 +67,7 @@ content:
     settings:
       match_operator: CONTAINS
       size: 60
-      placeholder: ''
+      placeholder: 'Select Department'
     third_party_settings: {  }
     region: content
   field_short_title:

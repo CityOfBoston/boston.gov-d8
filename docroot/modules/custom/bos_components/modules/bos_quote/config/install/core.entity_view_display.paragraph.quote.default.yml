@@ -9,7 +9,8 @@ dependencies:
     - field.field.paragraph.quote.field_single_neighborhood
     - paragraphs.paragraphs_type.quote
   module:
-    - image
+    - fences
+    - svg_image
 id: paragraph.quote.default
 targetEntityType: paragraph
 bundle: quote
@@ -21,7 +22,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_last_name:
     label: hidden
@@ -29,7 +37,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_person_photo:
     label: hidden
@@ -38,7 +53,18 @@ content:
     settings:
       image_style: ''
       image_link: ''
-    third_party_settings: {  }
+      svg_render_as_image: '1'
+      svg_attributes:
+        width: ''
+        height: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_quote:
     label: hidden
@@ -46,14 +72,28 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_single_neighborhood:
     label: hidden
     weight: 4
     type: entity_reference_label
     settings:
-      link: true
-    third_party_settings: {  }
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

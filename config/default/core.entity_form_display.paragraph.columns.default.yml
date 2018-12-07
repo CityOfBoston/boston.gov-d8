@@ -9,7 +9,7 @@ dependencies:
     - field.field.paragraph.columns.field_link
     - paragraphs.paragraphs_type.columns
   module:
-    - file
+    - file_entity
     - paragraphs
     - text
 id: paragraph.columns.default
@@ -35,21 +35,28 @@ content:
     region: content
   field_image:
     weight: 2
-    type: file_generic
+    type: file_editable
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_link:
     weight: 5
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Link
-      title_plural: Links
-      edit_mode: open
+      title: CTA
+      title_plural: 'CTA''s'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   moderation_state:
