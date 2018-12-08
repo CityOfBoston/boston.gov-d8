@@ -26,7 +26,7 @@ if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]] || [[ "${DEPLOY_PR}" = "true" ]];
       then
         echo "Build artifact will be deployed."
         # Call the `deploy` Phing target, passing in required parameters.
-        ${phing} deploy:artifact:drupal8
+        ${phing} deploy:artifact:drupal8 -Dtravis.branch=$source_branch
       else
         echo "Build artifact will NOT be deployed for this branch."
     fi

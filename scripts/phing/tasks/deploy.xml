@@ -105,16 +105,16 @@
 
     <echo message="Deploying to Acquia ... " level="info"/>
 
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.dir}" outputProperty="deploy.dir"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.remotes}" outputProperty="deploy.remotes"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.deploy-branch}" outputProperty="deploy.branch"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.travis-drush-path}" outputProperty="travis.drush"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.drush-alias}" outputProperty="drush.alias"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.commit-message}" outputProperty="deploy.commitMsg"/>
+    <property name="deploy.dir" value="${deploy.${travis.branch}.dir}"/>
+    <property name="deploy.remotes" value="${deploy.${travis.branch}.remotes}"/>
+    <property name="deploy.branch" value="${deploy.${travis.branch}.deploy-branch}"/>
+    <property name="travis.drush" value="${deploy.${travis.branch}.travis-drush-path}"/>
+    <property name="drush.alias" value="${deploy.${travis.branch}.drush-alias}"/>
+    <property name="deploy.commitMsg" value="${deploy.${travis.branch}.commit-message}"/>
     <!-- This property sync.db controls whether the database is copied (from staging) during post-deploy. -->
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.copy-db}" outputProperty="deploy.copy-db"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.drush-db-source}" outputProperty="drush.db-source"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.dry-run}" outputProperty="deploy.dry-run"/>
+    <property name="deploy.copy-db" value="${deploy.${travis.branch}.copy-db}"/>
+    <property name="drush.db-source" value="${deploy.${travis.branch}.drush-db-source}"/>
+    <property name="deploy.dry-run" value="${deploy.${travis.branch}.dry-run}"/>
 
     <!-- Delete the existing deploy directory and re-initialize as an empty git repository. -->
     <phingcall target="deploy:artifact:prepare-dir"
