@@ -86,8 +86,10 @@
   </target>
 
   <target name="deploy:artifact:sanitize" description="Removes files from the deploy which may already be in repo.">
+    <dirname property="sanitize.dir" file="${deploy.sanitize-file}"/>
+    <basename property="sanitize.name" file="${deploy.sanitize-file}"/>
     <delete>
-      <fileset includesfile="${deploy.sanitize-file}"/>
+      <fileset includesfile="${sanitize.name}" dir="${sanitize.dir}"/>
     </delete>
   </target>
 
