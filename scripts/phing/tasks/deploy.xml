@@ -46,7 +46,7 @@
     <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
-    <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
+    <echo message="Copied." level="info"/>
   </target>
 
   <target name="deploy:artifact:prepare-dir" description="*Delete the existing deploy directory and re-initialize as an empty git repository.">
@@ -108,6 +108,8 @@
     <property name="deploy.dir" value="${deploy.${travis.branch}.dir}"/>
     <property name="deploy.remotes" value="${deploy.${travis.branch}.remotes}"/>
     <property name="deploy.branch" value="${deploy.${travis.branch}.deploy-branch}"/>
+    <property name="deploy.excludes-file" value="${deploy.${travis.branch}.excludes-file}"/>
+    <property name="deploy.includes-file" value="${deploy.${travis.branch}.includes-file}"/>
     <property name="travis.drush" value="${deploy.${travis.branch}.travis-drush-path}"/>
     <property name="drush.alias" value="${deploy.${travis.branch}.drush-alias}"/>
     <property name="deploy.commitMsg" value="${deploy.${travis.branch}.commit-message}"/>
@@ -137,7 +139,7 @@
 
     <!-- Push up changes to remotes. -->
     <if>
-      <isfalse value="${deploy.dry-run}"/>
+      <istrue value="${deploy.dry-run}"/>
       <then>
         <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
       </then>
