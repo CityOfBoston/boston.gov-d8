@@ -3,7 +3,7 @@ project:
     name: 'bos_profile'
     contrib: false
     install_profile: 'config_installer'
-  cloud_alias: "@boston"
+  cloud_alias: "@bostond8"
   themes:
     - bos_theme
   config:
@@ -63,16 +63,13 @@ git:
   private_repo:
     repo: CityOfBoston/boston.gov-d8-private.git
     branch: develop
+    deploy-branch: master
     # Where the repo will be cloned to.
     local_dir: ${repo.root}/setup/private
     # [optional] Provide the path to a settings script (relative to the private repo root),
     # which will be copied to the main repo and then set up to be called from (i.e. extend)
     # the sites main settings.php script.
-    settings_file: sites/${drupal.multisite.name}/settings/private.settings.php
-
-  # Defining git remotes allows builds deployed via CI.
-  x-remotes:
-    - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
 
 composer:
   bin: ${repo.root}/vendor/bin
@@ -82,8 +79,30 @@ drush:
   cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
   root: ${docroot}
 
-# deploy:
-  # includes-file: ${core.phing.dir}/../files/deploy-include-files.txt
+deploy:
+  # each element of the deploy object is a branch in the main CoB repo.
+  develop:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${repo.root}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy-branch: develop-deploy
+    # Path to the drush command in the Travis container.
+    travis-drush-path: '${repo.root}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush-alias: "@bostond8.dev"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
+    excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit-message: "Automated commit by Travis CI for Build #${TRAVIS_BUILD_ID}"
+    # Dry-run (for testing).
+    dry-run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy-db: false
+    drush-db-source: "@bostond8.stage"
+    # Array of user:host for (Acquia) git remotes to be used for deployment.
+    remotes:
+      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
 reports:
   localDir: ${docroot}/testing/reports
@@ -115,8 +134,3 @@ x-php:
     remote_file: '/usr/local/etc/php/conf.d/boston.xdebug.ini'
     # Provide the filename of the xdebug.ini
     default_file: 'xdebug.ini'
-
-x-deploy:
-  dir: ${repo.root}/deploy
-  includes-file: ${custom.phing.dir}/../files/deploy-includes.txt
-  excludes-file: ${custom.phing.dir}/../files/deploy-excludes.txt

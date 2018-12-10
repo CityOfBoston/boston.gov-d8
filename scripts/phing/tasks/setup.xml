@@ -33,12 +33,14 @@
   <!-- Define the build task used by travis. -->
   <target name="setup:docker:drupal-travis"
           description="Creates a drupal environment in docker (command run by travis)."
-          depends=" setup:drupal:clone_private_repo,
-                    setup:drupal:set_prod_config,
+          depends=" setup:drupal:download-modules,
+                    setup:drupal:clone_private_repo,
+                    setup:drupal:set_dev_config,
                     setup:drupal:site-install,
                     setup:drush:local-config,
-                    update:database:update,
-                    setup:drupal:reset_config">
+                    update:database:update
+                    ">
+    <!--setup:drupal:reset_config-->
     <!-- Be sure that we produce correct exit codes for travis (0=success) -->
   </target>
 
@@ -213,9 +215,16 @@
 
   </target>
 
+  <target name="setup:prepare:travis" description="Set travis specific properties etc">
+    <property description="Switch to the deploy branch in the private repo"
+              name="git.private_repo.branch"
+              value="${git.private_repo.deploy-branch}"/>
+  </target>
+
   <!-- Define the Drupal setup task -->
   <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
+    <if><not><available file="${project.basedir}/setup"/></not><then><mkdir dir="${project.basedir}/setup"/></then></if>
     <if>
       <equals arg1="${acquia.site_environment}" arg2="dev"/>
       <then>
@@ -236,25 +245,21 @@
         <fail message="Drupal is already installed."/>
       </then>
       <else>
-        <echo
-                message="Using Composer to install Drupal core and the required contrib modules."
-                level="info"/>
+        <echo message="Using Composer to install Drupal core and the required contrib modules."
+              level="info"/>
         <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/setup/composer.log for output.\033[0m'" logoutput="true"/>
         <echo message="Executes: > composer install ${flag.dev}${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec
-                description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-                command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                logoutput="true"/>
+        <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
+              command="composer install ${flag.dev} >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <echo message="${line.separator} > composer drupal:scaffold"
               file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec
-                description="Installs the drupal scaffold files, and logs to composer.log"
-                command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
-                dir="${project.basedir}/"
-                logoutput="true"/>
-
+        <exec description="Installs the drupal scaffold files, and logs to composer.log"
+              command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <exec description="Establish drupal command in path."
               command="if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/; fi"
               logoutput="true"
@@ -315,8 +320,7 @@
             <property name="si_install_profile"
                       value="${project.profile.name}"/>
             <property name="si_site_profile" value="${project.profile.name}"/>
-            <echo
-                    message="${install_config.abs}/system.site.yml does not exist, normal profile-based install performed."/>
+            <echo message="${install_config.abs}/system.site.yml does not exist, normal profile-based install performed."/>
           </else>
         </if>
 
@@ -325,12 +329,17 @@
               message="==== Installing Drupal ====${line.separator}"  append="true"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
               message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
-        <exec
-                description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
-                dir="${docroot}"
-                command="${si.command} >> ${project.basedir}/setup/drush_site_install.log "
-                logoutput="true"/>
-
+        <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
+              dir="${docroot}"
+              command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
+              logoutput="true" returnProperty="install.output"/>
+        <if><not><equals arg1="${install.output}" arg2="0" /></not>
+          <then>
+            <exec command="cat ${project.basedir}/setup/drush_site_install.log"
+                  passthru="true" logoutput="true"/>
+            <fail message="Fail - Site install failure"/>
+          </then>
+        </if>
       </then>
       <else>
         <echo message="Drupal core is not found." level="error"/>
@@ -344,62 +353,56 @@
   <target name="setup:drupal:local_settings_php"
           description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
+    <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
+    <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
+    <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
+
     <!-- Firstly delete the local settings file -->
     <echo message="Delete the ${local.settings.file} file (if exists)."/>
     <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
 
     <!-- Now recreate the settings file -->
-    <echo
-            message="Recreate the ${local.settings.file} file with build settings."/>
+    <echo message="Recreate the ${local.settings.file} file with build settings."/>
     <if>
       <not>
         <available file="${local.settings.file}"/>
       </not>
       <then>
 
-        <copy
-                file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php"
-                tofile="${local.settings.file}" haltonerror="false" overwrite="false"
-                verbose="false" />
-        <copy
-                file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
-                tofile="${local.services.file}" haltonerror="false" overwrite="false"
-                verbose="false"/>
+        <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php"
+              tofile="${local.settings.file}" haltonerror="false" overwrite="false"
+              verbose="false" />
+        <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
+              tofile="${local.services.file}" haltonerror="false" overwrite="false"
+              verbose="false"/>
 
         <echo description="Adds local settings to settings.local.php file."
               message="${line.separator}" append="true"
               file="${local.settings.file}"/>
         <echo message="/*${line.separator}" append="true"
               file="${local.settings.file}"/>
-        <echo
-                message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <echo message=" */${line.separator}" append="true"
               file="${local.settings.file}"/>
-        <echo
-                message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <if>
           <equals arg1="${acquia.site_environment}" arg2="dev"/>
           <then>
-            <echo
-                    message="error_reporting(E_ALL);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
-            <echo
-                    message="ini_set('display_errors', TRUE);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
-            <echo
-                    message="ini_set('display_startup_errors', TRUE);${line.separator}"
-                    append="true" file="${local.settings.file}"/>
+            <echo message="error_reporting(E_ALL);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="ini_set('display_errors', TRUE);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
+            <echo message="ini_set('display_startup_errors', TRUE);${line.separator}"
+                  append="true" file="${local.settings.file}"/>
           </then>
         </if>
       </then>
       <else>
-        <echo
-                message="The local.settings.php already exists, did not update with local settings."/>
+        <echo message="The local.settings.php already exists, did not update with local settings."/>
       </else>
     </if>
 
@@ -414,40 +417,37 @@
     </if>
 
     <!-- Remove unwanted and confusing template config files. -->
-    <delete file="${docroot}/sites/default/default.settings.php" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
-    <delete file="${docroot}/sites/default/default.services.yml" quiet="true" verbose="false"/>
     <delete file="${docroot}/sites/development.services.yml" quiet="true" verbose="false"
             description="Redundant file as we have this in the sites/default folder."/>
 
     <!-- Append code to (fresh) settings.php file -->
-    <echo
-            description="Adds default settings to settings.php and directve to include the settings.local.php file."
-            message="${line.separator}" append="true" file="${settings.file}"/>
-    <echo message="/**${line.separator} * @file${line.separator}" append="true" file="${settings.file}"/>
-    <echo
-            message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}${line.separator}"
-            append="true" file="${settings.file}"/>
+    <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
+          message="${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="/**${line.separator} * @file${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}${line.separator}"
+          append="true" file="${settings.file}"/>
     <echo message="$settings['update_free_access'] = FALSE;${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo
-            message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}"
-            append="true" file="${settings.file}"/>
-    <echo
-            message="$settings['file_scan_ignore_directories'] = [${line.separator}"
-            append="true" file="${settings.file}"/>
-    <echo message="  'node_modules',${line.separator}" append="true"
-          file="${settings.file}"/>
-    <echo message="  'bower_components',${line.separator}" append="true"
-          file="${settings.file}"/>
-    <echo message="];${line.separator}" append="true" file="${settings.file}"/>
+    <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="$settings['file_scan_ignore_directories'] = [${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="  'node_modules',${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="  'bower_components',${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="];${line.separator}"
+          append="true" file="${settings.file}"/>
     <echo message="$settings['entity_update_batch_size'] = 50;${line.separator}"
           append="true" file="${settings.file}"/>
     <echo message="$databases['default']['default'] = [${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="  'driver' => 'mysql',${line.separator}" append="true"
-          file="${settings.file}"/>
+    <echo message="  'driver' => 'mysql',${line.separator}"
+          append="true" file="${settings.file}"/>
     <echo message="  'database' => '${lando.db.database}',${line.separator}"
           append="true" file="${settings.file}"/>
     <echo message="  'username' => '${lando.db.username}',${line.separator}"
@@ -458,39 +458,31 @@
           append="true" file="${settings.file}"/>
     <echo message="  'port' => '${lando.db.port}',${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="];${line.separator}" append="true"
-          file="${settings.file}"></echo>
-    <echo
-            message="if (file_exists('${local.settings.file}')) {${line.separator}"
-            append="true" file="${settings.file}"/>
-    <echo message="  include '${local.settings.file}';${line.separator}"
+    <echo message="];${line.separator}"
           append="true" file="${settings.file}"/>
-    <echo message="}${line.separator}${line.separator}" append="true"
-          file="${settings.file}"/>
-    <echo message="/* End of additions. */${line.separator}" append="true"
-          file="${settings.file}"/>
+    <echo message='if (file_exists(DRUPAL_ROOT . "/${local.settings.file.rel}")) {${line.separator}'
+          append="true" file="${settings.file}"/>
+    <echo message='  include DRUPAL_ROOT . "/${local.settings.file.rel}";${line.separator}'
+          append="true" file="${settings.file}"/>
+    <echo message="}${line.separator}${line.separator}"
+          append="true" file="${settings.file}"/>
+    <echo message="/* End of additions. */${line.separator}"
+          append="true" file="${settings.file}"/>
 
     <!-- Add in directive for private settings file if needed -->
-    <property
-            description="Location of settings files for this Drupal intallation."
-            name="private.docroot.settings"
-            value="${docroot}/${git.private_repo.settings_file}"/>
+    <property description="Location of PRIVATE settings file for this Drupal intallation."
+              name="private.docroot.settings"
+              value="${docroot}/${git.private_repo.settings_file.rel}"/>
     <if>
-      <and>
-        <available file="${private.docroot.settings}"/>
-        <isset property="git.private_repo.settings_file"/>
-      </and>
+      <available file="${private.docroot.settings}"/>
       <then>
-        <echo
-                description="Adds a directive to settings file to include contents of settings file in repo."
-                message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="if (file_exists('${private.docroot.settings}')) {${line.separator}"
-                append="true" file="${local.settings.file}"/>
-        <echo
-                message="  include '${private.docroot.settings}';${line.separator}"
-                append="true" file="${local.settings.file}"/>
+        <echo description="Adds a directive to settings file to include contents of settings file in repo."
+              message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message='if (file_exists(DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
+              append="true" file="${local.settings.file}"/>
+        <echo message='  include DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}";${line.separator}'
+              append="true" file="${local.settings.file}"/>
         <echo message="}${line.separator}${line.separator}" append="true"
               file="${local.settings.file}"/>
         <echo message="/* End of additions. */${line.separator}"
@@ -531,50 +523,48 @@
         <exec command="echo '\033[1;33m> Merging the private repo from ${git.private_repo.user}@${git.private_repo.repo} (${git.private_repo.branch}).\033[0m'" logoutput="true"/>
 
         <!-- Clone the private repo. -->
-        <delete
-                description="Completely delete folder at private repo target. (won't run if doesn't exist)."
+        <delete description="Completely delete folder at private repo target. (won't run if doesn't exist)."
                 includeemptydirs="true" dir="${git.private_repo.local_dir}"
                 failonerror="false" quiet="true"/>
         <mkdir dir="${git.private_repo.local_dir}"/>
         <echo message="Clone the repo."/>
-        <exec
-                description="Clone a private repo which has confidential settings (passwords etc)."
-                command="git clone ${git.private_repo.user}${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
-                dir="${git.private_repo.local_dir}"
-                returnProperty="repoOK" logoutput="false" passthru="true"/>
+        <exec description="Clone a private repo which has confidential settings (passwords etc)."
+              command="git clone ${git.private_repo.user}${git.private_repo.repo} ${git.private_repo.local_dir} -q --depth 1 -b ${git.private_repo.branch} >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${git.private_repo.local_dir}"
+              returnProperty="repoOK" logoutput="false" passthru="true"/>
 
         <!-- Move files from private repo into main repo, and add include directive so it is loaded on bootstrap. -->
         <if>
           <available file="${git.private_repo.local_dir}/.git/config"/>
           <then>
-            <delete
-                    description="Remove .git so folder is no longer a repo (and doesn't get copied)."
+            <exec description="Ensure the master branch is pulled and up to date."
+                  command="git fetch >> ${project.basedir}/setup/drush_site_install.log"
+                  dir="${git.private_repo.local_dir}"
+                  logoutput="true" passthru="true"/>
+            <delete description="Remove .git so folder is no longer a repo (and doesn't get copied)."
                     dir="${git.private_repo.local_dir}/.git"
                     quiet="true" verbose="false" failonerror="false"
                     includeemptydirs="true"/>
             <exec description="Rename any ..gitignore files to .gitignore so the contents arent saved in main repo"
                   dir="${git.private_repo.local_dir}"
                   command="find . -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; "
-                  passthru="true" logoutput="true" checkreturn="false"
-            />
+                  passthru="true" logoutput="true" checkreturn="false"/>
             <exec description="Remove markdown files so they dont get copied."
                   command="rm -f ${git.private_repo.local_dir}/*.md"
                   passthru="true" logoutput="false" checkreturn="false"/>
             <echo message="Move private repo files into the main repo."/>
-            <exec
-                    description="Move the private repo files to the docroot folder."
-                    command="rsync -aE ${git.private_repo.local_dir}/ ${repo.root}/"
-                    passthru="true" logoutput="false" checkreturn="false"/>
+            <exec description="Move the private repo files to the docroot folder."
+                  command="rsync -aE ${git.private_repo.local_dir}/ ${repo.root}/ >> ${project.basedir}/setup/drush_site_install.log"
+                  passthru="true" logoutput="false" checkreturn="false"/>
             <exec description="Delete the private repo files."
-                  command="rm -rf ${git.private_repo.local_dir}"
+                  command="rm -rf ${git.private_repo.local_dir} >> ${project.basedir}/setup/drush_site_install.log"
                   passthru="true" logoutput="false" checkreturn="false"/>
           </then>
           <else>
             <exec command="echo '\033[1;33mPrivate repo was not cloned.  Build process will continue.\033[0m'" logoutput="true"/>
-            <echo
-                    message="Private repo was not cloned.  Build process will continue."
-                    level="warning" append="true"
-                    file="${project.basedir}/setup/drush_site_install.log"/>
+            <echo message="Private repo was not cloned.  Build process will continue."
+                  level="warning" append="true"
+                  file="${project.basedir}/setup/drush_site_install.log"/>
           </else>
         </if>
 
@@ -701,18 +691,17 @@
       <then>
         <echo message="Installing production-only modules." level="info"/>
         <echo message="==== production-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
-        <exec   description="Install production modules if not installed already."
-                command="drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true"/>
+        <exec description="Install production modules if not installed already."
+              command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=production -y >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
         <echo message="Enabling development-only config settings" level="info"/>
-        <exec
-                description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
-                command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in development is available."
+              command="mv config_split.config_split.development.yml.disabled config_split.config_split.development.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
       </then>
     </if>
     <if>
@@ -721,33 +710,30 @@
       <then>
         <echo message="Installing development-only modules." level="info"/>
         <echo message="==== development-only modules ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
-        <exec   description="Install development modules if not installed already."
-                command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true" />
-        <exec description="Re-installs migrate_drupal_ui which for some reason does not install well."
-              command="${drush.cmd} pmu -y migrate_drupal_ui"
+        <exec description="Install development modules if not installed already."
+              command="${project.basedir}/vendor/drupal/console/bin/drupal csim --split=development -y >> ${project.basedir}/setup/drush_site_install.log"
+              dir="${install_config_abs}"
               passthru="true"
-              logoutput="true"/>
-        <exec command="${drush.cmd} en -y migrate_drupal_ui"
-              passthru="true"
-              logoutput="true"/>
+              logoutput="true" />
+        <!--<exec description="Re-installs migrate_drupal_ui which for some reason does not install well."-->
+              <!--command="${drush.cmd} pmu -y migrate_drupal_ui"-->
+              <!--passthru="true"-->
+              <!--logoutput="true"/>-->
+        <!--<exec command="${drush.cmd} en -y migrate_drupal_ui"-->
+              <!--passthru="true"-->
+              <!--logoutput="true"/>-->
         <echo message="Enabling production-only config settings for developers to maintain." level="info"/>
-        <exec
-                description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
-                command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
-                dir="${install_config_abs}"
-                passthru="true"
-                logoutput="true"/>
+        <exec description="Ensure the config_split yml file which contains the modules to be implemented only in production is available."
+              command="mv config_split.config_split.production.yml.disabled config_split.config_split.production.yml"
+              dir="${install_config_abs}"
+              passthru="true"
+              logoutput="true"/>
       </then>
     </if>
     <if>
       <and>
-        <equals arg1="${acquia.site_environment}" arg2="dev"
-                casesensitive="true"/>
-        <available
-                file="${install_config_abs}/config_split.config_split.production.yml"/>
+        <equals arg1="${acquia.site_environment}" arg2="dev" casesensitive="true"/>
+        <available file="${install_config_abs}/config_split.config_split.production.yml"/>
       </and>
       <then>
         <echo message="Imports prod config."/>
@@ -755,20 +741,18 @@
                   value="\Drupal::service(&quot;config.factory&quot;)->getEditable(&quot;config_split.config_split.production&quot;)->set(&quot;status&quot;, false)->save();"/>
         <resolvepath propertyName="cfg.prod" file="${project.config.prod}"
                      dir="${docroot}"/>
-        <exec
-                description="Use drupal console to re-import the production yml config_split file."
-                dir="${docroot}"
-                command="${project.basedir}/vendor/drupal/console/bin/drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
-                logoutput="true"/>
+        <exec description="Use drupal console to re-import the production yml config_split file."
+              dir="${docroot}"
+              command="${project.basedir}/vendor/drupal/console/bin/drupal config:import:single --file=/app/config/default/config_split.config_split.production.yml"
+              logoutput="true"/>
         <exec description="Sets the active status for the settings."
               dir="${docroot}"
               command="${drush.cmd} eval '${cfg.php}'"
               logoutput="true"/>
-        <exec
-                description="Make git ignore the changes to the config/prod folder because we did not use the production config."
-                dir="${cfg.prod}"
-                command="git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')"
-                logoutput="true"/>
+        <exec description="Make git ignore the changes to the config/prod folder because we did not use the production config."
+               dir="${cfg.prod}"
+               command="git update-index --assume-unchanged $(git ls-files | tr '\n' ' ')"
+               logoutput="true"/>
       </then>
     </if>
     <echo message="Done." level="info"/>
@@ -808,11 +792,7 @@
   </target>
 
   <target name="test">
-    <chown user="www-data" description="Ensure configs tree is available." quiet="true" verbose="false">
-      <fileset dir="${project.basedir}/config">
-        <include name="**/*"></include>
-      </fileset>
-    </chown>
+    <echo message="Testing." level="info"/>
   </target>
 
 </project>
