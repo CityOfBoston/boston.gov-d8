@@ -4,7 +4,6 @@ dependencies:
   config:
     - core.entity_view_mode.paragraph.listing
     - field.field.paragraph.cabinet.field_description
-    #- field.field.paragraph.cabinet.field_contacts
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
@@ -32,5 +31,6 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_description: true
   field_short_title: true
   field_title: true
