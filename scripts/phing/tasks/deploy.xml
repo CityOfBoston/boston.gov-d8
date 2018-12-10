@@ -34,10 +34,11 @@
     <echo message="Add modified files to git (git add --all)." level="info"/>
     <exec command="git add --all" dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
-    <echo message="Commit files to git (git commit)." level="info"/>
+    <echo message="Commit files to git (git commit -m '${deploy.commitMsg}')." level="info"/>
     <exec command="git commit -m '${deploy.commitMsg}' --quiet" dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
-    <echo message="Git repo now ready to deploy to Acquia." level="info"/>
+    <echo message="Done." level="info"/>
+    <echo message="Branch ${travis.branch} now ready to deploy to Acquia as ${deploy.branch}." level="info"/>
 
   </target>
 
@@ -84,19 +85,9 @@
     <exec command="export DEPLOY_UPTODATE=$(echo '${deploy.push.output}' | grep --quiet 'Everything up-to-date')"/>
   </target>
 
-  <target name="deploy:artifact:sanitize" description="Removes sensitive files from the deploy docroot.">
+  <target name="deploy:artifact:sanitize" description="Removes files from the deploy which may already be in repo.">
     <delete>
-      <fileset dir="${deploy.dir}/docroot">
-        <include name="CHANGELOG.txt"/>
-        <include name="COPYRIGHT.txt"/>
-        <include name="INSTALL.txt"/>
-        <include name="INSTALL.*.txt"/>
-        <include name="LICENSE.txt"/>
-        <include name="MAINTAINERS.txt"/>
-        <include name="PATCHES.txt"/>
-        <include name="README.txt"/>
-        <include name="UPGRADE.txt"/>
-      </fileset>
+      <fileset includesfile="${deploy.sanitize-file}"/>
     </delete>
   </target>
 
@@ -110,6 +101,7 @@
     <property name="deploy.branch" value="${deploy.${travis.branch}.deploy-branch}"/>
     <property name="deploy.excludes-file" value="${deploy.${travis.branch}.excludes-file}"/>
     <property name="deploy.includes-file" value="${deploy.${travis.branch}.includes-file}"/>
+    <property name="deploy.sanitize-file" value="${deploy.${travis.branch}.sanitize-file}"/>
     <property name="travis.drush" value="${deploy.${travis.branch}.travis-drush-path}"/>
     <property name="drush.alias" value="${deploy.${travis.branch}.drush-alias}"/>
     <property name="deploy.commitMsg" value="${deploy.${travis.branch}.commit-message}"/>
@@ -132,10 +124,9 @@
     <phingcall target="deploy:artifact:copy"
                description="Copy the entire built artifact to the deploy folder."/>
 
-    <!--Sanitize the existing repo - not needed, the eclude file should cope with this. -->
-    <!--<phingcall target="deploy:artifact:sanitize"-->
-               <!--description="Deletes (sensitive/unwanted) files not excluded in copy"/>-->
-
+    <!--Sanitize files from the existing repo - not usually needed, the exclude file should cope with this. -->
+    <phingcall target="deploy:artifact:sanitize"
+               description="Deletes (sensitive/unwanted) files not excluded in copy"/>
 
     <!-- Push up changes to remotes. -->
     <if>

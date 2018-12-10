@@ -20,15 +20,16 @@ if [[ "${TRAVIS_PULL_REQUEST}" = "false" ]] || [[ "${DEPLOY_PR}" = "true" ]];
   then
     echo "Deployments will be triggered on the \"${source_branch}\" branch or on any tag."
     echo "Current branch is \"${TRAVIS_BRANCH}\"."
+    echo "Travis build artifact id is \"${TRAVIS_BUILD_ID}\"."
 
     # Trigger deployment if $source_branch parameters matches or this is a tag.
     if [[ "${TRAVIS_BRANCH}" = $source_branch ]] || [[ -n "${TRAVIS_TAG}" ]];
       then
-        echo "Build artifact will be deployed."
+        echo " -> This build artifact will be deployed."
         # Call the `deploy` Phing target, passing in required parameters.
-        ${phing} deploy:artifact:drupal8 -Dtravis.branch=$source_branch
+        ${phing} deploy:artifact:drupal8 -Dtravis.branch=$source_branch -Dtravis.id=$TRAVIS_BUILD_ID
       else
-        echo "Build artifact will NOT be deployed for this branch."
+        echo " -> this build artifact will NOT be deployed."
     fi
   else
     echo "Build artifacts are not deployed for Pull Requests."
