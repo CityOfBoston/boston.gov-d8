@@ -15,6 +15,7 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_grid
     - paragraphs.paragraphs_type.group_of_links_list
     - paragraphs.paragraphs_type.group_of_links_mini_grid
+    - paragraphs.paragraphs_type.iframe
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.video
@@ -47,6 +48,7 @@ settings:
       group_of_links_grid: group_of_links_grid
       group_of_links_list: group_of_links_list
       group_of_links_mini_grid: group_of_links_mini_grid
+      iframe: iframe
       photo: photo
       text: text
       video: video
@@ -187,8 +189,8 @@ settings:
         weight: 113
         enabled: false
       iframe:
+        enabled: true
         weight: 114
-        enabled: false
       internal_link:
         weight: 115
         enabled: false
