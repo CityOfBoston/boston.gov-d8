@@ -13,6 +13,14 @@ targetEntityType: paragraph
 bundle: discussion_topic
 mode: default
 content:
+  field_description:
+    weight: 1
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
   field_links:
     weight: 3
     type: entity_reference_paragraphs
