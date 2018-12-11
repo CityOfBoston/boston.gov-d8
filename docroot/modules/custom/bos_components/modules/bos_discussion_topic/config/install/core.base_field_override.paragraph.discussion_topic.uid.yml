@@ -1,0 +1,20 @@
+uuid: dac98a8d-237a-443e-8189-4cc97f07457b
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.discussion_topic
+id: paragraph.discussion_topic.uid
+field_name: uid
+entity_type: paragraph
+bundle: discussion_topic
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference
