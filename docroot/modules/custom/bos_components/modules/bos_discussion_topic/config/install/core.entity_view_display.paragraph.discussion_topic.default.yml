@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.discussion_topic.field_description
+    - field.field.paragraph.discussion_topic.field_links
+    - field.field.paragraph.discussion_topic.field_title
+    - paragraphs.paragraphs_type.discussion_topic
+  module:
+    - entity_reference_revisions
+id: paragraph.discussion_topic.default
+targetEntityType: paragraph
+bundle: discussion_topic
+mode: default
+content:
+  field_description:
+    label: hidden
+    weight: 1
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_links:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
