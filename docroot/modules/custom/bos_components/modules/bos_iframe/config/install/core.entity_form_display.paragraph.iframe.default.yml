@@ -1,4 +1,3 @@
-uuid: 74d7af25-c559-4517-bd4b-082848d7e98b
 langcode: en
 status: true
 dependencies:
@@ -9,52 +8,57 @@ dependencies:
     - field.field.paragraph.iframe.field_short_title
     - field.field.paragraph.iframe.field_source_url
     - paragraphs.paragraphs_type.iframe
-  module:
-    - options
-_core:
-  default_config_hash: F_xQzrGoIuaVtgP-S1iHZrPfEIUcfKrkhxZfoRoE1qg
 id: paragraph.iframe.default
 targetEntityType: paragraph
 bundle: iframe
 mode: default
 content:
   field_component_title:
-    label: hidden
-    weight: 0
-    type: string
+    weight: 3
+    type: string_textfield
     settings:
-      link_to_entity: false
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
     region: content
   field_contact:
-    label: hidden
-    weight: 2
-    type: entity_reference_label
+    weight: 5
+    type: entity_reference_autocomplete
     settings:
-      link: true
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
     region: content
   field_iframe_size:
-    label: hidden
-    weight: 3
-    type: list_key
+    weight: 7
+    type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_short_title:
-    label: above
     weight: 4
-    type: string
+    type: string_textfield
     settings:
-      link_to_entity: false
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
     region: content
   field_source_url:
-    label: hidden
-    weight: 1
-    type: string
+    weight: 6
+    type: string_textfield
     settings:
-      link_to_entity: false
+      size: 100
+      placeholder: ''
     third_party_settings: {  }
     region: content
-hidden: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
