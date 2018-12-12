@@ -1,43 +1,50 @@
-uuid: c252f5af-dc19-4d07-843e-31d8a022db66
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.drawer.field_short_description
-    - field.field.paragraph.drawer.field_text_blocks
-    - field.field.paragraph.drawer.field_title
-    - paragraphs.paragraphs_type.drawer
+    - field.field.paragraph.drawers.field_component_title
+    - field.field.paragraph.drawers.field_contact
+    - field.field.paragraph.drawers.field_drawer
+    - field.field.paragraph.drawers.field_short_title
+    - paragraphs.paragraphs_type.drawers
   module:
     - paragraphs
-_core:
-  default_config_hash: ynct42lvVma9MJGYNBBYhzzaAlIWszHjzKYBB5PSR30
-id: paragraph.drawer.default
+id: paragraph.drawers.default
 targetEntityType: paragraph
-bundle: drawer
+bundle: drawers
 mode: default
 content:
-  field_short_description:
-    weight: 2
+  field_component_title:
+    weight: 1
     type: string_textfield
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_text_blocks:
+  field_contact:
     weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_drawer:
+    weight: 4
     type: entity_reference_paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
+      title: Drawer
+      title_plural: Drawers
       edit_mode: open
       add_mode: button
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
     region: content
-  field_title:
-    weight: 1
+  field_short_title:
+    weight: 2
     type: string_textfield
     settings:
       size: 60
