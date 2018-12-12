@@ -12,9 +12,9 @@
       "email": "james.fisk@boston.gov"
     },
     {
-      "name": "Keith Donaldson",
+      "name": "Zachary Weishar",
       "role": "Drupal developer",
-      "email": "keith.donaldson@boston.gov"
+      "email": "zachary.weishar@boston.gov"
     },
     {
       "name": "David Upton",
@@ -45,9 +45,7 @@
     "drupal/better_exposed_filters": "^3.0@alpha",
     "drupal/bg_image_formatter": "^1.1",
     "drupal/chosen": "^2.5",
-    "drupal/coder": "8.2.12",
     "drupal/config_filter": "^1.0",
-    "drupal/config_override": "^1.0",
     "drupal/config_readonly": "^1.0",
     "drupal/config_split": "^1.3",
     "drupal/config_update": "1.x-dev",
@@ -86,7 +84,6 @@
     "drupal/module_filter": "^3.1",
     "drupal/office_hours": "^1.1",
     "drupal/page_manager": "^4.0",
-    "drupal/panels": "^4.3",
     "drupal/paragraphs": "^1.3",
     "drupal/paragraphs_browser": "1.x-dev",
     "drupal/paragraphs_edit": "^2.0@alpha",
@@ -118,7 +115,6 @@
     "drupal/views_bulk_operations": "^2.3",
     "drupal/votingapi": "^3.0",
     "drupal/workbench": "^1.0",
-    "drupal/workbench_moderation": "^1.3",
     "drupal/workflow": "^1.1_",
     "drupal/xmlsitemap": "^1.0",
     "drush/drush": "^9.0",
@@ -126,33 +122,31 @@
     "oomphinc/composer-installers-extender": "^1.1",
     "phing/phing": "2.*",
     "sainsburys/guzzle-oauth2-plugin": "^3.0",
-    "squizlabs/php_codesniffer": "2.*",
     "vlucas/phpdotenv": "^2.4",
-    "webflo/drupal-core-require-dev": "^8.6",
     "webflo/drupal-finder": "^1.0.0",
     "webmozart/path-util": "^2.3"
   },
 
   "require-dev": {
-    "ajgl/breakpoint-twig-extension": "^0.3.0",
     "behat/behat": "^3.4",
     "behat/mink-extension": "^2.3",
     "behat/mink-goutte-driver": "^1.2",
     "behat/mink-selenium2-driver": "^1.3",
     "behat/mink": "^1.7",
+    "drupal/coder": "8.2.12",
     "drupal/config_devel": "^1.2",
-    "drupal/config_installer": "^1.8",
     "drupal/devel": "^1.2",
     "drupal/drupal-extension": "^3.4",
     "drupal/masquerade": "^2.0",
     "drupal/migrate_plus": "^4.0",
+    "drupal/migrate_source_csv": "^2.2",
     "drupal/migrate_tools": "^4.0",
     "drupal/migrate_upgrade": "^3.0",
     "drupal/stage_file_proxy": "^1.0",
     "drupal/twig_xdebug": "1.x-dev",
     "jarnaiz/behat-junit-formatter": "^1.3",
     "phpunit/phpunit": "*",
-    "drupal/migrate_source_csv": "^2.2",
+    "squizlabs/php_codesniffer": "2.*",
     "webflo/drupal-core-require-dev": "^8.6"
   },
   "conflict": {
@@ -178,7 +172,7 @@
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
     "patches": {
-       "drupal/field_group": {
+      "drupal/field_group": {
         "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
         "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
       },
