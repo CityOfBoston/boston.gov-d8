@@ -17,6 +17,6 @@ $settings['file_scan_ignore_directories'] = [
 
 $settings['entity_update_batch_size'] = 50;
 
-if (file_exists(DRUPAL_ROOT . '/default/settings/settings.local.php')) {
-  include DRUPAL_ROOT . '/default/settings/settings.local.php';
+if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/settings.local.php')) {
+  include DRUPAL_ROOT . '/' . $site_path . '/settings/settings.local.php';
 }
