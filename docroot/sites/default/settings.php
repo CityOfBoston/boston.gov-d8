@@ -20,6 +20,3 @@ $settings['entity_update_batch_size'] = 50;
 if (file_exists(DRUPAL_ROOT . '/default/settings/settings.local.php')) {
   include DRUPAL_ROOT . '/default/settings/settings.local.php';
 }
-
-// $settings['install_profile'] = 'bos_profile';
-// $config_directories['sync'] = '/app/config/default';
