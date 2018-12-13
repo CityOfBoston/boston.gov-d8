@@ -380,9 +380,9 @@
         <echo message="/*${line.separator}" append="true"
               file="${local.settings.file}"/>
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
-              message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+              message=" * Adds a directive to settings file to include contents of settings file in repo ${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
+        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */"
               append="true" file="${local.settings.file}"/>
         <echo message='if (file_exists(DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
               append="true" file="${local.settings.file}"/>
