@@ -69,7 +69,7 @@
         <echo message="Import configuration from sync folder: '${project.sync}' into database" />
         <exec description="Imports the config files in the sync folder at ${project.sync}."
               dir="${docroot}"
-              command="${drush.cmd} cim sync -y"
+              command="${drush.cmd} cim sync -y --quiet"
               logoutput="true" checkreturn="true"/>
     </target>
     <target name="update:config:export"
