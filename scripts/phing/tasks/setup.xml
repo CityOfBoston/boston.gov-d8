@@ -374,15 +374,13 @@
     </if>
 
     <!-- Second, add in the require to the private repo file if exists. -->
+    <echo message="/*${line.separator} * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}"
+          append="true" file="${local.settings.file}"/>
     <if>
       <available file="${private.docroot.settings}"/>
       <then>
-        <echo message="/*${line.separator}" append="true"
-              file="${local.settings.file}"/>
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
-              message=" * Adds a directive to settings file to include contents of settings file in repo ${line.separator}"
-              append="true" file="${local.settings.file}"/>
-        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */"
+              message="${line.separator}// Adds a directive to include contents of settings file in repo. ${line.separator}"
               append="true" file="${local.settings.file}"/>
         <echo message='if (file_exists(DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
               append="true" file="${local.settings.file}"/>
@@ -390,21 +388,15 @@
               append="true" file="${local.settings.file}"/>
         <echo message="}${line.separator}${line.separator}"
               append="true" file="${local.settings.file}"/>
-        <echo message="/* End of additions. */${line.separator}"
-              append="true" file="${local.settings.file}"/>
       </then>
     </if>
 
     <!-- Third, add in config sync directory from yml. -->
-    <echo message="/*${line.separator}" append="true"
-          file="${local.settings.file}"/>
-    <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
-          append="true" file="${local.settings.file}"/>
-    <echo message=" */${line.separator}" append="true"
-          file="${local.settings.file}"/>
     <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
           append="true" file="${local.settings.file}"/>
     <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
+          append="true" file="${local.settings.file}"/>
+    <echo message="/* End of additions. */${line.separator}"
           append="true" file="${local.settings.file}"/>
 
     <!-- Fourth copy default.service.yml to service.yml if not present. -->
