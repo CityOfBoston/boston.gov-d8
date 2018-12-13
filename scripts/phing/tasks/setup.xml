@@ -353,142 +353,69 @@
   <target name="setup:drupal:local_settings_php"
           description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
+    <!-- Resource names -->
     <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
+    <resolvepath propertyName="travis.settings.file" path="${docroot}/${travis.settings.file.rel}"/>
+    <resolvepath propertyName="acquia.settings.file" path="${docroot}/${acquia.settings.file.rel}"/>
     <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
     <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
+    <property name="private.docroot.settings" value="${docroot}/${git.private_repo.settings_file.rel}"/>
 
-    <!-- Firstly delete the local settings file -->
-    <echo message="Delete the ${local.settings.file} file (if exists)."/>
-    <delete file="${local.settings.file}" failonerror="false" quiet="true" verbose="false"/>
+    <echo message="Customize settings."/>
 
-    <!-- Now recreate the settings file -->
-    <echo message="Recreate the ${local.settings.file} file with build settings."/>
+    <!-- First if there is no settings.local.php file, then rename the default. -->
     <if>
-      <not>
-        <available file="${local.settings.file}"/>
-      </not>
+      <not><available file="${local.settings.file}"/></not>
       <then>
-
         <copy file="${docroot}/sites/${drupal.multisite.name}/settings/default.local.settings.php"
               tofile="${local.settings.file}" haltonerror="false" overwrite="false"
               verbose="false" />
-        <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
-              tofile="${local.services.file}" haltonerror="false" overwrite="false"
-              verbose="false"/>
-
-        <echo description="Adds local settings to settings.local.php file."
-              message="${line.separator}" append="true"
-              file="${local.settings.file}"/>
-        <echo message="/*${line.separator}" append="true"
-              file="${local.settings.file}"/>
-        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
-              append="true" file="${local.settings.file}"/>
-        <echo message=" */${line.separator}" append="true"
-              file="${local.settings.file}"/>
-        <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
-              append="true" file="${local.settings.file}"/>
-        <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
-              append="true" file="${local.settings.file}"/>
-        <if>
-          <equals arg1="${acquia.site_environment}" arg2="dev"/>
-          <then>
-            <echo message="error_reporting(E_ALL);${line.separator}"
-                  append="true" file="${local.settings.file}"/>
-            <echo message="ini_set('display_errors', TRUE);${line.separator}"
-                  append="true" file="${local.settings.file}"/>
-            <echo message="ini_set('display_startup_errors', TRUE);${line.separator}"
-                  append="true" file="${local.settings.file}"/>
-          </then>
-        </if>
-      </then>
-      <else>
-        <echo message="The local.settings.php already exists, did not update with local settings."/>
-      </else>
-    </if>
-
-    <if>
-      <not>
-        <available file="${settings.file}"/>
-      </not>
-      <then>
-        <echo message="&lt;?php${line.separator}" append="true"
-              file="${settings.file}"/>
       </then>
     </if>
 
-    <!-- Remove unwanted and confusing template config files. -->
-    <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
-    <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
-    <delete file="${docroot}/sites/development.services.yml" quiet="true" verbose="false"
-            description="Redundant file as we have this in the sites/default folder."/>
-
-    <!-- Append code to (fresh) settings.php file -->
-    <echo description="Adds default settings to settings.php and directve to include the settings.local.php file."
-          message="${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="/**${line.separator} * @file${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator} */${line.separator}${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="$settings['update_free_access'] = FALSE;${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="$settings['container_yamls'][] = $app_root . '/' . $site_path . '/services.yml';${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="$settings['file_scan_ignore_directories'] = [${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'node_modules',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'bower_components',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="];${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="$settings['entity_update_batch_size'] = 50;${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="$databases['default']['default'] = [${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'driver' => 'mysql',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'database' => '${lando.db.database}',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'username' => '${lando.db.username}',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'password' => '${lando.db.password}',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'host' => '${lando.db.host}',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="  'port' => '${lando.db.port}',${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="];${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message='if (file_exists(DRUPAL_ROOT . "/${local.settings.file.rel}")) {${line.separator}'
-          append="true" file="${settings.file}"/>
-    <echo message='  include DRUPAL_ROOT . "/${local.settings.file.rel}";${line.separator}'
-          append="true" file="${settings.file}"/>
-    <echo message="}${line.separator}${line.separator}"
-          append="true" file="${settings.file}"/>
-    <echo message="/* End of additions. */${line.separator}"
-          append="true" file="${settings.file}"/>
-
-    <!-- Add in directive for private settings file if needed -->
-    <property description="Location of PRIVATE settings file for this Drupal intallation."
-              name="private.docroot.settings"
-              value="${docroot}/${git.private_repo.settings_file.rel}"/>
+    <!-- Second, add in the require to the private repo file if exists. -->
     <if>
       <available file="${private.docroot.settings}"/>
       <then>
+        <echo message="/*${line.separator}" append="true"
+              file="${local.settings.file}"/>
         <echo description="Adds a directive to settings file to include contents of settings file in repo."
               message="${line.separator}/* Adds a directive to settings file to include contents of settings file in repo */${line.separator}"
+              append="true" file="${local.settings.file}"/>
+        <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
               append="true" file="${local.settings.file}"/>
         <echo message='if (file_exists(DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}")) {${line.separator}'
               append="true" file="${local.settings.file}"/>
         <echo message='  include DRUPAL_ROOT . "/${git.private_repo.settings_file.rel}";${line.separator}'
               append="true" file="${local.settings.file}"/>
-        <echo message="}${line.separator}${line.separator}" append="true"
-              file="${local.settings.file}"/>
+        <echo message="}${line.separator}${line.separator}"
+              append="true" file="${local.settings.file}"/>
         <echo message="/* End of additions. */${line.separator}"
               append="true" file="${local.settings.file}"/>
       </then>
     </if>
+
+    <!-- Third, add in config sync directory from yml. -->
+    <echo message="/*${line.separator}" append="true"
+          file="${local.settings.file}"/>
+    <echo message=" * Content added by Phing &lt;setup:drupal:local_settings_php&gt;.${line.separator}"
+          append="true" file="${local.settings.file}"/>
+    <echo message=" */${line.separator}" append="true"
+          file="${local.settings.file}"/>
+    <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
+          append="true" file="${local.settings.file}"/>
+    <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
+          append="true" file="${local.settings.file}"/>
+
+    <!-- Fourth copy default.service.yml to service.yml if not present. -->
+    <copy file="${docroot}/sites/${drupal.multisite.name}/default.services.yml"
+          tofile="${local.services.file}" haltonerror="false" overwrite="false"
+          verbose="false"/>
+
+    <!-- Remove unwanted and confusing template config files. -->
+    <delete file="${docroot}/sites/example.settings.local.php" quiet="true" verbose="false"/>
+    <delete file="${docroot}/sites/example.sites.php" quiet="true" verbose="false"/>
+
     <echo message="Success - done." level="info"/>
 
   </target>

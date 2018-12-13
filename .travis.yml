@@ -11,7 +11,6 @@ branches:
     - develop
     - master
     - travis-deploy-2
-    - acquia-deployment
 
 php:
   - 7.1
@@ -69,5 +68,4 @@ script:
 after_success:
   - scripts/deploy/travis-deploy.sh develop
   - scripts/deploy/travis-deploy.sh travis-deploy-2
-#  - scripts/deploy/travis-deploy.sh master master-build
-#  - scripts/deploy/travis-deploy.sh acquia-deployment acquia-build
+  - scripts/deploy/travis-deploy.sh master master-build
