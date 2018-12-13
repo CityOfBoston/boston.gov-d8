@@ -15,14 +15,23 @@
 
   <!-- Define the build task for normal developerreset_config local builds. -->
   <target name="setup:docker:drupal-local"
-          description="Creates a Drupal environment in Docker Containers for local development."
-          depends=" setup:drupal:download-modules,
-                    setup:drupal:clone_private_repo,
-                    setup:drupal:set_dev_config,
-                    setup:drupal:site-install,
-                    setup:drush:local-config,
-                    update:database:update,
-                    setup:drupal:reset_config">
+          description="Creates a Drupal environment in Docker Containers for local development.">
+
+    <!-- Map build-specifc properties. -->
+    <property name="build.config.site-uuid" value="${build.local.config.site-uuid}"/>
+    <property name="build.config.sync" value="${build.local.config.sync}"/>
+    <property name="build.config.develop" value="${build.local.config.develop}"/>
+    <property name="build.config.prod" value="${build.local.config.prod}"/>
+    <property name="build.database.source" value="${build.local.database.source}"/>
+    <property name="build.database.drush-alias" value="${build.local.database.drush-alias}"/>
+
+    <!-- Build. -->
+    <phingcall target="setup:drupal:download-modules" />
+    <phingcall target="setup:drupal:clone_private_repo"/>
+    <phingcall target="setup:drupal:site-install"/>
+    <phingcall target="setup:drush:local-config"/>
+    <phingcall target="update:database:update"/>
+
     <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
     <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password `${drupal.account.password}`.\033[0m'" logoutput="true"/>
     <echo
@@ -32,28 +41,46 @@
 
   <!-- Define the build task used by travis. -->
   <target name="setup:docker:drupal-travis"
-          description="Creates a drupal environment in docker (command run by travis)."
-          depends=" setup:drupal:download-modules,
-                    setup:drupal:clone_private_repo,
-                    setup:drupal:set_dev_config,
-                    setup:drupal:site-install,
-                    setup:drush:local-config,
-                    update:database:update
-                    ">
-    <!--setup:drupal:reset_config-->
-    <!-- Be sure that we produce correct exit codes for travis (0=success) -->
+          description="Creates a drupal environment in docker (command run by travis).">
+
+    <!-- Map build-specifc properties. -->
+    <property name="build.config.site-uuid" value="${build.travis.config.site-uuid}"/>
+    <property name="build.config.sync" value="${build.travis.config.sync}"/>
+    <property name="build.config.develop" value="${build.travis.config.develop}"/>
+    <property name="build.config.prod" value="${build.travis.config.prod}"/>
+    <property name="build.database.source" value="${build.travis.database.source}"/>
+    <property name="build.database.drush-alias" value="${build.travis.database.drush-alias}"/>
+    <!-- Builds using the deploy branch of the private-repo. -->
+    <property name="git.private_repo.branch" value="${git.private_repo.deploy-branch}"/>
+
+    <!-- Build. -->
+    <phingcall target="setup:drupal:download-modules" />
+    <phingcall target="setup:drupal:clone_private_repo"/>
+    <phingcall target="setup:drupal:site-install"/>
+    <phingcall target="setup:drush:local-config"/>
+    <phingcall target="update:database:update"/>
+
   </target>
 
   <!-- Define the build task used by terraform-->
   <target name="setup:docker:drupal-terraform"
           description="Creates a drupal environment in docker (command run by terraform).">
-    <exec command="echo 'Build Mode: ${project.build_db_from}'" logoutput="true"/>
+
+    <!-- Map build-specifc properties. -->
+    <property name="build.config.site-uuid" value="${build.local.config.site-uuid}"/>
+    <property name="build.config.sync" value="${build.local.config.sync}"/>
+    <property name="build.config.develop" value="${build.local.config.develop}"/>
+    <property name="build.config.prod" value="${build.local.config.prod}"/>
+    <property name="build.database.source" value="${build.terraform.database.source}"/>
+    <property name="build.database.drush-alias" value="${build.local.database.drush-alias}"/>
+
+    <exec command="echo 'Build Mode: ${build.database.source}'" logoutput="true"/>
     <!-- Work out what sort of database handling is to be done. -->
     <if>
-      <not><isset property="project.build_db_from"/></not>
+      <not><isset property="build.database.source"/></not>
       <then>
         <property description="will be one of 'sync', 'build' or 'dump'."
-          name="project.build_db_from" value="build"/>
+          name="build.database.source" value="build"/>
       </then>
     </if>
 
@@ -84,15 +111,15 @@
     </if>
 
     <if>
-      <!-- Only run the build process if ${project.build_db_from} is not "none" -->
-      <not><equals arg1="${project.build_db_from}" arg2="none" casesensitive="true"/></not>
+      <!-- Only run the build process if ${build.database.source} is not "none" -->
+      <not><equals arg1="${build.database.source}" arg2="none" casesensitive="true"/></not>
       <then>
 
         <!-- If in auto or recovery mode, then try to fetch a previous database dump -->
         <if>
           <or>
-            <equals arg1="${project.build_db_from}" arg2="auto" casesensitive="true"/>
-            <equals arg1="${project.build_db_from}" arg2="restore" casesensitive="true"/>
+            <equals arg1="${build.database.source}" arg2="auto" casesensitive="true"/>
+            <equals arg1="${build.database.source}" arg2="restore" casesensitive="true"/>
           </or>
           <then>
             <!-- Set default dump location if necessary. -->
@@ -115,12 +142,12 @@
 
             <!-- Switch auto mode -->
             <if>
-              <equals arg1="${project.build_db_from}" arg2="auto" casesensitive="true"/>
+              <equals arg1="${build.database.source}" arg2="auto" casesensitive="true"/>
               <then>
                 <if>
                   <isset property="dbdump.found"/>
-                  <then><property name="${project.build_db_from}" value="restore"/></then>
-                  <else><property name="${project.build_db_from}" value="sync"/></else>
+                  <then><property name="${build.database.source}" value="restore"/></then>
+                  <else><property name="${build.database.source}" value="sync"/></else>
                 </if>
               </then>
             </if>
@@ -128,7 +155,7 @@
         </if>
 
         <!-- Build, Restore or sync the database. -->
-        <switch value="${project.build_db_from}" caseinsensitive="true">
+        <switch value="${build.database.source}" caseinsensitive="true">
 
           <!-- Restore database. -->
           <case value="restore">
@@ -215,12 +242,6 @@
 
   </target>
 
-  <target name="setup:prepare:travis" description="Set travis specific properties etc">
-    <property description="Switch to the deploy branch in the private repo"
-              name="git.private_repo.branch"
-              value="${git.private_repo.deploy-branch}"/>
-  </target>
-
   <!-- Define the Drupal setup task -->
   <target name="setup:drupal:download-modules"
           description="Uses Composer to install drupal in the container. (logs to /app/setup/composer.log)">
@@ -279,6 +300,7 @@
       <available file="${docroot}/core/lib/Drupal.php"/>
       <then>
 
+        <!-- Send some messages to console. -->
         <if>
           <not>
             <isset property="no-settings"/>
@@ -286,7 +308,7 @@
           <then>
             <echo message="Preparing to setup the Drupal database."/>
             <phingcall target="setup:drupal:local_settings_php"
-                  description="Recreate the local.settings.php file from default and load DB and any other settings."/>
+                  description="Update and install all drupal settings.php files."/>
             <exec command="echo '\033[1;33m\nBuild is now using settings file ${local.settings.file}\033[0m'" logoutput="true"
                   passthru="true"/>
             <exec command="echo '\033[1;33m... with `${lando.db.database}` database (${lando.db.type}) at `${lando.db.host}:${lando.db.port}` in container `${lando.db.container}`\033[0m'\n" logoutput="true"
@@ -300,31 +322,10 @@
         <echo message="Install the Drupal 8 database."/>
         <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/drush_site_install.log for output.\033[0m'" logoutput="true"/>
         <resolvepath propertyName="install_config_abs"
-                     file="${docroot}/${project.config.sync}"/>
-        <if>
-          <available filepath="${docroot}/${project.config.sync}"
-                     file="system.site.yml"/>
-          <then>
-            <property name="si_install_profile"
-                      value="${project.profile.install_profile}"
-                      description="Directs si to use the config_installer profile."/>
-            <property name="si_flag_install"
-                      value="config_installer_sync_configure_form.sync_directory=${install_config_abs}"
-                      description="Sets the location of a previous installation Drupal configs to import to this installation."/>
-            <property name="si_site_profile" value="${project.profile.name}"
-                      description="Defines the profile to be applied after the import is performed."/>
-            <echo level="info"
-                  message="Build is importing configs from ${install_config_abs} during install (takes a while)."/>
-          </then>
-          <else>
-            <property name="si_install_profile"
-                      value="${project.profile.name}"/>
-            <property name="si_site_profile" value="${project.profile.name}"/>
-            <echo message="${install_config.abs}/system.site.yml does not exist, normal profile-based install performed."/>
-          </else>
-        </if>
+                     file="${docroot}/${build.config.sync}"/>
 
-        <property name="si.command" value="${drush.cmd} si ${si_install_profile} ${si_flag_install} --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database} --site-name=${lando.name} --site-mail=${drupal.account.mail} --account-name=${drupal.account.name} --account-pass=${drupal.account.password} --account-mail=${drupal.account.mail} --sites-subdir=${drupal.multisite.name} -vvv -y"/>
+        <!-- Run the drush si command and check output. -->
+        <property name="si.command" value="${drush.cmd} si ${project.profile.name} --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database} --site-name=${lando.name} --site-mail=${drupal.account.mail} --account-name=${drupal.account.name} --account-pass=${drupal.account.password} --account-mail=${drupal.account.mail} --sites-subdir=${drupal.multisite.name} -vvv -y"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
               message="==== Installing Drupal ====${line.separator}"  append="true"/>
         <echo file="${project.basedir}/setup/drush_site_install.log"
@@ -332,7 +333,7 @@
         <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
               dir="${docroot}"
               command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
-              logoutput="true" returnProperty="install.output"/>
+              logoutput="true" returnProperty="install.output" checkreturn="true"/>
         <if><not><equals arg1="${install.output}" arg2="0" /></not>
           <then>
             <exec command="cat ${project.basedir}/setup/drush_site_install.log"
@@ -340,7 +341,42 @@
             <fail message="Fail - Site install failure"/>
           </then>
         </if>
+
+        <!-- If the site UUID is specified, and a system.site.yml exits then check they match here and fix. -->
+        <if>
+          <and>
+            <isset property="build.config.site_uuid"/>
+            <available file="${project.sync}/system.site.yml"/>
+          </and>
+          <then>
+            <exec command='drush cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*"' outputProperty="db.uuid"/>
+            <exec command='cat ${project.sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*"' outputProperty="yml.uuid"/>
+            <propertyregex property="db.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${db.uuid}" override="true"/>
+            <propertyregex property="yml.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${yml.uuid}" override="true"/>
+            <if>
+              <not><equals arg1="${db.uuid}" arg2="${yml.uuid}"/></not>
+              <then>
+                <echo message="Setting uuid in database to match uuid in config files."/>
+                <exec command='${drush.cmd} cset "system.site" uuid "${yml.uuid}" -y'
+                      checkreturn="true"/>
+              </then>
+            </if>
+          </then>
+        </if>
+
+        <!-- If sync'ing DB then do so now -->
+        <if><equals arg1="${build.database.source}" arg2="sync"/><then>
+          <phingcall target="update:database:sync" description="Sync the database"/>
+        </then></if>
+
+        <!-- Import the configs now. -->
+        <phingcall target="update:config:import" description="Import yml configs into DB"/>
+
+        <!-- Update the database. -->
+        <phingcall target="update:database:update" description="Update the database (run hook updates)"/>
+
       </then>
+
       <else>
         <echo message="Drupal core is not found." level="error"/>
         <fail message="Setup is incomplete." status="1"/>
@@ -351,7 +387,7 @@
 
   <!-- Define a task to copy a new local.settings.php file and append initial settings. -->
   <target name="setup:drupal:local_settings_php"
-          description="Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
+          description="! Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
     <!-- Resource names -->
     <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
@@ -392,7 +428,7 @@
     </if>
 
     <!-- Third, add in config sync directory from yml. -->
-    <echo message="$config_directories['sync'] = '${project.config.sync}';${line.separator}"
+    <echo message="$config_directories['sync'] = '${build.config.sync}';${line.separator}"
           append="true" file="${local.settings.file}"/>
     <echo message="$settings['install_profile'] = '${project.profile.name}';${line.separator}"
           append="true" file="${local.settings.file}"/>
@@ -496,6 +532,7 @@
   <target name="setup:drush:local-config"
           description="Creates a drush.yml file to default drush commands to the local site.">
     <echo message="Update the drush config with the container url"/>
+    <delete file="${repo.root}/drush/drush.yml" failonerror="false" quiet="true"/>
     <echo
             message="# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml${line.separator}"
             append="true" file="${repo.root}/drush/drush.yml"/>
@@ -509,9 +546,9 @@
   </target>
 
   <target name="setup:cleanup"
-          description="Final cleanup after the install process.">
+          description="! Final cleanup after the install process.">
     <resolvepath propertyName="install_config_abs"
-                 file="${docroot}/${project.config.sync}"/>
+                 file="${docroot}/${build.config.sync}"/>
     <delete description="Removes the config files used during installation."
             dir="${install_config_abs}" failonerror="true"
             includeemptydirs="true"/>
@@ -532,8 +569,8 @@
       removed.
    -->
   <target name="setup:drupal:set_prod_config"
-          description="Disables the develop configs from non-dev environments.">
-    <resolvepath propertyName="install_config_abs" file="${project.config.sync}"
+          description="! Disables the develop configs from non-dev environments.">
+    <resolvepath propertyName="install_config_abs" file="${build.config.sync}"
                  dir="${docroot}"/>
     <echo message="Disabling development-only config settings." level="info"/>
     <exec
@@ -571,8 +608,8 @@
       removed.
    -->
   <target name="setup:drupal:set_dev_config"
-          description="Disables the production configs from non-prod environments.">
-    <resolvepath propertyName="install_config_abs" file="${project.config.sync}"
+          description="! Disables the production configs from non-prod environments.">
+    <resolvepath propertyName="install_config_abs" file="${build.config.sync}"
                  dir="${docroot}"/>
     <echo message="Disabling production-only config settings." level="info"/>
     <exec
@@ -600,8 +637,8 @@
   </target>
 
   <target name="setup:drupal:reset_config"
-          description="Re-enables the configs from both environments.">
-    <resolvepath propertyName="install_config_abs" file="${project.config.sync}"
+          description="! Re-enables the configs from both environments.">
+    <resolvepath propertyName="install_config_abs" file="${build.config.sync}"
                  dir="${docroot}"/>
     <echo message="Enabling config_split settings." level="info"/>
     <if>
@@ -658,7 +695,7 @@
         <echo message="Imports prod config."/>
         <property name="cfg.php"
                   value="\Drupal::service(&quot;config.factory&quot;)->getEditable(&quot;config_split.config_split.production&quot;)->set(&quot;status&quot;, false)->save();"/>
-        <resolvepath propertyName="cfg.prod" file="${project.config.prod}"
+        <resolvepath propertyName="cfg.prod" file="${build.config.prod}"
                      dir="${docroot}"/>
         <exec description="Use drupal console to re-import the production yml config_split file."
               dir="${docroot}"

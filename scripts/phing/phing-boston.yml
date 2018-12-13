@@ -1,44 +1,46 @@
 project:
   profile:
     name: 'bos_profile'
-    contrib: false
-    install_profile: 'config_installer'
   themes:
     - bos_theme
-  config:
-    # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
-    # aquia require ./config/default:
-    #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
-    sync: "../config/default"
-    develop: "../config/develop"
-    prod: "../config/prod"
 
-  # Set this to 'initialize' to start a fresh install.
-  # Otherwise set it to sync to sync from the stg environment.
-  build_db_from: sync
-  # The acquia_subname value is the machine name of your subscription on Acquia
-  # Cloud. E.g., if your dev env URL on Acquia Cloud is
-  # http://psprojectdev.prod.acquia-sites.com/ then your acquia_subname is
-  # "psproject". This value is used to correctly configure settings in
-  # settings.php includes. This will also determine the the directory name
-  # of the new repository.
-  acquia_subname: 'spyglass'
-  # Used for enforcing correct git commit msg syntax.
-  prefix: 'SPY'
-  human_name: 'Spyglass'
-  # This is the default makefile that will be used to build dependencies.
-  # It should live in the project root.
-  make_file: 'make.yml'
+build:
+  local:
+    config:
+      # Enter the UUID from system.site.yml if the config files in the sync folder
+      # specified do not match the UUID in the DB, or we are installing a new DB.
+      site-uuid: "452fac34-8a25-4346-b005-f85d26dd3cf9"
+      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia require ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+      develop: "../config/develop"
+      prod: "../config/prod"
 
-  # These configurations map to AH_XXXX environment variables.
-  # refer: https://docs.acquia.com/acquia-cloud/develop/env-variable/
-  acquia:
-    # Un-comment is this is a production site
-    # production: 1
-    # Un-comment is this is a non-production site
-    non_production: 1
-    # set one of dev, test or prod based on host
-    site_environment: dev
+    # Set this to 'initialize' to start a fresh install.
+    # Otherwise set it to sync to sync from the drush-alias environment.
+    database:
+      source: sync
+      drush-alias: "@bostond8.test"
+
+  travis:
+    config:
+      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia require ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+      develop: "../config/develop"
+      prod: "../config/prod"
+
+    # Set this to 'initialize' to start a fresh install.
+    # Otherwise set it to sync to sync from the drush-alias environment.
+    database:
+      source: sync
+      drush-alias: "@bostond8.test"
+
+  terraform:
+    database:
+      source: sync
 
 # Drupal Account Credentials. These are used for installing Drupal.
 drupal:

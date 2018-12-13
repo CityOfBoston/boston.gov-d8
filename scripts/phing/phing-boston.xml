@@ -57,6 +57,8 @@
     <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}:${lando.proxyHttpsPort}" override="true"/>
     <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
 
+    <property name="project.sync" value="${docroot}/${build.local.config.sync}" override="true"/>
+
 <!-- set path for local.settings.php file. -->
     <property name="local.settings.file.rel" value="sites/${drupal.multisite.name}/settings/settings.local.php" />
     <property name="settings.file.rel" value="sites/${drupal.multisite.name}/settings.php" />

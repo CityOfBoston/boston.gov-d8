@@ -16,7 +16,7 @@
             description="Build the site locally."
             depends="setup:build:all">
         <if>
-            <equals arg1="${project.build_db_from}" arg2="initialize"/>
+            <equals arg1="${build.local.database.source}" arg2="initialize"/>
             <then>
                 <phingcall target="setup:drupal:install"/>
             </then>
