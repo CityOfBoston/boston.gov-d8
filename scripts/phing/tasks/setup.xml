@@ -345,7 +345,7 @@
         <!-- If the site UUID is specified, and a system.site.yml exits then check they match here and fix. -->
         <if>
           <and>
-            <isset property="build.config.site_uuid"/>
+            <isset property="build.config.site-uuid"/>
             <available file="${project.sync}/system.site.yml"/>
           </and>
           <then>
@@ -362,6 +362,9 @@
               </then>
             </if>
           </then>
+          <else>
+            <echo message="No ${project.sync}/system.site.yml or ${build.config.site-uuid}"/>
+          </else>
         </if>
 
         <!-- If sync'ing DB then do so now -->
