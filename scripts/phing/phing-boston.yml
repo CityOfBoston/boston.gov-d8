@@ -17,9 +17,9 @@ build:
       develop: "../config/develop"
       prod: "../config/prod"
 
-    # Set this to 'initialize' to start a fresh install.
-    # Otherwise set it to sync to sync from the drush-alias environment.
     database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to sync to sync from the drush-alias environment.
       source: sync
       drush-alias: "@bostond8.dev"
 
@@ -32,14 +32,15 @@ build:
       develop: "../config/develop"
       prod: "../config/prod"
 
-    # Set this to 'initialize' to start a fresh install.
-    # Otherwise set it to sync to sync from the drush-alias environment.
     database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to sync to sync from the drush-alias environment.
       source: initialize
       drush-alias: "@bostond8.test"
 
   terraform:
     database:
+      # none, auto, build, sync or restore
       source: sync
 
 # Drupal Account Credentials. These are used for installing Drupal.

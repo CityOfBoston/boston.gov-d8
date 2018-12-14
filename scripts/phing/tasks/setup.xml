@@ -343,6 +343,11 @@
           </then>
         </if>
 
+        <!-- If sync'ing DB then do so now -->
+        <if><equals arg1="${build.database.source}" arg2="sync"/><then>
+          <phingcall target="update:database:sync" description="Sync the database"/>
+        </then></if>
+
         <!-- If the site UUID is specified, and a system.site.yml exits then check they match here and fix. -->
         <if>
           <and>
@@ -367,11 +372,6 @@
             <echo message="No ${project.sync}/system.site.yml or ${build.config.site-uuid}"/>
           </else>
         </if>
-
-        <!-- If sync'ing DB then do so now -->
-        <if><equals arg1="${build.database.source}" arg2="sync"/><then>
-          <phingcall target="update:database:sync" description="Sync the database"/>
-        </then></if>
 
         <!-- Import the configs now. -->
         <phingcall target="update:config:import" description="Import yml configs into DB"/>
@@ -496,12 +496,17 @@
         <if>
           <available file="${git.private_repo.local_dir}/.git/config"/>
           <then>
+            <!-- TODO: Use includes and excludes files to filter rsync and simplify all this ...-->
             <exec description="Ensure the master branch is pulled and up to date."
                   command="git fetch >> ${project.basedir}/setup/drush_site_install.log"
                   dir="${git.private_repo.local_dir}"
                   logoutput="true" passthru="true"/>
             <delete description="Remove .git so folder is no longer a repo (and doesn't get copied)."
                     dir="${git.private_repo.local_dir}/.git"
+                    quiet="true" verbose="false" failonerror="false"
+                    includeemptydirs="true"/>
+            <delete description="Remove .gitignore on root (so doesn't get copied)."
+                    file="${git.private_repo.local_dir}/.gitignore"
                     quiet="true" verbose="false" failonerror="false"
                     includeemptydirs="true"/>
             <exec description="Rename any ..gitignore files to .gitignore so the contents arent saved in main repo"
