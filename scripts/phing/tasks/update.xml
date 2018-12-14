@@ -70,14 +70,14 @@
         <exec description="Imports the config files in the sync folder at ${project.sync}."
               dir="${docroot}"
               command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log "
-              logoutput="true" level="warning" outputProperty="cim.result"/>
-        <echo message="Result: ${cim.result}"/>
-        <if><not><equals arg1="${cim.result}" arg2="0" trim="true"/></not><then>
-            <exec description="Redo Import, sometimes dependencies not resolved first time...."
-                  dir="${docroot}"
-                  command="${drush.cmd} cim sync -y >> ${project.basedir}/setup/config-import.log "
-                  logoutput="true" checkreturn="true" level="warning"/>
-        </then></if>
+              logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
+        <!--<echo message="Result: ${cim.result}"/>-->
+        <!--<if><not><equals arg1="${cim.result}" arg2="0" trim="true"/></not><then>-->
+            <!--<exec description="Redo Import, sometimes dependencies not resolved first time...."-->
+                  <!--dir="${docroot}"-->
+                  <!--command="${drush.cmd} cim sync -y >> ${project.basedir}/setup/config-import.log "-->
+                  <!--logoutput="true" checkreturn="true" level="warning"/>-->
+        <!--</then></if>-->
     </target>
     <target name="update:config:export"
             description="Export configurations in DB to files in sync location.">
