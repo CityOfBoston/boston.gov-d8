@@ -170,7 +170,7 @@
       </else>
     </if>
     <echo message="Import config files into DB on deploy target." level="info"/>
-    <exec dir="${docroot}" passthru="true"
+    <exec dir="${docroot}" passthru="true" checkreturn="true"
           description="Import the configurations."
           command="${travis.drush} ${drush.alias} cim -y"/>
     <echo message="Update DB with un-executed hook_updates on deploy target." level="info"/>
