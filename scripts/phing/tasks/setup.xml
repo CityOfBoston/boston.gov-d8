@@ -255,7 +255,7 @@
       <case value="prod">
         <echo message="Creates PRODUCTION build"/>
         <property name="build.type.long" value="production"/>
-        <property name="composer.mode" value="--no-dev"/>
+        <property name="composer.mode" value="--dev"/>
       </case>
       <default>
         <echo message="Creates DEVELOPMENT build"/>
