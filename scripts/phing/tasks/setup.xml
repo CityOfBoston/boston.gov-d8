@@ -383,6 +383,7 @@
         <switch value="${build.type}">
           <case value="dev"><property name="config_split" value="development"/></case>
           <case value="prod"><property name="config_split" value="production"/></case>
+          <default><property name="config_split" value="development"/></default>
         </switch>
         <exec description="Imports the appropriate config_split files."
               dir="${docroot}"
