@@ -32,6 +32,8 @@
     <phingcall target="setup:drupal:site-install"/>
     <phingcall target="setup:drush:local-config"/>
 
+
+
     <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
     <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password `${drupal.account.password}`.\033[0m'" logoutput="true"/>
     <echo
@@ -44,6 +46,7 @@
           description="Creates a drupal environment in docker (command run by travis).">
 
     <!-- Map build-specifc properties. -->
+    <property name="build.type" value="${build.travis.type}"/>
     <property name="build.config.site-uuid" value="${build.travis.config.site-uuid}"/>
     <property name="build.config.sync" value="${build.travis.config.sync}"/>
     <property name="build.config.develop" value="${build.travis.config.develop}"/>
@@ -67,6 +70,7 @@
           description="Creates a drupal environment in docker (command run by terraform).">
 
     <!-- Map build-specifc properties. -->
+    <property name="build.type" value="${build.terraform.type}"/>
     <property name="build.config.site-uuid" value="${build.local.config.site-uuid}"/>
     <property name="build.config.sync" value="${build.local.config.sync}"/>
     <property name="build.config.develop" value="${build.local.config.develop}"/>
@@ -376,6 +380,15 @@
         <!-- Import the configs now. -->
         <phingcall target="update:config:import" description="Import yml configs into DB"/>
 
+        <switch value="${build.type}">
+          <case value="dev"><property name="config_split" value="development"/></case>
+          <case value="prod"><property name="config_split" value="production"/></case>
+        </switch>
+        <exec description="Imports the appropriate config_split files."
+              dir="${docroot}"
+              command="${drush.cmd} csim ${config_split} -y >> ${project.basedir}/setup/config-import.log "
+              logoutput="true" checkreturn="true"/>
+
         <!-- Update the database. -->
         <phingcall target="update:database:update" description="Update the database (run hook updates)"/>
 
@@ -578,10 +591,7 @@
   <!-- Just rebuild Drupal using settings and files already on server. -->
   <target name="setup:local_rebuild"
           depends=" setup:fast_build:prep,
-                    setup:drupal:set_dev_config,
                     setup:drupal:site-install,
-                    setup:drupal:reset_config,
-                    update:database:update,
                     update:user:loginadmin">
     <echo message="Done"/>
   </target>
