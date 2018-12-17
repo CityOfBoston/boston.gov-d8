@@ -101,10 +101,6 @@ deploy:
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
-reports:
-  localDir: ${docroot}/testing/reports
-  remoteDir: testing/reports
-
 # Configuration settings for new git repository.
 git:
   # [Optional] Set this node (private_repo) if there is a private repo that needs to
@@ -137,6 +133,9 @@ drush:
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
 # this from being copied, remove the 'testing_framework' key.
 testing_framework:
+  reports:
+    localDir: ${docroot}/testing/reports
+    remoteDir: testing/reports
   behat:
     javascript_driver: 'selenium2'
     # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters

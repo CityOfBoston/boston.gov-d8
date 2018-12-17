@@ -54,7 +54,12 @@
 
     <property name="lando.url.domain" value="${env.LANDO_DOMAIN}" override="true"/>
 
-    <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}:${lando.proxyHttpsPort}" override="true"/>
+    <property name="lando.url.url" value="" override="true"/>
+    <if><isset property="env.LANDO_APP_NAME"/>
+        <then>
+            <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${lando.url.domain}:${lando.proxyHttpsPort}" override="true"/>
+        </then>
+    </if>
     <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
 
     <property name="project.sync" value="${docroot}/${build.local.config.sync}" override="true"/>

@@ -199,11 +199,11 @@
 
 
     <target name="rsync-results">
-        <property name="reports.remoteDir" value="build-results" />
+        <property name="testing_framework.reports.remoteDir" value="build-results" />
 
         <drush command="rsync">
-            <arg>"${reports.localDir}"</arg>
-            <arg>"${drush.aliases.default}:%files/${reports.remoteDir}"</arg>
+            <arg>"${testing_framework.reports.localDir}"</arg>
+            <arg>"${drush.aliases.default}:%files/${testing_framework.reports.remoteDir}"</arg>
         </drush>
 
         <!-- @todo Add message with link to new reports. -->

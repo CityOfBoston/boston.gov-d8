@@ -284,29 +284,35 @@
         <echo message="Using Composer to install Drupal core and the required contrib modules."
               level="info"/>
         <if>
-          <not><isset property="lando.url.url"/></not>
-          <then><property name="lando/url.url" value=""/></then>
+          <not><isset property="env.LANDO_APP_NAME"/></not>
+          <then><property name="lando.url.url" value=""/></then>
         </if>
+
         <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/composer.log for output.\033[0m'" logoutput="true"/>
-        <echo message="Executes: > composer install ${composer.mode}${line.separator}${line.separator}"
+        <echo message="Executes: > composer install ${composer.mode} --no-suggest${line.separator}${line.separator}"
               file="${project.basedir}/setup/composer.log" append="true"/>
+        <!-- Install composer (using lock file fif present) -->
         <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-              command="composer install ${composer.mode} >> ${project.basedir}/setup/composer.log"
-              dir="${project.basedir}/"
+              command="composer install ${composer.mode} --no-suggest >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/" outputProperty="composer.result"
               logoutput="true"/>
-        <echo message="${line.separator} > composer drupal:scaffold"
-              file="${project.basedir}/setup/composer.log" append="true"/>
-        <exec description="Installs the drupal scaffold files, and logs to composer.log"
-              command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
-              dir="${project.basedir}/" returnProperty="composer.result"
-              logoutput="true"/>
-          <if>
-              <not><equals arg1="${composer.result}" arg2="0"/></not>
-              <then>
-                  <exec command="cat ${project.basedir}/setup/composer.log" passthru="true"/>
-                  <fail message="Composer did not install required files."/>
-              </then>
-          </if>
+
+        <if>
+          <equals arg1="${composer.result}" arg2="0"/>
+          <then>
+            <echo message="${line.separator} > composer drupal:scaffold"
+                  file="${project.basedir}/setup/composer.log" append="true"/>
+            <exec description="Installs the drupal scaffold files, and logs to composer.log"
+                  command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
+                  dir="${project.basedir}/"
+                  logoutput="true"/>
+          </then>
+          <else>
+            <echo message="Composer Install failed. Log output follows:"/>
+            <exec command="cat ${project.basedir}/setup/composer.log" passthru="true"/>
+            <fail message="Composer did not install required files."/>
+          </else>
+        </if>
         <!-- Create a symlink for usr/local/bin/drupal when building locally. -->
         <if>
           <and>
