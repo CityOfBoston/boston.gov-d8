@@ -67,6 +67,7 @@
     <target name="update:config:import"
             description="Import configurations from sync location into the DB.">
         <echo message="Import configuration from sync folder: '${project.sync}' into database" />
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/config-import.log for output.\033[0m'" logoutput="true"/>
         <exec description="Imports the config files in the sync folder at ${project.sync}."
               dir="${docroot}"
               command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log "

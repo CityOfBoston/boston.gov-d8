@@ -30,7 +30,6 @@
     <phingcall target="setup:drupal:clone_private_repo"/>
     <phingcall target="setup:drupal:site-install"/>
     <phingcall target="setup:drush:local-config"/>
-    <phingcall target="update:database:update"/>
 
     <symlink link="${project.basedir}/docroot/sites/default/files/setup" target="${project.basedir}/setup" overwrite="true"/>
     <exec command="echo '\033[1;33mThe user-1 account (${drupal.account.name}) is created with password `${drupal.account.password}`.\033[0m'" logoutput="true"/>
