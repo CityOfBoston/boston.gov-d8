@@ -72,13 +72,22 @@
               dir="${docroot}"
               command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log "
               logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
-        <!--<echo message="Result: ${cim.result}"/>-->
-        <!--<if><not><equals arg1="${cim.result}" arg2="0" trim="true"/></not><then>-->
-            <!--<exec description="Redo Import, sometimes dependencies not resolved first time...."-->
-                  <!--dir="${docroot}"-->
-                  <!--command="${drush.cmd} cim sync -y >> ${project.basedir}/setup/config-import.log "-->
-                  <!--logoutput="true" checkreturn="true" level="warning"/>-->
-        <!--</then></if>-->
+    </target>
+    <target name="update:config:import-dev"
+            description="Import configurations from sync location into the DB.">
+        <echo message="Import configuration from develop config_split into database" />
+        <exec description="Imports the development config files in the config_sync folder."
+              dir="${docroot}"
+              command="${drush.cmd} csim development -y >> ${project.basedir}/setup/config-import.log "
+              logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
+    </target>
+    <target name="update:config:import-prod"
+            description="Import configurations from sync location into the DB.">
+        <echo message="Import configuration from production config_split into database" />
+        <exec description="Imports the production config files in the config_sync folder."
+              dir="${docroot}"
+              command="${drush.cmd} csim production -y >> ${project.basedir}/setup/config-import.log "
+              logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
     </target>
     <target name="update:config:export"
             description="Export configurations in DB to files in sync location.">

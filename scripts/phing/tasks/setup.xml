@@ -381,14 +381,10 @@
         <phingcall target="update:config:import" description="Import yml configs into DB"/>
 
         <switch value="${build.type}">
-          <case value="dev"><property name="config_split" value="development"/></case>
-          <case value="prod"><property name="config_split" value="production"/></case>
-          <default><property name="config_split" value="development"/></default>
+          <case value="dev"><phingcall target="update:config:import-dev"/></case>
+          <case value="prod"><phingcall target="update:config:import-prod"/></case>
+          <default><phingcall target="update:config:import-dev"/></default>
         </switch>
-        <exec description="Imports the appropriate config_split files."
-              dir="${docroot}"
-              command="${drush.cmd} csim ${config_split} -y >> ${project.basedir}/setup/config-import.log "
-              logoutput="true" checkreturn="true"/>
 
         <!-- Update the database. -->
         <phingcall target="update:database:update" description="Update the database (run hook updates)"/>
