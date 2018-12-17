@@ -3,6 +3,16 @@ project:
     name: 'bos_profile'
   themes:
     - bos_theme
+    -
+# Drupal Account Credentials. These are used for installing Drupal.
+drupal:
+  account:
+    name: admin
+    password: admin
+    mail: no-reply@acquia.com
+  multisite:
+    # Use 'default' as the name if there are no multisites.
+    name: default
 
 build:
   local:
@@ -41,44 +51,6 @@ build:
     database:
       # none, auto, build, sync or restore
       source: sync
-
-# Drupal Account Credentials. These are used for installing Drupal.
-drupal:
-  account:
-    name: admin
-    password: admin
-    mail: no-reply@acquia.com
-  multisite:
-    # Use 'default' as the name if there are no multisites.
-    name: default
-
-# Configuration settings for new git repository.
-git:
-  # [Optional] Set this node (private_repo) if there is a private repo that needs to
-  # be included as part of the build:
-  # - It is expected that the repo is hosted on GitHub.
-  # - The development machine *must* have a valid ssh key for this remote repo.
-  # - The repo can contain a settings file (e.g. private.settings.php)
-  # - The folder structure of the private repo must exactly match the folder structure
-  #   of the main repo so that files can be copied across to the correct folders.
-  private_repo:
-    repo: CityOfBoston/boston.gov-d8-private.git
-    branch: develop
-    deploy-branch: develop
-    # Where the repo will be cloned to.
-    local_dir: ${repo.root}/setup/private
-    # [optional] Provide the path to a settings script (relative to the private repo root),
-    # which will be copied to the main repo and then set up to be called from (i.e. extend)
-    # the sites main settings.php script.
-    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
-
-composer:
-  bin: ${repo.root}/vendor/bin
-
-drush:
-  bin: ${composer.bin}/drush
-  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
-  root: ${docroot}
 
 deploy:
   # each element of the deploy object is a branch in the main CoB repo.
@@ -128,9 +100,38 @@ deploy:
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
 reports:
   localDir: ${docroot}/testing/reports
   remoteDir: testing/reports
+
+# Configuration settings for new git repository.
+git:
+  # [Optional] Set this node (private_repo) if there is a private repo that needs to
+  # be included as part of the build:
+  # - It is expected that the repo is hosted on GitHub.
+  # - The development machine *must* have a valid ssh key for this remote repo.
+  # - The repo can contain a settings file (e.g. private.settings.php)
+  # - The folder structure of the private repo must exactly match the folder structure
+  #   of the main repo so that files can be copied across to the correct folders.
+  private_repo:
+    repo: CityOfBoston/boston.gov-d8-private.git
+    branch: develop
+    deploy-branch: develop
+    # Where the repo will be cloned to.
+    local_dir: ${repo.root}/setup/private
+    # [optional] Provide the path to a settings script (relative to the private repo root),
+    # which will be copied to the main repo and then set up to be called from (i.e. extend)
+    # the sites main settings.php script.
+    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
+
+composer:
+  bin: ${repo.root}/vendor/bin
+
+drush:
+  bin: ${composer.bin}/drush
+  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
+  root: ${docroot}
 
 # The testing framework is limited to the `tests` directory, and includes
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
@@ -152,9 +153,3 @@ testing_framework:
     #  launch-phantom: true
   phpunit:
 
-x-php:
-  xdebug:
-    # Provide absolute path and filename on the drupal server for the xdebug.ini file.
-    remote_file: '/usr/local/etc/php/conf.d/boston.xdebug.ini'
-    # Provide the filename of the xdebug.ini
-    default_file: 'xdebug.ini'
