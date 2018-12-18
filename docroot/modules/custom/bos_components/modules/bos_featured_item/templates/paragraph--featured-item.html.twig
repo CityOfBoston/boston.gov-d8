@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation for a single paragraph item.
  *
@@ -24,12 +22,12 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
-?>
-<div class="<?php print $classes; ?>"<?php print $attributes; ?>>
-  <div class="content"<?php print $content_attributes; ?>>
-    <?php if (isset($content['field_featured_item'])): ?>
-      <?php print render($content['field_featured_item']); ?>
-    <?php endif; ?>
+ #}
+
+<div class="{{ classes }}" {{ attributes }}>
+  <div class="content" {{ attributes }}>
+    {% if content.field_featured_item %}
+      {{ content.field_featured_item }}
+    {% endif %}
   </div>
 </div>

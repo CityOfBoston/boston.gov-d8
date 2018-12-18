@@ -4,3 +4,14 @@
  * @file
  * The Base module file for bos_featured_item module.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_featured_item_theme() {
+  $theme['paragraph__featured_item'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_featured_item/templates',
+  ];
+  return $theme;
+}
