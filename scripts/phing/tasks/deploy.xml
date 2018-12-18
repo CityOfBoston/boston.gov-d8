@@ -49,7 +49,6 @@
           logoutput="true"/>
 
     <!-- Remove config_split -->
-          logoutput="true"/>
     <switch value="${build.travis.type}">
       <case value="prod"><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/prod ${deploy.dir}/config/" logoutput="true"/></case>
       <default><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/develop ${deploy.dir}/config/" logoutput="true"/></default>
