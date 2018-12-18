@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Code for the Boston Component Cabinet feature.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK__TYPE().
+ */
+function bos_cabinet_preprocess_paragraph__cabinet(&$variables) {
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bos_cabinet_theme() {
+  $theme['paragraph__cabinet__default'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_cabinet/templates',
+  ];
+  return $theme;
+}
