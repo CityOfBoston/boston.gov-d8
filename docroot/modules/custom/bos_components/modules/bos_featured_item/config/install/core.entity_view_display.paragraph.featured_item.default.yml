@@ -4,6 +4,8 @@ dependencies:
   config:
     - field.field.paragraph.featured_item.field_featured_item
     - paragraphs.paragraphs_type.featured_item
+  module:
+    - fences
 id: paragraph.featured_item.default
 targetEntityType: paragraph
 bundle: featured_item
@@ -14,8 +16,15 @@ content:
     weight: 0
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: featured_item
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
 hidden: {  }
