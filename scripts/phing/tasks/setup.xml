@@ -315,7 +315,7 @@
             <available file="/usr/local/bin"/>
           </and>
           <then>
-            <symlink link="${LANDO_MOUNT}/vendor/drupal/console/bin/drupal" target="/usr/local/bin/drupal" overwrite="false"/>
+            <symlink link="${project.basedir}/vendor/drupal/console/bin/drupal" target="/usr/local/bin/drupal" overwrite="false"/>
           </then>
         </if>
 
