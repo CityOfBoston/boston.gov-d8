@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.discussion_topic.field_description
+    - field.field.paragraph.discussion_topic.field_links
+    - field.field.paragraph.discussion_topic.field_title
+    - paragraphs.paragraphs_type.discussion_topic
+  module:
+    - paragraphs
+id: paragraph.discussion_topic.default
+targetEntityType: paragraph
+bundle: discussion_topic
+mode: default
+content:
+  field_description:
+    weight: 1
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_links:
+    weight: 3
+    type: entity_reference_paragraphs
+    settings:
+      title: Resource
+      title_plural: Resources
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    weight: 0
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

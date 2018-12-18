@@ -4,6 +4,7 @@ namespace Drupal\bos_core\Commands;
 
 use Drush\Commands\DrushCommands;
 use Drupal\bos_core\BosCoreCssSwitcherService;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * A Drush commandfile.
@@ -71,6 +72,83 @@ class BosCoreCommands extends DrushCommands {
         '@sourcePath' => $libArray[$ord][1],
       ]);
     }
+  }
+
+  /**
+   * Automate common tasks related to bos componetization plan.
+   *
+   * @param string $module_name
+   *   Machine name for output component module.
+   * @param array $options
+   *   Additional options for the command.
+   *
+   * @validate-module-enabled bos_core
+   *
+   * @command bos:componetize
+   * @option components Comma seperated list of component machine names
+   * @aliases componetize
+   */
+  public function componetize($module_name = NULL, array $options = ['components' => NULL]) {
+
+    $module_path = \Drupal::service('file_system')->realpath(drupal_get_path('module', 'bos_components')) . '/modules/' . $module_name;
+    if (file_exists($module_path)) {
+      return 'This module directory already exists.';
+    }
+    else {
+      mkdir($module_path);
+    }
+
+    $template_path = \Drupal::service('file_system')->realpath(drupal_get_path('module', 'bos_core')) . '/src/componentizer_templates';
+    $template_files = array_diff(scandir($template_path), ['..', '.']);
+
+    foreach ($template_files as $file) {
+      $filename_parts = explode('.', $file);
+      $filename_parts['0'] = $module_name;
+      $new_filepath = $module_path . "/" . implode('.', $filename_parts);
+      if (!copy($template_path . "/{$file}", $new_filepath)) {
+        return 'File copy failed';
+      }
+      $file_contents = file_get_contents($new_filepath);
+      $file_contents = str_replace("componentizer_template", $module_name, $file_contents);
+      file_put_contents($new_filepath, $file_contents);
+    }
+
+    $module_config_dir = $module_path . '/config/install';
+    mkdir($module_config_dir, 0777, TRUE);
+    $site_install_directory = '/';
+    foreach (explode('/', realpath(__FILE__)) as $part) {
+      if ($part != 'docroot') {
+        $site_install_directory .= $part;
+      }
+      else {
+        break;
+      }
+    }
+
+    $config_store_directory = $site_install_directory . '/config/default';
+    // Adding to $this so we can access values in array_filter() callback.
+    $this->components = explode(',', $options['components']);
+    $component_configs = array_filter(scandir($config_store_directory), function ($file_name) {
+      foreach ($this->components as $component) {
+        if (preg_match("/\.($component)\./", $file_name)) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    });
+
+    $info_file_path = $module_path . "/{$module_name}.info.yml";
+    $install_file = Yaml::parse(file_get_contents($info_file_path));
+    $install_file['config_devel'] = [];
+
+    foreach ($component_configs as $config_name) {
+      copy($config_store_directory . "/{$config_name}", $module_config_dir . "/{$config_name}");
+      $install_file['config_devel'][] = basename($config_name, '.yml');
+    }
+
+    file_put_contents($info_file_path, Yaml::dump($install_file, 2, 2));
+
+    return 'Componentization complete!';
   }
 
 }

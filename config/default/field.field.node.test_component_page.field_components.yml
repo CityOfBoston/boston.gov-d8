@@ -15,6 +15,8 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_grid
     - paragraphs.paragraphs_type.group_of_links_list
     - paragraphs.paragraphs_type.group_of_links_mini_grid
+    - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.video
   module:
@@ -46,6 +48,8 @@ settings:
       group_of_links_grid: group_of_links_grid
       group_of_links_list: group_of_links_list
       group_of_links_mini_grid: group_of_links_mini_grid
+      iframe: iframe
+      photo: photo
       text: text
       video: video
     target_bundles_drag_drop:
@@ -185,8 +189,8 @@ settings:
         weight: 113
         enabled: false
       iframe:
+        enabled: true
         weight: 114
-        enabled: false
       internal_link:
         weight: 115
         enabled: false
@@ -218,8 +222,8 @@ settings:
         weight: 124
         enabled: false
       photo:
+        enabled: true
         weight: 125
-        enabled: false
       quote:
         weight: 126
         enabled: false
