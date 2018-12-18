@@ -298,7 +298,7 @@
               file="${project.basedir}/setup/composer.log" append="true"/>
         <!-- Install composer (using lock file fif present) -->
         <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-              command="composer install ${composer.mode} --no-suggest "
+              command="composer install ${composer.mode} --no-suggest --prefer-dist"
               dir="${project.basedir}/" outputProperty="composer.result" checkreturn="true"
               logoutput="true"/>
         <!--command="composer install ${composer.mode} &#45;&#45;no-suggest >> ${project.basedir}/setup/composer.log"-->

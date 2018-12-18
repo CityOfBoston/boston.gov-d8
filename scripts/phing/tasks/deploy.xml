@@ -47,6 +47,17 @@
     <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
+
+    <!-- Remove config_split -->
+    <switch value="${build.type}">
+      <case value="prod"><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/prod ${deploy.dir}/config/default/" logoutput="true"/></case>
+      <default><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/develop ${deploy.dir}/config/default/" logoutput="true"/></default>
+    </switch>
+    <delete dir="${deploy.dir}/config/prod"></delete>
+    <delete dir="${deploy.dir}/config/develop"></delete>
+    <delete file="${deploy.dir}/config/default/config_split.config_split.production.yml"></delete>
+    <delete file="${deploy.dir}/config/default/config_split.config_split.production.yml"></delete>
+
     <echo message="Copied." level="info"/>
   </target>
 
