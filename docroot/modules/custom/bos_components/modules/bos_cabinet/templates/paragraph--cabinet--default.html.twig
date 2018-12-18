@@ -42,7 +42,11 @@
           <div class="g--12 g--4--xl">
             {% if content.field_contacts %}
               <h5 class="m-t000 m-b200">Departments, Boards, &amp; Agencies</h5>
-              {# cabinet_contacts #}
+              <ul class="ul t--upper t--sans">
+              {% for key, item in content.field_contacts if key|first != '#' %}
+                <li class="t--s100 lh--200 item-{{ key + 1 }}">{{ item }}</li>
+              {% endfor %}
+              </ul>
             {% else %}
               &nbsp;
             {% endif %}
