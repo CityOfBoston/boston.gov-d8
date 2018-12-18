@@ -298,10 +298,10 @@
               file="${project.basedir}/setup/composer.log" append="true"/>
         <!-- Install composer (using lock file fif present) -->
         <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-              command="composer install ${composer.mode} --no-suggest >> ${project.basedir}/setup/composer.log"
+              command="composer install ${composer.mode} --no-suggest "
               dir="${project.basedir}/" outputProperty="composer.result" checkreturn="true"
               logoutput="true"/>
-
+        <!--command="composer install ${composer.mode} &#45;&#45;no-suggest >> ${project.basedir}/setup/composer.log"-->
         <echo message="${line.separator} > composer drupal:scaffold"
               file="${project.basedir}/setup/composer.log" append="true"/>
         <exec description="Installs the drupal scaffold files, and logs to composer.log"
