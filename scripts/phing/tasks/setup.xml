@@ -259,13 +259,13 @@
     <switch value="${build.type}">
       <case value="prod">
         <echo message="Creates PRODUCTION build"/>
-        <property name="build.type.long" value="production"/>
-        <property name="composer.mode" value="--no-dev"/>
+        <property name="build.type.long" value="production" override="true"/>
+        <property name="composer.mode" value="--no-dev" override="true"/>
       </case>
       <default>
         <echo message="Creates DEVELOPMENT build"/>
-        <property name="build.type.long" value="development"/>
-        <property name="composer.mode" value="--dev"/>
+        <property name="build.type.long" value="development" override="true"/>
+        <property name="composer.mode" value="--dev" override="true"/>
       </default>
     </switch>
   </target>
@@ -302,22 +302,12 @@
               dir="${project.basedir}/" outputProperty="composer.result"
               logoutput="true"/>
 
-        <if>
-          <equals arg1="${composer.result}" arg2="0"/>
-          <then>
-            <echo message="${line.separator} > composer drupal:scaffold"
-                  file="${project.basedir}/setup/composer.log" append="true"/>
-            <exec description="Installs the drupal scaffold files, and logs to composer.log"
-                  command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
-                  dir="${project.basedir}/"
-                  logoutput="true"/>
-          </then>
-          <else>
-            <echo message="Composer Install failed. Log output follows:"/>
-            <exec command="cat ${project.basedir}/setup/composer.log" passthru="true"/>
-            <fail message="Composer did not install required files."/>
-          </else>
-        </if>
+        <echo message="${line.separator} > composer drupal:scaffold"
+              file="${project.basedir}/setup/composer.log" append="true"/>
+        <exec description="Installs the drupal scaffold files, and logs to composer.log"
+              command="composer drupal:scaffold >> ${project.basedir}/setup/composer.log"
+              dir="${project.basedir}/"
+              logoutput="true"/>
         <!-- Create a symlink for usr/local/bin/drupal when building locally. -->
         <if>
           <and>
