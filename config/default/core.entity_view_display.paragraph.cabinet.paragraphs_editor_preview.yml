@@ -1,14 +1,17 @@
-uuid: 811b25ba-ba70-455b-8cae-64e4b5d8a96d
+uuid: d6b17583-cca5-4858-921d-73466415ca01
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
     - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
     - paragraphs.paragraphs_type.cabinet
+_core:
+  default_config_hash: 0e-hCKTdmUW_uC6P-i-gF4XMmBXOmQMZFC_o5jxSKHs
 id: paragraph.cabinet.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: cabinet
@@ -16,6 +19,7 @@ mode: paragraphs_editor_preview
 content: {  }
 hidden:
   field_contacts: true
+  field_description: true
   field_person: true
   field_short_title: true
   field_title: true

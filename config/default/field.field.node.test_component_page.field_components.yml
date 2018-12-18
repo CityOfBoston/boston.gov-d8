@@ -8,17 +8,16 @@ dependencies:
     - paragraphs.paragraphs_type.3_column_w_image
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
+    - paragraphs.paragraphs_type.cabinet
     - paragraphs.paragraphs_type.city_score_dashboard
+    - paragraphs.paragraphs_type.featured_item
     - paragraphs.paragraphs_type.grid_links
     - paragraphs.paragraphs_type.grid_of_cards
     - paragraphs.paragraphs_type.grid_of_quotes
     - paragraphs.paragraphs_type.group_of_links_grid
     - paragraphs.paragraphs_type.group_of_links_list
     - paragraphs.paragraphs_type.group_of_links_mini_grid
-    - paragraphs.paragraphs_type.iframe
-    - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
-    - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
 _core:
@@ -41,17 +40,16 @@ settings:
       3_column_w_image: 3_column_w_image
       bid: bid
       bos311: bos311
+      cabinet: cabinet
       city_score_dashboard: city_score_dashboard
+      featured_item: featured_item
       grid_links: grid_links
       grid_of_cards: grid_of_cards
       grid_of_quotes: grid_of_quotes
       group_of_links_grid: group_of_links_grid
       group_of_links_list: group_of_links_list
       group_of_links_mini_grid: group_of_links_mini_grid
-      iframe: iframe
-      photo: photo
       text: text
-      video: video
     target_bundles_drag_drop:
       sidebar_item:
         weight: 9
@@ -78,8 +76,8 @@ settings:
         weight: 76
         enabled: false
       cabinet:
+        enabled: true
         weight: 77
-        enabled: false
       card:
         weight: 78
         enabled: false
@@ -126,8 +124,8 @@ settings:
         weight: 92
         enabled: false
       featured_item:
+        enabled: true
         weight: 93
-        enabled: false
       featured_topics:
         weight: 94
         enabled: false
@@ -189,8 +187,8 @@ settings:
         weight: 113
         enabled: false
       iframe:
-        enabled: true
         weight: 114
+        enabled: false
       internal_link:
         weight: 115
         enabled: false
@@ -222,8 +220,8 @@ settings:
         weight: 124
         enabled: false
       photo:
-        enabled: true
         weight: 125
+        enabled: false
       quote:
         weight: 126
         enabled: false
@@ -267,6 +265,6 @@ settings:
         weight: 143
         enabled: false
       video:
-        enabled: true
         weight: 144
+        enabled: false
 field_type: entity_reference_revisions

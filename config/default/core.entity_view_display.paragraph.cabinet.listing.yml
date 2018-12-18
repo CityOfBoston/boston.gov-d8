@@ -1,14 +1,17 @@
-uuid: bd79a29d-36f6-44bc-9305-ec178c3ec0d2
+uuid: 6dfa3b75-f0fc-4166-8705-abd86e0281e2
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.listing
     - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
     - paragraphs.paragraphs_type.cabinet
+_core:
+  default_config_hash: nlSu0-7-zMrpzEB9SZCvTr-feSBqM8c42kwWd90SAvw
 id: paragraph.cabinet.listing
 targetEntityType: paragraph
 bundle: cabinet
@@ -32,5 +35,6 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_description: true
   field_short_title: true
   field_title: true

@@ -1,13 +1,18 @@
-uuid: 3d831915-c1b4-4595-a54e-718970c7a42e
+uuid: 7706affd-c7e1-488b-9026-40c774ab735c
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
     - paragraphs.paragraphs_type.cabinet
+  module:
+    - text
+_core:
+  default_config_hash: EUZwoUNhXmXf_G9IkXb5lR3QeaRCK1Kprrn9vmPNJic
 id: paragraph.cabinet.default
 targetEntityType: paragraph
 bundle: cabinet
@@ -19,6 +24,14 @@ content:
     settings:
       match_operator: CONTAINS
       size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_description:
+    weight: 5
+    type: text_textarea
+    settings:
+      rows: 5
       placeholder: ''
     third_party_settings: {  }
     region: content
