@@ -53,7 +53,7 @@ install:
   # Step 2: Build the drupal site using Phing.
     # Make an account for drupal in MySQL (better than using root a/c).
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
-  - cd /home/travis/build/CityOfBoston/boston.gov-d8/vendor/g1a/composer-test-scenarios && git stash
+  - cd $TRAVIS_BUILD_DIR/vendor/g1a/composer-test-scenarios && git stash && cd $TRAVIS_BUILD_DIR
   - travis_wait 15 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
   # Step 3: Manage SSH keys for deployment to Acquia.

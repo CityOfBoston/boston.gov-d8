@@ -140,7 +140,7 @@ tooling:
     service: appserver
     description: "Run Phing tasks in app container: lando phing <task>"
     cmd:
-      - phing
+      - /app/vendor/bin/phing
 
   mycli:
     service: database
