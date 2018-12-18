@@ -46,10 +46,12 @@
   <target name="setup:docker:drupal-travis"
           description="Creates a drupal environment in docker (command run by travis).">
 
+    <echo message="Whee!"/>
+
     <!-- Map build-specifc properties. -->
     <property name="build.type" value="${build.travis.type}"/>
     <property name="build.type.long" value="production"/>
-    <property name="composer.mode" value=""/>
+    <property name="composer.mode" value="--no-dev"/>
     <property name="build.config.site-uuid" value="${build.travis.config.site-uuid}"/>
     <property name="build.config.sync" value="${build.travis.config.sync}"/>
     <property name="build.config.develop" value="${build.travis.config.develop}"/>
@@ -258,7 +260,7 @@
       <case value="prod">
         <echo message="Creates PRODUCTION build"/>
         <property name="build.type.long" value="production"/>
-        <property name="composer.mode" value="--dev"/>
+        <property name="composer.mode" value="--no-dev"/>
       </case>
       <default>
         <echo message="Creates DEVELOPMENT build"/>
