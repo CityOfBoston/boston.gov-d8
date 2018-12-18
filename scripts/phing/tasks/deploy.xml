@@ -49,9 +49,10 @@
           logoutput="true"/>
 
     <!-- Remove config_split -->
-    <switch value="${build.type}">
-      <case value="prod"><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/prod ${deploy.dir}/config/default/" logoutput="true"/></case>
-      <default><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/develop ${deploy.dir}/config/default/" logoutput="true"/></default>
+          logoutput="true"/>
+    <switch value="${build.travis.type}">
+      <case value="prod"><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/prod ${deploy.dir}/config/" logoutput="true"/></case>
+      <default><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/develop ${deploy.dir}/config/" logoutput="true"/></default>
     </switch>
     <delete dir="${deploy.dir}/config/prod"></delete>
     <delete dir="${deploy.dir}/config/develop"></delete>
@@ -168,6 +169,7 @@
 
     <echo message="Check Drush status on remote (deploy target)." level="info"/>
     <echo message="Using drush command ${travis.drush} ${drush.alias}." level="info"/>
+
     <if><istrue value="${deploy.copy-db}"/>
       <then>
         <echo message="Sync'ing database ... " level="info"/>
@@ -180,10 +182,14 @@
         <echo message="Note: Database on target remote not overwritten. " level="info"/>
       </else>
     </if>
+
     <echo message="Import config files into DB on deploy target." level="info"/>
+    <exec command="${drush.cmd} pmu config_split"/>
+    <exec command="${drush.cmd} cdel core.extension module.config_split"/>
     <exec dir="${docroot}" passthru="true" checkreturn="true"
           description="Import the configurations."
           command="${travis.drush} ${drush.alias} cim -y"/>
+
     <echo message="Update DB with un-executed hook_updates on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Run update.php to import update hooks."
