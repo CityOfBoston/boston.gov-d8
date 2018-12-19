@@ -27,6 +27,7 @@
  * @see template_process()
  */
 #}
-{{ breakpoint() }}
-    {{ variables.grid_icon }}
-    {{ content.field_grid_link }}
+  {% for item in items %}
+    {{ item.content }}
+  {% endfor %}
+

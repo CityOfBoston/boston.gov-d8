@@ -21,12 +21,11 @@ default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 1
+    target_bundles:
+      contact: contact
     sort:
       field: name
       direction: ASC
-    target_bundles:
-      contact: contact
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

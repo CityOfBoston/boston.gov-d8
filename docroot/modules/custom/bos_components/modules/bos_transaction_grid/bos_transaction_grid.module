@@ -16,10 +16,50 @@ function bos_transaction_grid_theme() {
       'path' => 'modules/custom/bos_components/modules/bos_transaction_grid/templates',
       'template' => 'paragraph--transaction-grid',
     ],
-    'field__paragraph__field_transactions' => [
+    'paragraph__transactions' => [
       'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_transaction_grid/templates',
+      'template' => 'paragraph--transactions',
+    ],
+    'field__paragraph__field_transactions' => [
+      'base hook' => 'field',
       'path' => 'modules/custom/bos_components/modules/bos_transaction_grid/templates',
       'template' => 'field--paragraph--field-transactions',
     ],
+    'field__field_external_link__mode__transaction' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_transaction_grid/templates',
+      'template' => 'field--field-external-link--mode--transaction',
+    ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_transaction_grid_preprocess_paragraph(&$variables) {
+  if ($variables['paragraph']->bundle() != 'transactions') {
+    return;
+  }
+  $variables["content"]["field_icon"][0]["#item_attributes"]['class'][] = "lwi-i";
+  if (isset($variables["content"]["field_grid_link"][0]['#paragraph']) && $para = $variables["content"]["field_grid_link"][0]['#paragraph']) {
+    switch ($para->bundle()) {
+      case "external_link":
+        $variables['link'] = $para->field_external_link->uri;
+        $variables['title'] = $para->field_external_link->title;
+        break;
+      case "internal_link":
+        $uri = "/" . explode(":", $para->field_internal_link->uri)[1];
+        $variables['link'] = \Drupal::service('path.alias_manager')->getAliasByPath($uri, "en");
+        $variables['title'] = $para->field_internal_link->title;
+        break;
+      case "document":
+        $file = \Drupal\file\Entity\File::load($para->field_document->target_id);
+        $variables['link'] = file_create_url($file->getFileUri());
+        $variables['title'] = $para->field_title->value;
+        break;
+      default:
+        break;
+    }
+  }
 }

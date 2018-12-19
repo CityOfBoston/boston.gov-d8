@@ -25,21 +25,13 @@
  * @see template_process()
  */
 #}
-<div class="b b--g b--fw">
-  <div class="b-c">
-    <div class="contextual-region">
-      {{ title_suffix }}
-    </div>
-  	<div class="sh">
-	    {{ content.field_component_title }}
-	    {% if content.field_contact %}
-          {{ content.field_contact }}
-	    {% endif %}
-    </div>
-    <div class="g">
-      {% if content.field_transactions %}
-        {{ content.field_transactions }}
-      {% endif %}
-    </div>
-  </div>
-</div>
+<a href="{{ link }}" class="lwi g--3 g--3--sl m-t200 m-t500--m" target="_blank">
+    <span class="lwi-ic">
+        {{ content.field_icon }}
+    </span>
+    <span class="lwi-t">
+        {{ title }}
+    </span>
+</a>
+
+

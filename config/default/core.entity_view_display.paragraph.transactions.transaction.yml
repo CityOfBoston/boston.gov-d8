@@ -1,21 +1,22 @@
-uuid: 1f5b6358-418d-4cfb-ad32-5e0839b89493
+uuid: 2d493e99-564d-473f-826e-8a0af8d7fbac
 langcode: en
-status: true
+status: false
 dependencies:
   config:
+    - core.entity_view_mode.paragraph.transaction
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
     - paragraphs.paragraphs_type.transactions
   module:
     - entity_reference_revisions
     - fences
-    - svg_image
+    - image_url_formatter
 _core:
   default_config_hash: WIRqOMF7CCx-9a0tOTPA4lCOKM9g8LqSpyLZcEqkl4I
-id: paragraph.transactions.default
+id: paragraph.transactions.transaction
 targetEntityType: paragraph
 bundle: transactions
-mode: default
+mode: transaction
 content:
   field_grid_link:
     label: hidden
@@ -34,17 +35,14 @@ content:
         fences_label_classes: ''
     region: content
   field_icon:
-    type: image
+    type: image_url
     weight: 0
     region: content
     label: hidden
     settings:
+      url_type: '0'
       image_style: ''
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none

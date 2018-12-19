@@ -27,11 +27,11 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    label: inline
+    label: hidden
     weight: 2
     type: entity_reference_entity_view
     settings:
-      view_mode: contact
+      view_mode: default
       link: false
     third_party_settings:
       fences:
@@ -58,5 +58,12 @@ content:
     settings:
       view_mode: default
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
 hidden: {  }
