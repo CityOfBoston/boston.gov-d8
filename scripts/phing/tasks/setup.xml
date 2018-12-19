@@ -62,7 +62,7 @@
     <property name="git.private_repo.branch" value="${git.private_repo.deploy-branch}"/>
 
     <!-- Build. -->
-    <phingcall target="setup:type"/>
+    <phingcall target="setup:type" inheritRefs="true" inheritAll="true"/>
     <phingcall target="setup:drupal:download-modules" />
     <phingcall target="setup:drupal:clone_private_repo"/>
     <phingcall target="setup:drupal:site-install"/>
@@ -616,7 +616,14 @@
   </target>
 
   <target name="test">
-    <echo message="Testing." level="info"/>
+    <property name="var" value="123"/>
+    <echo message="Testing ${var}." level="info"/>
+    <phingcall target="test2"/>
+    <echo message="Testing ${var}." level="info"/>
+  </target>
+  <target name="test2">
+    <echo message="Testing2 ${var}." level="info"/>
+    <property name="var" value="1234"/>
   </target>
 
 </project>
