@@ -1,4 +1,3 @@
-uuid: 6e971ef5-49c8-422d-a040-b73ae513cb9e
 langcode: en
 status: true
 dependencies:
@@ -6,6 +5,8 @@ dependencies:
     - field.field.paragraph.featured_topics.field_short_title
     - field.field.paragraph.featured_topics.field_topics
     - paragraphs.paragraphs_type.featured_topics
+  module:
+    - fences
 id: paragraph.featured_topics.default
 targetEntityType: paragraph
 bundle: featured_topics
@@ -24,8 +25,15 @@ content:
     weight: 0
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: featured_topics
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
 hidden: {  }
