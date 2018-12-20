@@ -37,14 +37,17 @@
  $guide_theme = $guide_themes[$GLOBALS["featured_guide_count"]];
 #}
 
-<a href="/node/1" class="cdfg cdfg--{{ guide_theme[1] }}" style="background-image: url({{ content.field_thumbnail}})">
+<a href="{{ url }}"
+   class="cdfg cdfg--{{ guide_themes[1] }}"
+   style="background-image: url({{ file_url(content.field_thumbnail['#items'].entity.uri.value) }})"
+>
   <div class="cdfg-c">
     <div class="cdfg-i">
       <span>1</span>
     </div>
     <div class="cdfg-ic">
       <div class="cdfg-d">Guide:</div>
-      <div class="cdfg-t">Title</div>
+      <div class="cdfg-t">{% filter trim %}{% filter striptags %}{{ title }}{% endfilter %}{% endfilter %}</div>
     </div>
   </div>
 </a>
