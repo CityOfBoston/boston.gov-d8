@@ -18,7 +18,17 @@ function bos_featured_topics_preprocess_paragraph__featured_topics(&$variables) 
           'count' => $key,
           'nid' => $nid,
         ];
+        bos_featured_topics_preprocess_node($variables);
       }
+    }
+  }
+}
+function bos_featured_topics_preprocess_node(&$variables) {
+  if ($node = $variables['node']) {
+    $type = $node->getType();
+    if ($type == 'topic_page') {
+      static $topics_counter;
+      $variables['topics_counter'] = ++$topics_counter;
     }
   }
 }
