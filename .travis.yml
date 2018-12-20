@@ -10,7 +10,6 @@ branches:
   only:
     - develop
     - master
-    - travis-deploy-2
 
 php:
   - 7.1
@@ -70,5 +69,4 @@ script:
 
 after_success:
   - scripts/deploy/travis-deploy.sh develop
-  - scripts/deploy/travis-deploy.sh travis-deploy-2
   - scripts/deploy/travis-deploy.sh master master-build
