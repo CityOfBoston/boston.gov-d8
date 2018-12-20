@@ -6,10 +6,25 @@
  */
 
 /**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bos_featured_topics_theme_suggestions_node_alter(array &$suggestions, array $variables) {
+  $type = $variables['elements']['#node']->getType();
+  $mode = $variables['elements']['#view_mode'];
+  if ($type == 'topic_page' && $mode == 'featured_topics') {
+    $suggestions[] = 'node__topic_page__featured_topics';
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function bos_featured_topics_theme() {
   $theme['paragraph__featured_topics'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_featured_topics/templates',
+  ];
+  $theme['node__topic_page__featured_topics'] = [
     'base hook' => 'paragraph',
     'path' => 'modules/custom/bos_components/modules/bos_featured_topics/templates',
   ];
