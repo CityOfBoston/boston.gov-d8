@@ -43,19 +43,11 @@
  * @ingroup themeable
  #}
 
-<a name="start"
-    data-text="start" class="subnav-anchor">
-</a>
-
 {% if short_title %}
   <a name="{{ short_title }}"
      data-text="{{ short_title }}" class="subnav-anchor">
   </a>
 {% endif %}
-
-<a name="end"
-    data-text="end" class="subnav-anchor">
-</a>
 
 {% for item in items %}
   {{ item.content }}
