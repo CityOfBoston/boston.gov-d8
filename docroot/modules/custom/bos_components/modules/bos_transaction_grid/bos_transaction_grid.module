@@ -3,8 +3,9 @@
 /**
  * @file
  * Primary module hooks for bos_transaction_grid module.
- *
  */
+
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_theme().
@@ -48,16 +49,19 @@ function bos_transaction_grid_preprocess_paragraph(&$variables) {
         $variables['link'] = $para->field_external_link->uri;
         $variables['title'] = $para->field_external_link->title;
         break;
+
       case "internal_link":
         $uri = "/" . explode(":", $para->field_internal_link->uri)[1];
         $variables['link'] = \Drupal::service('path.alias_manager')->getAliasByPath($uri, "en");
         $variables['title'] = $para->field_internal_link->title;
         break;
+
       case "document":
-        $file = \Drupal\file\Entity\File::load($para->field_document->target_id);
+        $file = File::load($para->field_document->target_id);
         $variables['link'] = file_create_url($file->getFileUri());
         $variables['title'] = $para->field_title->value;
         break;
+
       default:
         break;
     }
