@@ -43,8 +43,11 @@
  * @ingroup themeable
  #}
 
-{% if short_title %}
+{% if field-name-field-short-title %}
   <a name="{{ short_title_link }}"
-     data-text="{{ short_title }}" class="subnav-anchor"></a>
+     data-text="{{ short_title }}" class="subnav-anchor">
+  </a>
 {% endif %}
-{{ items }}
+{% for item in items %}
+  {{ item.content }}
+{% endfor %}
