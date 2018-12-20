@@ -26,17 +26,6 @@
    'ob',
  ] %}
 
-{#
- if (!isset($GLOBALS["featured_guide_count"])) {
-   $GLOBALS["featured_guide_count"] = 0;
- } else {
-   $GLOBALS["featured_guide_count"]++;
- }
-
- $guide_index = $GLOBALS["featured_guide_count"] + 1;
- $guide_theme = $guide_themes[$GLOBALS["featured_guide_count"]];
-#}
-
 <a href="{{ url }}"
    class="cdfg cdfg--{{ guide_themes[topics_counter -1] }}"
    style="background-image: url({{ file_url(content.field_thumbnail['#items'].entity.uri.value) }})"
