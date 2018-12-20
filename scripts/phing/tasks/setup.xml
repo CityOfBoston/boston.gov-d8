@@ -255,12 +255,12 @@
   </target>
 
   <!-- Do some preparatory steps. -->
-  <target name="setup:type" description="Determines which build type - defaults to PROD">
+  <target name="setup:type" description="Determines which build type - defaults to Development">
     <switch value="${build.type}">
       <case value="prod">
         <echo message="Creates PRODUCTION build"/>
         <property name="build.type.long" value="production" override="true"/>
-        <property name="composer.mode" value="--no-dev" override="true"/>
+        <property name="composer.mode" value="--dev" override="true"/>
       </case>
       <default>
         <echo message="Creates DEVELOPMENT build"/>
@@ -277,7 +277,8 @@
 
     <if>
       <not><isset property="composer.mode"/></not>
-      <then><property name="composer.mode" value="--no-dev"/></then>
+      <then><property name="composer.mode" value="--dev"
+                      description="Always default to downloading require-dev packages."/></then>
     </if>
 
     <if>
@@ -409,7 +410,6 @@
         <phingcall target="update:config:import" description="Import yml configs into DB"/>
 
         <switch value="${build.type}">
-          <case value="dev"><phingcall target="update:config:import-dev"/></case>
           <case value="prod"><phingcall target="update:config:import-prod"/></case>
           <default><phingcall target="update:config:import-dev"/></default>
         </switch>
