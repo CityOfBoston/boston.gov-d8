@@ -9,7 +9,27 @@ dependencies:
     - field.field.paragraph.transaction_grid.field_transactions
     - paragraphs.paragraphs_type.transaction_grid
   module:
+    - field_group
     - paragraphs
+third_party_settings:
+  field_group:
+    group_transaction_info:
+      children:
+        - field_component_title
+        - field_short_title
+        - field_contact
+        - field_transactions
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Transaction Info'
+_core:
+  default_config_hash: 7LryD1XwXWTCxSd5hO-TqlTp7O7VFN-s-3IGfEtjVIU
 id: paragraph.transaction_grid.default
 targetEntityType: paragraph
 bundle: transaction_grid
@@ -25,7 +45,7 @@ content:
     region: content
   field_contact:
     weight: 3
-    type: entity_reference_autocomplete
+    type: entity_reference_autocomplete_tags
     settings:
       match_operator: CONTAINS
       size: 60
@@ -42,14 +62,21 @@ content:
     region: content
   field_transactions:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
+      title: Transactions
+      title_plural: Transactions
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: transactions
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   moderation_state:

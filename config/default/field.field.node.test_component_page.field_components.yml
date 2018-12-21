@@ -18,6 +18,7 @@ dependencies:
     - paragraphs.paragraphs_type.iframe
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
+    - paragraphs.paragraphs_type.transaction_grid
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -51,6 +52,7 @@ settings:
       iframe: iframe
       photo: photo
       text: text
+      transaction_grid: transaction_grid
       video: video
     target_bundles_drag_drop:
       sidebar_item:
@@ -255,8 +257,8 @@ settings:
         weight: 139
         enabled: false
       transaction_grid:
+        enabled: true
         weight: 140
-        enabled: false
       transactions:
         weight: 141
         enabled: false

@@ -8,6 +8,11 @@ dependencies:
     - field.field.paragraph.transaction_grid.field_short_title
     - field.field.paragraph.transaction_grid.field_transactions
     - paragraphs.paragraphs_type.transaction_grid
+  module:
+    - entity_reference_revisions
+    - fences
+_core:
+  default_config_hash: 4GZ6OQfRMY2Te_cD5X_HT6qtclnMEvOt6uacwyHZOaE
 id: paragraph.transaction_grid.default
 targetEntityType: paragraph
 bundle: transaction_grid
@@ -22,13 +27,20 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    label: inline
+    label: hidden
     weight: 2
     type: entity_reference_entity_view
     settings:
       view_mode: default
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
@@ -38,5 +50,20 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-hidden:
-  field_transactions: true
+  field_transactions:
+    type: entity_reference_revisions_entity_view
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+hidden: {  }
