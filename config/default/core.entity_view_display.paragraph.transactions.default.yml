@@ -8,6 +8,10 @@ dependencies:
     - paragraphs.paragraphs_type.transactions
   module:
     - entity_reference_revisions
+    - fences
+    - svg_image
+_core:
+  default_config_hash: WIRqOMF7CCx-9a0tOTPA4lCOKM9g8LqSpyLZcEqkl4I
 id: paragraph.transactions.default
 targetEntityType: paragraph
 bundle: transactions
@@ -18,9 +22,35 @@ content:
     weight: 1
     type: entity_reference_revisions_entity_view
     settings:
-      view_mode: full
+      view_mode: transaction
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
-hidden:
-  field_icon: true
+  field_icon:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: ''
+      image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+hidden: {  }
