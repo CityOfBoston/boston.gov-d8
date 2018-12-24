@@ -40,32 +40,29 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
   - composer selfupdate
-  - composer require phing/phing:2.* --no-suggest --no-scripts -q
+  - composer require phing/phing:2.* --no-suggest --no-scripts
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
-  # Step 1: Download all dependencies.
-    # ensure composer is on latest version.
-  - export AH_SITE_ENVIRONMENT=dev
-  - export LANDO_INFO='{"database":{"type":"mysql","creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"localhost","port":3306}}}'
-  # Step 2: Build the drupal site using Phing.
-    # Make an account for drupal in MySQL (better than using root a/c).
+  # Make an account for drupal in MySQL (better than using root a/c).
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
   - travis_wait 20 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+  # Build the drupal site using Phing.
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
-  # Step 3: Manage SSH keys for deployment to Acquia.
-  - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
-  - eval "$(ssh-agent -s)"
-  - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
-  - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
 
 script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
-  - vendor/bin/phing -f build.xml deploy:artifact:test
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test
 
 after_success:
+  # Manage SSH keys for deployment to Acquia.
+  - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
+  - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
+  - eval "$(ssh-agent -s)"
+  - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
+  # Deploy
   - scripts/deploy/travis-deploy.sh develop
   - scripts/deploy/travis-deploy.sh travis-deploy-2
   - scripts/deploy/travis-deploy.sh master master-build
