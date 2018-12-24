@@ -152,8 +152,8 @@
                    description="Commit copied files into the the repo."/>
         <phingcall target="deploy:artifact:push-all"
                    description="Push the updated repo branch to Acquia servers."/>
-        <phingcall target="deploy:artifact:post-deploy"
-                   description="Sync database, import configs, run update hooks, reset permissions and clear external caches."/>
+        <!--<phingcall target="deploy:artifact:post-deploy"-->
+                   <!--description="Sync database, import configs, run update hooks, reset permissions and clear external caches."/>-->
       </else>
     </if>
 
@@ -189,6 +189,11 @@
           description="Import the configurations."
           command="${travis.drush} ${drush.alias} cim -y"/>
 
+      <echo message="PRE-LAUNCH ONLY: Enable modules for migration."/>
+      <exec dir="${docroot}" passthru="true"
+            description="Enable modules."
+            command="${travis.drush} ${drush.alias} en migrate -y"/>
+
     <echo message="Update DB with un-executed hook_updates on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Run update.php to import update hooks."
@@ -206,5 +211,12 @@
           description="Run cron for good measure."
           command="${travis.drush} ${drush.alias} cron"/>
   </target>
+
+  <!-- Verify and test the artifact once built. -->
+  <target name="deploy:artifact:test" description="Runs all tests on the artifact built on Travis.">
+    <phingcall target="validate:all" description="Runs linting and compile validation."/>
+    <phingcall target="tests:all" description="Runs PHPUnit, Behat and any other automated testing."/>
+  </target>
+
 
 </project>
