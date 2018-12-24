@@ -38,7 +38,8 @@ notifications:
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
   - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
-#  - composer install phing/phing:2.* --no-suggest --no-scripts
+  - mv composer.json composer.json.tmp && mv composer.lock composer.lock.tmp && composer require phing/phing:2.* --no-suggest --no-scripts
+  - mv -f composer.json.tmp composer.json && mv -f composer.lock.tmp composer.lock
   - echo $LANDO_INFO
 
 install:
