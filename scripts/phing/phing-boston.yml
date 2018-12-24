@@ -91,7 +91,7 @@ deploy:
     excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
     sanitize-file: ${repo.root}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit-message: "Automated commit by Travis CI for Build #${TRAVIS_BUILD_ID}"
+    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
     # Dry-run (for testing).
     dry-run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
