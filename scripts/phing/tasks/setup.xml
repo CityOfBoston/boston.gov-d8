@@ -46,8 +46,6 @@
   <target name="setup:docker:drupal-travis"
           description="Creates a drupal environment in docker (command run by travis).">
 
-    <echo message="Whee!"/>
-
     <!-- Map build-specifc properties. -->
     <property name="build.type" value="${build.travis.type}"/>
     <property name="build.type.long" value="production"/>
@@ -63,7 +61,7 @@
 
     <!-- Build. -->
     <phingcall target="setup:type" inheritRefs="true" inheritAll="true"/>
-    <phingcall target="setup:drupal:download-modules" />
+    <!--<phingcall target="setup:drupal:download-modules" />-->
     <phingcall target="setup:drupal:clone_private_repo"/>
     <phingcall target="setup:drupal:site-install"/>
     <phingcall target="setup:drush:local-config"/>
@@ -302,10 +300,9 @@
     <echo message="composer install ${composer.mode} --no-suggest --prefer-dist"/>
     <!-- Install composer (using lock file fif present) -->
     <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-          command="composer install ${composer.mode} --no-suggest --prefer-dist"
+          command="composer install ${composer.mode} --no-suggest --prefer-dist >> ${project.basedir}/setup/composer.log"
           dir="${project.basedir}/" outputProperty="composer.result" checkreturn="true"
           logoutput="true"/>
-    <!--command="composer install ${composer.mode} &#45;&#45;no-suggest >> ${project.basedir}/setup/composer.log"-->
     <echo message="${line.separator} > composer drupal:scaffold"
           file="${project.basedir}/setup/composer.log" append="true"/>
     <exec description="Installs the drupal scaffold files, and logs to composer.log"
