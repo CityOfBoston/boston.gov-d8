@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.drawer.field_short_description
+    - field.field.paragraph.drawer.field_text_blocks
+    - field.field.paragraph.drawer.field_title
+    - paragraphs.paragraphs_type.drawer
+  module:
+    - entity_reference_revisions
+id: paragraph.drawer.default
+targetEntityType: paragraph
+bundle: drawer
+mode: default
+content:
+  field_text_blocks:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_short_description: true
+  field_title: true
