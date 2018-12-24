@@ -39,12 +39,13 @@ before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
   - sudo apt-get update
   - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
+  - composer selfupdate
+  - composer require phing/phing:2.* --no-suggest --no-scripts -q
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.
   # Step 1: Download all dependencies.
     # ensure composer is on latest version.
-  - composer selfupdate
   - export AH_SITE_ENVIRONMENT=dev
   - export LANDO_INFO='{"database":{"type":"mysql","creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"localhost","port":3306}}}'
   # Step 2: Build the drupal site using Phing.
