@@ -45,7 +45,7 @@ install:
   # download all the latest modules (includes phing).
   - composer install --no-suggest
   - composer drupal:scaffold
-  - if [ ! -e  /usr/local/bin/drupal ]; then ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
+  - if [ ! -e  /usr/local/bin/drupal ]; then sudo ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
   # Make an account for drupal in MySQL (better than using root a/c).
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
   - travis_wait 20 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
