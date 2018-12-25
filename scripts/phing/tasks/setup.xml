@@ -364,7 +364,11 @@
               dir="${docroot}"
               command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
               logoutput="true" returnProperty="install.output"/>
-        <if><not><equals arg1="${install.output}" arg2="0" /></not>
+        <if>
+          <and>
+            <isset property="install.output"/>
+            <not><equals arg1="${install.output}" arg2="0" /></not>
+          </and>
           <then>
             <echo message="Build Failed." level="error"/>
             <exec command="cat ${project.basedir}/setup/drush_site_install.log"
@@ -385,7 +389,7 @@
             <available file="${project.sync}/system.site.yml"/>
           </and>
           <then>
-            <exec command='drush cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*"' outputProperty="db.uuid"/>
+            <exec command='${drush.cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*"' outputProperty="db.uuid"/>
             <exec command='cat ${project.sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*"' outputProperty="yml.uuid"/>
             <propertyregex property="db.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${db.uuid}" override="true"/>
             <propertyregex property="yml.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${yml.uuid}" override="true"/>
