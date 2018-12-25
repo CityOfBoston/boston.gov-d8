@@ -16,10 +16,10 @@ source_branch="$3"
 deployed_tag="$4"
 repo_url="$5"
 repo_type="$6"
-drush_alias="@bostond8.test"
-target_docroot="/var/www/html/bostond8.test/docroot"
+drush_alias="@bostond8.${target_env}"
+target_docroot="/var/www/html/bostond8.${target_env}/docroot"
 
-if [ "$target_env" = 'dev' ]; then
+if [ "$target_env" = 'test' ]; then
     echo "$site.$target_env: The $source_branch branch has been updated on $target_env. Running post-update tasks.."
 
     echo "Remove config_split module."

@@ -16,7 +16,6 @@ source_branch="$3"
 deployed_tag="$4"
 repo_url="$5"
 repo_type="$6"
-drush_alias="@bostond8.dev"
 
 if [ "$source_branch" != "$deployed_tag" ]; then
     echo "$site.$target_env: Deployed branch $source_branch as $deployed_tag."

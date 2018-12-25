@@ -18,7 +18,8 @@ repo_url="$5"
 repo_type="$6"
 
 if [ "$target_env" = 'dev' ]; then
-    echo "$site.$target_env: The $source_branch branch has been updated on $target_env. Clearing the cache."
+    echo "$site.$target_env: The $source_branch branch has been updated on $target_env."
 else
     echo "$site.$target_env: The $source_branch branch has been updated on $target_env."
 fi
+
