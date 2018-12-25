@@ -23,27 +23,27 @@ if [ "$target_env" = 'dev' ]; then
     echo "$site.$target_env: The $source_branch branch has been updated on $target_env. Running post-update tasks."
 
     echo "Remove config_split module."
-    cd ${target_docroot} && drush9 $drush_alias pmu config_split -y
-    cd ${target_docroot} && drush9 $drush_alias cdel core.extension module.config_split -y
+    cd $target_docroot && drush9 $drush_alias pmu config_split -y
+    cd $target_docroot && drush9 $drush_alias cdel core.extension module.config_split -y
 
     echo "Import configurations from $source_branch."
-    cd ${target_docroot} && drush9 $drush_alias cim -y
+    cd $target_docroot && drush9 $drush_alias cim -y
 
     #    DEV ONLY - enable migration modules.
     echo "DEVELOPMENT PRE-D8 LAUNCH ONLY: Add back in some dev modules."
-    cd ${target_docroot} && drush9 $drush_alias en migrate -y
+    cd $target_docroot && drush9 $drush_alias en migrate -y
 
     echo "Update $site.$target_env DB with un-executed hook_updates on deploy target."
-    cd ${target_docroot} && drush9 $drush_alias updb -y
+    cd $target_docroot && drush9 $drush_alias updb -y
 
     echo "Update existing entities on $site.$target_env (poss. redundant)."
-    cd ${target_docroot} && drush9 $drush_alias entup -y
+    cd $target_docroot && drush9 $drush_alias entup -y
 
     echo "Rebuild user content access permissions on $site.$target_env."
-    cd ${target_docroot} && drush9 $drush_alias php-eval 'node_access_rebuild()' -y
+    cd $target_docroot && drush9 $drush_alias php-eval 'node_access_rebuild()' -y
 
     echo "Run cron now on $site.$target_env (poss. redundant)."
-    cd ${target_docroot} && drush9 $drush_alias cron
+    cd $target_docroot && drush9 $drush_alias cron
 
 else
     echo "$site.$target_env: The $source_branch branch has been updated on $target_env."

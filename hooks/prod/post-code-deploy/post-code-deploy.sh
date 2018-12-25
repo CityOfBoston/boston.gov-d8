@@ -17,21 +17,22 @@ deployed_tag="$4"
 repo_url="$5"
 repo_type="$6"
 drush_alias="@bostond8.prod"
+target_docroot="/var/www/html/bostond8.prod/docroot"
 
 if [ "$source_branch" != "$deployed_tag" ]; then
     echo "$site.$target_env: Deployed branch $source_branch as $deployed_tag.  Running post-deploy tasks."
 
     echo "Import configurations from $source_branch."
-    /usr/local/drush8/drush $drush_alias cim -y
+    cd $target_docroot && drush9 $drush_alias cim -y
 
     echo "Update $site.$target_env DB with un-executed hook_updates on deploy target."
-    /usr/local/drush8/drush $drush_alias updb -y
+    cd $target_docroot && drush9 $drush_alias updb -y
 
     echo "Update existing entities on $site.$target_env (poss. redundant)."
-    /usr/local/drush8/drush $drush_alias entup -y
+    cd $target_docroot && drush9 $drush_alias entup -y
 
     echo "Rebuild user content access permissions on $site.$target_env."
-    /usr/local/drush8/drush $drush_alias php-eval 'node_access_rebuild()' -y
+    cd $target_docroot && drush9 $drush_alias php-eval 'node_access_rebuild()' -y
 
 else
     echo "$site.$target_env: Deployed $deployed_tag."
