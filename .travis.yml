@@ -38,7 +38,6 @@ notifications:
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
   - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
-#  - export LANDO_INFO='{"database":{"type":"mysql","creds":{"user":"root","password":"","database":"drupal"},"internal_connection":{"host":"localhost","port":3306}}}'
 
 install:
   # In this context "install" is the phing build process because we are installing Drupal in order to test it.

@@ -33,8 +33,11 @@
     <target name="update:database:sync"
             description="Syncronise the database with staging.">
         <!-- Make sure the sync source is specified. -->
-        <if><not><isset property=""/></not><then><property name="build.database.drush-alias" value="@bostond8.test"/></then></if>
-        <echo message="Synchronizing local database with copy from ${build.database.drush-alias}" />
+        <if>
+            <not><isset property="build.database.drush-alias"/></not>
+            <then><property name="build.database.drush-alias" value="@bostond8.test"/></then>
+        </if>
+        <echo message="Synchronizing local database with content from ${build.database.drush-alias}" />
         <exec description="Make the db sync."
               dir="${docroot}"
               command="${drush.cmd} sql-sync ${build.database.drush-alias} @self -y"
@@ -51,16 +54,17 @@
     <target name="update:database:update"
             description="Update the database with any hook_updates etc.">
         <echo message="Updating Drupal database (checks for module updates and database changes)." />
-        <echo message="==== Update Drupal DB ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/config-import.log.log for output.\033[0m'" logoutput="true"/>
+        <echo message="==== Update Drupal DB ====${line.separator}" file="${project.basedir}/setup/config-import.log.log" append="true"/>
         <exec description="Update the database with any hook_updates etc."
-              dir="${docroot}"
-              command="${drush.cmd} updb --entity-updates -y >> ${repo.root}/setup/drush_site_install.log "
+              dir="${docroot}" level="warning"
+              command="${drush.cmd} updb --entity-updates -y >> ${repo.root}/setup/config-import.log.log "
               logoutput="true" />
-        <echo message="==== Rebuild Drupal Permissions ====${line.separator}" file="${project.basedir}/setup/drush_site_install.log" append="true"/>
+        <echo message="==== Rebuild Drupal Permissions ====${line.separator}" file="${project.basedir}/setup/config-import.log.log" append="true"/>
         <exec description="Rebuild the user permissions"
               logoutput="true"
-              dir="${docroot}"
-              command='${drush.cmd} eval "node_access_rebuild();" >> ${repo.root}/setup/drush_site_install.log '/>
+              dir="${docroot}" level="warning"
+              command='${drush.cmd} eval "node_access_rebuild();" >> ${repo.root}/setup/config-import.log.log '/>
     </target>
 
 <!--Configuration commands-->
