@@ -443,11 +443,6 @@
           description="! Deletes, recreates and sets the database and any other default values into the local.settings.php file.">
 
     <!-- Resource names -->
-    <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
-    <resolvepath propertyName="travis.settings.file" path="${docroot}/${travis.settings.file.rel}"/>
-    <resolvepath propertyName="acquia.settings.file" path="${docroot}/${acquia.settings.file.rel}"/>
-    <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
-    <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
     <property name="private.docroot.settings" value="${docroot}/${git.private_repo.settings_file.rel}"/>
 
     <echo message="Customize settings."/>
