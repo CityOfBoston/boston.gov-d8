@@ -77,15 +77,15 @@ deploy:
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-  travis-deploy-2:
+  master:
     # Folder in Travis container where deploy files will be "built"
     dir: ${repo.root}/deploy
     # Name of the target branch in the Acquia repo.
-    deploy-branch: develop-deploy
+    deploy-branch: master-deploy
     # Path to the drush command in the Travis container.
     travis-drush-path: '${repo.root}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
-    drush-alias: "@bostond8.dev"
+    drush-alias: "@bostond8.test"
     # Definition of files that will and wont be copied from build to deploy.
     includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
     excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
@@ -96,7 +96,7 @@ deploy:
     dry-run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy-db: false
-    drush-db-source: "@bostond8.stage"
+    drush-db-source: ""
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
