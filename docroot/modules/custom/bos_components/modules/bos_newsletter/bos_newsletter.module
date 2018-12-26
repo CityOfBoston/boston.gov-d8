@@ -19,3 +19,13 @@ function bos_newsletter_theme() {
   ];
   return $theme;
 }
+
+/**
+ * Implements hook_preprocess_HOOK__TYPE().
+ */
+function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
+  $email_list_title = $variables["elements"]["field_newsletter"][0]["#title"];
+  // Newsletter ID: $variables["elements"]["field_newsletter"][0]["#options"]["entity"]->values["field_id"]["x-default"][0]["value"];
+  $newsletter_id = $variables["elements"]["field_newsletter"][0]["#options"]["entity"]->get('field_id')->getValue('list')[0]["value"];
+  $variables['newsletter_id'] = $newsletter_id;
+}
