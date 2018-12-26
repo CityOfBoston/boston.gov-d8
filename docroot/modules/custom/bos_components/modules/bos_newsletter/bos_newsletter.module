@@ -4,3 +4,18 @@
  * @file
  * The Base module file for bos_newsletter module.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_newsletter_theme() {
+  $theme['paragraph__newsletter'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_newsletter/templates',
+  ];
+  $theme['paragraph__newsletter__sidebar'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_newsletter/templates',
+  ];
+  return $theme;
+}

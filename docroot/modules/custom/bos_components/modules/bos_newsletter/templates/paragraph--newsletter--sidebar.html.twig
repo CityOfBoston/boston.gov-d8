@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default theme implementation for a single paragraph item.
  *
@@ -23,21 +22,20 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
-?>
-<div class="b b--<?php print $component_theme; ?><?php if ($component_theme !== 'w'): ?> p-a300<?php endif; ?>">
-  <?php if (isset($content['field_component_title'])): ?>
-    <div class="sh sh--sm <?php print $section_header_theme; ?> m-b300">
-      <?php print render($content['field_component_title']); ?>
+ #}
+<div class="b b--{{ component_theme }}{% if component_theme !== 'w' %} p-a300{% endif %}">
+  {% if content.field_component_title %}
+    <div class="sh sh--sm {{ section_header_theme }} m-b300">
+      {{ content.field_component_title }}
     </div>
-  <?php endif; ?>
-  <?php if (isset($content['field_description'])): ?>
-    <div class="t--info m-b300"><?php print render($content['field_description']); ?></div>
-  <?php endif; ?>
+  {% endif %}
+  {% if content.field_description %}
+    <div class="t--info m-b300">{{ content.field_description }}</div>
+  {% endif %}
   <div>
-    <?php if (isset($content['field_newsletter'])): ?>
-      <?php $newsletter_id = $content['field_newsletter']['#items'][0]['entity']->field_id['und'][0]['value']; ?>
-      <form action="<?php print $newsletter_url ?>?list=<?php print $newsletter_id ?>" method="POST" class="bos-newsletter" novalidate>
+    {% if content.field_newsletter %}
+      {# set newsletter_id = $content['field_newsletter']['#items'][0]['entity']->field_id['und'][0]['value']; #}
+      <form action="{{ newsletter_url }}?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
         <div class="fs">
           <div class="fs-c">
             <div class="txt">
@@ -54,6 +52,6 @@
           </div>
         </div>
       </form>
-    <?php endif; ?>
+    {% endif %}
   </div>
 </div>
