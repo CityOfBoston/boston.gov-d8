@@ -27,6 +27,11 @@
   <target name="deploy:artifact:add-remotes" description="*Add remotes and fetch upstream refs.">
     <echo message="Add remote(s) to the new repo (in deploy directory)." level="info"/>
     <foreach list="${deploy.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
+
+    <exec command="rm -f .git/gc.log"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git prune"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
   </target>
 
   <target name="deploy:artifact:commitd8" description="*Commits deployment files to repo.">
@@ -71,16 +76,13 @@
     <echo message="Initialize new git repo in deploy directory." level="info"/>
     <exec command="git init"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git config gc.pruneExpire 3.days.ago"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+
   </target>
 
   <target name="deploy:artifact:push-all" description="*Push to all registered remotes.">
     <echo message="Push (deploy) to all remotes." level="info"/>
-    <exec command="rm -f .git/gc.log"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git prune"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git config gc.pruneExpire 3.days.ago"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${deploy.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
     <echo message="Push complete. Code now deployed to all remotes." level="info"/>
   </target>
@@ -100,10 +102,8 @@
   </target>
 
   <target name="deploy:artifact:sanitize" description="Removes files from the deploy which may already be in repo.">
-    <dirname property="sanitize.dir" file="${deploy.sanitize-file}"/>
-    <basename property="sanitize.name" file="${deploy.sanitize-file}"/>
     <delete>
-      <fileset includesfile="${sanitize.name}" dir="${sanitize.dir}"/>
+      <fileset includesfile="${deploy.sanitize-file}" dir="${repo.root}"/>
     </delete>
   </target>
 

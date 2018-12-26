@@ -627,15 +627,9 @@
   </target>
 
   <target name="test">
-    <property name="var" value="123"/>
-    <echo message="Testing ${var}." level="info"/>
-    <phingcall target="test2"/>
-    <echo message="Testing ${var}." level="info"/>
+    <echo message="Testing." level="info"/>
   </target>
-  <target name="test2">
-    <echo message="Testing2 ${var}." level="info"/>
-    <property name="var" value="1234"/>
-  </target>
+
 
 </project>
 
