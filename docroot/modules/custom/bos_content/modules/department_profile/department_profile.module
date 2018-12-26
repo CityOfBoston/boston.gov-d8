@@ -69,7 +69,7 @@ function department_profile_preprocess_node(&$variables) {
  */
 function department_profile_preprocess_breadcrumb(&$variables) {
   $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
-  if (count($variables['breadcrumb'] == 1)) {
+  if (!empty($variables['breadcrumb']) && count($variables['breadcrumb'] == 1)) {
     $route = $variables['breadcrumb'][0]['url'];
 
     $a = array_keys($crumbs);

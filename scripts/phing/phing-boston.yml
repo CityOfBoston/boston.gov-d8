@@ -1,46 +1,9 @@
 project:
   profile:
     name: 'bos_profile'
-    contrib: false
-    install_profile: 'config_installer'
-  cloud_alias: "@bostond8"
   themes:
     - bos_theme
-  config:
-    # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
-    # aquia require ./config/default:
-    #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
-    sync: "../config/default"
-    develop: "../config/develop"
-    prod: "../config/prod"
-
-  # Set this to 'initialize' to start a fresh install.
-  # Otherwise set it to sync to sync from the stg environment.
-  build_db_from: sync
-  # The acquia_subname value is the machine name of your subscription on Acquia
-  # Cloud. E.g., if your dev env URL on Acquia Cloud is
-  # http://psprojectdev.prod.acquia-sites.com/ then your acquia_subname is
-  # "psproject". This value is used to correctly configure settings in
-  # settings.php includes. This will also determine the the directory name
-  # of the new repository.
-  acquia_subname: 'spyglass'
-  # Used for enforcing correct git commit msg syntax.
-  prefix: 'SPY'
-  human_name: 'Spyglass'
-  # This is the default makefile that will be used to build dependencies.
-  # It should live in the project root.
-  make_file: 'make.yml'
-
-  # These configurations map to AH_XXXX environment variables.
-  # refer: https://docs.acquia.com/acquia-cloud/develop/env-variable/
-  acquia:
-    # Un-comment is this is a production site
-    # production: 1
-    # Un-comment is this is a non-production site
-    non_production: 1
-    # set one of dev, test or prod based on host
-    site_environment: dev
-
+    -
 # Drupal Account Credentials. These are used for installing Drupal.
 drupal:
   account:
@@ -51,33 +14,43 @@ drupal:
     # Use 'default' as the name if there are no multisites.
     name: default
 
-# Configuration settings for new git repository.
-git:
-  # [Optional] Set this node (private_repo) if there is a private repo that needs to
-  # be included as part of the build:
-  # - It is expected that the repo is hosted on GitHub.
-  # - The development machine *must* have a valid ssh key for this remote repo.
-  # - The repo can contain a settings file (e.g. private.settings.php)
-  # - The folder structure of the private repo must exactly match the folder structure
-  #   of the main repo so that files can be copied across to the correct folders.
-  private_repo:
-    repo: CityOfBoston/boston.gov-d8-private.git
-    branch: develop
-    deploy-branch: master
-    # Where the repo will be cloned to.
-    local_dir: ${repo.root}/setup/private
-    # [optional] Provide the path to a settings script (relative to the private repo root),
-    # which will be copied to the main repo and then set up to be called from (i.e. extend)
-    # the sites main settings.php script.
-    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
+build:
+  local:
+    # Build Type = dev or prod.
+    type: dev
+    config:
+      # Enter the UUID from system.site.yml if the config files in the sync folder
+      # specified do not match the UUID in the DB, or we are installing a new DB.
+      site-uuid: "452fac34-8a25-4346-b005-f85d26dd3cf9"
+      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia require ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+    database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to sync to sync from the drush-alias environment.
+      source: initialize
+      drush-alias: "@bostond8.dev"
 
-composer:
-  bin: ${repo.root}/vendor/bin
+  travis:
+    # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+    type: dev
+    config:
+      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia require ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+    database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to sync to sync from the drush-alias environment.
+      source: initialize
+      drush-alias: "@bostond8.test"
 
-drush:
-  bin: ${composer.bin}/drush
-  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
-  root: ${docroot}
+  terraform:
+    type: prod
+    database:
+      # none, auto, build, sync or restore
+      source: sync
 
 deploy:
   # each element of the deploy object is a branch in the main CoB repo.
@@ -93,8 +66,32 @@ deploy:
     # Definition of files that will and wont be copied from build to deploy.
     includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
     excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+    sanitize-file: ${repo.root}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit-message: "Automated commit by Travis CI for Build #${TRAVIS_BUILD_ID}"
+    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
+    # Dry-run (for testing).
+    dry-run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy-db: false
+    drush-db-source: "@bostond8.stage"
+    # Array of user:host for (Acquia) git remotes to be used for deployment.
+    remotes:
+      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+  travis-deploy-2:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${repo.root}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy-branch: develop-deploy
+    # Path to the drush command in the Travis container.
+    travis-drush-path: '${repo.root}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush-alias: "@bostond8.dev"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
+    excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+    sanitize-file: ${repo.root}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
     # Dry-run (for testing).
     dry-run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -104,14 +101,41 @@ deploy:
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
-reports:
-  localDir: ${docroot}/testing/reports
-  remoteDir: testing/reports
+# Configuration settings for new git repository.
+git:
+  # [Optional] Set this node (private_repo) if there is a private repo that needs to
+  # be included as part of the build:
+  # - It is expected that the repo is hosted on GitHub.
+  # - The development machine *must* have a valid ssh key for this remote repo.
+  # - The repo can contain a settings file (e.g. private.settings.php)
+  # - The folder structure of the private repo must exactly match the folder structure
+  #   of the main repo so that files can be copied across to the correct folders.
+  private_repo:
+    repo: CityOfBoston/boston.gov-d8-private.git
+    branch: develop
+    deploy-branch: develop
+    # Where the repo will be cloned to.
+    local_dir: ${repo.root}/setup/private
+    # [optional] Provide the path to a settings script (relative to the private repo root),
+    # which will be copied to the main repo and then set up to be called from (i.e. extend)
+    # the sites main settings.php script.
+    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
+
+composer:
+  bin: ${repo.root}/vendor/bin
+
+drush:
+  bin: ${composer.bin}/drush
+  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
+  root: ${docroot}
 
 # The testing framework is limited to the `tests` directory, and includes
 # example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
 # this from being copied, remove the 'testing_framework' key.
 testing_framework:
+  reports:
+    localDir: ${docroot}/testing/reports
+    remoteDir: testing/reports
   behat:
     javascript_driver: 'selenium2'
     # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
@@ -128,9 +152,3 @@ testing_framework:
     #  launch-phantom: true
   phpunit:
 
-x-php:
-  xdebug:
-    # Provide absolute path and filename on the drupal server for the xdebug.ini file.
-    remote_file: '/usr/local/etc/php/conf.d/boston.xdebug.ini'
-    # Provide the filename of the xdebug.ini
-    default_file: 'xdebug.ini'

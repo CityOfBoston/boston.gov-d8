@@ -60,7 +60,7 @@
        error log, set 'xdebug.max_nesting_level=1000' in php.ini. -->
   <!--<target name="tests:behat" depends="tests:run-server, tests:phantomjs:launch" description="Executes Behat all behat tests in behat.paths.">-->
   <target name="tests:behat" description="Executes Behat all behat tests in behat.paths.">
-    <mkdir dir="${reports.localDir}/behat"/>
+    <mkdir dir="${testing_framework.reports.localDir}/behat"/>
     <phingcall target="tests:behat:execute"/>
     <!--<phingcall target="tests:phantomjs:kill"/>-->
   </target>
@@ -74,7 +74,7 @@
            strict="true"
            haltonerror="false"
            returnProperty="behatFail"
-           out="std,${reports.localDir}"
+           out="std,${testing_framework.reports.localDir}"
            format="pretty,junit"
            tags="${behat.tags}"
     />
@@ -89,8 +89,8 @@
 
   <!-- Execute PHPUnit tests. -->
   <target name="tests:phpunit" description="Executes PHPUnit tests against custom code.">
-    <delete dir="${reports.localDir}/phpunit" quiet="true" verbose="false"/>
-    <mkdir dir="${reports.localDir}/phpunit"/>
+    <delete dir="${testing_framework.reports.localDir}/phpunit" quiet="true" verbose="false"/>
+    <mkdir dir="${testing_framework.reports.localDir}/phpunit"/>
 
     <phpunit
       printsummary="true"
@@ -99,7 +99,7 @@
       pharlocation="/usr/local/bin/phpunit"
     >
       <formatter type="plain" usefile="false"/>
-      <formatter type="xml" todir="${reports.localDir}/phpunit"/>
+      <formatter type="xml" todir="${testing_framework.reports.localDir}/phpunit"/>
       <batchtest>
         <fileset dir="${project.basedir}/tests/phpunit">
           <include name="**/*Test*.php"/>
@@ -108,13 +108,13 @@
     </phpunit>
 
     <phpunitreport
-      infile="${reports.localDir}/phpunit/testsuites.xml"
+      infile="${testing_framework.reports.localDir}/phpunit/testsuites.xml"
       format="noframes"
-      todir="${reports.localDir}/phpunit" />
+      todir="${testing_framework.reports.localDir}/phpunit" />
     <property
-      name="reports.phpunit.file"
-      value="${reports.localDir}/phpunit/phpunit-noframes.html"/>
-    <echo>PHPUnit Report is available at ${reports.phpunit.file}</echo>
+      name="testing_framework.reports.phpunit.file"
+      value="${testing_framework.reports.localDir}/phpunit/phpunit-noframes.html"/>
+    <echo>PHPUnit Report is available at ${testing_framework.reports.phpunit.file}</echo>
 
     <if>
       <or>

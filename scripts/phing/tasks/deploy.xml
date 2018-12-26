@@ -27,6 +27,11 @@
   <target name="deploy:artifact:add-remotes" description="*Add remotes and fetch upstream refs.">
     <echo message="Add remote(s) to the new repo (in deploy directory)." level="info"/>
     <foreach list="${deploy.remotes}" param="deploy.remote" target="deploy:artifact:add-remote"/>
+
+    <exec command="rm -f .git/gc.log"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git prune"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
   </target>
 
   <target name="deploy:artifact:commitd8" description="*Commits deployment files to repo.">
@@ -34,10 +39,11 @@
     <echo message="Add modified files to git (git add --all)." level="info"/>
     <exec command="git add --all" dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
-    <echo message="Commit files to git (git commit)." level="info"/>
+    <echo message="Commit files to git (git commit -m '${deploy.commitMsg}')." level="info"/>
     <exec command="git commit -m '${deploy.commitMsg}' --quiet" dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
-    <echo message="Git repo now ready to deploy to Acquia." level="info"/>
+    <echo message="Done." level="info"/>
+    <echo message="Branch ${travis.branch} now ready to deploy to Acquia as ${deploy.branch}." level="info"/>
 
   </target>
 
@@ -46,7 +52,21 @@
     <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
-    <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
+
+    <!-- Ensure all hooks have appropriate executable permissions. -->
+    <exec command="chmod +x ${deploy.dir}/hooks/**/*.sh" logoutput="true"/>
+
+    <!-- Remove config_split -->
+    <switch value="${build.travis.type}">
+      <case value="prod"><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/prod ${deploy.dir}/config/" logoutput="true"/></case>
+      <default><exec command="rsync -rlDW --inplace --delete ${repo.root}/config/develop ${deploy.dir}/config/" logoutput="true"/></default>
+    </switch>
+    <delete dir="${deploy.dir}/config/prod"></delete>
+    <delete dir="${deploy.dir}/config/develop"></delete>
+    <delete file="${deploy.dir}/config/default/config_split.config_split.production.yml"></delete>
+    <delete file="${deploy.dir}/config/default/config_split.config_split.development.yml"></delete>
+
+    <echo message="Copied." level="info"/>
   </target>
 
   <target name="deploy:artifact:prepare-dir" description="*Delete the existing deploy directory and re-initialize as an empty git repository.">
@@ -56,16 +76,13 @@
     <echo message="Initialize new git repo in deploy directory." level="info"/>
     <exec command="git init"
           dir="${deploy.dir}" logoutput="true" passthru="true"/>
+    <exec command="git config gc.pruneExpire 3.days.ago"
+          dir="${deploy.dir}" logoutput="true" passthru="true"/>
+
   </target>
 
   <target name="deploy:artifact:push-all" description="*Push to all registered remotes.">
     <echo message="Push (deploy) to all remotes." level="info"/>
-    <exec command="rm -f .git/gc.log"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git prune"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
-    <exec command="git config gc.pruneExpire 3.days.ago"
-          dir="${deploy.dir}" logoutput="true" passthru="true"/>
     <foreach list="${deploy.remotes}" param="deploy.remote" target="deploy:artifact:push-remote"/>
     <echo message="Push complete. Code now deployed to all remotes." level="info"/>
   </target>
@@ -84,19 +101,9 @@
     <exec command="export DEPLOY_UPTODATE=$(echo '${deploy.push.output}' | grep --quiet 'Everything up-to-date')"/>
   </target>
 
-  <target name="deploy:artifact:sanitize" description="Removes sensitive files from the deploy docroot.">
+  <target name="deploy:artifact:sanitize" description="Removes files from the deploy which may already be in repo.">
     <delete>
-      <fileset dir="${deploy.dir}/docroot">
-        <include name="CHANGELOG.txt"/>
-        <include name="COPYRIGHT.txt"/>
-        <include name="INSTALL.txt"/>
-        <include name="INSTALL.*.txt"/>
-        <include name="LICENSE.txt"/>
-        <include name="MAINTAINERS.txt"/>
-        <include name="PATCHES.txt"/>
-        <include name="README.txt"/>
-        <include name="UPGRADE.txt"/>
-      </fileset>
+      <fileset includesfile="${deploy.sanitize-file}" dir="${repo.root}"/>
     </delete>
   </target>
 
@@ -105,16 +112,19 @@
 
     <echo message="Deploying to Acquia ... " level="info"/>
 
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.dir}" outputProperty="deploy.dir"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.remotes}" outputProperty="deploy.remotes"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.deploy-branch}" outputProperty="deploy.branch"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.travis-drush-path}" outputProperty="travis.drush"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.drush-alias}" outputProperty="drush.alias"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.commit-message}" outputProperty="deploy.commitMsg"/>
+    <property name="deploy.dir" value="${deploy.${travis.branch}.dir}"/>
+    <property name="deploy.remotes" value="${deploy.${travis.branch}.remotes}"/>
+    <property name="deploy.branch" value="${deploy.${travis.branch}.deploy-branch}"/>
+    <property name="deploy.excludes-file" value="${deploy.${travis.branch}.excludes-file}"/>
+    <property name="deploy.includes-file" value="${deploy.${travis.branch}.includes-file}"/>
+    <property name="deploy.sanitize-file" value="${deploy.${travis.branch}.sanitize-file}"/>
+    <property name="travis.drush" value="${deploy.${travis.branch}.travis-drush-path}"/>
+    <property name="drush.alias" value="${deploy.${travis.branch}.drush-alias}"/>
+    <property name="deploy.commitMsg" value="${deploy.${travis.branch}.commit-message}"/>
     <!-- This property sync.db controls whether the database is copied (from staging) during post-deploy. -->
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.copy-db}" outputProperty="deploy.copy-db"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.drush-db-source}" outputProperty="drush.db-source"/>
-    <exec command="echo ${deploy.${TRAVIS_BRANCH}.dry-run}" outputProperty="deploy.dry-run"/>
+    <property name="deploy.copy-db" value="${deploy.${travis.branch}.copy-db}"/>
+    <property name="drush.db-source" value="${deploy.${travis.branch}.drush-db-source}"/>
+    <property name="deploy.dry-run" value="${deploy.${travis.branch}.dry-run}"/>
 
     <!-- Delete the existing deploy directory and re-initialize as an empty git repository. -->
     <phingcall target="deploy:artifact:prepare-dir"
@@ -130,14 +140,13 @@
     <phingcall target="deploy:artifact:copy"
                description="Copy the entire built artifact to the deploy folder."/>
 
-    <!--Sanitize the existing repo - not needed, the eclude file should cope with this. -->
-    <!--<phingcall target="deploy:artifact:sanitize"-->
-               <!--description="Deletes (sensitive/unwanted) files not excluded in copy"/>-->
-
+    <!--Sanitize files from the existing repo - not usually needed, the exclude file should cope with this. -->
+    <phingcall target="deploy:artifact:sanitize"
+               description="Deletes (sensitive/unwanted) files not excluded in copy"/>
 
     <!-- Push up changes to remotes. -->
     <if>
-      <isfalse value="${deploy.dry-run}"/>
+      <istrue value="${deploy.dry-run}"/>
       <then>
         <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
       </then>
@@ -146,8 +155,8 @@
                    description="Commit copied files into the the repo."/>
         <phingcall target="deploy:artifact:push-all"
                    description="Push the updated repo branch to Acquia servers."/>
-        <phingcall target="deploy:artifact:post-deploy"
-                   description="Sync database, import configs, run update hooks, reset permissions and clear external caches."/>
+        <!--<phingcall target="deploy:artifact:post-deploy"-->
+                   <!--description="Sync database, import configs, run update hooks, reset permissions and clear external caches."/>-->
       </else>
     </if>
 
@@ -162,6 +171,7 @@
 
     <echo message="Check Drush status on remote (deploy target)." level="info"/>
     <echo message="Using drush command ${travis.drush} ${drush.alias}." level="info"/>
+
     <if><istrue value="${deploy.copy-db}"/>
       <then>
         <echo message="Sync'ing database ... " level="info"/>
@@ -174,10 +184,19 @@
         <echo message="Note: Database on target remote not overwritten. " level="info"/>
       </else>
     </if>
+
     <echo message="Import config files into DB on deploy target." level="info"/>
-    <exec dir="${docroot}" passthru="true"
+    <exec command="${drush.cmd} pmu config_split"/>
+    <exec command="${drush.cmd} cdel core.extension module.config_split"/>
+    <exec dir="${docroot}" passthru="true" checkreturn="true"
           description="Import the configurations."
           command="${travis.drush} ${drush.alias} cim -y"/>
+
+      <echo message="PRE-LAUNCH ONLY: Enable modules for migration."/>
+      <exec dir="${docroot}" passthru="true"
+            description="Enable modules."
+            command="${travis.drush} ${drush.alias} en migrate -y"/>
+
     <echo message="Update DB with un-executed hook_updates on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Run update.php to import update hooks."
@@ -189,11 +208,18 @@
     <echo message="Rebuild user content access permissions on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Rebuild content access permissions."
-          command="${travis.drush} ${drush.alias} drush php-eval 'node_access_rebuild()' -y"/>
+          command="${travis.drush} ${drush.alias} php-eval 'node_access_rebuild()' -y"/>
     <echo message="Run cron now on deploy target (poss. redundant)." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Run cron for good measure."
           command="${travis.drush} ${drush.alias} cron"/>
   </target>
+
+  <!-- Verify and test the artifact once built. -->
+  <target name="deploy:artifact:test" description="Runs all tests on the artifact built on Travis.">
+    <phingcall target="validate:all" description="Runs linting and compile validation."/>
+    <phingcall target="tests:all" description="Runs PHPUnit, Behat and any other automated testing."/>
+  </target>
+
 
 </project>
