@@ -24,19 +24,16 @@ function bos_newsletter_theme() {
  * Implements hook_preprocess_HOOK__TYPE().
  */
 function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
-  $email_list_title = $variables["elements"]["field_newsletter"][0]["#title"];
 
   // Newsletter ID.
   $newsletter_id = $variables["elements"]["field_newsletter"][0]["#options"]["entity"]->get('field_id')->getValue('list')[0]["value"];
   $variables['newsletter_id'] = $newsletter_id;
 
   // Component Theme.
-  //$variables["elements"]["field_component_theme"]["#items"]->list[0]->values["value"]
   $component_theme = $variables["elements"]["field_component_theme"]["#items"]->getValue('list')[0]["value"];
-  //$component_theme = $variables["elements"]["field_component_theme"][0]["#markup"];
   $variables['component_theme'] = $component_theme;
 
   // Section Header Theme.
-  $section_header_theme = $component_theme == 'b' ? 'sh--w' : ''; 
+  $section_header_theme = $component_theme == 'b' ? 'sh--w' : '';
   $variables['section_header_theme'] = $section_header_theme;
 }
