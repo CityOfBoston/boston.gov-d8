@@ -68,6 +68,11 @@
     <property name="local.services.file.rel" value="sites/${drupal.multisite.name}/services.yml" />
     <property name="acquia.settings.file.rel" value="sites/${drupal.multisite.name}/settings/settings.acquia.php" />
     <property name="travis.settings.file.rel" value="sites/${drupal.multisite.name}/settings/settings.travis.php" />
+    <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
+    <resolvepath propertyName="travis.settings.file" path="${docroot}/${travis.settings.file.rel}"/>
+    <resolvepath propertyName="acquia.settings.file" path="${docroot}/${acquia.settings.file.rel}"/>
+    <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
+    <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
 
 <!-- Determine the Aquia Cloud Environment variables -->
     <php expression="getenv('AH_SITE_ENVIRONMENT') ? getenv('AH_SITE_ENVIRONMENT') : 'dev'" returnProperty="acquia.site_environment" level="verbose"/>
