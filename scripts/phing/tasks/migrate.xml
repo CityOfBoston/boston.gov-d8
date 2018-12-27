@@ -360,23 +360,34 @@
               description="Code to change the uid 101 user init field to 'anon'."
               value='\Drupal\Core\Database\Database::getConnection("default", "migrate")->update("users")->fields(["init" => "anon", "name" => "anon"])->condition("uid", 101, "=")->execute();'>
     </property>
+
+    <echo message="Migrate Users."/>
     <exec description="Fixes the init name for uid=101."
           command="${drush.cmd} eval '${php.command}'" level="info"/>
-
     <property name="migration.options" value="-v --update"/>
     <phingcall target="migrate:user" inheritAll="true"/>
-    <phingcall target="migrate:taxonomy:config" inheritAll="true"/>
 
+    <echo message="Migrate Taxonomy."/>
     <property name="migration.options" value="--force -v --update"/>
+    <phingcall target="migrate:taxonomy:config" inheritAll="true"/>
     <phingcall target="migrate:taxonomy:content" inheritAll="true"/>
 
-    <!-- Menu should go last -->
+    <echo message="Migrate Paragraphs."/>
     <property name="migration.options" value="--force -v --update"/>
-    <phingcall target="migrate:menu:content" inheritAll="true"/>
+    <phingcall target="migrate:paragraphs:content" inheritAll="true"/>
+
+    <echo message="Migrate Nodes."/>
+    <property name="migration.options" value="--force -v --update"/>
     <property name="migration.configs" override="true"
               description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
-              value="d7_node_type,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article,paragraph__bid,paragraph__bos311,paragraph__sidebar_item,paragraph__sidebar_item_w_icon,paragraph__social_media_links,paragraph__social_networking,paragraph__text,paragraph__text_one_column,paragraph__text_two_column,paragraph__text_three_column,paragraph__custom_hours_text,paragraph__daily_hours,d7_url_alias"/>
+              value="d7_node_type,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
+
+    <!-- Menu should go last -->
+    <echo message="Migrate Menus and Paths."/>
+    <property name="migration.options" value="--force -v --update"/>
+    <phingcall target="migrate:menu:config" inheritAll="true"/>
+    <phingcall target="migrate:menu:content" inheritAll="true"/>
   </target>
 
 </project>

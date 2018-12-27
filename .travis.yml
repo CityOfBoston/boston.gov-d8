@@ -7,7 +7,6 @@ branches:
   only:
     - develop
     - master
-    - travis-deploy-2
 
 php:
   - 7.1
@@ -65,5 +64,4 @@ after_success:
   - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   # Deploy
   - scripts/deploy/travis-deploy.sh develop
-  - scripts/deploy/travis-deploy.sh travis-deploy-2
   - scripts/deploy/travis-deploy.sh master master-build
