@@ -6,24 +6,6 @@
  */
 
 /**
- * Implements hook_preprocess_HOOK__TYPE().
- */
-function bos_featured_topics_preprocess_paragraph__featured_topics(&$variables) {
-  $topic_nodes = $variables['elements']['field_topics'];
-  foreach ($topic_nodes as $key => $topic) {
-    if (is_numeric($key)) {
-      $node = $topic['#node'];
-      if ($nid = $node->nid->value) {
-        $variables['featured_topic_counter'][] = [
-          'count' => $key,
-          'nid' => $nid,
-        ];
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_HOOK().
  */
 function bos_featured_topics_preprocess_node(&$variables) {
