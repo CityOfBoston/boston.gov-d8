@@ -26,14 +26,20 @@ function bos_newsletter_theme() {
 function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
 
   // Newsletter ID.
-  $newsletter_id = $variables["elements"]["field_newsletter"][0]["#options"]["entity"]->get('field_id')->getValue('list')[0]["value"];
-  $variables['newsletter_id'] = $newsletter_id;
+  if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_newsletter')) {
+    $tid = $variables['paragraph']->get('field_newsletter')->getValue()['0']['target_id'];
+    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
+    $variables['newsletter_id'] = $term->get('field_id')->getValue()['0']['value'];
+  }
 
-  // Component Theme.
-  $component_theme = $variables["elements"]["field_component_theme"]["#items"]->getValue('list')[0]["value"];
-  $variables['component_theme'] = $component_theme;
+  if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
+    // Component Theme.
+    $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
+    $variables['component_theme'] = $component_theme;
 
-  // Section Header Theme.
-  $section_header_theme = $component_theme == 'b' ? 'sh--w' : '';
-  $variables['section_header_theme'] = $section_header_theme;
+    // Section Header Theme.
+    $section_header_theme = $component_theme == 'b' ? 'sh--w' : '';
+    $variables['section_header_theme'] = $section_header_theme;
+  }
+
 }
