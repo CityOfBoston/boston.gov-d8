@@ -9,6 +9,9 @@ dependencies:
     - paragraphs.paragraphs_type.bid
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.city_score_dashboard
+    - paragraphs.paragraphs_type.commission_members
+    - paragraphs.paragraphs_type.commission_search
+    - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.grid_links
     - paragraphs.paragraphs_type.grid_of_cards
     - paragraphs.paragraphs_type.grid_of_quotes
@@ -43,6 +46,9 @@ settings:
       bid: bid
       bos311: bos311
       city_score_dashboard: city_score_dashboard
+      commission_search: commission_search
+      commission_members: commission_members
+      commission_summary: commission_summary
       grid_links: grid_links
       grid_of_cards: grid_of_cards
       grid_of_quotes: grid_of_quotes
@@ -94,15 +100,15 @@ settings:
       commission_contact_info:
         weight: 81
         enabled: false
-      commission_info:
-        weight: 82
-        enabled: false
-      commission_members:
+      commission_search:
+        enabled: true
         weight: 83
-        enabled: false
+      commission_members:
+        enabled: true
+        weight: 83
       commission_summary:
+        enabled: true
         weight: 84
-        enabled: false
       custom_hours_text:
         weight: 85
         enabled: false
