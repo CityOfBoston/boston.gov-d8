@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_featured_topics module.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_featured_topics_preprocess_node(&$variables) {
+  if ($node = $variables['node']) {
+    $type = $node->getType();
+    if ($type == 'topic_page') {
+      static $topics_counter;
+      $variables['topics_counter'] = ++$topics_counter;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_featured_topics_preprocess_field(&$variables, $hook) {
+  $element = $variables['element'];
+  if (isset($element['#field_name'])) {
+    if ($element['#field_name'] == 'field_short_title') {
+      foreach ($element as $key => $value) {
+        if (is_numeric($key)) {
+          if ($short_title = $value['#context']['value']) {
+            $variables['short_title'] = $short_title;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bos_featured_topics_theme() {
+  $theme['paragraph__featured_topics'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_featured_topics/templates',
+  ];
+  $theme['node__topic_page__featured_topics'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_featured_topics/templates',
+  ];
+  $theme['field__component__field_title'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_featured_topics/templates',
+  ];
+  $theme['field__component__field_topics'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_featured_topics/templates',
+  ];
+  return $theme;
+}
