@@ -15,6 +15,11 @@ function bos_city_score_theme() {
       'path' => 'modules/custom/bos_components/modules/bos_city_score/templates',
       'template' => 'paragraph--city-score-dashboard',
     ],
+    'field__taxonomy_term__cityscore_metrics' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_city_score/templates',
+      'template' => 'field--taxonomy-term--cityscore-metrics',
+    ],
   ];
 }
 
@@ -26,4 +31,20 @@ function bos_city_score_preprocess_paragraph(&$variables) {
   if ($variables['elements']['#paragraph']->bundle() == "city_score_dashboard") {
     $variables['#attached']['library'][] = "bos_city_score/heroku.style";
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_city_score_preprocess_field(&$variables) {
+  if ($variables["element"]["#bundle"] != "cityscore_metrics") {
+    return;
+  }
+
+  $variables["label_hidden"] = true;
+  if ($variables["element"]["#field_type"] == "decimal" && intval($variables["items"][0]["content"]["#markup"]) * 10 < 10) {
+    $variables["items"][0]["attributes"]->addClass("cs__low");
+  }
+
+
 }
