@@ -1,0 +1,22 @@
+name: bos_upcoming_events
+type: module
+description: 'Provides theming and configuration for bos_upcoming_events.'
+package: 'City of Boston (components)'
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_components
+  - paragraphs
+config_devel:
+  - core.base_field_override.paragraph.upcoming_events.created
+  - core.base_field_override.paragraph.upcoming_events.status
+  - core.base_field_override.paragraph.upcoming_events.uid
+  - core.entity_form_display.paragraph.upcoming_events.default
+  - core.entity_view_display.paragraph.upcoming_events.default
+  - core.entity_view_display.paragraph.upcoming_events.paragraphs_editor_preview
+  - field.field.paragraph.upcoming_events.field_component_title
+  - field.field.paragraph.upcoming_events.field_featured_item
+  - field.field.paragraph.upcoming_events.field_link
+  - field.field.paragraph.upcoming_events.field_short_title
+  - language.content_settings.paragraph.upcoming_events
+  - paragraphs.paragraphs_type.upcoming_events
