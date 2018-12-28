@@ -4,3 +4,14 @@
  * @file
  * The Base module file for bos_upcoming_events module.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_upcoming_events_theme() {
+  $theme['paragraph__upcoming_events'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_upcoming_events/templates',
+  ];
+  return $theme;
+}
