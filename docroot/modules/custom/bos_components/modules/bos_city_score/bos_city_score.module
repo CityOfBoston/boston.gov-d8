@@ -4,7 +4,7 @@
  * @file
  * The Base module file for bos_external_link module.
  */
-
+use Drupal\views\ViewExecutable;
 /**
  * Implements hook_theme().
  */
@@ -40,11 +40,9 @@ function bos_city_score_preprocess_field(&$variables) {
   if ($variables["element"]["#bundle"] != "cityscore_metrics") {
     return;
   }
-
+  // Used by the cityscore view, cityscore page.
   $variables["label_hidden"] = true;
   if ($variables["element"]["#field_type"] == "decimal" && intval($variables["items"][0]["content"]["#markup"]) * 10 < 10) {
     $variables["items"][0]["attributes"]->addClass("cs__low");
   }
-
-
 }

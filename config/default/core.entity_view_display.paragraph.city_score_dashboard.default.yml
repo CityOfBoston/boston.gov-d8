@@ -5,9 +5,13 @@ dependencies:
   config:
     - field.field.paragraph.city_score_dashboard.field_component_title
     - field.field.paragraph.city_score_dashboard.field_extra_info
+    - field.field.paragraph.city_score_dashboard.field_main_table
     - field.field.paragraph.city_score_dashboard.field_short_description
     - field.field.paragraph.city_score_dashboard.field_short_title
     - paragraphs.paragraphs_type.city_score_dashboard
+  module:
+    - fences
+    - viewfield
 _core:
   default_config_hash: I39Sx0eIa0LPlc9UfGB3BbqGPgsqflh4nXoVayn4P2A
 id: paragraph.city_score_dashboard.default
@@ -45,6 +49,23 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_main_table:
+    weight: 4
+    label: hidden
+    settings:
+      view_title: hidden
+      empty_view_title: hidden
+      always_build_output: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    type: viewfield_default
+    region: content
   field_short_description:
     type: string
     weight: 3

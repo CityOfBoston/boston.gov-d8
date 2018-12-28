@@ -25,6 +25,7 @@
  * @see template_process()
  */
 #}
+{{ breakpoint() }}
 <div{{ attributes }}>
    <div class="contextual-region">
        {{ title_suffix }}
@@ -62,6 +63,8 @@
             </li>
          </ul>
       </div>
-      <div id="scoreTable" class="cs--block"></div>
+      <div id="scoreTable" class="cs--block">
+         {{ content.field_main_table }}
+      </div>
    </div>
 </div>
