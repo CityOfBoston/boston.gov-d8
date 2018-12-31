@@ -2,11 +2,7 @@ uuid: c1d1ba52-4290-4977-9abb-bd7c8cdc9331
 langcode: en
 status: true
 dependencies:
-  config:
-    - image.style.linkit_result_thumbnail
   module:
-    - file
-    - image
     - node
 id: bos_settings_linkit_editor
 label: bos_settings_linkit_editor
@@ -23,29 +19,14 @@ matchers:
       group_by_bundle: true
       substitution_type: canonical
       limit: 100
-  ec22638a-a815-4bee-8c66-4a75534115bf:
-    uuid: ec22638a-a815-4bee-8c66-4a75534115bf
-    id: 'entity:file'
-    weight: 0
-    settings:
-      file_extensions: ''
-      file_status: 1
-      images:
-        show_dimensions: true
-        show_thumbnail: true
-        thumbnail_image_style: linkit_result_thumbnail
-      substitution_type: file
-      metadata: 'Created Date: [file:created]'
-      bundles: {  }
-      group_by_bundle: true
-      limit: 100
   141e9b0b-dcd9-4bd6-bc03-0a31364a5819:
     uuid: 141e9b0b-dcd9-4bd6-bc03-0a31364a5819
     id: 'entity:media'
     weight: 0
     settings:
-      metadata: '[media:thumbnail]'
-      bundles: {  }
+      metadata: '[media:name] | Created by: [media:uid] on [media:created]'
+      bundles:
+        file: file
       group_by_bundle: true
-      substitution_type: canonical
+      substitution_type: media
       limit: 100
