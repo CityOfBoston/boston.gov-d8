@@ -1,22 +1,24 @@
-uuid: 52cd9801-c2aa-45a6-8abf-b1581fca7eba
+uuid: 0f96e652-472e-4bd4-b0ef-9c33016d0b25
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_form_mode.media.media_browser
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
-    - image.style.thumbnail
+    - image.style.medium
     - media.type.image
   module:
     - content_moderation
+    - lightning_media
     - path
     - svg_image
 _core:
-  default_config_hash: kyoAHlZTGIuGTaQuBblGBk8EhfnVKOl19_0j5WbpQqM
-id: media.image.default
+  default_config_hash: iVmRBD7y3Gmddt29sSx9DwwH6Q4UaROqMu7FLyy_bvQ
+id: media.image.media_browser
 targetEntityType: media
 bundle: image
-mode: default
+mode: media_browser
 content:
   field_media_in_library:
     type: boolean_checkbox
@@ -29,9 +31,12 @@ content:
     type: image_image
     weight: 0
     settings:
+      preview_image_style: medium
       progress_indicator: throbber
-      preview_image_style: thumbnail
-    third_party_settings: {  }
+    third_party_settings:
+      lightning_media:
+        file_links: false
+        remove_button: false
     region: content
   langcode:
     type: language_select

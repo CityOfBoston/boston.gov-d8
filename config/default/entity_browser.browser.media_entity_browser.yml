@@ -5,6 +5,7 @@ dependencies:
   config:
     - views.view.media_entity_browser
   module:
+    - lightning_media
     - views
 _core:
   default_config_hash: UoGZLPH_DEy28wDjCYqiBKYsKoHlf6l6deygJjqdgPc
@@ -31,3 +32,14 @@ widgets:
     weight: 1
     label: Library
     id: view
+  4cff5ddf-dbc4-499e-b2be-a072ea018450:
+    settings:
+      submit_text: Place
+      target_bundles: {  }
+      form_mode: media_browser
+      return_file: false
+      upload_validators: {  }
+    uuid: 4cff5ddf-dbc4-499e-b2be-a072ea018450
+    weight: 2
+    label: Upload
+    id: file_upload

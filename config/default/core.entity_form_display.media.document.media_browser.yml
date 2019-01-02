@@ -1,36 +1,27 @@
-uuid: 52cd9801-c2aa-45a6-8abf-b1581fca7eba
+uuid: 391f2330-4fff-4934-8c65-ff86ec25a34b
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.image.field_media_in_library
-    - field.field.media.image.image
-    - image.style.thumbnail
-    - media.type.image
+    - core.entity_form_mode.media.media_browser
+    - field.field.media.document.field_document
+    - field.field.media.document.field_media_in_library
+    - media.type.document
   module:
     - content_moderation
     - path
-    - svg_image
 _core:
-  default_config_hash: kyoAHlZTGIuGTaQuBblGBk8EhfnVKOl19_0j5WbpQqM
-id: media.image.default
+  default_config_hash: X8KEO5iV-XcsBLSyLEMOMv3sw-WxXeIdWnZZ1btyyVU
+id: media.document.media_browser
 targetEntityType: media
-bundle: image
-mode: default
+bundle: document
+mode: media_browser
 content:
   field_media_in_library:
     type: boolean_checkbox
-    weight: 4
     settings:
       display_label: true
-    third_party_settings: {  }
-    region: content
-  image:
-    type: image_image
-    weight: 0
-    settings:
-      progress_indicator: throbber
-      preview_image_style: thumbnail
+    weight: 1
     third_party_settings: {  }
     region: content
   langcode:
@@ -48,7 +39,7 @@ content:
     third_party_settings: {  }
   name:
     type: string_textfield
-    weight: 3
+    weight: 0
     settings:
       size: 60
       placeholder: ''
@@ -69,4 +60,5 @@ content:
     third_party_settings: {  }
 hidden:
   created: true
+  field_document: true
   uid: true
