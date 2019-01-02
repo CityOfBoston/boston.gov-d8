@@ -4,10 +4,14 @@ description: Provides theming and config for cityscore component.
 package: City of Boston (components)
 core: 8.x
 version: 8.x.1.0
+configure: cityscore.admin
+help: help.page.bos_city_score
 dependencies:
   - bos_components
   - paragraphs
+  - rest
 config_devel:
+  - cityscore.settings.yml
   - core.base_field_override.paragraph.city_score_dashboard.created
   - core.base_field_override.paragraph.city_score_dashboard.status
   - core.base_field_override.paragraph.city_score_dashboard.uid
@@ -28,6 +32,7 @@ config_devel:
   - field.storage.taxonomy_term.field_day
   - field.storage.taxonomy_term.field_cs_weight
   - field.storage.taxonomy_term.field_calc_timestamp
+  - field.storage.taxonomy_term.field_current
   - taxonomy.vocabulary.cityscore_metrics
   - language.content_settings.taxonomy_term.cityscore_metrics
   - field.field.taxonomy_term.cityscore_metrics.field_table_timestamp
@@ -38,6 +43,7 @@ config_devel:
   - field.field.taxonomy_term.cityscore_metrics.field_day
   - field.field.taxonomy_term.cityscore_metrics.field_cs_weight
   - field.field.taxonomy_term.cityscore_metrics.field_calc_timestamp
+  - field.field.taxonomy_term.cityscore_metrics.field_current
   - core.entity_view_display.taxonomy_term.cityscore_metrics.default
   - core.entity_form_display.taxonomy_term.cityscore_metrics.default
   - rabbit_hole.behavior_settings.taxonomy_vocabulary_cityscore_metrics

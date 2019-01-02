@@ -20,4 +20,7 @@ function bos_city_score_uninstall() {
 function bos_city_score_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
+  $this->config('cityscore.settings')
+    ->set('auth_token', '9juHD7Y8oZpN2-erChlUQQ')
+    ->save();
 }

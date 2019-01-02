@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_current
+    - taxonomy.vocabulary.cityscore_metrics
+id: taxonomy_term.cityscore_metrics.field_current
+field_name: field_current
+entity_type: taxonomy_term
+bundle: cityscore_metrics
+label: Current
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

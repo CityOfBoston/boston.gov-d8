@@ -48,13 +48,6 @@ function bos_rest_menu() {
 }
 
 /**
- * Implements hook_admin_menu_cache_info().
- */
-function bos_rest_admin() {
-  // MATT: create a config form to hold variables in the init() section.
-}
-
-/**
  * Entrypoint for the rest/%/% menu callback (redirects to other functions).
  *
  * @param string $type
@@ -66,6 +59,8 @@ function bos_rest_endpoint($type, $action) {
   // Create new endpoints (e.g. /rest/newtype/action) by adding functions
   // with the name $endpoint.  Use bos_rest_hook and bos_rest_hook_action
   // functions as a template.
+  $endpoints = Drupal::config('bos_rest');
+
   $endpoint = "bos_rest_" . $type;
   echo $endpoint($action);
 }
@@ -327,4 +322,26 @@ function bos_rest_type_action($payload) {
   $result->message = "";
   $result = json_encode($result);
   return $result;
+}
+
+/**
+ * Registers a new endpoint for a module. (note: one endpoint per module)
+ *
+ * @param string $module
+ *   The Name of the module to register.
+ * @param string $endpoint_alias
+ *   The type for the module used in the pattern /rest/type/action.
+ */
+function bos_rest_register_endpoints($module, $endpoint_alias) {
+  \Drupal::config('rest_types')->set($module, $endpoint_alias)->save();
+}
+
+/**
+ * Deregisters a modules endpoint.
+ *
+ * @param string $module
+ *   The module to deregister.
+ */
+function bos_rest_deregister_endpoints($module) {
+  \Drupal::config('rest_types')->clear($module)->save();
 }

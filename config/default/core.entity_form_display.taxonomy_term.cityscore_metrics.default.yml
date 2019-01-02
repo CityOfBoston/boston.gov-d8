@@ -1,10 +1,11 @@
-uuid: b9168551-b913-456a-b951-fe707fdbda0f
+uuid: 771d036a-77c5-4c3c-bd54-99701e3e7b58
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.taxonomy_term.cityscore_metrics.field_calc_timestamp
     - field.field.taxonomy_term.cityscore_metrics.field_cs_weight
+    - field.field.taxonomy_term.cityscore_metrics.field_current
     - field.field.taxonomy_term.cityscore_metrics.field_day
     - field.field.taxonomy_term.cityscore_metrics.field_previous_day
     - field.field.taxonomy_term.cityscore_metrics.field_previous_month
@@ -27,6 +28,7 @@ third_party_settings:
         - field_previous_quarter
         - field_table_timestamp
         - field_calc_timestamp
+        - field_current
       parent_name: ''
       weight: 2
       format_type: fieldset
@@ -36,6 +38,8 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Metrics
+_core:
+  default_config_hash: E14m0ZxObYpyOtEd5DvSOEXBzHpyQD3Ehp7liuUO2r4
 id: taxonomy_term.cityscore_metrics.default
 targetEntityType: taxonomy_term
 bundle: cityscore_metrics
@@ -62,6 +66,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
+  field_current:
+    weight: 10
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   field_day:
     weight: 3

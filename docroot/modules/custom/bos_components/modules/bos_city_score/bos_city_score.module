@@ -5,8 +5,31 @@
  * The Base module file for bos_external_link module.
  */
 use Drupal\views\ViewExecutable;
-use \Drupal\views\ResultRow;
+use Drupal\views\ResultRow;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\bos_city_score\Controller\CityscoreRest;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Display the help page.
+ *
+ * @param string $route_name
+ *   As.
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *   As.
+ *
+ * @return array
+ *   As.
+ */
+function bos_city_score_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case ("help.page.bos_city_score"):
+      // As this help form contains some clues on authentication, lock access.
+      if (\Drupal::currentUser()->hasPermission('administer cityscore')) {
+        return CityscoreRest::helpPage();
+      }
+  }
+}
 
 /**
  * Implements hook_theme().

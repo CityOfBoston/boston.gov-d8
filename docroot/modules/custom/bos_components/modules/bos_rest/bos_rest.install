@@ -11,6 +11,7 @@
 function bos_rest_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
+  \Drupal::config('rest_types')->set('default', "boston")->save();
 }
 /**
  * Implements hook_uninstall().
@@ -23,6 +24,9 @@ function bos_rest_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
+
+  \Drupal::config('rest_types')->delete()->save();
+
 }
 
 /**

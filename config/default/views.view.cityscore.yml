@@ -1,4 +1,4 @@
-uuid: 35ace7e1-101d-407b-a555-8b347fa734c8
+uuid: 41562936-2c41-4c76-8c8d-18c13feb5ba3
 langcode: en
 status: true
 dependencies:
@@ -16,6 +16,8 @@ dependencies:
     - serialization
     - taxonomy
     - user
+_core:
+  default_config_hash: oYdnJ113optGz7uC9iN6Ut47VRszjWHQyE-QKVzQWlw
 id: cityscore
 label: Cityscore
 module: views
@@ -494,6 +496,42 @@ display:
           entity_type: taxonomy_term
           entity_field: vid
           plugin_id: bundle
+        field_current_value:
+          id: field_current_value
+          table: taxonomy_term__field_current
+          field: field_current_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: boolean
       sorts:
         field_cs_weight_value:
           id: field_cs_weight_value
