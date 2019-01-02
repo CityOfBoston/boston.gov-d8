@@ -42,6 +42,7 @@
     'field--name-' ~ field_name|clean_class,
     'field--type-' ~ field_type|clean_class,
     'field--label-' ~ label_display,
+    'fullwidth',
   ]
 %}
 {%
@@ -51,7 +52,7 @@
   ]
 %}
 
-<div{{ attributes.addClass(classes).addClass('fullwidth') }}>
+<div{{ attributes.addClass(classes) }}>
   {{ title_prefix }}
   {% if not label_hidden %}
     <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
