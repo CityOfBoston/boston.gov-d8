@@ -25,7 +25,16 @@
  * @see template_process()
  */
 #}
-<div class="{{ classes }} fullwidth"{{ attributes }}>
+{%
+  set classes = [
+    'entity',
+    'entity-paragraphs-item',
+    'paragraphs-item-upcoming-events',
+    'component-section',
+    'fullwidth',
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
   <div class="content container"{{ content_attributes }}>
   	  <div class="sh">
         {% if content.field_component_title %}
