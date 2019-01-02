@@ -8,12 +8,20 @@
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
  */
 function bos_core_theme($existing, $type, $theme, $path) {
   return [];
+}
+
+/**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ */
+function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
+  $entity_form['revision_log_message']['#access'] = FALSE;
 }
 
 /**
