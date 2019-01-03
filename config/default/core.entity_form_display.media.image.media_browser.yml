@@ -9,7 +9,6 @@ dependencies:
     - image.style.thumbnail
     - media.type.image
   module:
-    - imce
     - svg_image
 _core:
   default_config_hash: iVmRBD7y3Gmddt29sSx9DwwH6Q4UaROqMu7FLyy_bvQ
@@ -31,9 +30,7 @@ content:
     settings:
       preview_image_style: thumbnail
       progress_indicator: throbber
-    third_party_settings:
-      imce:
-        enabled: false
+    third_party_settings: {  }
     region: content
   name:
     type: string_textfield
