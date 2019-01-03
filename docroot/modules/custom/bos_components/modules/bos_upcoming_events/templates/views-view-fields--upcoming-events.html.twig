@@ -20,12 +20,11 @@
  * - $row: The raw result object from the query, with all data it fetched.
  *
  * @ingroup views_templates
-
- $node_type = node_load($row->nid)->type;
- if (!empty($node_type)) { $type_class = 'news-item-' . $node_type; } else { $class_type = 'news-item-news'; };
 #}
 
-<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing {{ type_class }}">
+{% set node_type = fields.type.content|striptags|trim|lower %}
+
+<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing news-item-{% if node_type %}{{ node_type }}{% else %}news{% endif %}">
   <a href="/node/{{ row._entity.nid.value }}" class="item-link"></a>
   <div class="news-item-wrapper">
     <div class="thumb-wrapper float-left">
