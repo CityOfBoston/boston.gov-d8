@@ -13,6 +13,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CityscoreRest extends ControllerBase {
 
+  protected $action;
+
   /**
    * Magic function.  Catches calls to endpoints that dont exist.
    *
@@ -52,8 +54,8 @@ class CityscoreRest extends ControllerBase {
    *   The JSON output string.
    */
   public function api($action) {
-    $headers = ['Content-Type' => 'application/json'];
-
+    // Note: This allows any GET requests to run without any verification.
+    $this->action = $action;
     if (in_array(\Drupal::request()->getMethod(), [
       "POST",
       "DELETE",
@@ -63,73 +65,33 @@ class CityscoreRest extends ControllerBase {
       if (($ip_whitelist = $this->config('ip_whitelist')) && !empty($ip_whitelist)) {
         $ip_whitelist = explode("\r\n", $ip_whitelist);
         if (!in_array(\Drupal::request()->getClientIp(), $ip_whitelist)) {
-          $response = new Response(
-            $this->jsonError("error ip not recognised"),
-            Response::HTTP_UNAUTHORIZED,
-            $headers
-          );
-          return $response;
+          return $this->responseOutput("error ip not recognised", Response::HTTP_UNAUTHORIZED);
         }
       }
       // Check token.
-      if (($token = $this->config('auth_token')) && empty($token)) {
-        $response = new Response(
-          $this->jsonError("error missing token"),
-          Response::HTTP_NO_CONTENT,
-          $headers
-        );
-        return $response;
+      if (($token = $this->config('auth_token')) && empty(\Drupal::request()->get("api-key"))) {
+        return $this->responseOutput("error missing token", Response::HTTP_UNAUTHORIZED);
       }
-      elseif ($_REQUEST["api-key"] != $token) {
-        $response = new Response(
-          $this->jsonError("error bad token"),
-          Response::HTTP_UNAUTHORIZED,
-          $headers
-        );
-        return $response;
+      elseif (\Drupal::request()->get("api-key") != $token) {
+        return $this->responseOutput("error bad token", Response::HTTP_UNAUTHORIZED);
       }
       // Check payload.
       if (!\Drupal::request()->get('payload', FALSE)) {
-        $response = new Response(
-          $this->jsonError("error no payload"),
-          Response::HTTP_NO_CONTENT,
-          $headers
-        );
-        return $response;
+        return $this->responseOutput("error no payload", Response::HTTP_BAD_REQUEST);
       }
       try {
         $payload = $this->cleanup(\Drupal::request()->get('payload', FALSE));
         if (!($payload = json_decode($payload))) {
-          $response = new Response(
-            $this->jsonError("bad json in payload"),
-            Response::HTTP_NO_CONTENT,
-            $headers
-          );
-          return $response;
+          return $this->responseOutput("bad json in payload", Response::HTTP_BAD_REQUEST);
         }
       }
       catch (Error $e) {
-        $response = new Response(
-          $this->jsonError("bad json in payload"),
-          Response::HTTP_NO_CONTENT,
-          $headers
-        );
-        return $response;
+        return $this->responseOutput("bad json in payload", Response::HTTP_BAD_REQUEST);
       }
-      $response = new Response(
-        $this->$action($payload),
-        Response::HTTP_OK,
-        $headers
-      );
-      return $response;
-    }
 
-    $response = new Response(
-      $this->$action(),
-      Response::HTTP_OK,
-      $headers
-    );
-    return $response;
+      return $this->$action($payload);
+    }
+    return $this->$action();
   }
 
   /**
@@ -174,15 +136,15 @@ class CityscoreRest extends ControllerBase {
    */
   private function load($payload = []) {
     if (empty($payload)) {
-      return $this->jsonError('error no payload');
+      return $this->responseOutput("error no payload", Response::HTTP_BAD_REQUEST);
     }
     // Process payload into taxonomy.
     $result = [];
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('cityscore_metrics');
     foreach ($terms as $term) {
-      $termm = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->tid);
-      $termm->field_current = 0;
-      $termm->save();
+      $taxTerm = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->tid);
+      $taxTerm->field_current = 0;
+      $taxTerm->save();
     }
     foreach ($payload as $row) {
       $tax = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['name' => $row->metric_name, 'vid' => 'cityscore_metrics']);
@@ -221,30 +183,59 @@ class CityscoreRest extends ControllerBase {
       }
     }
     if ($result['saved'] != $result['count']) {
-      return $this->jsonError("Not all records saved");
+      return $this->responseOutput("Not all records saved", Response::HTTP_NON_AUTHORITATIVE_INFORMATION);
     }
 
-    return json_encode([
-      "status" => "success",
-      "message" => "cityscore updated",
-    ]);
+    return $this->responseOutput("cityscore updated", Response::HTTP_CREATED);
+
   }
 
   /**
-   * Helper: Formats a standardised error as a json string.
+   * Helper: Formats a standardised Respose object.
    *
-   * @param string $error
-   *   Error message to JSON'ify.
+   * @param string $message
+   *   Message to JSON'ify.
+   * @param int $type
+   *   Response constant for the HTTP Status code returned.
    *
-   * @return string
-   *   JSON formatted error message.
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   Full Response object to be returned to caller.
    */
-  private function jsonError($error) {
+  private function responseOutput($message, $type) {
     $json = [
       'status' => 'error',
-      'message' => $error,
+      'message' => $message,
     ];
-    return json_encode($json);
+    $response = new Response(
+      NULL,
+      $type,
+      [
+        'Content-Type' => 'application/json',
+        'Cache-Control' => 'must-revalidate, no-cache, private',
+        'X-Generator-Origin' => 'City of Boston (https://www.boston.gov)',
+        'X-COB-Cityscore' => $this->action,
+        'Content-Language' => 'en',
+      ]
+    );
+    switch ($type) {
+      case Response::HTTP_CREATED:
+      case Response::HTTP_OK:
+      case Response::HTTP_NON_AUTHORITATIVE_INFORMATION:
+        $json['status'] = 'success';
+        $response->setContent(json_encode($json));
+        break;
+
+      case Response::HTTP_UNAUTHORIZED:
+      case Response::HTTP_NO_CONTENT:
+      case Response::HTTP_FORBIDDEN:
+      case Response::HTTP_BAD_REQUEST:
+      case Response::HTTP_METHOD_NOT_ALLOWED:
+      case Response::HTTP_INTERNAL_SERVER_ERROR:
+        $json['status'] = 'error';
+        $response->setContent(json_encode($json));
+        break;
+    }
+    return $response;
   }
 
   /**
