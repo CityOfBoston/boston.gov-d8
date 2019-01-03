@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\bos_city_score\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
@@ -68,4 +69,5 @@ class CityscoreSettingsForm extends ConfigFormBase {
       ->save();
     parent::submitForm($form, $form_state);
   }
+
 }

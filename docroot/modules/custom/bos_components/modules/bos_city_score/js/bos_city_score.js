@@ -37,7 +37,7 @@ var CityScore = (function (window, undefined) {
   function loadScores() {
     jQuery.ajax({
       url: "/rest/cityscore/html-table",
-      // url: "//cob-cityscore.herokuapp.com/scores/latest",
+      // url: "//cob-cityscore.herokuapp.com/scores/latest",.
       type: 'GET',
       contentType: 'text/plain',
       dataType: "html",

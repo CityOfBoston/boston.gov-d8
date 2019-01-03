@@ -4,6 +4,7 @@
  * @file
  * The Base module file for bos_external_link module.
  */
+
 use Drupal\views\ViewExecutable;
 use Drupal\views\ResultRow;
 use Drupal\taxonomy\Entity\Term;
@@ -72,7 +73,7 @@ function bos_city_score_preprocess_field(&$variables) {
     return;
   }
   // Used by the cityscore view, cityscore page.
-  $variables["label_hidden"] = true;
+  $variables["label_hidden"] = TRUE;
   if ($variables["element"]["#field_type"] == "decimal" && intval($variables["items"][0]["content"]["#markup"]) * 10 < 10) {
     $variables["items"][0]["attributes"]->addClass("cs__low");
   }
@@ -81,7 +82,7 @@ function bos_city_score_preprocess_field(&$variables) {
 /**
  * Implements hook_views_post_render().
  */
-function bos_city_score_views_post_render(ViewExecutable $view, &$output,  $cache) {
+function bos_city_score_views_post_render(ViewExecutable $view, &$output, $cache) {
   if ($view->storage->id() == "cityscore") {
     switch ($view->current_display) {
       case "cityscore_totals_json":
@@ -97,7 +98,7 @@ function bos_city_score_views_post_render(ViewExecutable $view, &$output,  $cach
  * Implements hook_preprocess_HOOK().
  */
 function bos_city_score_preprocess_views_view_table(&$variables) {
-  if ($variables['view']->storage->id() == "cityscore" && $variables['view']->current_display == "html_css_table" ) {
+  if ($variables['view']->storage->id() == "cityscore" && $variables['view']->current_display == "html_css_table") {
     $variables['attributes']['class'][] = "views-table";
     $variables['attributes']['id'][] = "cityscoreTable";
   }
@@ -107,7 +108,7 @@ function bos_city_score_preprocess_views_view_table(&$variables) {
  * Implements hook_views_post_execute().
  */
 function bos_city_score_views_post_execute(ViewExecutable $view) {
-  // used to generate totals(averages) for the view.
+  // Used to generate totals(averages) for the view.
   $total = [
     "day" => ["total" => 0, "count" => 0],
     "week" => ["total" => 0, "count" => 0],
@@ -135,7 +136,7 @@ function bos_city_score_views_post_execute(ViewExecutable $view) {
   $tot = new ResultRow([
     "taxonomy_term__field_cs_weight_field_cs_weight_value" => 1000,
     "tid" => 10000000,
-    ]);
+  ]);
   $tot->_entity = new Term([
     'activeLangcode' => $view->result[0]->_entity->activeLangcode,
     'defaultLangcode' => $view->result[0]->_entity->defaultLangcode,

@@ -249,21 +249,32 @@ class CityscoreRest extends ControllerBase {
       'help_page' => [
         '#tree' => TRUE,
         '#type' => 'fieldset',
-        '#title' => "About Slack Poster",
-        '#markup' => "<p>Cityscore module defines a Taxonomy Vocab, a paragraph component and some API endpoints.<ul>
-                      <li>Cityscore_metrics taxonomy with customised field to store the current cityscore metrics values.</li>
-                      <li>Paragraph component which can be used to add Cityscore table to pages.</li>
-                      <li>REST API endpoints to allow external updating and retrieval of cityscore metrics.</li>
+        '#title' => "About CityScore Component",
+        '#markup' => "<p>Cityscore Drupal 8 module defines a Taxonomy Vocabulary, a Paragraph component, Permissions and some API endpoints.<ul>
+                      <li><i>Cityscore_metrics</i> <b>taxonomy</b> with customised field to store the current cityscore metrics values.</li>
+                      <li><b>Paragraph</b> component which can be used to add Cityscore table to pages.</li>
+                      <li>REST <b>API</b> endpoints to allow external updating and retrieval of cityscore metrics.</li>
                       </ul></p>
+                      <h3>Taxonomy.</h3>
+                      <p>Cityscore data is stored in the <b>cityscore_metrics</b> customized Taxonomy. Data may be added/updated using the <b>load</b> API endpoint, and users with \"<i>administer cityscore</i>\" permissions can add/edit data in the Taxonomy via the GUI.</p>
+                      <h3>Paragraph.</h3>
+                      <p>Cityscore Paragraph can be enabled in any \"components\" field on any page.  It is a large table with a graphical metric display and hence is usually the only component added to a page.<br>
+                      Content is controlled by a Cityscore <b>View</b>.</p>
                       <h3>RESTful endpoints.</h3>
-                      <p>The API endpoints can be accessed from " . \Drupal::request()->getSchemeAndHttpHost() ."/{endpoint} where {endpoint} is: 
+                      <p>API Endpoints are used so that external entities can update or retrieve the latest CityScore data.  Updating is controlled to registered users, but data retrieval is unsecured.</p>
+                      <p>The API endpoints can be accessed from <b>" . \Drupal::request()->getSchemeAndHttpHost() . "/{endpoint}</b> where <b>{endpoint}</b> is: 
                       <ul>
-                      <li>'rest/cityscore/load' - Allows someone with a token and correctly formatted payload to update cityscore taxonomy items.  Note: requires a token and must come from a registered IPAddress.</li>
-                      <li>'rest/views/cityscore/metrics/latest' - Provides a JSON string which is an array of objects. Each object is a current metric.</li>
-                      <li>'rest/views/cityscore/html-table' - Same data as above, but as an HTML table with CoB themeing.</li>
-                      <li>'rest/views/cityscore/totals/latest' - Provides a JSON string which an object containing the cityscore value for today.</li>
-                      </ul></p>",
+                      <li><b>rest/cityscore/load</b>|<i>(secured|POST)</i> - Allows someone with a token and correctly formatted payload to update cityscore taxonomy items.<br/>
+                      <span style='margin-left: 25px'>Requires a correctly formatted POST message with an <b>api-key</b> string and <b>payload</b> JSON string.<br/>
+                      Returns JSON message and uses HTTP response codes in header.<br/>
+                      Note: requires an api-key and request must come from a registered IPAddress (click Admin Pages link below to configure).</span></li>
+                      <li><b>rest/views/cityscore/metrics/latest</b>|<i>(public/unsecured|GET)</i> - Returns a JSON string which is an array of objects. Each object is a current metric.</li>
+                      <li><b>rest/views/cityscore/html-table</b>|<i>(public/unsecured|GET)</i> - Returns same data as above, but as an HTML table with CoB themeing.</li>
+                      <li><b>rest/views/cityscore/totals/latest</b>|<i>(public/unsecured|GET)</i> - Returns a JSON string which an object containing the cityscore value for today.</li>
+                      </ul></p>
+                      <p>Endpoint content is controlled by a Cityscore <b>View</b>.</p>",
       ],
     ];
   }
+
 }
