@@ -23,14 +23,14 @@ class CityscoreSettingsForm extends ConfigFormBase {
    * Implements getEditableConfigNames().
    */
   protected function getEditableConfigNames() {
-    return ["cityscore.settings"];
+    return ["bos_city_score.settings"];
   }
 
   /**
    * Implements buildForm()
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('cityscore.settings');
+    $config = $this->config('bos_city_score.settings');
     $form = [
       '#tree' => TRUE,
       'cityscore_admin' => [
@@ -63,7 +63,7 @@ class CityscoreSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $form_state->getValue('cityscore_admin');
 
-    $this->config('cityscore.settings')
+    $this->config('bos_city_score.settings')
       ->set('auth_token', $settings['auth_token'])
       ->set('ip_whitelist', $settings['ip_whitelist'])
       ->save();

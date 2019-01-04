@@ -37,7 +37,7 @@ class CityscoreRest extends ControllerBase {
    *   The value of the setting being managed.
    */
   public function config($name) {
-    $config = parent::config("cityscore.settings");
+    $config = parent::config("bos_city_score.settings");
     if (isset($name)) {
       return $config->get($name);
     }
