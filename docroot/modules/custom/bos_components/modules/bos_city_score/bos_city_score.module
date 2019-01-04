@@ -74,8 +74,8 @@ function bos_city_score_preprocess_field(&$variables) {
   }
   // Used by the cityscore view, cityscore page.
   $variables["label_hidden"] = TRUE;
-  $fieldVal = (empty($variables["items"][0]['content']['#markup']) ? 0 : intval($variables["items"][0]['content']['#markup']) * 10);
-  if ($variables["element"]["#field_type"] == "decimal" && $fieldVal < 10) {
+  $fieldVal = (empty($variables["items"][0]['content']['#markup']) ? 0 : intval($variables["items"][0]['content']['#markup']));
+  if ($variables["element"]["#field_type"] == "decimal" && $fieldVal < 1) {
     $variables["items"][0]["attributes"]->addClass("cs__low");
   }
 }
