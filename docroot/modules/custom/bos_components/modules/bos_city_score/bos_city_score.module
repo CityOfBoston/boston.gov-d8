@@ -84,12 +84,12 @@ function bos_city_score_preprocess_field(&$variables) {
  * Implements hook_views_post_render().
  */
 function bos_city_score_views_post_render(ViewExecutable $view, &$output, $cache) {
-  if ($view->storage->id() == "cityscore") {
+  if ($view->storage->id() == "cityscore" && isset($output)) {
     switch ($view->current_display) {
       case "cityscore_totals_json":
         // Strip array created by the view and just return a json string.
-        $json = json_decode($output['#plain_text']);
-        $output['#plain_text'] = json_encode($json[0]);
+        $json = json_decode($output['#markup']);
+        $output['#markup'] = json_encode($json[0]);
         break;
     }
   }

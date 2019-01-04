@@ -71,7 +71,9 @@ var CityScore = (function (window, undefined) {
 
   function renderDateUpdated(date) {
     dateDisplay.innerHTML = date;
+    dateDisplay.setAttribute("content",new Date(date).toISOString());
     dateContainer.style.display = 'block';
+    jQuery('.sh').css("justify-content","space-between");
   }
 
   function renderTodaysScore(score) {
