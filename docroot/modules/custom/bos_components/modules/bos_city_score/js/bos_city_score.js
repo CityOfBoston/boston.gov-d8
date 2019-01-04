@@ -34,29 +34,13 @@ var CityScore = (function (window, undefined) {
     }
   }
 
-  function loadScores() {
-    jQuery.ajax({
-      url: "/rest/cityscore/html-table",
-      // url: "//cob-cityscore.herokuapp.com/scores/latest",.
-      type: 'GET',
-      contentType: 'text/plain',
-      dataType: "html",
-      success: function (html) {
-        // jQuery('#scoreTable').html(html);
-      }
-    });
-  }
-
   function loadTodaysScore() {
-    jQuery.getJSON("//cob-cityscore.herokuapp.com/totals/latest")
+    jQuery.getJSON("/rest/views/cityscore/totals/latest")
       .done(function (json) {
         if (json.day) {
           todaysScore = json.day;
           renderDateUpdated(json.date_posted);
           renderTodaysScore(json.day);
-
-          // Then start to load other scores.
-          loadScores();
         }
         else {
           renderError("The day value is missing from the total response");

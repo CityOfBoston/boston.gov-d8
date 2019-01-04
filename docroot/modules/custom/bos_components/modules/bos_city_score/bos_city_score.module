@@ -74,7 +74,8 @@ function bos_city_score_preprocess_field(&$variables) {
   }
   // Used by the cityscore view, cityscore page.
   $variables["label_hidden"] = TRUE;
-  if ($variables["element"]["#field_type"] == "decimal" && intval($variables["items"][0]->value) * 10 < 10) {
+  $fieldVal = (empty($variables["items"][0]['content']['#markup']) ? 0 : intval($variables["items"][0]['content']['#markup']) * 10);
+  if ($variables["element"]["#field_type"] == "decimal" && $fieldVal < 10) {
     $variables["items"][0]["attributes"]->addClass("cs__low");
   }
 }
@@ -140,7 +141,7 @@ function bos_city_score_views_post_execute(ViewExecutable $view) {
     }
   }
   $tot = new ResultRow([
-//    "taxonomy_term__field_cs_weight_field_cs_weight_value" => 1000,
+    "taxonomy_term_field_data_weight" => 1000,
     "tid" => 10000000,
   ]);
   $actLang = "en";
@@ -161,7 +162,7 @@ function bos_city_score_views_post_execute(ViewExecutable $view) {
   $tot->_entity->field_previous_week = number_format($total['week']['total'] / $total['week']['count'], 6);
   $tot->_entity->field_previous_month = number_format($total['month']['total'] / $total['month']['count'], 6);
   $tot->_entity->field_previous_quarter = number_format($total['quarter']['total'] / $total['quarter']['count'], 6);
-//  $tot->_entity->weight = 1000;
+  $tot->_entity->weight = 1000;
   $tot->_entity->name = 'TOTAL';
   $tot->_entity->save;
   $view->result[] = $tot;
