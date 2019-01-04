@@ -1,0 +1,63 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.upcoming_events.field_component_title
+    - field.field.paragraph.upcoming_events.field_featured_item
+    - field.field.paragraph.upcoming_events.field_link
+    - field.field.paragraph.upcoming_events.field_list
+    - field.field.paragraph.upcoming_events.field_short_title
+    - paragraphs.paragraphs_type.upcoming_events
+  module:
+    - entity_reference_revisions
+    - viewfield
+id: paragraph.upcoming_events.default
+targetEntityType: paragraph
+bundle: upcoming_events
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_featured_item:
+    label: hidden
+    weight: 1
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_link:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_list:
+    weight: 2
+    label: hidden
+    settings:
+      view_title: hidden
+      always_build_output: 0
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
+    region: content
+  field_short_title:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
