@@ -4,8 +4,6 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.cityscore_metrics.field_calc_timestamp
-    - field.field.taxonomy_term.cityscore_metrics.field_cs_weight
-    - field.field.taxonomy_term.cityscore_metrics.field_current
     - field.field.taxonomy_term.cityscore_metrics.field_day
     - field.field.taxonomy_term.cityscore_metrics.field_previous_day
     - field.field.taxonomy_term.cityscore_metrics.field_previous_month
@@ -38,25 +36,6 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
     type: number_integer
-    region: content
-  field_cs_weight:
-    weight: 7
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    type: number_integer
-    region: content
-  field_current:
-    weight: 1
-    label: above
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
-    type: boolean
     region: content
   field_day:
     weight: 2

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The Base module file for bos_external_link module.
+ * The Base module file for bos_city_score module.
  */
 
 use Drupal\views\ViewExecutable;
@@ -108,6 +108,9 @@ function bos_city_score_preprocess_views_view_table(&$variables) {
  * Implements hook_views_post_execute().
  */
 function bos_city_score_views_post_execute(ViewExecutable $view) {
+  if ($view->id() != "cityscore" && $view->current_display != "json_metrics") {
+    return;
+  }
   // Used to generate totals(averages) for the view.
   $total = [
     "day" => ["total" => 0, "count" => 0],
@@ -134,19 +137,28 @@ function bos_city_score_views_post_execute(ViewExecutable $view) {
     }
   }
   $tot = new ResultRow([
-    "taxonomy_term__field_cs_weight_field_cs_weight_value" => 1000,
+//    "taxonomy_term__field_cs_weight_field_cs_weight_value" => 1000,
     "tid" => 10000000,
   ]);
+  $actLang = "en";
+  $defLang = "en";
+  if (isset($view->result[0]) && isset($view->result[0]->_entity)) {
+    $actLang = $view->result[0]->_entity->activeLangcode;
+    $defLang = $view->result[0]->_entity->defaultLangcode;
+  }
   $tot->_entity = new Term([
-    'activeLangcode' => $view->result[0]->_entity->activeLangcode,
-    'defaultLangcode' => $view->result[0]->_entity->defaultLangcode,
+    'activeLangcode' => $actLang,
+    'defaultLangcode' => $defLang,
   ], 'taxonomy_term', 'cityscore_metrics');
-
+  $total['day']['count'] = ($total['day']['count'] == 0 ? 1 : $total['day']['count']);
+  $total['week']['count'] = ($total['week']['count'] == 0 ? 1 : $total['week']['count']);
+  $total['month']['count'] = ($total['month']['count'] == 0 ? 1 : $total['month']['count']);
+  $total['quarter']['count'] = ($total['quarter']['count'] == 0 ? 1 : $total['quarter']['count']);
   $tot->_entity->field_previous_day = number_format($total['day']['total'] / $total['day']['count'], 6);
   $tot->_entity->field_previous_week = number_format($total['week']['total'] / $total['week']['count'], 6);
   $tot->_entity->field_previous_month = number_format($total['month']['total'] / $total['month']['count'], 6);
   $tot->_entity->field_previous_quarter = number_format($total['quarter']['total'] / $total['quarter']['count'], 6);
-  $tot->_entity->field_cs_weight = 1000;
+//  $tot->_entity->weight = 1000;
   $tot->_entity->name = 'TOTAL';
   $tot->_entity->save;
   $view->result[] = $tot;

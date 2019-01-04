@@ -143,7 +143,7 @@ class CityscoreRest extends ControllerBase {
     $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('cityscore_metrics');
     foreach ($terms as $term) {
       $taxTerm = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->tid);
-      $taxTerm->field_current = 0;
+      $taxTerm->status = 0;
       $taxTerm->save();
     }
     foreach ($payload as $row) {
@@ -175,8 +175,8 @@ class CityscoreRest extends ControllerBase {
         $tax->field_previous_month = $row->previous_month_score;
         $tax->field_previous_week = $row->previous_week_score;
         $tax->field_previous_day = $row->previous_day_score;
-        $tax->field_cs_weight = $result['count'];
-        $tax->field_current = 1;
+        $tax->weight = $result['count'];
+        $tax->status = 1;
         if ($tax->save() == SAVED_UPDATED) {
           $result['saved']++;
         }
@@ -207,7 +207,7 @@ class CityscoreRest extends ControllerBase {
       'message' => $message,
     ];
     $response = new Response(
-      NULL,
+      json_encode($json),
       $type,
       [
         'Content-Type' => 'application/json',
