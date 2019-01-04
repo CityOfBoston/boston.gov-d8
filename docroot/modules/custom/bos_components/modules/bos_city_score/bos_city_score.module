@@ -74,7 +74,7 @@ function bos_city_score_preprocess_field(&$variables) {
   }
   // Used by the cityscore view, cityscore page.
   $variables["label_hidden"] = TRUE;
-  if ($variables["element"]["#field_type"] == "decimal" && intval($variables["items"][0]["content"]["#markup"]) * 10 < 10) {
+  if ($variables["element"]["#field_type"] == "decimal" && intval($variables["items"][0]->value) * 10 < 10) {
     $variables["items"][0]["attributes"]->addClass("cs__low");
   }
 }
@@ -108,7 +108,10 @@ function bos_city_score_preprocess_views_view_table(&$variables) {
  * Implements hook_views_post_execute().
  */
 function bos_city_score_views_post_execute(ViewExecutable $view) {
-  if ($view->id() != "cityscore" && $view->current_display != "json_metrics") {
+  if ($view->id() != "cityscore") {
+    return;
+  }
+  if ($view->current_display != "json_metrics") {
     return;
   }
   // Used to generate totals(averages) for the view.

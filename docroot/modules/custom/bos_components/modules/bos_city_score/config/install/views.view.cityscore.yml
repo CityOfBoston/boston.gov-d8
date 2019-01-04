@@ -494,7 +494,7 @@ display:
           plugin_id: bundle
         status:
           id: status
-          table: taxonomy_index
+          table: taxonomy_term_field_data
           field: status
           relationship: none
           group_type: group
@@ -527,6 +527,8 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+          entity_type: taxonomy_term
+          entity_field: status
           plugin_id: boolean
       sorts:
         weight:
