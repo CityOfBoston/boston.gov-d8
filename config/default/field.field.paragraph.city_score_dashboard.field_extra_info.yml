@@ -1,4 +1,4 @@
-uuid: c237bfba-3f56-407f-ae1a-44e375e82949
+uuid: 7781c252-4430-48ea-98ad-2f725f5285d9
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - field.storage.paragraph.field_extra_info
     - paragraphs.paragraphs_type.city_score_dashboard
 _core:
-  default_config_hash: Z9v_LX1bFS4fuPzRyhQaa0jK7cKhesT004naCh_0ZHU
+  default_config_hash: WO1Pi4cA3ZXzSfk8Y7qAJuWJ79jBTali8Nky9UJuE3E
 id: paragraph.city_score_dashboard.field_extra_info
 field_name: field_extra_info
 entity_type: paragraph
@@ -15,7 +15,9 @@ label: 'Text for Less Than'
 description: ''
 required: true
 translatable: false
-default_value: {  }
+default_value:
+  -
+    value: 'Scores below 1 indicate that performance is below the target.'
 default_value_callback: ''
 settings: {  }
 field_type: string

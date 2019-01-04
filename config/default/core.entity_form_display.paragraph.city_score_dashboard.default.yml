@@ -1,17 +1,18 @@
-uuid: f4a4f5ac-83ee-4720-9066-dc9b58f6c043
+uuid: 49cb3234-331b-45a9-8103-3b3cb8b75267
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.paragraph.city_score_dashboard.field_component_title
     - field.field.paragraph.city_score_dashboard.field_extra_info
+    - field.field.paragraph.city_score_dashboard.field_main_table
     - field.field.paragraph.city_score_dashboard.field_short_description
     - field.field.paragraph.city_score_dashboard.field_short_title
     - paragraphs.paragraphs_type.city_score_dashboard
   module:
-    - content_moderation
+    - viewfield
 _core:
-  default_config_hash: 3C7_BJhZBT2U0MjlfUSBNSBzT5J818VM4_SB4AjFCsY
+  default_config_hash: epnQAJwN7Nxzy1pYe2Jis0haEE33ewt1LWmHqoBO9As
 id: paragraph.city_score_dashboard.default
 targetEntityType: paragraph
 bundle: city_score_dashboard
@@ -32,6 +33,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_main_table:
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
     region: content
   field_short_description:
     weight: 5

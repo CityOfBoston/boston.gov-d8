@@ -4,11 +4,12 @@ dependencies:
   config:
     - field.field.paragraph.city_score_dashboard.field_component_title
     - field.field.paragraph.city_score_dashboard.field_extra_info
+    - field.field.paragraph.city_score_dashboard.field_main_table
     - field.field.paragraph.city_score_dashboard.field_short_description
     - field.field.paragraph.city_score_dashboard.field_short_title
     - paragraphs.paragraphs_type.city_score_dashboard
   module:
-    - content_moderation
+    - viewfield
 id: paragraph.city_score_dashboard.default
 targetEntityType: paragraph
 bundle: city_score_dashboard
@@ -29,6 +30,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_main_table:
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
     region: content
   field_short_description:
     weight: 5
