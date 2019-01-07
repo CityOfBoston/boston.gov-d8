@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/CityOfBoston/boston.gov-d8.png)](https://travis-ci.org/CityOfBoston/boston.gov-d8)
+
 # Boston.gov-d8
 
 [Refer to Wiki](https://github.com/CityOfBoston/boston.gov-d8/wiki)
