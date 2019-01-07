@@ -1,4 +1,4 @@
-<?php if (isset($content['field_document_id'])): ?> 
+{% if content.field_document_id %}
   <script>
     function scriptLoaded() {
       var loader = document.getElementById('scriptLoader');
@@ -11,5 +11,5 @@
     }
   </script>
   <div id="scriptLoader" class="b" style="border: 3px solid red; padding: 1.25rem 2rem">Loading...</div>
-  <script src="https://boston.seamlessdocs.com/s/<?php print render($content['field_document_id']); ?>/embed/iframe" onload="scriptLoaded()" onerror="scriptFailed()"></script>
-<?php endif; ?>
+  <script src="https://boston.seamlessdocs.com/s/{{ content.field_document_id }}/embed/iframe" onload="scriptLoaded()" onerror="scriptFailed()"></script>
+{% endif %}
