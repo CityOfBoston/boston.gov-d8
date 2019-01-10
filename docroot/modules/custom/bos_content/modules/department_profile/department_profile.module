@@ -68,30 +68,33 @@ function department_profile_preprocess_node(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function department_profile_preprocess_breadcrumb(&$variables) {
-  $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
-  if (!empty($variables['breadcrumb']) && count($variables['breadcrumb'] == 1)) {
-    $route = $variables['breadcrumb'][0]['url'];
+  // TODO: Revisit this function wrt bos_breadcrumbs from v7.
+  if (1 == 2) {
 
-    $a = array_keys($crumbs);
-    $last_key = end($a);
-    foreach ($crumbs as $key => $crumb) {
-      if ($key == $last_key) {
-        break;
-      }
+    $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
+    if (!empty($variables['breadcrumb']) && count($variables['breadcrumb'] == 1)) {
+      $route = $variables['breadcrumb'][0]['url'];
 
-      $text = new TranslatableMarkup($crumb);
-      $new_crumb = [
-        'text' => $text,
-        'url' => "",
-      ];
-      if (\Drupal::pathValidator()->isValid($route . $crumb)) {
-        $new_crumb['url'] = $route . $crumb;
+      $a = array_keys($crumbs);
+      $last_key = end($a);
+      foreach ($crumbs as $key => $crumb) {
+        if ($key == $last_key) {
+          break;
+        }
+
+        $text = new TranslatableMarkup($crumb);
+        $new_crumb = [
+          'text' => $text,
+          'url' => "",
+        ];
+        if (\Drupal::pathValidator()->isValid($route . $crumb)) {
+          $new_crumb['url'] = $route . $crumb;
+        }
+        $variables['breadcrumb'][] = $new_crumb;
+        $route .= $crumb . "/";
       }
-      $variables['breadcrumb'][] = $new_crumb;
-      $route .= $crumb . "/";
     }
   }
-
 }
 
 /**
