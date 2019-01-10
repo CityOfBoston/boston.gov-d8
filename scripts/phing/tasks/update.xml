@@ -74,8 +74,23 @@
         <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/config-import.log for output.\033[0m'" logoutput="true"/>
         <exec description="Imports the config files in the sync folder at ${project.sync}."
               dir="${docroot}"
-              command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log "
-              logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
+              command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log"
+              logoutput="true" outputProperty="cim.result"/>
+        <if>
+            <and>
+                <isset property="cim.result"/>
+                <not><equals arg1="${cim.result}" arg2="0" /></not>
+            </and>
+            <then>
+                <echo message="Config Import Failed." level="error"/>
+                <exec command="cat ${project.basedir}/setup/config-import.log"
+                      passthru="true" logoutput="true"/>
+                <fail message="Fail - Config Import from ${project.sync} failed."/>
+            </then>
+            <else>
+                <echo message="Success: Config imported from ${project.sync}."/>
+            </else>
+        </if>
     </target>
     <target name="update:config:import-dev"
             description="Import configurations from sync location into the DB.">
