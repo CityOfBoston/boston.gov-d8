@@ -82,10 +82,27 @@
                 <not><equals arg1="${cim.result}" arg2="0" /></not>
             </and>
             <then>
-                <echo message="Config Import Failed." level="error"/>
-                <exec command="cat ${project.basedir}/setup/config-import.log"
-                      passthru="true" logoutput="true"/>
-                <fail message="Fail - Config Import from ${project.sync} failed."/>
+                <echo message="Problem: trying partial import from ${project.sync}."/>
+                <exec description="Imports the config files in the sync folder at ${project.sync}."
+                      dir="${docroot}"
+                      command="${drush.cmd} cim sync --partial -y > ${project.basedir}/setup/config-import.log"
+                      logoutput="true" outputProperty="cim.result.2"/>
+                <if>
+                    <and>
+                        <isset property="cim.result.2"/>
+                        <not><equals arg1="${cim.result.2}" arg2="0" /></not>
+                    </and>
+                    <then>
+                        <echo message="Config Import Failed." level="error"/>
+                        <echo message="=== Log Output ===."/>
+                        <exec command="cat ${project.basedir}/setup/config-import.log"
+                              passthru="true" logoutput="true"/>
+                        <fail message="Fail - Config Import from ${project.sync} failed."/>
+                    </then>
+                    <else>
+                        <echo message="Success: Config imported from ${project.sync}."/>
+                    </else>
+                </if>
             </then>
             <else>
                 <echo message="Success: Config imported from ${project.sync}."/>
