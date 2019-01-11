@@ -46,7 +46,7 @@ install:
   - if [ ! -e  /usr/local/bin/drupal ]; then sudo ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
   # Make an account for drupal in MySQL (better than using root a/c).
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
-  - travis_wait 20 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+  - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
   # Build the drupal site using Phing.
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
 
@@ -64,4 +64,4 @@ after_success:
   - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   # Deploy
   - scripts/deploy/travis-deploy.sh develop
-  - scripts/deploy/travis-deploy.sh master master-build
+  - scripts/deploy/travis-deploy.sh master
