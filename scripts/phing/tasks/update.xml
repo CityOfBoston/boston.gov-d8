@@ -75,7 +75,7 @@
         <exec description="Imports the config files in the sync folder at ${project.sync}."
               dir="${docroot}"
               command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log"
-              logoutput="true" outputProperty="cim.result"/>
+              logoutput="true" returnProperty="cim.result"/>
         <if>
             <and>
                 <isset property="cim.result"/>
@@ -85,12 +85,12 @@
                 <echo message="Problem: trying partial import from ${project.sync}."/>
                 <exec description="Imports the config files in the sync folder at ${project.sync}."
                       dir="${docroot}"
-                      command="${drush.cmd} cim sync --partial -y > ${project.basedir}/setup/config-import.log"
-                      logoutput="true" outputProperty="cim.result.2"/>
+                      command="${drush.cmd} cim sync --partial -y >> ${project.basedir}/setup/config-import.log"
+                      logoutput="true" returnProperty="cim.result2"/>
                 <if>
                     <and>
-                        <isset property="cim.result.2"/>
-                        <not><equals arg1="${cim.result.2}" arg2="0" /></not>
+                        <isset property="cim.result2"/>
+                        <not><equals arg1="${cim.result2}" arg2="0" /></not>
                     </and>
                     <then>
                         <echo message="Config Import Failed." level="error"/>
