@@ -62,6 +62,16 @@ after_success:
   - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
   - eval "$(ssh-agent -s)"
   - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
-  # Deploy
-  - scripts/deploy/travis-deploy.sh develop
-  - scripts/deploy/travis-deploy.sh master
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: master
+
