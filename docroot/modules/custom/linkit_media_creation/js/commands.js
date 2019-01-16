@@ -1,5 +1,6 @@
 /**
- * @file Copy values back into linkit form.
+ * Copy values back into linkit form.
+ * @file
  */
 
 (function ($, Drupal) {

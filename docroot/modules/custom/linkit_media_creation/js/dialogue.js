@@ -1,5 +1,6 @@
 /**
- * @file Launch media creation window.
+ * Launch media creation window.
+ * @file
  */
 
 (function ($, Drupal) {
