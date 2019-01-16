@@ -25,9 +25,8 @@ settings:
             - Strike
             - '-'
             - '-'
-            - Superscript
+            - Blockquote
             - '-'
-            - Subscript
         -
           name: Alignment
           items:
@@ -55,11 +54,8 @@ settings:
             - '-'
             - Redo
             - '-'
-            - Cut
             - '-'
-            - Copy
             - '-'
-            - Paste
             - '-'
             - PasteText
             - '-'
@@ -71,34 +67,26 @@ settings:
             - '-'
             - DrupalUnlink
         -
-          name: Tools
+          name: Media
           items:
-            - Source
             - '-'
-            - ShowBlocks
+            - media_entity_embed
+        -
+          name: Styles
+          items:
+            - '-'
+            - '-'
+            - '-'
+            - Styles
+            - '-'
         -
           name: Misc
           items:
             - HorizontalRule
             - '-'
             - Table
-      -
-        -
-          name: Styles
-          items:
-            - '-'
             - RemoveFormat
-            - Format
-            - '-'
-            - '-'
-            - Styles
-            - '-'
-        -
-          name: Media
-          items:
-            - Blockquote
-            - '-'
-            - media_entity_embed
+            - Source
   plugins:
     drupallink:
       linkit_enabled: true
@@ -106,7 +94,7 @@ settings:
     language:
       language_list: un
     stylescombo:
-      styles: "p.supporting-text|Intro Text\r\nspan.red|Red Text\r\na.test-button|Test Button"
+      styles: "p.supporting-text|Intro Text\r\nspan.red|Red Text"
     tokenbrowser:
       token_types: {  }
 image_upload:

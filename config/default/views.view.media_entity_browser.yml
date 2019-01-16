@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - image.style.media_entity_browser_thumbnail
+    - media.type.image
   module:
     - entity_browser
     - media
@@ -392,9 +393,10 @@ display:
           group_type: group
           admin_label: ''
           operator: in
-          value: {  }
+          value:
+            image: image
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: bundle_op
             label: Type
@@ -420,6 +422,7 @@ display:
               landing_author: '0'
               procurement_editor: '0'
             reduce: false
+            argument: null
           is_grouped: false
           group_info:
             label: ''

@@ -18,37 +18,76 @@ settings:
           name: Formatting
           items:
             - Bold
-            - Italic
-            - Strike
-            - Superscript
-            - Subscript
             - '-'
-            - RemoveFormat
+            - Italic
+            - '-'
+            - '-'
+            - Underline
+            - '-'
+            - Strike
+            - '-'
+            - '-'
+            - Blockquote
+            - '-'
         -
-          name: Linking
+          name: Alignment
           items:
-            - DrupalLink
-            - DrupalUnlink
+            - JustifyLeft
+            - '-'
+            - JustifyCenter
+            - '-'
+            - JustifyRight
+            - '-'
+            - JustifyBlock
+            - '-'
+            - Outdent
+            - '-'
+            - Indent
         -
           name: Lists
           items:
             - BulletedList
+            - '-'
             - NumberedList
+        -
+          name: 'Text Editing'
+          items:
+            - Undo
+            - '-'
+            - Redo
+            - '-'
+            - '-'
+            - '-'
+            - '-'
+            - PasteText
+            - '-'
+            - PasteFromWord
+        -
+          name: Links
+          items:
+            - DrupalLink
+            - '-'
+            - DrupalUnlink
         -
           name: Media
           items:
-            - Blockquote
+            - '-'
             - media_entity_embed
-            - Table
+        -
+          name: Styles
+          items:
+            - '-'
+            - '-'
+            - '-'
+            - Styles
+            - '-'
+        -
+          name: Misc
+          items:
             - HorizontalRule
-        -
-          name: 'Block Formatting'
-          items:
-            - Format
-        -
-          name: Tools
-          items:
-            - ShowBlocks
+            - '-'
+            - Table
+            - RemoveFormat
             - Source
   plugins:
     drupallink:
