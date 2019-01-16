@@ -1,5 +1,6 @@
 /**
  * Launch media creation window.
+ *
  * @file
  */
 
