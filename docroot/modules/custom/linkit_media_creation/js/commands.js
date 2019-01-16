@@ -1,7 +1,5 @@
 /**
- * @file commands.js
- *
- * Copy values back into linkit form.
+ * @file Copy values back into linkit form.
  */
 
 (function ($, Drupal) {
