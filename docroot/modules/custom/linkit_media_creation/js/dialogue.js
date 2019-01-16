@@ -1,3 +1,7 @@
+/**
+ * @file dialogue.js
+ */
+
 (function ($, Drupal) {
   "use strict";
 

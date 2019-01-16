@@ -1,3 +1,7 @@
+/**
+ * @file commands.js
+ */
+
 (function ($, Drupal) {
   /**
    * Submit data back to linkit form.
