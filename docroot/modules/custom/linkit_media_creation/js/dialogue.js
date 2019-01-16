@@ -1,6 +1,7 @@
 /**
- * Launch media creation window.
  * @file dialogue.js
+ *
+ * Launch media creation window.
  */
 
 (function ($, Drupal) {
