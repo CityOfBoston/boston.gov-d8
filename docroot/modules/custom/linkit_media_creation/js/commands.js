@@ -1,8 +1,8 @@
-(function($, Drupal) {
+(function ($, Drupal) {
   /**
    * Submit data back to linkit form.
    */
-  Drupal.AjaxCommands.prototype.returnToLinkit = function(
+  Drupal.AjaxCommands.prototype.returnToLinkit = function (
     ajax,
     response,
     status
