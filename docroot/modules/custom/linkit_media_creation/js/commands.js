@@ -1,4 +1,5 @@
 /**
+ * Copy values back into linkit form.
  * @file commands.js
  */
 

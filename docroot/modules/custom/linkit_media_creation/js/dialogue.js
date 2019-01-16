@@ -1,4 +1,5 @@
 /**
+ * Launch media creation window.
  * @file dialogue.js
  */
 
