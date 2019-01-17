@@ -70,6 +70,13 @@ filters:
     weight: -47
     settings:
       filter_url_length: 72
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: -40
+    settings:
+      title: true
   shortcode:
     id: shortcode
     provider: shortcode
@@ -98,13 +105,6 @@ filters:
     weight: -48
     settings:
       replace_empty: '1'
-  linkit:
-    id: linkit
-    provider: linkit
-    status: true
-    weight: -40
-    settings:
-      title: true
   entity_embed:
     id: entity_embed
     provider: entity_embed
