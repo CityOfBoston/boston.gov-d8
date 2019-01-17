@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - editor
+    - entity_embed
     - linkit
     - shortcode
     - token_filter
@@ -50,7 +51,7 @@ filters:
   editor_file_reference:
     id: editor_file_reference
     provider: editor
-    status: false
+    status: true
     weight: -44
     settings: {  }
   filter_html_image_secure:
@@ -62,7 +63,7 @@ filters:
   filter_caption:
     id: filter_caption
     provider: filter
-    status: false
+    status: true
     weight: -41
     settings: {  }
   filter_align:
@@ -86,13 +87,6 @@ filters:
       allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title> <img src alt data-entity-type data-entity-uuid> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <p>'
       filter_html_help: true
       filter_html_nofollow: false
-  linkit:
-    id: linkit
-    provider: linkit
-    status: true
-    weight: -40
-    settings:
-      title: true
   shortcode_corrector:
     id: shortcode_corrector
     provider: shortcode
@@ -106,3 +100,16 @@ filters:
     weight: -43
     settings:
       replace_empty: '1'
+  linkit:
+    id: linkit
+    provider: linkit
+    status: true
+    weight: -40
+    settings:
+      title: true
+  entity_embed:
+    id: entity_embed
+    provider: entity_embed
+    status: true
+    weight: 0
+    settings: {  }

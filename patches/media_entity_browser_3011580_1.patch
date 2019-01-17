@@ -1,0 +1,13 @@
+diff --git a/js/media_entity_browser.entity_embed.js b/js/media_entity_browser.entity_embed.js
+index 4f72f7d..e160483 100644
+--- a/js/media_entity_browser.entity_embed.js
++++ b/js/media_entity_browser.entity_embed.js
+@@ -20,7 +20,7 @@
+ 
+       // On iFrame load, hide the real nested "Select Files" button.
+       $('body').once('entity-browser-modal').on('entityBrowserIFrameAppend', function () {
+-        $(this).find('.entity-embed-dialog iframe').load(function () {
++        $(this).find('.entity-embed-dialog iframe').on('load', function () {
+           $(this).contents().find('.is-entity-browser-submit').hide();
+         });
+       });

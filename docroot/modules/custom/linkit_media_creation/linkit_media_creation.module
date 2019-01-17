@@ -1,0 +1,84 @@
+<?php
+
+/**
+ * @file
+ * Main file for the linkit_media_creation.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\linkit_media_creation\Ajax\ReturnToLinkitCommand;
+use Drupal\Component\Utility\UrlHelper;
+
+/**
+ * Implements hook_theme().
+ */
+function linkit_media_creation_theme() {
+  $theme['html__admin__linkit_media_creation__dialogue'] = [
+    'base hook' => 'html',
+    'path' => drupal_get_path('module', 'linkit_media_creation') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function linkit_media_creation_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Alter only the form with ID 'editor_link_dialog'.
+  if ($form_id !== 'editor_link_dialog') {
+    return;
+  }
+
+  /** @var Drupal\filter\Entity\FilterFormat $filter_format */
+  $filter_format = $form_state->getBuildInfo()['args'][0];
+
+  /** @var \Drupal\Core\Entity\EntityStorageInterface $editorStorage */
+  $editorStorage = Drupal::service('entity.manager')->getStorage('editor');
+
+  /** @var \Drupal\editor\EditorInterface $editor */
+  $editor = $editorStorage->load($filter_format->id());
+  $plugin_settings = $editor->getSettings()['plugins']['drupallink'];
+
+  // Do not alter the form if Linkit is not enabled for this text format.
+  if (!isset($plugin_settings['linkit_enabled']) || (isset($plugin_settings['linkit_enabled']) && !$plugin_settings['linkit_enabled'])) {
+    return;
+  }
+
+  $form['#attributes']['class'][] = 'linkit-media-creation-url-input';
+  $form['#attached']['library'][] = 'linkit_media_creation/dialogue';
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function linkit_media_creation_form_media_document_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::routeMatch()->getRouteName() == 'linkit_media_creation.dialogue') {
+    $form['actions']['submit']['#ajax'] = [
+      'callback' => 'linkit_media_creation_ajax_callback',
+    ];
+  }
+}
+
+/**
+ * Pass entity data to ajax command.
+ */
+function linkit_media_creation_ajax_callback(array &$form, FormStateInterface $form_state) {
+  $entity = $form_state->getFormObject()->getEntity();
+  $mid = $entity->id();
+  $returnValue = "/media/{$mid}";
+  $current_uri = \Drupal::requestStack()->getCurrentRequest()->getRequestUri();
+  $inputId = UrlHelper::parse($current_uri)['query']['inputId'];
+  $entitySubstitution = $entityType = 'media';
+  $uuid = $entity->uuid();
+  $ajax_response = new AjaxResponse();
+  $ajax_response->addCommand(
+    new ReturnToLinkitCommand(
+      $returnValue,
+      $inputId,
+      $entitySubstitution,
+      $entityType,
+      $uuid
+  ));
+  return $ajax_response;
+}
