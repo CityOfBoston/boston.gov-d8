@@ -26,11 +26,10 @@ dependencies:
     - content_moderation
     - datetime
     - field_group
-    - image
-    - imce
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -216,9 +215,7 @@ content:
     settings:
       preview_image_style: thumbnail
       progress_indicator: throbber
-    third_party_settings:
-      imce:
-        enabled: true
+    third_party_settings: {  }
     region: content
   field_intro_text:
     weight: 1

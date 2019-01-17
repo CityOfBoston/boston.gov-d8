@@ -3,7 +3,11 @@ langcode: en
 status: true
 dependencies:
   module:
+    - lightning_core
     - paragraphs
+third_party_settings:
+  lightning_core:
+    internal: true
 id: paragraph.token
 label: Token
 targetEntityType: paragraph
