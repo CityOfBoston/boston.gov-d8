@@ -1,5 +1,3 @@
-'use strict'
-
 var BostonEmergencyAlerts = (function () {
   var form = jQuery('#bosAlertForm');
   var email,
