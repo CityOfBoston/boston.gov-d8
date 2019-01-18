@@ -1,0 +1,15 @@
+signup.endpoint:
+  path: '/rest/codered/{action}'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\bos_emergency_alerts\Controller\CodeRedRest::api'
+  requirements:
+    _permission: 'access content'
+
+emergency_alerts.admin:
+  path: '/admin/config/system/boston/codered'
+  defaults:
+    _title: 'Cityscore RESTful API endpoint.'
+    _form: '\Drupal\bos_city_score\Form\CityscoreSettingsForm'
+  requirements:
+    _permission: 'administer cityscore'
