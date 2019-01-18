@@ -1,22 +1,20 @@
-uuid: 73fc8023-7396-4e9f-b268-2089c89fe700
+uuid: 0b48baa1-653e-4b73-8a70-423a3fef19d4
 langcode: en
 status: true
 dependencies:
   config:
-    - node.type.test_component_page
-_core:
-  default_config_hash: kZc7f3M2HniurMGPsqnfB1UTYxNrHuiB2-LFgiFlkUI
-id: node.test_component_page.status
+    - paragraphs.paragraphs_type.bos_signup_emergency_alerts
+id: paragraph.bos_signup_emergency_alerts.status
 field_name: status
-entity_type: node
-bundle: test_component_page
+entity_type: paragraph
+bundle: bos_signup_emergency_alerts
 label: Published
 description: ''
 required: false
 translatable: false
 default_value:
   -
-    value: 0
+    value: 1
 default_value_callback: ''
 settings:
   on_label: 'On'

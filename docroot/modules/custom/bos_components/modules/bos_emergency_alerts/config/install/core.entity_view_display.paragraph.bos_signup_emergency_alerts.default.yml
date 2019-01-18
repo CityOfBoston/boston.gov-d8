@@ -6,14 +6,11 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_theme
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_title
     - field.field.paragraph.bos_signup_emergency_alerts.field_contact
-    - field.field.paragraph.bos_signup_emergency_alerts.field_description
     - field.field.paragraph.bos_signup_emergency_alerts.field_icon
-    - field.field.paragraph.bos_signup_emergency_alerts.field_intro_text
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
   module:
     - image_url_formatter
-    - text
 id: paragraph.bos_signup_emergency_alerts.default
 targetEntityType: paragraph
 bundle: bos_signup_emergency_alerts
@@ -21,7 +18,7 @@ mode: default
 content:
   field_component_title:
     label: hidden
-    weight: 0
+    weight: 1
     type: string
     settings:
       link_to_entity: false
@@ -29,40 +26,24 @@ content:
     region: content
   field_contact:
     label: hidden
-    weight: 1
+    weight: 2
     type: entity_reference_entity_view
     settings:
       view_mode: default
       link: false
     third_party_settings: {  }
     region: content
-  field_description:
-    weight: 4
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: text_default
-    region: content
   field_icon:
     label: hidden
-    weight: 5
+    weight: 6
     type: image_url
     settings:
       image_style: ''
-      url_type: ''
-      image_link: ''
     third_party_settings: {  }
-    region: content
-  field_intro_text:
-    weight: 3
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: text_default
     region: content
   field_short_title:
     label: hidden
-    weight: 2
+    weight: 3
     type: string
     settings:
       link_to_entity: false

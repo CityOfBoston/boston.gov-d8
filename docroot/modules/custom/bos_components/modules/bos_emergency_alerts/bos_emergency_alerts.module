@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module file for bos_emergency_alerts.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_emergency_alerts_theme() {
+  $theme['paragraph__bos_signup_emergency_alerts'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_signup_emergency_alerts/templates',
+  ];
+  return $theme;
+}

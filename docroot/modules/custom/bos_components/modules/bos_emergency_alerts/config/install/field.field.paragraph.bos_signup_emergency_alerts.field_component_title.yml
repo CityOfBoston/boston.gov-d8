@@ -1,18 +1,18 @@
-uuid: 5dd97652-e05f-450c-84c3-29ce670742c1
+uuid: 6a394b36-8b2e-4109-b556-e03a411ae9f3
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.paragraph.field_short_title
+    - field.storage.paragraph.field_component_title
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
-id: paragraph.bos_signup_emergency_alerts.field_short_title
-field_name: field_short_title
+id: paragraph.bos_signup_emergency_alerts.field_component_title
+field_name: field_component_title
 entity_type: paragraph
 bundle: bos_signup_emergency_alerts
-label: 'Short Title'
+label: Title
 description: ''
-required: false
-translatable: true
+required: true
+translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
