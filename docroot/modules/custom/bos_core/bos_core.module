@@ -95,6 +95,9 @@ function _bos_core_install_icons($module) {
   }
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
+    if (file_exists($path . "/" . $icon)) {
+      unlink($path . "/" . $icon);
+    }
     copy($modulePath . "/" . $icon, $path . "/" . $icon);
   }
 }
