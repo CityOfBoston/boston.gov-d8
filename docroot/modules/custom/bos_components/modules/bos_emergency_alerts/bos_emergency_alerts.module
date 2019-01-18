@@ -11,7 +11,27 @@
 function bos_emergency_alerts_theme() {
   $theme['paragraph__bos_signup_emergency_alerts'] = [
     'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_signup_emergency_alerts/templates',
+    'path' => 'modules/custom/bos_components/modules/bos_emergency_alerts/templates',
+  ];
+  $theme['field__paragraph__field_intro_text__bos_signup_emergency_alerts'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_emergency_alerts/templates',
   ];
   return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_emergency_alerts_preprocess_paragraph(&$variables) {
+  if ($variables["paragraph"]->bundle() != "bos_signup_emergency_alerts") {
+    return;
+  }
+  $variables['#attached']['library'][] = "bos_emergency_alerts/signup.alerts";
+  if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
+    $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
+    $variables['component_theme'] = $component_theme;
+    $section_header_theme = ($component_theme == 'b' ? 'sh--w' : '');
+    $variables['section_header_theme'] = $section_header_theme;
+  }
 }
