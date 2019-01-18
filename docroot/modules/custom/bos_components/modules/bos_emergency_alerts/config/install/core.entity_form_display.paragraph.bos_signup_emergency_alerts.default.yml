@@ -1,4 +1,3 @@
-uuid: 3f0384ca-62e1-458f-b191-38210cdb0ead
 langcode: en
 status: true
 dependencies:
@@ -6,11 +5,36 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_theme
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_title
     - field.field.paragraph.bos_signup_emergency_alerts.field_contact
+    - field.field.paragraph.bos_signup_emergency_alerts.field_description
     - field.field.paragraph.bos_signup_emergency_alerts.field_icon
+    - field.field.paragraph.bos_signup_emergency_alerts.field_intro_text
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
   module:
-    - file
+    - field_group
+    - file_entity
+    - text
+third_party_settings:
+  field_group:
+    group_component:
+      children:
+        - field_component_title
+        - field_component_theme
+        - field_contact
+        - field_icon
+        - field_short_title
+        - field_intro_text
+        - field_description
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        label: Component
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Component
 id: paragraph.bos_signup_emergency_alerts.default
 targetEntityType: paragraph
 bundle: bos_signup_emergency_alerts
@@ -36,12 +60,28 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_description:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
   field_icon:
     weight: 4
-    type: file_generic
+    type: file_editable
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 6
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
     region: content
   field_short_title:
     weight: 5
@@ -57,6 +97,11 @@ content:
     settings: {  }
     region: content
     third_party_settings: {  }
+  translation:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden:
   created: true
   status: true
