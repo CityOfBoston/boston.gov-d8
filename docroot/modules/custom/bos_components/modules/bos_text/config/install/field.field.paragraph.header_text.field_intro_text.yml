@@ -2,16 +2,19 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.paragraph.field_intro_text
     - paragraphs.paragraphs_type.header_text
-id: paragraph.header_text.created
-field_name: created
+  module:
+    - text
+id: paragraph.header_text.field_intro_text
+field_name: field_intro_text
 entity_type: paragraph
 bundle: header_text
-label: 'Authored on'
-description: 'The time that the Paragraph was created.'
+label: 'Intro Text'
+description: ''
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: created
+field_type: text_long
