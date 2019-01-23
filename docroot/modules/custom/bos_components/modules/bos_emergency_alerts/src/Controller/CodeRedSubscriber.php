@@ -9,8 +9,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CodeRedSubscriber extends ControllerBase {
 
-  protected $action;
-
   protected $uri = [
     "login" => "/api/login",          // GET or POST
     "contact-list" => "/api/contacts",    // POST only
@@ -56,7 +54,6 @@ class CodeRedSubscriber extends ControllerBase {
    *   The JSON output string.
    */
   public function api($action) {
-    $this->action = $action;
     switch (\Drupal::request()->getMethod()) {
       case "POST":
         return $this->$action(\Drupal::request()->request->all());
@@ -118,6 +115,107 @@ class CodeRedSubscriber extends ControllerBase {
   }
 
   /**
+   * Makes a standard (authenticating) POST to the codered API.
+   *
+   * @param string $uri
+   *   The endpoint being POSTED to.
+   * @param array $fields
+   *   Fields to be posted in the message.
+   * @param array $headers
+   *   [optional] Extra non-default hedaers to add.
+   * @param bool $cachebuster
+   *   Should a string be added to bust caches (not usually needed for POSTS)
+   *
+   * @return array
+   *   An output array with the codered REST response and http_status_code.
+   */
+  private function post($uri, $fields, $headers, $cachebuster = FALSE) {
+
+    $codered = $this->config("codered_settings");
+    $url = $codered['api_base'] . "/" . ltrim($uri,"/");
+
+    // Add a random string at end of post to bust any caches.
+    if ($cachebuster) {
+      if ( stripos($url, "?") > 0) {
+        $url .= "&cobcb=" . rand();
+      }
+      else {
+        $url .= "?cobcb=" . rand();
+      }
+    }
+
+    //url-encode the data for the POST
+    $fields_string = "";
+    foreach($fields as $key=>$value) {
+      $fields_string .= $key . '=' . urlencode($value) . '&';
+    }
+    $fields_string = rtrim($fields_string, '&');
+
+    // Build headers.
+    if (!isset($headers)) {
+      $headers = [];
+    }
+
+    // Make the post and return the response.
+    $login_url = $codered['api_base'] . "/api/login?username=" . $codered['api_user'] . "&password=" . $codered['api_pass'];
+    $public_path = \Drupal::service('file_system')->realpath(file_default_scheme() . "://");
+
+    $curl_handle = curl_init();
+    curl_setopt($curl_handle, CURLOPT_URL, $login_url);
+    curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($curl_handle, CURLOPT_AUTOREFERER, TRUE);
+    curl_setopt($curl_handle, CURLOPT_POST, FALSE);
+    curl_setopt($curl_handle, CURLOPT_COOKIEJAR, $public_path . '/codered.cookie');
+    $output = curl_exec($curl_handle);
+    curl_close($curl_handle);
+
+    if ($output) {
+      $curl_handle = curl_init();
+      curl_setopt($curl_handle, CURLOPT_URL, $url);
+      curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
+      curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, TRUE);
+      curl_setopt($curl_handle, CURLOPT_AUTOREFERER, TRUE);
+      curl_setopt($curl_handle, CURLOPT_POST, count($fields));
+      curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
+      curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $fields_string);
+      curl_setopt($curl_handle, CURLOPT_COOKIEFILE, $public_path . '/codered.cookie');
+      $output = curl_exec($curl_handle);
+
+      $http_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
+      if (!$output) {
+        $output = '{"errors":"Error"}';
+        $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+      }
+
+      curl_close($curl_handle);
+      unlink($public_path . '/codered.cookie');
+
+      $json = json_decode($output);
+      if (json_last_error() <> 0) {
+        $json = [
+          "errors" => $output,
+          ];
+        $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+      }
+
+      return [
+        "output" => $json,
+        "http_code" => $http_code,
+      ];
+    }
+
+    return [
+      "output" => [
+        "errors" => "Authentication Error"
+      ],
+      "http_code" => Response::HTTP_INTERNAL_SERVER_ERROR,
+    ];
+  }
+
+  /**
    * Helper: Formats a standardised Response object.
    *
    * @param string $message
@@ -162,76 +260,14 @@ class CodeRedSubscriber extends ControllerBase {
         $json['errors'] = "Sorry, internal error.";
         unset($json['contact']);
         $response->setContent(json_encode($json));
+        // Write log.
+        \Drupal::logger("Emergency Alerts")
+          ->error("Internal Error");
+        // Send email.
+        $this->mailAlert();
         break;
     }
     return $response;
-  }
-
-  private function post($uri, $fields, $headers, $cachebuster = FALSE) {
-
-    $codered = $this->config("codered_settings");
-    $url = $codered['api_base'] . "/" . ltrim($uri,"/");
-
-    // Add a random string at end of post to bust any caches.
-    if ($cachebuster) {
-      if ( stripos($url, "?") > 0) {
-        $url .= "&cobcb=" . rand();
-      }
-      else {
-        $url .= "?cobcb=" . rand();
-      }
-    }
-
-    //url-encode the data for the POST
-    $fields_string = "";
-    foreach($fields as $key=>$value) {
-      $fields_string .= $key . '=' . urlencode($value) . '&';
-    }
-    $fields_string = rtrim($fields_string, '&');
-
-    // Build headers.
-    // $headers[] = "";
-
-    // Make the post and return the response.
-    $login_url = $codered['api_base'] . "/api/login?username=" . $codered['api_user'] . "&password=" . $codered['api_pass'];
-    $public_path = \Drupal::service('file_system')->realpath(file_default_scheme() . "://");
-    $curl_handle = curl_init();
-    curl_setopt($curl_handle, CURLOPT_URL, $login_url);
-    curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, TRUE);
-    curl_setopt($curl_handle, CURLOPT_AUTOREFERER, TRUE);
-    curl_setopt($curl_handle, CURLOPT_POST, FALSE);
-    curl_setopt($curl_handle, CURLOPT_COOKIEJAR, $public_path . '/codered.cookie');
-    $output = curl_exec($curl_handle);
-
-    if ($output) {
-      $curl_handle = curl_init();
-      curl_setopt($curl_handle, CURLOPT_URL, $url);
-      curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
-      curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, TRUE);
-      curl_setopt($curl_handle, CURLOPT_AUTOREFERER, TRUE);
-      curl_setopt($curl_handle, CURLOPT_POST, count($fields));
-      curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
-      curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $fields_string);
-      curl_setopt($curl_handle, CURLOPT_COOKIEFILE, $public_path . '/codered.cookie');
-
-      if (!($output = curl_exec($curl_handle))) {
-        $output = NULL;
-      }
-      $http_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
-      curl_close($curl_handle);
-      unlink($public_path . '/codered.cookie');
-
-      return [
-        "output" => json_decode($output),
-        "http_code" => $http_code,
-      ];
-    }
-    else {
-      return;
-    }
   }
 
   /**
@@ -256,4 +292,30 @@ class CodeRedSubscriber extends ControllerBase {
 
     return substr(strtoupper($hex), 0, $maxlen);
   }
+
+  /**
+   * Helper function to email alerts.
+   *
+   * Actual email formatted in bos_emergency_alerts_mail().
+   */
+  private function mailAlert() {
+    $mailManager = \Drupal::service('plugin.manager.mail');
+    $request = \Drupal::request()->request->all();
+    $codered = $this->config("codered_settings");
+
+    if (empty($codered["email_alerts"])) {
+      \Drupal::logger("Emergency Alerts")
+        ->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
+      return;
+    }
+
+    $params['message'] = $request;
+    $result = $mailManager->mail("bos_emergency_alerts", "subscribe_error", $codered["email_alerts"], "en", $params, NULL, TRUE);
+
+    if ($result['result'] !== true) {
+      \Drupal::logger("Emergency Alerts")
+        ->warning("There was a problem sending your message and it was not sent.");
+    }
+  }
+
 }

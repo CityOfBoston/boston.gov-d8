@@ -68,6 +68,25 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
             '#default_value' => isset($codered['api_pass']) ? $codered['api_pass'] : "",
             '#required' => FALSE,
           ],
+
+          'api_group' => [
+            '#type' => 'textfield',
+            '#title' => t('CodeRed Subscriber Group'),
+            '#description' => t('Enter the group name (string) in which subscribers are to be added.'),
+            '#default_value' => isset($codered['api_group']) ? $codered['api_group'] : "",
+            '#required' => FALSE,
+          ],
+
+          'email_alerts' => [
+            '#type' => 'textfield',
+            '#title' => t('module Error Alerts'),
+            '#description' => t('Enter an email to which module errors will be advised.'),
+            '#default_value' => isset($codered['email_alerts']) ? $codered['email_alerts'] : "",
+            '#required' => FALSE,
+            '#attributes' => [
+              "placeholder" => 'e.g. digital@boston.gov'
+            ],
+          ],
         ],
       ],
     ];
@@ -84,6 +103,8 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
       'api_base' => $settings['codered_settings']['api_base'],
       'api_user' => $settings['codered_settings']['api_user'],
       'api_pass' => $settings['codered_settings']['api_pass'],
+      'api_group' => $settings['codered_settings']['api_group'],
+      'email_alerts' => $settings['codered_settings']['email_alerts'],
     ];
 
     $this->config('bos_emergency_alerts.settings')
