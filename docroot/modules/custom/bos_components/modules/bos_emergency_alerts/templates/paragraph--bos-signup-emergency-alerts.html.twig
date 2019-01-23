@@ -43,9 +43,9 @@
       {% if content.field_component_title %}
         {{ content.field_component_title }}
       {% endif %}
-	    {% if content.field_contact %}
-	      <div class="sh-contact">{{ content.field_contact }}</div>
-	    {% endif %}
+      {% if content.field_contact %}
+        <div class="sh-contact">{{ content.field_contact }}</div>
+      {% endif %}
     </div>
     <div class="g m-t500">
       <div class="g--7">
@@ -93,6 +93,9 @@
               </label>
             </div>
             <div class="t--subinfo{% if component_theme == 'b' %} t--w{% endif %} m-t100">Message &amp data rates may apply</div>
+            <div>
+              <div id="text_or_call" class="txt-l"></div>
+            </div>
             <hr class="hr hr--sq" />
             <div class="fs-c m-b300">
               <div class="txt">
@@ -137,4 +140,3 @@
     </div>
   </div>
 </div>
-

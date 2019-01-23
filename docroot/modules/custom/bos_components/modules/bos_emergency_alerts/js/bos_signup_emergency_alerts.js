@@ -49,6 +49,7 @@ var BostonEmergencyAlerts = (function () {
     triggerSuccess(text, data.contact.text ? 'Yes' : 'No');
     form.find('#message, #button').remove();
     form.find('.t--subinfo').remove();
+    form.css("visibility", "hidden");
     jQuery('#alert_content').remove();
     jQuery('#alert_success .t--intro').show();
   }
@@ -57,6 +58,9 @@ var BostonEmergencyAlerts = (function () {
     var valid = true;
 
     resetForm();
+    var textVal = jQuery("#checkbox-text").prop('checked');
+    var callVal = jQuery("#checkbox-call").prop('checked');
+    var checkEmailFormat = /^[A-Z0-9_'%=+!`#~$*?^{}&|-]+([\.][A-Z0-9_'%=+!`#~$*?^{}&|-]+)*@[A-Z0-9-]+(\.[A-Z0-9-]+)+$/i;
 
     if (email.val() == '' && phone_number.val() == '') {
       triggerError(email, "Please enter a valid email or phone number", 'txt-f--err');
@@ -67,6 +71,16 @@ var BostonEmergencyAlerts = (function () {
     if (first_name.val() == '' && last_name.val() == '') {
       triggerError(first_name, "Please enter your first or last name", 'txt-f--err');
       triggerError(last_name, "Please enter your first or last name", 'txt-f--err');
+      valid = false;
+    }
+
+    if (email.val() !== '' && !checkEmailFormat.test(email.val())){
+      triggerError(email, "Email format is invalid", 'txt-f--err');
+      valid = false;
+    }
+
+    if (phone_number.val() !== '' && textVal == false && callVal == false ) {
+      triggerError(text_or_call, "Please select text or call", 'txt-f--err');
       valid = false;
     }
 
@@ -120,6 +134,6 @@ var BostonEmergencyAlerts = (function () {
   return {
     start: start
   }
-})();
+})()
 
-BostonEmergencyAlerts.start();
+BostonEmergencyAlerts.start()
