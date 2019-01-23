@@ -46,7 +46,7 @@ function bos_emergency_alerts_mail($key, &$message, $params) {
     $message['subject'] = "Emergency Alerts Subscription Error.";
     $message['body'] = "
       <p>There was an issue with a user subscribing to CodeRed Emergency Alerts from boston.gov.</p>
-      <p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") ."</p>
+      <p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") . "</p>
       <p>The user was located at: " . \Drupal::request()->getClientIp() . "</p>
       <p>The information completed on the form was:<br/> 
       <pre>" . print_r($params["message"], TRUE) . "</pre>

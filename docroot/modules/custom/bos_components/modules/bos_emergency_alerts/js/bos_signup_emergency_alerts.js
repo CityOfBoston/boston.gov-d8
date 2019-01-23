@@ -1,3 +1,7 @@
+/**
+ * @file
+ */
+
 var BostonEmergencyAlerts = (function () {
   var form = jQuery('#bosAlertForm');
   var email,
@@ -30,7 +34,8 @@ var BostonEmergencyAlerts = (function () {
 
           if (req.responseJSON && req.responseJSON.errors) {
             jQuery('#message').append('<div class="t--subinfo t--err m-t100">' + req.responseJSON.errors + '</div>').show();
-          } else {
+          }
+          else {
             jQuery('#message').append('<div class="t--subinfo t--err m-t100">There was an error. Please try again or email <a href="mailto:feedback@boston.gov">feedback@boston.gov</a>.</div>').show();
           }
         },
@@ -74,12 +79,12 @@ var BostonEmergencyAlerts = (function () {
       valid = false;
     }
 
-    if (email.val() !== '' && !checkEmailFormat.test(email.val())){
+    if (email.val() !== '' && !checkEmailFormat.test(email.val())) {
       triggerError(email, "Email format is invalid", 'txt-f--err');
       valid = false;
     }
 
-    if (phone_number.val() !== '' && textVal == false && callVal == false ) {
+    if (phone_number.val() !== '' && textVal == false && callVal == false) {
       triggerError(text_or_call, "Please select text or call", 'txt-f--err');
       valid = false;
     }
@@ -104,7 +109,8 @@ var BostonEmergencyAlerts = (function () {
         parent.css({'display': 'block'});
         parent.find('.cb-l').css({'margin-left': 0});
       }
-    } else {
+    }
+    else {
       parent.remove();
     }
   }
@@ -136,4 +142,4 @@ var BostonEmergencyAlerts = (function () {
   }
 })()
 
-BostonEmergencyAlerts.start()
+BostonEmergencyAlerts.start();

@@ -3,15 +3,19 @@
 namespace Drupal\bos_emergency_alerts\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class CodeRedSubscriber.
+ *
+ * @package Drupal\bos_emergency_alerts\Controller
+ */
 class CodeRedSubscriber extends ControllerBase {
 
   protected $uri = [
-    "login" => "/api/login",          // GET or POST
-    "contact-list" => "/api/contacts",    // POST only
+    "login" => "/api/login",
+    "contact-list" => "/api/contacts",
     "contact" => "/api/contacts/{}",
   ];
 
@@ -129,14 +133,14 @@ class CodeRedSubscriber extends ControllerBase {
    * @return array
    *   An output array with the codered REST response and http_status_code.
    */
-  private function post($uri, $fields, $headers, $cachebuster = FALSE) {
+  private function post($uri, array $fields, array $headers, $cachebuster = FALSE) {
 
     $codered = $this->config("codered_settings");
-    $url = $codered['api_base'] . "/" . ltrim($uri,"/");
+    $url = $codered['api_base'] . "/" . ltrim($uri, "/");
 
     // Add a random string at end of post to bust any caches.
     if ($cachebuster) {
-      if ( stripos($url, "?") > 0) {
+      if (stripos($url, "?") > 0) {
         $url .= "&cobcb=" . rand();
       }
       else {
@@ -144,9 +148,9 @@ class CodeRedSubscriber extends ControllerBase {
       }
     }
 
-    //url-encode the data for the POST
+    // Url-encode the data for the POST.
     $fields_string = "";
-    foreach($fields as $key=>$value) {
+    foreach ($fields as $key => $value) {
       $fields_string .= $key . '=' . urlencode($value) . '&';
     }
     $fields_string = rtrim($fields_string, '&');
@@ -197,7 +201,7 @@ class CodeRedSubscriber extends ControllerBase {
       if (json_last_error() <> 0) {
         $json = [
           "errors" => $output,
-          ];
+        ];
         $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
       }
 
@@ -209,7 +213,7 @@ class CodeRedSubscriber extends ControllerBase {
 
     return [
       "output" => [
-        "errors" => "Authentication Error"
+        "errors" => "Authentication Error",
       ],
       "http_code" => Response::HTTP_INTERNAL_SERVER_ERROR,
     ];
@@ -275,7 +279,6 @@ class CodeRedSubscriber extends ControllerBase {
    *
    * @param string $string
    *   A string which is to be converted into a hex number.
-   *
    * @param int $maxlen
    *   Maximum number of chars to be returned.
    *
@@ -285,7 +288,7 @@ class CodeRedSubscriber extends ControllerBase {
   private function stringtohex($string, $maxlen = 140) {
     $hex = '';
 
-    for ($i=0; $i<strlen($string); $i++){
+    for ($i = 0; $i < strlen($string); $i++) {
       $ord = ord($string[$i]);
       $hex .= substr('0' . dechex($ord), -2);
     }
@@ -312,7 +315,7 @@ class CodeRedSubscriber extends ControllerBase {
     $params['message'] = $request;
     $result = $mailManager->mail("bos_emergency_alerts", "subscribe_error", $codered["email_alerts"], "en", $params, NULL, TRUE);
 
-    if ($result['result'] !== true) {
+    if ($result['result'] !== TRUE) {
       \Drupal::logger("Emergency Alerts")
         ->warning("There was a problem sending your message and it was not sent.");
     }

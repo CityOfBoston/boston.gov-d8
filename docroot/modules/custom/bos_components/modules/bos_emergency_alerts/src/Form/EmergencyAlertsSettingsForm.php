@@ -5,6 +5,11 @@ namespace Drupal\bos_emergency_alerts\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Class EmergencyAlertsSettingsForm.
+ *
+ * @package Drupal\bos_emergency_alerts\Form
+ */
 class EmergencyAlertsSettingsForm extends ConfigFormBase {
 
   /**
@@ -48,7 +53,7 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
             '#description' => t('Enter the full (remote) URL for the CodeRed API used to register subscriptions.'),
             '#default_value' => $codered['api_base'],
             '#attributes' => [
-              "placeholder" => 'e.g. https://api.coderedweb.com'
+              "placeholder" => 'e.g. https://api.coderedweb.com',
             ],
             '#required' => FALSE,
           ],
@@ -84,7 +89,7 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
             '#default_value' => isset($codered['email_alerts']) ? $codered['email_alerts'] : "",
             '#required' => FALSE,
             '#attributes' => [
-              "placeholder" => 'e.g. digital@boston.gov'
+              "placeholder" => 'e.g. digital@boston.gov',
             ],
           ],
         ],
@@ -113,4 +118,5 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
   }
+
 }
