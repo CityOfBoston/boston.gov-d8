@@ -90,14 +90,21 @@ class CodeRedSubscriber extends ControllerBase {
         "CustomKey" => $customKey,
         "FirstName" => $payload['first_name'],
         "LastName" => $payload['last_name'],
-        "OtherPhone" => $payload['phone_number'],
-        "TextNumber" => $payload['phone_number'],
         'MobileProvider' => "Sprint",
+        'OtherPhone' => "",
+        'TextNumber' => "",
         "HomeEmail" => $payload['email'],
         "Zip" => $payload['zip'],
         "PreferredLanguage" => $payload['language'],
         "Groups" => "digital test",
       ];
+      if ($payload['call']) {
+        $fields["OtherPhone"] = $payload['phone_number'];
+      }
+      if ($payload['text']) {
+        $fields["TextNumber"] = $payload['phone_number'];
+      }
+
       $headers = [
         "Cache-Control: no-cache",
       ];
