@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Module file for bos_emergency_alerts.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_emergency_alerts_theme() {
+  $theme['paragraph__bos_signup_emergency_alerts'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_emergency_alerts/templates',
+  ];
+  $theme['field__paragraph__field_intro_text__bos_signup_emergency_alerts'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_emergency_alerts/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_emergency_alerts_preprocess_paragraph(&$variables) {
+  if ($variables["paragraph"]->bundle() != "bos_signup_emergency_alerts") {
+    return;
+  }
+  $variables['#attached']['library'][] = "bos_emergency_alerts/signup.alerts";
+  $variables['emergency_alerts_url'] = '/rest/codered/subscribe';
+  if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
+    $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
+    $variables['component_theme'] = $component_theme;
+    $section_header_theme = ($component_theme == 'b' ? 'sh--w' : '');
+    $variables['section_header_theme'] = $section_header_theme;
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function bos_emergency_alerts_mail($key, &$message, $params) {
+  if ($key == "subscribe_error") {
+    $message['from'] = \Drupal::config('system.site')->get('mail');
+    $message['subject'] = "Emergency Alerts Subscription Error.";
+    $message['body'] = "
+      <p>There was an issue with a user subscribing to CodeRed Emergency Alerts from boston.gov.</p>
+      <p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") . "</p>
+      <p>The user was located at: " . \Drupal::request()->getClientIp() . "</p>
+      <p>The information completed on the form was:<br/> 
+      <pre>" . print_r($params["message"], TRUE) . "</pre>
+      </p>";
+  }
+}
