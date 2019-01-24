@@ -5,6 +5,8 @@
  * Main file for the bos_text module.
  */
 
+use Drupal\Component\Utility\Html;
+
 /**
  * Implements hook_theme().
  *
@@ -41,6 +43,10 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'base hook' => 'paragraph',
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'paragraph--text-three-column',
+    ],
+    'paragraph__header_text' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
     ],
     'field__component__field_columns' => [
       'base hook' => 'field',
@@ -89,6 +95,12 @@ function bos_text_preprocess_paragraph(&$variables) {
   // Set a flag if the title is to be hidden in twig.
   if ($variables["paragraph"]->bundle() == "text") {
     $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+  }
+  elseif ($variables["paragraph"]->bundle() == "header_text") {
+    $host = $variables["paragraph"]->getParentEntity();
+    if ($host && $host->getEntityTypeId() == 'node') {
+      $variables['host_title'] = Html::escape($host->getTitle());
+    }
   }
 }
 
