@@ -1,0 +1,50 @@
+uuid: 6fd3ea1c-8fe9-4bf4-b517-7c2f4d318715
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.grid_of_topics.field_component_title
+    - field.field.paragraph.grid_of_topics.field_contact
+    - field.field.paragraph.grid_of_topics.field_short_title
+    - field.field.paragraph.grid_of_topics.field_topics
+    - paragraphs.paragraphs_type.grid_of_topics
+id: paragraph.grid_of_topics.default
+targetEntityType: paragraph
+bundle: grid_of_topics
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 2
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_topics:
+    label: hidden
+    weight: 3
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
