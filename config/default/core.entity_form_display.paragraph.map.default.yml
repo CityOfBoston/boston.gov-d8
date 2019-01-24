@@ -4,18 +4,17 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.map.field_component_title
-    - field.field.paragraph.map.field_contact
     - field.field.paragraph.map.field_extra_info
-    - field.field.paragraph.map.field_hide_title_bar
-    - field.field.paragraph.map.field_map
-    - field.field.paragraph.map.field_map_default_coordinates
-    - field.field.paragraph.map.field_map_options
-    - field.field.paragraph.map.field_map_point_of_interest
-    - field.field.paragraph.map.field_map_type
+    - field.field.paragraph.map.field_image
+    - field.field.paragraph.map.field_map_config_json
+    - field.field.paragraph.map.field_map_inline
     - field.field.paragraph.map.field_short_title
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.map
   module:
-    - paragraphs
+    - svg_image
+_core:
+  default_config_hash: DLviDfSHxjCJ_xcwBqrLqpXTmFueDiEYhvXB-PPXP_w
 id: paragraph.map.default
 targetEntityType: paragraph
 bundle: map
@@ -29,74 +28,39 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_contact:
-    weight: 3
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_extra_info:
-    weight: 2
+    weight: 3
     type: string_textfield
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_hide_title_bar:
-    weight: 1
-    type: boolean_checkbox
+  field_image:
+    type: image_image
+    weight: 102
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    region: content
+    third_party_settings: {  }
+  field_map_config_json:
+    weight: 103
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_map_inline:
+    weight: 101
     settings:
       display_label: true
     third_party_settings: {  }
-    region: content
-  field_map:
-    weight: 4
-    type: options_select
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_map_default_coordinates:
-    weight: 9
-    type: entity_reference_paragraphs
-    settings:
-      title: 'Coordinates Override'
-      title_plural: 'Coordinates Overrides'
-      edit_mode: open
-      add_mode: select
-      form_display_mode: default
-      default_paragraph_type: ''
-    third_party_settings: {  }
-    region: content
-  field_map_options:
-    weight: 6
-    type: options_buttons
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_map_point_of_interest:
-    weight: 7
-    type: entity_reference_paragraphs
-    settings:
-      title: 'Point of Interest'
-      title_plural: 'Points of Interest'
-      edit_mode: open
-      add_mode: select
-      form_display_mode: default
-      default_paragraph_type: ''
-    third_party_settings: {  }
-    region: content
-  field_map_type:
-    weight: 5
-    type: options_select
-    settings: {  }
-    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   field_short_title:
-    weight: 2
+    weight: 1
     type: string_textfield
     settings:
       size: 60
