@@ -1,0 +1,115 @@
+uuid: c1adb168-17f7-452e-959e-26018849e1e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.map.field_component_title
+    - field.field.paragraph.map.field_contact
+    - field.field.paragraph.map.field_extra_info
+    - field.field.paragraph.map.field_hide_title_bar
+    - field.field.paragraph.map.field_map
+    - field.field.paragraph.map.field_map_default_coordinates
+    - field.field.paragraph.map.field_map_options
+    - field.field.paragraph.map.field_map_point_of_interest
+    - field.field.paragraph.map.field_map_type
+    - field.field.paragraph.map.field_short_title
+    - paragraphs.paragraphs_type.map
+  module:
+    - paragraphs
+id: paragraph.map.default
+targetEntityType: paragraph
+bundle: map
+mode: default
+content:
+  field_component_title:
+    weight: 0
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_extra_info:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_hide_title_bar:
+    weight: 1
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_map:
+    weight: 4
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_map_default_coordinates:
+    weight: 9
+    type: entity_reference_paragraphs
+    settings:
+      title: 'Coordinates Override'
+      title_plural: 'Coordinates Overrides'
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_map_options:
+    weight: 6
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_map_point_of_interest:
+    weight: 7
+    type: entity_reference_paragraphs
+    settings:
+      title: 'Point of Interest'
+      title_plural: 'Points of Interest'
+      edit_mode: open
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_map_type:
+    weight: 5
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
