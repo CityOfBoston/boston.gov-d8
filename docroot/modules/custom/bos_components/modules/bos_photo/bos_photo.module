@@ -55,7 +55,7 @@ function bos_photo_preprocess_field(&$vars) {
       break;
 
     case 'field_image':
-      if (!empty($vars['element']['#object']) && $vars['element']['#object']->bundle() == 'photo') {
+      if (!empty($vars['element']['#object']->_photo_id)) {
         $image = $vars['element']['#object']->get('field_image')->getValue();
         $base_url = file_load($image['0']['target_id'])->getFileUri();
         $styles = [
