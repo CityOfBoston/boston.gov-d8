@@ -1,11 +1,18 @@
 uuid: 050d9406-db41-4fde-b2c3-cee7cfb3c354
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:ee132ce9-898f-4f17-945e-c91eab01d889'
+  module:
+    - paragraphs_library
+third_party_settings:
+  paragraphs_library:
+    allow_library_conversion: true
 _core:
   default_config_hash: o-h5yXHRzGHEz7KUQfjUv_cV00iP0RXVYWVdgPS_ito
 id: grid_of_programs_initiatives
 label: 'Grid of Programs/Initiatives'
-icon_uuid: null
+icon_uuid: ee132ce9-898f-4f17-945e-c91eab01d889
 description: 'Migrated from paragraph bundle Grid of Programs/Initiatives'
 behavior_plugins: {  }
