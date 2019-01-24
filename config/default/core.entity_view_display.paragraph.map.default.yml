@@ -4,88 +4,116 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.map.field_component_title
-    - field.field.paragraph.map.field_contact
     - field.field.paragraph.map.field_extra_info
-    - field.field.paragraph.map.field_hide_title_bar
-    - field.field.paragraph.map.field_map
-    - field.field.paragraph.map.field_map_default_coordinates
-    - field.field.paragraph.map.field_map_options
-    - field.field.paragraph.map.field_map_point_of_interest
-    - field.field.paragraph.map.field_map_type
+    - field.field.paragraph.map.field_image
+    - field.field.paragraph.map.field_map_config_json
+    - field.field.paragraph.map.field_map_inline
     - field.field.paragraph.map.field_short_title
     - paragraphs.paragraphs_type.map
   module:
-    - entity_reference_revisions
-    - options
+    - fences
+    - svg_image
+_core:
+  default_config_hash: DvTB0lUCF0682LYp5Y5hezalU3LX9cVdfSPo7MvPOIs
 id: paragraph.map.default
 targetEntityType: paragraph
 bundle: map
 mode: default
 content:
-  field_contact:
-    label: above
-    weight: 3
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
+  field_component_title:
+    type: string
+    weight: 0
     region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_extra_info:
     label: hidden
-    weight: 9
+    weight: 2
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
-  field_hide_title_bar:
-    label: above
-    weight: 1
-    type: list_default
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_map:
-    label: above
+  field_image:
     weight: 4
-    type: entity_reference_label
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
+      image_style: ''
+      image_link: ''
+      svg_render_as_image: '1'
+      svg_attributes:
+        width: ''
+        height: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: image
     region: content
-  field_map_default_coordinates:
-    label: above
-    weight: 8
-    type: entity_reference_revisions_entity_view
-    settings:
-      view_mode: full
-      link: ''
-    third_party_settings: {  }
-    region: content
-  field_map_options:
-    label: above
-    weight: 6
-    type: list_default
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_map_point_of_interest:
-    label: above
+  field_map_config_json:
     weight: 5
-    type: entity_reference_revisions_entity_view
-    settings:
-      view_mode: full
-      link: ''
-    third_party_settings: {  }
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: basic_string
     region: content
-  field_map_type:
-    label: above
-    weight: 7
-    type: entity_reference_label
+  field_map_inline:
+    weight: 3
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
+      format: default
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: boolean
     region: content
-hidden:
-  field_component_title: true
-  field_short_title: true
+  field_short_title:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+hidden: {  }
