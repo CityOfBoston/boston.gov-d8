@@ -6,7 +6,6 @@ dependencies:
     - core.entity_view_display.comment.comment_node_emergency_alert.default
     - field.field.node.emergency_alert.comment_node_emergency_alert
     - field.field.node.emergency_alert.field_link
-    - field.field.node.emergency_alert.field_status_overrides
     - field.field.node.emergency_alert.field_theme
     - field.field.node.emergency_alert.field_updated_date
     - node.type.emergency_alert
@@ -33,15 +32,6 @@ content:
   field_link:
     label: above
     weight: 2
-    type: entity_reference_revisions_entity_view
-    settings:
-      view_mode: full
-      link: ''
-    third_party_settings: {  }
-    region: content
-  field_status_overrides:
-    label: above
-    weight: 4
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
