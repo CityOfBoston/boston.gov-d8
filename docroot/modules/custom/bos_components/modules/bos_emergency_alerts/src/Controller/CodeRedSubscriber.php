@@ -3,9 +3,12 @@
 namespace Drupal\bos_emergency_alerts\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\salesforce\Exception;
+use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Mail\MailManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -21,6 +24,30 @@ class CodeRedSubscriber extends ControllerBase {
     "contact-list" => "/api/contacts",
     "contact" => "/api/contacts/{}",
   ];
+
+  /**
+   * CodeRedSubscriber create.
+   *
+   * @inheritdoc
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack'),
+      $container->get('logger.factory'),
+      $container->get('plugin.manager.mail')
+    );
+  }
+
+  /**
+   * CodeRedSubscriber constructor.
+   *
+   * @inheritdoc
+   */
+  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail) {
+    $this->request = $requestStack->getCurrentRequest();
+    $this->log = $logger->get('EmergencyAlerts');
+    $this->mail = $mail;
+  }
 
   /**
    * Magic function.  Catches calls to endpoints that dont exist.
@@ -61,9 +88,9 @@ class CodeRedSubscriber extends ControllerBase {
    *   The JSON output string.
    */
   public function api($action) {
-    switch (\Drupal::request()->getMethod()) {
+    switch ($this->request->getMethod()) {
       case "POST":
-        return $this->$action(\Drupal::request()->request->all());
+        return $this->$action($this->request->request->all());
     }
   }
 
@@ -130,11 +157,12 @@ class CodeRedSubscriber extends ControllerBase {
    *   Fields to be posted in the message.
    * @param array $headers
    *   Extra non-default hedaers to add.
-   * @param boolean $cachebuster
+   * @param bool $cachebuster
    *   [optional] Appended random string to bust caching (NOT usually needed).
    *
    * @return array
    *   An output array with the codered REST response and http_status_code.
+   *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
   private function post($uri, array $fields, array $headers, $cachebuster = FALSE) {
@@ -166,7 +194,7 @@ class CodeRedSubscriber extends ControllerBase {
         'query' => [
           "username" => $codered['api_user'],
           "password" => $codered['api_pass'],
-        ]
+        ],
       ]);
 
       if (!isset($authenticate)) {
@@ -250,7 +278,7 @@ class CodeRedSubscriber extends ControllerBase {
         unset($json['contact']);
         $response->setContent(json_encode($json));
         // Write log.
-        \Drupal::logger("Emergency Alerts")
+        $this->log
           ->error("Internal Error");
         // Send email.
         $this->mailAlert();
@@ -287,22 +315,19 @@ class CodeRedSubscriber extends ControllerBase {
    * Actual email formatted in bos_emergency_alerts_mail().
    */
   private function mailAlert() {
-    $mailManager = \Drupal::service('plugin.manager.mail');
-    $request = \Drupal::request()->request->all();
+    $request = $this->request->request->all();
     $codered = $this->config("codered_settings");
 
     if (empty($codered["email_alerts"])) {
-      \Drupal::logger("Emergency Alerts")
-        ->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
+      $this->log->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
       return;
     }
 
     $params['message'] = $request;
-    $result = $mailManager->mail("bos_emergency_alerts", "subscribe_error", $codered["email_alerts"], "en", $params, NULL, TRUE);
+    $result = $this->mail->mail("bos_emergency_alerts", "subscribe_error", $codered["email_alerts"], "en", $params, NULL, TRUE);
 
     if ($result['result'] !== TRUE) {
-      \Drupal::logger("Emergency Alerts")
-        ->warning("There was a problem sending your message and it was not sent.");
+      $this->log->warning("There was a problem sending your message and it was not sent.");
     }
   }
 
