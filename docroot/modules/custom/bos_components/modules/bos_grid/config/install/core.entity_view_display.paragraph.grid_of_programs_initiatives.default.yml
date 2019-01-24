@@ -1,0 +1,60 @@
+uuid: a235e9a1-0f3f-4adb-ba2f-ce97be226b5f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.grid_of_programs_initiatives.field_component_theme
+    - field.field.paragraph.grid_of_programs_initiatives.field_component_title
+    - field.field.paragraph.grid_of_programs_initiatives.field_contact
+    - field.field.paragraph.grid_of_programs_initiatives.field_program_initiative
+    - field.field.paragraph.grid_of_programs_initiatives.field_short_title
+    - paragraphs.paragraphs_type.grid_of_programs_initiatives
+  module:
+    - options
+id: paragraph.grid_of_programs_initiatives.default
+targetEntityType: paragraph
+bundle: grid_of_programs_initiatives
+mode: default
+content:
+  field_component_theme:
+    label: above
+    weight: 4
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 2
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_program_initiative:
+    label: hidden
+    weight: 3
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
