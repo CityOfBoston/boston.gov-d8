@@ -4,3 +4,36 @@
  * @file
  * The Base module file for bos_map module.
  */
+
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_map_theme() {
+  $theme['paragraph__map'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_map') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_map_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'map':
+        $vars['inline'] = $paragraph->get('field_map_inline')->getValue()['0']['value'];
+        $vars['config'] = $paragraph->get('field_map_config_json')->getValue()['0']['value'];
+        $vars['#attached']['library'][] = 'bos_map/map';
+        $photo_id = Html::getUniqueId('ph-p--1');
+        $vars['paragraph']->_photo_id = $photo_id;
+        $vars['photo_id'] = $photo_id;
+        $vars['map_id'] = 'map--' . $paragraph->id();
+        break;
+    }
+  }
+}
