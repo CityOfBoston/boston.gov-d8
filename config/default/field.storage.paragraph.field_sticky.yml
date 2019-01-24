@@ -1,19 +1,17 @@
-uuid: 88e961a2-3119-4567-a324-075bccb94365
+uuid: db41a1ff-976b-46fc-94a3-28ca701c536c
 langcode: en
 status: true
 dependencies:
   module:
-    - node
     - paragraphs
-id: paragraph.field_people
-field_name: field_people
+id: paragraph.field_sticky
+field_name: field_sticky
 entity_type: paragraph
-type: entity_reference
-settings:
-  target_type: node
+type: boolean
+settings: {  }
 module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
