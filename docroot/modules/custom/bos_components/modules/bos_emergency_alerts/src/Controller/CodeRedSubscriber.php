@@ -3,6 +3,9 @@
 namespace Drupal\bos_emergency_alerts\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -109,7 +112,7 @@ class CodeRedSubscriber extends ControllerBase {
       $headers = [
         "Cache-Control: no-cache",
       ];
-      $result = $this->post($uri, $fields, $headers, TRUE);
+      $result = $this->post($uri, $fields, $headers);
     }
     else {
       $result = ["output" => "Missing Drupal Configuration.", "HTTP_CODE" => "500"];
@@ -148,75 +151,59 @@ class CodeRedSubscriber extends ControllerBase {
       }
     }
 
-    // Url-encode the data for the POST.
-    $fields_string = "";
-    foreach ($fields as $key => $value) {
-      $fields_string .= $key . '=' . urlencode($value) . '&';
-    }
-    $fields_string = rtrim($fields_string, '&');
-
     // Build headers.
     if (!isset($headers)) {
       $headers = [];
     }
 
     // Make the post and return the response.
-    $login_url = $codered['api_base'] . "/api/login?username=" . $codered['api_user'] . "&password=" . $codered['api_pass'];
-    $public_path = \Drupal::service('file_system')->realpath(file_default_scheme() . "://");
+    $client = new Client();
+    try {
+      $jar = new CookieJar();
+      $authenticate = $client->request('GET', $codered['api_base'] . "/api/login", [
+        'cookies' => $jar,
+        'query' => [
+          "username" => $codered['api_user'],
+          "password" => $codered['api_pass'],
+        ]
+      ]);
 
-    $curl_handle = curl_init();
-    curl_setopt($curl_handle, CURLOPT_URL, $login_url);
-    curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, TRUE);
-    curl_setopt($curl_handle, CURLOPT_AUTOREFERER, TRUE);
-    curl_setopt($curl_handle, CURLOPT_POST, FALSE);
-    curl_setopt($curl_handle, CURLOPT_COOKIEJAR, $public_path . '/codered.cookie');
-    $output = curl_exec($curl_handle);
-    curl_close($curl_handle);
-
-    if ($output) {
-      $curl_handle = curl_init();
-      curl_setopt($curl_handle, CURLOPT_URL, $url);
-      curl_setopt($curl_handle, CURLOPT_HTTPHEADER, $headers);
-      curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, TRUE);
-      curl_setopt($curl_handle, CURLOPT_AUTOREFERER, TRUE);
-      curl_setopt($curl_handle, CURLOPT_POST, count($fields));
-      curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
-      curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $fields_string);
-      curl_setopt($curl_handle, CURLOPT_COOKIEFILE, $public_path . '/codered.cookie');
-      $output = curl_exec($curl_handle);
-
-      $http_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
-      if (!$output) {
-        $output = '{"errors":"Error"}';
+      if (isset($authenticate)) {
+        $client = new Client();
+        $response = $client->post($url, [
+          'cookies' => $jar,
+          'form_params' => $fields,
+          'headers' => $headers,
+        ]);
+        if (isset($response)) {
+          $http_code = $response->getStatusCode();
+          $output = $response->getBody()->getContents();
+          $json = json_decode($output);
+          if (json_last_error() <> 0) {
+            $json = '{"errors":"' . $output . '"}';
+            $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+          }
+        }
+        else {
+          $json = '{"errors":"CodeRed Endpoint Error"}';
+          $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+      }
+      else {
+        $json = '{"errors":"Authentication Error"}';
         $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
       }
-
-      curl_close($curl_handle);
-      unlink($public_path . '/codered.cookie');
-
-      $json = json_decode($output);
-      if (json_last_error() <> 0) {
-        $json = [
-          "errors" => $output,
-        ];
-        $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
-      }
-
-      return [
-        "output" => $json,
-        "http_code" => $http_code,
-      ];
+    }
+    catch (RequestException $e) {
+      $json = '{"errors":' . $e->getMessage() . '}';
+      $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
     }
 
     return [
-      "output" => [
-        "errors" => "Authentication Error",
-      ],
-      "http_code" => Response::HTTP_INTERNAL_SERVER_ERROR,
+      "output" => $json,
+      "http_code" => $http_code,
     ];
+
   }
 
   /**
