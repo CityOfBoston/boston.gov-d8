@@ -3,9 +3,9 @@
 namespace Drupal\bos_emergency_alerts\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\salesforce\Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -129,12 +129,13 @@ class CodeRedSubscriber extends ControllerBase {
    * @param array $fields
    *   Fields to be posted in the message.
    * @param array $headers
-   *   [optional] Extra non-default hedaers to add.
-   * @param bool $cachebuster
-   *   Should a string be added to bust caches (not usually needed for POSTS)
+   *   Extra non-default hedaers to add.
+   * @param boolean $cachebuster
+   *   [optional] Appended random string to bust caching (NOT usually needed).
    *
    * @return array
    *   An output array with the codered REST response and http_status_code.
+   * @throws \GuzzleHttp\Exception\GuzzleException
    */
   private function post($uri, array $fields, array $headers, $cachebuster = FALSE) {
 
@@ -142,7 +143,7 @@ class CodeRedSubscriber extends ControllerBase {
     $url = $codered['api_base'] . "/" . ltrim($uri, "/");
 
     // Add a random string at end of post to bust any caches.
-    if ($cachebuster) {
+    if (isset($cachebuster) && $cachebuster) {
       if (stripos($url, "?") > 0) {
         $url .= "&cobcb=" . rand();
       }
@@ -168,7 +169,7 @@ class CodeRedSubscriber extends ControllerBase {
         ]
       ]);
 
-      if (isset($authenticate)) {
+      if (!isset($authenticate)) {
         $client = new Client();
         $response = $client->post($url, [
           'cookies' => $jar,
@@ -180,21 +181,18 @@ class CodeRedSubscriber extends ControllerBase {
           $output = $response->getBody()->getContents();
           $json = json_decode($output);
           if (json_last_error() <> 0) {
-            $json = '{"errors":"' . $output . '"}';
-            $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+            throwException(new \Exception($output));
           }
         }
         else {
-          $json = '{"errors":"CodeRed Endpoint Error"}';
-          $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+          throwException(new \Exception("CodeRed Endpoint Error"));
         }
       }
       else {
-        $json = '{"errors":"Authentication Error"}';
-        $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
+        throwException(new \Exception("Authentication Error"));
       }
     }
-    catch (RequestException $e) {
+    catch (\Exception $e) {
       $json = '{"errors":' . $e->getMessage() . '}';
       $http_code = Response::HTTP_INTERNAL_SERVER_ERROR;
     }
