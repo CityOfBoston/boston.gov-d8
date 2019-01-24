@@ -7,6 +7,7 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Mail\MailManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -127,7 +128,7 @@ class CodeRedSubscriber extends ControllerBase {
         "HomeEmail" => $payload['email'],
         "Zip" => $payload['zip'],
         "PreferredLanguage" => $payload['language'],
-        "Groups" => "digital test",
+        "Groups" => isset($codered['api_group']) ? $codered['api_group'] : 'website signups',
       ];
       if ($payload['call']) {
         $fields["OtherPhone"] = $payload['phone_number'];
@@ -197,7 +198,7 @@ class CodeRedSubscriber extends ControllerBase {
         ],
       ]);
 
-      if (!isset($authenticate)) {
+      if (isset($authenticate)) {
         $client = new Client();
         $response = $client->post($url, [
           'cookies' => $jar,
@@ -209,15 +210,15 @@ class CodeRedSubscriber extends ControllerBase {
           $output = $response->getBody()->getContents();
           $json = json_decode($output);
           if (json_last_error() <> 0) {
-            throwException(new \Exception($output));
+            throw new \Exception($output);
           }
         }
         else {
-          throwException(new \Exception("CodeRed Endpoint Error"));
+          throw new \Exception("CodeRed Endpoint Error");
         }
       }
       else {
-        throwException(new \Exception("Authentication Error"));
+        throw new \Exception("Authentication Error");
       }
     }
     catch (\Exception $e) {
