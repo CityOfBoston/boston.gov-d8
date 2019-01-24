@@ -4,7 +4,10 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.header_text.field_contact
+    - field.field.paragraph.header_text.field_intro_text
     - paragraphs.paragraphs_type.header_text
+  module:
+    - text
 id: paragraph.header_text.default
 targetEntityType: paragraph
 bundle: header_text
@@ -18,6 +21,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 101
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
     region: content
   moderation_state:
     type: moderation_state_default
