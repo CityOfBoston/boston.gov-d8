@@ -81,8 +81,9 @@ class BosCoreCommands extends DrushCommands {
    *   Machine name for output component module.
    * @param array $options
    *   Additional options for the command.
+   *
    * @return string
-   *    Stdout to console.
+   *   Stdout to console.
    *
    * @validate-module-enabled bos_core
    *
@@ -167,7 +168,7 @@ class BosCoreCommands extends DrushCommands {
    * @command bos:google-measurement-endpoint
    * @aliases bgme
    */
-  public function gaEndpoint ($endpoint = null) {
+  public function gaEndpoint($endpoint = NULL) {
     if ($endpoint == NULL) {
       return "PROBLEM: Please supply a new endpoint.";
     }
@@ -194,7 +195,7 @@ class BosCoreCommands extends DrushCommands {
    * @command bos:google-measurement
    * @aliases bgm
    */
-  public function gaEnable (string $enabled = null) {
+  public function gaEnable(string $enabled = NULL) {
     if ($enabled == NULL) {
       return "PROBLEM: Please supply the enabled/disabled state.";
     }
