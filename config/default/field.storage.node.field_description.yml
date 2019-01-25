@@ -1,16 +1,16 @@
+uuid: 35df8453-9dc5-4727-aeda-c2c1c134854b
 langcode: en
 status: true
 dependencies:
   module:
-    - comment
     - node
-id: node.comment_node_emergency_alert
-field_name: comment_node_emergency_alert
+    - text
+id: node.field_description
+field_name: field_description
 entity_type: node
-type: comment
-settings:
-  comment_type: comment_node_emergency_alert
-module: comment
+type: text_long
+settings: {  }
+module: text
 locked: false
 cardinality: 1
 translatable: true
