@@ -1,7 +1,4 @@
 <?php
-/**
- * @see https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
- */
 
 namespace Drupal\bos_core\Form;
 
@@ -9,11 +6,16 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Admin Settings form for bos_core.
+ *
+ * @see https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
+ */
+
+/**
  * Class BosCoreSettingsForm.
  *
  * @package Drupal\bos_core\Form
  */
-
 class BosCoreSettingsForm extends ConfigFormBase {
 
   /**
@@ -88,10 +90,10 @@ class BosCoreSettingsForm extends ConfigFormBase {
               "placeholder" => 'e.g. 35009a79-1a05-49d7-b876-2b884d0f825b',
             ],
             '#required' => TRUE,
-          ]
-       ]
-     ]
-   ];
+          ],
+        ],
+      ],
+    ];
     return parent::buildForm($form, $form_state);
   }
 

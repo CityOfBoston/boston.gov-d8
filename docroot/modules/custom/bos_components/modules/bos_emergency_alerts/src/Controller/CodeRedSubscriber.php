@@ -106,7 +106,7 @@ class CodeRedSubscriber extends ControllerBase {
 
     if (!empty($codered['api_base']) && !empty($codered['api_pass']) && !empty($codered['api_user'])) {
       // Track this page.
-      BosCoreGAPost::pageview($this->request->getRequestUri(),"CoB REST | CodeRed Subscription");
+      BosCoreGAPost::pageview($this->request->getRequestUri(), "CoB REST | CodeRed Subscription");
 
       $uri = $this->uri['contact-list'];
 

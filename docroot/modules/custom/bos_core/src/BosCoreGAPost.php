@@ -1,7 +1,4 @@
 <?php
-/**
- * @see https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
- */
 
 namespace Drupal\bos_core;
 
@@ -10,6 +7,12 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Psr\Container\ContainerInterface;
+
+/**
+ * Class to manage posting pageviews to Google.
+ *
+ * @see https://developers.google.com/analytics/devguides/collection/protocol/v1/reference
+ */
 
 /**
  * Class BosCoreGAPost.
@@ -56,15 +59,16 @@ class BosCoreGAPost {
    *   E.g. api/cityscore/list/summary.
    *   E.g. api/cityscore/list/html.
    *
-   * @return boolean
-   *    True if posted OK else false.
+   * @return bool
+   *   True if posted OK else false.
+   *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
   public static function pageview(string $page_id, string $page_title = NULL) {
     $settings = \Drupal::config("bos_core.settings")->get("bos_core.settings");
 
-    if(!$settings["ga_enabled"]) {
-      return;
+    if (!$settings["ga_enabled"]) {
+      return TRUE;
     }
 
     if (!isset($page_title)) {
@@ -92,17 +96,17 @@ class BosCoreGAPost {
     $endpoint = isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect";
 
     try {
-      $client->request('GET', $endpoint , [
+      $client->request('GET', $endpoint, [
         'query' => $payload,
         'headers' => [
           "Content-type: text/plain",
-        ]
+        ],
       ]);
       return TRUE;
 
     }
     catch (TransferException | \Exception $except) {
-      // static function so cannot use $this->>log() ...
+      // Static function so cannot use $this->>log() ...
       \Drupal::logger("Boston Core")->error("Google Analytics Post error.", []);
     }
 
