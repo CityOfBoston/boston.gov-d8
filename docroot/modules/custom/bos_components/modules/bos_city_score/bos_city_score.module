@@ -10,7 +10,7 @@ use Drupal\views\ResultRow;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\bos_city_score\Controller\CityscoreRest;
 use Drupal\Core\Routing\RouteMatchInterface;
-use \Drupal\bos_core\BosCoreGAPost;
+use Drupal\bos_core\BosCoreGAPost;
 
 /**
  * Display the help page.
@@ -90,9 +90,11 @@ function bos_city_score_views_post_render(ViewExecutable $view, &$output, $cache
       case "html_css_table":
         BosCoreGAPost::pageview(\Drupal::request()->getRequestUri(), "CoB REST | Cityscore Data (HTML)");
         break;
+
       case "json_metrics":
         BosCoreGAPost::pageview(\Drupal::request()->getRequestUri(), "CoB REST | Cityscore Data (JSON)");
         break;
+
       case "cityscore_totals_json":
         // Strip array created by the view and just return a json string.
         BosCoreGAPost::pageview(\Drupal::request()->getRequestUri(), "CoB REST | Cityscore Totals (JSON)");
