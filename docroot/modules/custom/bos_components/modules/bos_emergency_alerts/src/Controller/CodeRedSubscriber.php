@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_emergency_alerts\Controller;
 
-use Drupal\bos_core\BosCoreGAPost;
+use Drupal\bos_core\Services\BosCoreGAPost;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Mail\MailManager;
@@ -25,6 +25,10 @@ class CodeRedSubscriber extends ControllerBase {
     "contact-list" => "/api/contacts",
     "contact" => "/api/contacts/{}",
   ];
+  protected $request;
+  protected $log;
+  protected $mail;
+  protected $gapost;
 
   /**
    * CodeRedSubscriber create.
@@ -35,7 +39,8 @@ class CodeRedSubscriber extends ControllerBase {
     return new static(
       $container->get('request_stack'),
       $container->get('logger.factory'),
-      $container->get('plugin.manager.mail')
+      $container->get('plugin.manager.mail'),
+      $container->get('bos_core.gapost')
     );
   }
 
@@ -44,10 +49,11 @@ class CodeRedSubscriber extends ControllerBase {
    *
    * @inheritdoc
    */
-  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail) {
+  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail, BosCoreGAPost $gapost) {
     $this->request = $requestStack->getCurrentRequest();
     $this->log = $logger->get('EmergencyAlerts');
     $this->mail = $mail;
+    $this->gapost = $gapost;
   }
 
   /**
@@ -106,7 +112,7 @@ class CodeRedSubscriber extends ControllerBase {
 
     if (!empty($codered['api_base']) && !empty($codered['api_pass']) && !empty($codered['api_user'])) {
       // Track this page.
-      BosCoreGAPost::pageview($this->request->getRequestUri(), "CoB REST | CodeRed Subscription");
+      $this->gapost->pageview($this->request->getRequestUri(), "CoB REST | CodeRed Subscription");
 
       $uri = $this->uri['contact-list'];
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace Drupal\bos_core;
+namespace Drupal\bos_core\Services;
 
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\TransferException;
-use Psr\Container\ContainerInterface;
 
 /**
  * Class to manage posting pageviews to Google.
@@ -19,23 +19,12 @@ use Psr\Container\ContainerInterface;
  *
  *    Posts to the Google Analytics vX endpoint.
  *
- * @package Drupal\bos_core
+ * @package Drupal\bos_core\Services
  */
 class BosCoreGAPost {
 
-  private $log;
-
-  /**
-   * BosCoreGAPost create.
-   *
-   * @inheritdoc
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('logger.factory'),
-      $container->get('config.factory')
-    );
-  }
+  protected $log;
+  protected $config;
 
   /**
    * BosCoreGAPost constructor.
@@ -61,11 +50,9 @@ class BosCoreGAPost {
    *
    * @return bool
    *   True if posted OK else false.
-   *
-   * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  public static function pageview(string $page_id, string $page_title = NULL) {
-    $settings = \Drupal::config("bos_core.settings")->get("bos_core.settings");
+  public function pageview(string $page_id, string $page_title = NULL) {
+    $settings = $this->config->get("ga_settings");
 
     if (!$settings["ga_enabled"]) {
       return TRUE;
@@ -87,15 +74,15 @@ class BosCoreGAPost {
       "cg1" => "API",
     ];
     foreach ($payload as $key => &$value) {
-      $value = utf8_encode($value);
-      $value = urlencode($value);
+      if ($key != "dt") {
+        $value = utf8_encode($value);
+        $value = urlencode($value);
+      }
     }
 
-    $client = new Client();
-
-    $endpoint = isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect";
-
+    $endpoint = (isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect");
     try {
+      $client = new Client();
       $client->request('GET', $endpoint, [
         'query' => $payload,
         'headers' => [
@@ -105,9 +92,9 @@ class BosCoreGAPost {
       return TRUE;
 
     }
-    catch (TransferException | \Exception $except) {
+    catch (GuzzleException | TransferException | \Exception $except) {
       // Static function so cannot use $this->>log() ...
-      \Drupal::logger("Boston Core")->error("Google Analytics Post error.", []);
+      $this->log->error("Google Analytics Post error.", []);
     }
 
     return FALSE;

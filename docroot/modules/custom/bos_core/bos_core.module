@@ -9,12 +9,33 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\bos_core\BosCoreHelp;
+use Drupal\Views\ViewExecutable;
 
 /**
  * Implements hook_theme().
  */
 function bos_core_theme($existing, $type, $theme, $path) {
   return [];
+}
+
+/**
+ * Display the help page.
+ *
+ * @param string $route_name
+ *   As.
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *   As.
+ *
+ * @return array
+ *   As.
+ */
+function bos_core_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case ("help.page.bos_core"):
+      return BosCoreHelp::helpPage();
+  }
 }
 
 /**
@@ -41,6 +62,90 @@ function bos_core_preprocess_field(&$variables) {
         break;
     }
   }
+}
+
+/**
+ * Check view and records a GA pageview if this is a REST call.
+ *
+ * @param \Drupal\Views\ViewExecutable $view
+ * @param array $output
+ * @param \Drupal\views\Plugin\views\cache\None $cache
+ */
+function bos_core_views_post_render(ViewExecutable $view, &$output, $cache) {
+  $pageTitle = NULL;
+  $view_display = $view->display_handler->display;
+
+  if (isset($output)) {
+    // If the view display type is rest-export, or else if the admin comment
+    // contains the string gapost.
+    if ($view_display["display_plugin"] == "rest_export"
+      || (isset($view_display["display_options"]["display_comment"])
+        && stripos($view_display["display_options"]["display_comment"], "gapost") != FALSE)) {
+
+      $pageTitle = _bos_core_make_gapost_title($view_display, "CoB REST | ");
+      if (isset($view_display["display_options"]["style"]["options"]["formats"])) {
+        $pageTitle .= " (" . reset($view_display["display_options"]["style"]["options"]["formats"]) . ")";
+      }
+    }
+
+    // Otherwise if the display type is a page, and there is a path which has
+    // the string "rest" in it, or the admin title has string gapost in it.
+    elseif ($view_display["display_plugin"] == "page"
+      && isset($view_display["display_options"]["path"])) {
+
+      if (stripos($view_display["display_options"]["path"], "rest") !== FALSE
+        || (isset($view_display["display_options"]["display_comment"])
+            && stripos($view_display["display_options"]["display_comment"], "gapost"))) {
+        $pageTitle = _bos_core_make_gapost_title($view_display, "CoB REST | ");
+      }
+    }
+
+    elseif ($view_display["display_plugin"] == "feed"
+      && isset($view_display["display_options"]["path"])) {
+
+      $pageTitle = _bos_core_make_gapost_title($view_display, "CoB | ");
+    }
+  }
+
+  if (isset($pageTitle)) {
+    \Drupal::service("bos_core.gapost")->pageview(\Drupal::request()
+      ->getRequestUri(), $pageTitle);
+  }
+}
+
+/**
+ * Helper to make a page title (to pass to Google Analytics).
+ *
+ * @param array $view_display
+ *   The current view_display array.
+ * @param string $pageTitle
+ *   The current pageTitle.
+ *
+ * @return string
+ */
+function _bos_core_make_gapost_title(array $view_display, string $pageTitle = "") {
+  $found = FALSE;
+
+  if (isset($view_display["display_options"])) {
+    if (!empty($view_display["display_options"]["title"])) {
+      $pageTitle .= $view_display["display_options"]["title"];
+      $found = TRUE;
+    }
+    else{
+      if (!empty($view_display["display_title"])) {
+        $pageTitle .= $view_display["display_title"] . " | ";
+        $found = TRUE;
+      }
+      if (!empty($view_display["display_options"]["path"])) {
+        $pageTitle .= $view_display["display_options"]["path"];
+        $found = TRUE;
+      }
+    }
+  }
+  if (!$found) {
+    $pageTitle .= $view_display["display_title"];
+  }
+  return rtrim($pageTitle, "\t\n\r\0\x0B |");
 }
 
 /**
