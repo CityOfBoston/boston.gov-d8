@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.place_profile.field_did_you_know
     - field.field.node.place_profile.field_features
     - field.field.node.place_profile.field_intro_image
+    - field.field.node.place_profile.field_intro_text
     - field.field.node.place_profile.field_links
     - field.field.node.place_profile.field_operation_hours
     - field.field.node.place_profile.field_phone_number
@@ -22,6 +23,7 @@ dependencies:
     - node.type.place_profile
   module:
     - comment
+    - content_moderation
     - datetime
     - file
     - paragraphs
@@ -95,6 +97,14 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 121
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
     region: content
   field_links:
     weight: 11

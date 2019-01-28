@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.program_initiative_profile.field_components
     - field.field.node.program_initiative_profile.field_contacts
     - field.field.node.program_initiative_profile.field_intro_image
+    - field.field.node.program_initiative_profile.field_intro_text
     - field.field.node.program_initiative_profile.field_program_logo
     - field.field.node.program_initiative_profile.field_program_type
     - field.field.node.program_initiative_profile.field_published_date
@@ -15,6 +16,7 @@ dependencies:
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
   module:
+    - content_moderation
     - datetime
     - file
     - paragraphs
@@ -68,6 +70,14 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 121
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
     region: content
   field_program_logo:
     weight: 5
