@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
+    - field.field.node.topic_page.field_intro_text
     - field.field.node.topic_page.field_published_date
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
@@ -18,6 +19,7 @@ dependencies:
     - comment
     - datetime
     - entity_reference_revisions
+    - text
     - user
 id: node.topic_page.default
 targetEntityType: node
@@ -50,6 +52,13 @@ content:
       view_mode: default
       link: false
     third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 101
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
     region: content
   field_published_date:
     label: hidden
