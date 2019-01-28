@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - paragraphs.paragraphs_type.news_announcements
+    - paragraphs.paragraphs_type.news_and_announcements
   module:
     - content_translation
 third_party_settings:
@@ -11,8 +11,8 @@ third_party_settings:
     enabled: false
     bundle_settings:
       untranslatable_fields_hide: '0'
-id: paragraph.news_announcements
+id: paragraph.news_and_announcements
 target_entity_type_id: paragraph
-target_bundle: news_announcements
+target_bundle: news_and_announcements
 default_langcode: site_default
 language_alterable: false
