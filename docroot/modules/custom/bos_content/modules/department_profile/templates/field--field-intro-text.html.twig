@@ -5,12 +5,12 @@
  */
 #}
 
-{% set lclasses = ["intro-text", "supporting-text", "squiggle-border-bottom"] %}
+{% set lclasses  = ["intro-text", "supporting-text", "squiggle-border-bottom"] %}
 
 {% if classes %}
    {% set lclasses = lclasses|merge(classes) %}
 {% endif %}
 
-<div{{ attributes.addClass(lclasses) }}>
-   {{ items }}
-</div>
+{% for item in items %}
+   <div{{ item.attributes.addClass(lclasses) }}>{{ item.content }}</div>
+{% endfor %}
