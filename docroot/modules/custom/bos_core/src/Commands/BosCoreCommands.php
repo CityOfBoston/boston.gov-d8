@@ -82,6 +82,9 @@ class BosCoreCommands extends DrushCommands {
    * @param array $options
    *   Additional options for the command.
    *
+   * @return string
+   *   Stdout to console.
+   *
    * @validate-module-enabled bos_core
    *
    * @command bos:componetize
@@ -149,6 +152,60 @@ class BosCoreCommands extends DrushCommands {
     file_put_contents($info_file_path, Yaml::dump($install_file, 2, 2));
 
     return 'Componentization complete!';
+  }
+
+  /**
+   * Admin function to set the GA Measurement endpoint for REST tracking.
+   *
+   * @param string $endpoint
+   *   The Google endpoint.
+   *
+   * @return string
+   *   Message to stdout in console.
+   *
+   * @validate-module-enabled bos_core
+   *
+   * @command bos:google-measurement-endpoint
+   * @aliases bgme
+   */
+  public function gaEndpoint($endpoint = NULL) {
+    if ($endpoint == NULL) {
+      return "PROBLEM: Please supply a new endpoint.";
+    }
+    $config = \Drupal::configFactory()
+      ->getEditable("bos_core.settings");
+    $settings = $config->get("ga_settings");
+    $settings["ga_endpoint"] = $endpoint;
+    $config->set("ga_settings", $settings)
+      ->save();
+    return 'SUCCESS: Google Analytics/Measurement endpoint changed to ' . $endpoint;
+  }
+
+  /**
+   * Admin function to disable REST GA Measurement/Tracking.
+   *
+   * @param string $enabled
+   *   TRUE/FALSE to set REST hit tracking state.
+   *
+   * @return string
+   *   Message to stdout in console.
+   *
+   * @validate-module-enabled bos_core
+   *
+   * @command bos:google-measurement
+   * @aliases bgm
+   */
+  public function gaEnable(string $enabled = NULL) {
+    if ($enabled == NULL) {
+      return "PROBLEM: Please supply the enabled/disabled state.";
+    }
+    $config = \Drupal::configFactory()
+      ->getEditable("bos_core.settings");
+    $settings = $config->get("ga_settings");
+    $settings["ga_enabled"] = ($enabled == TRUE);
+    $config->set("ga_settings", $settings)
+      ->save();
+    return 'SUCCESS: Google Analytics tracking for REST calls is now ' . ($enabled == TRUE ? "ON" : "OFF");
   }
 
 }

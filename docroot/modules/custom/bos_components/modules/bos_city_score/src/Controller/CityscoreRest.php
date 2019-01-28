@@ -2,9 +2,14 @@
 
 namespace Drupal\bos_city_score\Controller;
 
+use Drupal\bos_core\BosCoreGAPost;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Logger\LoggerChannelFactory;
+use Drupal\Core\Mail\MailManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class CityscoreRest.
@@ -14,6 +19,30 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class CityscoreRest extends ControllerBase {
 
   protected $action;
+
+  /**
+   * CityscoreRest create.
+   *
+   * @inheritdoc
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack'),
+      $container->get('logger.factory'),
+      $container->get('plugin.manager.mail')
+    );
+  }
+
+  /**
+   * CityscoreRest constructor.
+   *
+   * @inheritdoc
+   */
+  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail) {
+    $this->request = $requestStack->getCurrentRequest();
+    $this->log = $logger->get('EmergencyAlerts');
+    $this->mail = $mail;
+  }
 
   /**
    * Magic function.  Catches calls to endpoints that dont exist.
@@ -135,6 +164,8 @@ class CityscoreRest extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   private function load($payload = []) {
+    BosCoreGAPost::pageview($this->request->getRequestUri(), "CoB REST | Cityscore Load");
+
     if (empty($payload)) {
       return $this->responseOutput("error no payload", Response::HTTP_BAD_REQUEST);
     }
