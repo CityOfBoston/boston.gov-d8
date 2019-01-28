@@ -1,0 +1,21 @@
+uuid: 51f3e2a1-47ac-45f2-975b-09ad2a939028
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.separated_title
+    - field.field.paragraph.news_announcements.field_component_title
+    - field.field.paragraph.news_announcements.field_featured_post
+    - field.field.paragraph.news_announcements.field_link
+    - field.field.paragraph.news_announcements.field_short_title
+    - paragraphs.paragraphs_type.news_announcements
+id: paragraph.news_announcements.separated_title
+targetEntityType: paragraph
+bundle: news_announcements
+mode: separated_title
+content: {  }
+hidden:
+  field_component_title: true
+  field_featured_post: true
+  field_link: true
+  field_short_title: true
