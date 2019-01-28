@@ -2,12 +2,12 @@
 
 namespace Drupal\bos_emergency_alerts\Controller;
 
+use Drupal\bos_core\BosCoreGAPost;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Mail\MailManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,6 +105,9 @@ class CodeRedSubscriber extends ControllerBase {
     $codered = $this->config("codered_settings");
 
     if (!empty($codered['api_base']) && !empty($codered['api_pass']) && !empty($codered['api_user'])) {
+      // Track this page.
+      BosCoreGAPost::pageview($this->request->getRequestUri(), "CoB REST | CodeRed Subscription");
+
       $uri = $this->uri['contact-list'];
 
       // Make a customKey.
