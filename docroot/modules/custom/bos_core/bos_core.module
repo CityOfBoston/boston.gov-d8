@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\bos_core\BosCoreHelp;
 use Drupal\Views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\None;
 
 /**
  * Implements hook_theme().
@@ -68,10 +69,13 @@ function bos_core_preprocess_field(&$variables) {
  * Check view and records a GA pageview if this is a REST call.
  *
  * @param \Drupal\Views\ViewExecutable $view
+ *   The view object.
  * @param array $output
+ *   The output array.
  * @param \Drupal\views\Plugin\views\cache\None $cache
+ *   The cache.
  */
-function bos_core_views_post_render(ViewExecutable $view, &$output, $cache) {
+function bos_core_views_post_render(ViewExecutable $view, array &$output, None $cache) {
   $pageTitle = NULL;
   $view_display = $view->display_handler->display;
 
@@ -122,6 +126,7 @@ function bos_core_views_post_render(ViewExecutable $view, &$output, $cache) {
  *   The current pageTitle.
  *
  * @return string
+ *   The page title to be recorded in GA.
  */
 function _bos_core_make_gapost_title(array $view_display, string $pageTitle = "") {
   $found = FALSE;
@@ -131,7 +136,7 @@ function _bos_core_make_gapost_title(array $view_display, string $pageTitle = ""
       $pageTitle .= $view_display["display_options"]["title"];
       $found = TRUE;
     }
-    else{
+    else {
       if (!empty($view_display["display_title"])) {
         $pageTitle .= $view_display["display_title"] . " | ";
         $found = TRUE;

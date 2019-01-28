@@ -192,7 +192,7 @@ class CityscoreRest extends ControllerBase {
         $tax = $this->entityTypeManager->getStorage('taxonomy_term')
           ->loadByProperties([
             'name' => $row->metric_name,
-            'vid' => 'cityscore_metrics'
+            'vid' => 'cityscore_metrics',
           ]);
         $result['count']++;
         if (empty($tax)) {
