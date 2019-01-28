@@ -9,6 +9,7 @@ dependencies:
     - field.field.paragraph.grid_of_programs_initiatives.field_short_title
     - paragraphs.paragraphs_type.grid_of_programs_initiatives
   module:
+    - fences
     - options
 id: paragraph.grid_of_programs_initiatives.default
 targetEntityType: paragraph
@@ -20,7 +21,14 @@ content:
     weight: 4
     type: list_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_component_title:
     label: hidden
@@ -28,7 +36,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_contact:
     label: hidden
@@ -37,7 +52,14 @@ content:
     settings:
       view_mode: default
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_program_initiative:
     label: hidden
@@ -46,7 +68,14 @@ content:
     settings:
       view_mode: default
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
@@ -54,6 +83,13 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }
