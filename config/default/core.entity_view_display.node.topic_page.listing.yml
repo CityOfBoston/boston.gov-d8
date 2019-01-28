@@ -8,14 +8,17 @@ dependencies:
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
+    - field.field.node.topic_page.field_intro_text
     - field.field.node.topic_page.field_published_date
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_type_of_content
     - field.field.node.topic_page.field_updated_date
+    - image.style.news_item_thumb
     - node.type.topic_page
   module:
-    - image
+    - fences
+    - svg_image
     - user
 id: node.topic_page.listing
 targetEntityType: node
@@ -27,21 +30,31 @@ content:
     weight: 0
     type: image
     settings:
-      image_style: ''
+      image_style: news_item_thumb
       image_link: ''
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
+      svg_render_as_image: '1'
+      svg_attributes:
+        width: ''
+        height: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   comment_node_topic_page: true
   field_components: true
   field_contacts: true
+  field_intro_text: true
   field_published_date: true
   field_thumbnail: true
   field_topic_category: true
   field_type_of_content: true
   field_updated_date: true
   langcode: true
+  links: true
   published_at: true

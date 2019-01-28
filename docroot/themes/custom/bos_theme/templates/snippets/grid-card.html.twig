@@ -19,12 +19,12 @@
   <div class="cd-c">
     <h3 class="cd-t">{{ title}}</h3>
     {% if subtitle %}
-    <div class="cd-st t--upper t--subtitle">{{ subtitle}}</div>
+      <div class="cd-st t--upper t--subtitle">{{ subtitle}}</div>
     {% endif %}
-    {% description %}
-    <div class="cd-d">{{ description}}</div>
+    {% if description %}
+      <div class="cd-d">{{ description}}</div>
+    {% endif %}
   </div>
-  {% endif %}
   {% if link %}
     </a>
   {% endif %}

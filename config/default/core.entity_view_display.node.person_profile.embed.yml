@@ -1,6 +1,6 @@
 uuid: 2e9ab3a0-2d17-4845-aeb9-46d3d9d2e2fa
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.embed
@@ -20,8 +20,8 @@ dependencies:
     - field.field.node.person_profile.field_year_elected
     - node.type.person_profile
   module:
-    - image
     - options
+    - svg_image
     - user
 id: node.person_profile.embed
 targetEntityType: node
