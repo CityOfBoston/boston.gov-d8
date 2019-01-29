@@ -2,8 +2,10 @@
 
 namespace Drupal\bos_city_score\Controller;
 
-use Drupal\bos_core\BosCoreGAPost;
+use Drupal\bos_core\Services\BosCoreGAPost;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Mail\MailManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,6 +21,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class CityscoreRest extends ControllerBase {
 
   protected $action;
+  protected $request;
+  protected $log;
+  protected $mail;
+  protected $gapost;
+  protected $entityTypeManager;
 
   /**
    * CityscoreRest create.
@@ -29,7 +36,9 @@ class CityscoreRest extends ControllerBase {
     return new static(
       $container->get('request_stack'),
       $container->get('logger.factory'),
-      $container->get('plugin.manager.mail')
+      $container->get('plugin.manager.mail'),
+      $container->get('bos_core.gapost'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -38,10 +47,12 @@ class CityscoreRest extends ControllerBase {
    *
    * @inheritdoc
    */
-  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail) {
+  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail, BosCoreGAPost $gapost, EntityTypeManager $entityTypeManager) {
     $this->request = $requestStack->getCurrentRequest();
     $this->log = $logger->get('EmergencyAlerts');
     $this->mail = $mail;
+    $this->gapost = $gapost;
+    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
@@ -85,7 +96,7 @@ class CityscoreRest extends ControllerBase {
   public function api($action) {
     // Note: This allows any GET requests to run without any verification.
     $this->action = $action;
-    if (in_array(\Drupal::request()->getMethod(), [
+    if (in_array($this->request->getMethod(), [
       "POST",
       "DELETE",
       "PUT",
@@ -93,23 +104,23 @@ class CityscoreRest extends ControllerBase {
       // Check IP.
       if (($ip_whitelist = $this->config('ip_whitelist')) && !empty($ip_whitelist)) {
         $ip_whitelist = explode("\r\n", $ip_whitelist);
-        if (!in_array(\Drupal::request()->getClientIp(), $ip_whitelist)) {
+        if (!in_array($this->request->getClientIp(), $ip_whitelist)) {
           return $this->responseOutput("error ip not recognised", Response::HTTP_UNAUTHORIZED);
         }
       }
       // Check token.
-      if (($token = $this->config('auth_token')) && empty(\Drupal::request()->get("api-key"))) {
+      if (($token = $this->config('auth_token')) && empty($this->request->get("api-key"))) {
         return $this->responseOutput("error missing token", Response::HTTP_UNAUTHORIZED);
       }
-      elseif (\Drupal::request()->get("api-key") != $token) {
+      elseif ($this->request->get("api-key") != $token) {
         return $this->responseOutput("error bad token", Response::HTTP_UNAUTHORIZED);
       }
       // Check payload.
-      if (!\Drupal::request()->get('payload', FALSE)) {
+      if (!$this->request->get('payload', FALSE)) {
         return $this->responseOutput("error no payload", Response::HTTP_BAD_REQUEST);
       }
       try {
-        $payload = $this->cleanup(\Drupal::request()->get('payload', FALSE));
+        $payload = $this->cleanup($this->request->get('payload', FALSE));
         if (!($payload = json_decode($payload))) {
           return $this->responseOutput("bad json in payload", Response::HTTP_BAD_REQUEST);
         }
@@ -158,61 +169,70 @@ class CityscoreRest extends ControllerBase {
    *
    * @return string
    *   A JSON string which is returned to the caller.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   private function load($payload = []) {
-    BosCoreGAPost::pageview($this->request->getRequestUri(), "CoB REST | Cityscore Load");
+    $this->gapost->pageview($this->request->getRequestUri(), "CoB REST | Cityscore Load");
 
     if (empty($payload)) {
       return $this->responseOutput("error no payload", Response::HTTP_BAD_REQUEST);
     }
     // Process payload into taxonomy.
     $result = [];
-    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('cityscore_metrics');
-    foreach ($terms as $term) {
-      $taxTerm = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term->tid);
-      $taxTerm->status = 0;
-      $taxTerm->save();
-    }
-    foreach ($payload as $row) {
-      $tax = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties(['name' => $row->metric_name, 'vid' => 'cityscore_metrics']);
-      $result['count']++;
-      if (empty($tax)) {
-        // Create the record.
-        $tax = [
-          'vid' => "cityscore_metrics",
-          'name' => $row->metric_name,
-        ];
-        $tax = \Drupal::entityTypeManager()
-          ->getStorage('taxonomy_term')
-          ->create($tax);
-        $result = $tax->save();
-        if ($result != SAVED_NEW) {
-          // Continue for now.  May fail later.
+    try {
+      $terms = $this->entityTypeManager->getStorage('taxonomy_term')
+        ->loadTree('cityscore_metrics');
+
+      foreach ($terms as $term) {
+        $taxTerm = $this->entityTypeManager->getStorage('taxonomy_term')
+          ->load($term->tid);
+        $taxTerm->status = 0;
+        $taxTerm->save();
+      }
+      foreach ($payload as $row) {
+        $tax = $this->entityTypeManager->getStorage('taxonomy_term')
+          ->loadByProperties([
+            'name' => $row->metric_name,
+            'vid' => 'cityscore_metrics',
+          ]);
+        $result['count']++;
+        if (empty($tax)) {
+          // Create the record.
+          $tax = [
+            'vid' => "cityscore_metrics",
+            'name' => $row->metric_name,
+          ];
+          $tax = $this->entityTypeManager
+            ->getStorage('taxonomy_term')
+            ->create($tax);
+          $result = $tax->save();
+          if ($result != SAVED_NEW) {
+            // Continue for now.  May fail later.
+          }
+        }
+        else {
+          $tax = array_values($tax)[0];
+        }
+        // Update the taxonomy term.
+        if (isset($tax)) {
+          $tax->field_calc_timestamp = strtotime($row->score_calculated_ts);
+          $tax->field_table_timestamp = strtotime($row->score_final_table_ts);
+          $tax->field_day = $row->score_day_name;
+          $tax->field_previous_quarter = $row->previous_quarter_score;
+          $tax->field_previous_month = $row->previous_month_score;
+          $tax->field_previous_week = $row->previous_week_score;
+          $tax->field_previous_day = $row->previous_day_score;
+          $tax->weight = $result['count'];
+          $tax->status = 1;
+          if ($tax->save() == SAVED_UPDATED) {
+            $result['saved']++;
+          }
         }
       }
-      else {
-        $tax = array_values($tax)[0];
-      }
-      // Update the taxonomy term.
-      if (isset($tax)) {
-        $tax->field_calc_timestamp = strtotime($row->score_calculated_ts);
-        $tax->field_table_timestamp = strtotime($row->score_final_table_ts);
-        $tax->field_day = $row->score_day_name;
-        $tax->field_previous_quarter = $row->previous_quarter_score;
-        $tax->field_previous_month = $row->previous_month_score;
-        $tax->field_previous_week = $row->previous_week_score;
-        $tax->field_previous_day = $row->previous_day_score;
-        $tax->weight = $result['count'];
-        $tax->status = 1;
-        if ($tax->save() == SAVED_UPDATED) {
-          $result['saved']++;
-        }
-      }
     }
+    catch (EntityStorageException | \Exception $e) {
+      return $this->responseOutput("Internal Error", Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
     if ($result['saved'] != $result['count']) {
       return $this->responseOutput("Not all records saved", Response::HTTP_NON_AUTHORITATIVE_INFORMATION);
     }
@@ -287,7 +307,7 @@ class CityscoreRest extends ControllerBase {
                       <li>REST <b>API</b> endpoints to allow external updating and retrieval of cityscore metrics.</li>
                       </ul></p>
                       <h3>Taxonomy.</h3>
-                      <p>Cityscore data is stored in the <b>cityscore_metrics</b> customized Taxonomy. Data may be added/updated using the <b>load</b> API endpoint, and users with \"<i>administer cityscore</i>\" permissions can add/edit data in the Taxonomy via the GUI.</p>
+                      <p>Cityscore data is stored in the <b>cityscore_metrics</b> customized Taxonomy. Data may be added/updated using the <b>load</b> API endpoint, and users with \"<i>administer boston</i>\" permissions can add/edit data in the Taxonomy via the GUI.</p>
                       <h3>Paragraph.</h3>
                       <p>Cityscore Paragraph can be enabled in any \"components\" field on any page.  It is a large table with a graphical metric display and hence is usually the only component added to a page.<br>
                       Content is controlled by a Cityscore <b>View</b>.</p>
