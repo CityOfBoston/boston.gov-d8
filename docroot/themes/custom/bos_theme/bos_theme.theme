@@ -646,8 +646,12 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
       $variables['attributes']['class'][] = "field-label-hidden";
     }
   }
-  if (!empty($variables['items']) && count($variables["items"]) != 0 && count($variables["items"][0]["attributes"]->storage()) == 0) {
-    unset($variables["items"][0]['attributes']);
+  if (!empty($variables['items'])) {
+    foreach ($variables["items"] as $key => $item) {
+      if (!empty($item["attributes"]) && count($item["attributes"]->storage()) == 0) {
+        unset($variables["items"][$key]['attributes']);
+      }
+    }
   }
 }
 
