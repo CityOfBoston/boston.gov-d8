@@ -8,6 +8,10 @@ dependencies:
     - field.field.paragraph.grid_of_topics.field_short_title
     - field.field.paragraph.grid_of_topics.field_topics
     - paragraphs.paragraphs_type.grid_of_topics
+  module:
+    - fences
+_core:
+  default_config_hash: HjDqF4t_DFoSz4M0bDQemj_jeynlLuwZ3uOdycuO4LE
 id: paragraph.grid_of_topics.default
 targetEntityType: paragraph
 bundle: grid_of_topics
@@ -19,7 +23,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_contact:
     label: hidden
@@ -28,7 +39,14 @@ content:
     settings:
       view_mode: default
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
@@ -36,15 +54,29 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_topics:
     label: hidden
     weight: 3
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: listing
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }

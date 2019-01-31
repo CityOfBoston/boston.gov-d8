@@ -1,0 +1,4 @@
+services:
+  bos_core.gapost:
+    class: Drupal\bos_core\Services\BosCoreGAPost
+    arguments: ['@logger.factory', '@config.factory']

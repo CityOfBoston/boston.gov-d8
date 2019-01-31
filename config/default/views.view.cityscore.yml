@@ -9,7 +9,6 @@ dependencies:
     - field.storage.taxonomy_term.field_previous_week
     - field.storage.taxonomy_term.field_table_timestamp
     - taxonomy.vocabulary.cityscore_metrics
-    - user.role.administrator
   module:
     - rest
     - serialization
@@ -978,14 +977,16 @@ display:
           items_per_page: 1
           offset: 0
       access:
-        type: none
-        options: {  }
+        type: perm
+        options:
+          perm: 'access content'
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - request_format
+        - user.permissions
       tags:
         - 'config:field.storage.taxonomy_term.field_table_timestamp'
   embed_1:
@@ -1746,10 +1747,9 @@ display:
           query_comment: ''
           query_tags: null
       access:
-        type: role
+        type: perm
         options:
-          role:
-            administrator: administrator
+          perm: 'access content'
       pager:
         type: none
         options:
@@ -1760,7 +1760,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - request_format
-        - user.roles
+        - user.permissions
       tags:
         - 'config:field.storage.taxonomy_term.field_previous_day'
         - 'config:field.storage.taxonomy_term.field_previous_month'

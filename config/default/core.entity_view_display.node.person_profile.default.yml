@@ -22,7 +22,7 @@ dependencies:
   module:
     - comment
     - entity_reference_revisions
-    - image
+    - svg_image
     - user
 id: node.person_profile.default
 targetEntityType: node
@@ -86,6 +86,10 @@ content:
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_phone_number:
@@ -132,6 +136,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_preferred_contact: true
   field_profile_type: true

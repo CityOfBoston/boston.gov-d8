@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.place_profile.field_did_you_know
     - field.field.node.place_profile.field_features
     - field.field.node.place_profile.field_intro_image
+    - field.field.node.place_profile.field_intro_text
     - field.field.node.place_profile.field_links
     - field.field.node.place_profile.field_operation_hours
     - field.field.node.place_profile.field_phone_number
@@ -25,7 +26,6 @@ dependencies:
     - comment
     - datetime
     - entity_reference_revisions
-    - options
     - text
     - user
 id: node.place_profile.default
@@ -82,6 +82,13 @@ content:
       link: false
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 101
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_links:
     label: hidden
     weight: 9
@@ -111,8 +118,11 @@ content:
   field_place_neighborhood:
     label: above
     weight: 20
-    type: list_default
-    settings: {  }
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
     region: content
   field_place_type:
@@ -161,6 +171,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_intro_image: true
   langcode: true

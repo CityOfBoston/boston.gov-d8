@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Theme override to display a node.
+ *
+#}
+<article {{ attributes.addClass(['clearfix', 'desktop-4-col', 'tablet-3-col', 'mobile-1-col', node.id ]) }}>
+  <div class="topic-wrapper">
+    <a href="{{ url }}">
+      <div class="topic-highlight-area">
+        {{ content }}
+        <div class="topic-details">
+          <div class="grid-of-topics-label">
+            Guide:
+          </div>
+          <div class="topic-listing-title">
+            {{ title_raw }}
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</article>

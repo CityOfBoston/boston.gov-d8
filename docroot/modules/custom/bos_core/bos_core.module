@@ -9,12 +9,34 @@ use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\bos_core\BosCoreHelp;
+use Drupal\Views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 
 /**
  * Implements hook_theme().
  */
 function bos_core_theme($existing, $type, $theme, $path) {
   return [];
+}
+
+/**
+ * Display the help page.
+ *
+ * @param string $route_name
+ *   As.
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *   As.
+ *
+ * @return array
+ *   As.
+ */
+function bos_core_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case ("help.page.bos_core"):
+      return BosCoreHelp::helpPage();
+  }
 }
 
 /**
@@ -25,22 +47,91 @@ function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateI
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Check view and records a GA pageview if this is a REST call.
+ *
+ * @param \Drupal\Views\ViewExecutable $view
+ *   The view object.
+ * @param array $output
+ *   The output array.
+ * @param Drupal\views\Plugin\views\cache\CachePluginBase $cache
+ *   The cache.
  */
-function bos_core_preprocess_field(&$variables) {
-  if (!empty($variables["element"]["#bundle"])) {
-    switch ($variables["element"]["#bundle"]) {
-      case 'department_profile':
-      case 'header_text':
-        // Addresses twig issue in field--field-intro-text.html.twig where the
-        // twig parser cannot process an attribute where attribute->storage is
-        // empty.
-        if ($variables['field_name'] == "field_intro_text" && count($variables["items"][0]["attributes"]->storage()) == 0) {
-          unset($variables["items"][0]['attributes']);
-        }
-        break;
+function bos_core_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache) {
+  $pageTitle = NULL;
+  $view_display = $view->display_handler->display;
+
+  if (isset($output)) {
+    // If the view display type is rest-export, or else if the admin comment
+    // contains the string gapost.
+    if ($view_display["display_plugin"] == "rest_export"
+      || (isset($view_display["display_options"]["display_comment"])
+        && stripos($view_display["display_options"]["display_comment"], "gapost") != FALSE)) {
+
+      $pageTitle = _bos_core_make_gapost_title($view_display, "CoB REST | ");
+      if (isset($view_display["display_options"]["style"]["options"]["formats"])) {
+        $pageTitle .= " (" . reset($view_display["display_options"]["style"]["options"]["formats"]) . ")";
+      }
+    }
+
+    // Otherwise if the display type is a page, and there is a path which has
+    // the string "rest" in it, or the admin title has string gapost in it.
+    elseif ($view_display["display_plugin"] == "page"
+      && isset($view_display["display_options"]["path"])) {
+
+      if (stripos($view_display["display_options"]["path"], "rest") !== FALSE
+        || (isset($view_display["display_options"]["display_comment"])
+            && stripos($view_display["display_options"]["display_comment"], "gapost"))) {
+        $pageTitle = _bos_core_make_gapost_title($view_display, "CoB REST | ");
+      }
+    }
+
+    elseif ($view_display["display_plugin"] == "feed"
+      && isset($view_display["display_options"]["path"])) {
+
+      $pageTitle = _bos_core_make_gapost_title($view_display, "CoB | ");
     }
   }
+
+  if (isset($pageTitle)) {
+    \Drupal::service("bos_core.gapost")->pageview(\Drupal::request()
+      ->getRequestUri(), $pageTitle);
+  }
+}
+
+/**
+ * Helper to make a page title (to pass to Google Analytics).
+ *
+ * @param array $view_display
+ *   The current view_display array.
+ * @param string $pageTitle
+ *   The current pageTitle.
+ *
+ * @return string
+ *   The page title to be recorded in GA.
+ */
+function _bos_core_make_gapost_title(array $view_display, string $pageTitle = "") {
+  $found = FALSE;
+
+  if (isset($view_display["display_options"])) {
+    if (!empty($view_display["display_options"]["title"])) {
+      $pageTitle .= $view_display["display_options"]["title"];
+      $found = TRUE;
+    }
+    else {
+      if (!empty($view_display["display_title"])) {
+        $pageTitle .= $view_display["display_title"] . " | ";
+        $found = TRUE;
+      }
+      if (!empty($view_display["display_options"]["path"])) {
+        $pageTitle .= $view_display["display_options"]["path"];
+        $found = TRUE;
+      }
+    }
+  }
+  if (!$found) {
+    $pageTitle .= $view_display["display_title"];
+  }
+  return rtrim($pageTitle, "\t\n\r\0\x0B |");
 }
 
 /**
