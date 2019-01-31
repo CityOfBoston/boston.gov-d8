@@ -9,6 +9,8 @@ dependencies:
     - field.field.paragraph.grid_of_places.field_place
     - field.field.paragraph.grid_of_places.field_short_title
     - paragraphs.paragraphs_type.grid_of_places
+_core:
+  default_config_hash: e7H-uyI18G-CipI-9bBA9IgRh_zS4LpmeQ2Ng-NPoz8
 id: paragraph.grid_of_places.default
 targetEntityType: paragraph
 bundle: grid_of_places
@@ -21,7 +23,7 @@ content:
     third_party_settings: {  }
     region: content
   field_component_title:
-    weight: 1
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -29,7 +31,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 3
+    weight: 2
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -38,7 +40,7 @@ content:
     third_party_settings: {  }
     region: content
   field_place:
-    weight: 2
+    weight: 3
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -47,7 +49,7 @@ content:
     third_party_settings: {  }
     region: content
   field_short_title:
-    weight: 2
+    weight: 1
     type: string_textfield
     settings:
       size: 60

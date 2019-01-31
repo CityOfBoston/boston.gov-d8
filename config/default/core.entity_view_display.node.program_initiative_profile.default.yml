@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.program_initiative_profile.field_components
     - field.field.node.program_initiative_profile.field_contacts
     - field.field.node.program_initiative_profile.field_intro_image
+    - field.field.node.program_initiative_profile.field_intro_text
     - field.field.node.program_initiative_profile.field_program_logo
     - field.field.node.program_initiative_profile.field_program_type
     - field.field.node.program_initiative_profile.field_published_date
@@ -17,7 +18,7 @@ dependencies:
   module:
     - datetime
     - entity_reference_revisions
-    - image
+    - svg_image
     - text
     - user
 id: node.program_initiative_profile.default
@@ -50,6 +51,13 @@ content:
       link: false
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 101
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_program_logo:
     label: hidden
     weight: 5
@@ -57,6 +65,10 @@ content:
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_published_date:
@@ -89,6 +101,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_intro_image: true
   field_program_type: true

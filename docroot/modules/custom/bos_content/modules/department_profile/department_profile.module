@@ -23,10 +23,10 @@ function department_profile_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_content/modules/department_profile/templates',
       'template' => 'node--department-profile-contact',
     ],
-    'field__field_intro_text' => [
+    'field__field_intro_text__mode__full' => [
       'base hook' => 'field',
       'path' => 'modules/custom/bos_content/modules/department_profile/templates',
-      'template' => 'field--field-intro-text',
+      'template' => 'field--field-intro-text--mode--full',
     ],
   ];
 }
