@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.program_initiative_profile.field_components
     - field.field.node.program_initiative_profile.field_contacts
     - field.field.node.program_initiative_profile.field_intro_image
+    - field.field.node.program_initiative_profile.field_intro_text
     - field.field.node.program_initiative_profile.field_program_logo
     - field.field.node.program_initiative_profile.field_program_type
     - field.field.node.program_initiative_profile.field_published_date
@@ -16,6 +17,8 @@ dependencies:
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
   module:
+    - advanced_text_formatter
+    - fences
     - image_url_formatter
     - user
 id: node.program_initiative_profile.listing
@@ -28,12 +31,55 @@ content:
     weight: 1
     type: image_url
     settings:
-      image_style: ''
-    third_party_settings: {  }
+      url_type: '0'
+      image_style: grid_card_image
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
-  links:
-    weight: 100
+  field_intro_text:
+    type: advanced_text
+    weight: 0
     region: content
+    label: hidden
+    settings:
+      trim_length: '120'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: input
+      format: plain_text
+      allowed_html:
+        - a
+        - b
+        - br
+        - dd
+        - dl
+        - dt
+        - em
+        - i
+        - li
+        - ol
+        - p
+        - strong
+        - u
+        - ul
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
 hidden:
   body: true
   field_components: true
@@ -45,4 +91,5 @@ hidden:
   field_type_of_content: true
   field_updated_date: true
   langcode: true
+  links: true
   published_at: true
