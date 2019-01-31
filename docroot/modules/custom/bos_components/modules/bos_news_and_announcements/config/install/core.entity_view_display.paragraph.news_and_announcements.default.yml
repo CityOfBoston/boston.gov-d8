@@ -1,4 +1,3 @@
-uuid: ab69e6c9-1d84-4902-a3d5-76ab47788c70
 langcode: en
 status: true
 dependencies:
@@ -6,10 +5,12 @@ dependencies:
     - field.field.paragraph.news_and_announcements.field_component_title
     - field.field.paragraph.news_and_announcements.field_featured_post
     - field.field.paragraph.news_and_announcements.field_link
+    - field.field.paragraph.news_and_announcements.field_list
     - field.field.paragraph.news_and_announcements.field_short_title
     - paragraphs.paragraphs_type.news_and_announcements
   module:
     - entity_reference_revisions
+    - viewfield
 id: paragraph.news_and_announcements.default
 targetEntityType: paragraph
 bundle: news_and_announcements
@@ -40,6 +41,16 @@ content:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    region: content
+  field_list:
+    weight: 2
+    label: hidden
+    settings:
+      view_title: hidden
+      always_build_output: 0
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
     region: content
   field_short_title:
     label: above
