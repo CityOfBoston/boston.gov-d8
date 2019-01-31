@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\bos_core\BosCoreHelp;
 use Drupal\Views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 
 /**
  * Implements hook_theme().
@@ -52,10 +53,10 @@ function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateI
  *   The view object.
  * @param array $output
  *   The output array.
- * @param $cache
+ * @param Drupal\views\Plugin\views\cache\CachePluginBase $cache
  *   The cache.
  */
-function bos_core_views_post_render(ViewExecutable $view, array &$output, $cache) {
+function bos_core_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache) {
   $pageTitle = NULL;
   $view_display = $view->display_handler->display;
 
