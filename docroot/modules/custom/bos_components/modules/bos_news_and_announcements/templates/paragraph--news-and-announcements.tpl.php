@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default theme implementation for a single paragraph item.
  *
@@ -23,29 +22,29 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
-?>
-<div class="<?php print $classes; ?> fullwidth"<?php print $attributes; ?>>
-  <div class="content container"<?php print $content_attributes; ?>>
+ #}
+
+<div class="{{ classes }} fullwidth"{{ attributes }}>
+  <div class="content container"{{ content_attributes }}>
   	  <div class="sh">
-        <?php if (isset($content['field_component_title'])): ?>
-          <?php print render($content['field_component_title']); ?>
-        <?php endif; ?>
-        <?php if (isset($content['field_short_title'])): ?>
-          <?php print render($content['field_short_title']); ?>
-        <?php endif; ?>
-        <?php if (isset($content['field_contact'])): ?>
-          <?php print render($content['field_contact']); ?>
-        <?php endif; ?>
+        {% if content.field_component_title %}
+          {{ content.field_component_title }}
+        {% endif %}
+        {% if content.field_short_title %}
+          {{ content.field_short_title }}
+        {% endif %}
+        {% if content.field_contact %}
+          {{ content.field_contact }}
+        {% endif %}
       </div>
      <div>
-       <?php print render($content['field_featured_post']); ?>
+       {{ content.field_featured_post }}
      </div>
      <div class="grid-wrapper clearfix">
-      <?php print render($content['field_list']); ?>
+      {{ content.field_list }}
     </div>
-    <?php if (isset($call_to_action)): ?>
-      <?php print render($call_to_action); ?>
-    <?php endif; ?>
+    {% if call_to_action %}
+      {{ call_to_action }}
+    {% endif %}
   </div>
 </div>

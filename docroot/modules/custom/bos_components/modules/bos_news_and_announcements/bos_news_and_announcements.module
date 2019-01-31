@@ -4,3 +4,14 @@
  * @file
  * The Base module file for bos_news_announcements module.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_news_and_announcements_theme() {
+  $theme['paragraph__news_and_announcements'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
+  return $theme;
+}
