@@ -4,14 +4,3 @@
  * @file
  * The Base module file for bos_entity_reference_filters module.
  */
-
-/**
- * Implements hook_theme().
- */
-function bos_entity_reference_filters_theme() {
-  $theme['view__entity_reference_filters'] = [
-    'base hook' => 'view',
-    'path' => drupal_get_path('module', 'bos_entity_reference_filters') . '/templates',
-  ];
-  return $theme;
-}
