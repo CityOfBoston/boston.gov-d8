@@ -1,0 +1,31 @@
+name: Site Alert
+type: module
+description: 'Provides a site alert entity.'
+package: City of Boston (content)
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_content
+config_devel:
+  - comment.type.comment_node_site_alert
+  - core.base_field_override.node.site_alert.status
+  - core.base_field_override.node.site_alert.promote
+  - core.entity_form_display.comment.comment_node_site_alert.default
+  - core.entity_form_display.node.site_alert.default
+  - core.entity_view_display.comment.comment_node_site_alert.default
+  - core.entity_view_display.node.site_alert.default
+  - core.entity_view_display.node.site_alert.teaser
+  - field.field.comment.comment_node_site_alert.comment_body
+  - field.field.node.site_alert.comment_node_site_alert
+  - field.field.node.site_alert.field_excluded_nodes
+  - field.field.node.site_alert.field_extra_info
+  - field.field.node.site_alert.field_icon
+  - field.field.node.site_alert.field_link
+  - field.field.node.site_alert.field_theme
+  - field.field.node.site_alert.title_field
+  - field.storage.node.comment_node_site_alert
+  - language.content_settings.comment.comment_node_site_alert
+  - language.content_settings.node.site_alert
+  - node.type.site_alert
+  - rabbit_hole.behavior_settings.node_type_site_alert
+  - site_alert.views_default.inc

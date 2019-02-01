@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * @file
+ * Provides a site alert entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_theme().
+ */
+function site_alert_theme() {
+  return [
+    'html__api' => [
+      'base hook' => 'html',
+      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'template' => 'html--api',
+    ],
+    'node__site_alert' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'template' => 'node--site-alert',
+    ],
+    'container__site_alert' => [
+      'base hook' => 'container',
+      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'template' => 'container--site-alert',
+    ],
+    'field__node__field_link__site_alert' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'template' => 'field--node--field-link--site-alert',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for site alert templates.
+ *
+ * Default template: site-alert.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the site alert information and
+ *     any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ * TODO: This is not working ... hook does not exist.
+ */
+function template_preprocess_site_alert(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function site_alert_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == "node_site_alert_form") {
+    $field = new TranslatableMarkup("Exclude another page");
+    $form["field_excluded_nodes"]["widget"]["add_more"]["#value"] = $field;
+  }
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function site_alert_preprocess(&$variables, $hook) {
+  if ($hook == "image_url_formatter") {
+    // Even though a full URL is requested in the view, a relative url is
+    // provided.  This manually extends to a full URL.
+    if ($variables["url_type"] == 0) {
+      $variables["url"] = file_create_url($variables["item"]->__get("entity")->get("uri")->value);
+    }
+  }
+  if ($hook == "node") {
+    $variables['#attached']['library'][] = "site_alert/alert.call";
+  }
+  if ($hook == "field" && isset($variables["element"]["#object"]->_referringItem) && $variables["element"]["#object"]->_referringItem->getParent()->getName() == "field_link") {
+    if (isset($variables["attributes"]["data-quickedit-field-id"])) {
+      unset($variables["attributes"]["data-quickedit-field-id"]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function site_alert_preprocess_node(&$variables) {
+  if ($variables['node']->bundle() != basename(__FILE__, ".module")) {
+    return;
+  }
+  if (isset($variables["elements"]["field_excluded_nodes"]["#items"])) {
+    for ($i = 0; $i < $variables["elements"]["field_excluded_nodes"]["#items"]->count(); $i++) {
+      $variables['excluded_nodes'] = "node/" . $variables["elements"]["field_excluded_nodes"][$i]["#plain_text"] . ",";
+    }
+    $variables['excluded_nodes'] = rtrim($variables['excluded_nodes'], ",");
+  }
+
+  // Used in templates to se the background colors.
+  $variables['block_theme'] = $variables["content"]["field_theme"]["#items"]->value;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ *
+ * This is used to create a cut-down container when site_alert is called from
+ * the page display of a view.
+ */
+function site_alert_theme_suggestions_container(array $variables) {
+  if(empty($variables["element"]["#view_id"]) || empty($variables["element"]["#view_display_plugin_id"])) {
+    return;
+  }
+  if ($variables["element"]["#view_id"] == "site_alerts" && $variables["element"]["#view_display_plugin_id"] == "page") {
+    return [
+      'container__site_alert',
+    ];
+
+  }
+}

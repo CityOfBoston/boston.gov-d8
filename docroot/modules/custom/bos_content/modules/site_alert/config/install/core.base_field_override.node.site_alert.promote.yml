@@ -1,20 +1,19 @@
-uuid: 952e5ad1-cb08-4c00-8a70-f4015495bfb1
 langcode: en
 status: true
 dependencies:
   config:
     - node.type.site_alert
-id: node.site_alert.status
-field_name: status
+id: node.site_alert.promote
+field_name: promote
 entity_type: node
 bundle: site_alert
-label: Published
+label: 'Promoted to front page'
 description: ''
 required: false
 translatable: false
 default_value:
   -
-    value: 0
+    value: 1
 default_value_callback: ''
 settings:
   on_label: 'On'
