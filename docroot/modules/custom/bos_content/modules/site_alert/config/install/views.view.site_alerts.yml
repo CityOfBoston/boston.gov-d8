@@ -5,7 +5,23 @@ dependencies:
     - core.entity_view_mode.node.embed
     - field.storage.node.field_extra_info
     - field.storage.node.field_icon
+    - node.type.article
+    - node.type.change
+    - node.type.department_profile
+    - node.type.event
+    - node.type.how_to
+    - node.type.landing_page
+    - node.type.listing_page
+    - node.type.metrolist_affordable_housing
+    - node.type.person_profile
+    - node.type.place_profile
+    - node.type.post
+    - node.type.procurement_advertisement
+    - node.type.program_initiative_profile
+    - node.type.public_notice
     - node.type.site_alert
+    - node.type.test_component_page
+    - node.type.topic_page
   module:
     - image_url_formatter
     - node
@@ -156,6 +172,13 @@ display:
           expose:
             label: ''
           granularity: second
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
       header: {  }
       footer: {  }
       empty: {  }
@@ -192,6 +215,267 @@ display:
         options:
           relationship: none
           view_mode: embed
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  exclude_pages_autocomplete:
+    display_plugin: entity_reference
+    id: exclude_pages_autocomplete
+    display_title: 'Autocomplete Excluded Pages'
+    position: 5
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+      fields:
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: false
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: node
+          entity_field: type
+          plugin_id: field
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ title }} ({{ type }})'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+      defaults:
+        fields: false
+        sorts: false
+        filters: false
+        filter_groups: false
+        show_admin_links: false
+      pager:
+        type: none
+        options:
+          offset: 0
+      style:
+        type: entity_reference
+        options:
+          search_fields:
+            title: title
+            type: '0'
+      row:
+        type: entity_reference
+        options:
+          default_field_elements: false
+          inline:
+            type: type
+            title: title
+          separator: '-'
+          hide_empty: false
+      display_comment: 'For use on autocomplete fields to select excluded pages.'
+      sorts:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: standard
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            article: article
+            change: change
+            department_profile: department_profile
+            event: event
+            topic_page: topic_page
+            how_to: how_to
+            landing_page: landing_page
+            listing_page: listing_page
+            metrolist_affordable_housing: metrolist_affordable_housing
+            person_profile: person_profile
+            place_profile: place_profile
+            post: post
+            procurement_advertisement: procurement_advertisement
+            program_initiative_profile: program_initiative_profile
+            public_notice: public_notice
+            test_component_page: test_component_page
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+            argument: null
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      show_admin_links: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -471,9 +755,11 @@ display:
       title: 'Site Alerts'
       defaults:
         title: false
+        show_admin_links: false
       allow:
         items_per_page: false
       block_description: 'Site Alerts'
+      show_admin_links: false
     cache_metadata:
       max-age: -1
       contexts:

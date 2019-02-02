@@ -7,6 +7,8 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\core\StringTranslation\TranslatableMarkup;
+use \Drupal\views\ViewExecutable;
+use \Drupal\views\Plugin\views\cache\CachePluginBase;
 
 /**
  * Implements hook_theme().
@@ -114,18 +116,6 @@ function site_alert_preprocess(&$variables, $hook) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function site_alert_preprocess_views_view(&$variables) {
-  // Contextual links from site_alert node provided by view.
-  if ($variables["id"] == "site_alerts" && $variables["display_id"] == "site_alerts") {
-    if (isset($variables["title_suffix"]["contextual_links"])) {
-      unset($variables["title_suffix"]["contextual_links"]);
-    }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
 function site_alert_preprocess_node(&$variables) {
   if ($variables['node']->bundle() != basename(__FILE__, ".module")) {
     return;
@@ -158,6 +148,19 @@ function site_alert_preprocess_node(&$variables) {
     }
   }*/
 
+}
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Rewrites the autocomplete list for excluded pages.
+ */
+function site_alert_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($view->id() == "site_alerts" && $view->current_display == "exclude_pages_autocomplete") {
+    foreach ($output as &$line) {
+      $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
+    }
+  }
 }
 
 /**
