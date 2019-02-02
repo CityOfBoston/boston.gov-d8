@@ -7,8 +7,8 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\core\StringTranslation\TranslatableMarkup;
-use \Drupal\views\ViewExecutable;
-use \Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 
 /**
  * Implements hook_theme().
@@ -54,7 +54,7 @@ function site_alert_theme() {
  *   - elements: An associative array containing the site alert information and
  *     any fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
- * TODO: This is not working ... hook does not exist.
+ *   TODO: This is not working ... hook does not exist.
  */
 function template_preprocess_site_alert(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
@@ -110,7 +110,6 @@ function site_alert_preprocess(&$variables, $hook) {
       }
     }
   }
-
 }
 
 /**
@@ -121,6 +120,7 @@ function site_alert_preprocess_node(&$variables) {
     return;
   }
 
+  // Add-in a bit of css.
   $variables['#attached']['library'][] = "site_alert/alert.call";
 
   // Used in templates to set the background colors.
@@ -131,23 +131,6 @@ function site_alert_preprocess_node(&$variables) {
   $variables['attributes']['class'][] = "b";
   $variables['attributes']['class'][] = "b--" . $variables['block_theme'];
   $variables['attributes']['class'][] = "b--fw";
-
-  // Manage page exclusions.
-/*  if (isset($variables["elements"]["field_excluded_nodes"]["#items"])) {
-    foreach ($variables["elements"]["field_excluded_nodes"]["#items"]->getValue() as $key => $item) {
-      $nodes[] = "node/" . $variables["elements"]["field_excluded_nodes"][$key]["#plain_text"];
-    }
-    // This is for legacy.
-    $variables['attributes']['data-excludes'] = implode(",", $nodes);
-    // This is for D8.
-    $here = \Drupal::request()->getRequestUri();
-    $path = ltrim(\Drupal::service('path.alias_manager')->getPathByAlias($here), "/");
-    if (in_array($path, $nodes)) {
-      $variables['attributes']['class'][] = "hidden";
-      $variables['has_site_alert'] = FALSE;
-    }
-  }*/
-
 }
 
 /**
@@ -170,7 +153,7 @@ function site_alert_views_post_render(ViewExecutable $view, &$output, CachePlugi
  * the page display of a view.
  */
 function site_alert_theme_suggestions_container(array $variables) {
-  if(empty($variables["element"]["#view_id"]) || empty($variables["element"]["#view_display_plugin_id"])) {
+  if (empty($variables["element"]["#view_id"]) || empty($variables["element"]["#view_display_plugin_id"])) {
     return;
   }
   if ($variables["element"]["#view_id"] == "site_alerts" && $variables["element"]["#view_display_plugin_id"] == "page") {

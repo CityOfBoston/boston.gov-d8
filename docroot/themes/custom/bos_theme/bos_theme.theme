@@ -361,7 +361,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     ],
     "swiftype_priority",
   ];
-  // Dependent on content-type (i.e node), need to register a swiftType type metatag.
+  // Dependent on content-type (i.e node), register a swiftType type metatag.
   if (isset($variables['node']) && is_object($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
     $metaTags[] = [
       [
