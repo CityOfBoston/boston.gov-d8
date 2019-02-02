@@ -348,6 +348,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     'listing_page',
     'landing_page',
   ];
+  // TODO: Check swift type search settings.
   // Add a site priority meta tag for swiftype.
   $metaTags[] = [
     [
@@ -383,66 +384,48 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     $variables["attributes"] = new Attribute();
   }
   if (isset($variables['node']) && is_object($variables['node'])) {
+    $variables["attributes"]->addClass("page");
     if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
-      $variables["attributes"]->addClass("page");
+      $variables["attributes"]->addClass("page--wa");
       $variables["attributes"]->setAttribute("id", "page");
+    }
+    else {
+      $variables["attributes"]->addClass("page--nm");
     }
     if ($variables['is_front']) {
       $variables["attributes"]->addClass("page--fp");
+      if (!$variables["attributes"]->hasClass("page--wa")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
+    }
+  }
+
+  // D8 OK: If we are on the employee directory page, change the title.
+  if (strpos($current_path, 'user') === 0) {
+    if (!$variables["attributes"]->hasClass("page")) {
+      $variables["attributes"]->addClass("page");
+    }
+    if (!$variables["attributes"]->hasClass("page--wa")) {
       $variables["attributes"]->addClass("page--wa");
     }
   }
 
-  // If we are on the employee directory page, change the title.
-  if (strpos($current_path, 'user') === 0) {
-    $variables["attributes"]->addClass("page");
-    $variables["attributes"]->addClass("page--wa");
-  }
-
-  // By default, there is no site alert.
+  // D8 OK:  By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
   if (empty($variables['has_site_alert'])) {
     $variables['has_site_alert'] = FALSE;
   }
 
+  // D8 OK: Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
     $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
-
-/*    if ($variables['node']->getType() == 'topic_page') {
-      $variables['page_class'] = 'page';
-    }
-
-    if ($variables['node']->getType() !== 'landing_page') {
-      if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to') {
-        $variables['page_class_alert'] = 'page page--wa';
-        $variables["content_attributes"] = new Attribute([
-          "data-classes" => "page page--wa",
-        ]);
-
-      }
-      else {
-        $variables['page_class_alert'] = 'page page--wa page--nm';
-      }
-    }
-    else {
-      $variables['page_class_alert'] = 'page';
-    }*/
-
-/*    if ($variables['is_front']) {
-      $variables['page_class_alert'] = 'page page--wa page--fp';
-    }*/
   }
 
-  // If we are on the employee directory page, change the title.
-/*  if (strpos($current_path, 'user') === 0) {
-    $variables['page_class_alert'] = 'page page--wa';
-  }*/
-
+  // TODO: Review if these variable elements are needed.
   $variables['site_name'] = \Drupal::configFactory()
     ->get('system.site')
     ->get('name');
-  $variables['title'] = $variables["page"]["#title"];
-
+  $variables['title'] = trim(strip_tags($variables["page"]["#title"]));
   $variables['site_info'] = [
     'front_page' => $variables['front_page'],
     'cache_buster' => $variables['cache_buster'],
@@ -450,6 +433,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     'hide_logo' => FALSE,
   ];
 
+  // TODO: review if the secondary menu is needed ...
   $menu_tree = \Drupal::menuTree();
   $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
   $tree = $menu_tree->load("menu-secondary-menu", $parameters);
@@ -462,6 +446,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $tree = $menu_tree->transform($tree, $manipulators);
   $variables['secondary_menu'] = $menu_tree->build($tree);
 
+  // D8 OK - Render the header elements here so just markup is passed to tmplt.
   $arr_base = [
     '#site_name' => $variables['site_name'],
     '#front_page' => $variables['front_page'],
@@ -470,21 +455,21 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     '#cache_buster' => $variables['cache_buster'],
     '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
     '#secondary_menu' => $variables['secondary_menu'],
+    '#theme' => '',
   ];
-  $arr = $arr_base + ['#theme' => 'burger'];
-  $variables['burger'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'logo'];
-  $variables['logo'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'seal'];
+  $arr_base['#theme'] = 'burger';
+  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'logo';
+  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'secondary_nav';
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'search';
+  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
   if ($variables['has_site_alert']) {
-    $arr["#hidden"] = " hidden";
+    $arr_base["#hidden"] = " hidden";
   }
-  $variables['seal'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'secondary_nav'];
-  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'search'];
-  $variables['search'] = \Drupal::service('renderer')->render($arr);
-
+  $arr_base['#theme'] = 'seal';
+  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
 }
 
 /**
