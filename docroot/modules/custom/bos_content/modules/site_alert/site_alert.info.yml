@@ -7,6 +7,7 @@ version: 8.x.1.0
 dependencies:
   - bos_content
 config_devel:
+  - block.block.views_block__site_alerts_site_alerts
   - comment.type.comment_node_site_alert
   - core.base_field_override.node.site_alert.status
   - core.base_field_override.node.site_alert.promote
@@ -28,4 +29,4 @@ config_devel:
   - language.content_settings.node.site_alert
   - node.type.site_alert
   - rabbit_hole.behavior_settings.node_type_site_alert
-  - site_alert.views_default.inc
+  - views.view.site_alerts

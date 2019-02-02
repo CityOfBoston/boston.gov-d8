@@ -44,7 +44,12 @@
  * @see html.html.twig
  */
 #}
-
+{% if page.site_alert %}
+  {% set attributes = attributes.addClass('page--wa') %}
+{% endif %}
+{% if is_front %}
+  {% set attributes = attributes.addClass('page--wa') %}
+{% endif %}
 <input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
 
 <nav class="nv-m">
@@ -61,18 +66,21 @@
   </div>
 </nav>
 
-<div {% if page_class %}class="{{ page_class }} mn"{% endif %} id="page"{{ attributes }}>
+<div{{ attributes }}>
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
+
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
-
-      {{ burger }}
-      {{ logo }}
-      {{ seal }}
-      {{ secondary_nav }}
-      {{ search }}
-
+    {{ burger }}
+    {{ logo }}
+    {{ seal }}
+    {{ secondary_nav }}
+    {{ search }}
   </header>
-  <div id="sa" data-target="{{ target_id }}" data-classes="{{ page_class_alert }}  mn" class="d--n"></div>
+
+  {% if has_site_alert %}
+    {{ page.site_alert }}
+  {% endif %}
+
   <div class="main">
     <div class="container">
       <section class="main-content" id="content" role="main">
@@ -147,3 +155,4 @@
 </div>
 
 {{ page.bottom }}
+
