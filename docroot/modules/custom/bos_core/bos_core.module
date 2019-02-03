@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\bos_core\BosCoreHelp;
 use Drupal\Views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 
 /**
  * Implements hook_theme().
@@ -46,35 +47,16 @@ function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateI
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function bos_core_preprocess_field(&$variables) {
-  if (!empty($variables["element"]["#bundle"])) {
-    switch ($variables["element"]["#bundle"]) {
-      case 'department_profile':
-      case 'header_text':
-        // Addresses twig issue in field--field-intro-text.html.twig where the
-        // twig parser cannot process an attribute where attribute->storage is
-        // empty.
-        if ($variables['field_name'] == "field_intro_text" && count($variables["items"][0]["attributes"]->storage()) == 0) {
-          unset($variables["items"][0]['attributes']);
-        }
-        break;
-    }
-  }
-}
-
-/**
  * Check view and records a GA pageview if this is a REST call.
  *
  * @param \Drupal\Views\ViewExecutable $view
  *   The view object.
  * @param array $output
  *   The output array.
- * @param mixed $cache
+ * @param Drupal\views\Plugin\views\cache\CachePluginBase $cache
  *   The cache.
  */
-function bos_core_views_post_render(ViewExecutable $view, array &$output, $cache) {
+function bos_core_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache) {
   $pageTitle = NULL;
   $view_display = $view->display_handler->display;
 

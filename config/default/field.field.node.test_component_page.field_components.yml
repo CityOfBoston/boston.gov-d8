@@ -15,7 +15,11 @@ dependencies:
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.grid_links
     - paragraphs.paragraphs_type.grid_of_cards
+    - paragraphs.paragraphs_type.grid_of_people
+    - paragraphs.paragraphs_type.grid_of_places
+    - paragraphs.paragraphs_type.grid_of_programs_initiatives
     - paragraphs.paragraphs_type.grid_of_quotes
+    - paragraphs.paragraphs_type.grid_of_topics
     - paragraphs.paragraphs_type.group_of_links_grid
     - paragraphs.paragraphs_type.group_of_links_list
     - paragraphs.paragraphs_type.group_of_links_mini_grid
@@ -56,7 +60,11 @@ settings:
       commission_summary: commission_summary
       grid_links: grid_links
       grid_of_cards: grid_of_cards
+      grid_of_people: grid_of_people
+      grid_of_places: grid_of_places
+      grid_of_programs_initiatives: grid_of_programs_initiatives
       grid_of_quotes: grid_of_quotes
+      grid_of_topics: grid_of_topics
       group_of_links_grid: group_of_links_grid
       group_of_links_list: group_of_links_list
       group_of_links_mini_grid: group_of_links_mini_grid
@@ -141,9 +149,6 @@ settings:
       external_link:
         weight: 92
         enabled: false
-      featured_item:
-        weight: 93
-        enabled: false
       featured_topics:
         weight: 94
         enabled: false
@@ -166,20 +171,20 @@ settings:
         enabled: true
         weight: 100
       grid_of_people:
+        enabled: true
         weight: 101
-        enabled: false
       grid_of_places:
+        enabled: true
         weight: 102
-        enabled: false
       grid_of_programs_initiatives:
+        enabled: true
         weight: 103
-        enabled: false
       grid_of_quotes:
         enabled: true
         weight: 104
       grid_of_topics:
+        enabled: true
         weight: 105
-        enabled: false
       group_of_links_grid:
         enabled: true
         weight: 106
@@ -219,15 +224,6 @@ settings:
       map:
         enabled: true
         weight: 118
-      map_coordinates:
-        weight: 119
-        enabled: false
-      map_esri_feed:
-        weight: 120
-        enabled: false
-      map_pin:
-        weight: 121
-        enabled: false
       message_for_the_day:
         weight: 122
         enabled: false
@@ -243,20 +239,8 @@ settings:
       quote:
         weight: 126
         enabled: false
-      recollect_widget:
-        weight: 127
-        enabled: false
-      script_embed:
-        weight: 128
-        enabled: false
       seamless_doc:
         weight: 129
-        enabled: false
-      status_override:
-        weight: 134
-        enabled: false
-      tabbed_content_tab:
-        weight: 135
         enabled: false
       text:
         enabled: true
@@ -278,9 +262,6 @@ settings:
         enabled: false
       upcoming_events:
         weight: 142
-        enabled: false
-      user_action:
-        weight: 143
         enabled: false
       video:
         enabled: true
