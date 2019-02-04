@@ -1,0 +1,66 @@
+uuid: 00994c91-5017-49c2-aace-d5b030a343ee
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.news_and_announcements.field_component_title
+    - field.field.paragraph.news_and_announcements.field_featured_post
+    - field.field.paragraph.news_and_announcements.field_link
+    - field.field.paragraph.news_and_announcements.field_list
+    - field.field.paragraph.news_and_announcements.field_short_title
+    - paragraphs.paragraphs_type.news_and_announcements
+  module:
+    - entity_reference_revisions
+    - viewfield
+_core:
+  default_config_hash: s54Y6-Z0z92WupSD8mEBTepbbiPZZzPDRVro4iIHMXY
+id: paragraph.news_and_announcements.default
+targetEntityType: paragraph
+bundle: news_and_announcements
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_featured_post:
+    label: hidden
+    weight: 1
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_link:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_list:
+    weight: 2
+    label: hidden
+    settings:
+      view_title: hidden
+      always_build_output: 0
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
+    region: content
+  field_short_title:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
