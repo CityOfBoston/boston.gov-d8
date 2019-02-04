@@ -13,5 +13,9 @@ function bos_news_and_announcements_theme() {
     'base hook' => 'paragraph',
     'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
   ];
+  $theme['views_view_unformatted__news_and_announcements'] = [
+    'base hook' => 'view',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
   return $theme;
 }
