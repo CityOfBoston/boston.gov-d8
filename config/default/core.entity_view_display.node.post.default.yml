@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.post.field_place
     - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
+    - field.field.node.post.field_related
     - field.field.node.post.field_related_content
     - field.field.node.post.field_related_departments
     - field.field.node.post.field_related_events_notices
@@ -28,7 +29,7 @@ dependencies:
     - comment
     - datetime
     - entity_reference_revisions
-    - image
+    - svg_image
     - text
     - user
 id: node.post.default
@@ -110,6 +111,14 @@ content:
       format_type: medium
       timezone_override: ''
     third_party_settings: {  }
+    region: content
+  field_related:
+    weight: 101
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
   field_related_content:
     label: above

@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.post.field_place
     - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
+    - field.field.node.post.field_related
     - field.field.node.post.field_related_content
     - field.field.node.post.field_related_departments
     - field.field.node.post.field_related_events_notices
@@ -25,6 +26,7 @@ dependencies:
     - node.type.post
   module:
     - comment
+    - content_moderation
     - datetime
     - file
     - paragraphs
@@ -126,6 +128,15 @@ content:
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_related:
+    weight: 121
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_related_content:
     weight: 16
