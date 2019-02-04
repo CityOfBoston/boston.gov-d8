@@ -111,7 +111,7 @@ function bos_core_permission() {
  * Use this hook to manage the items in the contextual links drop-down.
  */
 function bos_core_contextual_links_alter(array &$links, $group, array $route_parameters) {
-  if (!\Drupal::currentUser()->hasPermission("contextual delete")) {
+  if (\Drupal::currentUser()->hasPermission("contextual delete")) {
     foreach ($links as $route => $data) {
       // Remove all Delete functionality to avoid accidents.
       if (strtolower($data["title"]) == "delete") {
