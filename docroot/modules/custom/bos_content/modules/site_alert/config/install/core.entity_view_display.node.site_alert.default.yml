@@ -1,0 +1,94 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.site_alert.comment_node_site_alert
+    - field.field.node.site_alert.field_excluded_nodes
+    - field.field.node.site_alert.field_extra_info
+    - field.field.node.site_alert.field_icon
+    - field.field.node.site_alert.field_link
+    - field.field.node.site_alert.field_theme
+    - field.field.node.site_alert.title_field
+    - node.type.site_alert
+  module:
+    - entity_reference_revisions
+    - fences
+    - options
+    - svg_image
+    - user
+id: node.site_alert.default
+targetEntityType: node
+bundle: site_alert
+mode: default
+content:
+  field_excluded_nodes:
+    label: hidden
+    weight: 5
+    type: entity_reference_entity_id
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_extra_info:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_icon:
+    label: hidden
+    weight: 0
+    type: image
+    settings:
+      image_style: ''
+      image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_link:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_theme:
+    label: hidden
+    weight: 4
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  title_field:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  comment_node_site_alert: true
+  langcode: true
+  links: true
+  published_at: true

@@ -99,6 +99,20 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 }
 
 /**
+ * Implements hook_contextual_links_alter().
+ *
+ * Use this hook to manage the items in the contextual links drop-down.
+ */
+function bos_core_contextual_links_alter(array &$links, $group, array $route_parameters) {
+  foreach ($links as $route => $data) {
+    // Remove all Delete functionality to avoid accidents.
+    if (strtolower($data["title"]) == "delete") {
+      unset($links[$route]);
+    }
+  }
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display

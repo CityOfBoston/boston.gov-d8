@@ -68,6 +68,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
         'asset_url' => '',
         'asset_name' => '',
         'cache_buster' => '',
+        'hidden' => '',
       ],
     ],
     'search' => [
@@ -271,13 +272,18 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
  * Implements hook_preprocess_page().
  */
 function bos_theme_preprocess_page(array &$variables, $hook) {
-  // Add in the js required by each page.
+  // D8-OK: Add in the js required by each page.
   $variables['#attached']['library'][] = "bos_theme/page.assets";
 
+  // TODO: review this theme suggestion.
+  // This is probably related to (site_alert) api calls (built in views) which
+  // are passed with an "embed" querystring parameter to extract only the
+  // view-controlled html and not a fully drupal-themed page.
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
     $variables['theme_hook_suggestions'][] = 'page__embed';
   }
 
+  // TODO: Review if needed in D8.
   // Find the title of the menu used by the secondary links.
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
@@ -288,6 +294,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
+  // TODO: Review.  This D8 converted, but is it needed / best way ?
   // This is done to bring the hero image rendered output to the page level
   // of rendering. Hero image styling fits more naturally at the page level
   // as opposed to the rendered node output in the system block.
@@ -310,7 +317,9 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
       }
     }
   }
-  // Custom 404/403 pages.
+
+  // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
+  // D8 OK: Custom 404/403 pages.
   if (!empty($variables['status_code'])) {
     switch ($variables['status_code']) {
       case "404":
@@ -333,13 +342,29 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
+  // D8 OK: MetaTags Block
   // Some content types aren't special.
   $no_type_needed = [
     'listing_page',
     'landing_page',
   ];
+  // TODO: Check swift type search settings.
+  // Add a site priority meta tag for swiftype.
+  $metaTags[] = [
+    [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'class' => 'swiftype',
+        'name' => 'site-priority',
+        'data-type' => 'integer',
+        'content' => 5,
+      ],
+    ],
+    "swiftype_priority",
+  ];
+  // Dependent on content-type (i.e node), register a swiftType type metatag.
   if (isset($variables['node']) && is_object($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
-    $variables['#attached']['html_head'][] = [
+    $metaTags[] = [
       [
         '#tag' => 'meta',
         '#attributes' => [
@@ -352,66 +377,55 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
       "swiftype_type",
     ];
   }
+  $variables['#attached']['html_head'] = $metaTags;
 
-  // Add a site priority meta tag for swiftype.
-  $variables['#attached']['html_head'][] = [
-    [
-      '#tag' => 'meta',
-      '#attributes' => [
-        'class' => 'swiftype',
-        'name' => 'site-priority',
-        'data-type' => 'integer',
-        'content' => 5,
-      ],
-    ],
-    "swiftype_priority",
-  ];
-
-  // Create necessary page classes.
-  if (isset($variables['node']) && is_object($variables['node']) && $variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
-    $variables['page_class'] = 'page';
+  // D8 OK: Create necessary page classes.
+  if (empty($variables["attributes"])) {
+    $variables["attributes"] = new Attribute();
   }
-  else {
-    $variables['page_class'] = NULL;
-  }
-
-  $variables['page_class_alert'] = $variables['page_class'];
-  $variables['target_id'] = NULL;
-
   if (isset($variables['node']) && is_object($variables['node'])) {
-    $variables['target_id'] = $variables['node']->nid->value;
-
-    if ($variables['node']->getType() == 'topic_page') {
-      $variables['page_class'] = 'page';
-    }
-
-    if ($variables['node']->getType() !== 'landing_page') {
-      if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to') {
-        $variables['page_class_alert'] = 'page page--wa';
-      }
-      else {
-        $variables['page_class_alert'] = 'page page--wa page--nm';
-      }
+    $variables["attributes"]->addClass("page");
+    if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
+      $variables["attributes"]->addClass("page--wa");
+      $variables["attributes"]->setAttribute("id", "page");
     }
     else {
-      $variables['page_class_alert'] = 'page';
+      $variables["attributes"]->addClass("page--nm");
     }
-
     if ($variables['is_front']) {
-      $variables['page_class_alert'] = 'page page--wa page--fp';
+      $variables["attributes"]->addClass("page--fp");
+      if (!$variables["attributes"]->hasClass("page--wa")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
     }
   }
 
-  // If we are on the employee directory page, change the title.
+  // D8 OK: If we are on the employee directory page, change the title.
   if (strpos($current_path, 'user') === 0) {
-    $variables['page_class_alert'] = 'page page--wa';
+    if (!$variables["attributes"]->hasClass("page")) {
+      $variables["attributes"]->addClass("page");
+    }
+    if (!$variables["attributes"]->hasClass("page--wa")) {
+      $variables["attributes"]->addClass("page--wa");
+    }
   }
 
+  // D8 OK:  By default, there is no site alert.
+  // This is overidden in site_alert_preprocess when there is an alert.
+  if (empty($variables['has_site_alert'])) {
+    $variables['has_site_alert'] = FALSE;
+  }
+
+  // D8 OK: Legacy, set data-target.
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
+  }
+
+  // TODO: Review if these variable elements are needed.
   $variables['site_name'] = \Drupal::configFactory()
     ->get('system.site')
     ->get('name');
-  $variables['title'] = $variables["page"]["#title"];
-
+  $variables['title'] = trim(strip_tags($variables["page"]["#title"]));
   $variables['site_info'] = [
     'front_page' => $variables['front_page'],
     'cache_buster' => $variables['cache_buster'],
@@ -419,6 +433,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     'hide_logo' => FALSE,
   ];
 
+  // TODO: review if the secondary menu is needed ...
   $menu_tree = \Drupal::menuTree();
   $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
   $tree = $menu_tree->load("menu-secondary-menu", $parameters);
@@ -431,6 +446,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $tree = $menu_tree->transform($tree, $manipulators);
   $variables['secondary_menu'] = $menu_tree->build($tree);
 
+  // D8 OK - Render the header elements here so just markup is passed to tmplt.
   $arr_base = [
     '#site_name' => $variables['site_name'],
     '#front_page' => $variables['front_page'],
@@ -439,18 +455,21 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     '#cache_buster' => $variables['cache_buster'],
     '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
     '#secondary_menu' => $variables['secondary_menu'],
+    '#theme' => '',
   ];
-  $arr = $arr_base + ['#theme' => 'burger'];
-  $variables['burger'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'logo'];
-  $variables['logo'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'seal'];
-  $variables['seal'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'secondary_nav'];
-  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr);
-  $arr = $arr_base + ['#theme' => 'search'];
-  $variables['search'] = \Drupal::service('renderer')->render($arr);
-
+  $arr_base['#theme'] = 'burger';
+  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'logo';
+  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'secondary_nav';
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'search';
+  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
+  if ($variables['has_site_alert']) {
+    $arr_base["#hidden"] = " hidden";
+  }
+  $arr_base['#theme'] = 'seal';
+  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
 }
 
 /**
@@ -644,6 +663,13 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
     $variables['attributes']['class'][] = "field-type-" . _make_class($variables['field_type']);
     if (isset($variables["label_display"]) && !$variables["label_display"]) {
       $variables['attributes']['class'][] = "field-label-hidden";
+    }
+  }
+  if (!empty($variables['items'])) {
+    foreach ($variables["items"] as $key => $item) {
+      if (!empty($item["attributes"]) && count($item["attributes"]->storage()) == 0) {
+        unset($variables["items"][$key]['attributes']);
+      }
     }
   }
 }

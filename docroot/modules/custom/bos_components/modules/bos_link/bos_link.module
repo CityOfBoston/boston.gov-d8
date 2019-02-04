@@ -54,7 +54,8 @@ function bos_link_preprocess_paragraph(&$vars) {
 function bos_link_preprocess_field(&$vars) {
   $field_name = $vars['element']['#field_name'];
   if ($field_name == 'field_external_link' || $field_name == 'field_internal_link') {
-    if (_paragraph_is_direct_child_of($vars['element']['#object'], 'fyi')) {
+    if (_paragraph_is_direct_child_of($vars['element']['#object'], 'fyi')
+        || _paragraph_is_direct_child_of($vars['element']['#object'], 'site_alert')) {
       $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l';
     }
   }
