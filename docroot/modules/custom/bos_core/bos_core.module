@@ -100,6 +100,16 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function bos_core_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $node = $form_state->getFormObject()->getEntity();
+  if (isset($node) && $node ==  "node") {
+    return;
+  }
+}
+
+/**
  * Implements hook_contextual_links_alter().
  *
  * Use this hook to manage the items in the contextual links drop-down.
@@ -136,6 +146,10 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
     // Remove Translation if there are no permissions.
     if (!\Drupal::currentUser()
       ->hasPermission("administer content")
+      && !\Drupal::currentUser()
+        ->hasPermission("translate any entity")
+      && !\Drupal::currentUser()
+        ->hasPermission("create content translations")
       && !\Drupal::currentUser()
         ->hasPermission("translate " . str_replace("_", " ", $entity->bundle()) . " node")) {
       unset($build["actions"]["content_translation.local_tasks:entity.node.content_translation_overview"]);

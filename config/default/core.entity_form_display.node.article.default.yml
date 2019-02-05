@@ -22,10 +22,10 @@ dependencies:
     - content_moderation
     - datetime
     - field_group
-    - image
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -101,6 +101,22 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+    group_publishing:
+      children:
+        - path
+        - url_redirects
+        - moderation_state
+        - uid
+        - created
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Publishing
 _core:
   default_config_hash: zo4zPPW7rLh-Mn2dazb-Y4GMa2nJ5_gkocuTPejLMtA
 id: node.article.default
@@ -119,32 +135,39 @@ content:
     region: content
   comment:
     type: comment_default
-    weight: 14
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   comment_node_article:
     type: comment_default
-    weight: 13
+    weight: 8
     settings: {  }
     third_party_settings: {  }
     region: content
   created:
     type: datetime_timestamp
-    weight: 8
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
   field_components:
     weight: 13
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Component
       title_plural: Components
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
       add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_contact:
@@ -158,7 +181,7 @@ content:
     region: content
   field_image:
     type: image_image
-    weight: 5
+    weight: 4
     region: content
     settings:
       progress_indicator: throbber
@@ -180,19 +203,26 @@ content:
     region: content
   field_sidebar_components:
     weight: 9
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: button
+      title: Component
+      title_plural: Components
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_tags:
     type: entity_reference_autocomplete_tags
-    weight: 4
+    weight: 3
     region: content
     settings:
       match_operator: CONTAINS
@@ -220,13 +250,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 17
+    weight: 14
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 15
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -234,12 +264,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 6
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 9
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -247,14 +277,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 18
+    weight: 10
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 11
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -267,7 +297,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 7
+    weight: 15
     region: content
     settings:
       match_operator: CONTAINS
@@ -275,7 +305,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 16
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
