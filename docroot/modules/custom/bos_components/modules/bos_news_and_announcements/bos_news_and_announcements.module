@@ -27,26 +27,3 @@ function bos_news_and_announcements_theme() {
   ];
   return $theme;
 }
-
-/**
- * Implements hook_preprocess_paragraph().
- */
-function bos_news_and_announcements_preprocess_paragraph(&$vars) {
-  $paragraph = $vars['paragraph'];
-  if ($paragraph && $paragraph->bundle() == 'news_and_announcements') {
-    $title = $paragraph->get('field_component_title')->getValue();
-    if (!empty($title['0']['value'])) {
-      $title_class = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title['0']['value'])));
-      $vars['attributes'] = [
-        'class' => [
-          'entity',
-          'entity-paragraphs-item',
-          'paragraphs-item-news-and-announcements',
-          'component-section',
-          'fullwidth',
-          $title_class,
-        ],
-      ];
-    }
-  }
-}
