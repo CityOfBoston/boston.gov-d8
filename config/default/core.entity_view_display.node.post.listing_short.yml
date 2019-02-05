@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.post.field_place
     - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
+    - field.field.node.post.field_related
     - field.field.node.post.field_related_content
     - field.field.node.post.field_related_departments
     - field.field.node.post.field_related_events_notices
@@ -26,7 +27,8 @@ dependencies:
     - node.type.post
   module:
     - datetime
-    - image
+    - fences
+    - svg_image
     - user
 id: node.post.listing_short
 targetEntityType: node
@@ -46,9 +48,16 @@ content:
     weight: 1
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_featured
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
   field_thumbnail:
     label: hidden
@@ -57,11 +66,17 @@ content:
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   body: true
   comment_node_post: true
@@ -71,6 +86,7 @@ hidden:
   field_people: true
   field_place: true
   field_program_initiative: true
+  field_related: true
   field_related_content: true
   field_related_departments: true
   field_related_events_notices: true
