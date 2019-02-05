@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.storage.paragraph.field_list
     - paragraphs.paragraphs_type.news_and_announcements
+    - views.view.news_and_announcements
   module:
     - viewfield
 id: paragraph.news_and_announcements.field_list
@@ -14,7 +15,12 @@ label: List
 description: ''
 required: false
 translatable: true
-default_value: {  }
+default_value:
+  -
+    token_help: ''
+    display_id: block_1
+    arguments: ''
+    target_uuid: 3c1c73e3-dac9-4cd4-aa22-090aa02db695
 default_value_callback: ''
 settings:
   force_default: 0
