@@ -473,43 +473,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 }
 
 /**
- * Implements THEME_preprocess_HOOK().
- *
- * This hook is used to move the form management tabs of the primary tabs
- * navigation into the workbench menu.  This avoids the need for client-side js.
- */
-function bos_theme_preprocess_menu__toolbar__workbench(array &$variables, $hook) {
-  // Only execute this if displaying a front-end page.
-  if ($variables["directory"] != "themes/custom/bos_theme") {
-    return;
-  }
-  $manager = \Drupal::service('plugin.manager.menu.local_task');
-  if (empty($manager)) {
-    return;
-  }
-
-  // Fetch the primary local tasks.
-//  $links = $manager->getLocalTasks(\Drupal::routeMatch()->getRouteName(), 0);
-
-//  foreach ($links['tabs'] as $key => $item) {
-//    if (strpos($key, "entity.") === 0) {
-//      $variables['items'][$key] = [
-//        'attributes' => new Attribute([
-//          'class' => ['tab', 'primary-task-tab'],
-//        ]),
-//        'below' => [],
-//        'in_active_trail' => FALSE,
-//        'is_collapsed' => FALSE,
-//        'is_expanded' => FALSE,
-//        'original_link' => NULL,
-//        'title' => $item['#link']['title'],
-//        'url' => $item['#link']['url'],
-//      ];
-//    }
-//  }
-}
-
-/**
  * Implements hook_preprocess_hook().
  */
 function bos_theme_preprocess_breadcrumb(array &$variables) {
