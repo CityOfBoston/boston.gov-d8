@@ -21,4 +21,28 @@ function bos_admin_preprocess_html(&$variables) {
  * Implements hook_form_alter().
  */
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
+    // Node-edit forms: Make the Revision log message required.
+    $form["revision_log"]["widget"][0]["value"]["#required"] = TRUE;
+    $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "You are required to supply some information about this update.";
+    // Move Revision Log to footer.
+    $form["revision_log"]["#group"] = "footer";
+    // Move the Revisions info into a new details fieldset, and collapse.
+    $form["group_revision"] = [
+      "#group" => "advanced",
+      "#type" => "details",
+      "#open" => FALSE,
+      "#title" => \Drupal::translation()->translate('Revision Information'),
+    ];
+    $form["revision_information"]["#group"] = "group_revision";
+    // Close the URL Alias details fieldset.
+    $form["path"]["widget"][0]["#open"] = FALSE;
+  }
+
+  if ($form_id == "revision_overview_form") {
+    // Revision form ...
+    $form["node_revisions_table"]["#header"]["select_column_one"] = "compare";
+    $form["node_revisions_table"]["#header"]["select_column_two"] = "compare";
+  }
+
 }
