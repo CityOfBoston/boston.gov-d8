@@ -84,12 +84,14 @@
   <a href="{{ node_url }}" class="item-link"></a>
   <div class="news-item-wrapper">
       <div class="thumb-wrapper float-left">
-        {% if content.field_thumbnail %}
-          {{ content.field_thumbnail }}
-        {% else %}
-          <div class="news-item-default-image" style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
+        {% if node.field_thumbnail.isempty %}
+          <div
+            class="news-item-default-image"
+            style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
             <span>Default News image</span>
           </div>
+        {% else %}
+          {{ content.field_thumbnail }}
         {% endif %}
         <div class="date-flag">{{ content.field_published_date }}</div>
       </div>
