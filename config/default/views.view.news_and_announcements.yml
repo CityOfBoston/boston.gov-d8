@@ -1,14 +1,16 @@
-uuid: 2065698c-8f82-4ce6-b378-efc535edc3d6
+uuid: 3c1c73e3-dac9-4cd4-aa22-090aa02db695
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing_short
     - node.type.post
   module:
     - node
     - paragraphs
     - user
+_core:
+  default_config_hash: Rx-AkEvgIXQ2hng3t-tzSKNJaJQrYUNhTJK-aNAidJ4
 id: news_and_announcements
 label: 'News & Announcements'
 module: views
@@ -60,7 +62,7 @@ display:
         type: 'entity:node'
         options:
           relationship: none
-          view_mode: teaser
+          view_mode: listing_short
       fields:
         title:
           id: title

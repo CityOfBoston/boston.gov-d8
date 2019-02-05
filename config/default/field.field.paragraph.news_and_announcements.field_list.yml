@@ -1,14 +1,15 @@
-uuid: b8b7e159-5eab-4055-a7e9-bb5f016f2b64
+uuid: ccd0a589-2fa7-4d6c-8826-5fa821533c91
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_list
     - paragraphs.paragraphs_type.news_and_announcements
+    - views.view.news_and_announcements
   module:
     - viewfield
 _core:
-  default_config_hash: JGhd_7A_iKPqmpnoqzGXiG03yeDN_yNNJKenDjYr8ow
+  default_config_hash: rmCjvcZO7hiS_4IwnYLhnsxerLLwoWDB8B8PWRh-Po0
 id: paragraph.news_and_announcements.field_list
 field_name: field_list
 entity_type: paragraph
@@ -17,7 +18,12 @@ label: List
 description: ''
 required: false
 translatable: true
-default_value: {  }
+default_value:
+  -
+    token_help: ''
+    display_id: block_1
+    arguments: ''
+    target_uuid: 3c1c73e3-dac9-4cd4-aa22-090aa02db695
 default_value_callback: ''
 settings:
   force_default: 0
