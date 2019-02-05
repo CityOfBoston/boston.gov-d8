@@ -100,22 +100,12 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 }
 
 /**
- * Implements hook_form_alter().
- */
-function bos_core_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $node = $form_state->getFormObject()->getEntity();
-  if (isset($node) && $node ==  "node") {
-    return;
-  }
-}
-
-/**
  * Implements hook_contextual_links_alter().
  *
  * Use this hook to manage the items in the contextual links drop-down.
  */
 function bos_core_contextual_links_alter(array &$links, $group, array $route_parameters) {
-  if (\Drupal::currentUser()->hasPermission("contextual delete")) {
+  if (!\Drupal::currentUser()->hasPermission("allow contextual delete")) {
     foreach ($links as $route => $data) {
       // Remove all Delete functionality to avoid accidents.
       if (strtolower($data["title"]) == "delete") {
