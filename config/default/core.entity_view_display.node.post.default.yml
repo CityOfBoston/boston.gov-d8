@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
+    - field.field.node.post.field_intro_text
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
@@ -70,6 +71,13 @@ content:
       view_mode: default
       link: false
     third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 102
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
     region: content
   field_news_tags:
     label: hidden
