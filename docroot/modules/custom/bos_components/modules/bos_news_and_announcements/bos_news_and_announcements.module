@@ -21,6 +21,10 @@ function bos_news_and_announcements_theme() {
     'base hook' => 'node',
     'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
   ];
+  $theme['viewfield__paragraph__news_and_announcements'] = [
+    'base hook' => 'viewfield',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
   return $theme;
 }
 

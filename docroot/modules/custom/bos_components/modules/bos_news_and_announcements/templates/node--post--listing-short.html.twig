@@ -97,7 +97,7 @@
       </div>
       <div class="text-wrapper">
         <h3 class="title">
-          {# {{ truncate_utf8($title, 97, TRUE, TRUE) }} #}
+          {{ node.label|truncate(97, TRUE, "...") }}
         </h3>
         <div class="department-title">{{ content.field_contact }}</div>
       </div>
