@@ -153,8 +153,9 @@ function bos_theme_preprocess(array &$variables, $hook) {
     // A variable to define the cache buster.
     $variables['cache_buster'] = \Drupal::state()
       ->get('system.css_js_query_string');
+    $mode = _bos_theme_library();
     $lib = \Drupal::service('library.discovery')
-      ->getLibraryByName('bos_theme', 'global-styling.patterns');
+      ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
     $variables['asset_url'] = $lib['remote'];
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
