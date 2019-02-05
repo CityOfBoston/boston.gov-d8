@@ -489,24 +489,24 @@ function bos_theme_preprocess_menu__toolbar__workbench(array &$variables, $hook)
   }
 
   // Fetch the primary local tasks.
-  $links = $manager->getLocalTasks(\Drupal::routeMatch()->getRouteName(), 0);
+//  $links = $manager->getLocalTasks(\Drupal::routeMatch()->getRouteName(), 0);
 
-  foreach ($links['tabs'] as $key => $item) {
-    if (strpos($key, "entity.") === 0) {
-      $variables['items'][$key] = [
-        'attributes' => new Attribute([
-          'class' => ['tab', 'primary-task-tab'],
-        ]),
-        'below' => [],
-        'in_active_trail' => FALSE,
-        'is_collapsed' => FALSE,
-        'is_expanded' => FALSE,
-        'original_link' => NULL,
-        'title' => $item['#link']['title'],
-        'url' => $item['#link']['url'],
-      ];
-    }
-  }
+//  foreach ($links['tabs'] as $key => $item) {
+//    if (strpos($key, "entity.") === 0) {
+//      $variables['items'][$key] = [
+//        'attributes' => new Attribute([
+//          'class' => ['tab', 'primary-task-tab'],
+//        ]),
+//        'below' => [],
+//        'in_active_trail' => FALSE,
+//        'is_collapsed' => FALSE,
+//        'is_expanded' => FALSE,
+//        'original_link' => NULL,
+//        'title' => $item['#link']['title'],
+//        'url' => $item['#link']['url'],
+//      ];
+//    }
+//  }
 }
 
 /**
