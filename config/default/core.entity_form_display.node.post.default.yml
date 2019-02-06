@@ -8,11 +8,13 @@ dependencies:
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
+    - field.field.node.post.field_intro_text
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
     - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
+    - field.field.node.post.field_related
     - field.field.node.post.field_related_content
     - field.field.node.post.field_related_departments
     - field.field.node.post.field_related_events_notices
@@ -25,6 +27,7 @@ dependencies:
     - node.type.post
   module:
     - comment
+    - content_moderation
     - datetime
     - file
     - paragraphs
@@ -85,6 +88,14 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 122
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
   field_news_tags:
     weight: 6
     type: entity_reference_autocomplete
@@ -126,6 +137,15 @@ content:
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_related:
+    weight: 121
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_related_content:
     weight: 16
