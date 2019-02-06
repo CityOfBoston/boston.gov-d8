@@ -1,0 +1,31 @@
+uuid: d090e16f-4cbd-4ff9-966e-64db916fc198
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.how_to_text_step.field_step_details
+    - field.field.paragraph.how_to_text_step.field_title
+    - paragraphs.paragraphs_type.how_to_text_step
+  module:
+    - text
+id: paragraph.how_to_text_step.default
+targetEntityType: paragraph
+bundle: how_to_text_step
+mode: default
+content:
+  field_step_details:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }
