@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_news_announcements module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_news_and_announcements_theme() {
+  $theme['paragraph__news_and_announcements'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
+  $theme['views_view_unformatted__news_and_announcements'] = [
+    'base hook' => 'view',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
+  $theme['node__post__listing_short'] = [
+    'base hook' => 'node',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
+  $theme['viewfield__paragraph__news_and_announcements'] = [
+    'base hook' => 'viewfield',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
+  return $theme;
+}

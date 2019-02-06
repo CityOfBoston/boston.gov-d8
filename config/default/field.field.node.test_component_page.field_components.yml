@@ -27,6 +27,7 @@ dependencies:
     - paragraphs.paragraphs_type.hero_image
     - paragraphs.paragraphs_type.iframe
     - paragraphs.paragraphs_type.map
+    - paragraphs.paragraphs_type.news_and_announcements
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
@@ -55,8 +56,8 @@ settings:
       bos311: bos311
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       city_score_dashboard: city_score_dashboard
-      commission_members: commission_members
       commission_search: commission_search
+      commission_members: commission_members
       commission_summary: commission_summary
       grid_links: grid_links
       grid_of_cards: grid_of_cards
@@ -70,6 +71,7 @@ settings:
       group_of_links_mini_grid: group_of_links_mini_grid
       header_text: header_text
       hero_image: hero_image
+      news_and_announcements: news_and_announcements
       iframe: iframe
       map: map
       photo: photo
@@ -116,10 +118,10 @@ settings:
       commission_contact_info:
         weight: 81
         enabled: false
-      commission_members:
+      commission_search:
         enabled: true
         weight: 83
-      commission_search:
+      commission_members:
         enabled: true
         weight: 83
       commission_summary:
@@ -200,6 +202,9 @@ settings:
       hero_image:
         enabled: true
         weight: 110
+      news_and_announcements:
+        enabled: true
+        weight: 111
       how_to_contact_step:
         weight: 111
         enabled: false
