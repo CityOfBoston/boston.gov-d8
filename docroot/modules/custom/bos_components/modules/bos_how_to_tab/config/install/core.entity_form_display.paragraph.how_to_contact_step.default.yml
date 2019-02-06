@@ -1,13 +1,14 @@
-uuid: cd22f459-4355-4377-9633-20c7864f0846
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.how_to_contact_step.field_address
     - field.field.paragraph.how_to_contact_step.field_operation_hours
     - field.field.paragraph.how_to_contact_step.field_step_details
     - field.field.paragraph.how_to_contact_step.field_title
     - paragraphs.paragraphs_type.how_to_contact_step
   module:
+    - address
     - paragraphs
     - text
 id: paragraph.how_to_contact_step.default
@@ -15,8 +16,15 @@ targetEntityType: paragraph
 bundle: how_to_contact_step
 mode: default
 content:
+  field_address:
+    weight: 2
+    settings:
+      default_country: US
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_operation_hours:
-    weight: 8
+    weight: 3
     type: entity_reference_paragraphs
     settings:
       title: 'Operation Hours'
@@ -28,7 +36,7 @@ content:
     third_party_settings: {  }
     region: content
   field_step_details:
-    weight: 6
+    weight: 1
     type: text_textarea
     settings:
       rows: 5
@@ -36,7 +44,7 @@ content:
     third_party_settings: {  }
     region: content
   field_title:
-    weight: 5
+    weight: 0
     type: string_textfield
     settings:
       size: 60
