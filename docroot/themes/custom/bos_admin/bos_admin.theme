@@ -25,18 +25,76 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     // Node-edit forms: Make the Revision log message required.
     $form["revision_log"]["widget"][0]["value"]["#required"] = TRUE;
     $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "You are required to supply some information about this update.";
-    // Move Revision Log to footer.
-    $form["revision_log"]["#group"] = "footer";
+
+    // Create a secondary block group, and load.
+    $form["group_secondary"] = [
+      "#type" => "container",
+      "#weight" => 99,
+      "#attributes" => [
+        "class" => ["entity-meta__header", "entity-meta"],
+      ],
+    ];
+    // Load status and moderation state elements into block.
+    $form["status"]["#group"] = "group_secondary";
+    $form["moderation_state"]["#group"] = "group_secondary";
+
+    // Create a child block inside secondary block.
+    $form["group_secondary_revision_log"] = [
+      "#type" => "container",
+      "#group" => "group_secondary",
+      "#weight" => 99,
+      "#attributes" => [
+        "class" => ["entity-content-form-revision-information"],
+      ],
+    ];
+    // Load revision log to secondary-child block.
+    $form["revision_log"]["#group"] = "group_secondary_revision_log";
+
     // Move the Revisions info into a new details fieldset, and collapse.
     $form["group_revision"] = [
-      "#group" => "advanced",
       "#type" => "details",
       "#open" => FALSE,
+      "#group" => "advanced",
+      "#weight" => "-10",
       "#title" => \Drupal::translation()->translate('Revision Information'),
     ];
     $form["revision_information"]["#group"] = "group_revision";
+
+    // Create a new field_group to hold config form elements.
+    $fieldset = new stdClass();
+    $fieldset->children = [
+      "advanced",
+    ];
+    $fieldset->format_type = "tab";
+    $fieldset->format_settings = [
+      "id" => "",
+      "classes" => "group-page-bos-admin field-group-tab",
+      "description" => "",
+      "required_fields" => TRUE,
+      "formatter" => "closed",
+    ];
+    $fieldset->label = "Advanced";
+    $fieldset->group_name = "group_bos_theme";
+    $fieldset->entity_type = "node";
+    $fieldset->bundle = "article";
+    $fieldset->context = "form";
+    $fieldset->mode = "default";
+    $fieldset->parent_name = "group_article";
+    $fieldset->weight = 10;
+
+    // Configure the field group so it sits in the vertical tabs area.
+    $form["#fieldgroups"][$fieldset->group_name] = $fieldset;
+    $form["#fieldgroups"][$fieldset->parent_name]->children[] = $fieldset->group_name;
+    $form["#group_children"][$fieldset->group_name] = $fieldset->parent_name;
+    foreach ($fieldset->children as &$child) {
+      $form["#group_children"][$child] = $fieldset->group_name;
+      $form[$child]["#group"] = $fieldset->group_name;
+    }
+
     // Close the URL Alias details fieldset.
     $form["path"]["widget"][0]["#open"] = FALSE;
+    // Add css to close border on meta element.
+    $form["meta"]["#attributes"]["class"][] = "entity-meta";
   }
 
   if ($form_id == "revision_overview_form") {
