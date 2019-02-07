@@ -26,9 +26,9 @@ third_party_settings:
     group_article:
       children:
         - group_basic_info
-        - group_page_meta_data
         - group_sidebar_components
         - group_components
+        - group_page_meta_data
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -40,10 +40,10 @@ third_party_settings:
       label: Article
     group_basic_info:
       children:
+        - field_contact
         - title
         - field_intro_text
         - body
-        - field_contact
       parent_name: group_article
       weight: 1
       format_type: tab
@@ -59,7 +59,7 @@ third_party_settings:
         - field_updated_date
         - field_published_date
       parent_name: group_article
-      weight: 2
+      weight: 4
       format_type: tab
       format_settings:
         id: ''
@@ -72,7 +72,7 @@ third_party_settings:
       children:
         - field_sidebar_components
       parent_name: group_article
-      weight: 3
+      weight: 2
       format_type: tab
       format_settings:
         id: ''
@@ -85,7 +85,7 @@ third_party_settings:
       children:
         - field_components
       parent_name: group_article
-      weight: 4
+      weight: 3
       format_type: tab
       format_settings:
         id: ''
@@ -102,7 +102,7 @@ bundle: article
 mode: default
 content:
   body:
-    weight: 3
+    weight: 7
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -152,7 +152,7 @@ content:
     region: content
   field_intro_text:
     type: text_textarea
-    weight: 2
+    weight: 6
     region: content
     settings:
       rows: 5
@@ -237,7 +237,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 5
     region: content
     settings:
       size: 60
