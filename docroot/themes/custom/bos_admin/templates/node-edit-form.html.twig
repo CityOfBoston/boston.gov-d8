@@ -12,7 +12,6 @@
 <div class="layout-node-form clearfix">
   <div class="layout-region layout-region-node-main">
     {{ form|without('footer', 'actions', 'group_secondary') }}
-    {#{{ form.advanced }}#}
   </div>
   <div class="layout-region layout-region-node-secondary">
     {{ form.group_secondary }}
@@ -21,7 +20,6 @@
   <div class="layout-region layout-region-node-footer">
     <div class="layout-region-node-footer__content">
       {{ form.footer }}
-      {{ form.actions }}
     </div>
   </div>
 </div>

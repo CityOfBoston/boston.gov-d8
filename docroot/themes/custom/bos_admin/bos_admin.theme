@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Component\Render\MarkupInterface;
 
 /**
  * Implements hook_preprocess_HOOK() for HTML document templates.
@@ -50,6 +51,31 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     // Load revision log to secondary-child block.
     $form["revision_log"]["#group"] = "group_secondary_revision_log";
 
+    // Close the URL Alias details fieldset.
+    $form["path"]["widget"][0]["#open"] = FALSE;
+
+    // Find the tabs group which is the ultimate parent.
+    $bundle = $form_state->getFormObject()->getEntity()->bundle();
+    $parent = NULL;
+    foreach ((array) $form['#fieldgroups'] as $fieldgroup) {
+      if ($fieldgroup->format_type == "tabs") {
+        $parent = $fieldgroup->group_name;
+        break;
+      }
+    }
+    if (!isset($parent)) {
+      \Drupal::messenger()
+        ->addWarning("DISPLAY WARNING: To arrange properly, this display form requires\n
+              a \"tabs\" group element, and
+              a customised node-edit-form.html.twig template.
+            See the article content-type for examples.");
+      \Drupal::logger("component")
+        ->warning("To display to content editors properly, the module %mod display_form requires a 'tabs' group element.", ["%mod" => $bundle])
+      ;
+      $form['advanced']['#group'] = "group_secondary";
+      return;
+    }
+
     // Move the Revisions info into a new details fieldset, and collapse.
     $form["group_revision"] = [
       "#type" => "details",
@@ -76,23 +102,21 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $fieldset->label = "Advanced";
     $fieldset->group_name = "group_bos_theme";
     $fieldset->entity_type = "node";
-    $fieldset->bundle = "article";
+    $fieldset->bundle = $bundle;
     $fieldset->context = "form";
     $fieldset->mode = "default";
-    $fieldset->parent_name = "group_article";
+    $fieldset->parent_name = $parent;
     $fieldset->weight = 10;
 
     // Configure the field group so it sits in the vertical tabs area.
     $form["#fieldgroups"][$fieldset->group_name] = $fieldset;
     $form["#fieldgroups"][$fieldset->parent_name]->children[] = $fieldset->group_name;
     $form["#group_children"][$fieldset->group_name] = $fieldset->parent_name;
-    foreach ($fieldset->children as &$child) {
+    foreach ($fieldset->children as $child) {
       $form["#group_children"][$child] = $fieldset->group_name;
       $form[$child]["#group"] = $fieldset->group_name;
     }
 
-    // Close the URL Alias details fieldset.
-    $form["path"]["widget"][0]["#open"] = FALSE;
     // Add css to close border on meta element.
     $form["meta"]["#attributes"]["class"][] = "entity-meta";
   }
