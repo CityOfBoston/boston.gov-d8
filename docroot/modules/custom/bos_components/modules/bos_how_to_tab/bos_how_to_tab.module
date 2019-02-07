@@ -9,21 +9,25 @@
  * Implements hook_theme().
  */
 function bos_how_to_tab_theme() {
-  $theme['paragraph__field_how_to_tabs'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  $theme['node__how_to'] = [
+    'base hook' => 'node',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
+  ];
+  $theme['field__field_how_to_tabs'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
   ];
   $theme['paragraph__how_to_contact_step'] = [
     'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
   ];
   $theme['paragraph__how_to_tab'] = [
     'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
   ];
   $theme['paragraph__how_to_text_step'] = [
     'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
   ];
   return $theme;
 }
