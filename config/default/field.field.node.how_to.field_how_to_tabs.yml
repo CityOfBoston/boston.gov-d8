@@ -5,7 +5,6 @@ dependencies:
   config:
     - field.storage.node.field_how_to_tabs
     - node.type.how_to
-    - paragraphs.paragraphs_type.how_to_tab
   module:
     - entity_reference_revisions
 id: node.how_to.field_how_to_tabs
@@ -21,8 +20,7 @@ default_value_callback: ''
 settings:
   handler_settings:
     negate: 0
-    target_bundles:
-      how_to_tab: how_to_tab
+    target_bundles: {  }
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: false
