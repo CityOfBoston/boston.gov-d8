@@ -4,3 +4,26 @@
  * @file
  * The Base module file for bos_how_to_tab module.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_how_to_tab_theme() {
+  $theme['paragraph__field_how_to_tabs'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  $theme['paragraph__how_to_contact_step'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  $theme['paragraph__how_to_tab'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  $theme['paragraph__how_to_text_step'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  return $theme;
+}
