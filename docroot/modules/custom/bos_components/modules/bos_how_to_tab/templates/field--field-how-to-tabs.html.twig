@@ -23,4 +23,6 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-{{ content }}
+{% for item in items %}
+  {{ item.content }}
+{% endfor %}
