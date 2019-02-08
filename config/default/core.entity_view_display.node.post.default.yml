@@ -9,11 +9,13 @@ dependencies:
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
+    - field.field.node.post.field_intro_text
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
     - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
+    - field.field.node.post.field_related
     - field.field.node.post.field_related_content
     - field.field.node.post.field_related_departments
     - field.field.node.post.field_related_events_notices
@@ -28,7 +30,7 @@ dependencies:
     - comment
     - datetime
     - entity_reference_revisions
-    - image
+    - svg_image
     - text
     - user
 id: node.post.default
@@ -70,6 +72,13 @@ content:
       link: false
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 102
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_news_tags:
     label: hidden
     weight: 8
@@ -110,6 +119,14 @@ content:
       format_type: medium
       timezone_override: ''
     third_party_settings: {  }
+    region: content
+  field_related:
+    weight: 101
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
   field_related_content:
     label: above

@@ -1,0 +1,22 @@
+uuid: 17846772-7afe-404b-b114-ecc53c27b928
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.news_and_announcements
+_core:
+  default_config_hash: ZV677talvScP2_hjcPc68mKAxcy7FTEG8wMwNPETl8w
+id: paragraph.news_and_announcements.uid
+field_name: uid
+entity_type: paragraph
+bundle: news_and_announcements
+label: 'Authored by'
+description: 'The user ID of the paragraphs author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\paragraphs\Entity\Paragraph::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference
