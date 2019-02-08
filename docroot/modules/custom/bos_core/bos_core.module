@@ -13,6 +13,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\bos_core\BosCoreHelp;
 use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_theme().
@@ -104,10 +105,76 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
  * Use this hook to manage the items in the contextual links drop-down.
  */
 function bos_core_contextual_links_alter(array &$links, $group, array $route_parameters) {
-  foreach ($links as $route => $data) {
-    // Remove all Delete functionality to avoid accidents.
-    if (strtolower($data["title"]) == "delete") {
-      unset($links[$route]);
+  if (!\Drupal::currentUser()->hasPermission("allow contextual delete")) {
+    foreach ($links as $route => $data) {
+      // Remove all Delete functionality to avoid accidents.
+      if (strtolower($data["title"]) == "delete") {
+        unset($links[$route]);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_moderation_sidebar_alter().
+ */
+function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entity) {
+  // Remove salesforce if there is no permission.
+  if (!\Drupal::currentUser()->hasPermission("view salesforce mapping")) {
+    unset($build["actions"]['salesforce_mapping.entities:node.salesforce_tab']);
+  }
+  // Remove devel if there is no permission.
+  if (!\Drupal::currentUser()->hasPermission("access devel information")) {
+    unset($build["actions"]['devel.entities:node.devel_tab']);
+  }
+  // Remove Content Access if there are no permissions.
+  if (!\Drupal::currentUser()->hasPermission("bypass node access")) {
+    unset($build["actions"]["entity.node.content_access"]);
+  }
+
+  if (isset($entity)) {
+    // Remove Translation if there are no permissions.
+    if (!\Drupal::currentUser()
+      ->hasPermission("administer content")
+      && !\Drupal::currentUser()
+        ->hasPermission("translate any entity")
+      && !\Drupal::currentUser()
+        ->hasPermission("create content translations")
+      && !\Drupal::currentUser()
+        ->hasPermission("translate " . str_replace("_", " ", $entity->bundle()) . " node")) {
+      unset($build["actions"]["content_translation.local_tasks:entity.node.content_translation_overview"]);
+    }
+    // Remove Delete option if there are no permissions.
+    if (!\Drupal::currentUser()
+      ->hasPermission("administer content")
+      && !\Drupal::currentUser()
+        ->hasPermission("delete any " . $entity->bundle() . " content")
+      && (!(\Drupal::currentUser()
+        ->hasPermission("delete own " . $entity->bundle() . " content")
+        && $entity->getOwnerId() == \Drupal::currentUser()->id()))
+      ) {
+      unset($build["actions"]["entity.node.delete_form"]);
+    }
+    // Remove Edit option if there are no permissions.
+    if (!\Drupal::currentUser()
+      ->hasPermission("administer content")
+      && !\Drupal::currentUser()
+        ->hasPermission("edit any " . $entity->bundle() . " content")
+      && (!(\Drupal::currentUser()
+        ->hasPermission("edit own " . $entity->bundle() . " content")
+        && $entity->getOwnerId() == \Drupal::currentUser()->id()))
+      ) {
+      unset($build["actions"]["entity.node.edit_form"]);
+    }
+    // Remove Revisions option if there are no permissions.
+    if (!\Drupal::currentUser()
+      ->hasPermission("administer content")
+      && !\Drupal::currentUser()
+        ->hasPermission("view all revisions")
+      && !\Drupal::currentUser()
+        ->hasPermission("view " . $entity->bundle() . " revisions")
+    ) {
+      unset($build["actions"]["entity.node.delete_form"]);
     }
   }
 }

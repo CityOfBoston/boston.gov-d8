@@ -5,15 +5,11 @@ dependencies:
   config:
     - field.field.node.article.body
     - field.field.node.article.comment
-    - field.field.node.article.comment_node_article
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
-    - field.field.node.article.field_image
     - field.field.node.article.field_intro_text
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
-    - field.field.node.article.field_tags
-    - field.field.node.article.field_type_of_content
     - field.field.node.article.field_updated_date
     - node.type.article
   module:
@@ -116,10 +112,6 @@ content:
     region: content
 hidden:
   comment: true
-  comment_node_article: true
-  field_image: true
-  field_tags: true
-  field_type_of_content: true
   langcode: true
   links: true
   published_at: true

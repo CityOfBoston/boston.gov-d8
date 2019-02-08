@@ -1,56 +1,44 @@
 track_enabled_base_fields: false
 local_task_enabled_entity_types:
+  - entity_browser
+  - file
+  - media
   - node
   - paragraphs_library_item
+  - profile
   - taxonomy_term
 _core:
   default_config_hash: D0RcOA_aIiwSPXOZSHQOTm5FXzziEsJHdfXGaF4nhIQ
 track_enabled_source_entity_types:
   - block_content
-  - comment
-  - content_moderation_state
-  - field_collection_item
   - media
   - node
   - paragraphs_library_item
-  - poll
-  - poll_choice
   - profile
-  - redirect
-  - salesforce_mapped_object
-  - shortcut
   - taxonomy_term
-  - token_custom
-  - vote
-  - vote_result
-  - menu_link_content
+  - taxonomy_vocabulary
+  - user
   - paragraph
 track_enabled_target_entity_types:
-  - block_content
-  - comment
-  - content_moderation_state
-  - field_collection_item
+  - field_storage_config
+  - file
   - media
   - node
   - paragraphs_library_item
-  - poll
-  - poll_choice
-  - profile
-  - redirect
-  - salesforce_mapped_object
-  - shortcut
+  - salesforce_mapping
   - taxonomy_term
+  - taxonomy_vocabulary
   - token_custom
-  - vote
-  - vote_result
-  - menu_link_content
+  - view
   - paragraph
 track_enabled_plugins:
-  - entity_reference
-  - link
-  - dynamic_entity_reference
-  - entity_embed
-  - html_link
   - block_field
+  - entity_reference
+  - entity_embed
+  - link
+  - html_link
   - linkit
+  - dynamic_entity_reference
 site_domains: {  }
+edit_warning_message_entity_types: {  }
+delete_warning_message_entity_types: {  }

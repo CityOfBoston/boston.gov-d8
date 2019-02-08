@@ -21,4 +21,108 @@ function bos_admin_preprocess_html(&$variables) {
  * Implements hook_form_alter().
  */
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
+    // Node-edit forms: Make the Revision log message required.
+    $form["revision_log"]["widget"][0]["value"]["#required"] = TRUE;
+    $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "You are required to supply some information about this update.";
+
+    // Create a secondary block group, and load.
+    $form["group_secondary"] = [
+      "#type" => "container",
+      "#weight" => 99,
+      "#attributes" => [
+        "class" => ["entity-meta__header", "entity-meta"],
+      ],
+    ];
+    // Load status and moderation state elements into block.
+    $form["status"]["#group"] = "group_secondary";
+    $form["moderation_state"]["#group"] = "group_secondary";
+
+    // Create a child block inside secondary block.
+    $form["group_secondary_revision_log"] = [
+      "#type" => "container",
+      "#group" => "group_secondary",
+      "#weight" => 99,
+      "#attributes" => [
+        "class" => ["entity-content-form-revision-information"],
+      ],
+    ];
+    // Load revision log to secondary-child block.
+    $form["revision_log"]["#group"] = "group_secondary_revision_log";
+
+    // Close the URL Alias details fieldset.
+    $form["path"]["widget"][0]["#open"] = FALSE;
+
+    // Find the tabs group which is the ultimate parent.
+    $bundle = $form_state->getFormObject()->getEntity()->bundle();
+    $parent = NULL;
+    foreach ((array) $form['#fieldgroups'] as $fieldgroup) {
+      if ($fieldgroup->format_type == "tabs") {
+        $parent = $fieldgroup->group_name;
+        break;
+      }
+    }
+    if (!isset($parent)) {
+      \Drupal::messenger()
+        ->addWarning("DISPLAY WARNING: To arrange properly, this display form requires\n
+              a \"tabs\" group element, and
+              a customised node-edit-form.html.twig template.
+            See the article content-type for examples.");
+      \Drupal::logger("component")
+        ->warning("To display to content editors properly, the module %mod display_form requires a 'tabs' group element.", ["%mod" => $bundle]);
+      $form['advanced']['#group'] = "group_secondary";
+      return;
+    }
+
+    // Move the Revisions info into a new details fieldset, and collapse.
+    $form["group_revision"] = [
+      "#type" => "details",
+      "#open" => FALSE,
+      "#group" => "advanced",
+      "#weight" => "-10",
+      "#title" => \Drupal::translation()->translate('Revision Information'),
+    ];
+    $form["revision_information"]["#group"] = "group_revision";
+
+    // Create a new field_group to hold config form elements.
+    $fieldset = new stdClass();
+    $fieldset->children = [
+      "advanced",
+    ];
+    $fieldset->format_type = "tab";
+    $fieldset->format_settings = [
+      "id" => "",
+      "classes" => "group-page-bos-admin field-group-tab",
+      "description" => "",
+      "required_fields" => TRUE,
+      "formatter" => "closed",
+    ];
+    $fieldset->label = "Advanced";
+    $fieldset->group_name = "group_bos_theme";
+    $fieldset->entity_type = "node";
+    $fieldset->bundle = $bundle;
+    $fieldset->context = "form";
+    $fieldset->mode = "default";
+    $fieldset->parent_name = $parent;
+    $fieldset->weight = 10;
+
+    // Configure the field group so it sits in the vertical tabs area.
+    $form["#fieldgroups"][$fieldset->group_name] = $fieldset;
+    $form["#fieldgroups"][$fieldset->parent_name]->children[] = $fieldset->group_name;
+    $form["#group_children"][$fieldset->group_name] = $fieldset->parent_name;
+    foreach ($fieldset->children as $child) {
+      $form["#group_children"][$child] = $fieldset->group_name;
+      $form[$child]["#group"] = $fieldset->group_name;
+    }
+
+    // Add css to close border on meta element.
+    $form["meta"]["#attributes"]["class"][] = "entity-meta";
+  }
+
+  if ($form_id == "revision_overview_form") {
+    // Revision form ...
+    $form["node_revisions_table"]["#header"]["select_column_one"] = "compare";
+    $form["node_revisions_table"]["#header"]["select_column_two"] = "compare";
+  }
+
 }
