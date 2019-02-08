@@ -100,23 +100,9 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 }
 
 /**
- * Implements hook_contextual_links_alter().
- *
- * Use this hook to manage the items in the contextual links drop-down.
- */
-function bos_core_contextual_links_alter(array &$links, $group, array $route_parameters) {
-  if (!\Drupal::currentUser()->hasPermission("allow contextual delete")) {
-    foreach ($links as $route => $data) {
-      // Remove all Delete functionality to avoid accidents.
-      if (strtolower($data["title"]) == "delete") {
-        unset($links[$route]);
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_moderation_sidebar_alter().
+ *
+ * @see https://www.drupal.org/files/issues/2018-09-17/moderation_sidebar-edit-access-check-3000387-2.patch
  */
 function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entity) {
   // Remove salesforce if there is no permission.
