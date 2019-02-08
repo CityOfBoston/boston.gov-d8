@@ -39,14 +39,13 @@ function bos_how_to_tab_preprocess_paragraph(&$variables) {
 
   $paragraph = $variables['elements']['#paragraph'];
   $paragraph_type = $paragraph->getType();
+  static $tabs_counter = -1;
   if ($paragraph_type == 'how_to_tab') {
-    static $tabs_counter;
     $variables['how_to_tabs_count'] = ++$tabs_counter;
   } 
   else if ($paragraph_type == 'how_to_text_step' || $paragraph_type =='how_to_contact_step') {
     static $steps_counter;
     static $previous_tab_count;
-    static $tabs_counter;
     if ($previous_tab_count < $tabs_counter) {
       $steps_counter = 0;
       $previous_tab_count = $tabs_counter;
