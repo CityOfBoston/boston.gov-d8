@@ -62,6 +62,7 @@
     "drupal/dynamic_entity_reference": "^2.0",
     "drupal/entity": "^1.0",
     "drupal/entity_browser": "^2.0",
+    "drupal/entity_clone": "^1.0",
     "drupal/entity_embed": "^1.0-beta2",
     "drupal/entity_usage": "^2.0",
     "drupal/environment_indicator": "^3.3",
@@ -76,12 +77,15 @@
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/libraries": "^3.0",
     "drupal/lightning_media": "^3.4",
+    "drupal/lightning_scheduler": "1.x-dev",
     "drupal/linkit": "^5.0",
     "drupal/login_security": "^1.4",
     "drupal/media_entity_browser": "^2.0",
     "drupal/memcache": "^2.0",
     "drupal/menu_block": "^1.5",
     "drupal/metatag": "^1.5",
+    "drupal/moderation_note": "^1.0",
+    "drupal/moderation_sidebar": "^1.1",
     "drupal/module_filter": "^3.1",
     "drupal/office_hours": "^1.1",
     "drupal/paragraphs": "^1.3",
@@ -190,6 +194,9 @@
       "drupal/media_entity_browser": {
         "https://www.drupal.org/project/media_entity_browser/issues/3011580": "./patches/media_entity_browser_3011580_1.patch",
         "Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
+      },
+      "drupal/rabbit_hole": {
+        "Compatibility with entity_clone": "https://www.drupal.org/files/issues/2018-12-04/fixing-operation-method-check--3013968-4.patch"
       }
     }
   }
