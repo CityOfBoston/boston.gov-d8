@@ -23,9 +23,8 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-{# TODO: review variable assignment: title = $content.field_how_to_title[0]['#markup #}
-{# TODO: review variable assignment: title_id = drupal_clean_css_identifier(drupal_html_class($title)) #}
-<div class="tab-p tab-p-{{ how_to_tabs_count }}" id="{{ title_id }}_content" {{ content_attributes }}>
+
+<div class="tab-p tab-p-{{ how_to_tabs_count }}" id="how_to_tab_content">
   {% if content.field_how_to_steps %}
     {{ content.field_how_to_steps }}
   {% endif %}
