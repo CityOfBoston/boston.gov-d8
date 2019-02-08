@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Render\MarkupInterface;
 
 /**
  * Implements hook_preprocess_HOOK() for HTML document templates.
@@ -70,8 +69,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
               a customised node-edit-form.html.twig template.
             See the article content-type for examples.");
       \Drupal::logger("component")
-        ->warning("To display to content editors properly, the module %mod display_form requires a 'tabs' group element.", ["%mod" => $bundle])
-      ;
+        ->warning("To display to content editors properly, the module %mod display_form requires a 'tabs' group element.", ["%mod" => $bundle]);
       $form['advanced']['#group'] = "group_secondary";
       return;
     }

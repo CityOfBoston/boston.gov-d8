@@ -1,4 +1,7 @@
 <?php
+
+namespace Drupal\bos_core\Plugin\Action;
+
 /**
  * Action description.
  *
@@ -16,12 +19,15 @@
  *
  */
 
-namespace Drupal\bos_core\Plugin\Action;
-
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
+/**
+ * Class ModerationBulkOperations.
+ *
+ * @package Drupal\bos_core\Plugin\Action
+ */
 class ModerationBulkOperations extends ViewsBulkOperationsActionBase {
 
   use StringTranslationTrait;
@@ -31,8 +37,8 @@ class ModerationBulkOperations extends ViewsBulkOperationsActionBase {
    */
   public function execute($entity = NULL) {
     // Do some processing..
-
-    // Don't return anything for a default completion message, otherwise return translatable markup.
+    // Don't return anything for a default completion message, otherwise
+    // return translatable markup.
     return $this->t('Changed Moderation State');
   }
 
@@ -50,4 +56,5 @@ class ModerationBulkOperations extends ViewsBulkOperationsActionBase {
     // access methods and properties.
     return TRUE;
   }
+
 }
