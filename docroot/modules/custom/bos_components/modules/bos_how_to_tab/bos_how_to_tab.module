@@ -33,24 +33,19 @@ function bos_how_to_tab_theme() {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function bos_how_to_tab_preprocess_node(&$variables) {
-  if ($node = $variables['node']) {
-    $type = $node->getType();
-    if ($type == 'how_to') {
-      $field_how_to_tabs = $node->get('field_how_to_tabs');
-      $tabs = $field_how_to_tabs->referencedEntities();
-      $tab_count = count($tabs);
-      $variables['how_to_tabs_count'] = $tab_count;
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess_HOOK__TYPE().
  */
 function bos_how_to_tab_preprocess_paragraph__how_to_tab(&$variables) {
+  $paragraph = $variables['elements']['#paragraph'];
+  $parent_node = $paragraph->getParentEntity();
+  $parent_node_type = $parent_node->getType();
+  if ($parent_node_type == 'how_to') {
+    $field_how_to_tabs = $parent_node->get('field_how_to_tabs');
+    $tabs = $field_how_to_tabs->referencedEntities();
+    $tab_count = count($tabs) - 1;
+    $variables['how_to_tabs_count'] = $tab_count;
+  }
+  /*
   $steps = $variables['elements']['field_how_to_steps']['#items'];
   $steps_list = $steps->referencedEntities();
   if (!empty($steps_list)) {
@@ -59,4 +54,5 @@ function bos_how_to_tab_preprocess_paragraph__how_to_tab(&$variables) {
   } else {
     $variables['how_to_step_count'] = 0;
   }
+  */
 }
