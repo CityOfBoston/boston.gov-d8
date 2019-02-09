@@ -25,10 +25,14 @@
  #}
 
 <div class="tab-p tab-p-{{ how_to_tabs_count }}" id="how_to_tab_content">
+  <div class="steps">
   {% if content.field_how_to_steps %}
     {{ content.field_how_to_steps }}
   {% endif %}
+  </div>
+  <div class="keep-in-mind">
   {% if content.field_keep_in_mind %}
     {{ content.field_keep_in_mind }}
   {% endif %}
+  </div>
 </div>
