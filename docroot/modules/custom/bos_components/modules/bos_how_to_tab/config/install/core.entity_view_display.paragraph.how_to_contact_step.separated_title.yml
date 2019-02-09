@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.separated_title
+    - field.field.paragraph.how_to_contact_step.field_address
     - field.field.paragraph.how_to_contact_step.field_operation_hours
     - field.field.paragraph.how_to_contact_step.field_step_details
     - field.field.paragraph.how_to_contact_step.field_title
@@ -13,6 +14,7 @@ bundle: how_to_contact_step
 mode: separated_title
 content: {  }
 hidden:
+  field_address: true
   field_operation_hours: true
   field_step_details: true
   field_title: true

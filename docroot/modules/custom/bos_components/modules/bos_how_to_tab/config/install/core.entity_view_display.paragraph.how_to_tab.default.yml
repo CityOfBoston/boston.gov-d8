@@ -8,6 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.how_to_tab
   module:
     - entity_reference_revisions
+    - fences
     - text
 id: paragraph.how_to_tab.default
 targetEntityType: paragraph
@@ -21,7 +22,14 @@ content:
     settings:
       view_mode: full
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_how_to_title:
     label: hidden
