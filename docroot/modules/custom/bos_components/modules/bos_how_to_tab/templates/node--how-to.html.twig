@@ -26,8 +26,10 @@
   <ul class="tab">
     {% for index,tab in tabs %}
     <li class="tab-li tab-li-{{ index }}">
-      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">Another How-To Tab</label>
-      <label for="tabCTRL{{ index }}" data-href="#another-how-to-tab" class="tab-li-a tab-li-a-{{ index }}">Another How-To Tab</label>
+      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">{{ tab }}</label>
+      <label for="tabCTRL{{ index }}" data-href="#{{ tab|lower|replace(' ','-') }}" class="tab-li-a tab-li-a-{{ index }}">
+        {{ tab }}
+      </label>
     </li>
     {% endfor %}
     <li class="tab-li tab-li-close">
