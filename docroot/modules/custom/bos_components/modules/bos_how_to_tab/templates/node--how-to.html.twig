@@ -8,8 +8,8 @@
  #}
 
 <input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">
-{% for tab_index in tab_count %}
-<input id="tabCTRL{{ tab_index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ tab_index }}" data-href="#how-to-tab" checked="" aria-hidden="true">
+{% for index,tab in tabs %}
+<input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">
 {% endfor %}
 
 {% if content.field_intro_image %}

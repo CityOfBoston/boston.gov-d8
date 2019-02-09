@@ -41,8 +41,7 @@ function bos_how_to_tab_preprocess_node(&$variables) {
     if ($type == 'how_to') {
       $field_how_to_tabs = $node->get('field_how_to_tabs');
       $tabs = $field_how_to_tabs->referencedEntities();
-      $tab_count = count($tabs);
-      $variables['tab_count'] = $tab_count;
+      $variables['tabs'] = $tabs;
     }
   }
 }
