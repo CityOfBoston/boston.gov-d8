@@ -12,11 +12,11 @@
 <input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">
 {% endfor %}
 
-{% if content.field_intro_image %}
+{% if not node.field_intro_image.isempty %}
   {{ content.field_intro_image }}
 {% endif %}
 
-<div class="hro {% if content.field_intro_image %}hro--t{% else %}hro--d{% endif %} hro--wh b--fw">
+<div class="hro {% if node.field_intro_image.isempty %}hro--d{% else %}hro--t{% endif %} hro--wh b--fw">
   <div class="hro-c b-c">
     <h1 class="hro-t">{{ node.label }}</h1>
     {% if content.body %}
