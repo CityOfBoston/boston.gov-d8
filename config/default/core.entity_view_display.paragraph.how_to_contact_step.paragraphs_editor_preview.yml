@@ -1,21 +1,23 @@
-uuid: 83593d3d-f808-49b9-a2ea-0796fac47504
+uuid: 5f9d11ca-6cb1-419f-b9a6-7873ec423875
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.how_to_contact_step.field_address
     - field.field.paragraph.how_to_contact_step.field_operation_hours
     - field.field.paragraph.how_to_contact_step.field_step_details
     - field.field.paragraph.how_to_contact_step.field_title
     - paragraphs.paragraphs_type.how_to_contact_step
 _core:
-  default_config_hash: JjQecubA1seR7is-ChrLUY_FtkEq4mAmcdK3cijpD28
+  default_config_hash: KJ-vNBjCZLwr3_ig5itqaRElhKaGcnbpKVpYHmaT1Bo
 id: paragraph.how_to_contact_step.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: how_to_contact_step
 mode: paragraphs_editor_preview
 content: {  }
 hidden:
+  field_address: true
   field_operation_hours: true
   field_step_details: true
   field_title: true
