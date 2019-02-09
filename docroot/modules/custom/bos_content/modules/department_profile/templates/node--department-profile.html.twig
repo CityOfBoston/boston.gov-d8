@@ -100,17 +100,18 @@
             {{ content.field_intro_text }}
          {% endif %}
 
-         <div class="sub-nav-trigger drawer-trigger">
-            <div class="sub-nav-chevron">
-               {{ sub_nav|raw }}
+         {% if navOutput %}
+            <div class="sub-nav-trigger drawer-trigger">
+               <div class="sub-nav-chevron">
+                  {{ sub_nav|raw }}
+               </div>
+               Page Sections
             </div>
-            Page Sections
-         </div>
-
-         <nav class="topic-nav topic-nav__left">
-            <ul></ul>
-            <a name="section-nav"></a>
-         </nav>
+            <nav class="topic-nav topic-nav__left">
+               <a name="section-nav"></a>
+               {{ navOutput }}
+            </nav>
+         {% endif %}
 
          <div class="body">
             {{ content.body }}

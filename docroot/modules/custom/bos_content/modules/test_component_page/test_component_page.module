@@ -57,7 +57,6 @@ function template_preprocess_node__test_component_page(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
-  $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
 }
 
 /**

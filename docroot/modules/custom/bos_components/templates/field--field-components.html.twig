@@ -41,11 +41,13 @@
     {% if multiple %}
         <div{{ attributes }}>
             {% for item in items %}
+                <a{{ item.content.nav_title.attributes }}></a>
                 {{ item.content }}
             {% endfor %}
         </div>
     {% else %}
         {% for item in items %}
+            <a{{ item.content.nav_title.attributes }}></a>
             {{ item.content }}
         {% endfor %}
     {% endif %}
@@ -53,13 +55,14 @@
     <div{{ attributes }}>
         <div{{ title_attributes }}>{{ label }}</div>
         {% if multiple %}
-        <div>
-            {% endif %}
-            {% for item in items %}
-                <div{{ item.attributes }}>{{ item.content }}</div>
-            {% endfor %}
-            {% if multiple %}
-        </div>
+            <div>
+        {% endif %}
+        {% for item in items %}
+            <a{{ item.content.nav_title.attributes }}></a>
+            <div{{ item.attributes }}>{{ item.content }}</div>
+        {% endfor %}
+        {% if multiple %}
+            </div>
         {% endif %}
     </div>
 {% endif %}
