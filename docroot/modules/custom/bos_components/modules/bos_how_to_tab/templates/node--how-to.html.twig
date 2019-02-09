@@ -24,6 +24,12 @@
     {% endif %}
   </div>
   <ul class="tab">
+    {% for index,tab in tabs %}
+    <li class="tab-li tab-li-{{ index }}">
+      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">Another How-To Tab</label>
+      <label for="tabCTRL{{ index }}" data-href="#another-how-to-tab" class="tab-li-a tab-li-a-{{ index }}">Another How-To Tab</label>
+    </li>
+    {% endfor %}
     <li class="tab-li tab-li-close">
       <label for="tabMenuCTRL" class="tab-li-a tab-li-a--c" aria-hidden="true">Close</label>
     </li>
