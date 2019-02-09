@@ -40,7 +40,10 @@ function bos_how_to_tab_preprocess_node(&$variables) {
     $type = $node->getType();
     if ($type == 'how_to') {
       $field_how_to_tabs = $node->get('field_how_to_tabs');
-      $tabs = $field_how_to_tabs->referencedEntities();
+      $tab_paragraphs = $field_how_to_tabs->referencedEntities();
+      foreach ($tab_paragraphs as $tab_paragraph) {
+        $tabs[] = $tab_paragraph->field_how_to_title->value;
+      }
       $variables['tabs'] = $tabs;
     }
   }
