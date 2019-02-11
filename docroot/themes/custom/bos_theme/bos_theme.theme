@@ -608,7 +608,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
 
     // Make the navigation menu.
     /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
-    if (isset($variables["content"]["field_components"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
+    if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
       $variables['navOutput'] = [
         '#theme' => 'item_list',
         '#list_type' => 'ul',
