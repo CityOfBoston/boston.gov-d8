@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_how_to_tab module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_how_to_tab_theme() {
+  $theme['node__how_to'] = [
+    'base hook' => 'node',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
+  ];
+  $theme['field__field_how_to_tabs'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
+  ];
+  $theme['paragraph__how_to_contact_step'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
+  ];
+  $theme['paragraph__how_to_tab'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
+  ];
+  $theme['paragraph__how_to_text_step'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_how_to_tab/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_how_to_tab_preprocess_node(&$variables) {
+  if ($node = $variables['node']) {
+    $type = $node->getType();
+    if ($type == 'how_to') {
+      $field_how_to_tabs = $node->get('field_how_to_tabs');
+      $tab_paragraphs = $field_how_to_tabs->referencedEntities();
+      foreach ($tab_paragraphs as $tab_paragraph) {
+        $tabs[] = $tab_paragraph->field_how_to_title->value;
+      }
+      $variables['tabs'] = $tabs;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_how_to_tab_preprocess_paragraph(&$variables) {
+
+  $paragraph = $variables['elements']['#paragraph'];
+  $paragraph_type = $paragraph->getType();
+  static $tabs_counter = -1;
+  if ($paragraph_type == 'how_to_tab') {
+    $variables['how_to_tabs_count'] = ++$tabs_counter;
+  }
+  elseif ($paragraph_type == 'how_to_text_step' || $paragraph_type == 'how_to_contact_step') {
+    static $steps_counter;
+    static $previous_tab_count;
+    if ($previous_tab_count < $tabs_counter) {
+      $steps_counter = 0;
+      $previous_tab_count = $tabs_counter;
+    }
+    $variables['how_to_step_count'] = ++$steps_counter;
+  }
+
+}
