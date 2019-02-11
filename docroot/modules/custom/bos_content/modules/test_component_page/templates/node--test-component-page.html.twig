@@ -49,20 +49,23 @@
                 </header>
             {% endif %}
 
-            <div class="intro-text supporting-text squiggle-border-bottom">
+            <div class="intro-text supporting-text">
                 <p>This is a test page for components on the boston.gov Drupal 8 site.</p>
             </div>
 
-            <div class="sub-nav-trigger drawer-trigger">
-                <div class="sub-nav-chevron">
-                    {{ sub_nav|raw }}
+            {% if navOutput %}
+                <div class="sub-nav-trigger drawer-trigger">
+                    <div class="sub-nav-chevron">
+                        {{ sub_nav|raw }}
+                    </div>
+                    Page Sections
                 </div>
-                Page Sections
-            </div>
-            <nav class="topic-nav topic-nav__left">
-                <ul></ul>
-                <a name="section-nav"></a>
-            </nav>
+                <nav class="topic-nav topic-nav__left">
+                    <a name="section-nav"></a>
+                    {{ navOutput }}
+                </nav>
+            {% endif %}
+
             <div class="body">
                 {# We hide the comments and links now so that we can render them later. #}
                 {#{{ content|without('created', 'uid', 'comments', 'links') }}#}

@@ -18,7 +18,7 @@
 
 {% set lclasses = ['clearfix', 'desktop-100'] %}
 {% if classes %}
-   {% set lclasses = lclasses|merge(classes) %}
+    {% set lclasses = lclasses|merge(classes) %}
 {% endif %}
 
 <article {{ attributes.addClass(lclasses) }}>
@@ -28,33 +28,34 @@
             Last updated: {{ content.field_updated_date }}
         </div>
     {% endif %}
-    
+
     <div class="department-info-wrapper desktop-100">
         <div class="column mobile-100 desktop-66-left">
 
-           {{ title_prefix }}
+            {{ title_prefix }}
 
-           {% if title %}
-               <h1{{ title_attributes }}>{{ title.0 }}</h1>
-           {%  endif %}
+            {% if title %}
+                <h1{{ title_attributes }}>{{ title.0 }}</h1>
+            {%  endif %}
 
             {{ title_suffix }}
 
-           {% if content.field_intro_text %}
-              {{ content.field_intro_text }}
-           {% endif %}
+            {% if content.field_intro_text %}
+                {{ content.field_intro_text }}
+            {% endif %}
 
-            <div class="sub-nav-trigger drawer-trigger">
-                <div class="sub-nav-chevron">
-                    {{ sub_nav|raw }}
+            {% if navOutput %}
+                <div class="sub-nav-trigger drawer-trigger">
+                    <div class="sub-nav-chevron">
+                        {{ sub_nav|raw }}
+                    </div>
+                    Page Sections
                 </div>
-                Page Sections
-            </div>
-
-            <nav class="topic-nav topic-nav__left">
-                <ul></ul>
-                <a name="section-nav"></a>
-            </nav>
+                <nav class="topic-nav topic-nav__left">
+                    <a name="section-nav"></a>
+                    {{ navOutput }}
+                </nav>
+            {% endif %}
 
             <div class="body">
                 {# We hide the comments and links now so that we can render them later. #}
