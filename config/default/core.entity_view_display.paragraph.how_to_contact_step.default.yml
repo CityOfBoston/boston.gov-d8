@@ -1,20 +1,39 @@
-uuid: a34d87fd-cfb7-4ab3-aaae-b5e488a8bbd3
+uuid: 14d51d67-974b-438e-abbc-fe34d2c2eb07
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.how_to_contact_step.field_address
     - field.field.paragraph.how_to_contact_step.field_operation_hours
     - field.field.paragraph.how_to_contact_step.field_step_details
     - field.field.paragraph.how_to_contact_step.field_title
     - paragraphs.paragraphs_type.how_to_contact_step
   module:
+    - address
     - entity_reference_revisions
+    - fences
     - text
+_core:
+  default_config_hash: CArD5e7pJ7J90dX0lOH7XB84ZcxBqllu4Amo2cOKeYU
 id: paragraph.how_to_contact_step.default
 targetEntityType: paragraph
 bundle: how_to_contact_step
 mode: default
 content:
+  field_address:
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: address_default
+    region: content
   field_operation_hours:
     label: hidden
     weight: 1

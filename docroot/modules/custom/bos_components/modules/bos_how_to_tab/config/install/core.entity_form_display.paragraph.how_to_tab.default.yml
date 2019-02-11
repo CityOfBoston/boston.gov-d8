@@ -1,0 +1,54 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.how_to_tab.field_how_to_steps
+    - field.field.paragraph.how_to_tab.field_how_to_title
+    - field.field.paragraph.how_to_tab.field_keep_in_mind
+    - paragraphs.paragraphs_type.how_to_tab
+  module:
+    - paragraphs
+    - text
+id: paragraph.how_to_tab.default
+targetEntityType: paragraph
+bundle: how_to_tab
+mode: default
+content:
+  field_how_to_steps:
+    weight: 2
+    type: entity_reference_paragraphs
+    settings:
+      title: 'How-To Step'
+      title_plural: 'How-To Steps'
+      edit_mode: open
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_how_to_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_keep_in_mind:
+    weight: 3
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
