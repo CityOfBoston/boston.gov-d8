@@ -58,20 +58,7 @@
     var list = $('.topic-nav ul');
 
     // Creates a menu item on any element it is called on.
-    $.fn.createNavItem = function () {
-      $(this).each(function () {
-        var thisTrim = $(this).attr('name');
-
-        if (thisTrim.length > 0) {
-          var tagID = thisTrim;
-          $(list).append('<li><a class="scroll-link-js" href="#' + tagID + '">' + $(this).data('text') + '</a></li>');
-        }
-      });
-    };
-
     if ($(".subnav-anchor").length) {
-      // Calling createNavItem on short titles.
-      $(".subnav-anchor").once('createNavItem').createNavItem();
 
       // Creates scroll effect on anchor links.
       $('.scroll-link-js').click(function () {

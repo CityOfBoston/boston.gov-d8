@@ -23,11 +23,6 @@ function department_profile_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_content/modules/department_profile/templates',
       'template' => 'node--department-profile-contact',
     ],
-    'field__field_intro_text__mode__full' => [
-      'base hook' => 'field',
-      'path' => 'modules/custom/bos_content/modules/department_profile/templates',
-      'template' => 'field--field-intro-text--mode--full',
-    ],
   ];
 }
 
@@ -50,18 +45,6 @@ function template_preprocess_node__department_profile(array &$variables) {
   foreach ($variables['attributes']['class'] as &$class) {
     $class = str_ireplace('_', '-', $class);
   }
-  $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function department_profile_preprocess_node(&$variables) {
-  if (!isset($variables["node"]) || $variables["node"]->bundle() != 'department_profile') {
-    return;
-  }
-  // Add javascript to enable component_navigation in-page menu (and scroll).
-  $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
 }
 
 /**
