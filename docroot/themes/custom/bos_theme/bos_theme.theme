@@ -195,22 +195,30 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
 
-  $variables['attributes']['class'] = ["html"];
-  $variables['attributes']['class'][] = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
-  $variables['attributes']['class'][] = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
+  if (empty($variables["attributes"])) {
+    $variables["attributes"] = new Attribute();
+  }
+
+  $variables['attributes']->addClass("html");
+  $newClass = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
+  $variables['attributes']->addClass($newClass);
+  $newClass = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
+  $variables['attributes']->addClass($newClass);
   if ($node = drupal::request()->get('node')) {
     $nid = $node->id();
-    $variables['attributes']['class'][] = "page-node-" . (isset($nid) ? $nid : "");
+    $newClass = "page-node-" . (isset($nid) ? $nid : "");
+    $variables['attributes']->addClass($newClass);
+
   }
 
   // Detect 400-status pages.
   switch ($variables['status_code']) {
     case 403:
-      $variables['attributes']['class'][] = "page-error page-403-error body-sidebars-none section-403-forbidden";
+      $variables['attributes']->addClass("page-error page-403-error body-sidebars-none section-403-forbidden");
       break;
 
     case 404:
-      $variables['attributes']['class'][] = "page-error page-404-error body-sidebars-none section-404-not-found";
+      $variables['attributes']->addClass("page-error page-404-error body-sidebars-none section-404-not-found");
       if (!$variables["page"]["#title"] instanceof Markup) {
         $string = new TranslatableMarkup("<h1>@title</h1>", ["@title" => $variables["page"]["#title"]->getUntranslatedString()]);
         $variables["page"]["#title"] = $string;
@@ -269,8 +277,8 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
 
   // Add in D7 style body classes:
   if (isset($variables['node_type'])) {
-    $variables["attributes"]['class'][] = "page-node";
-    $variables["attributes"]['class'][] = "node-type-" . _make_class($variables['node_type']);
+    $variables["attributes"]->addClass("page-node");
+    $variables["attributes"]->addClass("node-type-" . _make_class($variables['node_type']));
   }
 
 }
@@ -288,6 +296,10 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // view-controlled html and not a fully drupal-themed page.
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
     $variables['theme_hook_suggestions'][] = 'page__embed';
+  }
+
+  if (empty($variables["attributes"])) {
+    $variables["attributes"] = new Attribute();
   }
 
   // TODO: Review if needed in D8.
@@ -334,7 +346,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
           ->getEditable("bos_theme.settings")
           ->get("404-page");
         if (isset($variables['node'])) {
-          $variables['attributes']['data-quickedit-entity-id'] = "node/" . $variables['node']->id();
+          $variables['attributes']->setAttribute('data-quickedit-entity-id', "node/" . $variables['node']->id());
         }
         break;
 
@@ -343,7 +355,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
           ->getEditable("bos_theme.settings")
           ->get("403-page");
         if (isset($variables['node'])) {
-          $variables['attributes']['data-quickedit-entity-id'] = "node/" . $variables['node']->id();
+          $variables['attributes']->setAttribute('data-quickedit-entity-id', "node/" . $variables['node']->id());
         }
         break;
     }
@@ -387,9 +399,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $variables['#attached']['html_head'] = $metaTags;
 
   // D8 OK: Create necessary page classes.
-  if (empty($variables["attributes"])) {
-    $variables["attributes"] = new Attribute();
-  }
   if (isset($variables['node']) && is_object($variables['node'])) {
     if (!isset($variables["attributes"])) {
       $variables["attributes"] = new Attribute();
