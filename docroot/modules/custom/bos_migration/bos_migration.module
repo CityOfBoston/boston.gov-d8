@@ -9,6 +9,7 @@
  * Implements hook_migration_plugins_alter().
  */
 function bos_migration_migration_plugins_alter(array &$migrations) {
+  _migration_housekeeping($migrations);
 
   // Pass array into functions that alter each entity as needed.
   _node__department_profile($migrations);
@@ -21,6 +22,70 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
  * Helper functions.
  * Typically modify the plugin element in the process node of the config.
  */
+
+ /**
+  * Cleans up the list of migrations to only display those we need.
+  */
+function _migration_housekeeping(array &$migrations) {
+  $migrations = array_filter($migrations, function (array $migration) {
+    $tags = isset($migration['migration_tags']) ? (array) $migration['migration_tags'] : [];
+    if (in_array('Drupal 6', $tags)) {
+      return FALSE;
+    }
+    if (in_array($migration['id'], _get_unused_migrations())) {
+      return FALSE;
+    }
+    return TRUE;
+  });
+}
+
+/**
+ * Defines list of migrations to filter out.
+ */
+function _get_unused_migrations() {
+  return [
+    'd7_blocked_ips',
+    'd7_color',
+    'd7_dblog_settings',
+    'd7_filter_format',
+    'd7_filter_settings',
+    'd7_global_theme_settings',
+    'd7_image_settings',
+    'd7_image_styles',
+    'd7_language_negotiation_settings',
+    'd7_language_types',
+    'd7_node_settings',
+    'd7_realname_settings',
+    'd7_syslog_settings',
+    'd7_system_authorize',
+    'd7_system_cron',
+    'd7_system_date',
+    'd7_system_file',
+    'd7_system_mail',
+    'd7_system_performance',
+    'd7_theme_settings',
+    'd7_user_flood',
+    'd7_user_mail',
+    'd7_vote',
+    'd7_custom_block',
+    'd7_node_type',
+    'd7_comment_type',
+    'd7_comment_field',
+    'd7_comment_field_instance',
+    'd7_comment_entity_form_display',
+    'd7_comment_entity_form_display_subject',
+    'd7_comment_entity_display',
+    'd7_taxonomy_vocabulary',
+    'd7_field_collection_type',
+    'd7_paragraphs_type',
+    'd7_node_translation',
+    'd7_comment',
+    'd7_authmap',
+    'd7_field_instance_widget_settings',
+    'd7_node_revision',
+    'd7_node_title_label',
+  ];
+}
 
 /**
  * Alters the addressfield field so that the correct plugin is used.
