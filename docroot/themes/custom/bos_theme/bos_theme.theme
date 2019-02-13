@@ -391,7 +391,16 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     $variables["attributes"] = new Attribute();
   }
   if (isset($variables['node']) && is_object($variables['node'])) {
-    $variables["attributes"]->addClass("page");
+    if (!isset($variables["attributes"])) {
+      $variables["attributes"] = new Attribute();
+    }
+    if (is_array($variables["attributes"])) {
+      $variables["attributes"]['class'][] = "page";
+    }
+    else {
+      $variables["attributes"]->addClass("page");
+    }
+
     if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
       $variables["attributes"]->addClass("page--wa");
       $variables["attributes"]->setAttribute("id", "page");
