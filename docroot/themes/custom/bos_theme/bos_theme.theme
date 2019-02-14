@@ -673,11 +673,8 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
  */
 function bos_theme_preprocess_field(array &$variables, $hook) {
   // Emulate D7 paragraphs_items class-names.
-  if (!isset( $variables['attributes'])) {
+  if (!isset($variables['attributes'])) {
     $variables['attributes'] = new Attribute();
-  }
-  if (!isset( $variables['attributes']['class'])) {
-//    $variables['attributes']['class'] = new AttributeArray('class',[]);
   }
   if ($variables['field_type'] == "entity_reference_revisions" && isset($variables['items'][0]['content']['#paragraph'])) {
     $variables['attributes']->addClass("paragraphs-items");
@@ -884,14 +881,14 @@ function _make_nav_anchor(string $title) {
  * This snippet fixes the situation where a module has defined an attributes
  * element as an array and not a Drupal\core\Template\Attribute object.
  *
- * @param $variables
+ * @param array $variables
  *   The current variables array as generated pre-rendering.
  */
-function _bos_theme_fix_attributes(&$variables) {
+function _bos_theme_fix_attributes(array &$variables) {
   if (!empty($variables['attributes']) && is_array($variables['attributes'])) {
     $attribute = new Attribute();
     foreach ($variables["attributes"] as $key => $element) {
-      $attribute -> setAttribute($key, $element);
+      $attribute->setAttribute($key, $element);
     }
     if (!empty($attribute)) {
       $variables['attributes'] = $attribute;
