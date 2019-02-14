@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\core\Template\Attribute;
+use Drupal\Core\Template\AttributeArray;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
@@ -144,6 +145,9 @@ function bos_theme_process_maintenance_page(array &$variables, $hook) {
  *   The variables to be passed to the twig template.
  */
 function bos_theme_preprocess(array &$variables, $hook) {
+  // Ensure attributes in an Attributes object.
+  _bos_theme_fix_attributes($variables);
+
   if (in_array($hook, ['html', 'page', 'node'])) {
     $variables['bos_theme'] = [
       'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
@@ -403,12 +407,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     if (!isset($variables["attributes"])) {
       $variables["attributes"] = new Attribute();
     }
-    if (is_array($variables["attributes"])) {
-      $variables["attributes"]['class'][] = "page";
-    }
-    else {
-      $variables["attributes"]->addClass("page");
-    }
+    $variables["attributes"]->addClass("page");
 
     if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
       $variables["attributes"]->addClass("page--wa");
@@ -616,8 +615,12 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       ]);
     }
 
-    $variables['attributes']['id'] = 'node-' . $variables['nid'];
+    if (empty($variables["attributes"])) {
+      $variables["attributes"] = new Attribute();
+    }
+
     // Add in the necessary classes.
+    $variables['attributes']->addClass('node-' . $variables['nid']);
     $variables['attributes']['class'][] = 'node';
     $variables['attributes']['class'][] = 'node-' . _make_class($variables['node_type']);
     if ($variables['unpublished']) {
@@ -671,21 +674,27 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
  */
 function bos_theme_preprocess_field(array &$variables, $hook) {
   // Emulate D7 paragraphs_items class-names.
+  if (!isset( $variables['attributes'])) {
+    $variables['attributes'] = new Attribute();
+  }
+  if (!isset( $variables['attributes']['class'])) {
+//    $variables['attributes']['class'] = new AttributeArray('class',[]);
+  }
   if ($variables['field_type'] == "entity_reference_revisions" && isset($variables['items'][0]['content']['#paragraph'])) {
-    $variables['attributes']['class'][] = "paragraphs-items";
-    $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['field_name']);
-    $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['items'][0]['content']['#view_mode']);
-    $variables['attributes']['class'][] = "paragraphs-items-" . _make_class($variables['field_name']) . "-" . _make_class($variables['items'][0]['content']['#view_mode']);
+    $variables['attributes']->addClass("paragraphs-items");
+    $variables['attributes']->addClass("paragraphs-items-" . _make_class($variables['field_name']));
+    $variables['attributes']->addClass("paragraphs-items-" . _make_class($variables['items'][0]['content']['#view_mode']));
+    $variables['attributes']->addClass("paragraphs-items-" . _make_class($variables['field_name']) . "-" . _make_class($variables['items'][0]['content']['#view_mode']));
   }
   else {
-    $variables['attributes']['class'][] = "field";
-    $variables['attributes']['class'][] = "field-name-" . _make_class($variables['field_name']);
+    $variables['attributes']->addClass("field");
+    $variables['attributes']->addClass("field-name-" . _make_class($variables['field_name']));
     if ($variables['field_type'] == "string") {
-      $variables['attributes']['class'][] = "field-type-text";
+      $variables['attributes']->addClass("field-type-text");
     }
-    $variables['attributes']['class'][] = "field-type-" . _make_class($variables['field_type']);
+    $variables['attributes']->addClass("field-type-" . _make_class($variables['field_type']));
     if (isset($variables["label_display"]) && !$variables["label_display"]) {
-      $variables['attributes']['class'][] = "field-label-hidden";
+      $variables['attributes']->addClass("field-label-hidden");
     }
   }
 
@@ -719,8 +728,8 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
   if (!empty($variables['paragraph'])) {
-    $variables['attributes']['class'][] = 'entity entity-paragraphs-item component-section';
-    $variables['attributes']['class'][] = 'paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle());
+    $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
+    $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
   }
 }
 
@@ -868,4 +877,25 @@ function _make_class(string $class) {
  */
 function _make_nav_anchor(string $title) {
   return str_replace([" ", ":", "_", "\,"], "-", strtolower($title));
+}
+
+/**
+ * Ensure attributes element of variables array is an Attribute object.
+ *
+ * This snippet fixes the situation where a module has defined an attributes
+ * element as an array and not a Drupal\core\Template\Attribute object.
+ *
+ * @param $variables
+ *   The current variables array as generated pre-rendering.
+ */
+function _bos_theme_fix_attributes(&$variables) {
+  if (!empty($variables['attributes']) && is_array($variables['attributes'])) {
+    $attribute = new Attribute();
+    foreach ($variables["attributes"] as $key => $element) {
+      $attribute -> setAttribute($key, $element);
+    }
+    if (!empty($attribute)) {
+      $variables['attributes'] = $attribute;
+    }
+  }
 }
