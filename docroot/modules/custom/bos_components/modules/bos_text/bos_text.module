@@ -79,12 +79,12 @@ function bos_text_preprocess_paragraph(&$variables) {
   // Add standard classes.
   $variables['attributes']['class'][] = 'entity';
   $variables['attributes']['class'][] = 'entity-paragraphs-item';
-  $variables['attributes']['class'][] = 'paragraphs-item-' . _make_class($variables['paragraph']->bundle());
+  $variables['attributes']['class'][] = Html::cleanCssIdentifier('paragraphs-item-' . $variables['paragraph']->bundle());
   $variables['attributes']['class'][] = 'component-section';
 
   // Manage background images.
   if (isset($variables["paragraph"]->field_background_image->value)) {
-    $variables['attributes']['class'][] = _make_class($variables["paragraph"]->field_background_image->value);
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier($variables["paragraph"]->field_background_image->value);
   }
 
   // Assign tow/three_column classes.
