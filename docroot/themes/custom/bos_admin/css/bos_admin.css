@@ -25,6 +25,57 @@
   background-color: #f2f2f0;
 }
 
+/* Adds a calendar to the workflow scheduler. */
+transitionset.moderation-state {
+  display: block;
+  border: 1px solid #b8b8b8;
+  margin-top: 1em;
+}
+transitionset.moderation-state a {
+  background-image: url(/sites/default/files/paragraphs_type_icon/calendar.svg);
+  background-repeat: no-repeat;
+  padding-left: 3em;
+  line-height: 3em;
+  display: block;
+}
+transitionset.moderation-state .scheduled-transition {
+  margin: 1em;
+}
+transitionset.moderation-state .scheduled-transition a {
+  background-image: none;
+  padding-left: initial;
+  line-height: initial;
+  display: initial;
+}
+transitionset.moderation-state .scheduled-transition label {
+  display: block;
+}
+transitionset.moderation-state .scheduled-transition button {
+  margin-top: 1em;;
+}
+
+div[id^=edit-moderation-state-].container-inline,
+div#edit-meta-published {
+  border: 1px solid #b8b8b8;
+  padding: 1em;
+  background-color: #269e2c;
+  color: #333;
+  margin-bottom: 1em;
+}
+
+div[id^=edit-moderation-state-].status-draft,
+div[id^=edit-moderation-state-].status-needs-review,
+div#edit-meta-published.status-draft,
+div#edit-meta-published.status-needs-review {
+  background-color: #bd2727;
+  color: #fff;
+}
+div[id^=edit-moderation-state-].status-draft-available,
+div#edit-meta-published.status-draft-available {
+  background-color: #ffae00;
+}
+
+
 /******** LEGACY **************************/
 
 /*html {

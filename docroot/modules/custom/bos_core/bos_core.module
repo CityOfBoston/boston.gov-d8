@@ -14,6 +14,7 @@ use Drupal\bos_core\BosCoreHelp;
 use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_theme().
@@ -353,9 +354,15 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
  *
  * @param string $fid
  *   File ID.
+ *
+ * @return bool|string
+ *   The filename or false if $fid not found.
  */
 function _bos_core_get_file_name(string $fid) {
-  $file = file_load($fid);
-  $name = $file->get('filename')->getValue();
-  return $name['0']['value'];
+  $out = FALSE;
+  if ($file = File::load($fid)) {
+    $name = $file->get('filename')->getValue();
+    $out = $name['0']['value'];
+  }
+  return $out;
 }

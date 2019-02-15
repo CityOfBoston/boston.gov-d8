@@ -71,6 +71,24 @@ type_settings:
         - draft
       to: needs_review
       weight: -2
+    update_draft:
+      label: 'Update Draft'
+      from:
+        - draft
+      to: draft
+      weight: 3
+    update_needs_review:
+      label: 'Update Needs Review'
+      from:
+        - needs_review
+      to: needs_review
+      weight: 4
+    update_published:
+      label: 'Update Published'
+      from:
+        - published
+      to: published
+      weight: 5
   entity_types:
     node:
       - article
