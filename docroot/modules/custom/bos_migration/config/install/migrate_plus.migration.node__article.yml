@@ -1,0 +1,82 @@
+id: node__article
+label: 'Article Node'
+#audit:  1
+migration_tags:
+  - Drupal 7
+  - Content
+migration_group: bos_nodes
+#provider:  node
+
+migration_dependencies:
+  required:
+    - d7_user
+  optional:
+    - d7_field_instance
+    - d7_comment_field_instance
+
+source:
+  plugin: d7_node
+  node_type: article
+destination:
+  plugin: 'entity:node'
+  default_bundle:  article
+  new_revisions: true
+
+process:
+  nid: tnid
+  vid: vid
+  langcode:
+    plugin:  default_value
+    source:  language
+    default_value: "en"
+  title:  title
+  type:
+    plugin: default_value
+    default_value: article
+  uid: node_uid
+  status: status
+  created: created
+  changed: changed
+  promote: promote
+  sticky: sticky
+  revision_uid: revision_uid
+  revision_log: log
+  revision_timestamp: timestamp
+  comment_node_article:
+    status: comment
+  body:
+    plugin: get
+    source: body
+  field_components:
+    plugin: get
+    source: field_components
+  field_contact:
+    plugin: get
+    source: field_contact
+  field_intro_text:
+    plugin: get
+    source: field_intro_text
+  field_published_date:
+    plugin:  sub_process
+    source:  field_published_date
+    process:
+      value:
+        plugin:  format_date
+        from_format:  'Y-m-d\TH:i:s'
+        to_format:  'Y-m-d\TH:i:s'
+        source:  value
+  field_updated_date:
+    plugin:  sub_process
+    source:  field_updated_date
+    process:
+      value:
+        plugin: format_date
+        from_format:  'Y-m-d\TH:i:s'
+        to_format:  'Y-m-d\TH:i:s'
+        source:  value
+  field_sidebar_components:
+    plugin: get
+    source: field_sidebar_components
+  field_type_of_content:
+    plugin:  get
+    source:  field_type_of_content

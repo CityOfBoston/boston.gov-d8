@@ -138,7 +138,7 @@
     <echo message="Migrates taxonomy content into site." level="info"/>
     <property name="migration.options" value="--force -v --update"/>
     <property name="migration.configs" override="true"
-              value="d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:maps_basemap,d7_taxonomy_term:maps_esri_feed,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:type_of_content,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact"/>
+              value="d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
   <target name="migrate:taxonomy:config">
