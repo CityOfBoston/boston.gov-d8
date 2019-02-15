@@ -22,6 +22,7 @@ function bos_admin_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
 /**
  * Implements hook_preprocess_HOOK() for HTML document templates.
  */
@@ -158,7 +159,9 @@ function bos_admin_form_node_article_edit_form_alter(array &$form) {
  * Check to see if a log value has been provided when one is needed.
  *
  * @param array $form
+ *   The form array.
  * @param \Drupal\Core\Form\FormState $form_state
+ *   The form_state object.
  */
 function bos_admin_node_edit_vaidate(array &$form, FormState &$form_state) {
   // If the user has not supplied a revision_log value.

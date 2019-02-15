@@ -354,11 +354,12 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
  *
  * @param string $fid
  *   File ID.
- * @return boolean|string
+ *
+ * @return bool|string
  *   The filename or false if $fid not found.
  */
 function _bos_core_get_file_name(string $fid) {
-  $out = false;
+  $out = FALSE;
   if ($file = File::load($fid)) {
     $name = $file->get('filename')->getValue();
     $out = $name['0']['value'];
