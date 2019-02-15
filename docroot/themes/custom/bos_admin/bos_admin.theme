@@ -6,7 +6,22 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormState;
 
+/**
+ * Implements theme.api.php hook_theme().
+ *
+ * @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_theme/8.2.x
+ */
+function bos_admin_theme($existing, $type, $theme, $path) {
+  return [
+    'container' => [
+      'base hook' => 'container',
+      'path' => 'themes/custom/bos_admin/templates',
+      'template' => 'container',
+    ],
+  ];
+}
 /**
  * Implements hook_preprocess_HOOK() for HTML document templates.
  */
@@ -21,7 +36,6 @@ function bos_admin_preprocess_html(&$variables) {
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
     // Node-edit forms: Make the Revision log message required.
-    $form["revision_log"]["widget"][0]["value"]["#required"] = TRUE;
     $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "You are required to supply some information about this update.";
 
     /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/content-editor-ux */
@@ -124,4 +138,46 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $form["node_revisions_table"]["#header"]["select_column_two"] = "compare";
   }
 
+  // Theme the status a little bit.
+  $form["meta"]["published"]["#wrapper_attributes"]['class'][] = "status-" . _make_nav_anchor($form["meta"]["published"]["#markup"]);
+  $form["moderation_state"]["widget"][0]["current"]["#wrapper_attributes"]["class"][] = "status-" . _make_nav_anchor($form["moderation_state"]["widget"][0]["current"]["#markup"]);
+  $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
+}
+
+/**
+ * Adds validation for the Revision Log Message.
+ *
+ * @param array $form
+ *   The form element.
+ */
+function bos_admin_form_node_article_edit_form_alter(array &$form) {
+  $form['#validate'][] = "bos_admin_node_edit_vaidate";
+}
+
+/**
+ * Check to see if a log value has been provided when one is needed.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormState $form_state
+ */
+function bos_admin_node_edit_vaidate(array &$form, FormState &$form_state) {
+  // If the user has not supplied a revision_log value.
+  if ($form_state->getValue('revision_log')[0]['value'] == "") {
+    if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
+      $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
+    }
+  }
+}
+
+/**
+ * Helper to change the component title into a string safe for use as an anchor.
+ *
+ * @param string $title
+ *   Title to convert to an anchor name.
+ *
+ * @return string
+ *   Input string with no spaces in lowercase.
+ */
+function _make_nav_anchor(string $title) {
+  return str_replace([" ", ":", "_", "\,"], "-", strtolower($title));
 }
