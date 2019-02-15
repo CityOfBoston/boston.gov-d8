@@ -1,0 +1,22 @@
+id: paragraph__featured_item
+label: 'Featured Item Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: featured_item
+process:
+  field_featured_item: field_featured_item
+destination:
+  plugin: entity:paragraph
+  default_bundle: featured_item
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

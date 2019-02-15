@@ -1,0 +1,23 @@
+id: paragraph__commission_info
+label: 'Commission Info Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: commission_info
+process:
+  field_commission: field_commission
+  field_show_contact_info: field_show_contact_info
+destination:
+  plugin: entity:paragraph
+  default_bundle: commission_info
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }
