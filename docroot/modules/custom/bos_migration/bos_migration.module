@@ -9,9 +9,8 @@
  * Implements hook_migration_plugins_alter().
  */
 function bos_migration_migration_plugins_alter(array &$migrations) {
-  _migration_housekeeping($migrations);
-
   // Pass array into functions that alter each entity as needed.
+  _migration_housekeeping($migrations);
   _node__department_profile($migrations);
 
   \Drupal::logger('migrate')
@@ -84,6 +83,7 @@ function _get_unused_migrations() {
     'd7_field_instance_widget_settings',
     'd7_node_revision',
     'd7_node_title_label',
+    'd7_file',
   ];
 }
 
