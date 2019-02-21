@@ -13,6 +13,7 @@ use Drupal\migrate\Row;
  * )
  */
 class ManagedFiles extends File {
+  use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
   /**
    * {@inheritdoc}
@@ -32,17 +33,11 @@ class ManagedFiles extends File {
     // the URI relative to the Drupal root.
     $path = str_replace(['public:/', 'private:/', 'temporary:/'], [$this->publicPathMigration, $this->privatePathMigration, $this->temporaryPathMigration], $row->getSourceProperty('uri'));
     $row->setSourceProperty('source_base_path', $path);
-
-    // Move public files out of root directory.
-    if (strpos($row->getSourceProperty('uri'), 'public://') !== FALSE) {
-      $relative_uri = str_replace('public://', NULL, $row->getSourceProperty('uri'));
-      // After stripping the stream wrapper, files in the root directory will
-      // nessicarily be eqal to their filenames.
-      if ($relative_uri === $row->getSourceProperty('filename')) {
-        $hash = md5($row->getSourceProperty('filename'));
-        $row->setSourceProperty('uri', "public://{$hash}/{$relative_uri}");
-      }
+    $rewritten_uri = $this->rewriteUri($row->getSourceProperty('uri'));
+    if ($rewritten_uri !== $row->getSourceProperty('uri')) {
+      $row->setSourceProperty('uri', $rewritten_uri);
     }
+
     return parent::prepareRow($row);
   }
 
