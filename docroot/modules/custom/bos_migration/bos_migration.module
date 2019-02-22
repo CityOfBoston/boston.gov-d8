@@ -96,23 +96,49 @@ function _get_unused_migrations() {
 }
 
 /**
- * Alters rich text field migrations.
+ * Insert rich_text_to_media_embed plugin into pipeline of rich tech fields.
  */
 function _rich_text_field_alter(&$migrations) {
-  $rich_text_fields = _get_rich_text_fields();
-
-  $tswt = 's';
-}
-
-/**
- * Gets list of all rich text fields from migration source.
- */
-function _get_rich_text_fields() {
   $result = Database::getConnection('default', 'migrate')
     ->query("SELECT field_name FROM field_config WHERE type IN ('text_long', 'text_with_summary')")
     ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
-  return array_keys($result);
+  if (!empty($result)) {
+    $rich_text_fields = array_keys($result);
+    $rich_text_fields = array_flip($rich_text_fields);
+    $process_to_insert = ['plugin' => 'rich_text_to_media_embed'];
+    foreach ($migrations as $key => $value) {
+      $matches = array_intersect_key($value['process'], $rich_text_fields);
+      if (!empty($matches)) {
+        foreach ($matches as $destination => $process) {
+          if (is_string($process)) {
+            $current_source = $migrations[$key]['process'][$destination];
+            $migrations[$key]['process'][$destination] = [
+              '0' => [
+                'plugin' => 'get',
+                'source' => $current_source,
+              ],
+              '1' => $process_to_insert,
+            ];
+            unset($current_source);
+          }
+          elseif (is_array($process)) {
+            if (empty($migrations[$key]['process']['0'])) {
+              $current_process = $migrations[$key]['process'][$destination];
+              $migrations[$key]['process'][$destination] = [
+                '0' => $current_process,
+                '1' => $process_to_insert,
+              ];
+              unset($current_process);
+            }
+            else {
+              $migrations[$key]['process'][$destination][] = $process_to_insert;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
