@@ -31,7 +31,15 @@ class ManagedFiles extends File {
   public function prepareRow(Row $row) {
     // Compute the filepath property, which is a physical representation of
     // the URI relative to the Drupal root.
-    $path = str_replace(['public:/', 'private:/', 'temporary:/'], [$this->publicPathMigration, $this->privatePathMigration, $this->temporaryPathMigration], $row->getSourceProperty('uri'));
+    $path = str_replace(
+      ['public:/', 'private:/', 'temporary:/'],
+      [
+        $this->publicPathMigration,
+        $this->privatePathMigration,
+        $this->temporaryPathMigration,
+      ],
+      $row->getSourceProperty('uri')
+    );
     $row->setSourceProperty('source_base_path', $path);
     $rewritten_uri = $this->rewriteUri($row->getSourceProperty('uri'));
     if ($rewritten_uri !== $row->getSourceProperty('uri')) {
