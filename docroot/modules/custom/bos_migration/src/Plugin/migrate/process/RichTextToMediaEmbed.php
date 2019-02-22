@@ -19,7 +19,7 @@ use Drupal\media\Entity\Media;
  * )
  */
 class RichTextToMediaEmbed extends ProcessPluginBase {
-  use HtmlParsingTrait;
+  use \Drupal\bos_migration\HtmlParsingTrait;
   use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
   protected static $migratedFileBaseUri = "public://";
@@ -31,11 +31,17 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    if (!is_string($value)) {
-      throw new MigrateException('RichTextToMediaEmbed process plugin only accepts string values');
+    if (empty($value['value'] || !is_string($value['value']))) {
+      throw new MigrateException('RichTextToMediaEmbed process plugin only accepts rich text inputs.');
     }
 
-    return $this->convertToEntityEmbed($value, $migrate_executable);
+    if (!empty($value['format']) && $value['format'] == 'plain_text') {
+      // Nothing to do here.
+      return $value;
+    }
+
+    $value['value'] = $this->convertToEntityEmbed($value['value'], $migrate_executable);
+    return $value;
   }
 
   /**
@@ -59,48 +65,42 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         continue;
       }
       elseif ($this->resolveFileType($src) !== 'image') {
-        // Fail loudly if image type is unknown. This entire operation is
-        // brittle so we want to know when unexpected things happen.
+        // Fail loudly if file type is not what we expect.
         throw new MigrateException("Unsuported image type: {$src}");
       }
-      else {
-        if ($media_entity = $this->createMediaEntity($src, 'image')) {
-          $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
-          // Build <drupal-entity> element.
-          $drupal_entity_node = $document->createElement('drupal-entity');
-          $drupal_entity_node->setAttribute('data-embed-button', 'media_entity_embed');
-          $drupal_entity_node->setAttribute('data-entity-embed-display', 'bos_media_image');
-          $drupal_entity_node->setAttribute('data-entity-type', 'media');
-          $drupal_entity_node->setAttribute('data-entity-uuid', $media_entity->uuid());
-          // Replace the image node with the created element.
-          $image_node->parentNode->insertBefore($drupal_entity_node, $image_node);
-          $image_node->parentNode->removeChild($image_node);
-          continue;
-        }
+      if ($media_entity = $this->createMediaEntity($src, 'image')) {
+        $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
+        // Build <drupal-entity> element.
+        $drupal_entity_node = $document->createElement('drupal-entity');
+        $drupal_entity_node->setAttribute('data-embed-button', 'media_entity_embed');
+        $drupal_entity_node->setAttribute('data-entity-embed-display', 'bos_media_image');
+        $drupal_entity_node->setAttribute('data-entity-type', 'media');
+        $drupal_entity_node->setAttribute('data-entity-uuid', $media_entity->uuid());
+        // Replace the image node with the created element.
+        $image_node->parentNode->insertBefore($drupal_entity_node, $image_node);
+        $image_node->parentNode->removeChild($image_node);
+        continue;
       }
     }
 
     // Now links to the local filesystem.
     foreach ($xpath->query('//a[contains(@href, "/sites/default/files")]') as $link_node) {
-      $link_node = $image_node->getAttribute('src');
-      if ($this->isExternalFile($src)) {
+      $href = $link_node->getAttribute('href');
+      if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        throw new MigrateException("Your query is broke son: {$src}");
+        throw new MigrateException("Encountered unexpected external file: {$href}");
       }
-      elseif ($this->resolveFileType($src) !== 'file') {
-        // Fail loudly if image type is unknown. This entire operation is
-        // brittle so we want to know when unexpected things happen.
-        throw new MigrateException("Why are we linking to an image: {$src}");
+      elseif ($this->resolveFileType($href) !== 'file') {
+        // Fail loudly if file type is not what we expect.
+        throw new MigrateException("Why are we linking to an image: {$href}");
       }
-      else {
-        if ($media_entity = $this->createMediaEntity($src, 'document')) {
-          // Alter <a> element.
-          $link_node->setAttribute('data-entity-substitution', 'media');
-          $link_node->setAttribute('data-entity-type', 'media');
-          $link_node->setAttribute('data-entity-uuid', $media_entity->uuid());
-          $link_node->setAttribute('href', "/media/{$media_entity->id()}");
-        }
+      if ($media_entity = $this->createMediaEntity($href, 'document')) {
+        // Alter <a> element.
+        $link_node->setAttribute('data-entity-substitution', 'media');
+        $link_node->setAttribute('data-entity-type', 'media');
+        $link_node->setAttribute('data-entity-uuid', $media_entity->uuid());
+        $link_node->setAttribute('href', "/media/{$media_entity->id()}");
       }
     }
 
@@ -111,7 +111,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * Determines if file is external.
    *
    * @param string $src
-   *   The image src.
+   *   The file src.
    *
    * @return bool
    *   Yes or no.
@@ -127,7 +127,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * Creates a media entity.
    *
    * @param string $src
-   *   The image src.
+   *   The file src.
    * @param string $targetBundle
    *   The bundle of the media entity we want to create.
    *
@@ -145,7 +145,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     if (!$this->isRelativeUri($src)) {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
-        throw new MigrateException("Something has gone horribly wrong: {$src}");
+        throw new MigrateException("Unable to extract URI from: {$src}");
       }
     }
 
@@ -161,8 +161,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
 
     // Create the Media entity.
-    return Media::create([
+    $media = Media::create([
       'bundle' => $targetBundle,
+      // Should we be hardcoding a user ID?
       'uid' => '1',
       'status' => '1',
       $field_name => [
@@ -171,7 +172,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Don't add these images to media library. The media library should be
       // curated by a human.
       'field_media_in_library' => FALSE,
-    ])->save();
+    ]);
+    $media->save();
+    return $media;
   }
 
   /**
@@ -204,11 +207,11 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   TRUE or FALSE.
    */
   protected function isRelativeUri(string $uri) {
-    if (!preg_match('@^/sites/default/files/.*@', $uri)) {
-      return FALSE;
+    if (preg_match('@^/sites/default/files/.*@', $uri)) {
+      return TRUE;
     }
 
-    return TRUE;
+    return FALSE;
   }
 
   /**
@@ -221,10 +224,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   The converted URI.
    */
   protected function convertToStreamWrapper(string $uri) {
-    $new_uri = str_replace('/sites/default/files/private', 'private://', $uri);
+    $new_uri = str_replace('/sites/default/files/private/', 'private://', $uri);
     if ($new_uri === $uri) {
       // The replacement wasn't found, so this must be a public file.
-      $new_uri = str_replace('/sites/default/files', 'public://', $uri);
+      $new_uri = str_replace('/sites/default/files/', 'public://', $uri);
     }
 
     return $new_uri;
@@ -294,36 +297,40 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   File type.
    */
   public function resolveFileType($uri) {
+    // White list files based on file_managed table in D7.
+    $allowed_formats = [
+      'image' => [
+        '.jpg',
+        '.png',
+        '.jpeg',
+        '.svg',
+        '.gif',
+        '.tif',
+      ],
+      'file' => [
+        '.pdf',
+        '.xls',
+        '.xlsx',
+        '.docx',
+        '.doc',
+        '.pptx',
+        '.pptm',
+        '.ppt',
+        '.rtf',
+        '.ppt',
+        '.xlsm',
+      ],
+    ];
     $parts = explode('/', $uri);
-    $image_formats = [
-      'jpg',
-      'png',
-      'jpeg',
-      'svg',
-      'gif',
-      'tif',
-    ];
-    $file_formats = [
-      'pdf',
-      'xls',
-      'xlsx',
-      'docx',
-      'doc',
-      'pptx',
-      'pptm',
-      'ppt',
-      'rtf',
-      'ppt',
-      'xlsm',
-    ];
-    if (in_array($parts[count($parts) - 1], $image_formats)) {
-      return 'image';
-    }
-    elseif (in_array($parts[count($parts) - 1], $file_formats)) {
-      return 'file';
+    $index = count($parts) - 1;
+    foreach ($allowed_formats as $file_type => $formats) {
+      foreach ($formats as $extension) {
+        if (strpos($parts[$index], $extension) !== FALSE) {
+          return $file_type;
+        }
+      }
     }
 
-    // White list files based on file_managed table in D7.
     throw new MigrateException("Unrecognized file format: {$uri}");
   }
 

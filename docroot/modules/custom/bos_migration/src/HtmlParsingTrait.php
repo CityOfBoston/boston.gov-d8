@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_migration\Plugin\migrate\process;
+namespace Drupal\bos_migration;
 
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
