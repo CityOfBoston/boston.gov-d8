@@ -12,7 +12,7 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
 
 /**
- * Perform value transformations that fixes an invalid URI.
+ * Replace local image and link tags with entity embeds.
  *
  * @MigrateProcessPlugin(
  *   id = "rich_text_to_media_embed"
@@ -22,9 +22,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   use \Drupal\bos_migration\HtmlParsingTrait;
   use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
-  protected static $migratedFileBaseUri = "public://";
   protected static $baseUrl = "www.boston.gov";
-  protected static $editDomain = "edit.boston.gov";
   protected static $relativeUrl = "sites/default/files";
 
   /**
