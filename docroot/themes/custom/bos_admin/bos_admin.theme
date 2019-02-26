@@ -141,8 +141,12 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   }
 
   // Theme the status a little bit.
-  $form["meta"]["published"]["#wrapper_attributes"]['class'][] = "status-" . Html::cleanCssIdentifier(strtolower($form["meta"]["published"]["#markup"]));
-  $form["moderation_state"]["widget"][0]["current"]["#wrapper_attributes"]["class"][] = Html::cleanCssIdentifier(strtolower("status-" . $form["moderation_state"]["widget"][0]["current"]["#markup"]));
+  if (!empty($form["meta"]["published"]["#markup"])) {
+    $form["meta"]["published"]["#wrapper_attributes"]['class'][] = "status-" . Html::cleanCssIdentifier(strtolower($form["meta"]["published"]["#markup"]));
+  }
+  if (!empty($form["moderation_state"]["widget"][0]["current"]["#markup"])) {
+    $form["moderation_state"]["widget"][0]["current"]["#wrapper_attributes"]["class"][] = Html::cleanCssIdentifier(strtolower("status-" . $form["moderation_state"]["widget"][0]["current"]["#markup"]));
+  }
   $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
 }
 
