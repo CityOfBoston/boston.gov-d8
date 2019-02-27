@@ -281,7 +281,7 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   // Add in D7 style body classes:
   if (isset($variables['node_type'])) {
     $variables["attributes"]->addClass("page-node");
-    $variables["attributes"]->addClass("node-type-" . _make_class($variables['node_type']));
+    $variables["attributes"]->addClass(Html::cleanCssIdentifier("node-type-" . $variables['node_type']));
   }
 
 }
@@ -621,7 +621,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     // Add in the necessary classes.
     $variables['attributes']->addClass('node-' . $variables['nid']);
     $variables['attributes']['class'][] = 'node';
-    $variables['attributes']['class'][] = 'node-' . _make_class($variables['node_type']);
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('node-' . $variables['node_type']);
     if ($variables['unpublished']) {
       $variables['attributes']['class'][] = 'node-unpublished';
     }
@@ -641,7 +641,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
           $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
           // Build the in-page navigation menu and links.
           $title = $component['#paragraph']->field_short_title->value;
-          $url = Url::fromUserInput("#" . _make_nav_anchor($title), ["attributes" => ["class" => ["scroll-link-js"]]]);
+          $url = Url::fromUserInput("#" . Html::cleanCssIdentifier(strtolower($title)), ["attributes" => ["class" => ["scroll-link-js"]]]);
           $anchor = \Drupal::service('link_generator')->generate($title, $url);
           $variables['navOutput']["#items"][] = $anchor;
         }
@@ -678,17 +678,17 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
   }
   if ($variables['field_type'] == "entity_reference_revisions" && isset($variables['items'][0]['content']['#paragraph'])) {
     $variables['attributes']->addClass("paragraphs-items");
-    $variables['attributes']->addClass("paragraphs-items-" . _make_class($variables['field_name']));
-    $variables['attributes']->addClass("paragraphs-items-" . _make_class($variables['items'][0]['content']['#view_mode']));
-    $variables['attributes']->addClass("paragraphs-items-" . _make_class($variables['field_name']) . "-" . _make_class($variables['items'][0]['content']['#view_mode']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("paragraphs-items-" . $variables['field_name']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("paragraphs-items-" . $variables['items'][0]['content']['#view_mode']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("paragraphs-items-" . $variables['field_name'] . "-" . $variables['items'][0]['content']['#view_mode']));
   }
   else {
     $variables['attributes']->addClass("field");
-    $variables['attributes']->addClass("field-name-" . _make_class($variables['field_name']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("field-name-" . $variables['field_name']));
     if ($variables['field_type'] == "string") {
       $variables['attributes']->addClass("field-type-text");
     }
-    $variables['attributes']->addClass("field-type-" . _make_class($variables['field_type']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("field-type-" . $variables['field_type']));
     if (isset($variables["label_display"]) && !$variables["label_display"]) {
       $variables['attributes']->addClass("field-label-hidden");
     }
@@ -706,12 +706,15 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
   /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
   if ($variables["field_name"] == "field_components") {
     if (!empty($variables['items'])) {
-      foreach ($variables["items"] as $key => &$item) {
-        $item['content']['nav_title']['attributes'] = new Attribute([
-          "class" => ["subnav-anchor"],
-          "name" => _make_nav_anchor($item['content']['#paragraph']->field_short_title->value),
-          "data-text" => $item['content']['#paragraph']->field_short_title->value,
-        ]);
+      foreach ($variables["items"] as $key => &$component) {
+        // Only add if the component has a short_title set.
+        if (!empty($component['content']['#paragraph']->field_short_title->value)) {
+          $component['content']['nav_title']['attributes'] = new Attribute([
+            "class" => ["subnav-anchor"],
+            "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
+            "data-text" => $component['content']['#paragraph']->field_short_title->value,
+          ]);
+        }
       }
     }
   }
@@ -850,32 +853,6 @@ function _bos_theme_library() {
 }
 
 /**
- * Removes reserved chars from class string.
- *
- * @param string $class
- *   The class which is to be standardised.
- *
- * @return mixed
- *   Standardised class where "-" has been replaced with "-".
- */
-function _make_class(string $class) {
-  return str_replace("_", "-", $class);
-}
-
-/**
- * Helper to change the component title into a string safe for use as an anchor.
- *
- * @param string $title
- *   Title to convert to an anchor name.
- *
- * @return string
- *   Input string with no spaces in lowercase.
- */
-function _make_nav_anchor(string $title) {
-  return str_replace([" ", ":", "_", "\,"], "-", strtolower($title));
-}
-
-/**
  * Ensure attributes element of variables array is an Attribute object.
  *
  * This snippet fixes the situation where a module has defined an attributes
@@ -885,10 +862,12 @@ function _make_nav_anchor(string $title) {
  *   The current variables array as generated pre-rendering.
  */
 function _bos_theme_fix_attributes(array &$variables) {
-  if (!empty($variables['attributes']) && is_array($variables['attributes'])) {
+  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Drupal\core\Template\Attribute::class)) {
     $attribute = new Attribute();
-    foreach ($variables["attributes"] as $key => $element) {
-      $attribute->setAttribute($key, $element);
+    if (!empty($variables['attributes'])) {
+      foreach ($variables["attributes"] as $key => $element) {
+        $attribute->setAttribute($key, $element);
+      }
     }
     if (!empty($attribute)) {
       $variables['attributes'] = $attribute;

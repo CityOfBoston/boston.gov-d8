@@ -55,52 +55,76 @@
 
   'use strict';
   if ($('.topic-nav').length) {
-    var list = $('.topic-nav ul');
 
     // Creates a menu item on any element it is called on.
     if ($(".subnav-anchor").length) {
 
-      // Creates scroll effect on anchor links.
-      $('.scroll-link-js').click(function () {
-        var navOffset = 75;
-        if (!$(this).parents("nav").hasClass("sticky")) {
-          navOffset += 115;
+      var navMenu = $('.topic-nav');
+      var fixedMenu = $("#main-menu");
+      var navTop = navMenu.first("ul").offset().top;
+
+      // Returns the current position of the lower edge of the #main-menu block.
+      var menusBottom = function() {
+        return fixedMenu.position().top + fixedMenu.height();
+      };
+
+      // Collapses and expands the components menu.
+      var stickyNav = function() {
+        var stickyNavTop = navTop - menusBottom();
+        var scrollTop = $("html, body").scrollTop();
+        if ($(document).width() >= 980 && scrollTop > stickyNavTop) {
+          if (!navMenu.hasClass('sticky')) {
+            var menu_height = navMenu.outerHeight(true);
+            navMenu
+              .addClass('sticky')
+              .next().css("margin-top", menu_height);
+            $('.intro-content').addClass('nav-fill-margin');
+          }
+          stickyNavTop = navTop - menusBottom();
+          navMenu.css("top", menusBottom());
         }
-        $('html, body').animate({
-          scrollTop: $('[name="' + $.attr(this, 'href').substr(1) + '"]').offset().top - navOffset
-        }, 1);
+        else if (scrollTop <= stickyNavTop && navMenu.hasClass('sticky')) {
+          navMenu
+            .removeClass('sticky').css("top", "initial")
+            .next().css("margin-top", 0);
+          $('.intro-content').removeClass('nav-fill-margin');
+        }
+      };
+
+      // Scroll to clicked anchor, allowing for page furniture.
+      var scrollToAnchor = function(obj) {
+        var navOffset = menusBottom() - navMenu.height();
+        var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset);
+        $("html, body").animate({scrollTop: loc}, 1000, "swing");
+      };
+
+      $('.scroll-link-js').click(function (e) {
+        e.preventDefault();
+        $('.intro-content').addClass('nav-fill-margin');
+        scrollToAnchor(this);
       });
 
       // Fade in/out topic nav when .sub-nav-button link is clicked.
       $('.sub-nav-button, .sub-nav-trigger').on('click', function () {
         $(this).toggleClass('open');
-        $('.topic-nav').fadeToggle(300);
+        navMenu.fadeToggle(300);
       });
 
       // If the menu was faded out on small screens, ensures it fades back in when resized to larger screens.
-      $(window).resize(function () {
+      $(window).resize(function() {
         if ($(window).width() > 980) {
-          $('.topic-nav').fadeIn(300);
+          navMenu.fadeIn(300);
         }
       });
 
-      var TopMargin = $('.topic-nav').css('margin-top');
-      var MarginOffest = parseInt(TopMargin, 10);
-      var stickyNavTop = $('.topic-nav').offset().top - MarginOffest;
-      var stickyNav = function () {
-        var scrollTop = $(window).scrollTop();
-        if (scrollTop > stickyNavTop) {
-          $('.topic-nav').addClass('sticky');
-          $('.intro-content').addClass('nav-fill-margin');
-        }
-        else {
-          $('.topic-nav').removeClass('sticky');
-          $('.intro-content').removeClass('nav-fill-margin');
-        }
-      };
+      var navLinks = document.querySelectorAll('.scroll-link-js');
+      var navLinksArray = Array.prototype.slice.call(navLinks);
+      var scrollItems = navLinksArray.map(function (value, index) {
+        return navLinks[index].getAttribute('href');
+      });
 
       var getScrollTop = function () {
-        if (typeof pageYOffset != 'undefined') {
+        if (typeof pageYOffset !== 'undefined') {
           return pageYOffset;
         }
         else {
@@ -110,12 +134,6 @@
           return D.scrollTop;
         }
       };
-
-      var navLinks = document.querySelectorAll('.scroll-link-js');
-      var navLinksArray = Array.prototype.slice.call(navLinks);
-      var scrollItems = navLinksArray.map(function (value, index) {
-        return navLinks[index].getAttribute('href');
-      });
 
       var removeActiveState = function () {
         var activeLinks = document.querySelectorAll('.scroll-link-js.is-active');
