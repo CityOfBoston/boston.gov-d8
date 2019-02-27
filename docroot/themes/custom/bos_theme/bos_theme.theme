@@ -859,7 +859,7 @@ function _bos_theme_library() {
  *   The current variables array as generated pre-rendering.
  */
 function _bos_theme_fix_attributes(array &$variables) {
-  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Drupal\core\Template\Attribute::class)) {
+  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
     $attribute = new Attribute();
     if (!empty($variables['attributes'])) {
       foreach ($variables["attributes"] as $key => $element) {
