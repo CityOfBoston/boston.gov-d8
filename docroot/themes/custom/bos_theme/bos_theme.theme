@@ -284,6 +284,15 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
     $variables["attributes"]->addClass(Html::cleanCssIdentifier("node-type-" . $variables['node_type']));
   }
 
+  // Detect node preview for d8 moderation css overrides.
+  if (strpos(\Drupal::request()->getRequestUri(), "node/preview") !== FALSE) {
+    $admin_theme = \Drupal::service('config.factory')
+      ->getEditable('system.theme')
+      ->get('admin');
+    $variables['#attached']['library'][] = $admin_theme . "/preview-styling";
+    $variables['is_preview'] = TRUE;
+    $variables['attributes']->addClass('node-preview');
+  }
 }
 
 /**
