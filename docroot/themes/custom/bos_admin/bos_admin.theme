@@ -24,12 +24,10 @@ function bos_admin_theme($existing, $type, $theme, $path) {
   ];
 }
 
-/**
- * Implements hook_preprocess_HOOK() for HTML document templates.
- */
 function bos_admin_preprocess_html(&$variables) {
   // Add adminimal class to the body.
   $variables['attributes']['class'][] = 'bos_admin';
+  $variables['#attached']['library'][] = "bos_admin/global-styling";
 }
 
 /**
