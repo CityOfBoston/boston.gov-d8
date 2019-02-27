@@ -1,19 +1,19 @@
-uuid: 047eb5bd-a698-469d-bd6e-c7ed8c899319
+uuid: 18e74312-6b75-4608-8dc0-db478821240f
 langcode: en
 status: true
 dependencies:
   module:
-    - datetime
     - paragraphs
-id: paragraph.field_date
-field_name: field_date
+    - taxonomy
+id: paragraph.field_map_type
+field_name: field_map_type
 entity_type: paragraph
-type: datetime
+type: entity_reference
 settings:
-  datetime_type: date
-module: datetime
+  target_type: taxonomy_term
+module: core
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

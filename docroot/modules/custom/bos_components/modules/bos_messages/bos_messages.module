@@ -1,0 +1,105 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_messages module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_messages_theme() {
+  $theme['paragraph__message_for_the_day'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_messages') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_messages_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'message_for_the_day':
+
+        $message = $variables['paragraphs_item'];
+        // Use paragraph->getParent()
+        $host = _get_message_host($message);
+
+        // Most of this work assumes that the message is part of the status node,
+        // which  is not always the case.
+        if (isset($host->nid) && $host->type == 'status_item') {
+          $status_item = $host;
+        }
+        // The message is attached to a status override paragraph.
+        else {
+          $status_item_info = bos_core_field_get_first_item('paragraphs_item', $host, 'field_status_item');
+          $status_item = node_load($status_item_info['target_id']);
+        }
+
+        // Add a class to help identify specific entities.
+        $variables['classes_array'][] = "paragraphs-item-message-for-the-day-{$status_item->nid}";
+
+        // We don't need to do this since we don't have status_override paragraphs on the new system
+        // Search for an emergency alert override.
+        // $query = new EntityFieldQuery();
+        // $query->entityCondition('entity_type', 'paragraphs_item');
+        // $query->entityCondition('bundle', 'status_override');
+        // $query->fieldCondition('field_status_item', 'target_id', $status_item->nid);
+        // $results = $query->execute();
+
+        // If we have an override, enhance the current message with the proper data.
+        // if (!empty($results)) {
+        //   foreach ($results['paragraphs_item'] as $id => $info) {
+        //     $status_override = paragraphs_item_load($id);
+        //     $status_override_host = $status_override->hostEntity();
+        //     // Make sure the override message is on an active emergency node.
+        //     if ($status_override_host->status == 1) {
+        //       $override_message_info = bos_core_field_get_first_item('paragraphs_item', $status_override, 'field_override_message');
+        //       if ($override_message_info) {
+        //         $override_message = paragraphs_item_load($override_message_info['value']);
+        //         boston_override_message($message, $override_message, $variables);
+        //       }
+        //     }
+        //   }
+        // }
+
+        // Here we are assuming that there is a 1-1 relationship between the Status
+        // Item content type and the Message for the Day paragraph item type. They
+        // are mutually dependent on each other.
+        /** @var \ParagraphsItemEntity $message */
+        $use_alert = field_get_items('paragraphs_item', $message, 'field_use_alert', $message->langcode());
+        // String will either be 1 or 0, and 0 is empty. So if the value is not empty
+        // then we want to use the alert.
+        $variables['use_alert'] = !empty($use_alert[0]['value']);
+
+        // Setup renderable arrays for the field_title, field_icon, and
+        // field_alert_icon fields on the message for the day to be rendered.
+        $variables['content']['field_title'] = field_view_field('node', $status_item, 'field_title', 'full');
+        $variables['content']['field_icon'] = field_view_field('node', $status_item, 'field_icon', 'full');
+        $filename = drupal_realpath(trim(render($variables['content']['field_icon'][0])));
+        // We can't find the file by default in dev, so we avoid trying to
+        // do the file_get_contents piece below.
+        if ($filename) {
+          $variables['icon'] = file_get_contents($filename);
+          $variables['icon'] = filter_xss($variables['icon'], explode(' ', BOS_CORE_SVG_ELEMENTS));
+        }
+
+        $link_id = bos_core_field_get_first_item('paragraphs_item', $variables['paragraphs_item'], 'field_link')['value'];
+
+        if ($link_id) {
+          // Load the link references.
+          $link = paragraphs_item_load($link_id);
+
+          // Return the url.
+          $url = bos_core_field_get_link_url($link);
+        }
+
+        $variables['card_url'] = $url;
+        break;
+    }
+  }
+}

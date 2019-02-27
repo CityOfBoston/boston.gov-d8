@@ -1,26 +1,31 @@
-uuid: 2c948867-d0df-4126-a842-120bd348cd10
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_messages
-    - node.type.status_item
+    - field.storage.paragraph.field_link
+    - paragraphs.paragraphs_type.document
+    - paragraphs.paragraphs_type.external_link
+    - paragraphs.paragraphs_type.internal_link
+    - paragraphs.paragraphs_type.message_for_the_day
   module:
     - entity_reference_revisions
-id: node.status_item.field_messages
-field_name: field_messages
-entity_type: node
-bundle: status_item
-label: Messages
-description: 'Add messages to be displayed with this status item.'
-required: true
+id: paragraph.message_for_the_day.field_link
+field_name: field_link
+entity_type: paragraph
+bundle: message_for_the_day
+label: Details
+description: 'Optionally include a link to a resource which provides additional details.'
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
   handler_settings:
     negate: 0
-    target_bundles: {  }
+    target_bundles:
+      document: document
+      external_link: external_link
+      internal_link: internal_link
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: false
@@ -35,7 +40,7 @@ settings:
         enabled: false
         weight: 5
       document:
-        enabled: false
+        enabled: true
         weight: 6
       drawer:
         enabled: false
@@ -44,7 +49,7 @@ settings:
         enabled: false
         weight: 8
       external_link:
-        enabled: false
+        enabled: true
         weight: 9
       featured_item:
         enabled: false
@@ -98,13 +103,13 @@ settings:
         enabled: false
         weight: 26
       internal_link:
-        enabled: false
+        enabled: true
         weight: 27
       list:
         enabled: false
         weight: 28
       message_for_the_day:
-        enabled: true
+        enabled: false
         weight: 29
       news_announcements:
         enabled: false

@@ -1,8 +1,8 @@
-uuid: 5c8cfa99-5c09-4358-bc75-8d3d82ee4ed1
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.message_for_the_day.field_date
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
     - field.field.paragraph.message_for_the_day.field_use_alert
@@ -11,8 +11,6 @@ dependencies:
     - entity_reference_revisions
     - fences
     - text
-_core:
-  default_config_hash: EhJC2uUd7w5qCe9Ho8H1FVSd5G4o8ketWy7YXl45ABw
 id: paragraph.message_for_the_day.default
 targetEntityType: paragraph
 bundle: message_for_the_day
@@ -49,4 +47,5 @@ content:
         fences_label_classes: ''
     region: content
 hidden:
+  field_date: true
   field_use_alert: true
