@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -141,10 +142,10 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 
   // Theme the status a little bit.
   if (!empty($form["meta"]["published"]["#markup"])) {
-    $form["meta"]["published"]["#wrapper_attributes"]['class'][] = "status-" . _make_nav_anchor($form["meta"]["published"]["#markup"]);
+    $form["meta"]["published"]["#wrapper_attributes"]['class'][] = "status-" . Html::cleanCssIdentifier(strtolower($form["meta"]["published"]["#markup"]));
   }
   if (!empty($form["moderation_state"]["widget"][0]["current"]["#markup"])) {
-    $form["moderation_state"]["widget"][0]["current"]["#wrapper_attributes"]["class"][] = "status-" . _make_nav_anchor($form["moderation_state"]["widget"][0]["current"]["#markup"]);
+    $form["moderation_state"]["widget"][0]["current"]["#wrapper_attributes"]["class"][] = Html::cleanCssIdentifier(strtolower("status-" . $form["moderation_state"]["widget"][0]["current"]["#markup"]));
   }
   $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
 }
@@ -174,17 +175,4 @@ function bos_admin_node_edit_vaidate(array &$form, FormState &$form_state) {
       $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
     }
   }
-}
-
-/**
- * Helper to change the component title into a string safe for use as an anchor.
- *
- * @param string $title
- *   Title to convert to an anchor name.
- *
- * @return string
- *   Input string with no spaces in lowercase.
- */
-function _make_nav_anchor(string $title) {
-  return str_replace([" ", ":", "_", "\,"], "-", strtolower($title));
 }
