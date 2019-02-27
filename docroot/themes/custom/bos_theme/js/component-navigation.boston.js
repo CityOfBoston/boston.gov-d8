@@ -64,12 +64,12 @@
       var navTop = navMenu.first("ul").offset().top;
 
       // Returns the current position of the lower edge of the #main-menu block.
-      var menusBottom = function() {
+      var menusBottom = function () {
         return fixedMenu.position().top + fixedMenu.height();
       };
 
       // Collapses and expands the components menu.
-      var stickyNav = function() {
+      var stickyNav = function () {
         var stickyNavTop = navTop - menusBottom();
         var scrollTop = $("html, body").scrollTop();
         if ($(document).width() >= 980 && scrollTop > stickyNavTop) {
@@ -92,7 +92,7 @@
       };
 
       // Scroll to clicked anchor, allowing for page furniture.
-      var scrollToAnchor = function(obj) {
+      var scrollToAnchor = function (obj) {
         var navOffset = menusBottom() - navMenu.height();
         var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset);
         $("html, body").animate({scrollTop: loc}, 1000, "swing");
@@ -111,7 +111,7 @@
       });
 
       // If the menu was faded out on small screens, ensures it fades back in when resized to larger screens.
-      $(window).resize(function() {
+      $(window).resize(function () {
         if ($(window).width() > 980) {
           navMenu.fadeIn(300);
         }
