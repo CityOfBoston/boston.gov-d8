@@ -20,18 +20,55 @@ dependencies:
     - comment
     - content_moderation
     - datetime
-    - file
+    - entity_browser
+    - field_group
     - paragraphs
     - path
     - publication_date
     - text
+third_party_settings:
+  field_group:
+    group_how_to:
+      children:
+        - title
+        - field_intro_image
+        - body
+        - field_how_to_tabs
+        - field_components
+        - field_need_to_know
+        - field_links
+        - field_contact
+        - field_payment_info
+        - field_type_of_content
+        - field_sidebar_components
+        - langcode
+        - uid
+        - created
+        - published_at
+        - promote
+        - sticky
+        - field_published_date
+        - field_updated_date
+        - comment_node_how_to
+        - path
+        - url_redirects
+        - moderation_state
+        - status
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: How-To
 id: node.how_to.default
 targetEntityType: node
 bundle: how_to
 mode: default
 content:
   body:
-    weight: 5
+    weight: 3
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -47,12 +84,12 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 14
     region: content
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 8
+    weight: 5
     type: entity_reference_paragraphs
     settings:
       title: Component
@@ -64,7 +101,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 15
+    weight: 8
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -73,26 +110,40 @@ content:
     third_party_settings: {  }
     region: content
   field_how_to_tabs:
-    weight: 6
-    type: entity_reference_paragraphs
+    weight: 4
+    type: paragraphs
     settings:
       title: 'How-To Tab'
       title_plural: 'How-To Tabs'
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: how_to_tab
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_intro_image:
-    weight: 4
-    type: file_generic
+    weight: 2
+    type: entity_browser_file
     settings:
-      progress_indicator: throbber
+      entity_browser: null
+      open: false
+      field_widget_edit: true
+      field_widget_remove: true
+      field_widget_replace: false
+      selection_mode: selection_append
+      view_mode: default
+      preview_image_style: thumbnail
     third_party_settings: {  }
     region: content
   field_links:
-    weight: 14
+    weight: 7
     type: entity_reference_paragraphs
     settings:
       title: Download
@@ -104,7 +155,7 @@ content:
     third_party_settings: {  }
     region: content
   field_need_to_know:
-    weight: 12
+    weight: 6
     type: text_textarea
     settings:
       rows: 5
@@ -112,7 +163,7 @@ content:
     third_party_settings: {  }
     region: content
   field_payment_info:
-    weight: 13
+    weight: 9
     type: text_textarea
     settings:
       rows: 5
@@ -120,13 +171,13 @@ content:
     third_party_settings: {  }
     region: content
   field_published_date:
-    weight: 17
+    weight: 18
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_sidebar_components:
-    weight: 20
+    weight: 11
     type: entity_reference_paragraphs
     settings:
       title: Paragraph
@@ -138,33 +189,33 @@ content:
     third_party_settings: {  }
     region: content
   field_type_of_content:
-    weight: 19
+    weight: 10
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 18
+    weight: 19
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 12
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 23
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 21
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -172,12 +223,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 16
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 15
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -185,19 +236,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 24
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 17
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 1
     region: content
     settings:
       size: 60
@@ -205,7 +256,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 13
     settings:
       match_operator: CONTAINS
       size: 60
@@ -213,6 +264,8 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 22
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
