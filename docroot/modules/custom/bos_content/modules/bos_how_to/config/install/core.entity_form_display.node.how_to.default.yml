@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_entity_browser
     - field.field.node.how_to.body
     - field.field.node.how_to.comment_node_how_to
     - field.field.node.how_to.field_components
@@ -217,13 +218,13 @@ content:
     weight: 6
     type: entity_browser_file
     settings:
-      entity_browser: null
-      open: false
+      entity_browser: media_entity_browser
       field_widget_edit: true
       field_widget_remove: true
-      field_widget_replace: false
       selection_mode: selection_append
       view_mode: default
+      field_widget_replace: false
+      open: false
       preview_image_style: thumbnail
     third_party_settings: {  }
     region: content
