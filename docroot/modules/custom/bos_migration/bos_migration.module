@@ -5,13 +5,16 @@
  * Main file for the bos_migration module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_migration_plugins_alter().
  */
 function bos_migration_migration_plugins_alter(array &$migrations) {
-
   // Pass array into functions that alter each entity as needed.
+  _migration_housekeeping($migrations);
   _node__department_profile($migrations);
+  _rich_text_field_alter($migrations);
 
   \Drupal::logger('migrate')
     ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, TRUE)]);
@@ -21,6 +24,122 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
  * Helper functions.
  * Typically modify the plugin element in the process node of the config.
  */
+
+/**
+ * Cleans up the list of migrations to only display those we need.
+ */
+function _migration_housekeeping(array &$migrations) {
+  $migrations = array_filter($migrations, function (array $migration) {
+    $tags = isset($migration['migration_tags']) ? (array) $migration['migration_tags'] : [];
+    if (in_array('Drupal 6', $tags)) {
+      return FALSE;
+    }
+    if (in_array($migration['id'], _get_unused_migrations())) {
+      return FALSE;
+    }
+    return TRUE;
+  });
+}
+
+/**
+ * Defines list of migrations to filter out.
+ */
+function _get_unused_migrations() {
+  return [
+    'd7_blocked_ips',
+    'd7_color',
+    'd7_dblog_settings',
+    'd7_filter_format',
+    'd7_field_instance',
+    'd7_view_modes',
+    'd7_field_formatter_settings',
+    'd7_field',
+    'd7_language_content_settings',
+    'd7_filter_settings',
+    'd7_global_theme_settings',
+    'd7_image_settings',
+    'd7_image_styles',
+    'd7_language_negotiation_settings',
+    'd7_language_types',
+    'd7_node_settings',
+    'd7_realname_settings',
+    'd7_syslog_settings',
+    'd7_system_authorize',
+    'd7_system_cron',
+    'd7_system_date',
+    'd7_system_file',
+    'd7_system_mail',
+    'd7_system_performance',
+    'd7_theme_settings',
+    'd7_user_flood',
+    'd7_user_mail',
+    'd7_vote',
+    'd7_custom_block',
+    'd7_node_type',
+    'd7_comment_type',
+    'd7_comment_field',
+    'd7_comment_field_instance',
+    'd7_comment_entity_form_display',
+    'd7_comment_entity_form_display_subject',
+    'd7_comment_entity_display',
+    'd7_taxonomy_vocabulary',
+    'd7_field_collection_type',
+    'd7_paragraphs_type',
+    'd7_node_translation',
+    'd7_comment',
+    'd7_authmap',
+    'd7_field_instance_widget_settings',
+    'd7_node_revision',
+    'd7_node_title_label',
+    'd7_file',
+  ];
+}
+
+/**
+ * Insert rich_text_to_media_embed plugin into pipeline of rich tech fields.
+ */
+function _rich_text_field_alter(&$migrations) {
+  $result = Database::getConnection('default', 'migrate')
+    ->query("SELECT field_name FROM field_config WHERE type IN ('text_long', 'text_with_summary')")
+    ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+
+  if (!empty($result)) {
+    $rich_text_fields = array_keys($result);
+    $rich_text_fields = array_flip($rich_text_fields);
+    $process_to_insert = ['plugin' => 'rich_text_to_media_embed'];
+    foreach ($migrations as $key => $value) {
+      $matches = array_intersect_key($value['process'], $rich_text_fields);
+      if (!empty($matches)) {
+        foreach ($matches as $destination => $process) {
+          if (is_string($process)) {
+            $current_source = $migrations[$key]['process'][$destination];
+            $migrations[$key]['process'][$destination] = [
+              '0' => [
+                'plugin' => 'get',
+                'source' => $current_source,
+              ],
+              '1' => $process_to_insert,
+            ];
+            unset($current_source);
+          }
+          elseif (is_array($process)) {
+            if (empty($migrations[$key]['process']['0'])) {
+              $current_process = $migrations[$key]['process'][$destination];
+              $migrations[$key]['process'][$destination] = [
+                '0' => $current_process,
+                '1' => $process_to_insert,
+              ];
+              unset($current_process);
+            }
+            else {
+              $migrations[$key]['process'][$destination][] = $process_to_insert;
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
 /**
  * Alters the addressfield field so that the correct plugin is used.

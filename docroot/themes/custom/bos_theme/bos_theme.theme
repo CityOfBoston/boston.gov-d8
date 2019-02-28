@@ -284,6 +284,15 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
     $variables["attributes"]->addClass(Html::cleanCssIdentifier("node-type-" . $variables['node_type']));
   }
 
+  // Detect node preview for d8 moderation css overrides.
+  if (strpos(\Drupal::request()->getRequestUri(), "node/preview") !== FALSE) {
+    $admin_theme = \Drupal::service('config.factory')
+      ->getEditable('system.theme')
+      ->get('admin');
+    $variables['#attached']['library'][] = $admin_theme . "/preview-styling";
+    $variables['is_preview'] = TRUE;
+    $variables['attributes']->addClass('node-preview');
+  }
 }
 
 /**
@@ -706,12 +715,15 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
   /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
   if ($variables["field_name"] == "field_components") {
     if (!empty($variables['items'])) {
-      foreach ($variables["items"] as $key => &$item) {
-        $item['content']['nav_title']['attributes'] = new Attribute([
-          "class" => ["subnav-anchor"],
-          "name" => Html::cleanCssIdentifier(strtolower($item['content']['#paragraph']->field_short_title->value)),
-          "data-text" => $item['content']['#paragraph']->field_short_title->value,
-        ]);
+      foreach ($variables["items"] as $key => &$component) {
+        // Only add if the component has a short_title set.
+        if (!empty($component['content']['#paragraph']->field_short_title->value)) {
+          $component['content']['nav_title']['attributes'] = new Attribute([
+            "class" => ["subnav-anchor"],
+            "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
+            "data-text" => $component['content']['#paragraph']->field_short_title->value,
+          ]);
+        }
       }
     }
   }
