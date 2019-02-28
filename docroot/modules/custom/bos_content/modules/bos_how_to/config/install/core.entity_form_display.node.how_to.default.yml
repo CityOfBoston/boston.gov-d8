@@ -30,25 +30,18 @@ third_party_settings:
   field_group:
     group_how_to:
       children:
-        - title
-        - field_intro_image
-        - body
-        - field_how_to_tabs
-        - field_components
-        - field_need_to_know
-        - field_links
-        - field_contact
-        - field_payment_info
-        - field_type_of_content
-        - field_sidebar_components
+        - group_basic_information
+        - group_how_to_tab
+        - group_sidebar_info
+        - group_page_metadata
+        - group_sidebar_components
+        - group_components
         - langcode
         - uid
         - created
         - published_at
         - promote
         - sticky
-        - field_published_date
-        - field_updated_date
         - comment_node_how_to
         - path
         - url_redirects
@@ -62,13 +55,98 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: How-To
+    group_basic_information:
+      children:
+        - title
+        - field_intro_image
+        - body
+      parent_name: group_how_to
+      weight: 10
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_how_to_tab:
+      children:
+        - field_how_to_tabs
+      parent_name: group_how_to
+      weight: 11
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'How-To Tab'
+    group_sidebar_info:
+      children:
+        - field_need_to_know
+        - field_payment_info
+        - field_links
+        - field_contact
+      parent_name: group_how_to
+      weight: 12
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Info'
+    group_page_metadata:
+      children:
+        - field_published_date
+        - field_updated_date
+        - field_type_of_content
+      parent_name: group_how_to
+      weight: 13
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
+    group_sidebar_components:
+      children:
+        - field_sidebar_components
+      parent_name: group_how_to
+      weight: 15
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_how_to
+      weight: 16
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
 id: node.how_to.default
 targetEntityType: node
 bundle: how_to
 mode: default
 content:
   body:
-    weight: 3
+    weight: 7
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -78,30 +156,37 @@ content:
     region: content
   comment_node_how_to:
     type: comment_default
-    weight: 20
+    weight: 23
     settings: {  }
     third_party_settings: {  }
     region: content
   created:
     type: datetime_timestamp
-    weight: 14
+    weight: 19
     region: content
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 5
-    type: entity_reference_paragraphs
+    weight: 14
+    type: paragraphs
     settings:
       title: Component
       title_plural: Components
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
       add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 8
+    weight: 17
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -110,7 +195,7 @@ content:
     third_party_settings: {  }
     region: content
   field_how_to_tabs:
-    weight: 4
+    weight: 12
     type: paragraphs
     settings:
       title: 'How-To Tab'
@@ -129,7 +214,7 @@ content:
     third_party_settings: {  }
     region: content
   field_intro_image:
-    weight: 2
+    weight: 6
     type: entity_browser_file
     settings:
       entity_browser: null
@@ -143,7 +228,7 @@ content:
     third_party_settings: {  }
     region: content
   field_links:
-    weight: 7
+    weight: 16
     type: entity_reference_paragraphs
     settings:
       title: Download
@@ -155,7 +240,7 @@ content:
     third_party_settings: {  }
     region: content
   field_need_to_know:
-    weight: 6
+    weight: 14
     type: text_textarea
     settings:
       rows: 5
@@ -163,7 +248,7 @@ content:
     third_party_settings: {  }
     region: content
   field_payment_info:
-    weight: 9
+    weight: 15
     type: text_textarea
     settings:
       rows: 5
@@ -171,51 +256,58 @@ content:
     third_party_settings: {  }
     region: content
   field_published_date:
-    weight: 18
+    weight: 23
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_sidebar_components:
-    weight: 11
-    type: entity_reference_paragraphs
+    weight: 16
+    type: paragraphs
     settings:
       title: Paragraph
       title_plural: Paragraphs
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_type_of_content:
-    weight: 10
+    weight: 25
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 19
+    weight: 24
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   langcode:
     type: language_select
-    weight: 12
+    weight: 17
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 23
+    weight: 26
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 21
+    weight: 24
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -223,12 +315,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 21
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 15
+    weight: 20
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -236,19 +328,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 24
+    weight: 27
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 17
+    weight: 22
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 5
     region: content
     settings:
       size: 60
@@ -256,7 +348,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 13
+    weight: 18
     settings:
       match_operator: CONTAINS
       size: 60
@@ -264,7 +356,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 22
+    weight: 25
     region: content
     settings: {  }
     third_party_settings: {  }
