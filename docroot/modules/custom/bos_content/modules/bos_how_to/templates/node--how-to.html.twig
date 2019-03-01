@@ -51,27 +51,27 @@
         {% endif %}
       </div><!-- end .desktop-66-left -->
       <div class="column mobile-100 desktop-33-right">
-        {% if content.field_payment_info %}
+        {% if not node.field_payment_info.isempty %}
         <div class="list-item">
           {{ content.field_payment_info }}
         </div>
         {% endif %}
-        {% if content.field_links %}
+        {% if not node.field_links.isempty %}
         <div class="list-item">
           {{ content.field_links }}
         </div>
         {% endif %}
-        {% if content.field_need_to_know %}
+        {% if not node.field_need_to_know.isempty %}
         <div class="list-item">
           {{ content.field_need_to_know }}
         </div>
         {% endif %}
-        {% if content.field_contact %}
+        {% if not node.field_contact.isempty %}
         <div class="contact-info">
           {{ content.field_contact }}
         </div>
         {% endif %}
-        {% if content.field_sidebar_components %}
+        {% if not node.field_sidebar_components.isempty %}
         <div class="list-item-wrapper">
           {{ content.field_sidebar_components }}
         </div>
@@ -79,7 +79,7 @@
       </div><!-- end .desktop-33-right -->
       <div class="clearfix"></div>
     </div><!-- end .tabbed-info-wrapper -->
-    {% if content.field_components %}
+    {% if not node.field_components.isempty %}
       <div class="tab-components desktop-100" {{ content_attributes }}>
         {{ content.field_components }}
       </div>
