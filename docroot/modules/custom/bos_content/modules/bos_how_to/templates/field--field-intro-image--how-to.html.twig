@@ -2,11 +2,14 @@
  * @file
  * Default implementation of field intro text on tabbed content nodes.
  #}
-{% set image_uri = $items[0]['#item']['uri'] %}
-{% set xlarge_image = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $image_uri) %}
-{% set large_image = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $image_uri) %}
-{% set medium_image = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $image_uri) %}
-{% set small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $image_uri) %}
+
+{% for item in items %}
+  {% set xlarge_image = item.content['#item'].entity.uri.value | image_style('rep_wide_2000x700custom_boston_desktop_2x') %}
+  {% set large_image = item.content['#item'].entity.uri.value | image_style('rep_wide_2000x700custom_boston_desktop_1x') %}
+  {% set medium_image = item.content['#item'].entity.uri.value | image_style('rep_wide_2000x700custom_boston_tablet_2x') %}
+  {% set small_image = item.content['#item'].entity.uri.value | image_style('rep_wide_2000x700custom_boston_mobile_2x') %}
+{% endfor %}
+
 <style>
   .hro {
     background-image: url({{ small_image }})
