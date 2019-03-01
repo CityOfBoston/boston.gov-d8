@@ -165,6 +165,9 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $form["meta"]["author"]["#markup"] = bos_admin_author_expand($form["meta"]["author"]["#markup"]);
   }
 
+  // management of secondary actions menu.
+  $form["#attached"]["library"][] = "bos_admin/actions";
+
   // move the metadata (update/publish) fields into advanced tab.
   if (isset($form["#fieldgroups"]["group_page_meta_data"])) {
     if (!empty($bundle) && (
