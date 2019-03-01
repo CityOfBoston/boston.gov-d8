@@ -21,6 +21,7 @@ dependencies:
     - comment
     - datetime
     - entity_reference_revisions
+    - fences
     - svg_image
     - text
     - user
@@ -79,6 +80,10 @@ content:
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_links:
@@ -127,13 +132,22 @@ content:
     weight: 9
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_type_of_content: true
   langcode: true
