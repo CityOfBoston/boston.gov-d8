@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_intro_text
+    - field.field.node.article.field_manual_date
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_updated_date
@@ -28,7 +29,6 @@ third_party_settings:
         - group_basic_info
         - group_sidebar_components
         - group_components
-        - group_page_meta_data
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -56,18 +56,20 @@ third_party_settings:
       label: 'Basic Information'
     group_page_meta_data:
       children:
+        - field_manual_date
         - field_updated_date
         - field_published_date
-      parent_name: group_article
-      weight: 4
+      parent_name: ''
+      weight: 12
       format_type: tab
       format_settings:
-        id: ''
-        classes: 'group-page-metadata field-group-tab'
+        label: 'Page Metadata'
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Page Meta Data'
+        id: ''
+        classes: 'group-page-metadata field-group-tab'
+      label: 'Page Metadata'
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -158,8 +160,15 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_manual_date:
+    weight: 2
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_published_date:
-    weight: 7
+    weight: 4
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -184,7 +193,7 @@ content:
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 6
+    weight: 3
     type: datetime_default
     settings: {  }
     third_party_settings: {  }

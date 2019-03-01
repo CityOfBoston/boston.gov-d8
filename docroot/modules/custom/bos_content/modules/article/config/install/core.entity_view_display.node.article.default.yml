@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_intro_text
+    - field.field.node.article.field_manual_date
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_updated_date
@@ -66,6 +67,16 @@ content:
     label: above
     settings: {  }
     third_party_settings: {  }
+  field_manual_date:
+    weight: 7
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
   field_published_date:
     label: hidden
     weight: 5
