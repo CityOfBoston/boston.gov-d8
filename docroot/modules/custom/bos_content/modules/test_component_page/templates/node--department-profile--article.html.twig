@@ -77,20 +77,23 @@
  *
  * @ingroup themeable
  #}
+
 <div class="article-contact">
   <address>
-    <h5 class="contact-title"><a href="{{ node_url }}">{{ content.title.0 }}</a></h5>
-    {% if content.field_phone_number %}
+    <h5 class="contact-title">
+      <a href="{{ node_url }}">{{ node.label }}</a>
+    </h5>
+    {% if not node.field_phone_number.isEmpty %}
       <div class="list-item">
-        {{ content.field_phone_number|raw }}
+        {{ content.field_phone_number }}
       </div>
     {% endif %}
-    {% if content.field_email %}
+    {% if not node.field_email.isEmpty %}
       <div class="list-item">
         {{ content.field_email }}
       </div>
     {% endif %}
-    {% if content.field_address %}
+    {% if not node.field_address.isEmpty %}
       <div class="list-item">
         {{ content.field_address }}
       </div>

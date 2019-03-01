@@ -78,14 +78,25 @@
  * @ingroup themeable
  #}
 
+{# 
+ * NOTE: This template is likely being overridden
+ * It is included here to keep this module self-contained
+ *
+ * Example: modules/custom/bos_content/modules/test_component_page/templates/node--department-profile--article.html.twig
+ *
+ * TODO: Discuss if view_modes should only be included in original node module
+ #}
+
 <div class="article-contact">
   <address>
-    <h5 class="contact-title"><a href="{{ node_url }}">{{ title }}</a></h5>
+    <h5 class="contact-title">
+      <a href="{{ node_url }}">{{ node.label }}</a>
+    </h5>
     {% if not node.field_phone_number.isEmpty %}
       <div class="list-item">
         {{ content.field_phone_number }}
       </div>
-    {{ endif }}
+    {% endif %}
     {% if not node.field_email.isEmpty %}
       <div class="list-item">
         {{ content.field_email }}
