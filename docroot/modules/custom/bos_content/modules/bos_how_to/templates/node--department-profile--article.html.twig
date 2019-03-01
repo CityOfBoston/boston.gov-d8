@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -77,26 +76,25 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
-?>
+ #}
 
 <div class="article-contact">
   <address>
-    <h5 class="contact-title"><a href="<?php print render($node_url); ?>"><?php print render($title); ?></a></h5>
-    <?php if (isset($content['field_phone_number'])): ?>
+    <h5 class="contact-title"><a href="{{ node_url }}">{{ title }}</a></h5>
+    {% if not node.field_phone_number.isEmpty %}
       <div class="list-item">
-        <?php print render($content['field_phone_number']); ?>
+        {{ content.field_phone_number }}
       </div>
-    <?php endif; ?>
-    <?php if (isset($content['field_email'])): ?>
+    {{ endif }}
+    {% if not node.field_email.isEmpty %}
       <div class="list-item">
-        <?php print render($content['field_email']); ?>
+        {{ content.field_email }}
       </div>
-    <?php endif; ?>
-    <?php if (isset($content['field_address'])): ?>
+    {% endif %}
+    {% if not node.field_address.isEmpty %}
       <div class="list-item">
-        <?php print render($content['field_address']); ?>
+        {{ content.field_address }}
       </div>
-    <?php endif; ?>
+    {% endif %}
   </address>
 </div>
