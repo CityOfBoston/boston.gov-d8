@@ -2,11 +2,11 @@
  * @file
  * Default implementation of field intro text on tabbed content nodes.
  #}
-{# TODO: review variable assignment:  image_uri = $items[0]['#item['uri #}
-{# TODO: review variable assignment:  xlarge_image = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $image_uri) #}
-{# TODO: review variable assignment:  large_image = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $image_uri) #}
-{# TODO: review variable assignment:  medium_image = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $image_uri) #}
-{# TODO: review variable assignment:  small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $image_uri) #}
+{% set image_uri = $items[0]['#item']['uri'] %}
+{% set xlarge_image = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $image_uri) %}
+{% set large_image = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $image_uri) %}
+{% set medium_image = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $image_uri) %}
+{% set small_image = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $image_uri) %}
 <style>
   .hro {
     background-image: url({{ small_image }})
