@@ -8,6 +8,8 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -39,7 +41,7 @@ function bos_admin_preprocess_html(&$variables) {
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
     // Node-edit forms: Make the Revision log message required.
-    $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "You are required to supply some information about this update.";
+    $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "If changing moderation state, you must supply a relevant log note for this update.";
 
     /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/content-editor-ux */
     // Create a secondary block group, and load.
@@ -120,7 +122,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $fieldset->context = "form";
     $fieldset->mode = "default";
     $fieldset->parent_name = $parent;
-    $fieldset->weight = 10;
+    $fieldset->weight = 200;
 
     // Configure the field group so it sits in the vertical tabs area.
     $form["#fieldgroups"][$fieldset->group_name] = $fieldset;
@@ -141,6 +143,15 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $form["node_revisions_table"]["#header"]["select_column_two"] = "compare";
   }
 
+  if (!empty($form["#entity_type"]) && $form["#entity_type"] == "node" && preg_match("/node\-.*\-edit\-form*/", $form["#id"])) {
+    if (isset($form["#validate"]) && count($form['#validate']) > 1) {
+      array_splice($form["#validate"], 1, 0, "bos_admin_node_edit_validate");
+    }
+    else {
+      $form['#validate'][] = "bos_admin_node_edit_validate";
+    }
+  }
+
   // Theme the status a little bit.
   if (!empty($form["meta"]["published"]["#markup"])) {
     $form["meta"]["published"]["#wrapper_attributes"]['class'][] = "status-" . Html::cleanCssIdentifier(strtolower($form["meta"]["published"]["#markup"]));
@@ -149,16 +160,24 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $form["moderation_state"]["widget"][0]["current"]["#wrapper_attributes"]["class"][] = Html::cleanCssIdentifier(strtolower("status-" . $form["moderation_state"]["widget"][0]["current"]["#markup"]));
   }
   $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
-}
 
-/**
- * Adds validation for the Revision Log Message.
- *
- * @param array $form
- *   The form element.
- */
-function bos_admin_form_node_article_edit_form_alter(array &$form) {
-  $form['#validate'][] = "bos_admin_node_edit_vaidate";
+  if (!empty($form["meta"]["author"]["#markup"])) {
+    $form["meta"]["author"]["#markup"] = bos_admin_author_expand($form["meta"]["author"]["#markup"]);
+  }
+
+  // move the metadata (update/publish) fields into advanced tab.
+  if (isset($form["#fieldgroups"]["group_page_meta_data"])) {
+    if (!empty($bundle) && (
+      \Drupal::currentUser()->hasPermission("set any published on date")
+      || \Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")
+      )) {
+      $form["#group_children"]["group_page_meta_data"] = "group_bos_theme";
+      $form["#fieldgroups"]["group_page_meta_data"]->weight = 100;
+
+      $form["#attached"]["library"][] = "bos_admin/manual_date";
+      $form['#validate'][] = "bos_admin_dates_update";
+    }
+  }
 }
 
 /**
@@ -169,11 +188,48 @@ function bos_admin_form_node_article_edit_form_alter(array &$form) {
  * @param \Drupal\Core\Form\FormState $form_state
  *   The form_state object.
  */
-function bos_admin_node_edit_vaidate(array &$form, FormState &$form_state) {
-  // If the user has not supplied a revision_log value.
-  if ($form_state->getValue('revision_log')[0]['value'] == "") {
-    if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
-      $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
+function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
+  $form["moderation_state"]["widget"][0]["#changed"] = FALSE;
+  $new_value = $form_state->getValue('moderation_state');
+  if (strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
+    $form["moderation_state"]["widget"][0]["#changed"] = TRUE;
+  }
+  if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
+    // If the moderation state has changed require a log message.
+    if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
+        $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
     }
   }
+}
+
+/**
+ * Update the custom Updated and Published fields on the node.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormState $form_state
+ *   The form_state object.
+ */
+function bos_admin_dates_update(array &$form, FormState &$form_state){
+  if ($form["moderation_state"]["widget"][0]["#changed"] && !$form_state->getErrors() && !reset($form_state->getValue("field_manual_date"))) {
+    // Update the last uopdated etc
+    $date = new DrupalDateTime("now", "UTC");
+    switch(strtolower(strtolower($form["moderation_state"]["widget"][0]["state"]["#value"]))) {
+      case "published":
+        $form_state->setValue('field_publiahed_date', [["value" => $date]]);
+    }
+    $form_state->setValue('field_updated_date', [["value" => $date]]);
+  }
+
+}
+
+function bos_admin_author_expand(string $name) {
+  $user = Drupal::entityTypeManager()->getStorage("user")->loadByProperties(["name" => $name]);
+  $user = reset($user);
+  return (string) new TranslatableMarkup("%name | %email (user <a href='@userLink'>#@uid</a>)", [
+    "%email" => $user->getEmail(),
+    "%name" => $name,
+    "@uid" => $user->id(),
+    "@userLink" => "/user/" . $user->id(),
+  ]);
 }

@@ -75,6 +75,13 @@ div#edit-meta-published.status-draft-available {
   background-color: #ffae00;
 }
 
+.bos_admin .layout-region-node-secondary {
+  margin-top: 10px;
+}
+.bos_admin .layout-region-node-secondary .entity-meta__header {
+  background-color: #d2e4fb;
+}
+
 
 /******** LEGACY **************************/
 
@@ -236,11 +243,13 @@ body.bos_admin {
 .bos_admin .vertical-tabs {
   border-radius: 0;
   border: 1px solid #b5b5b5;
-  background: #f2f2f0;
+   background: #f2f2f0;
 }
 
 .bos_admin .vertical-tabs__panes {
   border: none;
+  background-color: #d2e4fb; /* DU */
+  padding: 15px 15px 15px 15px;  /* DU */
 }
 
 .bos_admin .vertical-tabs__menu {
@@ -250,21 +259,36 @@ body.bos_admin {
 .bos_admin .vertical-tabs__menu-item a {
   border: 0 none;
   transition: all, 0.2s;
+  padding: 15px;
+}
+
+.bos_admin .vertical-tabs__pane {
+  padding: 5px 0 0 0;
+  border: 1px solid #bfbfbf;
+  border-radius:  3px;
+}
+
+.bos_admin .vertical-tabs__pane table.field-multiple-table {
+  display: none;
 }
 
 .bos_admin .vertical-tabs__menu-item a:hover,
 .bos_admin .vertical-tabs__menu-item a:focus {
-  background: #D2E7F4;
+  background: #d2e4fb;
 }
 
+.bos_admin .vertical-tabs__menu-item.is-selected a,
 .bos_admin .vertical-tabs__menu-item.is-selected a:hover,
 .bos_admin .vertical-tabs__menu-item.is-selected a:focus {
-  background: #FCFCFA;
+  background-color: #d2e4fb;
+  color: #000;
+  padding: 15px;
 }
 
 .bos_admin .vertical-tabs__menu-item.is-selected {
   border: 0 none;
   box-shadow: none;
+  background-color: #f2f2f0;
 }
 
 .bos_admin .button {
