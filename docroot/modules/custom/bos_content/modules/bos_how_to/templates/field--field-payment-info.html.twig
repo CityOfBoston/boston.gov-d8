@@ -2,14 +2,15 @@
  * @file
  * Payment Info Field template.
  #}
-{% set detail_item_variables = {
-  'label': 'Payment Info:',
-  'body': items,
-  'classes': {
-    'detail': 'detail-item',
-    'icon': 'icon-payment',
-    'body': 'detail-item__body--tertiary'
-  }
- } %}
-{# print theme('detail_item', $detail_item_variables); #}
-{% include 'detail-item.html.twig' with detail_item_variables %}
+
+<div class="detail-item">
+  <div class="detail-item__left">
+    <div class="icon icon-payment"></div>
+  </div>
+  <div class="detail-item__content">
+    <div class="detail-item__label">Payment Info:</div>
+    <div class="detail-item__body detail-item__body--tertiary">
+      {{ items }}
+    </div>
+  </div>
+</div>
