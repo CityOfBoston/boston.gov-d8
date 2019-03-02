@@ -165,10 +165,10 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $form["meta"]["author"]["#markup"] = bos_admin_author_expand($form["meta"]["author"]["#markup"]);
   }
 
-  // management of secondary actions menu.
+  // Management of secondary actions menu.
   $form["#attached"]["library"][] = "bos_admin/actions";
 
-  // move the metadata (update/publish) fields into advanced tab.
+  // Move the metadata (update/publish) fields into advanced tab.
   if (isset($form["#fieldgroups"]["group_page_meta_data"])) {
     if (!empty($bundle) && (
       \Drupal::currentUser()->hasPermission("set any published on date")
@@ -200,7 +200,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
   if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
     // If the moderation state has changed require a log message.
     if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
-        $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
+      $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
     }
   }
 }
@@ -213,11 +213,11 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
  * @param \Drupal\Core\Form\FormState $form_state
  *   The form_state object.
  */
-function bos_admin_dates_update(array &$form, FormState &$form_state){
+function bos_admin_dates_update(array &$form, FormState &$form_state) {
   if ($form["moderation_state"]["widget"][0]["#changed"] && !$form_state->getErrors() && !reset($form_state->getValue("field_manual_date"))) {
-    // Update the last uopdated etc
+    // Update the last uopdated etc.
     $date = new DrupalDateTime("now", "UTC");
-    switch(strtolower(strtolower($form["moderation_state"]["widget"][0]["state"]["#value"]))) {
+    switch (strtolower(strtolower($form["moderation_state"]["widget"][0]["state"]["#value"]))) {
       case "published":
         $form_state->setValue('field_publiahed_date', [["value" => $date]]);
     }
@@ -226,13 +226,30 @@ function bos_admin_dates_update(array &$form, FormState &$form_state){
 
 }
 
+/**
+ * Update the custom Updated and Published fields on the node.
+ *
+ * @param string $name
+ *   The Username.
+ *
+ * @return string
+ *   A formatted string with Username and email etc.
+ */
 function bos_admin_author_expand(string $name) {
-  $user = Drupal::entityTypeManager()->getStorage("user")->loadByProperties(["name" => $name]);
-  $user = reset($user);
-  return (string) new TranslatableMarkup("%name | %email (user <a href='@userLink'>#@uid</a>)", [
-    "%email" => $user->getEmail(),
-    "%name" => $name,
-    "@uid" => $user->id(),
-    "@userLink" => "/user/" . $user->id(),
-  ]);
+  try {
+    $user = Drupal::entityTypeManager()
+      ->getStorage("user")
+      ->loadByProperties(["name" => $name]);
+    $user = reset($user);
+    $output = (string) new TranslatableMarkup("%name | %email (user <a href='@userLink'>#@uid</a>)", [
+      "%email" => $user->getEmail(),
+      "%name" => $name,
+      "@uid" => $user->id(),
+      "@userLink" => "/user/" . $user->id(),
+    ]);
+  }
+  catch (Exception $e) {
+    $output = $name;
+  }
+  return $output;
 }

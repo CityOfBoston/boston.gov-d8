@@ -1,3 +1,7 @@
+/**
+* @file
+*/
+
 (function ($, window, document) {
   'use strict';
   $(document).ready(function () {
@@ -6,7 +10,7 @@
       var showActions = function () {
         $(".bos_admin .vertical-tabs__pane").each(function () {
           var blockTop = $(".bos_admin .layout-region-node-main").position().top;
-          if($(this).is(":visible")) {
+          if ($(this).is(":visible")) {
 
             if (($(this).height() + blockTop) > $(window).height()) {
               actions.slideDown();
