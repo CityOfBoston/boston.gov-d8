@@ -1,0 +1,28 @@
+{#
+ * @file
+ * Downloads Field template.
+ #}
+
+<div class="detail-item">
+  <div class="detail-item__left">
+    <div class="icon icon-download"></div>
+  </div>
+  <div class="detail-item__content">
+    <div class="detail-item__label">Downloads:</div>
+    <div class="detail-item__body detail-item__body--secondary download-list uppercase-sm-list">
+      <div class="item-list">
+        <ul>
+          {% for item in items %}
+            <li 
+              {% if loop.first %}
+                class="first"
+              {% elseif loop.last %}
+                class="last"
+              {% endif %}
+            >{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
