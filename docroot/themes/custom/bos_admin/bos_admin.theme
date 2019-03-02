@@ -216,14 +216,17 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
 function bos_admin_dates_update(array &$form, FormState &$form_state) {
   if ($form["moderation_state"]["widget"][0]["#changed"] && !$form_state->getErrors() && !reset($form_state->getValue("field_manual_date"))) {
     // Update the last uopdated etc.
-    $date = new DrupalDateTime("now", "UTC");
     switch (strtolower(strtolower($form["moderation_state"]["widget"][0]["state"]["#value"]))) {
       case "published":
-        $form_state->setValue('field_publiahed_date', [["value" => $date]]);
+        $date = new DrupalDateTime("now", "UTC");
+        if (isset($form['field_updated_date'])) {
+          $form_state->setValue('field_updated_date', [["value" => $date]]);
+        }
+        if (isset($form["field_published_date"]) && empty($form['field_published_date'])) {
+          $form_state->setValue('field_published_date', [["value" => $date]]);
+        }
     }
-    $form_state->setValue('field_updated_date', [["value" => $date]]);
   }
-
 }
 
 /**
