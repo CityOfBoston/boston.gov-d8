@@ -118,6 +118,14 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
   if (!\Drupal::currentUser()->hasPermission("bypass node access")) {
     unset($build["actions"]["entity.node.content_access"]);
   }
+  // Remove Clone if there are no permissions.
+  if (!\Drupal::currentUser()->hasPermission("clone node entity")) {
+    unset($build["actions"]["entity_clone.clone:node.clone_tab"]);
+  }
+  // Remove Usage if there are no permissions.
+  if (!\Drupal::currentUser()->hasPermission("access entity usage statistics")) {
+    unset($build["actions"]["entity_usage.entities:node.entity_usage"]);
+  }
 
   if (isset($entity)) {
     // Remove Translation if there are no permissions.

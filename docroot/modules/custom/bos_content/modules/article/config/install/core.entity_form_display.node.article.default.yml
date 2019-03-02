@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_intro_text
+    - field.field.node.article.field_manual_date
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_updated_date
@@ -25,7 +26,6 @@ third_party_settings:
     group_article:
       children:
         - group_basic_info
-        - group_page_meta_data
         - group_sidebar_components
         - group_components
       parent_name: ''
@@ -39,10 +39,10 @@ third_party_settings:
       label: Article
     group_basic_info:
       children:
+        - field_contact
         - title
         - field_intro_text
         - body
-        - field_contact
       parent_name: group_article
       weight: 1
       format_type: tab
@@ -55,23 +55,25 @@ third_party_settings:
       label: 'Basic Information'
     group_page_meta_data:
       children:
+        - field_manual_date
         - field_updated_date
         - field_published_date
-      parent_name: group_article
-      weight: 2
+      parent_name: ''
+      weight: 12
       format_type: tab
       format_settings:
-        id: ''
-        classes: 'group-page-metadata field-group-tab'
+        label: 'Page Metadata'
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Page Meta Data'
+        id: ''
+        classes: 'group-page-metadata field-group-tab'
+      label: 'Page Metadata'
     group_sidebar_components:
       children:
         - field_sidebar_components
       parent_name: group_article
-      weight: 3
+      weight: 2
       format_type: tab
       format_settings:
         id: ''
@@ -84,7 +86,7 @@ third_party_settings:
       children:
         - field_components
       parent_name: group_article
-      weight: 4
+      weight: 3
       format_type: tab
       format_settings:
         id: ''
@@ -99,7 +101,7 @@ bundle: article
 mode: default
 content:
   body:
-    weight: 3
+    weight: 7
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -149,14 +151,21 @@ content:
     region: content
   field_intro_text:
     type: text_textarea
-    weight: 2
+    weight: 6
     region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_manual_date:
+    weight: 2
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_published_date:
-    weight: 7
+    weight: 4
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -181,7 +190,7 @@ content:
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 6
+    weight: 3
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -234,7 +243,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 5
     region: content
     settings:
       size: 60
