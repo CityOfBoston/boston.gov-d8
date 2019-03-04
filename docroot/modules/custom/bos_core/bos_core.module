@@ -254,7 +254,6 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
 */
 }
 
-
 /**
  * Implements theme_preprocess_moderation_sidebar_revision.
  *
@@ -279,6 +278,24 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
       "#markup" => Markup::create($mod['title']),
     ];
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function bos_core_user_update(EntityInterface $entity) {
+  $name = _bos_core_name_from_email($entity->get("mail")->value);
+  $entity->__set("realname", $name);
+}
+
+/**
+ * Implements hook_realname_update().
+ *
+ * Programmatically enforces realname rule regardless of realname module settings.
+ */
+function bos_core_realname_update($realname, $account) {
+  $name = _bos_core_name_from_email($account->get("mail")->value);
+  $account->__set("realname", $name);
 }
 
 /**
@@ -482,7 +499,6 @@ function _bos_core_get_file_name(string $fid) {
   return $out;
 }
 
-
 /**
  * Returns the moderation state for the node and/or revision.
  *
@@ -526,4 +542,21 @@ function _bos_core_moderation_decode(array $node_info) {
   }
 
   return $output;
+}
+
+/**
+ * Takes an email (assumed boston.gov) and returns the username.
+ *
+ * @param string $email
+ *   The email (usually ending '@boston.gov')
+ * @return string
+ *   Best guess at the users name.
+ */
+function _bos_core_name_from_email(string $email) {
+  if (preg_match("/.*\@/", $email, $output)) {
+    return ucwords(str_replace(".", " ", trim($output[0], "@")));
+  }
+  else {
+    return $email;
+  }
 }
