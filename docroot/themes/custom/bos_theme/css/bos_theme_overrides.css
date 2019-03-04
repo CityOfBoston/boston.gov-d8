@@ -82,3 +82,135 @@ button.lity-close {
   padding: 0;
   font-family: Arial,Baskerville,monospace;
 }
+
+ /* Sidebar theme.  */
+.bos_theme .moderation-sidebar-actions .button--edit-draft {
+  background-color: #ffae00 !important;
+  padding-right: 42px !important;
+}
+.bos_theme .moderation-sidebar-actions .button--edit-draft:before {
+  content: url("/themes/custom/bos_theme/images/small-circle-icons_pencil");
+  min-width: 29px;
+  max-height: 16px;
+  display: inline-block;
+  float: left;
+  margin: -5px 13px 0 0;
+  padding: 0;
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--draft,
+.bos_theme .moderation-sidebar-actions .button--view-draft {
+  background-color: #ffae00 !important;
+  padding-right: 42px !important;
+}
+
+.bos_theme .moderation-sidebar-actions .button--view-live {
+  background-color: #00B000 !important;
+  padding-right: 42px !important;
+}
+.bos_theme .moderation-sidebar-actions .button--view-live:before,
+.bos_theme .moderation-sidebar-actions .button--view-draft:before {
+  content: url("/themes/custom/bos_theme/images/small-circle-icons_Computer");
+  min-width: 29px;
+  max-height: 16px;
+  display: inline-block;
+  float: left;
+  margin: -5px 13px 0 0;
+  padding: 0;
+}
+.bos_theme .moderation-sidebar-actions a.button--delete {
+  background-color: #bd2727 !important;
+  padding-right: 42px !important;
+}
+.bos_theme .moderation-sidebar-actions a.button--delete:before {
+  content: url("/themes/custom/bos_theme/images/small-circle-icons_alert");
+  min-width: 29px;
+  max-height: 16px;
+  display: inline-block;
+  float: left;
+  margin: -5px 13px 0 0;
+  padding: 0;
+}
+
+.bos_theme .moderation-sidebar-actions input.button--delete {
+  background-color: #bd2727 !important;
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--review,
+.bos_theme .moderation-sidebar-actions .button--review {
+  background-color: #277abd !important;
+}
+.bos_theme .moderation-sidebar-revision-item .title--archive {
+  background-color: #c5c5c5 !important;
+}
+
+/* Moderation status in toolbar. */
+.moderation-sidebar-toolbar-tab.status-published .toolbar-item:after {
+  content: "Published + Live";
+  background-color: #269e2c;
+}
+.moderation-sidebar-toolbar-tab.status-needs-review .toolbar-item:after {
+  content: "Needs Review";
+  background-color: #277abd;
+}
+.moderation-sidebar-toolbar-tab.status-draft .toolbar-item:after {
+  content: "Latest Draft";
+  background-color: #ffae00;
+}
+.moderation-sidebar-toolbar-tab.status-archive .toolbar-item:after {
+  content: "Archive";
+  background-color: #c5c5c5;
+}
+
+.toolbar-icon-moderation-sidebar.moderation-label-draft-available:after {
+  content: "Published";
+  background-color: #277abd;
+  color: #fff;
+  background-image: url("/themes/custom/bos_theme/images/small-circle-icons_pencil");
+  background-repeat: no-repeat;
+  background-position-x: 5px;
+  background-position-y: center;
+  background-size: 25px;
+  padding-left: 37px;
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--published {
+  background-color: #269e2c !important;
+}
+
+.moderation-sidebar-container .moderation-sidebar-revision-item {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  padding: 5px !important;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item p{
+  margin: .5em 0 !important;
+  line-height: 1.2em !important;
+  background-color: transparent !important;
+  color: #ccc !important;
+  text-align: center;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item a{
+  background-color: transparent !important;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-message{
+  font-weight: bold;
+  text-align: left;
+  padding-bottom: .4rem !important;
+  border-bottom: 1px solid #c5c5c5 !important;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-mod-type{
+  font-weight: bold;
+  font-size: 75% !important;
+  padding: 0.5em 0 !important;
+  margin: 0 !important;
+  color: #333 !important;
+  font-variant: small-caps;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-info,
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-link {
+  margin: 0.1em 0 !important;
+}
+.moderation-sidebar-container .moderation-sidebar-info p {
+  margin: 0 !important;
+  line-height: 1.2rem;
+}
