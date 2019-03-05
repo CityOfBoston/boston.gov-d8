@@ -40,17 +40,14 @@ function bos_admin_preprocess_html(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_admin_preprocess_username(&$variables) {
-  if (empty($variables["account"]->__get("realname"))) {
+  if (empty($variables["account"]->__get("realname")) || stripos($variables["account"]->__get("realname"), "@")) {
     if (function_exists("_bos_core_name_from_email")) {
       $name = _bos_core_name_from_email($variables["account"]->get("mail")->value);
       $variables["account"]->__set("realname", $name);
+      $variables["name"] = $name;
     }
-    else {
-      $email = strtolower($variables["account"]->get("mail")->value);
-      $variables["account"]->__set("realname", $email);
-    }
+    realname_user_update($variables["account"]);
   }
-  $variables["extra"] = $variables["account"]->__get("realname");
 }
 
 /**

@@ -189,9 +189,9 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
     }
   }
 
-  $mail = $build["info"]["#revision_author_link"]["#url"]->getOption('entity')->getEmail();
-  $build["info"]["#revision_author"] = $mail;
-  $build["info"]["#revision_author_link"]["#title"] = $mail;
+  $name = $build["info"]["#revision_author_link"]["#url"]->getOption('entity')->__get("realname");
+  $build["info"]["#revision_author"] = $name;
+  $build["info"]["#revision_author_link"]["#title"] = $name;
 
 /*
   // Add direct link to edit latest version.
@@ -266,7 +266,7 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
     ->getStorage("user")
     ->loadByProperties(["name" => $variables["revision_author"]])) {
     $account = reset($account);
-    $variables["revision_author_link"]["#title"] = $account->getEmail();
+    $variables["revision_author_link"]["#title"] = $account->__get("realname");
   }
   // Theme the revisions sidebar panel.
   $attributes = new Attribute(["class" => ["revision-mod-type"]]);
@@ -281,21 +281,19 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_update().
- */
-function bos_core_user_update(EntityInterface $entity) {
-  $name = _bos_core_name_from_email($entity->get("mail")->value);
-  $entity->__set("realname", $name);
-}
-
-/**
  * Implements hook_realname_update().
  *
  * Programmatically enforces realname rule regardless of realname module settings.
  */
 function bos_core_realname_update($realname, $account) {
-  $name = _bos_core_name_from_email($account->get("mail")->value);
-  $account->__set("realname", $name);
+  $realname = _bos_core_name_from_email($account->get("mail")->value);
+  \Drupal::database()->merge('realname')
+    ->key(['uid' => $account->id()])
+    ->fields([
+      'realname' => $realname,
+      'created' => \Drupal::time()->getRequestTime(),
+    ])
+    ->execute();
 }
 
 /**

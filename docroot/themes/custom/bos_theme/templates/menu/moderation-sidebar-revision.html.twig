@@ -22,10 +22,12 @@
   {% if revision_message %}
     <p class="revision-message">{{ revision_message }}</p>
   {% endif %}
-  {% if revision_author_link %}
-    <p class="revision-info">{{ revision_author_link }}</p>
-  {% endif %}
-  {% if revision_link %}
-    <p class="revision-link">{{ 'Created' | t }} {{ revision_link }}</p>
-  {% endif %}
+  <p class="revision-info revision-link">
+    {% if revision_author_link %}
+      <span>{{ 'by' | t }} {{ revision_author_link }}</span>
+    {% endif %}
+    {% if revision_link %}
+      <span> : {{ revision_link }}</span>
+    {% endif %}
+  </p>
 </div>
