@@ -51,26 +51,19 @@ function bos_admin_preprocess_username(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function bos_admin_preprocess_form_element(&$variables) {
-  return;
-}
-
-/**
  * Implements hook_form_alter().
  */
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == "revision_overview_form") {
-    foreach($form["node_revisions_table"] as $key => &$revision) {
+    foreach ($form["node_revisions_table"] as $key => &$revision) {
       if (is_numeric($key)) {
         $context = &$revision["revision"]["#context"];
         $uid = str_replace("\n", "", strip_tags($context["username"]->__toString()));
         $user = bos_admin_author_expand($uid);
-        $context["username"] = \Drupal\Core\Render\Markup::create($user);
+        $context["username"] = Markup::create($user);
         $tooltip = "Select this revision for compare";
-        $revision["select_column_one"]["#attributes"]["title"] = $tooltip ;
-        $revision["select_column_two"]["#attributes"]["title"] = $tooltip ;
+        $revision["select_column_one"]["#attributes"]["title"] = $tooltip;
+        $revision["select_column_two"]["#attributes"]["title"] = $tooltip;
       }
     }
     // Revision form ...
@@ -227,7 +220,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     }
   }
 
-  //TODO: When the moderation state is Published, make default save to draft
+  // TODO: When the moderation state is Published, make default save to draft
   // plus manage other situations sensibly ...
 }
 
@@ -311,9 +304,9 @@ function bos_admin_author_expand(string $name) {
  * Revisions form compare Submit call-back.  Sets default layout/filter.
  *
  * @param array $form
- *  The form object.
+ *   The form object.
  * @param \Drupal\Core\Form\FormState $form_state
- *  The form state object.
+ *   The form state object.
  */
 function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
   $route = $form_state->getRedirect()->getRouteParameters();

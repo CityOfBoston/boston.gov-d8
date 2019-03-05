@@ -194,6 +194,12 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
   $build["info"]["#revision_author_link"]["#title"] = $name;
 
 /*
+ * TODO: Revise this to manage buttons on moderation sidebar according to the
+ * moderation state.
+ * -> Create an array and implement on moderation workflow config page to set a
+ * default state to move to from the state the entity is currently in.
+ * e.g. When moderation state is "published", the default next state should be
+ * "draft" etc.
   // Add direct link to edit latest version.
   if (!empty($build["actions"]["view_latest"])) {
     $url = Url::fromRoute("entity.node.edit_form", [
@@ -283,7 +289,7 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
 /**
  * Implements hook_realname_update().
  *
- * Programmatically enforces realname rule regardless of realname module settings.
+ * Programmatically enforces realname regardless of realname module settings.
  */
 function bos_core_realname_update($realname, $account) {
   $realname = _bos_core_name_from_email($account->get("mail")->value);
@@ -507,7 +513,11 @@ function _bos_core_get_file_name(string $fid) {
  *   Array with moderation values for formatting
  */
 function _bos_core_moderation_decode(array $node_info) {
-  $output = ["title" => "UNKNOWN", "class" => "title--unknown", "", "moderation_state" => "unknown"];
+  $output = [
+    "title" => "UNKNOWN",
+    "class" => "title--unknown",
+    "moderation_state" => "unknown",
+  ];
   try {
     if (isset($node_info["node_revision"])) {
       $vid = $node_info["node_revision"];
@@ -534,7 +544,7 @@ function _bos_core_moderation_decode(array $node_info) {
     $mod_state = $node->get('moderation_state')->getString();
     $mod = $moderation_text[$mod_state];
     if ($node->isLatestRevision()) {
-      $mod["title"] = "LATEST REVISION (" . $mod["title"] .")";
+      $mod["title"] = "LATEST REVISION (" . $mod["title"] . ")";
     }
     $output = $mod + ["moderation_state" => $mod_state];
   }
@@ -547,6 +557,7 @@ function _bos_core_moderation_decode(array $node_info) {
  *
  * @param string $email
  *   The email (usually ending '@boston.gov')
+ *
  * @return string
  *   Best guess at the users name.
  */

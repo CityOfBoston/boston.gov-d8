@@ -15,7 +15,7 @@
         .prop({"checked": false});
     };
     radios.click(function () {
-      var state = ($(this).is(":checked") ? "hidden": "visible");
+      var state = ($(this).is(":checked") ? "hidden" : "visible");
       if ($(this).parent().hasClass("form-item-radios-left")) {
         radiosLeft.css({"visibility": state});
       }
