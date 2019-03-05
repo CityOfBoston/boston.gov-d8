@@ -85,6 +85,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       "#value" => Markup::create("Reset selections"),
     ];
     $form["#submit"][] = "bos_admin_revisions_defaults";
+    $form["#submit"][] = "bos_admin_dates_update";
   }
 
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
