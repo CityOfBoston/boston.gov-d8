@@ -293,7 +293,7 @@ function bos_admin_author_expand(string $name) {
       ->getStorage("user")
       ->loadByProperties(["name" => $name]);
     if ($user = reset($user)) {
-      $output = (string) new TranslatableMarkup("%name | %email (user <a href='@userLink'>#@uid</a>)", [
+      $output = (string) new TranslatableMarkup("%name | (<a href='@userLink'>user #@uid</a>)", [
         "%email" => $user->getEmail(),
         "%name" => $name,
         "@uid" => $user->id(),
