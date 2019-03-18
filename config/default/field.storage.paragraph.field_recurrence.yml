@@ -1,19 +1,20 @@
-uuid: 047eb5bd-a698-469d-bd6e-c7ed8c899319
+uuid: a0029366-71d4-4541-b0e9-8e79520561af
 langcode: en
 status: true
 dependencies:
   module:
-    - datetime
+    - date_recur
     - paragraphs
-id: paragraph.field_date
-field_name: field_date
+id: paragraph.field_recurrence
+field_name: field_recurrence
 entity_type: paragraph
-type: datetime
+type: date_recur
 settings:
   datetime_type: date
-module: datetime
+  rrule_max_length: 256
+module: date_recur
 locked: false
-cardinality: -1
+cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

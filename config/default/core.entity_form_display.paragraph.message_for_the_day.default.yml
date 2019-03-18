@@ -3,26 +3,36 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.message_for_the_day.field_date
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
+    - field.field.paragraph.message_for_the_day.field_recurrence
     - field.field.paragraph.message_for_the_day.field_use_alert
     - paragraphs.paragraphs_type.message_for_the_day
   module:
-    - datetime
+    - bos_core
+    - field_group
     - paragraphs
     - text
+third_party_settings:
+  field_group:
+    group_recurrence:
+      children:
+        - field_recurrence
+        - field_recurrence_exceptions
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Recurrence
 id: paragraph.message_for_the_day.default
 targetEntityType: paragraph
 bundle: message_for_the_day
 mode: default
 content:
-  field_date:
-    weight: 3
-    type: datetime_default
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_link:
     weight: 5
     type: entity_reference_paragraphs
@@ -42,6 +52,12 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_recurrence:
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    type: bos_core_mod_recur
     region: content
   field_use_alert:
     weight: 2

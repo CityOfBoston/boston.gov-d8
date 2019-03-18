@@ -3,12 +3,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.message_for_the_day.field_date
+    - core.date_format.medium
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
+    - field.field.paragraph.message_for_the_day.field_recurrence
     - field.field.paragraph.message_for_the_day.field_use_alert
     - paragraphs.paragraphs_type.message_for_the_day
   module:
+    - date_recur
     - entity_reference_revisions
     - text
 id: paragraph.message_for_the_day.default
@@ -32,6 +34,20 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_recurrence:
+    weight: 2
+    label: above
+    settings:
+      show_next: 5
+      count_per_item: true
+      occurrence_format_type: medium
+      same_end_date_format_type: medium
+      interpreter: null
+      separator: '-'
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: date_recur_basic_formatter
+    region: content
 hidden:
-  field_date: true
   field_use_alert: true
