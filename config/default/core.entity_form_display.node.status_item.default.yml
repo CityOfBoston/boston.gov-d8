@@ -7,13 +7,15 @@ dependencies:
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
+    - image.style.thumbnail
     - node.type.status_item
   module:
     - comment
-    - file
+    - content_moderation
     - paragraphs
     - path
     - publication_date
+    - svg_image
 id: node.status_item.default
 targetEntityType: node
 bundle: status_item
@@ -33,21 +35,29 @@ content:
     third_party_settings: {  }
   field_icon:
     weight: 3
-    type: file_generic
+    type: image_image
     settings:
+      preview_image_style: thumbnail
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_messages:
     weight: 6
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Message
       title_plural: Messages
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: message_for_the_day
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_title:
@@ -124,4 +134,6 @@ content:
   url_redirects:
     weight: 50
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
