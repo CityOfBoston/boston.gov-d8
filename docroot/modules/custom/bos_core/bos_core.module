@@ -19,12 +19,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 
-/**
- * Implements hook_theme().
- */
-function bos_core_theme($existing, $type, $theme, $path) {
-  return [];
-}
+define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
 /**
  * Display the help page.
