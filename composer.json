@@ -57,6 +57,8 @@
     "drupal/core": "^8.6",
     "drupal/ctools": "^3.0",
     "drupal/date_popup": "^1.0",
+    "drupal/date_recur": "2.x-dev#1da6755c1173f1bd9cd4f32f3689297b09886be1",
+    "drupal/date_recur_modular": "^1.0-alpha1",
     "drupal/diff": "^1.0",
     "drupal/draggableviews": "^1.0",
     "drupal/dynamic_entity_reference": "^2.0",
@@ -197,6 +199,10 @@
       },
       "drupal/rabbit_hole": {
         "Compatibility with entity_clone": "https://www.drupal.org/files/issues/2018-12-04/fixing-operation-method-check--3013968-4.patch"
+      },
+      "drupal/date_recur": {
+        "https://www.drupal.org/project/date_recur/issues/3015633": "https://www.drupal.org/files/issues/2019-02-14/rdate-exdate-3015633-3_0.patch",
+        "Add helper for exdate retreival": "patches/exdate_helper.patch"
       }
     }
   }
