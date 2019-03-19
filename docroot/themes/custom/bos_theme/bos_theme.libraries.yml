@@ -103,8 +103,15 @@ fleet-components.heroku-patterns:
 page.assets:
   css:
     theme:
-      css/bos_theme_overrides.css: {}
+      css/bos_theme_overrides.css: {weight: 500}
 
 page.component_navigation:
   js:
     js/component-navigation.boston.js: {attributes: {id: "component_nav_script"}}
+
+context_link:
+  js:
+    js/bos_core.context_link.js: {attributes: {id: "bos_core_context_link"}}
+  dependencies:
+    - core/jquery
+    - contextual/drupal.contextual-links

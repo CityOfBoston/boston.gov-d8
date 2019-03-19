@@ -36,7 +36,7 @@ type_settings:
       weight: 1
   transitions:
     archived:
-      label: Archived
+      label: 'Archive Content'
       from:
         - published
       to: archive
@@ -48,7 +48,7 @@ type_settings:
       to: draft
       weight: 0
     draft_from_published:
-      label: 'Draft from Published'
+      label: 'New Draft'
       from:
         - published
       to: draft
@@ -60,7 +60,7 @@ type_settings:
       to: published
       weight: 2
     reject:
-      label: Reject
+      label: 'Reject Draft'
       from:
         - needs_review
       to: draft
@@ -77,12 +77,6 @@ type_settings:
         - draft
       to: draft
       weight: 3
-    update_needs_review:
-      label: 'Update Needs Review'
-      from:
-        - needs_review
-      to: needs_review
-      weight: 4
     update_published:
       label: 'Update Published'
       from:

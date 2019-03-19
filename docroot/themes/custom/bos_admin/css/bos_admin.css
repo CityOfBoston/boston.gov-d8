@@ -58,21 +58,30 @@ div[id^=edit-moderation-state-].container-inline,
 div#edit-meta-published {
   border: 1px solid #b8b8b8;
   padding: 1em;
-  background-color: #269e2c;
-  color: #333;
   margin-bottom: 1em;
 }
 
 div[id^=edit-moderation-state-].status-draft,
+div#edit-meta-published.status-draft {
+  background-color: #ffae00;
+  color: #333;
+}
 div[id^=edit-moderation-state-].status-needs-review,
-div#edit-meta-published.status-draft,
 div#edit-meta-published.status-needs-review {
-  background-color: #bd2727;
+  background-color: #277abd;
   color: #fff;
 }
 div[id^=edit-moderation-state-].status-draft-available,
 div#edit-meta-published.status-draft-available {
   background-color: #ffae00;
+}
+div.status-archive {
+  background-color: #c5c5c5;
+  color: #333;
+}
+div.status-published {
+  background-color: #269e2c;
+  color: #333;
 }
 
 .bos_admin .layout-region-node-secondary {
@@ -90,6 +99,30 @@ div#edit-meta-published.status-draft-available {
 }
 .bos_admin h1.page-title {
   line-height: 1.4em;
+}
+
+/* Node revision summary page */
+.bos_admin .diff-revisions tr {
+    font-size: 110%;
+    font-weight: bold;
+}
+.bos_admin .diff-revisions tr .revision-log {
+  font-weight: normal;
+  margin: 5px 0 0 10px;
+  border: 1px solid #c5c5c5;
+  padding: 0.5em;
+  background-color: #d2e4fb;
+}
+.bos_admin .diff-revisions tr .revision-log:before {
+  content: "Revision Log: ";
+  color: #1979cc;
+  font-weight: bold;
+}
+/* For the node revision compare form */
+.bos_admin #block-bos-admin-content .diff-responsive-table-wrapper {
+    border:  1px solid #c5c5c5;
+    padding: .7em;
+    border-radius: 3px;
 }
 
 /******** LEGACY **************************/

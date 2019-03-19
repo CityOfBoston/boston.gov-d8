@@ -15,6 +15,9 @@ use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
+use Drupal\Core\Render\Markup;
+use Drupal\core\Template\Attribute;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_theme().
@@ -101,6 +104,19 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_core_preprocess_toolbar(&$variables) {
+  if (isset($variables["tabs"]["moderation_sidebar"])) {
+    $status = Html::cleanCssIdentifier(strtolower($variables["tabs"]["moderation_sidebar"]["link"]["#attributes"]["data-label"]));
+    $variables["tabs"]["moderation_sidebar"]["attributes"]->addClass("status-" . $status);
+    if ($status == "draft-available") {
+      $variables["tabs"]["moderation_sidebar"]["attributes"]->setAttribute("title", "Draft available.");
+    }
+  }
+}
+
+/**
  * Implements hook_moderation_sidebar_alter().
  *
  * @see https://www.drupal.org/files/issues/2018-09-17/moderation_sidebar-edit-access-check-3000387-2.patch
@@ -172,6 +188,111 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
       unset($build["actions"]["entity.node.delete_form"]);
     }
   }
+
+  $name = $build["info"]["#revision_author_link"]["#url"]->getOption('entity')->__get("realname");
+  $build["info"]["#revision_author"] = $name;
+  $build["info"]["#revision_author_link"]["#title"] = $name;
+
+  /*
+   * TODO: Revise this to manage buttons on moderation sidebar according to the
+   * moderation state.
+   * -> Create an array and implement on moderation workflow config page to set
+   * a default state to move to from the state the entity is currently in.
+   * e.g. When moderation state is "published", the default next state should be
+   * "draft" etc.
+   *
+   */
+  // Add direct link to edit latest version.
+  if (!empty($build["actions"]["view_latest"])) {
+    $url = Url::fromRoute("entity.node.edit_form", [
+      'node' => $entity->id(),
+    ],
+    [
+      'entity' => $entity,
+      'language' => $entity->language(),
+      'entity_type' => "node",
+    ]);
+
+    $build["actions"]["edit_latest"] = [
+      "#title" => Markup::create("Edit existing draft"),
+      "#attributes" => [
+        "class" => [
+          "moderation-sidebar-link",
+          "button",
+        ],
+      ],
+      "#url" => $url,
+      "#weight" => -1,
+      "#type" => "link",
+    ];
+    // Set some colors on the sidebar.
+    $build["actions"]["view_latest"]["#weight"] = -2;
+  }
+  // Set some colors on the sidebar.
+  if (isset($build["actions"]["view_latest"])) {
+    $build["actions"]["view_latest"]["#attributes"]["class"][] = "button--view-draft clearfix";
+  }
+  if (isset($build["actions"]["edit"])) {
+    $build["actions"]["edit_latest"]["#attributes"]["class"][] = "button--edit-draft clearfix";
+  }
+  if (isset($build["actions"]["edit_latest"])) {
+    $build["actions"]["edit_latest"]["#attributes"]["class"][] = "button--edit-draft clearfix";
+  }
+  if (isset($build["actions"]["view_default"])) {
+    $build["actions"]["view_default"]["#attributes"]["class"][] = "button--view-live clearfix";
+  }
+  if ($build["actions"]["delete"]) {
+    $build["actions"]["delete"]["#attributes"]["class"][] = "button--delete clearfix";
+  }
+  if (isset($build["actions"]["quick_draft_form"]["discard_draft"])) {
+    $build["actions"]["quick_draft_form"]["discard_draft"]["#attributes"]["class"][] = "button--delete clearfix";
+  }
+  if (isset($build["actions"]["quick_draft_form"]["submit_for_review"])) {
+    $build["actions"]["quick_draft_form"]["submit_for_review"]["#attributes"]["class"][] = "button--review clearfix";
+  }
+
+}
+
+/**
+ * Implements theme_preprocess_moderation_sidebar_revision.
+ *
+ * Called when revisions button is clicked on moderation sidebar menu, and
+ * sets up the revisions panel fo the sidebar.
+ */
+function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
+  // Change username to email address.
+  if ($account = Drupal::entityTypeManager()
+    ->getStorage("user")
+    ->loadByProperties(["name" => $variables["revision_author"]])) {
+    $account = reset($account);
+    $variables["revision_author_link"]["#title"] = $account->__get("realname");
+  }
+  // Theme the revisions sidebar panel.
+  $attributes = new Attribute(["class" => ["revision-mod-type"]]);
+  $route = $variables["revision_link"]->getUrl()->getRouteParameters(["node"]);
+  $mod = _bos_core_moderation_decode($route);
+  if ($mod['moderation_state'] != "unknown") {
+    $variables["revision_mod_type"] = [
+      "attributes" => $attributes->addClass($mod["class"]),
+      "#markup" => Markup::create($mod['title']),
+    ];
+  }
+}
+
+/**
+ * Implements hook_realname_update().
+ *
+ * Programmatically enforces realname regardless of realname module settings.
+ */
+function bos_core_realname_update($realname, $account) {
+  $realname = _bos_core_name_from_email($account->get("mail")->value);
+  \Drupal::database()->merge('realname')
+    ->key(['uid' => $account->id()])
+    ->fields([
+      'realname' => $realname,
+      'created' => \Drupal::time()->getRequestTime(),
+    ])
+    ->execute();
 }
 
 /**
@@ -373,4 +494,71 @@ function _bos_core_get_file_name(string $fid) {
     $out = $name['0']['value'];
   }
   return $out;
+}
+
+/**
+ * Returns the moderation state for the node and/or revision.
+ *
+ * @param array $node_info
+ *   Node and Revision information.
+ *
+ * @return array|mixed
+ *   Array with moderation values for formatting
+ */
+function _bos_core_moderation_decode(array $node_info) {
+  $output = [
+    "title" => "UNKNOWN",
+    "class" => "title--unknown",
+    "moderation_state" => "unknown",
+  ];
+  try {
+    if (isset($node_info["node_revision"])) {
+      $vid = $node_info["node_revision"];
+      $node = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->loadRevision($vid);
+    }
+    else {
+      $nid = $node_info["node"];
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+    }
+  }
+  catch (Exception $e) {
+    return $output;
+  }
+
+  if ($node) {
+    $moderation_text = [
+      "archive" => ["title" => "ARCHIVE", "class" => "title--archive"],
+      "draft" => ["title" => "DRAFT", "class" => "title--draft"],
+      "published" => ["title" => "PUBLISHED", "class" => "title--published"],
+      "needs_review" => ["title" => "REVIEW", "class" => "title--review"],
+    ];
+    $mod_state = $node->get('moderation_state')->getString();
+    $mod = $moderation_text[$mod_state];
+    if ($node->isLatestRevision()) {
+      $mod["title"] = "LATEST REVISION (" . $mod["title"] . ")";
+    }
+    $output = $mod + ["moderation_state" => $mod_state];
+  }
+
+  return $output;
+}
+
+/**
+ * Takes an email (assumed boston.gov) and returns the username.
+ *
+ * @param string $email
+ *   The email (usually ending '@boston.gov')
+ *
+ * @return string
+ *   Best guess at the users name.
+ */
+function _bos_core_name_from_email(string $email) {
+  if (preg_match("/.*\@/", $email, $output)) {
+    return ucwords(str_replace(".", " ", trim($output[0], "@")));
+  }
+  else {
+    return $email;
+  }
 }

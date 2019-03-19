@@ -202,7 +202,7 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
     $variables["attributes"] = new Attribute();
   }
 
-  $variables['attributes']->addClass("html");
+  $variables['attributes']->addClass("html bos_theme");
   $newClass = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
   $variables['attributes']->addClass($newClass);
   $newClass = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
@@ -674,6 +674,9 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     if ($variables['unpublished'] || $variables['preview']) {
       $variables['attributes']['class'][] = 'watermark__wrapper';
     }
+
+    // Addin a theme override for the contextual_links.
+    $variables["#attached"]["library"][] = 'bos_theme/context_link';
   }
 }
 
