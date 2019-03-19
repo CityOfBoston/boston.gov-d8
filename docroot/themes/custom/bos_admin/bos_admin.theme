@@ -44,11 +44,6 @@ function bos_admin_node_presave(EntityInterface $entity) {
   $changed = $new_state != $current_state;
   $date = new DrupalDateTime("now", "UTC");
 
-  switch ($current_state) {
-    default:
-      break;
-  }
-
   switch ($new_state) {
 
     case "archive":

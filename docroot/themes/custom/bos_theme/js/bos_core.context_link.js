@@ -1,8 +1,8 @@
 /**
  * @file
  * Extends context_edit menu functionality.
- * if there is only one menu item causes a click on the context edit button to trigger first menu item.
  *
+ * If there is only one menu item causes a click on the context edit button to trigger first menu item.
  */
 
 (function ($, window, document) {
@@ -14,9 +14,9 @@
     /*
       Attempts to determine what sort of node this is from the classes applied.
      */
-    var findNode = function() {
+    var findNode = function () {
       var classes = links.parents("article").attr("class").split(/\s+/);
-      $(classes).each(function(key, value){
+      $(classes).each(function (key, value) {
         if (value == "node-article") {
           type = "Article";
         }
@@ -35,7 +35,7 @@
     }
     else if (links.length > 1) {
       findNode();
-      links.each(function(key, listItem) {
+      links.each(function (key, listItem) {
         $(listItem).find("a").text($(listItem).find("a").text() + " " + type);
       });
       links.parents(".contextual").attr({"title": "Click for " + type + " admin options."});
