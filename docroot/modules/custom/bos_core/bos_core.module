@@ -200,6 +200,8 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
  * default state to move to from the state the entity is currently in.
  * e.g. When moderation state is "published", the default next state should be
  * "draft" etc.
+ *
+ */
   // Add direct link to edit latest version.
   if (!empty($build["actions"]["view_latest"])) {
     $url = Url::fromRoute("entity.node.edit_form", [
@@ -227,7 +229,7 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
     // Set some colors on the sidebar.
     $build["actions"]["view_latest"]["#weight"] = -2;
   }
-
+/*
   if (isset($build["actions"]["edit"])) {
     $build["actions"]["edit_latest"] = $build["actions"]["edit"];
     $build["actions"]["edit_latest"]["#weight"] = -1;

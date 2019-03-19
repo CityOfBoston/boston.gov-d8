@@ -108,3 +108,10 @@ page.assets:
 page.component_navigation:
   js:
     js/component-navigation.boston.js: {attributes: {id: "component_nav_script"}}
+
+context_link:
+  js:
+    js/bos_core.context_link.js: {attributes: {id: "bos_core_context_link"}}
+  dependencies:
+    - core/jquery
+    - contextual/drupal.contextual-links

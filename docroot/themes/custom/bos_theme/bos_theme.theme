@@ -674,6 +674,9 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     if ($variables['unpublished'] || $variables['preview']) {
       $variables['attributes']['class'][] = 'watermark__wrapper';
     }
+
+    // Addin a theme override for the contextual_links.
+    $variables["#attached"]["library"][] = 'bos_theme/context_link';
   }
 }
 

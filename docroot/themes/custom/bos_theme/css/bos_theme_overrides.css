@@ -17,6 +17,7 @@
 .toolbar-horizontal.toolbar-fixed.toolbar-tray-open header#main-menu,
 .toolbar-horizontal.toolbar-fixed.toolbar-tray-open nav.nv-m{
   top: 79px;
+  z-index: 501;
 }
 .toolbar-fixed div.dialog-off-canvas-main-canvas {
   /*position: relative;*/
@@ -215,4 +216,46 @@ button.lity-close {
 .moderation-sidebar-container .moderation-sidebar-info p {
   margin: 0 !important;
   line-height: 1.2rem;
+}
+.contextual-region .contextual .contextual-links a,
+.contextual-region .contextual .contextual-links a:hover {
+  font-size: 80%;
+}
+
+.contextual {
+  right: -8px;
+}
+.contextual .trigger:active,
+.contextual .trigger:visited,
+.contextual .trigger:focus,
+.contextual .trigger {
+  background-image: url(../images/context-edit.svg);
+  background-color: transparent !important;
+  background-position-y: center;
+  border: none;
+  border-radius: 0;
+  background-size: 30px 30px;
+  padding: 0;
+  height: 31px !important;
+  width: 31px !important;
+}
+.contextual .trigger:hover {
+  background-image: url(../images/context-edit-hover.svg);
+  background-color: transparent !important;
+  background-position-y: center;
+  border: none;
+  border-radius: 0;
+  background-size: 30px 30px;
+  padding:0;
+  height: 31px !important;
+  width: 31px !important;
+}
+.contextual-region .contextual .contextual-links a,
+.contextual-region .contextual .contextual-links {
+  background-color: #ddd;
+  color: #277abd;
+  border-color: #277abd;
+}
+.contextual-region .contextual .contextual-links li {
+  background-color: #ccc;
 }

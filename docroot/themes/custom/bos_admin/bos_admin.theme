@@ -28,6 +28,65 @@ function bos_admin_theme($existing, $type, $theme, $path) {
 }
 
 /**
+ * Implements hook_entity_presave().
+ */
+function bos_admin_node_presave(EntityInterface $entity) {
+  $revId = $entity->getLoadedRevisionId();
+  if (isset($revId)) {
+    $current_entity = Drupal::entityTypeManager()->getStorage("node")->loadRevision($revId);
+    $current_state = $current_entity->get('moderation_state')->getString();
+  }
+  else {
+    $current_entity = Drupal::entityTypeManager()->getStorage("node")->info;
+    $current_state = "new";
+  }
+  $new_state = $entity->get('moderation_state')->getString();
+  $changed = $new_state != $current_state;
+  $date = new DrupalDateTime("now", "UTC");
+
+  switch ($current_state) {
+    default:
+      break;
+  }
+
+  switch ($new_state) {
+
+    case "archive":
+    case "archived":
+      break;
+
+    case "draft":
+      break;
+
+    case "needs_review":
+      break;
+
+    case "published":
+      if (!$entity->isPublished()) {
+        $entity->status->value = TRUE;
+      }
+      // If publish dates are being automatically maintained.
+      if (!$entity->field_manual_date->value) {
+        // Update field_updated_date if changing (or keeping) published.
+        if (isset($entity->field_updated_date)) {
+          $entity->field_updated_date->value = $date->format("Y-m-d\TH:i:s");
+        }
+        // Set published_date if this is the first time published.
+        if ($changed && isset($entity->field_published_date) && empty($entity->field_published_date->value)) {
+          $entity->field_published_date->value = $date->format("Y-m-d\TH:i:s");
+        }
+      }
+      break;
+  }
+  if (!empty($current_entity->field_updated_date->value) && empty($entity->field_updated_date->value)) {
+    $entity->field_updated_date->value = $current_entity->field_updated_date->value;
+  }
+  if (!empty($current_entity->field_published_date->value) && empty($entity->field_published_date->value)) {
+    $entity->field_published_date->value = $current_entity->field_published_date->value;
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK() for HTML document templates.
  */
 function bos_admin_preprocess_html(&$variables) {
@@ -78,7 +137,6 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       "#value" => Markup::create("Reset selections"),
     ];
     $form["#submit"][] = "bos_admin_revisions_defaults";
-    $form["#submit"][] = "bos_admin_dates_update";
   }
 
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
@@ -207,7 +265,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["#attached"]["library"][] = "bos_admin/actions";
 
   // Move the metadata (update/publish) fields into advanced tab.
-  if (isset($form["#fieldgroups"]["group_page_meta_data"])) {
+  if (preg_match("/node\-.*\-edit\-form*/", $form["#id"]) && isset($form["#fieldgroups"]["group_page_meta_data"])) {
     if (!empty($bundle) && (
       \Drupal::currentUser()->hasPermission("set any published on date")
       || \Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")
@@ -216,7 +274,6 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       $form["#fieldgroups"]["group_page_meta_data"]->weight = 100;
 
       $form["#attached"]["library"][] = "bos_admin/manual_date";
-      $form['#validate'][] = "bos_admin_dates_update";
     }
   }
 
@@ -249,30 +306,6 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
 /**
  * Update the custom Updated and Published fields on the node.
  *
- * @param array $form
- *   The form array.
- * @param \Drupal\Core\Form\FormState $form_state
- *   The form_state object.
- */
-function bos_admin_dates_update(array &$form, FormState &$form_state) {
-  if ($form["moderation_state"]["widget"][0]["#changed"] && !$form_state->getErrors() && !reset($form_state->getValue("field_manual_date"))) {
-    // Update the last uopdated etc.
-    switch (strtolower(strtolower($form["moderation_state"]["widget"][0]["state"]["#value"]))) {
-      case "published":
-        $date = new DrupalDateTime("now", "UTC");
-        if (isset($form['field_updated_date'])) {
-          $form_state->setValue('field_updated_date', [["value" => $date]]);
-        }
-        if (isset($form["field_published_date"]) && empty($form['field_published_date'])) {
-          $form_state->setValue('field_published_date', [["value" => $date]]);
-        }
-    }
-  }
-}
-
-/**
- * Update the custom Updated and Published fields on the node.
- *
  * @param string $name
  *   The Username.
  *
@@ -288,7 +321,7 @@ function bos_admin_author_expand(string $name) {
     if ($user = reset($user)) {
       $output = (string) new TranslatableMarkup("%name | (<a href='@userLink'>user #@uid</a>)", [
         "%email" => $user->getEmail(),
-        "%name" => $name,
+        "%name" => $user->realname,
         "@uid" => $user->id(),
         "@userLink" => "/user/" . $user->id(),
       ]);
