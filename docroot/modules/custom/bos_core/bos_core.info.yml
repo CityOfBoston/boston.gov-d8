@@ -6,6 +6,10 @@ package: City of Boston
 configure: bos_core.admin
 dependencies:
   - user
+  - workflows
+  - moderation_sidebar
+  - content_moderation
+  - moderation_note
 config_devel:
   - workflows.workflow.city_of_boston_workflows.yml
   - user.role.anonymous.yml
