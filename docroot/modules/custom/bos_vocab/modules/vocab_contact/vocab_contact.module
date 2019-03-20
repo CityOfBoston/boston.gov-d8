@@ -37,20 +37,20 @@ function vocab_contact_theme($existing, $type, $theme, $path) {
  * Implements hook_contact_token_info().
  */
 function vocab_contact_token_info() {
-  $info = array();
+  $info = [];
   // Define our new token.
-  $info['tokens']['boston']['contact-path'] = array(
+  $info['tokens']['boston']['contact-path'] = [
     'name' => t('Contact Path'),
     'description' => t('A token to replace the contact path for person profile.'),
-  );
+  ];
   return $info;
 }
 
 /**
  * Implements hook_tokens().
  */
-function vocab_contact_tokens($type, $tokens, array $data = array(), array $options = array()) {
-  $replacements = array();
+function vocab_contact_tokens($type, $tokens, array $data = [], array $options = []) {
+  $replacements = [];
 
   if ($type == 'boston') {
     // Loop through the available tokens.
@@ -67,17 +67,17 @@ function vocab_contact_tokens($type, $tokens, array $data = array(), array $opti
             // Find the contact and get the last part of it's alias.
             $contact_field = $this_node->getTranslation($langcode)->field_contact;
             if (!empty($contact_field)) {
-              $tid = $contact_field[0]['target_id'];
+              $tid = $contact_field->first()->target_id;
               $term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
               $path_array = explode('/', $term_path);
               $term_name = end($path_array);
-              $term = Drupal::entityTypeManager()->getStorage("taxonomy")->load($tid);
+              $term = Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($tid);
               // If the field_department_profile is set then this is not a
               // department, so set $node to the department_profile node
               // so we can get the department_type.
-              $term_dept_profile = $term->getTranslation($langcode)->field_department_profile;
+              $term_dept_profile = $term->field_department_profile;
               if ($term_dept_profile) {
-                $dept_node = Drupal::entityTypeManager()->getStorage("node")->load($term_dept_profile[0]['target_id']);
+                $dept_node = Drupal::entityTypeManager()->getStorage("node")->load($term_dept_profile->first()->target_id);
               }
             }
             // Figure out which type of department we have
