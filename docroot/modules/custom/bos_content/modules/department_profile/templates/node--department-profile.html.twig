@@ -120,10 +120,11 @@
       </div>
 
       <div class="column mobile-100 desktop-33-right">
-
+         {% if content.field_icon %}
          <div class="department-icon">
             {{ content.field_icon }}
          </div>
+         {% endif %}
 
          <h5 class="contact-title">Contact</h5>
 
