@@ -32,3 +32,16 @@ function vocab_contact_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
+/**
+ * Implements hook_contact_token_info().
+ */
+function vocab_contact_token_info() {
+  $info = array();
+  // Define our new token.
+  $info['tokens']['boston']['contact-path'] = array(
+    'name' => t('Contact Path'),
+    'description' => t('A token to replace the contact path for person profile.'),
+  );
+  return $info;
+}
