@@ -5,18 +5,21 @@ dependencies:
   module:
     - node
 id: department_profile_pattern
-label: 'Department Profile Pattern'
+label: 'Contact or Department Type Pattern'
 type: 'canonical_entities:node'
-pattern: 'departments/[node:title_field]'
+pattern: '[boston:contact-path]/[node:title]'
 selection_criteria:
-  e7d4dc5b-6d57-4f37-ac19-1ee9f75c1028:
+  baffd492-9322-4eef-b1c5-7e4bdc405df5:
     id: node_type
     bundles:
+      article: article
       department_profile: department_profile
+      how_to: how_to
+      person_profile: person_profile
     negate: false
     context_mapping:
       node: node
-    uuid: e7d4dc5b-6d57-4f37-ac19-1ee9f75c1028
+    uuid: baffd492-9322-4eef-b1c5-7e4bdc405df5
 selection_logic: and
 weight: -5
 relationships: {  }
