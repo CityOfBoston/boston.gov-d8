@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.department_profile.field_hide_contact_form
     - field.field.node.department_profile.field_icon
     - field.field.node.department_profile.field_intro_text
+    - field.field.node.department_profile.field_manual_date
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
@@ -24,8 +25,8 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
-    - image
     - options
+    - svg_image
     - text
     - user
 _core:
@@ -48,6 +49,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    region: content
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
     region: content
   field_address:
     type: address_default
@@ -127,6 +133,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_manual_date:
+    weight: 13
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
   field_operation_hours:
     label: hidden
     weight: 7
