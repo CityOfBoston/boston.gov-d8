@@ -272,7 +272,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["#attached"]["library"][] = "bos_admin/actions";
 
   // Move the metadata (update/publish) fields into advanced tab.
-  if (preg_match("/node\-.*\-edit\-form*/", $form["#id"]) &&
+  if (preg_match("/node\-.*[\-edit]?\-form*/", $form["#id"]) &&
     (isset($form["#fieldgroups"]["group_page_meta_data"]) || isset($form["#fieldgroups"]["group_page_metadata"]))) {
     if (!empty($bundle) && (
       \Drupal::currentUser()->hasPermission("set any published on date")
