@@ -1,23 +1,28 @@
-uuid: 314ebd36-5715-49e0-ac4b-a84afc0963d5
+uuid: 4e80566d-6c92-4acc-9ef5-f03752e6a7da
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.article
+    - core.entity_view_mode.node.listing_long
     - field.field.node.landing_page.comment_node_landing_page
     - field.field.node.landing_page.field_components
     - field.field.node.landing_page.field_contacts
+    - field.field.node.landing_page.field_manual_date
     - field.field.node.landing_page.field_published_date
-    - field.field.node.landing_page.field_type_of_content
     - field.field.node.landing_page.field_updated_date
     - node.type.landing_page
   module:
     - user
-id: node.landing_page.article
+id: node.landing_page.listing_long
 targetEntityType: node
 bundle: landing_page
-mode: article
+mode: listing_long
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
@@ -25,8 +30,8 @@ hidden:
   comment_node_landing_page: true
   field_components: true
   field_contacts: true
+  field_manual_date: true
   field_published_date: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
   published_at: true
