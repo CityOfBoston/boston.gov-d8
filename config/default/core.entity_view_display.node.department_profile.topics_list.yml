@@ -13,11 +13,11 @@ dependencies:
     - field.field.node.department_profile.field_hide_contact_form
     - field.field.node.department_profile.field_icon
     - field.field.node.department_profile.field_intro_text
+    - field.field.node.department_profile.field_manual_date
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
-    - field.field.node.department_profile.field_type_of_content
     - field.field.node.department_profile.field_updated_date
     - node.type.department_profile
   module:
@@ -29,6 +29,11 @@ targetEntityType: node
 bundle: department_profile
 mode: topics_list
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
@@ -42,11 +47,11 @@ hidden:
   field_hide_contact_form: true
   field_icon: true
   field_intro_text: true
+  field_manual_date: true
   field_operation_hours: true
   field_phone_number: true
   field_published_date: true
   field_sidebar_components: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
   published_at: true

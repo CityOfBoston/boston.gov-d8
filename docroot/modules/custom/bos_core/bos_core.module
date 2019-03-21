@@ -296,6 +296,19 @@ function bos_core_realname_update($realname, $account) {
 }
 
 /**
+ * Implements hook_contact_token_info().
+ */
+function bos_core_token_info() {
+  $info = [];
+  // Define a new token type for boston.
+  $info['types']['boston'] = [
+    'name' => t('Boston'),
+    'description' => t('A token type for Boston.'),
+  ];
+  return $info;
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
