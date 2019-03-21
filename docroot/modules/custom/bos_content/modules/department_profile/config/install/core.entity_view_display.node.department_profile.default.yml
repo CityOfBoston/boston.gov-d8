@@ -1,9 +1,7 @@
-uuid: 87bc6ca2-ed3c-421d-8e22-bd8ab52d58c8
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_department_profile.default
     - field.field.node.department_profile.body
     - field.field.node.department_profile.comment_node_department_profile
     - field.field.node.department_profile.field_address
@@ -13,6 +11,7 @@ dependencies:
     - field.field.node.department_profile.field_hide_contact_form
     - field.field.node.department_profile.field_icon
     - field.field.node.department_profile.field_intro_text
+    - field.field.node.department_profile.field_manual_date
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
@@ -22,16 +21,13 @@ dependencies:
     - node.type.department_profile
   module:
     - address
-    - comment
     - datetime
     - entity_reference_revisions
     - fences
-    - image
     - options
+    - svg_image
     - text
     - user
-_core:
-  default_config_hash: tVO8brLXDYZje7t8EdOg20flELYdokdTDRv6NEOaflY
 id: node.department_profile.default
 targetEntityType: node
 bundle: department_profile
@@ -51,13 +47,9 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     region: content
-  comment_node_department_profile:
-    label: hidden
-    type: comment_default
-    weight: 13
-    settings:
-      view_mode: default
-      pager_id: 0
+  content_moderation_control:
+    weight: -20
+    settings: {  }
     third_party_settings: {  }
     region: content
   field_address:
@@ -138,6 +130,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_manual_date:
+    weight: 13
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
   field_operation_hours:
     label: hidden
     weight: 7
@@ -168,7 +170,7 @@ content:
     type: datetime_default
     settings:
       timezone_override: ''
-      format_type: medium
+      format_type: date_format_boston_short
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -192,16 +194,20 @@ content:
     weight: 11
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
-  links:
-    weight: 14
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
+  comment_node_department_profile: true
   field_type_of_content: true
   langcode: true
+  links: true
   published_at: true
