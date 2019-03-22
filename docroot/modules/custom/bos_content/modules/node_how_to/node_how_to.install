@@ -2,13 +2,13 @@
 
 /**
  * @file
- * The install file for bos_how_to module.
+ * The install file for node_how_to module.
  */
 
 /**
  * Implements hook_uninstall().
  */
-function bos_how_to_uninstall() {
+function node_how_to_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
@@ -17,7 +17,7 @@ function bos_how_to_uninstall() {
 /**
  * Implements hook_install().
  */
-function bos_how_to_install() {
+function node_how_to_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
 }
