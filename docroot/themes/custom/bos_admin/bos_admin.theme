@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
+use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -101,6 +102,16 @@ function bos_admin_preprocess_username(&$variables) {
       $variables["name"] = $name;
     }
     realname_user_update($variables["account"]);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_admin_block(&$variables) {
+  if (NULL !== \Drupal::routeMatch()->getParameters()->get("link_id") && \Drupal::routeMatch()->getParameters()->get("link_id") == "system.admin_config") {
+    _bos_admin_fix_attributes($variables);
+    $variables["attributes"]->addClass("admin-" . strtolower(Html::cleanCssIdentifier($variables["block"]["title"])));
   }
 }
 
@@ -260,7 +271,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["#attached"]["library"][] = "bos_admin/actions";
 
   // Move the metadata (update/publish) fields into advanced tab.
-  if (preg_match("/node\-.*\-edit\-form*/", $form["#id"]) &&
+  if (preg_match("/node\-.*[\-edit]?\-form*/", $form["#id"]) &&
     (isset($form["#fieldgroups"]["group_page_meta_data"]) || isset($form["#fieldgroups"]["group_page_metadata"]))) {
     if (!empty($bundle) && (
       \Drupal::currentUser()->hasPermission("set any published on date")
@@ -349,4 +360,27 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
   $form_state->getRedirect()
     ->setRouteParameters($route)
     ->setOption('query', ["filter" => "strip_tags"]);
+}
+
+/**
+ * Ensure attributes element of variables array is an Attribute object.
+ *
+ * This snippet fixes the situation where a module has defined an attributes
+ * element as an array and not a Drupal\core\Template\Attribute object.
+ *
+ * @param array $variables
+ *   The current variables array as generated pre-rendering.
+ */
+function _bos_admin_fix_attributes(array &$variables) {
+  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
+    $attribute = new Attribute();
+    if (!empty($variables['attributes'])) {
+      foreach ($variables["attributes"] as $key => $element) {
+        $attribute->setAttribute($key, $element);
+      }
+    }
+    if (!empty($attribute)) {
+      $variables['attributes'] = $attribute;
+    }
+  }
 }

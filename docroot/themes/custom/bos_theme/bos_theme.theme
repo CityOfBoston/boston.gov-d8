@@ -415,18 +415,16 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     if (!isset($variables["attributes"])) {
       $variables["attributes"] = new Attribute();
     }
-    $variables["attributes"]->addClass("page");
 
     if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
-      $variables["attributes"]->addClass("page--wa");
+      if (!$variables["attributes"]->hasClass("page--nm")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
       $variables["attributes"]->setAttribute("id", "page");
-    }
-    else {
-      $variables["attributes"]->addClass("page--nm");
     }
     if ($variables['is_front']) {
       $variables["attributes"]->addClass("page--fp");
-      if (!$variables["attributes"]->hasClass("page--wa")) {
+      if (!$variables["attributes"]->hasClass("page--wa") && !$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
     }
@@ -511,8 +509,10 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-  $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
-  $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  if (!isset($variables["display_breadcrumb"])) {
+    $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  }
   $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
   $variables['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
 

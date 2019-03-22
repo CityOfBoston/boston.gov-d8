@@ -101,7 +101,13 @@ function site_alert_preprocess(&$variables, $hook) {
         ->getValue();
       $here = \Drupal::request()->getRequestUri();
       $path = ltrim(\Drupal::service('path.alias_manager')->getPathByAlias($here), "/");
+
       $variables['has_site_alert'] = TRUE;
+      if ($variables["attributes"]->hasClass("page-nm")) {
+        $variables["attributes"]->addClass("page-wa");
+        $variables["attributes"]->removeClass("page-nm");
+      }
+
       foreach ($excluded as $key => $exclude) {
         if (isset($exclude['target_id']) && "node/" . $exclude['target_id'] == $path) {
           $variables['has_site_alert'] = FALSE;
