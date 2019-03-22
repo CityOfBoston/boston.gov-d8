@@ -415,18 +415,16 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     if (!isset($variables["attributes"])) {
       $variables["attributes"] = new Attribute();
     }
-    $variables["attributes"]->addClass("page");
 
     if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
-      $variables["attributes"]->addClass("page--wa");
+      if (!$variables["attributes"]->hasClass("page--nm")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
       $variables["attributes"]->setAttribute("id", "page");
-    }
-    else {
-      $variables["attributes"]->addClass("page--nm");
     }
     if ($variables['is_front']) {
       $variables["attributes"]->addClass("page--fp");
-      if (!$variables["attributes"]->hasClass("page--wa")) {
+      if (!$variables["attributes"]->hasClass("page--wa") && !$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
     }
