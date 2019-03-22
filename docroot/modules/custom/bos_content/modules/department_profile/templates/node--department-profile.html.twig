@@ -144,9 +144,13 @@
             <div class="list-item">
                {{ content.field_address }}
             </div>
-         {% endif %}.
+         {% endif %}
 
-         {{ content.field_operation_hours }}
+         {% if content.field_operation_hours %}
+            <div class="list-item">
+               {{ content.field_operation_hours }}
+            </div>
+         {% endif %}
 
          {{ content.field_sidebar_components }}
 

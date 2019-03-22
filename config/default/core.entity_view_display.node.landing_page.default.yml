@@ -3,32 +3,23 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_landing_page.default
     - field.field.node.landing_page.comment_node_landing_page
     - field.field.node.landing_page.field_components
     - field.field.node.landing_page.field_contacts
+    - field.field.node.landing_page.field_manual_date
     - field.field.node.landing_page.field_published_date
-    - field.field.node.landing_page.field_type_of_content
     - field.field.node.landing_page.field_updated_date
     - node.type.landing_page
   module:
-    - comment
     - entity_reference_revisions
     - user
+_core:
+  default_config_hash: IFVOp7I2dBZXib8hogWBXlHS0o6iPex7QDE07SOttlQ
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
 mode: default
 content:
-  comment_node_landing_page:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
-    third_party_settings: {  }
-    region: content
   field_components:
     label: hidden
     weight: 0
@@ -38,13 +29,13 @@ content:
       link: ''
     third_party_settings: {  }
     region: content
-  links:
-    weight: 100
-    region: content
 hidden:
+  comment_node_landing_page: true
+  content_moderation_control: true
   field_contacts: true
+  field_manual_date: true
   field_published_date: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
+  links: true
   published_at: true

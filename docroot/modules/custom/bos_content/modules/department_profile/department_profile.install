@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The install file for the test_component_page module.
+ * The install file for bos_drawers module.
  */
 
 /**
@@ -18,24 +18,6 @@ function department_profile_uninstall() {
  * Implements hook_install().
  */
 function department_profile_install() {
-  // Ensure the translation fields are created in the database.
-  // @see: https://www.drupal.org/project/drupal/issues/2599228
-  // patch is in place - this is just to be sure ...
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
-
-  // Using content_access module to hide this page from all but authenticated
-  // users.
-  if (function_exists("content_access_set_settings")) {
-    $settings = [
-      'view' => ["authenticated"],
-      'view own' => ["authenticated"],
-    ];
-    try {
-      content_access_set_settings($settings, basename(__FILE__, ".install"));
-    }
-    catch (ErrorException $e) {
-      \Drupal::logger('test_component_page')
-        ->warning("Could not update content_access settings during module installation.");
-    }
-  }
+  // Copy icons into expected location.
+  _bos_core_install_icons(basename(__FILE__, ".install"));
 }
