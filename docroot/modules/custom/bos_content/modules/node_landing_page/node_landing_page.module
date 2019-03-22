@@ -10,7 +10,7 @@ use Drupal\Core\Render\Element;
 /**
  * Implements hook_theme().
  */
-function landing_page_theme() {
+function node_landing_page_theme() {
   return [
     'landing_page' => [
       'render element' => 'elements',
@@ -38,7 +38,7 @@ function template_preprocess_landing_page(array &$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function landing_page_preprocess_page(&$variables) {
+function node_landing_page_preprocess_page(&$variables) {
 
   if (isset($variables["node"]) && $variables["node"]->getType() == "landing_page") {
     // Determine if this is an edit page or a display page.
@@ -58,7 +58,7 @@ function landing_page_preprocess_page(&$variables) {
 /**
  * Implements hook_preprocess_hook().
  */
-function landing_page_preprocess_breadcrumb(array &$variables) {
+function node_landing_page_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
