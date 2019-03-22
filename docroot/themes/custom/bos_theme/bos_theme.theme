@@ -511,8 +511,10 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-  $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
-  $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  if (!isset($variables["display_breadcrumb"])) {
+    $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  }
   $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
   $variables['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
 

@@ -2,7 +2,7 @@
    @file
      Template for site breadcrumbs.
 #}
-{% if breadcrumb %}
+{% if display_breadcrumb and breadcrumb %}
    <div id="breadcrumb" data-swiftype-index="false">
       <nav class="brc" role="navigation" aria-labelledby="system-breadcrumb">
          <div class="a11y--h"><span class="brc-t">{{ title }}</span></div>
