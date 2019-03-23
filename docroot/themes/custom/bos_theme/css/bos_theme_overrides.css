@@ -85,52 +85,40 @@ button.lity-close {
 }
 
  /* Sidebar theme.  */
-.bos_theme .moderation-sidebar-actions .button--edit-draft {
-  background-color: #ffae00 !important;
-  padding-right: 42px !important;
-}
-.bos_theme .moderation-sidebar-actions .button--edit-draft:before {
-  content: url("/themes/custom/bos_theme/images/small-circle-icons_pencil");
-  min-width: 29px;
+
+.bos_theme .moderation-sidebar-actions .moderation-sidebar-link:before {
+  min-width: 50px;
   max-height: 16px;
   display: inline-block;
   float: left;
-  margin: -5px 13px 0 0;
+  margin: -17px 11px 0 0;
   padding: 0;
+}
+
+.bos_theme .moderation-sidebar-actions .button--edit-draft {
+  background-color: #ffae00 !important;
+}
+.bos_theme .moderation-sidebar-actions .button--edit-draft:before {
+  content: url("../images/moderation_sidebar/edit.svg");
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--draft,
 .bos_theme .moderation-sidebar-actions .button--view-draft {
   background-color: #ffae00 !important;
-  padding-right: 42px !important;
 }
 
 .bos_theme .moderation-sidebar-actions .button--view-live {
   background-color: #00B000 !important;
-  padding-right: 42px !important;
 }
 .bos_theme .moderation-sidebar-actions .button--view-live:before,
 .bos_theme .moderation-sidebar-actions .button--view-draft:before {
-  content: url("/themes/custom/bos_theme/images/small-circle-icons_Computer");
-  min-width: 29px;
-  max-height: 16px;
-  display: inline-block;
-  float: left;
-  margin: -5px 13px 0 0;
-  padding: 0;
+  content: url("../images/small-circle-icons_Computer.svg");
 }
 .bos_theme .moderation-sidebar-actions a.button--delete {
   background-color: #bd2727 !important;
-  padding-right: 42px !important;
 }
 .bos_theme .moderation-sidebar-actions a.button--delete:before {
-  content: url("/themes/custom/bos_theme/images/small-circle-icons_alert");
-  min-width: 29px;
-  max-height: 16px;
-  display: inline-block;
-  float: left;
-  margin: -5px 13px 0 0;
-  padding: 0;
+  content: url("../images/moderation_sidebar/delete.svg");
 }
 
 .bos_theme .moderation-sidebar-actions input.button--delete {
@@ -141,6 +129,11 @@ button.lity-close {
 .bos_theme .moderation-sidebar-actions .button--review {
   background-color: #277abd !important;
 }
+.bos_theme .moderation-sidebar-actions input.button--review:before {
+  /* content: url("../images/moderation_sidebar/review.svg"); */
+  background-color: red;
+}
+
 .bos_theme .moderation-sidebar-revision-item .title--archive {
   background-color: #c5c5c5 !important;
 }
@@ -167,7 +160,7 @@ button.lity-close {
   content: "Published";
   background-color: #277abd;
   color: #fff;
-  background-image: url("/themes/custom/bos_theme/images/small-circle-icons_pencil");
+  background-image: url("../images/moderation_sidebar/edit.svg");
   background-repeat: no-repeat;
   background-position-x: 5px;
   background-position-y: center;
