@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Provides a landing page entity type.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function node_landing_page_theme() {
+  return [
+    'landing_page' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for landing page templates.
+ *
+ * Default template: landing-page.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the landing page information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_landing_page(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_landing_page_preprocess_page(&$variables) {
+
+  if (isset($variables["node"]) && $variables["node"]->getType() == "landing_page") {
+    // Determine if this is an edit page or a display page.
+    $pathinfo = Drupal::request()->getPathInfo();
+    $pathinfo = explode("/", $pathinfo);
+    if (end($pathinfo) != "edit") {
+      _bos_theme_fix_attributes($variables);
+      if ($variables["attributes"]->hasClass("page--wa")) {
+        $variables["attributes"]->removeClass("page--wa");
+      }
+      $variables["attributes"]->addClass("page");
+      $variables["attributes"]->addClass("page--nm");
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function node_landing_page_preprocess_breadcrumb(array &$variables) {
+  // Define variables for the breadcrumb-related theme settings. This is done
+  // here so that sub-themes can dynamically change the settings under
+  // particular conditions in a preprocess function of their own.
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if (isset($node) && $node->getType() == "landing_page") {
+    $variables['display_breadcrumb'] = FALSE;
+  }
+}
