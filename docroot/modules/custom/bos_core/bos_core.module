@@ -233,7 +233,7 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
     $build["actions"]["view_latest"]["#attributes"]["class"][] = "button--view-draft clearfix";
   }
   if (isset($build["actions"]["edit"])) {
-    $build["actions"]["edit_latest"]["#attributes"]["class"][] = "button--edit-draft clearfix";
+    $build["actions"]["edit"]["#attributes"]["class"][] = "button--edit-draft clearfix";
   }
   if (isset($build["actions"]["edit_latest"])) {
     $build["actions"]["edit_latest"]["#attributes"]["class"][] = "button--edit-draft clearfix";
