@@ -50,6 +50,7 @@
   <target name="deploy:artifact:copy" description="*Copy required files from docroot/sites to deploy/docroot/sites.">
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
     <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
+    <delete file="${repo.root}/hooks/.gitignore" description="Remove this so the hook files are managed by git."></delete>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
 
