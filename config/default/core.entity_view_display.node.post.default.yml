@@ -3,9 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_post.default
     - field.field.node.post.body
-    - field.field.node.post.comment_node_post
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
@@ -27,7 +25,6 @@ dependencies:
     - field.field.node.post.field_updated_date
     - node.type.post
   module:
-    - comment
     - datetime
     - entity_reference_revisions
     - svg_image
@@ -43,15 +40,6 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  comment_node_post:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
     third_party_settings: {  }
     region: content
   field_components:

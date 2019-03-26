@@ -3,12 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_change.default
     - field.field.node.change.body
-    - field.field.node.change.comment_node_change
     - node.type.change
   module:
-    - comment
     - fences
     - text
     - user
@@ -33,13 +30,9 @@ content:
         fences_label_tag: div
         fences_label_classes: ''
     region: content
-  comment_node_change:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
+  content_moderation_control:
+    weight: -20
+    settings: {  }
     third_party_settings: {  }
     region: content
   links:

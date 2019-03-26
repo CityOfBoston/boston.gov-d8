@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.listing_page.comment_node_listing_page
     - field.field.node.listing_page.field_components
     - field.field.node.listing_page.field_header_component
     - field.field.node.listing_page.field_intro_image
@@ -11,7 +10,7 @@ dependencies:
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
   module:
-    - comment
+    - content_moderation
     - datetime
     - file
     - paragraphs
@@ -22,12 +21,6 @@ targetEntityType: node
 bundle: listing_page
 mode: default
 content:
-  comment_node_listing_page:
-    type: comment_default
-    weight: 20
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 10

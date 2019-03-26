@@ -5,7 +5,6 @@ dependencies:
   config:
     - core.entity_view_mode.node.featured_item
     - field.field.node.event.body
-    - field.field.node.event.comment_node_event
     - field.field.node.event.field_cancel_event
     - field.field.node.event.field_city_hall
     - field.field.node.event.field_city_sponsored
@@ -39,13 +38,18 @@ dependencies:
     - node.type.event
   module:
     - datetime
-    - image
+    - svg_image
     - user
 id: node.event.featured_item
 targetEntityType: node
 bundle: event
 mode: featured_item
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   field_event_dates:
     label: hidden
     weight: 0
@@ -69,7 +73,6 @@ content:
     region: content
 hidden:
   body: true
-  comment_node_event: true
   field_cancel_event: true
   field_city_hall: true
   field_city_sponsored: true

@@ -5,15 +5,16 @@ dependencies:
   config:
     - core.entity_view_mode.node.article
     - field.field.node.post.body
-    - field.field.node.post.comment_node_post
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
+    - field.field.node.post.field_intro_text
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
     - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
+    - field.field.node.post.field_related
     - field.field.node.post.field_related_content
     - field.field.node.post.field_related_departments
     - field.field.node.post.field_related_events_notices
@@ -36,7 +37,6 @@ content:
     region: content
 hidden:
   body: true
-  comment_node_post: true
   field_components: true
   field_contact: true
   field_intro_image: true
