@@ -3,14 +3,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.status_item.comment_node_status_item
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
     - image.style.thumbnail
     - node.type.status_item
   module:
-    - comment
     - content_moderation
     - paragraphs
     - path
@@ -21,12 +19,6 @@ targetEntityType: node
 bundle: status_item
 mode: default
 content:
-  comment_node_status_item:
-    type: comment_default
-    weight: 20
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 10

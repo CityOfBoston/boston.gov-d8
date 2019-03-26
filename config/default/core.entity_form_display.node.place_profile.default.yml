@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - field.field.node.place_profile.body
-    - field.field.node.place_profile.comment_node_place_profile
     - field.field.node.place_profile.field_components
     - field.field.node.place_profile.field_contact
     - field.field.node.place_profile.field_did_you_know
@@ -22,7 +21,6 @@ dependencies:
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
   module:
-    - comment
     - content_moderation
     - datetime
     - file
@@ -42,12 +40,6 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
-    third_party_settings: {  }
-    region: content
-  comment_node_place_profile:
-    type: comment_default
-    weight: 20
-    settings: {  }
     third_party_settings: {  }
     region: content
   created:

@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
-    - field.field.node.event.comment_node_event
     - field.field.node.event.field_cancel_event
     - field.field.node.event.field_city_hall
     - field.field.node.event.field_city_sponsored
@@ -37,7 +36,7 @@ dependencies:
     - field.field.node.event.field_updated_date
     - node.type.event
   module:
-    - comment
+    - content_moderation
     - datetime
     - file
     - link
@@ -57,12 +56,6 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
-    third_party_settings: {  }
-    region: content
-  comment_node_event:
-    type: comment_default
-    weight: 20
-    settings: {  }
     third_party_settings: {  }
     region: content
   created:

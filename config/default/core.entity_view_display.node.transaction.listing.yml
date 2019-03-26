@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.listing
-    - field.field.node.transaction.comment_node_transaction
     - field.field.node.transaction.field_link
     - field.field.node.transaction.field_sticky
     - node.type.transaction
@@ -29,7 +28,6 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_transaction: true
   field_sticky: true
   langcode: true
   published_at: true

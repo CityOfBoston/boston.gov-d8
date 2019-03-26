@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.topic_page.comment_node_topic_page
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
@@ -16,7 +15,6 @@ dependencies:
     - image.style.thumbnail
     - node.type.topic_page
   module:
-    - comment
     - content_moderation
     - datetime
     - field_group
@@ -104,12 +102,6 @@ targetEntityType: node
 bundle: topic_page
 mode: default
 content:
-  comment_node_topic_page:
-    type: comment_default
-    weight: 17
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 13

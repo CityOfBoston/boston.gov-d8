@@ -5,7 +5,6 @@ dependencies:
   config:
     - core.entity_view_mode.node.listing_short
     - field.field.node.event.body
-    - field.field.node.event.comment_node_event
     - field.field.node.event.field_cancel_event
     - field.field.node.event.field_city_hall
     - field.field.node.event.field_city_sponsored
@@ -52,6 +51,11 @@ content:
     label: hidden
     weight: 1
     type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: -20
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -184,7 +188,6 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_event: true
   field_cancel_event: true
   field_city_hall: true
   field_city_sponsored: true

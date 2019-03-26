@@ -12,12 +12,11 @@ dependencies:
     - field.field.node.advpoll.advpoll_options
     - field.field.node.advpoll.advpoll_results
     - field.field.node.advpoll.body
-    - field.field.node.advpoll.comment_node_advpoll
     - field.field.node.advpoll.field_thanks
     - field.field.node.advpoll.field_vote_button_text
     - node.type.advpoll
   module:
-    - comment
+    - content_moderation
     - datetime
     - path
     - publication_date
@@ -84,12 +83,6 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
-    third_party_settings: {  }
-    region: content
-  comment_node_advpoll:
-    type: comment_default
-    weight: 20
-    settings: {  }
     third_party_settings: {  }
     region: content
   created:

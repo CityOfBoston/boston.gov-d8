@@ -5,12 +5,12 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.place_profile.body
-    - field.field.node.place_profile.comment_node_place_profile
     - field.field.node.place_profile.field_components
     - field.field.node.place_profile.field_contact
     - field.field.node.place_profile.field_did_you_know
     - field.field.node.place_profile.field_features
     - field.field.node.place_profile.field_intro_image
+    - field.field.node.place_profile.field_intro_text
     - field.field.node.place_profile.field_links
     - field.field.node.place_profile.field_operation_hours
     - field.field.node.place_profile.field_phone_number
@@ -41,7 +41,6 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_place_profile: true
   field_components: true
   field_contact: true
   field_did_you_know: true

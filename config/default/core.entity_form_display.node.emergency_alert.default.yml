@@ -3,14 +3,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.emergency_alert.comment_node_emergency_alert
     - field.field.node.emergency_alert.field_description
     - field.field.node.emergency_alert.field_link
     - field.field.node.emergency_alert.field_theme
     - field.field.node.emergency_alert.field_updated_date
     - node.type.emergency_alert
   module:
-    - comment
     - content_moderation
     - datetime
     - paragraphs
@@ -22,12 +20,6 @@ targetEntityType: node
 bundle: emergency_alert
 mode: default
 content:
-  comment_node_emergency_alert:
-    type: comment_default
-    weight: 10
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 6

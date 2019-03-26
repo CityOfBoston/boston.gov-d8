@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.emergency_alert.comment_node_emergency_alert
+    - field.field.node.emergency_alert.field_description
     - field.field.node.emergency_alert.field_link
     - field.field.node.emergency_alert.field_theme
     - field.field.node.emergency_alert.field_updated_date
@@ -20,7 +20,6 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_emergency_alert: true
   field_description: true
   field_link: true
   field_theme: true

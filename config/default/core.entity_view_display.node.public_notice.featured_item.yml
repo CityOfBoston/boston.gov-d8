@@ -5,7 +5,6 @@ dependencies:
   config:
     - core.entity_view_mode.node.featured_item
     - field.field.node.public_notice.body
-    - field.field.node.public_notice.comment_node_public_notice
     - field.field.node.public_notice.field_cancelled
     - field.field.node.public_notice.field_city_hall
     - field.field.node.public_notice.field_components
@@ -168,7 +167,6 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_public_notice: true
   field_city_hall: true
   field_multiple_neighborhoods: true
   field_people: true
