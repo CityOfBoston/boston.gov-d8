@@ -85,62 +85,88 @@ button.lity-close {
 }
 
  /* Sidebar theme.  */
-.bos_theme .moderation-sidebar-actions .button--edit-draft {
-  background-color: #ffae00 !important;
-  padding-right: 42px !important;
-}
-.bos_theme .moderation-sidebar-actions .button--edit-draft:before {
-  content: url("/themes/custom/bos_theme/images/small-circle-icons_pencil");
-  min-width: 29px;
-  max-height: 16px;
+
+.bos_theme .moderation-sidebar-actions .moderation-sidebar-link:before {
+  min-width: 50px;
+  max-height: 1px;
   display: inline-block;
   float: left;
-  margin: -5px 13px 0 0;
+  margin: -17px 0px 0 0;
   padding: 0;
 }
 
-.bos_theme .moderation-sidebar-revision-item .title--draft,
-.bos_theme .moderation-sidebar-actions .button--view-draft {
+.bos_theme .moderation-sidebar-actions .button--edit-draft {
   background-color: #ffae00 !important;
-  padding-right: 42px !important;
+}
+.bos_theme .moderation-sidebar-actions .button--edit-draft:before {
+  content: url("../images/moderation_sidebar/edit.svg");
+}
+
+.bos_theme .moderation-sidebar-actions .button--view-draft {
+  background: repeating-linear-gradient(
+      135deg,
+      #ffae00,
+      #ffae00 10px,
+      #00B000 10px,
+      #00B000 20px
+  ) !important;
+  color: #000 !important;
+}
+.bos_theme .moderation-sidebar-actions .button--view-draft:before {
+  content: url("../images/moderation_sidebar/review.svg");
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--draft {
+  background-color: #ffae00 !important;
 }
 
 .bos_theme .moderation-sidebar-actions .button--view-live {
   background-color: #00B000 !important;
-  padding-right: 42px !important;
 }
-.bos_theme .moderation-sidebar-actions .button--view-live:before,
-.bos_theme .moderation-sidebar-actions .button--view-draft:before {
-  content: url("/themes/custom/bos_theme/images/small-circle-icons_Computer");
-  min-width: 29px;
-  max-height: 16px;
-  display: inline-block;
-  float: left;
-  margin: -5px 13px 0 0;
-  padding: 0;
-}
-.bos_theme .moderation-sidebar-actions a.button--delete {
-  background-color: #bd2727 !important;
-  padding-right: 42px !important;
-}
-.bos_theme .moderation-sidebar-actions a.button--delete:before {
-  content: url("/themes/custom/bos_theme/images/small-circle-icons_alert");
-  min-width: 29px;
-  max-height: 16px;
-  display: inline-block;
-  float: left;
-  margin: -5px 13px 0 0;
-  padding: 0;
+.bos_theme .moderation-sidebar-actions .button--view-live:before {
+  content: url("../images/moderation_sidebar/review.svg");
 }
 
-.bos_theme .moderation-sidebar-actions input.button--delete {
+.bos_theme .moderation-sidebar-actions a.button--delete {
   background-color: #bd2727 !important;
+}
+.bos_theme .moderation-sidebar-actions a.button--delete:before {
+  content: url("../images/moderation_sidebar/delete.svg");
+}
+
+/** Buttons provided by workflow */
+.bos_theme .moderation-sidebar-actions input.button--delete {
+  background: url("../images/moderation_sidebar/delete.svg") #db2727 no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+.bos_theme .moderation-sidebar-actions input#draft_from_archived {
+  background: url("../images/moderation_sidebar/new draft.svg") #ffae00 no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+.bos_theme .moderation-sidebar-actions input#submit_for_review {
+  background: url("../images/moderation_sidebar/review.svg") #277abd no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+.bos_theme .moderation-sidebar-actions input#reject {
+  background: url(../images/moderation_sidebar/delete.svg) #ffae00 no-repeat 2px center !important;
+  background-size: 50px !important;
+  color: maroon !important;
+  font-weight: bold !important;
+}
+.bos_theme .moderation-sidebar-actions input#publish {
+  background: url("../images/moderation_sidebar/publish.svg") #00B000 no-repeat 2px center !important;
+  background-size: 50px !important;
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--review,
 .bos_theme .moderation-sidebar-actions .button--review {
   background-color: #277abd !important;
 }
+.bos_theme .moderation-sidebar-actions input.button--review:before {
+  /* content: url("../images/moderation_sidebar/review.svg"); */
+  background-color: red;
+}
+
 .bos_theme .moderation-sidebar-revision-item .title--archive {
   background-color: #c5c5c5 !important;
 }
@@ -151,28 +177,28 @@ button.lity-close {
   background-color: #269e2c;
 }
 .moderation-sidebar-toolbar-tab.status-needs-review .toolbar-item:after {
-  content: "Needs Review";
+  content: "Review Pending";
   background-color: #277abd;
 }
 .moderation-sidebar-toolbar-tab.status-draft .toolbar-item:after {
   content: "Latest Draft";
   background-color: #ffae00;
 }
-.moderation-sidebar-toolbar-tab.status-archive .toolbar-item:after {
-  content: "Archive";
+/* Archive of a draft */
+.moderation-sidebar-toolbar-tab.status-archive .moderation-label-draft:after {
+  content: "Archived Draft";
   background-color: #c5c5c5;
 }
 
 .toolbar-icon-moderation-sidebar.moderation-label-draft-available:after {
-  content: "Published";
-  background-color: #277abd;
+  content: "Live";
+  background-color: #269e2c;
   color: #fff;
-  background-image: url("/themes/custom/bos_theme/images/small-circle-icons_pencil");
+  background-image: url("../images/moderation_sidebar/edit.svg");
   background-repeat: no-repeat;
-  background-position-x: 5px;
   background-position-y: center;
-  background-size: 25px;
-  padding-left: 37px;
+  background-size: 50px;
+  padding-left: 50px;
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--published {
@@ -258,4 +284,8 @@ button.lity-close {
 }
 .contextual-region .contextual .contextual-links li {
   background-color: #ccc;
+}
+
+.bos_theme #toolbar-bar.toolbar-space {
+  padding-right: 5px;
 }
