@@ -1,0 +1,23 @@
+<div{{ attributes }}>
+  {{ widget.mode }}
+  <div class="dates">
+    <div class="date">{{ widget.start }}</div>
+    <div class="date">{{ widget.end }}</div>
+    <div class="date">{{ widget.time_zone }}</div>
+  </div>
+  {{ widget.day_of_month }}
+  {{ widget.daily_frequency }}
+  {{ widget.weekdays }}
+  {{ widget.ordinals }}
+  {{ widget.month_of_year }}
+  <div class="ends">
+    <div>
+      {{ widget.ends_mode }}
+    </div>
+    <div>
+      {{ widget.ends_count }}
+      {{ widget.ends_date }}
+    </div>
+  </div>
+  {{ widget.exceptions }}
+</div>

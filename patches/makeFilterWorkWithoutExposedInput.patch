@@ -1,0 +1,20 @@
+diff --git a/src/Plugin/views/filter/DateRecurFilter.php b/src/Plugin/views/filter/DateRecurFilter.php
+index c67266e..b4ac18b 100644
+--- a/src/Plugin/views/filter/DateRecurFilter.php
++++ b/src/Plugin/views/filter/DateRecurFilter.php
+@@ -142,6 +142,15 @@ class DateRecurFilter extends FilterPluginBase {
+     $subQuery = $this->database->select($occurrenceTableName, 'occurrences');
+     $subQuery->addField('occurrences', 'entity_id');
+ 
++    if (!$this->largestDate && !$this->smallestDate) {
++      // We are using this filter without an exposed input, default to tdoay.
++      $granularity = $this->options['value_granularity'];
++      $now = new \DateTime();
++      $timezone = new \DateTimeZone('UTC');
++      $this->smallestDate = DateRecurUtility::createSmallestDateFromInput($granularity, $now->format('Y-m-d'), $timezone);
++      $this->largestDate = DateRecurUtility::createLargestDateFromInput($granularity, $now->format('Y-m-d'), $timezone);
++    }
++
+     $largestDate = $this->largestDate;
+     $largestDate->setTimezone($storageTimezone);
+     $startFieldName = $dateRecurFieldName . '_value';
