@@ -4,7 +4,6 @@ status: true
 dependencies:
   config:
     - field.field.node.public_notice.body
-    - field.field.node.public_notice.comment_node_public_notice
     - field.field.node.public_notice.field_cancelled
     - field.field.node.public_notice.field_city_hall
     - field.field.node.public_notice.field_components
@@ -31,7 +30,7 @@ dependencies:
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
   module:
-    - comment
+    - content_moderation
     - datetime
     - paragraphs
     - path
@@ -49,12 +48,6 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
-    third_party_settings: {  }
-    region: content
-  comment_node_public_notice:
-    type: comment_default
-    weight: 20
-    settings: {  }
     third_party_settings: {  }
     region: content
   created:

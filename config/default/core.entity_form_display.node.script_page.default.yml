@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.script_page.comment_node_script_page
     - field.field.node.script_page.field_components
     - field.field.node.script_page.field_contact
     - field.field.node.script_page.field_embed_list
@@ -11,7 +10,7 @@ dependencies:
     - field.field.node.script_page.field_sidebar_components
     - node.type.script_page
   module:
-    - comment
+    - content_moderation
     - paragraphs
     - path
     - publication_date
@@ -20,12 +19,6 @@ targetEntityType: node
 bundle: script_page
 mode: default
 content:
-  comment_node_script_page:
-    type: comment_default
-    weight: 20
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 10

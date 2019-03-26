@@ -3,9 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_place_profile.default
     - field.field.node.place_profile.body
-    - field.field.node.place_profile.comment_node_place_profile
     - field.field.node.place_profile.field_components
     - field.field.node.place_profile.field_contact
     - field.field.node.place_profile.field_did_you_know
@@ -23,7 +21,6 @@ dependencies:
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
   module:
-    - comment
     - datetime
     - entity_reference_revisions
     - text
@@ -38,15 +35,6 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  comment_node_place_profile:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
     third_party_settings: {  }
     region: content
   field_components:

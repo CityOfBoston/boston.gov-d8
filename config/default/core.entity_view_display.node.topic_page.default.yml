@@ -3,8 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_topic_page.default
-    - field.field.node.topic_page.comment_node_topic_page
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
@@ -16,7 +14,6 @@ dependencies:
     - field.field.node.topic_page.field_updated_date
     - node.type.topic_page
   module:
-    - comment
     - datetime
     - entity_reference_revisions
     - text
@@ -26,15 +23,6 @@ targetEntityType: node
 bundle: topic_page
 mode: default
 content:
-  comment_node_topic_page:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
-    third_party_settings: {  }
-    region: content
   field_components:
     label: hidden
     weight: 4
