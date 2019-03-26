@@ -1,0 +1,237 @@
+uuid: 47421acd-5bb4-4b8f-b9d1-184cbce50e50
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.message_for_the_day
+    - user.role.authenticated
+  module:
+    - date_recur
+    - paragraphs
+    - user
+id: message_for_the_day
+label: 'Message for the Day'
+module: views
+description: ''
+tag: ''
+base_table: paragraphs_item_field_data
+base_field: id
+core: 8.x
+display:
+  default:
+    display_plugin: default
+    id: default
+    display_title: Master
+    position: 0
+    display_options:
+      access:
+        type: role
+        options:
+          role:
+            authenticated: authenticated
+      cache:
+        type: tag
+        options: {  }
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_comment: ''
+          query_tags: {  }
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        type: none
+        options:
+          items_per_page: null
+          offset: 0
+      style:
+        type: default
+      row:
+        type: 'entity:paragraph'
+        options:
+          relationship: none
+          view_mode: default
+      fields:
+        id:
+          table: paragraphs_item_field_data
+          field: id
+          id: id
+          entity_type: null
+          entity_field: id
+          plugin_id: field
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+      filters:
+        status:
+          value: '1'
+          table: paragraphs_item_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: paragraph
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+          group: 1
+        type:
+          id: type
+          table: paragraphs_item_field_data
+          field: type
+          value:
+            message_for_the_day: message_for_the_day
+          entity_type: paragraph
+          entity_field: type
+          plugin_id: bundle
+        field_recurrence_occurrences:
+          id: field_recurrence_occurrences
+          table: paragraphs_item_field_data
+          field: field_recurrence_occurrences
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: Day
+            description: 'Change the day to see which messages of the day will be active on the given date'
+            use_operator: false
+            operator: field_recurrence_occurrences_op
+            identifier: field_recurrence_occurrences
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              content_editor: '0'
+              content_author: '0'
+              events_editor: '0'
+              press_release_editor: '0'
+              status_alert_editor: '0'
+              developer: '0'
+              guide_author: '0'
+              landing_author: '0'
+              procurement_editor: '0'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          value_min: null
+          value_max: null
+          value_granularity: day
+          entity_type: paragraph
+          plugin_id: date_recur_occurrences_filter
+      sorts: {  }
+      title: 'Preview: Message for the Day'
+      header: {  }
+      footer: {  }
+      empty: {  }
+      relationships: {  }
+      arguments: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - timezone
+        - url
+        - user.roles
+      tags: {  }
+  preview_page:
+    display_plugin: page
+    id: preview_page
+    display_title: 'Preview: Message for the Day'
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: preview/message-for-the-day
+      display_description: ''
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - timezone
+        - url
+        - user.roles
+      tags: {  }
