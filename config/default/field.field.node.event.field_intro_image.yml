@@ -1,0 +1,35 @@
+uuid: dc978228-ad98-45d7-9d9b-4f998b97681f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_intro_image
+    - node.type.event
+  module:
+    - image
+_core:
+  default_config_hash: _6r_0pd9x2S6Bz_W0JcXddJ8UURiDr3w9F4GpdT9MJc
+id: node.event.field_intro_image
+field_name: field_intro_image
+entity_type: node
+bundle: event
+label: 'Intro Image'
+description: 'Add an intro image to the page. It will display at the very top of the page, slightly above the content. It will also be used as the thumbnail if no thumbnail is entered.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  alt_field: false
+  default_image: 0
+  file_directory: 'event-intro-image-[current-date:file_directory_storage_date]'
+  file_extensions: 'png gif jpg jpeg svg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  title_field: false
+  alt_field_required: true
+  title_field_required: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image
