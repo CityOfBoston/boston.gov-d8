@@ -1,0 +1,66 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.newsletter.field_component_theme
+    - field.field.paragraph.newsletter.field_component_title
+    - field.field.paragraph.newsletter.field_contact
+    - field.field.paragraph.newsletter.field_description
+    - field.field.paragraph.newsletter.field_newsletter
+    - field.field.paragraph.newsletter.field_short_title
+    - paragraphs.paragraphs_type.newsletter
+  module:
+    - options
+id: paragraph.newsletter.default
+targetEntityType: paragraph
+bundle: newsletter
+mode: default
+content:
+  field_component_theme:
+    label: above
+    weight: 5
+    type: list_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 2
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_description:
+    label: hidden
+    weight: 3
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_newsletter:
+    label: above
+    weight: 4
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

@@ -1,0 +1,33 @@
+uuid: e3b9de95-cc60-4de1-8a6e-b20bc7c12f49
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_intro_image
+    - node.type.listing_page
+  module:
+    - image
+id: node.listing_page.field_intro_image
+field_name: field_intro_image
+entity_type: node
+bundle: listing_page
+label: 'Intro Image'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  alt_field: false
+  default_image: 0
+  file_directory: 'listing-page-intro-image-[current-date:file_directory_storage_date]'
+  file_extensions: 'png gif jpg jpeg svg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  title_field: false
+  alt_field_required: true
+  title_field_required: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image

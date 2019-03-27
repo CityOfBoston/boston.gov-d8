@@ -1,0 +1,21 @@
+uuid: f437e255-337e-4668-98d2-fb31783cd9a9
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.separated_title
+    - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_person
+    - field.field.paragraph.cabinet.field_short_title
+    - field.field.paragraph.cabinet.field_title
+    - paragraphs.paragraphs_type.cabinet
+id: paragraph.cabinet.separated_title
+targetEntityType: paragraph
+bundle: cabinet
+mode: separated_title
+content: {  }
+hidden:
+  field_contacts: true
+  field_person: true
+  field_short_title: true
+  field_title: true

@@ -1,0 +1,842 @@
+[00;36mBuildfile: /app/build.xml[0m
+[00;32m
+bostongov > migrate:field:config:
+[0m
+[00;36m     [echo] Migrates field configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_field,d7_field_instance,d7_field_formatter_settings,d7_field_instance_widget_settings,d7_view_modes,d7_field_group,d7_image_settings,d7_image_styles --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_ZKeIBD --database=drupal --host=database --port=3306 --silent  < /tmp/drush_YUya7W > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_s0ADD0 --database=drupal --host=database --port=3306 --silent  < /tmp/drush_6wNE7j > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.29 sec, 30.29 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.29 sec, 30.29 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.29 sec, 30.29 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [130.27 sec, 55.33 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_image_settings' [130.51 sec, 59.02 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [130.52 sec, 59.07 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_image_styles' [130.69 sec, 59.29 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [130.69 sec, 59.3 MB]
+ [error]  Attempt to create a field storage advpoll_choice with no type. (/app/docroot/core/modules/field/src/Entity/FieldStorageConfig.php:258) [137.55 sec, 60.41 MB] 
+ [notice] Processed 239 items (234 created, 0 updated, 1 failed, 4 ignored) - done with 'd7_field' [197.01 sec, 67.64 MB]
+
+In MigrateToolsCommands.php line 697:
+                                  
+  [Exception]                     
+  d7_field Migration - 1 failed.  
+                                  
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:user:config:
+[0m
+[00;36m     [echo] Migrates user configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import user_picture_field,user_picture_field_instance,user_picture_entity_display,user_picture_entity_form_display,d7_user_role,d7_user_maild7_user_flood --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_x0dPHh --database=drupal --host=database --port=3306 --silent  < /tmp/drush_qMbspO > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_r5KCle --database=drupal --host=database --port=3306 --silent  < /tmp/drush_XyMH1K > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.29 sec, 30.73 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.29 sec, 30.73 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.29 sec, 30.73 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.79 sec, 39.43 MB]
+ [notice] Processed 13 items (13 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_user_role' [1.55 sec, 51.05 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.55 sec, 51.04 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'user_picture_field' [1.8 sec, 53.59 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.8 sec, 53.59 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'user_picture_field_instance' [2.01 sec, 54.35 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.01 sec, 54.35 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'user_picture_entity_display' [2.25 sec, 55.6 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.25 sec, 55.6 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'user_picture_entity_form_display' [2.44 sec, 56.5 MB]
+[00;32m
+bostongov > migrate:taxonomy:config:
+[0m
+[00;36m     [echo] Migrates taxonomy configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_taxonomy_vocabulary --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_rk1DDh --database=drupal --host=database --port=3306 --silent  < /tmp/drush_qdETHE > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_gStryx --database=drupal --host=database --port=3306 --silent  < /tmp/drush_gKz1AU > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.3 sec, 30.57 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.3 sec, 30.57 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.3 sec, 30.57 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.6 sec, 35.86 MB]
+ [notice] Processed 24 items (24 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_taxonomy_vocabulary' [1.78 sec, 48.46 MB]
+[00;32m
+bostongov > migrate:menu:config:
+[0m
+[00;36m     [echo] Migrates menu configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_menu --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_9b2Htq --database=drupal --host=database --port=3306 --silent  < /tmp/drush_VFXHoG > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_njZQGU --database=drupal --host=database --port=3306 --silent  < /tmp/drush_liagAa > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.3 sec, 30.61 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.3 sec, 30.61 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.3 sec, 30.62 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.57 sec, 35.9 MB]
+ [notice] Processed 8 items (8 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_menu' [0.88 sec, 45.51 MB]
+[00;32m
+bostongov > migrate:paragraphs:config:
+[0m
+[00;36m     [echo] Migrates paragraph configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_paragraphs_type --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_yrb8fB --database=drupal --host=database --port=3306 --silent  < /tmp/drush_c6EokN > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_nrxBad --database=drupal --host=database --port=3306 --silent  < /tmp/drush_TERldp > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.3 sec, 30.61 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.3 sec, 30.61 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.3 sec, 30.62 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.58 sec, 35.98 MB]
+ [notice] Processed 68 items (68 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_paragraphs_type' [3.58 sec, 49.98 MB]
+[00;32m
+bostongov > migrate:nodes:config:
+[0m
+[00;36m     [echo] Migrates node configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_node_type,d7_node_title_label --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_8riV0J --database=drupal --host=database --port=3306 --silent  < /tmp/drush_ghnZdI > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_Loq4DN --database=drupal --host=database --port=3306 --silent  < /tmp/drush_YgLtPL > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.31 sec, 30.76 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.31 sec, 30.76 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.31 sec, 30.76 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.7 sec, 37.23 MB]
+ [notice] Processed 22 items (22 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node_type' [10.3 sec, 56.39 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [10.3 sec, 56.39 MB]
+ [notice] Processed 22 items (22 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node_title_label' [17.62 sec, 55.35 MB]
+[00;32m
+bostongov > migrate:blocks:config:
+[0m
+[00;36m     [echo] Migrates block configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_custom_block,block_content_type,block_content_body_field,block_content_entity_form_display,block_content_entity_display --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_yVvaMz --database=drupal --host=database --port=3306 --silent  < /tmp/drush_1BD45t > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_bL80bL --database=drupal --host=database --port=3306 --silent  < /tmp/drush_bNI4tF > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.31 sec, 31.26 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.31 sec, 31.26 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.31 sec, 31.27 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.65 sec, 36.65 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'block_content_type' [0.82 sec, 42.47 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.83 sec, 42.51 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'block_content_body_field' [1.04 sec, 48.74 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.04 sec, 48.75 MB]
+ [error]  Missing filter plugin: filter_null. [0.84 sec, 50.47 MB] 
+ [error]  The configuration property filters.filter_null.settings.nofollow_domains.0 doesn't exist. (/app/docroot/core/lib/Drupal/Core/Config/Schema/ArrayElement.php:76) [1.27 sec, 50.59 MB] 
+ [error]  Missing filter plugin: filter_null. [0.84 sec, 50.61 MB] 
+ [notice] Processed 4 items (3 created, 0 updated, 1 failed, 0 ignored) - done with 'd7_filter_format' [1.4 sec, 50.69 MB]
+
+In MigrateToolsCommands.php line 697:
+                                          
+  [Exception]                             
+  d7_filter_format Migration - 1 failed.  
+                                          
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:681
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:comments:config:
+[0m
+[00;36m     [echo] Migrates comments configuration into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_comment_type,d7_comment_field,d7_comment_field_instance,d7_comment_entity_display,d7_comment_entity_form_display,d7_comment_entity_form_display_subject --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_yPeO0q --database=drupal --host=database --port=3306 --silent  < /tmp/drush_kcfjBf > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_xttKSN --database=drupal --host=database --port=3306 --silent  < /tmp/drush_7TcLrC > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.33 sec, 31.26 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.33 sec, 31.26 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.33 sec, 31.27 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.87 sec, 42.16 MB]
+ [error]  Attempt to create a bundle with an ID longer than 32 characters: comment_node_metrolist_affordable_housing(). (/app/docroot/core/lib/Drupal/Core/Entity/Entity.php:434) [6.19 sec, 60.76 MB] 
+ [error]  Attempt to create a bundle with an ID longer than 32 characters: comment_node_procurement_advertisement(). (/app/docroot/core/lib/Drupal/Core/Entity/Entity.php:434) [8.08 sec, 61.38 MB] 
+ [error]  Attempt to create a bundle with an ID longer than 32 characters: comment_node_program_initiative_profile(). (/app/docroot/core/lib/Drupal/Core/Entity/Entity.php:434) [8.37 sec, 61.38 MB] 
+ [notice] Processed 22 items (19 created, 0 updated, 3 failed, 0 ignored) - done with 'd7_comment_type' [13.04 sec, 61.55 MB]
+
+In MigrateToolsCommands.php line 697:
+                                         
+  [Exception]                            
+  d7_comment_type Migration - 3 failed.  
+                                         
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:system:config:
+[0m
+[00;36m     [echo] Migrates system configurations into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_color,d7_filter_format,d7_system_authorize,d7_system_cron,d7_system_date,d7_system_file,d7_system_mail,d7_system_performance,system_image,system_image_gd,system_logging,system_maintenance,system_rss,system_site,d7_rdf_mapping --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_Unhmkd --database=drupal --host=database --port=3306 --silent  < /tmp/drush_tx8LYe > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_uw3O49 --database=drupal --host=database --port=3306 --silent  < /tmp/drush_UoxzHb > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.34 sec, 31.61 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.34 sec, 31.61 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.34 sec, 31.61 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.39 sec, 52.46 MB]
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_color' [1.53 sec, 53.7 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.53 sec, 53.76 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_system_authorize' [1.68 sec, 56.97 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.68 sec, 56.98 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_system_cron' [1.82 sec, 57.01 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.82 sec, 57.01 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_system_date' [1.94 sec, 57.06 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1.94 sec, 57.06 MB]
+ [notice] Processed 1 item (0 created, 0 updated, 0 failed, 1 ignored) - done with 'd7_system_file' [2.07 sec, 57.17 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.07 sec, 57.15 MB]
+ [notice] Processed 1 item (0 created, 0 updated, 0 failed, 1 ignored) - done with 'd7_system_mail' [2.18 sec, 57.19 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.19 sec, 57.17 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_system_performance' [2.31 sec, 57.22 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.31 sec, 57.22 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'system_image' [2.44 sec, 57.24 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.44 sec, 57.24 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'system_image_gd' [2.56 sec, 57.27 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.56 sec, 57.27 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'system_logging' [2.7 sec, 57.29 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.7 sec, 57.29 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'system_maintenance' [2.83 sec, 57.32 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.83 sec, 57.32 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'system_rss' [2.95 sec, 57.35 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [2.95 sec, 57.35 MB]
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'system_site' [3.08 sec, 57.4 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [3.08 sec, 57.4 MB]
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_filter_format' [3.21 sec, 57.72 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [3.21 sec, 57.73 MB]
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_rdf_mapping' [3.32 sec, 57.79 MB]
+[00;32m
+bostongov > migrate:finalize:config:
+[0m
+[00;36m     [echo] Finalize migration configurations.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_url_alias,d7_blocked_ips,d7_path_redirect --force --execute-dependencies -vv.[0m
+ [preflight] Config paths: /app/vendor/drush/drush/drush.yml,/app/drush/drush.yml
+ [preflight] Alias paths: /app/docroot/drush/sites,/app/drush/sites
+ [preflight] Commandfile search paths: /app/vendor/drush/drush/src
+ [debug] Bootstrap further to find migrate:import
+ [debug] Trying to bootstrap as far as we can
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalRoot()
+ [bootstrap] Change working directory to /app/docroot
+ [bootstrap] Initialized Drupal 8.6.1 root directory at /app/docroot
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalSite()
+ [bootstrap] Initialized Drupal site boston.lndo.site:3443 at sites/default
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalConfiguration()
+ [debug] Add service modifier
+ [info] sql-query: SELECT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_TLfgi1 --database=drupal --host=database --port=3306 --silent  < /tmp/drush_Sf3T2P > /dev/null
+ [info] sql-query: SELECT 1 FROM key_value LIMIT 1;
+ [info] Executing: mysql --defaults-file=/tmp/drush_03OYPn --database=drupal --host=database --port=3306 --silent  < /tmp/drush_eZr6yc > /dev/null
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalDatabase()
+ [bootstrap] Successfully connected to the Drupal database.
+ [bootstrap] Drush bootstrap phase: bootstrapDrupalFull()
+ [debug] Start bootstrap of the Drupal Kernel.
+ [debug] Finished bootstrap of the Drupal Kernel.
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigExportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\config\ConfigImportCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\BatchCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\CliCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\DrupalCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\EntityCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ImageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LanguageCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\LocaleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\MessengerCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\QueueCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\RoleCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\StateCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\TwigCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\UserCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\ViewsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\core\WatchdogCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\PmCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\pm\ThemeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeCommentsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeSessionsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserFieldsCommands
+ [debugnotify] Add a commandfile class: Drush\Drupal\Commands\sql\SanitizeUserTableCommands
+ [debugnotify] Add a commandfile class: Drupal\bos_core\Commands\BosCoreCommands
+ [debugnotify] Add a commandfile class: Drupal\config_split\Commands\ConfigSplitCommands
+ [debugnotify] Add a commandfile class: Drupal\default_content\Commands\DefaultContentCommands
+ [debugnotify] Add a commandfile class: Drupal\devel\Commands\DevelCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_tools\Commands\MigrateToolsCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_upgrade\Commands\MigrateUpgradeCommands
+ [debugnotify] Add a commandfile class: Drupal\migrate_utilities\Commands\MigutilDrushCommands
+ [debugnotify] Add a commandfile class: Drupal\views_bulk_operations\Commands\ViewsBulkOperationsCommands
+ [debugnotify] Add a commandfile class: Drupal\config_devel\Commands\ConfigDevelCommands
+ [debug] Done with bootstrap max in Application::find(): trying to find migrate:import again.
+ [bootstrap] Starting bootstrap to none [0.34 sec, 31.61 MB]
+ [bootstrap] Drush bootstrap phase 0 [0.34 sec, 31.61 MB]
+ [bootstrap] Try to validate bootstrap phase 0 [0.34 sec, 31.61 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.72 sec, 39.19 MB]
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_blocked_ips' [0.85 sec, 40.44 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [0.85 sec, 40.5 MB]
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_path_redirect' [1 sec, 43.57 MB]
+ [debug] Calling Drupal\migrate_tools\MigrateExecutable::import() [1 sec, 43.57 MB]
+ [notice] Processed 29473 items (29473 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_url_alias' [883.95 sec, 57.46 MB]
+[00;32m
+bostongov > migrate:all:config:
+[0m
+[00;32m
+BUILD FINISHED
+
+Total time: 18 minutes  46.66 seconds
+[0m

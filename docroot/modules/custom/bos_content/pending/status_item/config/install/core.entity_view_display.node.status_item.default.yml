@@ -1,0 +1,61 @@
+uuid: 9256680e-00e3-46b3-9b6f-91fd2542bed6
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_status_item.default
+    - field.field.node.status_item.comment_node_status_item
+    - field.field.node.status_item.field_icon
+    - field.field.node.status_item.field_messages
+    - field.field.node.status_item.field_title
+    - node.type.status_item
+  module:
+    - comment
+    - entity_reference_revisions
+    - image_url_formatter
+    - user
+id: node.status_item.default
+targetEntityType: node
+bundle: status_item
+mode: default
+content:
+  comment_node_status_item:
+    label: hidden
+    type: comment_default
+    weight: 20
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    region: content
+  field_icon:
+    label: hidden
+    weight: 2
+    type: image_url
+    settings:
+      image_style: ''
+    third_party_settings: {  }
+    region: content
+  field_messages:
+    label: hidden
+    weight: 4
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true

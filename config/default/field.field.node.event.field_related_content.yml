@@ -1,0 +1,36 @@
+uuid: 5e6c978e-e50a-4763-a71f-c48b6c78821f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_content
+    - node.type.article
+    - node.type.event
+    - node.type.how_to
+    - node.type.landing_page
+    - node.type.script_page
+id: node.event.field_related_content
+field_name: field_related_content
+entity_type: node
+bundle: event
+label: 'Other related content'
+description: 'Which articles, how tos, and / or other content are relevant for this event?'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      article: article
+      how_to: how_to
+      landing_page: landing_page
+      script_page: script_page
+field_type: entity_reference

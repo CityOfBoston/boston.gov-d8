@@ -1,0 +1,20 @@
+uuid: 406e1421-1bbe-4253-a6e2-293bb8069136
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.place_profile
+id: node.place_profile.uid
+field_name: uid
+entity_type: node
+bundle: place_profile
+label: 'Authored by'
+description: 'The username of the content author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\node\Entity\Node::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

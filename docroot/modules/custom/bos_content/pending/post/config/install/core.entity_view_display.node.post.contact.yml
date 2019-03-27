@@ -1,0 +1,58 @@
+uuid: 33395491-13f6-47cd-bba2-4125c1db7e99
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.contact
+    - field.field.node.post.body
+    - field.field.node.post.comment_node_post
+    - field.field.node.post.field_components
+    - field.field.node.post.field_contact
+    - field.field.node.post.field_intro_image
+    - field.field.node.post.field_news_tags
+    - field.field.node.post.field_people
+    - field.field.node.post.field_place
+    - field.field.node.post.field_program_initiative
+    - field.field.node.post.field_published_date
+    - field.field.node.post.field_related_content
+    - field.field.node.post.field_related_departments
+    - field.field.node.post.field_related_events_notices
+    - field.field.node.post.field_related_guides
+    - field.field.node.post.field_related_posts
+    - field.field.node.post.field_sidebar_components
+    - field.field.node.post.field_thumbnail
+    - field.field.node.post.field_type_of_content
+    - field.field.node.post.field_updated_date
+    - node.type.post
+  module:
+    - user
+id: node.post.contact
+targetEntityType: node
+bundle: post
+mode: contact
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  body: true
+  comment_node_post: true
+  field_components: true
+  field_contact: true
+  field_intro_image: true
+  field_news_tags: true
+  field_people: true
+  field_place: true
+  field_program_initiative: true
+  field_published_date: true
+  field_related_content: true
+  field_related_departments: true
+  field_related_events_notices: true
+  field_related_guides: true
+  field_related_posts: true
+  field_sidebar_components: true
+  field_thumbnail: true
+  field_type_of_content: true
+  field_updated_date: true
+  langcode: true
+  published_at: true

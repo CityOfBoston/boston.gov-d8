@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_link module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_link_theme() {
+  $theme['paragraph__external_link'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  $theme['paragraph__internal_link'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  $theme['paragraph__document'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_link_preprocess_paragraph(&$vars) {
+  $paragraph = $vars['paragraph'];
+  if ($paragraph && $paragraph->bundle() == 'document') {
+    $document = $paragraph->get('field_document')->getValue();
+    $title = $paragraph->get('field_title')->getValue();
+    if (!empty($document['0']['target_id']) && !empty($title['0']['value'])) {
+      $vars['link'] = _bos_core_get_file_link(
+        $document['0']['target_id'],
+        $title['0']['value'],
+        [
+          'attributes' => [
+            'class' => [
+              'fyi-l',
+            ],
+          ],
+        ]
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function bos_link_preprocess_field(&$vars) {
+  $field_name = $vars['element']['#field_name'];
+  if ($field_name == 'field_external_link' || $field_name == 'field_internal_link') {
+    if (_paragraph_is_direct_child_of($vars['element']['#object'], 'fyi')
+        || _paragraph_is_direct_child_of($vars['element']['#object'], 'site_alert')) {
+      $vars['items'][0]['content']['#options']['attributes']['class'][] = 'fyi-l';
+    }
+  }
+  if ($field_name == 'field_external_link') {
+    $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
+  }
+}

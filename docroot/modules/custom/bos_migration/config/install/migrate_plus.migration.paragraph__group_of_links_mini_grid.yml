@@ -1,0 +1,25 @@
+id: paragraph__group_of_links_mini_grid
+label: 'Group of Links Mini Grid Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: group_of_links_mini_grid
+process:
+  field_contact: field_contact
+  field_links: field_links
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: group_of_links_mini_grid
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

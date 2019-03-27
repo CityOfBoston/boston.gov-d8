@@ -1,0 +1,107 @@
+[00;36mBuildfile: /app/build.xml[0m
+[00;32m
+bostongov > migrate:field:settings:
+[0m
+[00;36m     [echo] Migrates field settings into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import file_settings,text_settings --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_5RrNld --database=drupal --host=database --port=3306 --silent  < /tmp/drush_YCjirk > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_Ev65cZ --database=drupal --host=database --port=3306 --silent  < /tmp/drush_larqh6 > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'file_settings'
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'text_settings'
+[00;32m
+bostongov > migrate:user:settings:
+[0m
+[00;36m     [echo] Migrates user settings into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_realname_settings --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_ugso6n --database=drupal --host=database --port=3306 --silent  < /tmp/drush_PrdOpr > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_BUcNvh --database=drupal --host=database --port=3306 --silent  < /tmp/drush_fNN4Nk > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_realname_settings'
+[00;32m
+bostongov > migrate:taxonomy:settings:
+[0m
+[00;36m     [echo] Migrates taxonomy settings into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import taxonomy_settings --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_v9tRrf --database=drupal --host=database --port=3306 --silent  < /tmp/drush_esrTOf > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_wGakLe --database=drupal --host=database --port=3306 --silent  < /tmp/drush_58Nz6e > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'taxonomy_settings'
+[00;32m
+bostongov > migrate:menu:settings:
+[0m
+[00;36m     [echo] Migrates menu settings into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import menu_settings --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_q7qiSj --database=drupal --host=database --port=3306 --silent  < /tmp/drush_phzZ1g > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_Rxw8Bp --database=drupal --host=database --port=3306 --silent  < /tmp/drush_57lcKm > /dev/null
+ [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'menu_settings'
+[00;32m
+bostongov > migrate:nodes:settings:
+[0m
+[00;36m     [echo] Migrates node settings into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_node_settings --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_WDR5Nn --database=drupal --host=database --port=3306 --silent  < /tmp/drush_9s9Wwh > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_J8RHoA --database=drupal --host=database --port=3306 --silent  < /tmp/drush_sRNn6t > /dev/null
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_node_settings'
+[00;32m
+bostongov > migrate:system:settings:
+[0m
+[00;36m     [echo] Migrates system settings into site.[0m
+[00;32m
+bostongov > migrate:execute:
+[0m
+[00;36m     [echo] Executes migrate:import d7_syslog_settings,d7_dblog_settings,update_settings,d7_language_negotiation_settings,d7_language_types,default_language,d7_filter_settings,d7_global_theme_settings,d7_theme_settings --force --execute-dependencies --verbose.[0m
+ [info] Executing: mysql --defaults-file=/tmp/drush_Cfyeqw --database=drupal --host=database --port=3306 --silent  < /tmp/drush_3JTifm > /dev/null
+ [info] Executing: mysql --defaults-file=/tmp/drush_w0PsPQ --database=drupal --host=database --port=3306 --silent  < /tmp/drush_iGuPCG > /dev/null
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_dblog_settings'
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_filter_settings'
+ [notice] Processed 1 item (1 created, 0 updated, 0 failed, 0 ignored) - done with 'd7_global_theme_settings'
+ [notice] Processed 1 item (0 created, 0 updated, 1 failed, 0 ignored) - done with 'd7_language_types'
+
+In MigrateToolsCommands.php line 697:
+                                           
+  [Exception]                              
+  d7_language_types Migration - 1 failed.  
+                                           
+
+Exception trace:
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->executeMigration() at n/a:n/a
+ array_walk() at /app/docroot/modules/contrib/migrate_tools/src/Commands/MigrateToolsCommands.php:287
+ Drupal\migrate_tools\Commands\MigrateToolsCommands->import() at n/a:n/a
+ call_user_func_array() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:235
+ Consolidation\AnnotatedCommand\CommandProcessor->runCommandCallback() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:181
+ Consolidation\AnnotatedCommand\CommandProcessor->validateRunAndAlter() at /app/vendor/consolidation/annotated-command/src/CommandProcessor.php:150
+ Consolidation\AnnotatedCommand\CommandProcessor->process() at /app/vendor/consolidation/annotated-command/src/AnnotatedCommand.php:404
+ Consolidation\AnnotatedCommand\AnnotatedCommand->execute() at /app/vendor/symfony/console/Command/Command.php:251
+ Symfony\Component\Console\Command\Command->run() at /app/vendor/symfony/console/Application.php:964
+ Symfony\Component\Console\Application->doRunCommand() at /app/vendor/symfony/console/Application.php:248
+ Symfony\Component\Console\Application->doRun() at /app/vendor/symfony/console/Application.php:148
+ Symfony\Component\Console\Application->run() at /app/vendor/drush/drush/src/Runtime/Runtime.php:112
+ Drush\Runtime\Runtime->doRun() at /app/vendor/drush/drush/src/Runtime/Runtime.php:41
+ Drush\Runtime\Runtime->run() at /app/vendor/drush/drush/drush.php:66
+ require() at /app/vendor/drush/drush/includes/preflight.inc:17
+ drush_main() at phar:///usr/local/bin/drush/bin/drush.php:141
+ require() at /usr/local/bin/drush:10
+
+migrate:import [--all [ALL]] [--group [GROUP]] [--tag [TAG]] [--limit [LIMIT]] [--feedback [FEEDBACK]] [--idlist [IDLIST]] [--update [UPDATE]] [--force [FORCE]] [--execute-dependencies [EXECUTE-DEPENDENCIES]] [-h|--help] [-q|--quiet] [-v|vv|vvv|--verbose] [-V|--version] [--ansi] [--no-ansi] [-n|--no-interaction] [-d|--debug] [-y|--yes] [--no] [--remote-host REMOTE-HOST] [--remote-user REMOTE-USER] [-r|--root ROOT] [-l|--uri URI] [--simulate] [--pipe] [-D|--define DEFINE] [--xh-link XH-LINK] [--druplicon] [--notify [NOTIFY]] [--] <command> [<migration_names>]
+
+[00;32m
+bostongov > migrate:all:settings:
+[0m
+[00;32m
+BUILD FINISHED
+
+Total time: 7.1663 seconds
+[0m

@@ -1,0 +1,56 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cabinet.field_description
+    - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_person
+    - field.field.paragraph.cabinet.field_short_title
+    - field.field.paragraph.cabinet.field_title
+    - paragraphs.paragraphs_type.cabinet
+id: paragraph.cabinet.default
+targetEntityType: paragraph
+bundle: cabinet
+mode: default
+content:
+  field_contacts:
+    label: hidden
+    weight: 3
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+  field_person:
+    label: hidden
+    weight: 1
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_description:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden: {  }

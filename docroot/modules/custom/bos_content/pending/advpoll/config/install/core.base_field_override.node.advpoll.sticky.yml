@@ -1,0 +1,22 @@
+uuid: bf0f4618-b094-45a1-ac1a-70074f85b5b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.advpoll
+id: node.advpoll.sticky
+field_name: sticky
+entity_type: node
+bundle: advpoll
+label: 'Sticky at top of lists'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

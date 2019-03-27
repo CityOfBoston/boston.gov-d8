@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_short_title
+    - paragraphs.paragraphs_type.newsletter
+id: paragraph.newsletter.field_short_title
+field_name: field_short_title
+entity_type: paragraph
+bundle: newsletter
+label: 'Short Title'
+description: 'This is where you name in-page navigation. It isn''t used on the sidebar version. Please keep it short: one to three words is ideal. Example can be found on boston.gov/winter/.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

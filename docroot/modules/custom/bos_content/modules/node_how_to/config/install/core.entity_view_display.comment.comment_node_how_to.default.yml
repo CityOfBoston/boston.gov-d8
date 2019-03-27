@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_how_to
+    - field.field.comment.comment_node_how_to.comment_body
+  module:
+    - text
+id: comment.comment_node_how_to.default
+targetEntityType: comment
+bundle: comment_node_how_to
+mode: default
+content:
+  comment_body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true

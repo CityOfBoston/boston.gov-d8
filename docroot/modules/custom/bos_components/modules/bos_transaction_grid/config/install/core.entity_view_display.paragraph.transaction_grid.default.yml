@@ -1,0 +1,42 @@
+uuid: 930121db-1b1c-4f20-8c53-a9159b9c4b44
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.transaction_grid.field_component_title
+    - field.field.paragraph.transaction_grid.field_contact
+    - field.field.paragraph.transaction_grid.field_short_title
+    - field.field.paragraph.transaction_grid.field_transactions
+    - paragraphs.paragraphs_type.transaction_grid
+id: paragraph.transaction_grid.default
+targetEntityType: paragraph
+bundle: transaction_grid
+mode: default
+content:
+  field_component_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: inline
+    weight: 2
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_transactions: true

@@ -1,0 +1,30 @@
+uuid: aa7ef8bc-e5a0-4b45-b89b-ec596c8cb5bc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_contact
+    - node.type.how_to
+    - taxonomy.vocabulary.contact
+id: node.how_to.field_contact
+field_name: field_contact
+entity_type: node
+bundle: how_to
+label: Contact
+description: 'Add contact information for this how-to.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: name
+      direction: ASC
+    target_bundles:
+      contact: contact
+field_type: entity_reference

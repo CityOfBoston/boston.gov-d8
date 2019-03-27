@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_newsletter module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_newsletter_theme() {
+  $theme['paragraph__newsletter'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_newsletter/templates',
+  ];
+  $theme['paragraph__newsletter__sidebar'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_newsletter/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK__TYPE().
+ */
+function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
+
+  // Newsletter ID.
+  if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_newsletter')) {
+    $tid = $variables['paragraph']->get('field_newsletter')->getValue()['0']['target_id'];
+    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
+    $variables['newsletter_id'] = $term->get('field_id')->getValue()['0']['value'];
+  }
+
+  if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
+    // Component Theme.
+    $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
+    $variables['component_theme'] = $component_theme;
+
+    // Section Header Theme.
+    $section_header_theme = $component_theme == 'b' ? 'sh--w' : '';
+    $variables['section_header_theme'] = $section_header_theme;
+  }
+
+}

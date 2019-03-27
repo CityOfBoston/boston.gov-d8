@@ -1,0 +1,102 @@
+name: How To
+type: module
+description: 'Provides theming and configuration for how_to.'
+package: 'City of Boston (content)'
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_components
+  - paragraphs
+config_devel:
+  # How-To
+  - comment.type.comment_node_how_to
+  - core.base_field_override.comment.comment_node_how_to.created
+  - core.base_field_override.comment.comment_node_how_to.homepage
+  - core.base_field_override.comment.comment_node_how_to.hostname
+  - core.base_field_override.comment.comment_node_how_to.mail
+  - core.base_field_override.comment.comment_node_how_to.name
+  - core.base_field_override.comment.comment_node_how_to.status
+  - core.base_field_override.comment.comment_node_how_to.subject
+  - core.base_field_override.comment.comment_node_how_to.uid
+  - core.base_field_override.node.how_to.created
+  - core.base_field_override.node.how_to.menu_link
+  - core.base_field_override.node.how_to.metatag
+  - core.base_field_override.node.how_to.path
+  - core.base_field_override.node.how_to.promote
+  - core.base_field_override.node.how_to.published_at
+  - core.base_field_override.node.how_to.status
+  - core.base_field_override.node.how_to.sticky
+  - core.base_field_override.node.how_to.title
+  - core.base_field_override.node.how_to.uid
+  - core.entity_form_display.comment.comment_node_how_to.default
+  - core.entity_form_display.node.how_to.default
+  - core.entity_view_display.comment.comment_node_how_to.default
+  - core.entity_view_display.node.how_to.article
+  - core.entity_view_display.node.how_to.calendar_listing
+  - core.entity_view_display.node.how_to.contact
+  - core.entity_view_display.node.how_to.default
+  - core.entity_view_display.node.how_to.department_listing
+  - core.entity_view_display.node.how_to.featured_item
+  - core.entity_view_display.node.how_to.featured_topics
+  - core.entity_view_display.node.how_to.listing
+  - core.entity_view_display.node.how_to.listing_long
+  - core.entity_view_display.node.how_to.poll_stub
+  - core.entity_view_display.node.how_to.popup_icon
+  - core.entity_view_display.node.how_to.published_by
+  - core.entity_view_display.node.how_to.teaser
+  - field.field.comment.comment_node_how_to.comment_body
+  - field.field.node.how_to.body
+  - field.field.node.how_to.comment_node_how_to
+  - field.field.node.how_to.field_components
+  - field.field.node.how_to.field_contact
+  - field.field.node.how_to.field_how_to_tabs
+  - field.field.node.how_to.field_intro_image
+  - field.field.node.how_to.field_links
+  - field.field.node.how_to.field_need_to_know
+  - field.field.node.how_to.field_payment_info
+  - field.field.node.how_to.field_published_date
+  - field.field.node.how_to.field_sidebar_components
+  - field.field.node.how_to.field_type_of_content
+  - field.field.node.how_to.field_updated_date
+  - language.content_settings.comment.comment_node_how_to
+  - language.content_settings.node.how_to
+  - node.type.how_to
+  - xmlsitemap.settings.node.how_to
+  # How-To Tab
+  - core.base_field_override.paragraph.how_to_tab.created
+  - core.base_field_override.paragraph.how_to_tab.status
+  - core.base_field_override.paragraph.how_to_tab.uid
+  - core.entity_form_display.paragraph.how_to_tab.default
+  - core.entity_view_display.paragraph.how_to_tab.default
+  - core.entity_view_display.paragraph.how_to_tab.paragraphs_editor_preview
+  - core.entity_view_display.paragraph.how_to_tab.separated_title
+  - field.field.paragraph.how_to_tab.field_how_to_steps
+  - field.field.paragraph.how_to_tab.field_how_to_title
+  - field.field.paragraph.how_to_tab.field_keep_in_mind
+  - language.content_settings.paragraph.how_to_tab
+  - paragraphs.paragraphs_type.how_to_tab
+  # How-To Contact Step
+  - core.base_field_override.paragraph.how_to_contact_step.created
+  - core.base_field_override.paragraph.how_to_contact_step.status
+  - core.base_field_override.paragraph.how_to_contact_step.uid
+  - core.entity_form_display.paragraph.how_to_contact_step.default
+  - core.entity_view_display.paragraph.how_to_contact_step.default
+  - core.entity_view_display.paragraph.how_to_contact_step.paragraphs_editor_preview
+  - core.entity_view_display.paragraph.how_to_contact_step.separated_title
+  - field.field.paragraph.how_to_contact_step.field_operation_hours
+  - field.field.paragraph.how_to_contact_step.field_step_details
+  - field.field.paragraph.how_to_contact_step.field_title
+  - language.content_settings.paragraph.how_to_contact_step
+  - paragraphs.paragraphs_type.how_to_contact_step
+  # How-To Text Step
+  - core.base_field_override.paragraph.how_to_text_step.created
+  - core.base_field_override.paragraph.how_to_text_step.status
+  - core.base_field_override.paragraph.how_to_text_step.uid
+  - core.entity_form_display.paragraph.how_to_text_step.default
+  - core.entity_view_display.paragraph.how_to_text_step.default
+  - core.entity_view_display.paragraph.how_to_text_step.paragraphs_editor_preview
+  - core.entity_view_display.paragraph.how_to_text_step.separated_title
+  - field.field.paragraph.how_to_text_step.field_step_details
+  - field.field.paragraph.how_to_text_step.field_title
+  - language.content_settings.paragraph.how_to_text_step
+  - paragraphs.paragraphs_type.how_to_text_step

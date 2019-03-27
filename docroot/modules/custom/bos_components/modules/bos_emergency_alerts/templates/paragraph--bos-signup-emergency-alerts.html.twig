@@ -1,0 +1,142 @@
+{#
+ * @file
+ * Default theme implementation for a single paragraph item.
+ *
+ * Available variables:
+ * - $content: An array of content items. Use render($content) to print them
+ *   all, or print a subset such as render($content['field_example']). Use
+ *   hide($content['field_example']) to temporarily suppress the printing of a
+ *   given element.
+ * - $classes: String of classes that can be used to style contextually through
+ *   CSS. It can be manipulated through the variable $classes_array from
+ *   preprocess functions. By default the following classes are available, where
+ *   the parts enclosed by {} are replaced by the appropriate values:
+ *   - entity
+ *   - entity-paragraphs-item
+ *   - paragraphs-item-{bundle}
+ *
+ * Other variables:
+ * - $classes_array: Array of html class attribute values. It is flattened into
+ *   a string within the variable $classes.
+ *
+ * @see template_preprocess()
+ * @see template_preprocess_entity()
+ * @see template_process()
+ #}
+{%
+  set classes = [
+    "b",
+    "b--" ~ component_theme,
+  ]
+  %}
+{% if component_theme == 'b' %}
+{%   set classes = classes|merge(["b--wt"]) %}
+{% endif %}
+{% set classes = classes|merge(["b--fw"])%}
+
+<div{{ attributes.addClass(classes) }}">
+  <div class="b-c">
+    <div class="contextual-region">
+      {{ title_suffix }}
+    </div>
+    <div class="sh {{ section_header_theme }}">
+      {% if content.field_component_title %}
+        {{ content.field_component_title }}
+      {% endif %}
+      {% if content.field_contact %}
+        <div class="sh-contact">{{ content.field_contact }}</div>
+      {% endif %}
+    </div>
+    <div class="g m-t500">
+      <div class="g--7">
+        <div class="p-r500">
+          <div id="alert_content" class="m-b500">
+            <div class="t--intro m-b300">{{ content.field_intro_text }}</div>
+            <div>{{ content.field_description }}</div>
+          </div>
+          <div id="alert_success" class="m-b500 p-t400">
+            <div class="di di--c{% if component_theme == 'b' %} di--c--w{% endif %} di--c--l fl--l m-r400">
+              <div class="di-a">
+                <img src="{{ content.field_icon.url }}" role="presentation" />
+              </div>
+            </div>
+            <div class="t--intro m-t300" style="display: none">You have been subscribed to the City of Boston's emergency alerts</div>
+          </div>
+        </div>
+      </div>
+      <div class="g--5">
+        <form id="bosAlertForm" action="{{ emergency_alerts_url }}" method="post">
+          <div class="fs">
+            <div class="fs-c m-b300">
+              <div class="txt">
+                <label for="email" class="txt-l txt-l--mt000">Your email address</label>
+                <input id="email" name="email" type="text" value="" placeholder="email@address.com" class="txt-f">
+              </div>
+                <div class="sep m-b300{% if component_theme == 'b' %} sep--w{% endif %}">
+                <div class="sep-l"></div>
+                <div class="sep-c">or</div>
+                <div class="sep-l"></div>
+              </div>
+              <div class="txt">
+                <label for="phone_number" class="txt-l txt-l--w txt-l--mt000">Your phone number</label>
+                <input id="phone_number" name="phone_number" type="text" value="" placeholder="Phone number" class="txt-f">
+              </div>
+            </div>
+            <div class="fs-c fs-c--i">
+              <label class="cb">
+                <input id="checkbox-text" name="text" type="checkbox" value="1" class="cb-f" checked>
+                <span class="cb-l cb-l--sans">Text me</span>
+              </label>
+              <label class="cb">
+                <input id="checkbox-call" name="call" type="checkbox" value="1" class="cb-f">
+                <span class="cb-l cb-l--sans">Call me</span>
+              </label>
+            </div>
+            <div class="t--subinfo{% if component_theme == 'b' %} t--w{% endif %} m-t100">Message &amp data rates may apply</div>
+            <div>
+              <div id="text_or_call" class="txt-l"></div>
+            </div>
+            <hr class="hr hr--sq" />
+            <div class="fs-c m-b300">
+              <div class="txt">
+                <label for="first_name" class="txt-l txt-l--mt000">First name</label>
+                <input id="first_name" name="first_name" type="text" value="" placeholder="First name" class="txt-f">
+              </div>
+            </div>
+            <div class="fs-c m-b300">
+              <div class="txt">
+                <label for="last_name" class="txt-l txt-l--mt000">Last name</label>
+                <input id="last_name" name="last_name" type="text" value="" placeholder="Last name" class="txt-f">
+              </div>
+            </div>
+            <div class="fs-c m-b300">
+              <div class="txt">
+                <label for="zip_code" class="txt-l txt-l--w txt-l--mt000">Zip code</label>
+                <input id="zip_code" name="zip" type="text" value="" placeholder="Zip code" class="txt-f" size="10">
+              </div>
+            </div>
+            <div class="fs-c m-b300">
+              <div class="sel">
+                <label for="emergency-alerts-language" class="txt-l txt-l--w txt-l--mt000">Language</label>
+                <div class="sel-c sel-c--fw">
+                  <select class="sel-f sel-f--fw" name="language" id="emergency-alerts-language">
+                    <option value="en" selected>English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="zh_TW">繁體中文</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div id="message" class="m-b300" style="display: none"></div>
+            <div id="button" class="fs-c fs-c--i fs-c--c">
+              <div class="m-lAAA m-t400 m-t300--mo">
+                <button id="alert_submit" type="submit" class="btn btn--700">Sign Up</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+uuid: 17c6be85-9800-4ab6-bd2d-7131493cbe1e
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.listing
+    - field.field.paragraph.document.field_document
+    - field.field.paragraph.document.field_title
+    - paragraphs.paragraphs_type.document
+  module:
+    - file
+id: paragraph.document.listing
+targetEntityType: paragraph
+bundle: document
+mode: listing
+content:
+  field_document:
+    label: hidden
+    weight: 0
+    type: file_url_plain
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * @file
+ * Main file for the bos_text module.
+ */
+
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+ *
+ * Register module templates.
+ */
+function bos_text_theme($existing, $type, $theme, $path) {
+  return [
+    'paragraph__text' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text',
+    ],
+    'paragraph__text_one_column' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text-one-column',
+    ],
+    'paragraph__text_two_column' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text-two-column',
+    ],
+    'paragraph__3_column_w_image' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--3-column-w-image',
+    ],
+    'paragraph__columns' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--columns',
+    ],
+    'paragraph__text_three_column' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'paragraph--text-three-column',
+    ],
+    'paragraph__header_text' => [
+      'base hook' => 'paragraph',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+    ],
+    'field__component__field_columns' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'field--component--field-columns',
+    ],
+    'field__field_link' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+      'template' => 'field--field-link',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_text_preprocess_paragraph(&$variables) {
+  // Restrict to bundles from this module only.
+  if (empty($variables["paragraph"]->bundle()) || !in_array($variables["paragraph"]->bundle(), [
+    "text",
+    "text_one_column",
+    "text_two_column",
+    "text_three_column",
+    "3_column_w_image",
+  ])) {
+    return;
+  }
+
+  // Add standard classes.
+  $variables['attributes']['class'][] = 'entity';
+  $variables['attributes']['class'][] = 'entity-paragraphs-item';
+  $variables['attributes']['class'][] = Html::cleanCssIdentifier('paragraphs-item-' . $variables['paragraph']->bundle());
+  $variables['attributes']['class'][] = 'component-section';
+
+  // Manage background images.
+  if (isset($variables["paragraph"]->field_background_image->value)) {
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier($variables["paragraph"]->field_background_image->value);
+  }
+
+  // Assign tow/three_column classes.
+  if ($variables["paragraph"]->bundle() == "text_two_column") {
+    $variables['attributes']['class'][] = $variables["paragraph"]->field_column_configuration->value;
+  }
+
+  // Set a flag if the title is to be hidden in twig.
+  if ($variables["paragraph"]->bundle() == "text") {
+    $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+  }
+  elseif ($variables["paragraph"]->bundle() == "header_text") {
+    $host = $variables["paragraph"]->getParentEntity();
+    if ($host && $host->getEntityTypeId() == 'node') {
+      $variables['host_title'] = Html::escape($host->getTitle());
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_text_preprocess_field(&$variables) {
+  // Restrict to bundles from this module only.
+  if (empty($variables["element"]['#bundle']) || !in_array($variables["element"]['#bundle'], [
+    "text",
+    "text_one_column",
+    "text_two_column",
+    "text_three_column",
+    "3_column_w_image",
+  ])) {
+    return;
+  }
+  $variables['attributes']['class'][] = "field";
+  if ($variables['label_hidden']) {
+    $variables['attributes']['class'][] = "field-label-hidden";
+  }
+  if ($variables['is_subcomponent_field']) {
+    $variables['attributes']['class'][] = "field-subcomponent";
+  }
+  elseif ($variables['is_component_field']) {
+    $variables['attributes']['class'][] = "field-component";
+  }
+  if ($variables["element"]['#bundle'] == "3_column_w_image") {
+    foreach ($variables['attributes']['class'] as $key => &$class) {
+      $class = str_replace('field', 'entity', $class);
+    }
+  }
+}

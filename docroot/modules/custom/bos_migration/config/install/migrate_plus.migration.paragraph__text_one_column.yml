@@ -1,0 +1,22 @@
+id: paragraph__text_one_column
+label: 'One Column Text Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: text_one_column
+process:
+  field_middle_column: field_middle_column
+destination:
+  plugin: entity:paragraph
+  default_bundle: text_one_column
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

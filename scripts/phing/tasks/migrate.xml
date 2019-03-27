@@ -1,0 +1,394 @@
+<project name="migrate" default="migrate:info">
+
+  <!-- Run migration status. -->
+  <target name="migrate:info" description="Gives migration status.">
+    <exec dir="${project.basedir}"
+          command="drush migrate:status --tag='Drupal 7,Content'"
+          passthru="true"
+          logoutput="true"/>
+  </target>
+
+  <!-- Run all migration targets. -->
+  <target name="migrate:all" description="Runs full migration, lets Drupal manage it.">
+    <exec dir="${project.basedir}"
+          command="drush mim --all --force --execute-dependencies"
+          passthru="true"
+          logoutput="true"
+          checkreturn="true"/>
+  </target>
+  <target name="migrate:all:sequenced" description="Runs all migration tasks defined here in a sequence."
+          depends=" migrate:field,
+                    migrate:user,
+                    migrate:taxonomy,
+                    migrate:menu,
+                    migrate:paragraphs,
+                    migrate:nodes,
+                    migrate:blocks,
+                    migrate:comments,
+                    migrate:system,
+                    migrate:finalize"
+  />
+  <target name="migrate:all:config" description="Runs all configuration-migration tasks defined here."
+          depends=" migrate:field:config,
+                    migrate:user:config,
+                    migrate:taxonomy:config,
+                    migrate:menu:config,
+                    migrate:paragraphs:config,
+                    migrate:nodes:config,
+                    migrate:blocks:config,
+                    migrate:comments:config,
+                    migrate:system:config,
+                    migrate:finalize:config"
+  />
+  <target name="migrate:all:settings" description="Runs all settings-migration tasks defined here."
+          depends=" migrate:field:settings,
+                    migrate:user:settings,
+                    migrate:taxonomy:settings,
+                    migrate:menu:settings,
+                    migrate:nodes:settings,
+                    migrate:system:settings"
+  />
+  <target name="migrate:all:content" description="Runs all content-migration tasks defined here."
+          depends=" migrate:field:content,
+                    migrate:field:custom:content,
+                    migrate:user:content,
+                    migrate:taxonomy:content,
+                    migrate:menu:content,
+                    migrate:paragraphs:content,
+                    migrate:nodes:content,
+                    migrate:blocks:content,
+                    migrate:comments:content"
+  />
+
+  <!-- Migrate fields -->
+  <target name="migrate:field" description="Runs all field migration tasks."
+          depends=" migrate:field:config,
+                    migrate:field:settings,
+                    migrate:field:content,
+                    migrate:field:custom:content">
+    <echo message="Field migration completed." level="info"/>
+  </target>
+  <target name="migrate:field:content">
+    <echo message="Migrates field content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_file,d7_file_private"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:field:custom:content">
+    <echo message="Migrates custom field content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="--group=bos_fields"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:field:config">
+    <echo message="Migrates field configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_field,d7_field_instance,d7_field_formatter_settings,\
+              d7_field_instance_widget_settings,d7_view_modes,d7_field_group,\
+              d7_image_settings,d7_image_styles"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:field:settings">
+    <echo message="Migrates field settings into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="file_settings,text_settings"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate user entities OK -->
+  <target name="migrate:user" description="Runs all user migration tasks."
+          depends=" migrate:user:config,
+                    migrate:user:settings,
+                    migrate:user:content">
+    <echo message="User migration completed."/>
+  </target>
+  <target name="migrate:user:content">
+    <echo message="Migrates user accounts into site." level="info"/>
+    <property name="php.command" override="true"
+              description="Code to change the uid 101 user init field to 'anon'."
+              value='\Drupal\Core\Database\Database::getConnection("default", "migrate")->update("users")->fields(["init" => "anon"])->condition("uid", 101, "=")->execute();'>
+    </property>
+    <exec description="Fixes the init name for uid=101."
+          command="${drush.cmd} eval '${php.command}'" level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_user,d7_authmap"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:user:config">
+    <echo message="Migrates user configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_user_role"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:user:settings">
+    <echo message="Migrates user settings into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_realname_settings"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate taxonomy entities OK -->
+  <target name="migrate:taxonomy" description="Runs all taxonomy migration tasks."
+          depends=" migrate:taxonomy:config,
+                    migrate:taxonomy:settings,
+                    migrate:taxonomy:content">
+    <echo message="Taxonomy migration complete." level="info"/>
+  </target>
+  <target name="migrate:taxonomy:content">
+    <echo message="Migrates taxonomy content into site." level="info"/>
+    <property name="migration.options" value="--force -v --update"/>
+    <property name="migration.configs" override="true"
+              value="d7_taxonomy_term:commissions,d7_taxonomy_term:procurement_footer,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:taxonomy:config">
+    <echo message="Migrates taxonomy configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_taxonomy_vocabulary"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:taxonomy:settings">
+    <echo message="Migrates taxonomy settings into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="taxonomy_settings"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate menu entities OK -->
+  <target name="migrate:menu" description="Runs all menu migration tasks."
+          depends=" migrate:menu:config,
+                    migrate:menu:settings,
+                    migrate:menu:content">
+    <echo message="Menu migration complete." level="info"/>
+  </target>
+  <target name="migrate:menu:content">
+    <echo message="Migrates menu content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_menu_links"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:menu:config">
+    <echo message="Migrates menu configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_menu"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:menu:settings">
+    <echo message="Migrates menu settings into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="menu_settings"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate comments -->
+  <target name="migrate:comments" description="Runs all comment migration tasks."
+          depends=" migrate:comments:config,
+                    migrate:comments:content">
+    <echo message="Comments migration completed."/>
+  </target>
+  <target name="migrate:comments:content">
+    <echo message="Migrates comments content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_comment"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:comments:config">
+    <echo message="Migrates comments configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_comment_type,d7_comment_field,d7_comment_field_instance,d7_comment_entity_display,d7_comment_entity_form_display,d7_comment_entity_form_display_subject"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate (custom) paragraph entities -->
+  <target name="migrate:paragraphs" description="Runs all (custom) paragraphs migration tasks."
+          depends=" migrate:paragraphs:config,
+                    migrate:paragraphs:content">
+    <echo message="Paragraphs migration complete." level="info"/>
+  </target>
+  <target name="migrate:paragraphs:content">
+    <echo message="Migrates paragraph content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value=" --group=bos_paragraphs"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:paragraphs:config">
+    <echo message="Migrates paragraph configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_paragraphs_type"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate (custom) nodes -->
+  <target name="migrate:nodes" description="Runs all node migration tasks."
+          depends=" migrate:nodes:config,
+                    migrate:nodes:settings,
+                    migrate:nodes:content,
+                    migrate:nodes:content_revision,
+                    migrate:nodes:content_translation">
+    <echo message="Node migration completed." level="info"/>
+  </target>
+  <target name="migrate:nodes:content">
+    <echo message="Migrates node content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="node__article,node__change,node__department_profile"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:nodes:content_revision">
+    <echo message="Migrates node-revision content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_node_revision:advpoll,d7_node_revision:article,d7_node_revision:change,d7_node_revision:department_profile,d7_node_revision:emergency_alert,d7_node_revision:event,d7_node_revision:how_to,d7_node_revision:landing_page,d7_node_revision:listing_page,d7_node_revision:metrolist_affordable_housing,d7_node_revision:person_profile,d7_node_revision:place_profile,d7_node_revision:post,d7_node_revision:procurement_advertisement,d7_node_revision:program_initiative_profile,d7_node_revision:public_notice,d7_node_revision:script_page,d7_node_revision:site_alert,d7_node_revision:status_item,d7_node_revision:tabbed_content,d7_node_revision:topic_page,d7_node_revision:transaction"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:nodes:content_translation">
+    <echo message="Migrates node-translation content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_node_translation:advpoll,d7_node_translation:article,d7_node_translation:change,d7_node_translation:department_profile,d7_node_translation:emergency_alert,d7_node_translation:event,d7_node_translation:how_to,d7_node_translation:landing_page,d7_node_translation:listing_page,d7_node_translation:metrolist_affordable_housing,d7_node_translation:person_profile,d7_node_translation:place_profile,d7_node_translation:post,d7_node_translation:procurement_advertisement,d7_node_translation:program_initiative_profile,d7_node_translation:public_notice,d7_node_translation:script_page,d7_node_translation:site_alert,d7_node_translation:status_item,d7_node_translation:tabbed_content,d7_node_translation:topic_page,d7_node_translation:transaction"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:nodes:config">
+    <echo message="Migrates node configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_node_type,d7_node_title_label"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:nodes:settings">
+    <echo message="Migrates node settings into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_node_settings"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate blocks -->
+  <target name="migrate:blocks" description="Runs all block migration tasks."
+          depends=" migrate:blocks:config,
+                    migrate:blocks:content">
+    <echo message="Block migration completed." level="info"/>
+
+  </target>
+  <target name="migrate:blocks:content">
+    <echo message="Migrates block content into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_block"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:blocks:config">
+    <echo message="Migrates block configuration into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_custom_block,block_content_type,block_content_body_field,block_content_entity_form_display,block_content_entity_display"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate sundry elements -->
+  <target name="migrate:system" description="Runs all system migration tasks."
+          depends=" migrate:system:config,
+                    migrate:system:settings">
+    <echo message="System-settings migration completed." level="info"/>
+  </target>
+  <target name="migrate:system:settings">
+    <echo message="Migrates system settings into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_syslog_settings,d7_dblog_settings,update_settings,d7_language_negotiation_settings,d7_language_types,default_language,d7_filter_settings,d7_global_theme_settings,d7_theme_settings"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:system:config">
+    <echo message="Migrates system configurations into site." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_color,d7_filter_format,d7_system_authorize,d7_system_cron,d7_system_date,d7_system_file,d7_system_mail,d7_system_performance,system_image,system_image_gd,system_logging,system_maintenance,system_rss,system_site,d7_rdf_mapping"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <!-- Migrate these elements last -->
+  <target name="migrate:finalize" description="Runs finalizing migration tasks."
+          depends=" migrate:finalize:config,
+                    migrate:finalize:settings">
+    <echo message="Migration Finalized." level="info"/>
+  </target>
+  <target name="migrate:finalize:settings">
+    <echo message="Finalize migration settings." level="info"/>
+    <property name="migration.configs" override="true"
+              value=""/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+  <target name="migrate:finalize:config">
+    <echo message="Finalize migration configurations." level="info"/>
+    <property name="migration.configs" override="true"
+              value="d7_url_alias,d7_blocked_ips,d7_path_redirect"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+  </target>
+
+  <target name="migrate:status" description="Provides a migrate status report for our migration targets.">
+    <echo message="Running migration status check..." level="info"/>
+    <exec command="drush migrate:status --tag='Drupal 7'" logoutput="true"/>
+    <exec command="drush migrate:status --group=bos_paragraphs" logoutput="true"/>
+    <exec command="drush migrate:status --group=bos_fields" logoutput="true"/>
+  </target>
+
+  <target name="migrate:execute" hidden="true" description="Executes the migration." >
+    <!--
+      property migration.options uses drush migrate:import command options (use double dash):
+        all[=ALL]                                   Process all migrations.
+        group[=GROUP]                               A comma-separated list of migration groups to import
+        tag[=TAG]                                   Name of the migration tag to import
+        limit[=LIMIT]                               Limit on the number of items to process in each migration
+        feedback[=FEEDBACK]                         Frequency of progress messages, in items processed
+        idlist[=IDLIST]                             Comma-separated list of IDs to import
+        update[=UPDATE]                             In addition to processing unprocessed items from the source, update previously-imported items with the current data
+        force[=FORCE]                               Force an operation to run, even if all dependencies are not satisfied
+        execute-dependencies[=EXECUTE-DEPENDENCIES] Execute all dependent migrations first.
+    -->
+    <if>
+      <!-- If property migration.options not overridden, use default. -->
+      <not><isset property="migration.options"/></not>
+      <then><property name="migration.options" value="--execute-dependencies --feedback=100 -v --update"/></then>
+    </if>
+    <if>
+      <!-- If additional migration.options provided, then add them here. -->
+      <isset property="migration.options.add"/>
+      <then><php expression="${migration.options} . ' ' . ${migration.options.add}" returnProperty="migration.options"/></then>
+    </if>
+    <echo message="Executes drush migrate:import '${migration.configs}' ${migration.options}." level="info"/>
+    <exec dir="${project.basedir}"
+          command='drush migrate:import "${migration.configs}" ${migration.options}'
+          passthru="true"
+          logoutput="true"
+          returnProperty="lastReturn"
+    />
+  </target>
+
+  <target name="migrate:migrate" description="Active migrations.">
+    <echo message="Working Migrations." level="info"/>
+    <property name="php.command" override="true"
+              description="Code to change the uid 101 user init field to 'anon'."
+              value='\Drupal\Core\Database\Database::getConnection("default", "migrate")->update("users")->fields(["init" => "anon", "name" => "anon"])->condition("uid", 101, "=")->execute();'>
+    </property>
+
+    <echo message="Migrate Users."/>
+    <exec description="Fixes the init name for uid=101."
+          command="${drush.cmd} eval '${php.command}'" level="info"/>
+    <property name="migration.options" value="-v --update"/>
+    <phingcall target="migrate:user" inheritAll="true"/>
+
+    <echo message="Migrate Taxonomy."/>
+    <property name="migration.options" value="--force -v --update"/>
+    <phingcall target="migrate:taxonomy:config" inheritAll="true"/>
+    <phingcall target="migrate:taxonomy:content" inheritAll="true"/>
+
+    <echo message="Migrate Paragraphs."/>
+    <property name="migration.options" value="--force -v --update"/>
+    <phingcall target="migrate:paragraphs:content" inheritAll="true"/>
+
+    <echo message="Migrate Nodes."/>
+    <property name="migration.options" value="--force -v --update"/>
+    <property name="migration.configs" override="true"
+              description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
+              value="d7_node_type,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article"/>
+    <phingcall target="migrate:execute" inheritAll="true"/>
+
+    <!-- Menu should go last -->
+    <echo message="Migrate Menus and Paths."/>
+    <property name="migration.options" value="--force -v --update"/>
+    <phingcall target="migrate:menu:config" inheritAll="true"/>
+    <phingcall target="migrate:menu:content" inheritAll="true"/>
+  </target>
+
+</project>

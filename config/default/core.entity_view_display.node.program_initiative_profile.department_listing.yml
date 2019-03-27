@@ -1,0 +1,41 @@
+uuid: c6466c9a-7235-4830-9254-c7c02dbfbd37
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.node.department_listing
+    - field.field.node.program_initiative_profile.body
+    - field.field.node.program_initiative_profile.field_components
+    - field.field.node.program_initiative_profile.field_contacts
+    - field.field.node.program_initiative_profile.field_intro_image
+    - field.field.node.program_initiative_profile.field_program_logo
+    - field.field.node.program_initiative_profile.field_program_type
+    - field.field.node.program_initiative_profile.field_published_date
+    - field.field.node.program_initiative_profile.field_sidebar_components
+    - field.field.node.program_initiative_profile.field_type_of_content
+    - field.field.node.program_initiative_profile.field_updated_date
+    - node.type.program_initiative_profile
+  module:
+    - user
+id: node.program_initiative_profile.department_listing
+targetEntityType: node
+bundle: program_initiative_profile
+mode: department_listing
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  body: true
+  field_components: true
+  field_contacts: true
+  field_intro_image: true
+  field_intro_text: true
+  field_program_logo: true
+  field_program_type: true
+  field_published_date: true
+  field_sidebar_components: true
+  field_type_of_content: true
+  field_updated_date: true
+  langcode: true
+  published_at: true

@@ -1,0 +1,319 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for bos_components module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_components_theme() {
+  $theme['field__field_components'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--field-components',
+  ];
+  $theme['field__component__field_component_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--component--field-component-title',
+  ];
+  $theme['field__component__field_short_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--component--field-short-title',
+  ];
+  $theme['field__component__field_contact'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--component--field-contact',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_components_preprocess_field(&$variables) {
+  _bos_component_embed_level($variables);
+
+  if ($variables['entity_type'] == "paragraph") {
+    switch ($variables['field_name']) {
+      case 'field_component_title':
+        if ($variables['is_component_field']) {
+          $component = $variables['element']['#object'];
+          $language = \Drupal::languageManager()->getCurrentLanguage()->getId();
+          if (empty($language)) {
+            $language = "und";
+          }
+          $short_title = $component->getTranslation($language)
+            ->get('field_short_title')
+            ->getValue();
+          if (!empty($short_title)) {
+            $variables['short_title'] = $short_title[0]['value'];
+            $short_title_link = preg_replace('@^[0-9\s]+@', '', strtolower($short_title[0]['value']));
+            $variables['short_title_link'] = preg_replace('@[^a-z0-9-]+@', '-', $short_title_link);
+          }
+        }
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_components_preprocess_paragraph(&$variables) {
+  if (!empty($variables['is_subcomponent_field'])) {
+    $variables['attributes']['class'][] = "paragraph-subcomponent";
+  }
+  elseif (!empty($variables['is_component_field'])) {
+    $variables['attributes']['class'][] = "paragraph-component";
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_components_form_node_form_alter(&$form, &$form_state, $form_id) {
+  // If the form contains field_address, set default information on it.
+  _set_default_address_field_values($form);
+  // Remove Master view options from List components.
+  if (isset($form['field_components'])) {
+    $form['field_components'] = walk_recursive_remove($form['field_components'], '_remove_master_view_listings_from_view_fields');
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function bos_components_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function bos_components_theme_suggestions_node($variables) {
+  return [];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function bos_components_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $field_name = $variables['element']['#field_name'];;
+  $view_mode = $variables['element']['#view_mode'];
+  $bundle = $variables['element']['#bundle'];
+
+  // Add suggestions for paragraphs.
+  if ('paragraph' == $entity_type = $variables['element']['#entity_type']) {
+    _bos_component_embed_level($variables);
+    if ($variables['is_component_field']) {
+      $suggestions[] = 'field__component__' . $variables['element']['#field_name'];
+    }
+    if ($variables['is_subcomponent_field']) {
+      $suggestions[] = 'field__subcomponent__' . $variables['element']['#field_name'];
+    }
+  }
+  $base_suggestion = "field__$field_name";
+
+  // Add suggestions for taxonomy terms.
+  if ('taxonomy_term' == $entity_type = $variables['element']['#entity_type']) {
+    $suggestions[] = "{$base_suggestion}__{$bundle}";
+  }
+  $base_suggestion = "field__{$field_name}";
+  // Add view mode suggestions.
+  $suggestions[] = "{$base_suggestion}__mode__{$view_mode}";
+  $suggestions[] = "{$base_suggestion}__{$bundle}__mode__{$view_mode}";
+  $suggestions[] = "{$base_suggestion}__type__{$entity_type}__mode__{$view_mode}";
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function bos_components_theme_suggestions_paragraph_alter(array &$suggestions, array $variables) {
+  if (!isset($variables['elements']['#paragraph'])) {
+    return;
+  }
+  if ($variables['elements']['#paragraph']->getParentEntity() && $parent = $variables['elements']['#paragraph']->getParentEntity()->bundle()) {
+
+    $paragraphType = $variables['elements']['#paragraph']->bundle();
+
+    switch ($paragraphType) {
+      case "bos311":
+        $suggestions[] = 'paragraph__' . $parent . '__' . $paragraphType;
+        $suggestions[] = 'paragraph__node__' . $paragraphType;
+        break;
+
+      default:
+        return;
+    }
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_components_preprocess_field_field_component_title(&$variables) {
+
+}
+
+/**
+ * Implements hook_paragraphs_info().
+ */
+function bos_components_paragraphs_info() {
+  $items = [
+    'text' => [
+      'name' => 'Text',
+      'bundle' => 'text',
+      'locked' => '1',
+    ],
+    'text_one_column' => [
+      'name' => 'One Column Text',
+      'bundle' => 'text_one_column',
+      'locked' => '1',
+    ],
+    'text_three_column' => [
+      'name' => 'Three Column Text',
+      'bundle' => 'text_three_column',
+      'locked' => '1',
+    ],
+    'text_two_column' => [
+      'name' => 'Two Column Text',
+      'bundle' => 'text_two_column',
+      'locked' => '1',
+    ],
+  ];
+  return $items;
+}
+
+/**
+ * Sets is_component and is_subcomponent variables.
+ *
+ * Establishes whether the object subject of the variables array is embedded
+ * directly on a node or taxonomy term, or if it is embedded withing some other
+ * component.
+ *
+ * @param array $variables
+ *   Standard Drupal preprocess variables object.
+ */
+function _bos_component_embed_level(array &$variables) {
+  $variables['is_component_field'] = $variables['is_subcomponent_field'] = FALSE;
+  if (isset($variables['element']['#entity_type'])) {
+    $componentParents = ['node', 'taxonomy_term', 'user'];
+    $variables['entity_type'] = $variables['element']['#entity_type'];
+    if (isset($variables["element"]["#object"]) && !in_array($variables["element"]["#object"]->getEntityType()->id(), $componentParents)) {
+      try {
+        $parentEntity = $variables["element"]["#object"]->getParentEntity();
+        if (!empty($parentEntity)) {
+          $variables['is_component_field'] = in_array($parentEntity->getEntityType()
+            ->id(), $componentParents);
+          $variables['is_subcomponent_field'] = !($variables['is_component_field']);
+        }
+      }
+      catch (Error $e) {
+
+      }
+    }
+  }
+}
+
+/**
+ * Set Boston, MA as the default city and state on field_address.
+ *
+ * Walk the form recursively in order to account for nested paragraph forms.
+ *
+ * @param array $form
+ *   Drupal form to modify field_address default values for.
+ */
+function _set_default_address_field_values(array &$form) {
+  // If we're looking at field_address on the current level, set defaults
+  // if applicable.
+  if (array_key_exists('field_address', $form) && is_array($form['field_address'])) {
+    if (!empty($form['field_address'])) {
+      // Set Boston as the default city.
+      $language = Drupal::languageManager()->getDefaultLanguage()->getId();
+      if (empty($form['field_address'][$language][0]['#address']['locality'])) {
+        $form['field_address'][$language][0]['#address']['locality'] = "Boston";
+      }
+      // Set Massachusetts as the default state.
+      if (empty($form['field_address'][$language][0]['#address']['administrative_area'])) {
+        $form['field_address'][$language][0]['#address']['administrative_area'] = "MA";
+      }
+    }
+  }
+  // Continue to walk the forms array.
+  foreach ($form as $key => &$value) {
+    if ($key === 'field_address' || !is_array($value)) {
+      continue;
+    }
+    if (is_array($value)) {
+      _set_default_address_field_values($value);
+    }
+  }
+}
+
+/**
+ * Remove master view displays from view form fields.
+ *
+ * Callback to determine if key/value pair should be removed.
+ *
+ * @param mixed $list_option
+ *   Value being checked to determine if it is a master display label.
+ * @param mixed $key
+ *   Value being checked to determine if it is a master display key.
+ *
+ * @return bool
+ *   TRUE if this is a master display listing option, FALSE otherwise.
+ */
+function _remove_master_view_listings_from_view_fields($list_option, $key) {
+  if (strpos($key, '|default') !== FALSE && strpos($list_option, 'Master') !== FALSE) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Recursive search for a key/value pair and removes said pair from the array.
+ *
+ * @param array $array
+ *   Array being recursively searched on.
+ * @param callable $callback
+ *   Function must return boolean value indicating whether to remove the node.
+ *
+ * @return array
+ *   The array with all values removed based on callback.
+ */
+function walk_recursive_remove(array $array, callable $callback) {
+  foreach ($array as $k => $v) {
+    if (is_array($v)) {
+      $array[$k] = walk_recursive_remove($v, $callback);
+    }
+    else {
+      if ($callback($v, $k)) {
+        unset($array[$k]);
+      }
+    }
+  }
+
+  return $array;
+}
+
+/**
+ * Determines if passed paragraph is a direct child of the passed bundle.
+ *
+ * @return bool
+ *   If this is a child of FYI.
+ */
+function _paragraph_is_direct_child_of($entity, $bundle) {
+  if (!empty($entity) && is_a($entity, 'Drupal\paragraphs\Entity\Paragraph') && $entity->getParentEntity()->bundle() == $bundle) {
+    return TRUE;
+  }
+  return FALSE;
+}

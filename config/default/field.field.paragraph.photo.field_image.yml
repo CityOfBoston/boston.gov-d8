@@ -1,0 +1,35 @@
+uuid: 9469d2e6-7c32-4964-9738-3957e2147d94
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_image
+    - paragraphs.paragraphs_type.photo
+  module:
+    - image
+_core:
+  default_config_hash: '-iO_bNAthCwDK7bT9HYYsbmoRMUI6jwJjd1-u-FVmFw'
+id: paragraph.photo.field_image
+field_name: field_image
+entity_type: paragraph
+bundle: photo
+label: Image
+description: 'The image that will be used for this component. The image size should be between 400px and 800px tall and 2000px wide.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  alt_field: false
+  default_image: 0
+  file_directory: 'photo-image-[current-date:file_directory_storage_date]'
+  file_extensions: 'png gif jpg jpeg svg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  title_field: false
+  alt_field_required: true
+  title_field_required: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image

@@ -1,0 +1,33 @@
+uuid: a4ee0ab0-33c1-41ec-8ba8-218a2a8d791d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.newsletters.field_id
+    - taxonomy.vocabulary.newsletters
+  module:
+    - text
+_core:
+  default_config_hash: _kpuMwgGGMtpfc83bTsc6xqprV5oHc25MrO4HuOWVOQ
+id: taxonomy_term.newsletters.default
+targetEntityType: taxonomy_term
+bundle: newsletters
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_id:
+    label: above
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true

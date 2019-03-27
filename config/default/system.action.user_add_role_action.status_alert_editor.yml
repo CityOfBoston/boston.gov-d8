@@ -1,0 +1,14 @@
+uuid: fa11ef1e-34b9-4ab7-8b85-0f0a14d3c311
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.status_alert_editor
+  module:
+    - user
+id: user_add_role_action.status_alert_editor
+label: 'Add the Status Alert Editor role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: status_alert_editor

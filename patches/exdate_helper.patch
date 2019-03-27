@@ -1,0 +1,30 @@
+diff --git a/src/DateRecurHelper.php b/src/DateRecurHelper.php
+index 94a263d..3c6bad8 100644
+--- a/src/DateRecurHelper.php
++++ b/src/DateRecurHelper.php
+@@ -5,6 +5,7 @@ declare(strict_types = 1);
+ namespace Drupal\date_recur;
+
+ use Drupal\date_recur\Rl\RlHelper;
++use RRule\RSet;
+
+ /**
+  * Helper for recurring rules.
+@@ -75,6 +76,17 @@ final class DateRecurHelper implements DateRecurHelperInterface {
+     return $rules;
+   }
+
++  /**
++   * {@inheritdoc}
++   */
++  public function getExdates(): array {
++    $RSet = $this->dateRecurHelper->getRlRuleset();
++    assert($RSet instanceof RSet);
++    $ExDates = $RSet->getExDates();
++    assert(count($ExDates) == 0 || $ExDates[0] instanceof \DateTime);
++    return $ExDates;
++  }
++
+   /**
+    * {@inheritdoc}
+    */

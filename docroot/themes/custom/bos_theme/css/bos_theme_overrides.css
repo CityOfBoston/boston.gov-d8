@@ -1,0 +1,291 @@
+/*
+* These changes are destined for patterns library at some point ...
+*/
+
+.dialog-off-canvas-main-canvas {
+  /*padding-top: 65px;*/
+}
+
+/* Fixes header location with the new toolbar */
+.toolbar-horizontal.toolbar-fixed div.dialog-off-canvas-main-canvas,
+.toolbar-horizontal.toolbar-fixed header#main-menu, .toolbar-vertical header#main-menu,
+.toolbar-horizontal.toolbar-fixed nav.nv-m, .toolbar-vertical nav.nv-m{
+  top: 39px;
+}
+
+.toolbar-horizontal.toolbar-fixed.toolbar-tray-open div.dialog-off-canvas-main-canvas,
+.toolbar-horizontal.toolbar-fixed.toolbar-tray-open header#main-menu,
+.toolbar-horizontal.toolbar-fixed.toolbar-tray-open nav.nv-m{
+  top: 79px;
+  z-index: 501;
+}
+.toolbar-fixed div.dialog-off-canvas-main-canvas {
+  /*position: relative;*/
+}
+
+/* locates and themes the search block on the 404 page. */
+body.page-error .dialog-off-canvas-main-canvas {
+  /*position: initial;*/
+  /*margin-top: 39px;*/
+}
+body.page-error h1.page-title {
+  position: initial !important;
+  height: auto;
+  width: auto;
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+.error-text .h-s {
+  display: block;
+  position: static;
+  padding: 0;
+  background-color: transparent;
+}
+.error-text .h-s .sf-i-f {
+  color: #091f2f;
+}
+.err.err--403 {
+  top: 69px;
+}
+.err.err--404 {
+  background-image: url('https://patterns.boston.gov/images/global/icons/404.svg');  /* in dev */
+  background-color: transparent;
+  background-position: bottom;
+  background-size: 102%;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 69px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.page-error .bos-search-form {
+  padding-top: 20px;
+}
+
+/* === TAB FOR LOCAL TASKS (NODE EDIT/REVISIONS ETC) === */
+/* This should go into patterns at some point. */
+.toolbar-tray .toolbar-menu li.primary-task-tab a {
+  background-color: black;
+  color: white;
+  border: 1px solid #2d2d2d;
+  -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
+}
+/* === === */
+
+.paragraphs-item-grid-of-quotes .quote-name {
+  text-transform: uppercase;
+}
+
+button.lity-close {
+  font-size: 35px;
+  padding: 0;
+  font-family: Arial,Baskerville,monospace;
+}
+
+ /* Sidebar theme.  */
+
+.bos_theme .moderation-sidebar-actions .moderation-sidebar-link:before {
+  min-width: 50px;
+  max-height: 1px;
+  display: inline-block;
+  float: left;
+  margin: -17px 0px 0 0;
+  padding: 0;
+}
+
+.bos_theme .moderation-sidebar-actions .button--edit-draft {
+  background-color: #ffae00 !important;
+}
+.bos_theme .moderation-sidebar-actions .button--edit-draft:before {
+  content: url("../images/moderation_sidebar/edit.svg");
+}
+
+.bos_theme .moderation-sidebar-actions .button--view-draft {
+  background: repeating-linear-gradient(
+      135deg,
+      #ffae00,
+      #ffae00 10px,
+      #00B000 10px,
+      #00B000 20px
+  ) !important;
+  color: #000 !important;
+}
+.bos_theme .moderation-sidebar-actions .button--view-draft:before {
+  content: url("../images/moderation_sidebar/review.svg");
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--draft {
+  background-color: #ffae00 !important;
+}
+
+.bos_theme .moderation-sidebar-actions .button--view-live {
+  background-color: #00B000 !important;
+}
+.bos_theme .moderation-sidebar-actions .button--view-live:before {
+  content: url("../images/moderation_sidebar/review.svg");
+}
+
+.bos_theme .moderation-sidebar-actions a.button--delete {
+  background-color: #bd2727 !important;
+}
+.bos_theme .moderation-sidebar-actions a.button--delete:before {
+  content: url("../images/moderation_sidebar/delete.svg");
+}
+
+/** Buttons provided by workflow */
+.bos_theme .moderation-sidebar-actions input.button--delete {
+  background: url("../images/moderation_sidebar/delete.svg") #db2727 no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+.bos_theme .moderation-sidebar-actions input#draft_from_archived {
+  background: url("../images/moderation_sidebar/new draft.svg") #ffae00 no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+.bos_theme .moderation-sidebar-actions input#submit_for_review {
+  background: url("../images/moderation_sidebar/review.svg") #277abd no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+.bos_theme .moderation-sidebar-actions input#reject {
+  background: url(../images/moderation_sidebar/delete.svg) #ffae00 no-repeat 2px center !important;
+  background-size: 50px !important;
+  color: maroon !important;
+  font-weight: bold !important;
+}
+.bos_theme .moderation-sidebar-actions input#publish {
+  background: url("../images/moderation_sidebar/publish.svg") #00B000 no-repeat 2px center !important;
+  background-size: 50px !important;
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--review,
+.bos_theme .moderation-sidebar-actions .button--review {
+  background-color: #277abd !important;
+}
+.bos_theme .moderation-sidebar-actions input.button--review:before {
+  /* content: url("../images/moderation_sidebar/review.svg"); */
+  background-color: red;
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--archive {
+  background-color: #c5c5c5 !important;
+}
+
+/* Moderation status in toolbar. */
+.moderation-sidebar-toolbar-tab.status-published .toolbar-item:after {
+  content: "Published + Live";
+  background-color: #269e2c;
+}
+.moderation-sidebar-toolbar-tab.status-needs-review .toolbar-item:after {
+  content: "Review Pending";
+  background-color: #277abd;
+}
+.moderation-sidebar-toolbar-tab.status-draft .toolbar-item:after {
+  content: "Latest Draft";
+  background-color: #ffae00;
+}
+/* Archive of a draft */
+.moderation-sidebar-toolbar-tab.status-archive .moderation-label-draft:after {
+  content: "Archived Draft";
+  background-color: #c5c5c5;
+}
+
+.toolbar-icon-moderation-sidebar.moderation-label-draft-available:after {
+  content: "Live";
+  background-color: #269e2c;
+  color: #fff;
+  background-image: url("../images/moderation_sidebar/edit.svg");
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-size: 50px;
+  padding-left: 50px;
+}
+
+.bos_theme .moderation-sidebar-revision-item .title--published {
+  background-color: #269e2c !important;
+}
+
+.moderation-sidebar-container .moderation-sidebar-revision-item {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  padding: 5px !important;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item p{
+  margin: .5em 0 !important;
+  line-height: 1.2em !important;
+  background-color: transparent !important;
+  color: #ccc !important;
+  text-align: center;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-info a{
+  background: transparent !important;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-message{
+  font-weight: bold;
+  text-align: left;
+  padding-bottom: .4rem !important;
+  border-bottom: 1px solid #c5c5c5 !important;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-mod-type{
+  font-weight: bold;
+  font-size: 75% !important;
+  padding: 0.5em 0 !important;
+  margin: 0 !important;
+  color: #333 !important;
+  font-variant: small-caps;
+}
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-info,
+.moderation-sidebar-container .moderation-sidebar-revision-item .revision-link {
+  margin: 0 !important;
+  background: #444 !important;
+  line-height: 1.2rem;
+}
+.moderation-sidebar-container .moderation-sidebar-info p {
+  margin: 0 !important;
+  line-height: 1.2rem;
+}
+.contextual-region .contextual .contextual-links a,
+.contextual-region .contextual .contextual-links a:hover {
+  font-size: 80%;
+}
+
+.contextual {
+  right: -8px;
+}
+.contextual .trigger:active,
+.contextual .trigger:visited,
+.contextual .trigger:focus,
+.contextual .trigger {
+  background-image: url(../images/context-edit.svg);
+  background-color: transparent !important;
+  background-position-y: center;
+  border: none;
+  border-radius: 0;
+  background-size: 30px 30px;
+  padding: 0;
+  height: 31px !important;
+  width: 31px !important;
+}
+.contextual .trigger:hover {
+  background-image: url(../images/context-edit-hover.svg);
+  background-color: transparent !important;
+  background-position-y: center;
+  border: none;
+  border-radius: 0;
+  background-size: 30px 30px;
+  padding:0;
+  height: 31px !important;
+  width: 31px !important;
+}
+.contextual-region .contextual .contextual-links a,
+.contextual-region .contextual .contextual-links {
+  background-color: #ddd;
+  color: #277abd;
+  border-color: #277abd;
+}
+.contextual-region .contextual .contextual-links li {
+  background-color: #ccc;
+}
+
+.bos_theme #toolbar-bar.toolbar-space {
+  padding-right: 5px;
+}

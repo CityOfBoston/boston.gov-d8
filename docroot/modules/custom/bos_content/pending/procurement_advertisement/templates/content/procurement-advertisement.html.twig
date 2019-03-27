@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present a procurement advertisement entity.
+ *
+ * This template is used when viewing a registered procurement advertisement's page,
+ * e.g., /admin/content/procurement-advertisement)/123. 123 being the procurement advertisement's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.title'.
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_procurement_advertisement()
+ */
+#}
+<article{{ attributes }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</article>

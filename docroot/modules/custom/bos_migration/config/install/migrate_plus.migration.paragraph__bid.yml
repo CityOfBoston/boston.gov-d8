@@ -1,0 +1,24 @@
+id: paragraph__bid
+label: 'Bid Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+    - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: bid
+process:
+  field_awarded: field_awarded
+  field_bid_amount: field_bid_amount
+  field_company_name: field_company_name
+destination:
+  plugin: entity:paragraph
+  default_bundle: bid
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

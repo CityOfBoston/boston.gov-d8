@@ -1,0 +1,156 @@
+<project name="update"
+         default="update:info"
+         description="Project defines targets to update apps and services in docker containers.">
+
+    <echo message="Building ${custom.phing.tasks.dir}/update.xml" level="verbose"/>
+
+    <target name="update:info"
+            description="Update apps and services in docker containers.">
+        <echo message="Project defines tragets to update apps and services in docker containers."/>
+    </target>
+
+<!--Composer commands-->
+    <target name="update:drupal:composer:install"
+            description="Install composer.json in repo root.">
+        <echo message="Installing the files defined in composer.lock, or composer.json." />
+        <exec command="composer install" dir="${repo.root}" />
+    </target>
+    <target name="update:drupal:composer:update"
+            description="Update/install composer.json and replace composer.lock in repo root.">
+        <echo message="Updating the files in the repo based on rules in composer.json then rewriting composer.lock." />
+        <exec command="composer update" dir="${repo.root}"/>
+    </target>
+    <target name="update:drupal:composer:drupal_scaffold"
+            description="Update the drupal scaffold (core config and command) files.">
+        <echo message="Updating the drupal scaffold files." />
+        <exec description="Updates the scaffold files using composer command."
+            command="composer drupal:scaffold"
+            dir="${repo.root}"
+            logoutput="true"/>
+    </target>
+
+<!--Drupal Database commands-->
+    <target name="update:database:sync"
+            description="Syncronise the database with staging.">
+        <!-- Make sure the sync source is specified. -->
+        <if>
+            <not><isset property="build.database.drush-alias"/></not>
+            <then><property name="build.database.drush-alias" value="@bostond8.test"/></then>
+        </if>
+        <echo message="Synchronizing local database with content from ${build.database.drush-alias}" />
+        <exec description="Make the db sync."
+              dir="${docroot}"
+              command="${drush.cmd} sql-sync ${build.database.drush-alias} @self -y"
+              logoutput="true" output="${project.basedir}/setup/db-sync.log"/>
+    </target>
+    <target name="update:database:restore"
+            description="Restore the database from a dump.">
+        <echo message="Restoring the Drupal databse from a previous dump." />
+        <exec description="Restore dump."
+              dir="${docroot}"
+              command="${drush.cmd} sql-cli &gt; ${dbdump.path}"
+              logoutput="true" escape="true"/>
+    </target>
+    <target name="update:database:update"
+            description="Update the database with any hook_updates etc.">
+        <echo message="Updating Drupal database (checks for module updates and database changes)." />
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/config-import.log.log for output.\033[0m'" logoutput="true"/>
+        <echo message="==== Update Drupal DB ====${line.separator}" file="${project.basedir}/setup/config-import.log.log" append="true"/>
+        <exec description="Update the database with any hook_updates etc."
+              dir="${docroot}" level="warning"
+              command="${drush.cmd} updb --entity-updates -y >> ${repo.root}/setup/config-import.log.log "
+              logoutput="true" />
+        <echo message="==== Rebuild Drupal Permissions ====${line.separator}" file="${project.basedir}/setup/config-import.log.log" append="true"/>
+        <exec description="Rebuild the user permissions"
+              logoutput="true"
+              dir="${docroot}" level="warning"
+              command='${drush.cmd} eval "node_access_rebuild();" >> ${repo.root}/setup/config-import.log.log '/>
+    </target>
+
+<!--Configuration commands-->
+    <target name="update:config:import"
+            description="Import configurations from sync location into the DB.">
+        <echo message="Import configuration from sync folder: '${project.sync}' into database" />
+        <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/config-import.log for output.\033[0m'" logoutput="true"/>
+        <exec description="Imports the config files in the sync folder at ${project.sync}."
+              dir="${docroot}"
+              command="${drush.cmd} cim sync -y > ${project.basedir}/setup/config-import.log"
+              logoutput="true" returnProperty="cim.result"/>
+        <if>
+            <and>
+                <isset property="cim.result"/>
+                <not><equals arg1="${cim.result}" arg2="0" /></not>
+            </and>
+            <then>
+                <echo message="Problem: trying partial import from ${project.sync}."/>
+                <exec description="Imports the config files in the sync folder at ${project.sync}."
+                      dir="${docroot}"
+                      command="${drush.cmd} cim sync --partial -y >> ${project.basedir}/setup/config-import.log"
+                      logoutput="true" returnProperty="cim.result2"/>
+                <if>
+                    <and>
+                        <isset property="cim.result2"/>
+                        <not><equals arg1="${cim.result2}" arg2="0" /></not>
+                    </and>
+                    <then>
+                        <echo message="Config Import Failed." level="error"/>
+                        <echo message="=== Log Output ===."/>
+                        <exec command="cat ${project.basedir}/setup/config-import.log"
+                              passthru="true" logoutput="true"/>
+                        <fail message="Fail - Config Import from ${project.sync} failed."/>
+                    </then>
+                    <else>
+                        <echo message="Success: Config imported from ${project.sync}."/>
+                    </else>
+                </if>
+            </then>
+            <else>
+                <echo message="Success: Config imported from ${project.sync}."/>
+            </else>
+        </if>
+    </target>
+    <target name="update:config:import-dev"
+            description="Import configurations from sync location into the DB.">
+        <echo message="Import configuration from develop config_split into database" />
+        <exec description="Imports the development config files in the config_sync folder."
+              dir="${docroot}"
+              command="${drush.cmd} csim development -y >> ${project.basedir}/setup/config-import.log "
+              logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
+    </target>
+    <target name="update:config:import-prod"
+            description="Import configurations from sync location into the DB.">
+        <echo message="Import configuration from production config_split into database" />
+        <exec description="Imports the production config files in the config_sync folder."
+              dir="${docroot}"
+              command="${drush.cmd} csim production -y >> ${project.basedir}/setup/config-import.log "
+              logoutput="true" level="warning" checkreturn="true" outputProperty="cim.result"/>
+    </target>
+    <target name="update:config:export"
+            description="Export configurations in DB to files in sync location.">
+        <echo message="Export database configuration to sync folder: '${project.sync}'" />
+        <exec description="Exports database configuration settings to files in the sync folder at ${project.sync}."
+              dir="${docroot}" command="${drush.cmd} cex sync -y" logoutput="true"/>
+    </target>
+
+<!--Utility commands-->
+    <target name="update:user:loginadmin"
+            description="Create a link which logs the user in on the uid=1 account.">
+        <exec command="echo '\033[1;33mUse this link to login to the ${lando.name} website at ${lando.url.url}.\033[0m'" logoutput="true"/>
+        <exec description="Login the admin user."
+              dir="${docroot}"
+              command="${drush.cmd} user-login"
+              logoutput="false"
+              outputProperty="uli"/>
+        <exec command="echo '\033[1;33m${uli}\033[0m'" logoutput="true" passthru="true"/>
+    </target>
+    <target name="update:user:setadminpwd"
+              description="Set the password on the uid=1 account.">
+        <exec command="echo '\033[1;33mThe ${drupal.account.name} account password is reset to: ${drupal.account.password}.\033[0m'" logoutput="true"
+              passthru="true"/>
+        <exec description="Change admin user password."
+              dir="${docroot}"
+              command='${drush.cmd} user:password admin "${drupal.account.password}"'
+              checkreturn="true"/>
+    </target>
+
+</project>

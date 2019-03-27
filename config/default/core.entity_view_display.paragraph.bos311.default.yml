@@ -1,0 +1,42 @@
+uuid: 390f54ea-aebc-4d14-b6db-8558400d4774
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.bos311.field_311_request
+    - field.field.paragraph.bos311.field_component_title
+    - field.field.paragraph.bos311.field_short_title
+    - paragraphs.paragraphs_type.bos311
+_core:
+  default_config_hash: AzSvjcEwzKPmELjqCHgxAgaWhRYPJKpyU43vMlsNtFg
+id: paragraph.bos311.default
+targetEntityType: paragraph
+bundle: bos311
+mode: default
+content:
+  field_311_request:
+    label: hidden
+    weight: 2
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

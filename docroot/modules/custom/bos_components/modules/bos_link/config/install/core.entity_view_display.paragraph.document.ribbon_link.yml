@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.ribbon_link
+    - field.field.paragraph.document.field_document
+    - field.field.paragraph.document.field_title
+    - paragraphs.paragraphs_type.document
+  module:
+    - file
+id: paragraph.document.ribbon_link
+targetEntityType: paragraph
+bundle: document
+mode: ribbon_link
+content:
+  field_document:
+    label: hidden
+    weight: 1
+    type: file_url_plain
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_title:
+    type: string
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden: {  }

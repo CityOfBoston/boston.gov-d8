@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_photo module.
+ */
+
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_photo_theme() {
+  $theme['paragraph__photo'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_photo') . '/templates',
+  ];
+  $theme['field__paragraph__field_image__photo'] = [
+    'base hook' => 'field',
+    'path' => drupal_get_path('module', 'bos_photo') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_photo_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'photo':
+        $photo_id = Html::getUniqueId('ph-p--1');
+        $vars['paragraph']->_photo_id = $photo_id;
+        $vars['photo_id'] = $photo_id;
+        if (!$paragraph->get('field_link')->isEmpty()) {
+          $cta = _bos_core_paragraph_extract_link(
+            $paragraph->get('field_link')->getValue(),
+            ['class' => 'btn']
+          );
+          $vars['cta'] = $cta['link'];
+        }
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function bos_photo_preprocess_field(&$vars) {
+  switch ($vars['field_name']) {
+    case 'field_photo_credit':
+      $vars['label'] .= ':';
+      break;
+
+    case 'field_image':
+      if (!empty($vars['element']['#object']->_photo_id)) {
+        $image = $vars['element']['#object']->get('field_image')->getValue();
+        $base_url = file_load($image['0']['target_id'])->getFileUri();
+        $styles = [
+          'xlarge_image' => 'rep_wide_2000x700custom_boston_desktop_2x',
+          'large_image' => 'rep_wide_2000x700custom_boston_desktop_1x',
+          'medium_image' => 'rep_wide_2000x700custom_boston_tablet_2x',
+          'small_image' => 'rep_wide_2000x700custom_boston_mobile_2x',
+        ];
+        foreach ($styles as $name => $style) {
+          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
+          $vars[$name] = $style->buildUrl($base_url);
+        }
+        $vars['photo_id'] = $vars['element']['#object']->_photo_id;
+      }
+      break;
+  }
+}

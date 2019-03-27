@@ -1,0 +1,52 @@
+uuid: bb33d999-3d4c-421e-968b-e708b464e4a9
+langcode: en
+status: false
+dependencies:
+  config:
+    - core.entity_view_mode.node.featured_topics
+    - field.field.node.place_profile.body
+    - field.field.node.place_profile.field_components
+    - field.field.node.place_profile.field_contact
+    - field.field.node.place_profile.field_did_you_know
+    - field.field.node.place_profile.field_features
+    - field.field.node.place_profile.field_intro_image
+    - field.field.node.place_profile.field_intro_text
+    - field.field.node.place_profile.field_links
+    - field.field.node.place_profile.field_operation_hours
+    - field.field.node.place_profile.field_phone_number
+    - field.field.node.place_profile.field_place_neighborhood
+    - field.field.node.place_profile.field_place_type
+    - field.field.node.place_profile.field_published_date
+    - field.field.node.place_profile.field_sidebar_components
+    - field.field.node.place_profile.field_single_neighborhood
+    - field.field.node.place_profile.field_updated_date
+    - node.type.place_profile
+  module:
+    - user
+id: node.place_profile.featured_topics
+targetEntityType: node
+bundle: place_profile
+mode: featured_topics
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  body: true
+  field_components: true
+  field_contact: true
+  field_did_you_know: true
+  field_features: true
+  field_intro_image: true
+  field_intro_text: true
+  field_links: true
+  field_operation_hours: true
+  field_phone_number: true
+  field_place_neighborhood: true
+  field_place_type: true
+  field_published_date: true
+  field_sidebar_components: true
+  field_single_neighborhood: true
+  field_updated_date: true
+  langcode: true
+  published_at: true

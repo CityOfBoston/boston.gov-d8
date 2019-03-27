@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Provides a department_profile entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * Implements hook_theme().
+ */
+function node_department_profile_theme($existing, $type, $theme, $path) {
+  return [
+    'node__department_profile' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_content/modules/node_department_profile/templates',
+      'template' => 'node--department-profile',
+    ],
+    'node__department_profile_contact' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_content/modules/node_department_profile/templates',
+      'template' => 'node--department-profile-contact',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for department-profile template.
+ *
+ * Default template: node--department-profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the test component page
+ *     information and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__node_department_profile(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+  // Replace underscores with dashes to maintain compatability with css library.
+  foreach ($variables['attributes']['class'] as &$class) {
+    $class = str_ireplace('_', '-', $class);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_department_profile_preprocess_breadcrumb(&$variables) {
+  // TODO: Revisit this function wrt bos_breadcrumbs from v7.
+  if (1 == 2) {
+
+    $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
+    if (!empty($variables['breadcrumb']) && count($variables['breadcrumb'] == 1)) {
+      $route = $variables['breadcrumb'][0]['url'];
+
+      $a = array_keys($crumbs);
+      $last_key = end($a);
+      foreach ($crumbs as $key => $crumb) {
+        if ($key == $last_key) {
+          break;
+        }
+
+        $text = new TranslatableMarkup($crumb);
+        $new_crumb = [
+          'text' => $text,
+          'url' => "",
+        ];
+        if (\Drupal::pathValidator()->isValid($route . $crumb)) {
+          $new_crumb['url'] = $route . $crumb;
+        }
+        $variables['breadcrumb'][] = $new_crumb;
+        $route .= $crumb . "/";
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.newsletters.field_id
+    - taxonomy.vocabulary.newsletters
+  module:
+    - text
+id: taxonomy_term.newsletters.default
+targetEntityType: taxonomy_term
+bundle: newsletters
+mode: default
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_id:
+    label: above
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden:
+  langcode: true

@@ -3,27 +3,25 @@ type: theme
 description: Boston City Council public website theme.
 package: boston
 core: 8.x
-screenshot: images/screenshot.png
+screenshot: images/b_base_2.png
 base theme: stable
-
-libraries:
-  - bos_theme/global-styling
 
 regions:
   header: 'Header'
   navigation: 'Navigation bar'
+  site_alert: 'Site alert'
   highlighted: 'Highlighted'
   help: 'Help'
   content: 'Content'
   footer: 'Footer'
   modal: 'Hidden Modal'
   bottom: 'Page bottom'
-  site_alert: 'Site alert'
   page_top: 'Page top'
   page_bottom: 'Page bottom'
-
 features:
   - name
   - favicon
   - main_menu
   - secondary_menu
+config_devel:
+  - bos_theme.settings

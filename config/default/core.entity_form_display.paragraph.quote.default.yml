@@ -1,0 +1,67 @@
+uuid: e520d053-32a8-4d85-8df4-2b7279bca9ec
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.quote.field_first_name
+    - field.field.paragraph.quote.field_last_name
+    - field.field.paragraph.quote.field_person_photo
+    - field.field.paragraph.quote.field_quote
+    - field.field.paragraph.quote.field_single_neighborhood
+    - paragraphs.paragraphs_type.quote
+  module:
+    - file_entity
+_core:
+  default_config_hash: MFHn19w339agg5hxstzYvjKdT0-UF-fS08qxJi4NrS4
+id: paragraph.quote.default
+targetEntityType: paragraph
+bundle: quote
+mode: default
+content:
+  field_first_name:
+    weight: 0
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_last_name:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_person_photo:
+    weight: 2
+    type: file_editable
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_quote:
+    weight: 3
+    type: string_textfield
+    settings:
+      size: 103
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_single_neighborhood:
+    weight: 4
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

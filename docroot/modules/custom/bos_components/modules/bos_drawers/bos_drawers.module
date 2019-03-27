@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_drawers module.
+ */
+
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_drawers_theme() {
+  $theme['paragraph__drawers'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_drawers') . '/templates',
+  ];
+  $theme['paragraph__drawer'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_drawers') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_drawers_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'drawer':
+        $vars['id'] = Html::getUniqueId('dr');
+        break;
+    }
+  }
+}
