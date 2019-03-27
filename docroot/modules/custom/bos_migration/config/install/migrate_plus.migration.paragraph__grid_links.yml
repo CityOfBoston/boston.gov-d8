@@ -1,0 +1,24 @@
+id: paragraph__grid_links
+label: 'Grid Links Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: grid_links
+process:
+  field_extra_info: field_extra_info
+  field_grid_link: field_grid_link
+  field_short_description: field_short_description
+destination:
+  plugin: entity:paragraph
+  default_bundle: grid_links
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

@@ -1,0 +1,154 @@
+project:
+  profile:
+    name: 'bos_profile'
+  themes:
+    - bos_theme
+    -
+# Drupal Account Credentials. These are used for installing Drupal.
+drupal:
+  account:
+    name: admin
+    password: admin
+    mail: no-reply@acquia.com
+  multisite:
+    # Use 'default' as the name if there are no multisites.
+    name: default
+
+build:
+  local:
+    # Build Type = dev or prod.
+    type: dev
+    config:
+      # Enter the UUID from system.site.yml if the config files in the sync folder
+      # specified do not match the UUID in the DB, or we are installing a new DB.
+      site-uuid: "452fac34-8a25-4346-b005-f85d26dd3cf9"
+      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia require ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+    database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to sync to sync from the drush-alias environment.
+      source: initialize
+      drush-alias: "@bostond8.dev"
+
+  travis:
+    # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+    type: dev
+    config:
+      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia require ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+    database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to sync to sync from the drush-alias environment.
+      source: initialize
+      drush-alias: "@bostond8.test"
+
+  terraform:
+    type: prod
+    database:
+      # none, auto, build, sync or restore
+      source: sync
+
+deploy:
+  # each element of the deploy object is a branch in the main CoB repo.
+  develop:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${repo.root}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy-branch: develop-deploy
+    # Path to the drush command in the Travis container.
+    travis-drush-path: '${repo.root}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush-alias: "@bostond8.dev"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
+    excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+    sanitize-file: ${repo.root}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
+    # Dry-run (for testing).
+    dry-run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy-db: false
+    drush-db-source: "@bostond8.stage"
+    # Array of user:host for (Acquia) git remotes to be used for deployment.
+    remotes:
+      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+  master:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${repo.root}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy-branch: master-deploy
+    # Path to the drush command in the Travis container.
+    travis-drush-path: '${repo.root}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush-alias: "@bostond8.test"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes-file: ${repo.root}/scripts/deploy/deploy-includes.txt
+    excludes-file: ${repo.root}/scripts/deploy/deploy-excludes.txt
+    sanitize-file: ${repo.root}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
+    # Dry-run (for testing).
+    dry-run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy-db: false
+    drush-db-source: ""
+    # Array of user:host for (Acquia) git remotes to be used for deployment.
+    remotes:
+      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
+# Configuration settings for new git repository.
+git:
+  # [Optional] Set this node (private_repo) if there is a private repo that needs to
+  # be included as part of the build:
+  # - It is expected that the repo is hosted on GitHub.
+  # - The development machine *must* have a valid ssh key for this remote repo.
+  # - The repo can contain a settings file (e.g. private.settings.php)
+  # - The folder structure of the private repo must exactly match the folder structure
+  #   of the main repo so that files can be copied across to the correct folders.
+  private_repo:
+    repo: CityOfBoston/boston.gov-d8-private.git
+    branch: develop
+    deploy-branch: develop
+    # Where the repo will be cloned to.
+    local_dir: ${repo.root}/setup/private
+    # [optional] Provide the path to a settings script (relative to the private repo root),
+    # which will be copied to the main repo and then set up to be called from (i.e. extend)
+    # the sites main settings.php script.
+    settings_file.rel: sites/${drupal.multisite.name}/settings/private.settings.php
+
+composer:
+  bin: ${repo.root}/vendor/bin
+
+drush:
+  bin: ${composer.bin}/drush
+  cmd: ${drush.bin} # -r ${docroot} # -l ${drupal.multisite.name}
+  root: ${docroot}
+
+# The testing framework is limited to the `tests` directory, and includes
+# example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
+# this from being copied, remove the 'testing_framework' key.
+testing_framework:
+  reports:
+    localDir: ${docroot}/testing/reports
+    remoteDir: testing/reports
+  behat:
+    javascript_driver: 'selenium2'
+    # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
+    config: ${repo.root}/tests/behat/local.yml
+    # An array of paths with behat tests that should be executed.
+    tags: ~@hub
+    # This is used for ad-hoc creation of a server via `drush rs`.
+    profile: local
+    # This needs to match a site entry in docroot/sites/sites.php.
+    server-url: http://127.0.0.1:8888
+    # If true, `drush runserver` will be used for executing tests.
+    #  run-server: false
+    # If true, PhantomJS GhostDriver will be launched with Behat.
+    #  launch-phantom: true
+  phpunit:
+

@@ -1,0 +1,24 @@
+uuid: 63901739-3b6e-4795-9ae3-1841dfd86874
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.transactions
+_core:
+  default_config_hash: dOhTBL3BOIlpo__dbshxgnotA6Fcwdgpdey18QST2xc
+id: paragraph.transactions.status
+field_name: status
+entity_type: paragraph
+bundle: transactions
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,94 @@
+<project name="validate" default="validate:all">
+
+  <property description="Defines a Drupal-specific PHP Ruleset."
+            name="phpcs.ruleset"
+            value="${repo.root}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml"/>
+
+  <!-- Run all validation targets. -->
+  <target name="validate:all" description="Runs all code validation targets."
+          depends="validate:lint, validate:phpcs"/>
+
+  <!-- Run linter against all php files in repository. -->
+  <target name="validate:lint" description="Runs a PHP Lint against all code.">
+    <echo message="Using PHP 7 native linting to check for PHP compile errors." level="info"/>
+    <mkdir dir="${testing_framework.reports.localDir}" description="Directory for linting report."/>
+    <delete file="${testing_framework.reports.localDir}/err.linting.txt" quiet="true" failonerror="false" verbose="false"/>
+    <phplint haltonfailure="true"
+             tofile="${testing_framework.reports.localDir}/err.linting.txt"
+             level="verbose"
+             errorproperty="lint.error">
+      <fileset refid="files.php"/>
+    </phplint>
+    <if>
+      <equals arg1="${lint.error}" arg2=""/>
+      <then>
+        <delete file="${testing_framework.reports.localDir}/err.linting.txt" quiet="true" failonerror="false" verbose="false"/>
+        <echo message="PHP linting OK." level="info"/>
+      </then>
+      <else>
+        <echo message="PHP linting failed: ${lint.error}" level="error"/>
+      </else>
+    </if>
+  </target>
+
+  <!-- Run code sniffer against all custom code. -->
+  <target name="validate:phpcs" description="Runs PHP Code Sniffer against only custom modules.">
+
+    <echo message="Using CodeSniffer (default ruleset) to check for php and js coding standards conformity." level="info"/>
+    <!-- Sniff custom modules for Drupal and generic JS coding standards compliance. -->
+    <if>
+      <equals arg1="${acquia.site_environment}" arg2="dev"/>
+      <then>
+        <mkdir dir="${testing_framework.reports.localDir}" description="Directory for linting report."/>
+        <exec command="echo '\033[1;33mNote: Any warnings/errors found will be detailed in the file: ${lando.url.url}/${testing_framework.reports.remoteDir}/err.code_sniffer.txt.\033[0m'" logoutput="true"/>
+        <phpcodesniffer
+          description="DEV: Sniff custom modules for Drupal coding standards compliance."
+          standard="${phpcs.ruleset}"
+          showSniffs="false"
+          showWarnings="true"
+          reportWidth="500"
+          haltonerror="false"
+          haltonwarning="false">
+          <fileset refid="files.codesniffer" description="Use the combined PHP and JS filesets." />
+          <formatter type="full" usefile="true" outfile="${testing_framework.reports.localDir}/err.code_sniffer.txt"/>
+          <formatter type="summary" usefile="false"/>
+        </phpcodesniffer>
+        <exec
+          description="Grep file to see if it contains any errors."
+          command="cat ${testing_framework.reports.localDir}/err.code_sniffer.txt | grep ' | ERROR'"
+          outputProperty="validate.result"/>
+        <if>
+          <not>
+            <equals arg1="${validate.result}" arg2=""/>
+          </not>
+          <then>
+            <echo message="ERRORS Found: Please check the file: ${lando.url.url}/${testing_framework.reports.remoteDir}/err.code_sniffer.txt" level="error"/>
+            <fail message="" status="1"/>
+          </then>
+
+          <else>
+            <delete file="${testing_framework.reports.localDir}/err.code_sniffer.txt" quiet="true" failonerror="false" verbose="false"/>
+            <echo message="Coding standards OK." level="info"/>
+          </else>
+        </if>
+
+      </then>
+
+      <else>
+        <phpcodesniffer
+          description="PROD/STAGE: Sniff custom modules for Drupal coding standards compliance."
+          standard="${phpcs.ruleset}"
+          showSniffs="false"
+          showWarnings="true"
+          haltonerror="true"
+          haltonwarning="false">
+          <fileset refid="files.codesniffer" description="Use the combined PHP and JS filesets." />
+          <formatter type="full" usefile="false"/>
+        </phpcodesniffer>
+        <echo message="Coding standards OK." level="info"/>
+      </else>
+    </if>
+
+  </target>
+
+</project>

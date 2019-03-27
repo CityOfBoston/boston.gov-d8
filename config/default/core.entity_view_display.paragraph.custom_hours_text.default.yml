@@ -1,0 +1,42 @@
+uuid: 57f6581e-ac99-4f65-9563-07d894e54e4a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.custom_hours_text.field_custom_hours_text
+    - field.field.paragraph.custom_hours_text.field_hours_icon
+    - field.field.paragraph.custom_hours_text.field_title
+    - paragraphs.paragraphs_type.custom_hours_text
+  module:
+    - options
+_core:
+  default_config_hash: 679GHL1eDBJ6n3PNLV7LpqORcWhwY-K--ouDPCEXXQI
+id: paragraph.custom_hours_text.default
+targetEntityType: paragraph
+bundle: custom_hours_text
+mode: default
+content:
+  field_custom_hours_text:
+    label: hidden
+    weight: 2
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+  field_hours_icon:
+    label: hidden
+    weight: 1
+    type: list_key
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
+hidden: {  }

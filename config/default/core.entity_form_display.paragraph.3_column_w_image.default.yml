@@ -1,0 +1,90 @@
+uuid: 84b132fb-23d4-4639-8132-e2c3d74d857e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.3_column_w_image.field_columns
+    - field.field.paragraph.3_column_w_image.field_component_title
+    - field.field.paragraph.3_column_w_image.field_contact
+    - field.field.paragraph.3_column_w_image.field_short_title
+    - paragraphs.paragraphs_type.3_column_w_image
+  module:
+    - field_group
+    - paragraphs
+third_party_settings:
+  field_group:
+    group_three_column_info:
+      children:
+        - field_component_title
+        - field_short_title
+        - field_contact
+        - field_columns
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        label: 'Component Header'
+        description: ''
+        required_fields: true
+        id: ''
+        classes: 'group-three-column-info field-group-fieldset'
+      label: 'Component Header'
+id: paragraph.3_column_w_image.default
+targetEntityType: paragraph
+bundle: 3_column_w_image
+mode: default
+content:
+  field_columns:
+    weight: 4
+    type: paragraphs
+    settings:
+      title: Column
+      title_plural: Columns
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: columns
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: 'Select Department'
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

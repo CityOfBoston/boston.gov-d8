@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.paragraph.sidebar
+    - field.field.paragraph.newsletter.field_component_theme
+    - field.field.paragraph.newsletter.field_component_title
+    - field.field.paragraph.newsletter.field_contact
+    - field.field.paragraph.newsletter.field_description
+    - field.field.paragraph.newsletter.field_newsletter
+    - field.field.paragraph.newsletter.field_short_title
+    - paragraphs.paragraphs_type.newsletter
+id: paragraph.newsletter.sidebar
+targetEntityType: paragraph
+bundle: newsletter
+mode: sidebar
+content:
+  field_contact:
+    label: hidden
+    weight: 2
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_component_theme: true
+  field_component_title: true
+  field_newsletter: true
+  field_short_title: true

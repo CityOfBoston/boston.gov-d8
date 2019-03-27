@@ -1,0 +1,78 @@
+sudo: false
+language: php
+
+env:
+
+branches:
+  only:
+    - develop
+    - master
+
+php:
+  - 7.1
+
+addons:
+  apt:
+    update: true
+    packages:
+      - libssl1.0.0
+  ssh_known_hosts:
+    - svn-29892.prod.hosting.acquia.com
+    - bostond8dev.ssh.prod.acquia-sites.com
+
+cache:
+  bundler: true
+  apt: true
+  directories:
+    - "$HOME/.composer/cache"
+    - "$HOME/.drush/cache"
+    - "$HOME/.nvm"
+    - vendor
+    - node_modules
+
+notifications:
+  slack:
+    secure: b2UX5FnE2/C5MDNK47EP0GZIRmfwX+18HES0Q/uSwt6t7+ogKCtIjWCp1sIPd7jqRak0VmLoM0OHy6MBjz6x+1MQMNUqPEiO1f2APgBJ48c6rzeWQKTVfrKsUvPYIA+gxQ7jq7Gn0zPYQ5/+KXkxac+NrVoH85sI0xIL2BhFgQu1W4OlLLFKT11U7zJtCi3bcYhF7/eyCcrs3+IBGGp9sldjWvaVLDqUnFjz3c5AXwxlbJ6UTq7GIdIEe5Xw/UOJS9weedhoYH2XSNzFpmqqkAGcvkFpgCeYxf12iiqkmoAq5A0CxWVXqA3vG+imabuQonpbQsGdvtFP71EV9o9DxwATwxaGhBpX+Sw4zN7v25IC6n7rcvcK2F9dtY0CAb8BpWbEbWMDXXmVvFEVAvgARQ/b+L7YOJbNbbJwJQqZkllJp0lAFluyMDwpP2Ncr177S5hR/4Z6rlj1aLK1nhbmi/tK/kSNe+bcashm7/S2KG076hN0b5TB87hsbkvHsnVJDMKXSHwKrrdJiXDAkwZbl2sBp/bbfMTXyEqrINUG4WA70WXP3lR/QJy2pldVEYIU5rRwSzZ0BJ9raF7iiXFgTn3+Yhl0U/UgcDCEKoRvutM/suCy1mQBYP+Gv1uyFNFco37doQbPeyAXNb1vjfJQtyzy8I31gIN/sK590YxLBCA=
+
+before_install:
+  # Add in some required packages (ref: <reporoot>/.lando.yml
+  - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
+
+install:
+  # In this context "install" is the phing build process because we are installing Drupal in order to test it.
+  # download all the latest modules (includes phing).
+  - composer install --no-suggest
+  - composer drupal:scaffold
+  - if [ ! -e  /usr/local/bin/drupal ]; then sudo ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
+  # Make an account for drupal in MySQL (better than using root a/c).
+  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml validate:all
+  - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+  # Build the drupal site using Phing.
+  - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
+
+script:
+  # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
+  # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
+  # of monitored branches.
+  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test
+
+after_success:
+  # Manage SSH keys for deployment to Acquia.
+  - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
+  - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
+  - eval "$(ssh-agent -s)"
+  - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: master
+

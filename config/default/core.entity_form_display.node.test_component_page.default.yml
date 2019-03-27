@@ -1,0 +1,212 @@
+uuid: 532686cf-8254-4850-9aeb-a53a3e0ac0f4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.test_component_page.body
+    - field.field.node.test_component_page.field_components
+    - field.field.node.test_component_page.field_contact
+    - field.field.node.test_component_page.field_sidebar_components
+    - node.type.test_component_page
+  module:
+    - content_moderation
+    - field_group
+    - paragraphs
+    - path
+    - publication_date
+    - text
+third_party_settings:
+  field_group:
+    group_main:
+      children:
+        - field_components
+      parent_name: group_test_component_page
+      weight: 10
+      format_type: tab
+      format_settings:
+        label: Components
+        formatter: closed
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Components
+    group_sidebar:
+      children:
+        - field_sidebar_components
+      parent_name: group_test_component_page
+      weight: 9
+      format_type: tab
+      format_settings:
+        label: 'Sidebar Components'
+        formatter: closed
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Sidebar Components'
+    group_test_component_page:
+      children:
+        - group_basic_information
+        - group_sidebar
+        - group_main
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Test Component Page'
+    group_basic_information:
+      children:
+        - field_contact
+        - title
+        - body
+      parent_name: group_test_component_page
+      weight: 8
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+_core:
+  default_config_hash: SHPRzVHkfTKvwFoewPpRFOl5sMGxYLR0gBoYdLaoeMo
+id: node.test_component_page.default
+targetEntityType: node
+bundle: test_component_page
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 5
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_components:
+    type: paragraphs
+    weight: 2
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+      closed_mode_threshold: 0
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_sidebar_components:
+    weight: 3
+    settings:
+      title: 'SB Component'
+      title_plural: 'SB Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+      closed_mode_threshold: 0
+    third_party_settings: {  }
+    type: paragraphs
+    region: content
+  langcode:
+    type: language_select
+    weight: 6
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 16
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 12
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 11
+    region: content
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 14
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  translation:
+    weight: 15
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 13
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  sticky: true

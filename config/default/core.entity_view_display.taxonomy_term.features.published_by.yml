@@ -1,0 +1,27 @@
+uuid: 2290d18b-2078-4caf-b07b-5fa955db1aaa
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.taxonomy_term.published_by
+    - field.field.taxonomy_term.features.field_icon
+    - taxonomy.vocabulary.features
+  module:
+    - text
+_core:
+  default_config_hash: '-mUdfAzqWbuuaNMgQ6tPWy1bzoP9ilNiyMZqHOqpTUk'
+id: taxonomy_term.features.published_by
+targetEntityType: taxonomy_term
+bundle: features
+mode: published_by
+content:
+  description:
+    label: hidden
+    type: text_default
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_icon: true
+  langcode: true

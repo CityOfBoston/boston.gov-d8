@@ -1,0 +1,15 @@
+--- a/modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d6/FieldGroup.php
++++ b/modules/contrib/field_group/contrib/field_group_migrate/src/Plugin/migrate/source/d6/FieldGroup.php
+@@ -9,8 +9,10 @@
+  * Drupal 6 field_group source.
+  *
+  * @MigrateSource(
+- *   id = "d6_field_group"
+- * )
++ *   id = "d6_field_group",
++ *   source_module = "field_group",
++ *   destination_module = "field_group"
++ * )
+  */
+ class FieldGroup extends DrupalSqlBase {
+ 

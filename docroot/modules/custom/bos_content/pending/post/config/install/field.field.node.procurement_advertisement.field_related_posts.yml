@@ -1,0 +1,30 @@
+uuid: c39e1c7e-2c74-4e36-85c0-fe0b01b9647b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_posts
+    - node.type.post
+    - node.type.procurement_advertisement
+id: node.procurement_advertisement.field_related_posts
+field_name: field_related_posts
+entity_type: node
+bundle: procurement_advertisement
+label: 'Related posts'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      post: post
+field_type: entity_reference

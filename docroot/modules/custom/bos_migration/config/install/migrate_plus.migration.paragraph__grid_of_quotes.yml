@@ -1,0 +1,25 @@
+id: paragraph__grid_of_quotes
+label: 'Grid of Quotes Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: grid_of_quotes
+process:
+  field_grid_of_quotes: field_grid_of_quotes
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: grid_of_quotes
+  new_revisions: true
+migration_dependencies:
+  required:
+    - paragraph__quote
+  optional: {  }

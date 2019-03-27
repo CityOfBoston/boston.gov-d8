@@ -1,0 +1,97 @@
+uuid: 5772b718-2bea-4cdd-9a9f-7f5ca7c9b827
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.grid_of_people.field_component_theme
+    - field.field.paragraph.grid_of_people.field_component_title
+    - field.field.paragraph.grid_of_people.field_contact
+    - field.field.paragraph.grid_of_people.field_people
+    - field.field.paragraph.grid_of_people.field_short_title
+    - paragraphs.paragraphs_type.grid_of_people
+  module:
+    - fences
+    - options
+_core:
+  default_config_hash: UVZLKGgqlS-dRYCJJLiVAWjIlG2OQzpL5zdfuKbOp8U
+id: paragraph.grid_of_people.default
+targetEntityType: paragraph
+bundle: grid_of_people
+mode: default
+content:
+  field_component_theme:
+    label: above
+    weight: 4
+    type: list_default
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_component_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_contact:
+    label: hidden
+    weight: 2
+    type: entity_reference_label
+    settings:
+      link: true
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_people:
+    label: hidden
+    weight: 3
+    type: entity_reference_entity_view
+    settings:
+      view_mode: listing
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_short_title:
+    label: hidden
+    weight: 1
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+hidden: {  }

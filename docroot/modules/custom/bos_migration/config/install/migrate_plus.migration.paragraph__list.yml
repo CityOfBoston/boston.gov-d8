@@ -1,0 +1,38 @@
+id: paragraph__list
+label: 'List Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+    - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: list
+process:
+  field_component_theme: field_component_theme
+  field_contact: field_contact
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+  field_list:
+    plugin: iterator
+    source: field_list
+    process:
+      field_list_arguments: field_list_vargs
+      field_list_display_id: field_list_vname
+      field_list_target_id: entity_type
+      bundle: bundle
+      entity_id: entity_id
+      revision_id: revision_id
+      deleted: deleted
+      langcode: language
+      delta: delta
+destination:
+  plugin: entity:paragraph
+  default_bundle: list
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

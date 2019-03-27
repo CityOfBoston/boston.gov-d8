@@ -1,0 +1,23 @@
+id: paragraph__discussion_topic
+label: 'Discussion Topic Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: discussion_topic
+process:
+  field_links: field_links
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: discussion_topic
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

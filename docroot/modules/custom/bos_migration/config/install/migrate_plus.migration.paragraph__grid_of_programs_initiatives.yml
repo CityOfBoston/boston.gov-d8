@@ -1,0 +1,26 @@
+id: paragraph__grid_of_programs_initiatives
+label: 'Grid of Programs Initiatives Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: grid_of_programs_initiatives
+process:
+  field_component_theme: field_component_theme
+  field_contact: field_contact
+  field_program_initiative: field_program_initiative
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: grid_of_programs_initiatives
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

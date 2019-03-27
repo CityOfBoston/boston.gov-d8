@@ -1,0 +1,22 @@
+uuid: 4bd4be13-dd43-4a8a-bcd3-445a1a59d717
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.program_initiative_profile
+id: node.program_initiative_profile.status
+field_name: status
+entity_type: node
+bundle: program_initiative_profile
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

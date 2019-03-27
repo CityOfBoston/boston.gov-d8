@@ -1,0 +1,30 @@
+uuid: e5d0563f-1773-433e-83cd-e504b7a54247
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.drawer.field_short_description
+    - field.field.paragraph.drawer.field_text_blocks
+    - field.field.paragraph.drawer.field_title
+    - paragraphs.paragraphs_type.drawer
+  module:
+    - entity_reference_revisions
+_core:
+  default_config_hash: fynMubqAl3bwnIrJhD3TaaN9VolOU9rrlv-dZcQsERk
+id: paragraph.drawer.default
+targetEntityType: paragraph
+bundle: drawer
+mode: default
+content:
+  field_text_blocks:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_short_description: true
+  field_title: true

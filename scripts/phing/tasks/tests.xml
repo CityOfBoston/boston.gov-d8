@@ -1,0 +1,130 @@
+<project name="tests" default="tests:info">
+
+  <target name="tests:info"
+          description="Tests project contains all PHPUnit and Behat testing for CI."
+          depends="build:info">
+    <echo message="Boston build installation uses CodeSniffer to check that minimum coding
+    standards have been met, and both PHPUnit and Behat tests to verify the build complies with
+    basic functional requirements."/>
+  </target>
+
+  <echo message="Building ${custom.phing.tasks.dir}/tests.xml" level="verbose"/>
+
+  <!-- <autoloader autoloaderpath="${project.basedir}/vendor/autoload.php"/> -->
+
+  <target name="tests:all" description="Runs all tests, including Behat, PHPUnit, and Security Update check."
+          depends="tests:security-updates"/>
+
+  <!-- Do a basic syntax check using Phing wrapper for "php -l"  -->
+  <target name="tests:phplinting" description="Duplicate for linting run in validate project.">
+    <phingcall target="validate:lint"/>
+  </target>
+
+  <!-- Ensure Drupal doesn't have any modules requiring security updates.
+       Requires Drush v9+. -->
+  <target name="tests:security-updates"
+          description="Check local Drupal installation for security updates.">
+    <exec description="Look for Drupal security updates."
+          outputProperty="ups.output"
+          passthru="true"
+          dir="${docroot}"
+          command="! ${drush.cmd} sec 2>/dev/null | grep 'success'"
+          logoutput="true"/>
+    <if>
+      <and>
+        <isset property="ups.output"/>
+        <isfalse value=" " id="${ups.output}"/>
+      </and>
+      <then>
+        <fail message="Security Update tests failed. The following modules require updating."/>
+        <echo message="${ups.output}" level="error"/>
+      </then>
+      <else>
+        <echo message="Security patches OK." level="info"/>
+      </else>
+    </if>
+  </target>
+
+  <target name="tests:phantomjs:start">
+    <exec
+          description="Start the PhantomJS server."
+          dir="${project.basedir}"
+          command="./tests/phantomjs/bin/phantomjs vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768 "
+          passthru="true"
+          checkreturn="true"/>
+  </target>
+
+  <!-- NOT VERIFIED FOR D8 BELOW HERE -->
+
+  <!-- If you experience 'Maximum function nesting level' errors in your PHP
+       error log, set 'xdebug.max_nesting_level=1000' in php.ini. -->
+  <!--<target name="tests:behat" depends="tests:run-server, tests:phantomjs:launch" description="Executes Behat all behat tests in behat.paths.">-->
+  <target name="tests:behat" description="Executes Behat all behat tests in behat.paths.">
+    <mkdir dir="${testing_framework.reports.localDir}/behat"/>
+    <phingcall target="tests:behat:execute"/>
+    <!--<phingcall target="tests:phantomjs:kill"/>-->
+  </target>
+
+  <target name="tests:behat:execute" description="Executes behat tests against specific path.">
+    <!-- Run behat. Any settings in behat.yml or local.yml will be used. -->
+    <behat executable="${composer.bin}/behat"
+           config="${behat.config}"
+           profile="${behat.profile}"
+           verbose="true"
+           strict="true"
+           haltonerror="false"
+           returnProperty="behatFail"
+           out="std,${testing_framework.reports.localDir}"
+           format="pretty,junit"
+           tags="${behat.tags}"
+    />
+
+    <if>
+      <istrue value="${behatFail}"/>
+      <then>
+        <fail message="One ore more Behat tests failed." />
+      </then>
+    </if>
+  </target>
+
+  <!-- Execute PHPUnit tests. -->
+  <target name="tests:phpunit" description="Executes PHPUnit tests against custom code.">
+    <delete dir="${testing_framework.reports.localDir}/phpunit" quiet="true" verbose="false"/>
+    <mkdir dir="${testing_framework.reports.localDir}/phpunit"/>
+
+    <phpunit
+      printsummary="true"
+      failureproperty="phpunit.failures"
+      errorproperty="phpunit.errors"
+      pharlocation="/usr/local/bin/phpunit"
+    >
+      <formatter type="plain" usefile="false"/>
+      <formatter type="xml" todir="${testing_framework.reports.localDir}/phpunit"/>
+      <batchtest>
+        <fileset dir="${project.basedir}/tests/phpunit">
+          <include name="**/*Test*.php"/>
+        </fileset>
+      </batchtest>
+    </phpunit>
+
+    <phpunitreport
+      infile="${testing_framework.reports.localDir}/phpunit/testsuites.xml"
+      format="noframes"
+      todir="${testing_framework.reports.localDir}/phpunit" />
+    <property
+      name="testing_framework.reports.phpunit.file"
+      value="${testing_framework.reports.localDir}/phpunit/phpunit-noframes.html"/>
+    <echo>PHPUnit Report is available at ${testing_framework.reports.phpunit.file}</echo>
+
+    <if>
+      <or>
+        <equals arg1="${phpunit.failures}" arg2="true"/>
+        <equals arg1="${phpunit.errors}" arg2="true"/>
+      </or>
+      <then>
+        <fail message="PHPUnit Failed. See report for details."/>
+      </then>
+    </if>
+  </target>
+
+</project>

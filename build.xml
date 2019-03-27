@@ -1,9 +1,9 @@
 <project name="bostongov" default="build:info" phingVersion="2.8.2">
 
   <!-- Define Phing target. -->
-  <property name="custom.phing.dir" value="${project.basedir}/build/custom/phing" />
+  <property name="custom.phing.dir" value="${project.basedir}/scripts/phing" />
 
   <!--Load the main build file. -->
-  <import file="${custom.phing.dir}/build.xml"/>
+  <import file="${custom.phing.dir}/phing-boston.xml"/>
 
 </project>

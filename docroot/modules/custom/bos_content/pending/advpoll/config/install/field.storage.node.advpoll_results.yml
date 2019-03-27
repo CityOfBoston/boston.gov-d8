@@ -1,0 +1,30 @@
+uuid: 4fac1fc6-a12c-4ec1-8d2f-4d3080d1cc13
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.advpoll_results
+field_name: advpoll_results
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: aftervote
+      label: 'After voting'
+    -
+      value: afterclose
+      label: 'After poll is closed'
+    -
+      value: never
+      label: Never
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

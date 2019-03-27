@@ -1,0 +1,93 @@
+uuid: 2727bc62-16ff-4c1a-b789-756d5ab8e4d9
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.article
+    - node.type.change
+    - node.type.department_profile
+    - node.type.event
+    - node.type.landing_page
+  module:
+    - content_moderation
+id: city_of_boston_workflows
+label: 'City of Boston Workflows'
+type: content_moderation
+type_settings:
+  states:
+    archive:
+      published: false
+      default_revision: false
+      label: Archive
+      weight: 3
+    draft:
+      label: Draft
+      published: false
+      default_revision: false
+      weight: 0
+    needs_review:
+      published: false
+      default_revision: false
+      label: 'Needs Review'
+      weight: 2
+    published:
+      label: Published
+      published: true
+      default_revision: true
+      weight: 1
+  transitions:
+    archived:
+      label: 'Archive Content'
+      from:
+        - published
+      to: archive
+      weight: -1
+    draft_from_archived:
+      label: 'Draft from Archived'
+      from:
+        - archive
+      to: draft
+      weight: 0
+    draft_from_published:
+      label: 'New Draft'
+      from:
+        - published
+      to: draft
+      weight: -3
+    publish:
+      label: Publish
+      from:
+        - needs_review
+      to: published
+      weight: 2
+    reject:
+      label: 'Reject Draft'
+      from:
+        - needs_review
+      to: draft
+      weight: 1
+    submit_for_review:
+      label: 'Submit for Review'
+      from:
+        - draft
+      to: needs_review
+      weight: -2
+    update_draft:
+      label: 'Update Draft'
+      from:
+        - draft
+      to: draft
+      weight: 3
+    update_published:
+      label: 'Update Published'
+      from:
+        - published
+      to: published
+      weight: 5
+  entity_types:
+    node:
+      - article
+      - change
+      - department_profile
+      - event
+      - landing_page

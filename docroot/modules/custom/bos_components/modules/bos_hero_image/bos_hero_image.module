@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_hero_image module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_hero_image_theme() {
+  $theme['paragraph__hero_image'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_hero_image') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ */
+function bos_hero_image_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    switch ($paragraph->bundle()) {
+      case 'hero_image':
+        $lib = \Drupal::service('library.discovery')
+          ->getLibraryByName('bos_theme', 'global-styling.patterns');
+        $vars['asset_url'] = $lib['remote'];
+        $image = $paragraph->get('field_image')->getValue();
+        $base_url = file_load($image['0']['target_id'])->getFileUri();
+        $styles = [
+          'xlarge_image' => 'rep_wide_2000x700custom_boston_desktop_2x',
+          'large_image' => 'rep_wide_2000x700custom_boston_desktop_1x',
+          'medium_image' => 'rep_wide_2000x700custom_boston_tablet_2x',
+          'small_image' => 'rep_wide_2000x700custom_boston_mobile_2x',
+        ];
+        foreach ($styles as $name => $style) {
+          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
+          $vars[$name] = $style->buildUrl($base_url);
+        }
+        break;
+    }
+  }
+}

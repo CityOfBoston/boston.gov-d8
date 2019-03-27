@@ -1,0 +1,32 @@
+uuid: 9256680e-00e3-46b3-9b6f-91fd2542bed6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.status_item.field_icon
+    - field.field.node.status_item.field_messages
+    - field.field.node.status_item.field_title
+    - node.type.status_item
+  module:
+    - entity_reference_revisions
+    - user
+id: node.status_item.default
+targetEntityType: node
+bundle: status_item
+mode: default
+content:
+  field_messages:
+    label: hidden
+    weight: 0
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_icon: true
+  field_title: true
+  langcode: true
+  links: true
+  published_at: true

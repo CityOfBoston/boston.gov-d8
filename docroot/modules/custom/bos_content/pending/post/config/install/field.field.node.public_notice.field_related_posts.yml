@@ -1,0 +1,30 @@
+uuid: af64725c-f12a-4c0a-b30c-95b10e3fb35c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_related_posts
+    - node.type.post
+    - node.type.public_notice
+id: node.public_notice.field_related_posts
+field_name: field_related_posts
+entity_type: node
+bundle: public_notice
+label: 'Related posts'
+description: 'Which press releases or blog posts are relevant for this public notice?'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      post: post
+field_type: entity_reference

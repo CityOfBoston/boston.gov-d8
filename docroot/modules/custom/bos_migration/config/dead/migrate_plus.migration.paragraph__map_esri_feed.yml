@@ -1,0 +1,25 @@
+id: paragraph__map_esri_feed
+label: 'Map ESRI Feed Paragraph'
+migration_group: bos_paragraphs_notready
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: map_esri_feed
+process:
+  field_map_cluster: field_map_cluster
+  field_color: field_color
+  field_title: field_title
+  field_url: field_url
+destination:
+  plugin: entity:paragraph
+  default_bundle: map_esri_feed
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

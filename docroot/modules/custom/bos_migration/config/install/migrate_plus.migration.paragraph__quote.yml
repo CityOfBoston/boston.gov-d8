@@ -1,0 +1,26 @@
+id: paragraph__quote
+label: 'Quote Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: quote
+process:
+  field_first_name: field_first_name
+  field_last_name: field_last_name
+  field_single_neighborhood: field_single_neighborhood
+  field_person_photo: field_person_photo
+  field_quote: field_quote
+destination:
+  plugin: entity:paragraph
+  default_bundle: quote
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

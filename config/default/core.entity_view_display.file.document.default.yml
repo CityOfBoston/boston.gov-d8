@@ -1,0 +1,69 @@
+uuid: 9a55991c-c097-49a3-83de-578086fe8df1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.file.document.field_type_of_content
+    - field.field.file.document.field_updated_date
+    - file_entity.type.document
+  module:
+    - datetime
+    - file_entity
+id: file.document.default
+targetEntityType: file
+bundle: document
+mode: default
+content:
+  field_updated_date:
+    label: above
+    weight: 1
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+  filemime:
+    type: string
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  filename:
+    type: string
+    label: hidden
+    weight: -5
+    region: content
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  filesize:
+    type: file_size
+    weight: 3
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  uid:
+    type: uri_link
+    weight: 1
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  uri:
+    type: file_image
+    label: hidden
+    weight: -5
+    region: content
+    settings:
+      title: field_image_title_text
+      alt: field_image_alt_text
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+hidden:
+  field_type_of_content: true
+  langcode: true

@@ -1,0 +1,14 @@
+bos_core.linkit_media_upload:
+  path: '/admin/content/linkit-media-upload'
+  defaults:
+    _form: '\Drupal\bos_core\Form\LinkitMediaUploadForm'
+  requirements:
+    _custom_access: '\Drupal\bos_core\Form\LinkitMediaUploadForm::access'
+
+bos_core.admin:
+  path: '/admin/config/system/boston'
+  defaults:
+    _title: 'Boston Core Settings'
+    _form: '\Drupal\bos_core\Form\BosCoreSettingsForm'
+  requirements:
+    _permission: 'access content'

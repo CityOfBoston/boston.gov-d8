@@ -1,0 +1,18 @@
+uuid: e52a3f3a-3106-45f9-a0bc-a4558d743f56
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.upcoming_events
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: paragraph.upcoming_events
+target_entity_type_id: paragraph
+target_bundle: upcoming_events
+default_langcode: site_default
+language_alterable: false

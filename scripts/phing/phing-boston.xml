@@ -1,0 +1,129 @@
+<project name="project"
+         default="build:info"
+         phingVersion="2.8.2"
+         description="Defines main entry points for build processes required for docker containers.">
+
+    <property name="custom.phing.dir" value="${project.basedir}/scripts/phing" />
+
+    <echo message="Building ${custom.phing.dir}/phing-boston.xml" level="verbose"/>
+
+    <property name="repo.root" value="${project.basedir}" description="repo.root is an alias for the project.basedir"/>
+
+    <!-- Define the repo root as a property, and resolve to an absolute file path. -->
+    <property name="docroot" value="${project.basedir}/docroot"/>
+
+    <!-- Define the base Phing directories  -->
+    <property name="custom.phing.files.dir" value="${custom.phing.dir}/files" />
+    <property name="custom.phing.tasks.dir" value="${custom.phing.dir}/tasks" />
+
+    <!-- Include custom task classes. -->
+    <includepath classpath="${custom.phing.dir}" />
+    <taskdef name="behat" classname="phingcludes.BehatTask"/>
+    <taskdef name="drush" classname="phingcludes.DrushTask"/>
+    <taskdef name="phpVariable" classname="phingcludes.PhpVariableTask"/>
+
+<!--Load up sub-project files-->
+    <import file="${custom.phing.tasks.dir}/setup.xml"
+            description="* Defines targets used for setting up apps and services in containers."/>
+    <import file="${custom.phing.tasks.dir}/tests.xml"
+            description="Contains targets relevant to the execution of tests. E.g., Behat, jMeter."/>
+    <import file="${custom.phing.tasks.dir}/update.xml"
+            description="Contains targets used to maintain/update a Drupal 8 installation."/>
+    <import file="${custom.phing.tasks.dir}/validate.xml"
+            description="Contains targets used to validate custom-written code against coding standards."/>
+    <import file="${custom.phing.tasks.dir}/migrate.xml"
+            description="Contains targets used to migrate d7 content into d8."/>
+    <import file="${custom.phing.tasks.dir}/deploy.xml"
+            description="Contains targets used to deploy onto acquia."/>
+
+<!-- Load the lando file to get db locations etc. -->
+    <property file="${project.basedir}/.lando.yml" prefix="lando" override="true" logoutput="false"/>
+    <property file="${custom.phing.files.dir}/lando.config.yml" prefix="lando" override="true" logoutput="false"/>
+
+<!-- Read the LANDO_INFO environment variablt to get the correct hostname and port for the database -->
+    <php expression="json_decode('${env.LANDO_INFO}')->database->internal_connection->host;" returnProperty="lando.db.host" level="verbose"/>
+    <php expression="json_decode('${env.LANDO_INFO}')->database->internal_connection->port;" returnProperty="lando.db.port" level="verbose"/>
+    <php expression="json_decode('${env.LANDO_INFO}')->database->creds->user;" returnProperty="lando.db.username" level="verbose"/>
+    <php expression="json_decode('${env.LANDO_INFO}')->database->creds->password;" returnProperty="lando.db.password" level="verbose"/>
+    <php expression="json_decode('${env.LANDO_INFO}')->database->creds->database;" returnProperty="lando.db.database" level="verbose"/>
+    <php expression="json_decode('${env.LANDO_INFO}')->database->type;" returnProperty="lando.db.type" level="verbose"/>
+    <php expression="json_decode('${env.LANDO_INFO}')->database->hostnames[0];" returnProperty="lando.db.container" level="verbose"/>
+
+<!-- Load file directory and binary locations. -->
+    <property file="${custom.phing.dir}/phing-boston.yml"  override="true" logoutput="false"/>
+
+    <property name="lando.url.url" value="" override="true"/>
+    <if><isset property="env.LANDO_APP_NAME"/>
+        <then>
+            <property name="lando.url.url" value="https://${env.LANDO_APP_NAME}.${env.LANDO_DOMAIN}" override="true"/>
+        </then>
+    </if>
+    <property name="lando.url.localpath" value="${env.LANDO_WEBROOT}" override="true"/>
+
+    <property name="project.sync" value="${docroot}/${build.local.config.sync}" override="true"/>
+
+<!-- set path for local.settings.php file. -->
+    <property name="local.settings.file.rel" value="sites/${drupal.multisite.name}/settings/settings.local.php" />
+    <property name="settings.file.rel" value="sites/${drupal.multisite.name}/settings.php" />
+    <property name="local.services.file.rel" value="sites/${drupal.multisite.name}/services.yml" />
+    <property name="acquia.settings.file.rel" value="sites/${drupal.multisite.name}/settings/settings.acquia.php" />
+    <property name="travis.settings.file.rel" value="sites/${drupal.multisite.name}/settings/settings.travis.php" />
+    <resolvepath propertyName="local.settings.file" path="${docroot}/${local.settings.file.rel}"/>
+    <resolvepath propertyName="travis.settings.file" path="${docroot}/${travis.settings.file.rel}"/>
+    <resolvepath propertyName="acquia.settings.file" path="${docroot}/${acquia.settings.file.rel}"/>
+    <resolvepath propertyName="settings.file" path="${docroot}/${settings.file.rel}"/>
+    <resolvepath propertyName="local.services.file" path="${docroot}/${local.services.file.rel}"/>
+
+<!-- Determine the Aquia Cloud Environment variables -->
+    <php expression="getenv('AH_SITE_ENVIRONMENT') ? getenv('AH_SITE_ENVIRONMENT') : 'dev'" returnProperty="acquia.site_environment" level="verbose"/>
+
+<!-- This defines generic, reusable file sets that are used by other targets -->
+    <fileset dir="${docroot}" id="files.php" description="All docroot PHP files which are not core or contributed.">
+        <readable/>
+        <patternset id="files.php.id">
+            <include name="**/*.inc"/>
+            <include name="**/*.php"/>
+            <include name="**/*.module"/>
+            <include name="**/*.install"/>
+            <include name="**/*.profile"/>
+            <include name="**/*.test"/>
+            <include name="**/*.theme"/>
+            <exclude name="**/core/**/*"/>
+            <exclude name="**/contrib/**/*"/>
+            <exclude name="**/preConversion/**/*"/>
+            <exclude name="*.php"/>
+        </patternset>
+    </fileset>
+    <fileset dir="${docroot}" id="files.js" description="All non-minified custom module js files.">
+        <readable/>
+        <patternset id="files.js.id">
+            <include name="modules/custom/**/*.js"/>
+            <include name="themes/custom/**/*.js"/>
+            <exclude name="**/core/**/*"/>
+            <exclude name="**/contrib/**/*"/>
+            <exclude name="**/themes/**/dist/**/*"/>
+            <exclude name="**/*.min.*"/>
+        </patternset>
+    </fileset>
+    <fileset dir="${docroot}" id="files.codesniffer" description="Drupal and js files for codesniffer.">
+        <readable/>
+        <patternset refid="files.php.id"/>
+        <patternset refid="files.js.id"/>
+        <exclude name="**/drupal7/**/*"/>
+        <exclude name="**/*.tpl.php"/>
+        <exclude name="**/modules/custom/**/drupal7/**/*"/>
+        <exclude name="**/modules/custom/**/pending/**/*"/>
+        <exclude name="**/sites/default/**/*"/>
+    </fileset>
+
+<!-- ================================================================= -->
+
+    <!-- Define the default task for this project - a welcome screen -->
+    <target name="build:info" description="Welcome to Boston.gov.">
+        <exec dir="${project.basedir}" command="${project.basedir}/scripts/doit/branding.sh" passthru="true" logoutput="true"/>
+    </target>
+
+<!-- ================================================================= -->
+
+
+</project>

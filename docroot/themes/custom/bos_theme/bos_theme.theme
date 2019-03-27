@@ -1,23 +1,888 @@
 <?php
+
 /**
  * @file
  * Contains functions to alter Drupal's markup for the STARTERKIT theme.
  */
 
 /**
- * Implements hook_preprocess_node.
+ * Implements hook_preprocess_html.
  */
-function bos_theme_preprocess_node(&$variables) {
-  // Place theme settings into the variable object so they can be used in twig.
-  $variables['bos_theme'] = array(
-    'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
-    'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
-    'boston_breadcrumb_home' => theme_get_setting('boston_breadcrumb_home'),
-    'boston_breadcrumb_trailing' => theme_get_setting('boston_breadcrumb_trailing'),
-    'boston_breadcrumb_title' => theme_get_setting('boston_breadcrumb_title'),
-    'boston_skip_link_anchor' => theme_get_setting('boston_skip_link_anchor'),
-    'boston_skip_link_text' => theme_get_setting('boston_skip_link_text'),
-    'boston_meta' => theme_get_setting('boston_meta'),
-    'boston_layout' => theme_get_setting('boston_layout'),
-  );
+
+use Symfony\Component\HttpFoundation\Response;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Xss;
+use Drupal\core\Template\Attribute;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+
+/**
+ * Implements theme.api.php hook_theme().
+ *
+ * @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_theme/8.2.x
+ */
+function bos_theme_theme($existing, $type, $theme, $path) {
+  return [
+    'page_contacts' => [
+      'variables' => [
+        'title' => NULL,
+        'short_title' => NULL,
+        'contacts' => NULL,
+      ],
+      'template' => 'templates/snippets/page-contacts',
+    ],
+    'grid_card' => [
+      'variables' => [
+        'title' => NULL,
+        'link' => NULL,
+        'subtitle' => NULL,
+        'image' => NULL,
+        'description' => NULL,
+        'classes' => '',
+      ],
+      'template' => 'templates/snippets/grid-card',
+    ],
+    'user_login' => [
+      'render element' => 'form',
+      'template' => 'templates/snippets/user_login',
+    ],
+    'logo' => [
+      'template' => 'snippets/logo',
+      'variables' => [
+        'site_name' => '',
+        'front_page' => '',
+        'asset_url' => '',
+        'asset_name' => '',
+        'cache_buster' => '',
+        'hide_logo' => '',
+      ],
+    ],
+    'burger' => [
+      'template' => 'snippets/burger',
+      'variables' => [],
+    ],
+    'seal' => [
+      'template' => 'snippets/seal',
+      'variables' => [
+        'front_page' => '',
+        'asset_url' => '',
+        'asset_name' => '',
+        'cache_buster' => '',
+        'hidden' => '',
+      ],
+    ],
+    'search' => [
+      'template' => 'snippets/search',
+      'variables' => [
+        'search_form_url' => '/search',
+      ],
+    ],
+    'secondary_nav' => [
+      'template' => 'snippets/secondary-nav',
+      'variables' => [
+        'secondary_menu' => [],
+      ],
+    ],
+    'profile_address' => [
+      'variables' => [
+        'address' => NULL,
+        'address_type' => NULL,
+      ],
+      'template' => 'templates/snippets/profile-address',
+    ],
+    'breadcrumb' => [
+      'template' => 'navigation/breadcrumb',
+    ],
+    'node' => [
+      'template' => 'content/node',
+    ],
+    'field__node__field_intro_text' => [
+      'base hook' => 'field',
+      'path' => 'themes/custom/bos_theme/templates/field',
+      'template' => 'field--node--field-intro-text',
+    ],
+  ];
+}
+
+/**
+ * Override or insert variables into the maintenance page template.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered ("maintenance_page" in this case).
+ */
+function bos_theme_process_maintenance_page(array &$variables, $hook) {
+  bos_theme_process_html($variables, $hook);
+  // Ensure default regions get a variable. Theme authors often forget to remove
+  // a deleted region's variable in maintenance-page.tpl.
+  $regions = [
+    'header',
+    'navigation',
+    'highlighted',
+    'help',
+    'content',
+    'sidebar_first',
+    'sidebar_second',
+    'footer',
+    'bottom',
+  ];
+  foreach ($regions as $region) {
+    if (!isset($variables[$region])) {
+      $variables[$region] = '';
+    }
+  }
+}
+
+/**
+ * Implements theme_preprocess().
+ *
+ * Returns a standard set of variables needed by major page elements.
+ *
+ * @param array $variables
+ *   The variables to be passed to the twig template.
+ */
+function bos_theme_preprocess(array &$variables, $hook) {
+  // Ensure attributes in an Attributes object.
+  _bos_theme_fix_attributes($variables);
+
+  if (in_array($hook, ['html', 'page', 'node'])) {
+    $variables['bos_theme'] = [
+      'boston_breadcrumb' => theme_get_setting('boston_breadcrumb'),
+      'boston_breadcrumb_separator' => theme_get_setting('boston_breadcrumb_separator'),
+      'boston_breadcrumb_home' => theme_get_setting('boston_breadcrumb_home'),
+      'boston_breadcrumb_trailing' => theme_get_setting('boston_breadcrumb_trailing'),
+      'boston_breadcrumb_title' => theme_get_setting('boston_breadcrumb_title'),
+      'boston_skip_link_anchor' => theme_get_setting('boston_skip_link_anchor'),
+      'boston_skip_link_text' => theme_get_setting('boston_skip_link_text'),
+      'boston_meta' => theme_get_setting('boston_meta'),
+      'boston_layout' => theme_get_setting('boston_layout'),
+    ];
+    // A variable to define the cache buster.
+    $variables['cache_buster'] = \Drupal::state()
+      ->get('system.css_js_query_string');
+    $mode = _bos_theme_library();
+    $lib = \Drupal::service('library.discovery')
+      ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
+    $variables['asset_url'] = $lib['remote'];
+    $variables['asset_name'] = 'public';
+    $variables['status_code'] = "200";
+    if (!is_null(Drupal::requestStack()
+      ->getCurrentRequest()->attributes->get('exception'))) {
+      $variables['status_code'] = (string) Drupal::requestStack()
+        ->getCurrentRequest()->attributes->get('exception')->getStatusCode();
+    }
+    // WTF this hook does not fire itself ...
+    if ($hook == "node") {
+      bos_theme_preprocess_node($variables, "node");
+    }
+    $variables['active_theme'] = \Drupal::service('theme.manager')->getActiveTheme();
+  }
+}
+
+/**
+ * Override or insert variables into the html template.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme template.
+ * @param string $hook
+ *   The name of the template being rendered. This is usually "html", but can
+ *   also be "maintenance_page" since boston_preprocess_maintenance_page() calls
+ *   this function to have consistent variables.
+ */
+function bos_theme_preprocess_html(array &$variables, $hook) {
+  // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
+  $variables['#attached']['library'][] = "bos_theme/global-styling.always";
+  $variables['#attached']['library'][] = "bos_theme/page.assets";
+  $mode = _bos_theme_library();
+  $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
+
+  if (empty($variables["attributes"])) {
+    $variables["attributes"] = new Attribute();
+  }
+
+  $variables['attributes']->addClass("html bos_theme");
+  $newClass = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
+  $variables['attributes']->addClass($newClass);
+  $newClass = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
+  $variables['attributes']->addClass($newClass);
+  if ($node = drupal::request()->get('node')) {
+    $nid = $node->id();
+    $newClass = "page-node-" . (isset($nid) ? $nid : "");
+    $variables['attributes']->addClass($newClass);
+
+  }
+
+  // Detect 400-status pages.
+  switch ($variables['status_code']) {
+    case 403:
+      $variables['attributes']->addClass("page-error page-403-error body-sidebars-none section-403-forbidden");
+      break;
+
+    case 404:
+      $variables['attributes']->addClass("page-error page-404-error body-sidebars-none section-404-not-found");
+      if (!$variables["page"]["#title"] instanceof Markup) {
+        $string = new TranslatableMarkup("<h1>@title</h1>", ["@title" => $variables["page"]["#title"]->getUntranslatedString()]);
+        $variables["page"]["#title"] = $string;
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  // Send X-UA-Compatible HTTP header to force IE to use the most recent
+  // rendering engine or use Chrome's frame rendering engine if available.
+  // This also prevents the IE compatibility mode button to appear when using
+  // conditional classes on the html tag.
+  $response = new response();
+  if (is_null($response->headers->get('X-UA-Compatible'))) {
+    $response->headers->set('X-UA-Compatible', 'IE=edge,chrome=1');
+  }
+
+  // Return early, so the maintenance page does not call any of the code below.
+  if ($hook != 'html') {
+    return;
+  }
+
+  // Grab some bos_theme specific settings.
+  $variables['skip_link_anchor'] = Html::escape(theme_get_setting('boston_skip_link_anchor'));
+  $variables['skip_link_text'] = Html::escape(theme_get_setting('boston_skip_link_text'));
+
+  // Store the menu item since it has some useful information.
+  $variables['menu_item'] = \Drupal::routeMatch()->getParameter('menu');
+  if (isset($variables['menu_item'])) {
+    switch ($variables['menu_item']['page_callback']) {
+      case 'views_page':
+        // Is this a Views page?
+        $variables['classes_array'][] = 'page-views';
+        break;
+
+      case 'page_manager_blog':
+      case 'page_manager_blog_user':
+      case 'page_manager_contact_site':
+      case 'page_manager_contact_user':
+      case 'page_manager_node_add':
+      case 'page_manager_node_edit':
+      case 'page_manager_node_view_page':
+      case 'page_manager_page_execute':
+      case 'page_manager_poll':
+      case 'page_manager_search_page':
+      case 'page_manager_term_view_page':
+      case 'page_manager_user_edit_page':
+      case 'page_manager_user_view_page':
+        // Is this a Panels page?
+        $variables['classes_array'][] = 'page-panels';
+        break;
+    }
+  }
+
+  // Add in D7 style body classes:
+  if (isset($variables['node_type'])) {
+    $variables["attributes"]->addClass("page-node");
+    $variables["attributes"]->addClass(Html::cleanCssIdentifier("node-type-" . $variables['node_type']));
+  }
+
+  // Detect node preview for d8 moderation css overrides.
+  if (strpos(\Drupal::request()->getRequestUri(), "node/preview") !== FALSE) {
+    $admin_theme = \Drupal::service('config.factory')
+      ->getEditable('system.theme')
+      ->get('admin');
+    $variables['#attached']['library'][] = $admin_theme . "/preview-styling";
+    $variables['is_preview'] = TRUE;
+    $variables['attributes']->addClass('node-preview');
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function bos_theme_preprocess_page(array &$variables, $hook) {
+  // D8-OK: Add in the js required by each page.
+  $variables['#attached']['library'][] = "bos_theme/page.assets";
+
+  // TODO: review this theme suggestion.
+  // This is probably related to (site_alert) api calls (built in views) which
+  // are passed with an "embed" querystring parameter to extract only the
+  // view-controlled html and not a fully drupal-themed page.
+  if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
+    $variables['theme_hook_suggestions'][] = 'page__embed';
+  }
+
+  if (empty($variables["attributes"])) {
+    $variables["attributes"] = new Attribute();
+  }
+
+  // TODO: Review if needed in D8.
+  // Find the title of the menu used by the secondary links.
+  $secondary_links = 'menu-secondary-menu';
+  $variables['secondary_menu_heading'] = '';
+  if (function_exists('menu_ui_get_menus')) {
+    $menus = menu_ui_get_menus();
+    if (!empty($menus[$secondary_links])) {
+      $variables['secondary_menu_heading'] = $menus[$secondary_links];
+    }
+  }
+
+  // TODO: Review.  This D8 converted, but is it needed / best way ?
+  // This is done to bring the hero image rendered output to the page level
+  // of rendering. Hero image styling fits more naturally at the page level
+  // as opposed to the rendered node output in the system block.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $path_args = explode('/', $current_path);
+  $variables['header_image'] = FALSE;
+  if (!empty($path_args[2])) {
+    $nid = $path_args[2];
+    if ($path_args[1] == 'node' && is_numeric($nid)) {
+      if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
+        $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
+        $uri = $background_image[0]['#item']['uri'];
+
+        $variables['header_image'] = TRUE;
+        $variables['background_image'] = $background_image;
+        $variables['xlarge_image'] = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $uri);
+        $variables['large_image'] = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $uri);
+        $variables['medium_image'] = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $uri);
+        $variables['small_image'] = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
+      }
+    }
+  }
+
+  // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
+  // D8 OK: Custom 404/403 pages.
+  if (!empty($variables['status_code'])) {
+    switch ($variables['status_code']) {
+      case "404":
+        $variables['error_text'] = \Drupal::configFactory()
+          ->getEditable("bos_theme.settings")
+          ->get("404-page");
+        if (isset($variables['node'])) {
+          $variables['attributes']->setAttribute('data-quickedit-entity-id', "node/" . $variables['node']->id());
+        }
+        break;
+
+      case "403":
+        $variables['error_text'] = \Drupal::configFactory()
+          ->getEditable("bos_theme.settings")
+          ->get("403-page");
+        if (isset($variables['node'])) {
+          $variables['attributes']->setAttribute('data-quickedit-entity-id', "node/" . $variables['node']->id());
+        }
+        break;
+    }
+  }
+
+  // D8 OK: MetaTags Block
+  // Some content types aren't special.
+  $no_type_needed = [
+    'listing_page',
+    'landing_page',
+  ];
+  // TODO: Check swift type search settings.
+  // Add a site priority meta tag for swiftype.
+  $metaTags[] = [
+    [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'class' => 'swiftype',
+        'name' => 'site-priority',
+        'data-type' => 'integer',
+        'content' => 5,
+      ],
+    ],
+    "swiftype_priority",
+  ];
+  // Dependent on content-type (i.e node), register a swiftType type metatag.
+  if (isset($variables['node']) && is_object($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+    $metaTags[] = [
+      [
+        '#tag' => 'meta',
+        '#attributes' => [
+          'class' => 'swiftype',
+          'name' => 'type',
+          'data-type' => 'enum',
+          'content' => $variables['node']->getType(),
+        ],
+      ],
+      "swiftype_type",
+    ];
+  }
+  $variables['#attached']['html_head'] = $metaTags;
+
+  // D8 OK: Create necessary page classes.
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    if (!isset($variables["attributes"])) {
+      $variables["attributes"] = new Attribute();
+    }
+
+    if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
+      if (!$variables["attributes"]->hasClass("page--nm")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
+      $variables["attributes"]->setAttribute("id", "page");
+    }
+    if ($variables['is_front']) {
+      $variables["attributes"]->addClass("page--fp");
+      if (!$variables["attributes"]->hasClass("page--wa") && !$variables["attributes"]->hasClass("page--nm")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
+    }
+  }
+
+  // D8 OK: If we are on the employee directory page, change the title.
+  if (strpos($current_path, 'user') === 0) {
+    if (!$variables["attributes"]->hasClass("page")) {
+      $variables["attributes"]->addClass("page");
+    }
+    if (!$variables["attributes"]->hasClass("page--wa")) {
+      $variables["attributes"]->addClass("page--wa");
+    }
+  }
+
+  // D8 OK:  By default, there is no site alert.
+  // This is overidden in site_alert_preprocess when there is an alert.
+  if (empty($variables['has_site_alert'])) {
+    $variables['has_site_alert'] = FALSE;
+  }
+
+  // D8 OK: Legacy, set data-target.
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
+  }
+
+  // TODO: Review if these variable elements are needed.
+  $variables['site_name'] = \Drupal::configFactory()
+    ->get('system.site')
+    ->get('name');
+  $variables['title'] = trim(strip_tags($variables["page"]["#title"]));
+  $variables['site_info'] = [
+    'front_page' => $variables['front_page'],
+    'cache_buster' => $variables['cache_buster'],
+    'site_name' => $variables['site_name'],
+    'hide_logo' => FALSE,
+  ];
+
+  // TODO: review if the secondary menu is needed ...
+  $menu_tree = \Drupal::menuTree();
+  $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
+  $tree = $menu_tree->load("menu-secondary-menu", $parameters);
+  $manipulators = [
+    // Only show links that are accessible for the current user.
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    // Use the default sorting of menu links.
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $variables['secondary_menu'] = $menu_tree->build($tree);
+
+  // D8 OK - Render the header elements here so just markup is passed to tmplt.
+  $arr_base = [
+    '#site_name' => $variables['site_name'],
+    '#front_page' => $variables['front_page'],
+    '#asset_url' => $variables['asset_url'],
+    '#asset_name' => $variables['asset_name'],
+    '#cache_buster' => $variables['cache_buster'],
+    '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
+    '#secondary_menu' => $variables['secondary_menu'],
+    '#theme' => '',
+  ];
+  $arr_base['#theme'] = 'burger';
+  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'logo';
+  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'secondary_nav';
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'search';
+  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
+  if ($variables['has_site_alert']) {
+    $arr_base["#hidden"] = " hidden";
+  }
+  $arr_base['#theme'] = 'seal';
+  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function bos_theme_preprocess_breadcrumb(array &$variables) {
+  // Define variables for the breadcrumb-related theme settings. This is done
+  // here so that sub-themes can dynamically change the settings under
+  // particular conditions in a preprocess function of their own.
+  if (!isset($variables["display_breadcrumb"])) {
+    $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  }
+  $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
+  $variables['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+
+  // Optionally get rid of the homepage link.
+  if (!theme_get_setting('boston_breadcrumb_home')) {
+    array_shift($variables["links"]);
+  }
+
+  // Add the title of the page to the end of the breadcrumb list.
+  if (!empty($variables["links"]) && theme_get_setting('boston_breadcrumb_title')) {
+    $item = \Drupal::routeMatch()->getParameters();
+    if (isset($item) && $item->has('node')) {
+      if (!empty($item->get('tab_parent'))) {
+        // If we are on a non-default tab, use the tab's title.
+        $variables['breadcrumb_title'] = Html::escape($item->get('title'));
+      }
+      else {
+        if (is_object($item->get('node'))) {
+          $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
+        }
+      }
+    }
+    elseif ($item->has('view_id')) {
+      $itemType = $item->get('view_id');
+      if ($itemType == 'taxonomy_term') {
+        $variables['breadcrumb_title'] = Html::escape($item->get($itemType)->get("name")->value);
+      }
+    }
+    // Turn off the trailing separator.
+    $variables['display_trailing_separator'] = FALSE;
+  }
+
+  // Provide a navigational heading to give context for breadcrumb links to
+  // screen-reader users.
+  if (empty($variables['title'])) {
+    $variables['title'] = t('You are here');
+  }
+}
+
+/**
+ * Override or insert variables for the breadcrumb theme function.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the theme function.
+ * @param string $hook
+ *   The name of the theme hook being called ("breadcrumb" in this case).
+ *
+ * @see boston_breadcrumb()
+ */
+function bos_theme_preprocess_block(array &$variables, $hook) {
+
+}
+
+/**
+ * Implements hook_preprocess_menu().
+ */
+function bos_theme_preprocess_menu(array &$variables, $hook) {
+  if ($hook == "menu" && $variables['menu_name'] == "main") {
+    $first = TRUE;
+    foreach ($variables['items'] as $id => &$item) {
+      if ($first) {
+        $item['class-array'][] = 'first';
+      }
+      $id = explode(':', $id);
+      $menu = \Drupal::service('entity.repository')
+        ->loadEntityByUuid($id[0], $id[1]);
+      $item['class-array'][] = 'menu-mlid-' . $menu->id();
+      if (stripos($item['title'], '311') !== FALSE) {
+        $item['class-array'][] = "nv-m-c-a--y";
+        $item['linkclass'] = "three-one-one";
+      }
+      $item['classes'] = implode(" ", $item['class-array']);
+      $first = FALSE;
+
+    }
+    // For the last element.
+    $item['class-array'][] = 'last';
+    $item['classes'] = implode(" ", $item['class-array']);
+
+  }
+  if ($hook == "menu" && $variables['menu_name'] == "secondary_menu") {
+    return;
+  }
+}
+
+/**
+ * Implements theme_preprocess_hook().
+ */
+function bos_theme_preprocess_node(array &$variables, $hook) {
+  if (isset($variables['elements']['#node'])) {
+    $node = $variables['elements']['#node'];
+    $variables['node_type'] = $node->getType();
+    $variables['node_url'] = $node->url();
+    $variables['title'] = $node->title->view();
+    $variables['nid'] = $node->id();
+    $variables['unpublished'] = !empty($node->isPublished()) ? TRUE : FALSE;
+
+    $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
+    $variables['date'] = format_date($node->get('published_at')->getString(), 'custom', 'c');
+    $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
+
+    // Add pubdate to submitted variable.
+    // TODO: display_submitted not set.
+    if (!empty($variables['display_submitted'])) {
+      $variables['submitted'] = t('Submitted by !username on !datetime', [
+        '!username' => isset($variables['name']) ? $variables['name'] : '',
+        '!datetime' => isset($variables['pubdate']) ? $variables['pubdate'] : '',
+      ]);
+    }
+
+    if (empty($variables["attributes"])) {
+      $variables["attributes"] = new Attribute();
+    }
+
+    // Add in the necessary classes.
+    $variables['attributes']->addClass('node-' . $variables['nid']);
+    $variables['attributes']['class'][] = 'node';
+    $variables['attributes']['class'][] = Html::cleanCssIdentifier('node-' . $variables['node_type']);
+    if ($variables['unpublished']) {
+      $variables['attributes']['class'][] = 'node-unpublished';
+    }
+
+    // Make the navigation menu.
+    /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
+    if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
+      $variables['navOutput'] = [
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#items' => [],
+        '#attributes' => [],
+      ];
+      foreach ($variables["content"]["field_components"] as $key => $component) {
+        if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
+          // Add js to enable component_navigation in-page menu (and scroll).
+          $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+          // Build the in-page navigation menu and links.
+          $title = $component['#paragraph']->field_short_title->value;
+          $url = Url::fromUserInput("#" . Html::cleanCssIdentifier(strtolower($title)), ["attributes" => ["class" => ["scroll-link-js"]]]);
+          $anchor = \Drupal::service('link_generator')->generate($title, $url);
+          $variables['navOutput']["#items"][] = $anchor;
+        }
+      }
+
+      // Add in the chevron used in mobile UX.
+      $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
+    }
+
+    // Add the squiggle bottom onto the page, below the intro-text.
+    if (isset($variables["content"]["field_intro_text"])) {
+      if (!isset($variables["content"]["field_intro_text"]["#attributes"])) {
+        $variables["content"]["field_intro_text"]["#attributes"] = new Attribute();
+      }
+      $variables["content"]["field_intro_text"]["#attributes"]->addClass("intro-text");
+      $variables["content"]["field_intro_text"]["#attributes"]->addClass("supporting-text");
+      $variables["content"]["field_intro_text"]["#attributes"]->addClass("squiggle-border-bottom");
+    }
+
+    // If the node is unpublished, add the "unpublished" watermark class.
+    if ($variables['unpublished'] || $variables['preview']) {
+      $variables['attributes']['class'][] = 'watermark__wrapper';
+    }
+
+    // Addin a theme override for the contextual_links.
+    $variables["#attached"]["library"][] = 'bos_theme/context_link';
+  }
+}
+
+/**
+ * Implements theme_preprocess_hook().
+ */
+function bos_theme_preprocess_field(array &$variables, $hook) {
+  // Emulate D7 paragraphs_items class-names.
+  if (!isset($variables['attributes'])) {
+    $variables['attributes'] = new Attribute();
+  }
+  if ($variables['field_type'] == "entity_reference_revisions" && isset($variables['items'][0]['content']['#paragraph'])) {
+    $variables['attributes']->addClass("paragraphs-items");
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("paragraphs-items-" . $variables['field_name']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("paragraphs-items-" . $variables['items'][0]['content']['#view_mode']));
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("paragraphs-items-" . $variables['field_name'] . "-" . $variables['items'][0]['content']['#view_mode']));
+  }
+  else {
+    $variables['attributes']->addClass("field");
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("field-name-" . $variables['field_name']));
+    if ($variables['field_type'] == "string") {
+      $variables['attributes']->addClass("field-type-text");
+    }
+    $variables['attributes']->addClass(Html::cleanCssIdentifier("field-type-" . $variables['field_type']));
+    if (isset($variables["label_display"]) && !$variables["label_display"]) {
+      $variables['attributes']->addClass("field-label-hidden");
+    }
+  }
+
+  if (!empty($variables['items'])) {
+    foreach ($variables["items"] as $key => $item) {
+      if (!empty($item["attributes"]) && count($item["attributes"]->storage()) == 0) {
+        unset($variables["items"][$key]['attributes']);
+      }
+    }
+  }
+
+  // Add a named anchor to each component (in-page navigation scrolling).
+  /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
+  if ($variables["field_name"] == "field_components") {
+    if (!empty($variables['items'])) {
+      foreach ($variables["items"] as $key => &$component) {
+        // Only add if the component has a short_title set.
+        if (!empty($component['content']['#paragraph']->field_short_title->value)) {
+          $component['content']['nav_title']['attributes'] = new Attribute([
+            "class" => ["subnav-anchor"],
+            "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
+            "data-text" => $component['content']['#paragraph']->field_short_title->value,
+          ]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function bos_theme_preprocess_paragraph(&$variables) {
+  $mode = _bos_theme_library();
+  $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
+  if (!empty($variables['paragraph'])) {
+    $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
+    $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
+  }
+}
+
+/**
+ * Implements hook_status_messages().
+ */
+function bos_theme_preprocess_status_messages(array &$variables) {
+  // Allow a preprocess function to override the default SVG icons.
+  if (!isset($variables['status_icon'])) {
+    $variables['status_icon'] = [];
+    foreach (['status', 'warning', 'error'] as $type) {
+      // Add a GPL-licensed icon from IcoMoon. https://icomoon.io/#preview-free
+      $icon_size = 'width="24" height="24"';
+      // All of the IcoMoon SVGs have the same header.
+      $variables['status_icon'][$type] = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' . $icon_size . ' viewBox="0 0 64 64">';
+      switch ($type) {
+        case 'error':
+          $variables['status_icon'][$type] .= '<path d="M63.416 51.416c-0-0-0.001-0.001-0.001-0.001l-19.415-19.416 19.415-19.416c0-0 0.001-0 0.001-0.001 0.209-0.209 0.36-0.453 0.457-0.713 0.265-0.711 0.114-1.543-0.458-2.114l-9.172-9.172c-0.572-0.572-1.403-0.723-2.114-0.458-0.26 0.097-0.504 0.248-0.714 0.457 0 0-0 0-0.001 0.001l-19.416 19.416-19.416-19.416c-0-0-0-0-0.001-0.001-0.209-0.209-0.453-0.36-0.713-0.457-0.711-0.266-1.543-0.114-2.114 0.457l-9.172 9.172c-0.572 0.572-0.723 1.403-0.458 2.114 0.097 0.26 0.248 0.505 0.457 0.713 0 0 0 0 0.001 0.001l19.416 19.416-19.416 19.416c-0 0-0 0-0 0.001-0.209 0.209-0.36 0.453-0.457 0.713-0.266 0.711-0.114 1.543 0.458 2.114l9.172 9.172c0.572 0.572 1.403 0.723 2.114 0.458 0.26-0.097 0.504-0.248 0.713-0.457 0-0 0-0 0.001-0.001l19.416-19.416 19.416 19.416c0 0 0.001 0 0.001 0.001 0.209 0.209 0.453 0.36 0.713 0.457 0.711 0.265 1.543 0.114 2.114-0.458l9.172-9.172c0.572-0.572 0.723-1.403 0.458-2.114-0.097-0.26-0.248-0.504-0.457-0.713z" fill="#000000"></path>';
+          break;
+
+        case 'warning':
+          $variables['status_icon'][$type] .= '<path d="M26,64l12,0c1.105,0 2,-0.895 2,-2l0,-9c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,9c0,1.105 0.895,2 2,2Z" fill="#000000"></path><path d="M26,46l12,0c1.105,0 2,-0.895 2,-2l0,-42c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,42c0,1.105 0.895,2 2,2Z" fill="#000000"></path>';
+          break;
+
+        default:
+          $variables['status_icon'][$type] .= '<path d="M54 8l-30 30-14-14-10 10 24 24 40-40z" fill="#000000"></path>';
+      }
+      $variables['status_icon'][$type] .= '</svg>';
+    }
+  }
+
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook) {
+  /*
+   * 401/3/4 template suggestions.
+   */
+  $status_code = 200;
+  if (!is_null(Drupal::requestStack()
+    ->getCurrentRequest()->attributes->get('exception'))) {
+    $status_code = (string) Drupal::requestStack()
+      ->getCurrentRequest()->attributes->get('exception')->getStatusCode();
+  }
+
+  switch ($status_code) {
+    case 401:
+    case 403:
+    case 404:
+      $suggestions[] = 'page__' . $status_code;
+      break;
+
+    default:
+      break;
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ *
+ * This overrides the fences default field.html.twig template with our own.
+ * We do this because the fences class naming does not align with the legacy
+ * classes we have defined in patterns library.
+ * Allowing fences to control field class naming would require overriding each
+ * field in the paragraphs defined in this webite, or redefining the boston
+ * templates defined in the patterns library.
+ */
+function bos_theme_theme_registry_alter(&$theme_registry) {
+  $module_path = drupal_get_path('theme', 'bos_theme') . "/templates/field";
+  $theme_registry['field']['path'] = $module_path;
+}
+
+/***************************************************************
+ * Helper functions
+ */
+
+/**
+ * Helper to find svg img from the correct /dist/img/ in theme or base_themes.
+ *
+ * @param string $image
+ *   The image filename to use.
+ *
+ * @return bool|string
+ *   Returns a string containing the svg image definition.
+ */
+function _bos_theme_findsvg($image) {
+  $theme_info = \Drupal::service('theme.manager')->getActiveTheme();
+  $svg = "";
+  if (file_exists(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
+    $svg = file_get_contents(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image);
+  }
+  else {
+    foreach ($theme_info->getBaseThemes() as $base_theme) {
+      if (file_exists(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image)) {
+        $svg = file_get_contents(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image);
+        break;
+      }
+    }
+  }
+  return $svg;
+}
+
+/**
+ * Helper function to determine which patterns library is being used.
+ *
+ * @return string
+ *   Returns one of 'local' | 'patterns' | 'heroku-patterns'.
+ */
+function _bos_theme_library() {
+  $theme = theme_get_setting('asset_source');
+  if (empty($theme)) {
+    $theme = \Drupal::service('library.discovery')
+      ->getLibrariesByExtension('bos_theme');
+    $theme = array_keys($theme);
+    $theme = $theme[0];
+  }
+  $mode = explode(".", $theme);
+  $mode = array_reverse($mode);
+  return $mode[0];
+}
+
+/**
+ * Ensure attributes element of variables array is an Attribute object.
+ *
+ * This snippet fixes the situation where a module has defined an attributes
+ * element as an array and not a Drupal\core\Template\Attribute object.
+ *
+ * @param array $variables
+ *   The current variables array as generated pre-rendering.
+ */
+function _bos_theme_fix_attributes(array &$variables) {
+  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
+    $attribute = new Attribute();
+    if (!empty($variables['attributes'])) {
+      foreach ($variables["attributes"] as $key => $element) {
+        $attribute->setAttribute($key, $element);
+      }
+    }
+    if (!empty($attribute)) {
+      $variables['attributes'] = $attribute;
+    }
+  }
 }

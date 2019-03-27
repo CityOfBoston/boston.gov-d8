@@ -1,0 +1,24 @@
+id: paragraph__sidebar_item_w_icon
+label: 'Sidebar Item with Icon Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: sidebar_item_w_icon
+process:
+  field_sidebar_icon: field_sidebar_icon
+  field_sidebar_text: field_sidebar_text
+  field_title: field_title
+destination:
+  plugin: entity:paragraph
+  default_bundle: sidebar_item_w_icon
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

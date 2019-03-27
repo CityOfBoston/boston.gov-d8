@@ -1,0 +1,31 @@
+id: paragraph__map
+label: 'Map Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: map
+process:
+  field_contact: field_contact
+  field_extra_info: field_extra_info
+  field_hide_title_bar: field_hide_title_bar
+  field_map: field_map
+  field_map_default_coordinates: field_map_default_coordinates
+  field_map_options: field_map_options
+  field_map_point_of_interest: field_map_point_of_interest
+  field_short_title: field_short_title
+  field_component_title: field_component_title
+  field_map_type: field_map_type
+destination:
+  plugin: entity:paragraph
+  default_bundle: map
+  new_revisions: true
+migration_dependencies:
+  required: {  }
+  optional: {  }

@@ -1,0 +1,120 @@
+uuid: b7fc2f74-f780-460d-aefa-8dac0fd3b74c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.text.field_background_image
+    - field.field.paragraph.text.field_component_title
+    - field.field.paragraph.text.field_contact
+    - field.field.paragraph.text.field_hide_title_bar
+    - field.field.paragraph.text.field_short_title
+    - field.field.paragraph.text.field_text_blocks
+    - paragraphs.paragraphs_type.text
+  module:
+    - content_moderation
+    - field_group
+    - paragraphs
+third_party_settings:
+  field_group:
+    group_basic_information:
+      children:
+        - field_component_title
+        - field_hide_title_bar
+        - field_short_title
+        - field_contact
+        - field_background_image
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Text Information'
+    group_text_blocks:
+      children:
+        - field_text_blocks
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        label: 'Formatted Text Blocks'
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Formatted Text Blocks'
+_core:
+  default_config_hash: SAnBki87S_9wRZTJapAnsT0LdD24Z_G69e_ryTe14X0
+id: paragraph.text.default
+targetEntityType: paragraph
+bundle: text
+mode: default
+content:
+  field_background_image:
+    weight: 4
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_component_title:
+    weight: 0
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_hide_title_bar:
+    weight: 1
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_text_blocks:
+    weight: 6
+    type: paragraphs
+    settings:
+      title: 'Text Block'
+      title_plural: 'Text Blocks'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 8
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true

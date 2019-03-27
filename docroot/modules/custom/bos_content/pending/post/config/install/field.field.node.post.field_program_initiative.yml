@@ -1,0 +1,30 @@
+uuid: 0439fdab-e8b2-4b3e-9674-0a127f009b29
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_program_initiative
+    - node.type.post
+    - node.type.program_initiative_profile
+id: node.post.field_program_initiative
+field_name: field_program_initiative
+entity_type: node
+bundle: post
+label: 'Related programs / initiatives'
+description: 'Which programs or initiatives are relevant for this post?'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      program_initiative_profile: program_initiative_profile
+field_type: entity_reference
