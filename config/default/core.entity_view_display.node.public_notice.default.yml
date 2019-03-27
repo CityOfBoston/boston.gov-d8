@@ -3,9 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_public_notice.default
     - field.field.node.public_notice.body
-    - field.field.node.public_notice.comment_node_public_notice
     - field.field.node.public_notice.field_cancelled
     - field.field.node.public_notice.field_city_hall
     - field.field.node.public_notice.field_components
@@ -32,7 +30,6 @@ dependencies:
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
   module:
-    - comment
     - datetime
     - entity_reference_revisions
     - options
@@ -48,15 +45,6 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  comment_node_public_notice:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
     third_party_settings: {  }
     region: content
   field_cancelled:

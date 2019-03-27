@@ -4,10 +4,10 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.listing_long
-    - field.field.node.topic_page.comment_node_topic_page
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
+    - field.field.node.topic_page.field_intro_text
     - field.field.node.topic_page.field_published_date
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
@@ -15,7 +15,7 @@ dependencies:
     - field.field.node.topic_page.field_updated_date
     - node.type.topic_page
   module:
-    - image
+    - svg_image
     - user
 id: node.topic_page.listing_long
 targetEntityType: node
@@ -35,7 +35,6 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_topic_page: true
   field_components: true
   field_contacts: true
   field_intro_text: true

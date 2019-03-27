@@ -4,10 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.change.body
-    - field.field.node.change.comment_node_change
     - node.type.change
   module:
-    - comment
     - content_moderation
     - path
     - publication_date
@@ -26,12 +24,6 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
-    third_party_settings: {  }
-    region: content
-  comment_node_change:
-    type: comment_default
-    weight: 20
-    settings: {  }
     third_party_settings: {  }
     region: content
   created:
