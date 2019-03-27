@@ -8,7 +8,7 @@
 /**
  * Implements hook_uninstall().
  */
-function event_uninstall() {
+function node_event_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
@@ -17,12 +17,12 @@ function event_uninstall() {
 /**
  * Implements hook_install().
  */
-function event_install() {
+function node_event_install() {
   // Using content_access module to hide this page from all but authenticated
   // users.
   if (function_exists("content_access_set_settings")) {
     $settings = [
-      'view' => ["authenticated"],
+      'view' => ["anonymous", "authenticated"],
       'view own' => ["authenticated"],
     ];
     try {

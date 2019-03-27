@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Provides an event entity type.
+ * Provides an node_event entity type.
  */
 
 use Drupal\Core\Render\Element;
@@ -10,7 +10,7 @@ use Drupal\Core\Render\Element;
 /**
  * Implements hook_theme().
  */
-function event_theme() {
+function node_event_theme() {
   return [
     'event' => [
       'render element' => 'elements',
@@ -29,7 +29,7 @@ function event_theme() {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_event(array &$variables) {
+function template_preprocess_node_event(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
