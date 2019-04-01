@@ -927,9 +927,19 @@ body.bos_admin {
   background-color: #f6f6f6;
 }
 
+.bos_admin .details-wrapper .form-wrapper thead tr {
+  border: none;
+}
+.bos_admin .details-wrapper .form-wrapper th.field-label {
+  color: inherit;
+  background: transparent;
+  padding-left: 0;
+}
+
+.bos_admin .details-wrapper .form-wrapper th.field-label h4,
 .bos_admin .details-wrapper .form-wrapper .form-type-managed-file label,
 .bos_admin .details-wrapper .form-wrapper .form-type-entity-autocomplete label,
-.bos_admin .details-wrapper .form-wrapper .field--widget-options-buttons .fieldset-legend,
+.bos_admin .details-wrapper .form-wrapper.field--widget-options-buttons .fieldset-legend,
 .bos_admin .details-wrapper .form-wrapper .form-type-select label div:not(.filter-wrapper),
 .bos_admin .details-wrapper .form-wrapper .form-type-textfield label,
 .bos_admin .entity-content-form-revision-information .form-wrapper .form-type-textarea label,
@@ -937,6 +947,11 @@ body.bos_admin {
   font-size: 1.5rem;
   padding: .5rem 0;
   font-variant: all-small-caps;
+}
+
+.bos_admin #edit-field-sidebar-components--description,
+.bos_admin #edit-field-components--description {
+  margin-bottom: 5px;
 }
 
 /* Theme for admin configuration page. */

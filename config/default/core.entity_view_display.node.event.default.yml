@@ -1,0 +1,74 @@
+uuid: bd98b76f-87d6-4823-ae3a-25c6e4febedf
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.node.event.field_cancel_event
+    - field.field.node.event.field_city_hall
+    - field.field.node.event.field_city_sponsored
+    - field.field.node.event.field_contacts
+    - field.field.node.event.field_cost
+    - field.field.node.event.field_description
+    - field.field.node.event.field_details_link
+    - field.field.node.event.field_email
+    - field.field.node.event.field_event_contact
+    - field.field.node.event.field_event_dates
+    - field.field.node.event.field_extra_info_event
+    - field.field.node.event.field_intro_image
+    - field.field.node.event.field_phone_number
+    - field.field.node.event.field_published_date
+    - field.field.node.event.field_related_departments
+    - field.field.node.event.field_thumbnail
+    - field.field.node.event.field_updated_date
+    - node.type.event
+  module:
+    - text
+    - user
+id: node.event.default
+targetEntityType: node
+bundle: event
+mode: default
+content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_contacts:
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_description:
+    weight: 101
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_cancel_event: true
+  field_city_hall: true
+  field_city_sponsored: true
+  field_cost: true
+  field_details_link: true
+  field_email: true
+  field_event_contact: true
+  field_event_dates: true
+  field_extra_info_event: true
+  field_intro_image: true
+  field_phone_number: true
+  field_published_date: true
+  field_related_departments: true
+  field_thumbnail: true
+  field_updated_date: true
+  langcode: true
+  published_at: true
