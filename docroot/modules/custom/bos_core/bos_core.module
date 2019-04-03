@@ -304,6 +304,15 @@ function bos_core_token_info() {
 }
 
 /**
+ * Implements hook_media_embed_alter().
+ */
+function bos_core_media_embed_alter(&$build, $entity, $context) {
+  if (!empty($context['data-style'])) {
+    $build['#attributes']['style'][] = $context['data-style'];
+  }
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
