@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_address
     - field.field.node.event.field_cancel_event
     - field.field.node.event.field_city_hall
     - field.field.node.event.field_city_sponsored
@@ -15,9 +16,13 @@ dependencies:
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
     - field.field.node.event.field_event_dates
+    - field.field.node.event.field_event_type
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
     - field.field.node.event.field_intro_image
+    - field.field.node.event.field_links
+    - field.field.node.event.field_manual_date
+    - field.field.node.event.field_multiple_neighborhoods
     - field.field.node.event.field_phone_number
     - field.field.node.event.field_published_date
     - field.field.node.event.field_related_departments
@@ -27,6 +32,7 @@ dependencies:
     - image.style.thumbnail
     - node.type.event
   module:
+    - address
     - advanced_text_formatter
     - content_moderation
     - datetime
@@ -70,20 +76,21 @@ third_party_settings:
       weight: 1
       format_type: tab
       format_settings:
+        label: 'Basic Information'
+        formatter: open
+        description: '<div class="bos-boxed-content"><a href="https://docs.google.com/document/d/1e3hyjdqM9W8M6WQ-VfuBJKy4dJOrp4XwAwqIcek31Hs/edit" target="_blank">Here are some useful tips for creating an event.</a></div>'
+        required_fields: true
         id: ''
         classes: ' group-event-basic-info field-group-tab'
-        formatter: open
-        description: '<p><a href="https://docs.google.com/document/d/1e3hyjdqM9W8M6WQ-VfuBJKy4dJOrp4XwAwqIcek31Hs/edit" target="_blank">Here''s some tips for creating an event.</a></p>'
-        required_fields: true
       label: 'Basic Information'
     group_event_information:
       children:
-        - field_details_link
-        - field_cost
+        - field_event_dates
         - field_city_sponsored
-        - group_event_date
-        - group_event_contact
+        - group_event_details
         - group_event_location
+        - group_event_contact
+        - group_event_date
       parent_name: group_article
       weight: 2
       format_type: tab
@@ -96,22 +103,24 @@ third_party_settings:
       label: 'Event Information'
     group_event_date:
       children:
-        - field_event_dates
+        - field_cost
       parent_name: group_event_information
-      weight: 24
+      weight: 26
       format_type: details
       format_settings:
-        label: 'Event  Date'
+        label: 'Event  Entry Fee'
         required_fields: true
         id: ''
         classes: ''
         open: false
-      label: 'Event  Date'
+      label: 'Event  Entry Fee'
     group_event_location:
       children:
         - field_city_hall
+        - field_address
+        - field_multiple_neighborhoods
       parent_name: group_event_information
-      weight: 26
+      weight: 24
       format_type: details
       format_settings:
         id: ''
@@ -135,10 +144,11 @@ third_party_settings:
       label: 'Event Contact'
     group_page_metadata:
       children:
+        - field_manual_date
         - field_updated_date
         - field_published_date
       parent_name: group_article
-      weight: 7
+      weight: 8
       format_type: tab
       format_settings:
         id: ''
@@ -164,7 +174,7 @@ third_party_settings:
       children:
         - field_sidebar_components
       parent_name: group_article
-      weight: 5
+      weight: 6
       format_type: tab
       format_settings:
         id: ''
@@ -177,7 +187,7 @@ third_party_settings:
       children:
         - field_related_departments
       parent_name: group_article
-      weight: 6
+      weight: 7
       format_type: tab
       format_settings:
         id: ''
@@ -201,6 +211,21 @@ third_party_settings:
         id: ''
         classes: ''
       label: 'Event Cancellation'
+    group_event_details:
+      children:
+        - field_event_type
+        - field_details_link
+        - field_links
+      parent_name: group_event_information
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Event Details'
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -221,6 +246,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_address:
+    weight: 7
+    settings:
+      default_country: US
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_cancel_event:
     type: boolean_checkbox
     weight: 27
@@ -237,28 +269,29 @@ content:
     third_party_settings: {  }
   field_city_sponsored:
     type: boolean_checkbox
-    weight: 23
+    weight: 22
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_components:
     type: paragraphs
-    weight: 1
+    weight: 4
     region: content
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
+      title: 'Event Component'
+      title_plural: 'Event Components'
       edit_mode: open
       closed_mode: summary
       autocollapse: none
       closed_mode_threshold: 0
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
       features:
         duplicate: duplicate
         collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
   field_contacts:
     weight: 3
@@ -271,7 +304,7 @@ content:
     region: content
   field_cost:
     type: string_textfield
-    weight: 22
+    weight: 24
     region: content
     settings:
       size: 60
@@ -289,11 +322,11 @@ content:
     region: content
   field_details_link:
     type: link_default
-    weight: 21
+    weight: 6
     region: content
     settings:
-      placeholder_url: ''
-      placeholder_title: ''
+      placeholder_url: '(optional) Link to Event Details'
+      placeholder_title: '(optional) Text for the Event details Link'
     third_party_settings: {  }
   field_email:
     type: string_textfield
@@ -314,6 +347,12 @@ content:
   field_event_dates:
     type: datetime_default
     weight: 21
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_event_type:
+    type: options_select
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -339,6 +378,38 @@ content:
       progress_indicator: throbber
     region: content
     third_party_settings: {  }
+  field_links:
+    type: paragraphs
+    weight: 7
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+  field_manual_date:
+    weight: 29
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_multiple_neighborhoods:
+    type: options_buttons
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_phone_number:
     type: string_textfield
     weight: 25
@@ -349,13 +420,13 @@ content:
     third_party_settings: {  }
   field_published_date:
     type: datetime_default
-    weight: 5
+    weight: 31
     region: content
     settings: {  }
     third_party_settings: {  }
   field_related_departments:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 21
     region: content
     settings:
       match_operator: CONTAINS
@@ -367,18 +438,19 @@ content:
     weight: 1
     region: content
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
       edit_mode: open
       closed_mode: summary
       autocollapse: none
       closed_mode_threshold: 0
       add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
       features:
         duplicate: duplicate
         collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
   field_thumbnail:
     type: image_image
@@ -390,7 +462,7 @@ content:
     third_party_settings: {  }
   field_updated_date:
     type: datetime_default
-    weight: 4
+    weight: 30
     region: content
     settings: {  }
     third_party_settings: {  }
