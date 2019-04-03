@@ -16,6 +16,7 @@ use Drupal\core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
+use \Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -335,16 +336,18 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   if (!empty($path_args[2])) {
     $nid = $path_args[2];
     if ($path_args[1] == 'node' && is_numeric($nid)) {
-      if (isset($variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'])) {
-        $background_image = $variables['page']['content']['system_main']['nodes'][$nid]['field_intro_image'];
-        $uri = $background_image[0]['#item']['uri'];
+      if (isset($variables["node"]->field_intro_image)) {
+        $background_image = $variables["node"]->field_intro_image;
+        $uri = $background_image->entity->getFileUri();
 
         $variables['header_image'] = TRUE;
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->setAttribute("id", "page");
         $variables['background_image'] = $background_image;
-        $variables['xlarge_image'] = image_style_url('rep_wide_2000x700custom_boston_desktop_2x', $uri);
-        $variables['large_image'] = image_style_url('rep_wide_2000x700custom_boston_desktop_1x', $uri);
-        $variables['medium_image'] = image_style_url('rep_wide_2000x700custom_boston_tablet_2x', $uri);
-        $variables['small_image'] = image_style_url('rep_wide_2000x700custom_boston_mobile_2x', $uri);
+        $variables['xlarge_image'] =  ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')->buildUrl($uri);
+        $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')->buildUrl($uri);
+        $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')->buildUrl($uri);
+        $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')->buildUrl($uri);
       }
     }
   }

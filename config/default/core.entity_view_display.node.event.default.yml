@@ -106,7 +106,7 @@ content:
       link: ''
     third_party_settings: {  }
   field_contacts:
-    weight: 13
+    weight: 14
     label: hidden
     settings:
       link: true
@@ -115,17 +115,17 @@ content:
     region: content
   field_cost:
     type: string
-    weight: 11
+    weight: 9
     region: content
-    label: hidden
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings:
       fences:
         fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
   field_description:
@@ -156,7 +156,7 @@ content:
     third_party_settings: {  }
   field_email:
     type: string
-    weight: 7
+    weight: 6
     region: content
     label: hidden
     settings:
@@ -171,7 +171,7 @@ content:
         fences_label_classes: ''
   field_event_contact:
     type: string
-    weight: 6
+    weight: 8
     region: content
     label: hidden
     settings:
@@ -180,8 +180,8 @@ content:
       fences:
         fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
   field_event_dates:
@@ -202,11 +202,11 @@ content:
         fences_label_classes: ''
   field_event_type:
     type: entity_reference_label
-    weight: 10
+    weight: 11
     region: content
     label: inline
     settings:
-      link: true
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -245,15 +245,22 @@ content:
     third_party_settings: {  }
   field_links:
     type: entity_reference_revisions_entity_view
-    weight: 15
+    weight: 12
     region: content
     label: inline
     settings:
       view_mode: default
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: detail-item__body--secondary
+        fences_label_tag: none
+        fences_label_classes: ''
   field_manual_date:
-    weight: 14
+    weight: 15
     label: hidden
     settings:
       format: default
@@ -264,15 +271,22 @@ content:
     region: content
   field_multiple_neighborhoods:
     type: entity_reference_label
-    weight: 9
+    weight: 10
     region: content
-    label: above
+    label: inline
     settings:
-      link: true
-    third_party_settings: {  }
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: detail-item__body--secondary
+        fences_label_tag: none
+        fences_label_classes: ''
   field_phone_number:
     type: string
-    weight: 8
+    weight: 7
     region: content
     label: hidden
     settings:
@@ -287,9 +301,9 @@ content:
         fences_label_classes: ''
   field_published_date:
     type: datetime_default
-    weight: 12
+    weight: 13
     region: content
-    label: hidden
+    label: inline
     settings:
       timezone_override: ''
       format_type: date_format_short
@@ -297,8 +311,8 @@ content:
       fences:
         fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
   field_related_departments:
