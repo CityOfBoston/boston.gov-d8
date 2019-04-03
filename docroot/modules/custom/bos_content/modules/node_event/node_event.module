@@ -58,61 +58,51 @@ function node_event_preprocess_node__event(&$variables) {
   _bos_theme_fix_attributes($variables);
   $variables['attributes']->addClass('desktop-100');
 
+  $vars = [
+    'classes' => [
+      'icon' => 'icon-time',
+      'label' => 'detail-item--secondary',
+      'body' => 'detail-item__body--tertiary',
+      'detail' => 'detail-item--middle'
+    ],
+  ];
   // Render the time element of the event date into a detail_item.
   if (isset($variables["content"]["field_event_dates"])) {
     // TODO: test when multiple dates. (in twig node-event.html.twig)
-    $vars = ['classes' => [
-        'icon' => 'icon-time',
-        'label' => 'detail-item--secondary',
-        'body' => 'detail-item__body--tertiary',
-        'detail' => 'detail-item--middle'
-      ],
-    ];
     $event_date = $variables["content"]["field_event_dates"]["#object"]->field_event_dates->first()->value;
-    $event_date = \Drupal::service('date.formatter')->format(strtotime($event_date), "date_format_calendar_time");
-    if ($variables["content"]["field_event_dates"]["#is_multiple"]) {
-      // TODO: Test for multiple dates.
-      foreach ($variables["content"]["field_event_dates"]["#items"] as $key => $value) {
-        $event_date .= "\n" . \Drupal::service('date.formatter')->format(strtotime($value->value), "date_format_calendar_time");
-      }
-      $vars += [
-        'body' => $event_date,
-      ];
-    }
-    else {
-      $vars += [
-        'label' => $event_date,
-      ];
-    }
+    $event_date = strtotime($event_date . " +0000");  //stored in UTC.
+    $event_date = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+    $vars["label"] = $event_date;
     $variables["content"]["field_event_times"] = Drupal::theme()->render("detail_item", $vars);
   }
 
+  $vars = [
+    'classes' => [
+      'label' => 'detail-item--left',
+      'body' => 'detail-item--secondary',
+      'detail' => 'detail-item--secondary'
+    ],
+  ];
+
   // Render the cost into a details_item.
   if (isset($variables["content"]["field_cost"])) {
-    $vars = ['classes' => [
-        'body' => 'detail-item--secondary',
-        'detail' => 'detail-item--secondary'
-      ],
-      'label' => "Price:",
-      "body" => $variables["content"]["field_cost"]["#items"]->first()->value,
-    ];
+    $vars["label"] = $variables["content"]["field_cost"]["#title"] . ":";
+    $vars["body"] = $variables["content"]["field_cost"];
     $variables["content"]["cost"] = Drupal::theme()->render("detail_item", $vars);
   }
 
   // Render the event_contact into a details_item.
   if (isset($variables["content"]["field_event_contact"])) {
-    $vars["label"] = "Contact:";
-    $vars["body"] = $variables["content"]["field_event_contact"]["#items"]->first()->value;
+    $vars["label"] = $variables["content"]["field_event_contact"]["#title"] . ":";
+    $vars["body"] = $variables["content"]["field_event_contact"];
     $variables["content"]["field_event_contact"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
 
   // Render the published_date into a details_item.
   if (isset($variables["content"]["field_published_date"])) {
-    $pub_date = $variables["content"]["field_published_date"]["#object"]->field_published_date->value;
-    $pub_date = \Drupal::service('date.formatter')->format(strtotime($pub_date), "date_format_short");
-    $vars["label"] = $variables["content"]["field_published_date"]["#title"] . ":";
-    $vars["body"] = $pub_date;
+    $vars["label"] = "Posted:";
+    $vars["body"] = $variables["content"]["field_published_date"];
     $variables["content"]["field_published_date"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
@@ -120,16 +110,7 @@ function node_event_preprocess_node__event(&$variables) {
   // Render the event_type into a details_item.
   if (isset($variables["content"]["field_multiple_neighborhoods"])) {
     $vars["label"] = $variables["content"]["field_multiple_neighborhoods"]["#title"] . ":";
-    $vars["body"] = "";
-    if ($variables["content"]["field_multiple_neighborhoods"]["#is_multiple"]) {
-      foreach ($variables["content"]["field_multiple_neighborhoods"]["#items"] as $key => $value) {
-        $vars["body"] .= "\n" . $variables["content"]["field_multiple_neighborhoods"][$key]["#title"];
-      }
-      $vars['classes']['body'] = 'detail-item__body--secondary';
-    }
-    else {
-      $vars["body"] = $variables["content"]["field_multiple_neighborhoods"][0]["#title"];
-    }
+    $vars["body"] = $variables["content"]["field_multiple_neighborhoods"];
     $variables["content"]["field_multiple_neighborhoods"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
@@ -137,17 +118,12 @@ function node_event_preprocess_node__event(&$variables) {
   // Render the downloads (field_links) into a details_item.
   if (isset($variables["content"]["field_links"])) {
     $vars["label"] = $variables["content"]["field_links"]["#title"] . ":";
-    $vars["body"] = "";
-    if ($variables["content"]["field_links"]["#is_multiple"]) {
-      foreach ($variables["content"]["field_links"]["#items"] as $key => $value) {
-        $vars["body"] .= "\n" . $variables["content"]["field_links"][$key]["#paragraph"];
-      }
-      $vars['classes']['body'] = 'detail-item__body--secondary';
-    }
-    else {
-      $vars["body"] = $variables["content"]["field_links"][0];
-    }
+    $vars["body"] =  $variables["content"]["field_links"];
     $variables["content"]["field_links"] = Drupal::theme()
       ->render("detail_item", $vars);
+  }
+
+  if (!empty($variables["content"]["field_city_hall"]) ) {
+    // TODO: Ajax back to get the address for CityHall.
   }
 }
