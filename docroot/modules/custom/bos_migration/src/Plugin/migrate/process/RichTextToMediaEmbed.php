@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\media\MediaInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
+use Drupal\Component\Serialization\Json;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -24,6 +25,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
   protected static $baseUrl = "www.boston.gov";
   protected static $relativeUrl = "sites/default/files";
+  protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
 
   /**
    * {@inheritdoc}
@@ -53,6 +55,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @returns string
    */
   public function convertToEntityEmbed($value, MigrateExecutableInterface $migrate_executable) {
+    // D7 media embeds get stored as funky tokens. Replace them with valid HTML
+    // so that the preceeding processing works smoothly.
+    $this->replaceD7MediaEmbeds($value);
+
     $document = $this->getDocument($value, $migrate_executable);
     $xpath = new \DOMXPath($document);
 
@@ -74,6 +80,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         $drupal_entity_node->setAttribute('data-entity-embed-display', 'bos_media_image');
         $drupal_entity_node->setAttribute('data-entity-type', 'media');
         $drupal_entity_node->setAttribute('data-entity-uuid', $media_entity->uuid());
+        $drupal_entity_node->setAttribute('data-style', $image_node->getAttribute('style'));
         // Replace the image node with the created element.
         $image_node->parentNode->insertBefore($drupal_entity_node, $image_node);
         $image_node->parentNode->removeChild($image_node);
@@ -103,6 +110,98 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     return Html::serialize($document);
+  }
+
+  /**
+   * Replaces D7 media embeds with valid HTML.
+   *
+   * @param string $value
+   *   Raw value.
+   *
+   * @return string
+   *   Value with media embeds replaced as HTML.
+   */
+  protected function replaceD7MediaEmbeds(&$value) {
+    $count = 1;
+    preg_match_all(self::$MediaWYSIWYGTokenREGEX, $value, $matches);
+    if (!empty($matches[0])) {
+      foreach ($matches[0] as $match) {
+        $replacement = $this->mediaWysiwygTokenToMarkup($match);
+        $value = str_replace($match, $replacement, $value, $count);
+      }
+    }
+
+    return $value;
+  }
+
+  /**
+   * Transform media embed token to markup.
+   *
+   * @param string $token
+   *   The token value.
+   *
+   * @return string
+   *   Token with replacements made.
+   */
+  protected function mediaWysiwygTokenToMarkup(string $token) {
+    $json = str_replace("[[", "", $token);
+    $json = str_replace("]]", "", $json);
+
+    try {
+      if (!is_string($json)) {
+        throw new Exception('Unable to find matching tag');
+      }
+      $tag_info = Json::decode($json);
+      if (!$file = \Drupal::service('entity_type.manager')->getStorage('file')->load($tag_info['fid'])) {
+        throw new MigrateException("Could not load file object: {$tag_info['fid']}");
+      }
+      $tag_info['file'] = $file;
+      if (!empty($tag_info['attributes']) && is_array($tag_info['attributes'])) {
+        if (isset($tag_info['attributes']['style'])) {
+          $css_properties = [];
+          foreach (array_map('trim', explode(";", $tag_info['attributes']['style'])) as $declaration) {
+            if ($declaration != '') {
+              list($name, $value) = array_map('trim', explode(':', $declaration, 2));
+              $css_properties[strtolower($name)] = $value;
+            }
+          }
+          foreach (['width', 'height'] as $dimension) {
+            if (isset($css_properties[$dimension]) && substr($css_properties[$dimension], -2) == 'px') {
+              $tag_info[$dimension] = substr($css_properties[$dimension], 0, -2);
+            }
+            elseif (isset($tag_info['attributes'][$dimension])) {
+              $tag_info[$dimension] = $tag_info['attributes'][$dimension];
+            }
+          }
+        }
+        foreach (['title', 'alt'] as $field_type) {
+          if (isset($tag_info['attributes'][$field_type])) {
+            $tag_info['attributes'][$field_type] = Html::decodeEntities($tag_info['attributes'][$field_type]);
+          }
+        }
+      }
+    }
+    catch (Exception $e) {
+      throw new MigrateException("D7 media token decoding has failed: {$token}");
+    }
+
+    if (isset($tag_info['link_text'])) {
+      $file->filename = Html::decodeEntities($tag_info['link_text']);
+    }
+    $document = new \DOMDocument();
+    $img = $document->createElement('img');
+    $uri = $tag_info['file']->getFileUri();
+    $url = file_create_url($uri);
+    $img->setAttribute('src', file_url_transform_relative($url));
+    foreach ($tag_info['attributes'] as $attribute => $value) {
+      $img->setAttribute($attribute, $value);
+    }
+    $document->appendChild($img);
+    $document_parts = explode("\n", $document->saveXML());
+    $image = array_filter($document_parts, function ($value) {
+      return strpos($value, '<img') === 0;
+    });
+    return array_pop($image);
   }
 
   /**
