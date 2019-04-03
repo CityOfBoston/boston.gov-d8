@@ -608,7 +608,8 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['node_url'] = $node->url();
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
-    $variables['unpublished'] = !empty($node->isPublished()) ? TRUE : FALSE;
+    $variables['unpublished'] = empty($node->isPublished());
+    $variables['moderation_state'] = Drupal::entityTypeManager()->getStorage("node")->loadRevision(3)->get('moderation_state')->getString();
 
     $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
     $variables['date'] = format_date($node->get('published_at')->getString(), 'custom', 'c');
@@ -623,16 +624,19 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       ]);
     }
 
-    if (empty($variables["attributes"])) {
-      $variables["attributes"] = new Attribute();
-    }
-
     // Add in the necessary classes.
+    _bos_theme_fix_attributes($variables);
     $variables['attributes']->addClass('node-' . $variables['nid']);
-    $variables['attributes']['class'][] = 'node';
-    $variables['attributes']['class'][] = Html::cleanCssIdentifier('node-' . $variables['node_type']);
-    if ($variables['unpublished']) {
-      $variables['attributes']['class'][] = 'node-unpublished';
+    $variables['attributes']->addClass('node');
+    $variables['attributes']->addClass('clearfix');
+    $variables['attributes']->addClass(Html::cleanCssIdentifier('node-' . $variables['node_type']));
+    if ($variables['unpublished'] || $variables['preview']) {
+      // TODO: These are probably not both required ...
+      $variables['attributes']->addClass('node-unpublished');
+      $variables['attributes']->addClass('watermark__wrapper');
+    }
+    if ($variables['moderation_state']) {
+      $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
     }
 
     // Make the navigation menu.
@@ -668,11 +672,6 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       $variables["content"]["field_intro_text"]["#attributes"]->addClass("intro-text");
       $variables["content"]["field_intro_text"]["#attributes"]->addClass("supporting-text");
       $variables["content"]["field_intro_text"]["#attributes"]->addClass("squiggle-border-bottom");
-    }
-
-    // If the node is unpublished, add the "unpublished" watermark class.
-    if ($variables['unpublished'] || $variables['preview']) {
-      $variables['attributes']['class'][] = 'watermark__wrapper';
     }
 
     // Addin a theme override for the contextual_links.
