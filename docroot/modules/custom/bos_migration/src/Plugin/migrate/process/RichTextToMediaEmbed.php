@@ -96,11 +96,13 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
+        \Drupal::logger('Migrate')->notice('1:Unexpected file type.');
         continue;
       }
       elseif ($this->resolveFileType($href) !== 'file') {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
+        \Drupal::logger('Migrate')->notice('1:Unexpected file type.');
         continue;
       }
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
@@ -251,6 +253,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
         // Nothing to do if we can't extract the URI.
+        \Drupal::logger('Migrate')->notice('3:URI extraction failed.');
         return NULL;
       }
     }
@@ -263,6 +266,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $file = $this->getFile($uri);
     if (!$file) {
       // Nothing to do if we can't find the file.
+      \Drupal::logger('Migrate')->notice('4:File lookup failed.');
       return NULL;
     }
     $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
@@ -439,6 +443,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     // We don't want to process any thing that we can't identify.
+    \Drupal::logger('Migrate')->notice('5:Unexpected file type.');
     return NULL;
   }
 
