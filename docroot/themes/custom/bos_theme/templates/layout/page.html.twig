@@ -81,9 +81,14 @@
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
 
-         {{ drupal_block('system_breadcrumb_block') }}
+        {% if not node and not header_image %}
+          {% if node.type.entity.label|lower == 'tabbed_content' or node.type.entity.label|lower == 'how_to' %}
+            {{ drupal_block('system_breadcrumb_block') }}
+          {% endif %}
+        {%  endif %}
 
-         {{ title_prefix }}
+        {{ title_prefix }}
+
         {%  if title and not hide_page_title %}
           {{ title }}
         {%  endif %}
@@ -97,9 +102,10 @@
           <ul class="action-links">{{ action_links }}</ul>
         {%  endif %}
 
-        {% if header_image %}
-          {% if node and not node.type == 'tabbed_content' and not node.type == 'how_to' %}
-            {% if not node.type == 'topic_page' %}
+        {% if node and header_image %}
+          {% if node.type.entity.label|lower != 'tabbed_content' and node.type.entity.label|lower != 'how_to' %}
+            {% if node.type.entity.label|lower != 'topic_page' %}
+              {{ breakpoint() }}
               <style>
                 .hro {
                   background-image: url({{ small_image }});
@@ -133,15 +139,19 @@
                 </div>
               </div>
             {% endif %}
+
+            <div class="brc--wh" data-swiftype-index="false">
+              {{ drupal_block('system_breadcrumb_block') }}
+            </div>
+
           {% endif %}
-          {% if node and not node.type == 'tabbed_content' and not node.type == 'how_to' %}
-            {% if page.breadcrumb %}
-              <div{% if header_image %} class="brc--wh"{% endif %} data-swiftype-index="false">{{ breadcrumb}}</div>
-            {% endif %}
-          {% endif %}
+
         {% endif %}
+
         {{ page.content }}
+
         {{ feed_icons }}
+
       </section>
     </div>
   </div>

@@ -1,0 +1,74 @@
+name: Event
+type: module
+description: 'Event Details, used with the calendar and many other places throughout the site.'
+package: City of Boston (content)
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_content
+config_devel:
+  - node.type.event
+  - field.field.node.event.body
+  - field.field.node.event.field_address
+  - field.field.node.event.field_event_type
+  - field.field.node.event.field_links
+  - field.field.node.event.field_manual_date
+  - field.field.node.event.field_multiple_neighborhoods
+  - field.field.node.event.field_cost
+  - field.field.node.event.field_email
+  - field.field.node.event.field_links
+  - field.field.node.event.field_place
+  - field.field.node.event.field_people
+  - field.field.node.event.field_contact
+  - field.field.node.event.field_featured
+  - field.field.node.event.field_city_hall
+  - field.field.node.event.field_thumbnail
+  - field.field.node.event.field_components
+  - field.field.node.event.field_event_type
+  - field.field.node.event.field_event_dates
+  - field.field.node.event.field_intro_image
+  - field.field.node.event.field_cancel_event
+  - field.field.node.event.field_details_link
+  - field.field.node.event.field_phone_number
+  - field.field.node.event.field_updated_date
+  - field.field.node.event.field_event_contact
+  - field.field.node.event.field_related_posts
+  - field.field.node.event.field_city_sponsored
+  - field.field.node.event.field_published_date
+  - field.field.node.event.field_related_guides
+  - field.field.node.event.field_related_content
+  - field.field.node.event.field_type_of_content
+  - field.field.node.event.field_extra_info_event
+  - field.field.node.event.field_program_initiative
+  - field.field.node.event.field_sidebar_components
+  - field.field.node.event.field_related_departments
+  - field.field.node.event.field_multiple_neighborhoods
+  - field.field.node.event.field_related_events_notices
+  - xmlsitemap.settings.node.event
+  - core.entity_form_display.node.event.default
+  - core.entity_view_display.node.event.article
+  - core.entity_view_display.node.event.contact
+  - core.entity_view_display.node.event.default
+  - core.entity_view_display.node.event.listing
+  - core.entity_view_display.node.event.poll_stub
+  - core.entity_view_display.node.event.popup_icon
+  - core.entity_view_display.node.event.topics_list
+  - core.entity_view_display.node.event.listing_long
+  - core.entity_view_display.node.event.published_by
+  - core.entity_view_display.node.event.featured_item
+  - core.entity_view_display.node.event.listing_short
+  - core.entity_view_display.node.event.featured_topics
+  - core.entity_view_display.node.event.calendar_listing
+  - core.entity_view_display.node.event.department_listing
+  - language.content_settings.node.event
+  - core.base_field_override.node.event.changed
+  - core.base_field_override.node.event.created
+  - core.base_field_override.node.event.menu_link
+  - core.base_field_override.node.event.metatag
+  - core.base_field_override.node.event.moderation_state
+  - core.base_field_override.node.event.path
+  - core.base_field_override.node.event.promote
+  - core.base_field_override.node.event.published_at
+  - core.base_field_override.node.event.status
+  - core.base_field_override.node.event.sticky
+  - core.base_field_override.node.event.title

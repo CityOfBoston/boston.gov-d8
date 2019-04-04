@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * @file
+ * Provides an node_event entity type.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function node_event_theme() {
+  return [
+    'event' => [
+      'render element' => 'elements',
+    ],
+    'node__event' => [
+      'render element' => 'elements',
+      'base_hook' => 'node',
+    ],
+    'field__node__field_event_type__event' => [
+      'base_hook' => 'field',
+    ],
+    'detail_item' => [
+      'template' => 'snippets/detail-item',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "image" => NULL,
+        "classes" => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for event templates.
+ *
+ * Default template: event.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the event information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__event(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_event_preprocess_node__event(&$variables) {
+  _bos_theme_fix_attributes($variables);
+  $variables['attributes']->addClass('desktop-100');
+
+  $vars = [
+    'classes' => [
+      'icon' => 'icon-time',
+      'label' => 'detail-item--secondary',
+      'body' => 'detail-item__body--tertiary',
+      'detail' => 'detail-item--middle',
+    ],
+  ];
+  // Render the time element of the event date into a detail_item.
+  if (isset($variables["content"]["field_event_dates"])) {
+    // TODO: test when multiple dates. (in twig node-event.html.twig)
+    $event_date = $variables["content"]["field_event_dates"]["#object"]->field_event_dates->first()->value;
+    // All dates stored in UTC in DB.
+    $event_date = strtotime($event_date . " +0000");
+    $event_date = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+    $vars["label"] = $event_date;
+    $variables["content"]["field_event_times"] = Drupal::theme()->render("detail_item", $vars);
+  }
+
+  $vars = [
+    'classes' => [
+      'label' => 'detail-item--left',
+      'body' => 'detail-item--secondary',
+      'detail' => 'detail-item--secondary',
+    ],
+  ];
+
+  // Render the cost into a details_item.
+  if (isset($variables["content"]["field_cost"])) {
+    $vars["label"] = $variables["content"]["field_cost"]["#title"] . ":";
+    $vars["body"] = $variables["content"]["field_cost"];
+    $variables["content"]["cost"] = Drupal::theme()->render("detail_item", $vars);
+  }
+
+  // Render the event_contact into a details_item.
+  if (isset($variables["content"]["field_event_contact"])) {
+    $vars["label"] = $variables["content"]["field_event_contact"]["#title"] . ":";
+    $vars["body"] = $variables["content"]["field_event_contact"];
+    $variables["content"]["field_event_contact"] = Drupal::theme()
+      ->render("detail_item", $vars);
+  }
+
+  // Render the published_date into a details_item.
+  if (isset($variables["content"]["field_published_date"])) {
+    $vars["label"] = "Posted:";
+    $vars["body"] = $variables["content"]["field_published_date"];
+    $variables["content"]["field_published_date"] = Drupal::theme()
+      ->render("detail_item", $vars);
+  }
+
+  // Render the event_type into a details_item.
+  if (isset($variables["content"]["field_multiple_neighborhoods"])) {
+    $vars["label"] = $variables["content"]["field_multiple_neighborhoods"]["#title"] . ":";
+    $vars["body"] = $variables["content"]["field_multiple_neighborhoods"];
+    $variables["content"]["field_multiple_neighborhoods"] = Drupal::theme()
+      ->render("detail_item", $vars);
+  }
+
+  // Render the downloads (field_links) into a details_item.
+  if (isset($variables["content"]["field_links"])) {
+    $vars["label"] = $variables["content"]["field_links"]["#title"] . ":";
+    $vars["body"] = $variables["content"]["field_links"];
+    $variables["content"]["field_links"] = Drupal::theme()
+      ->render("detail_item", $vars);
+  }
+
+  if (!empty($variables["content"]["field_city_hall"])) {
+    // TODO: Ajax back to get the address for CityHall.
+  }
+}

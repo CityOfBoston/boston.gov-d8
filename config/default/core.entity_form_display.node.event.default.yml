@@ -1,15 +1,17 @@
-uuid: 6445e588-7f2c-4155-8d6a-0dc8a9617421
-langcode: en
+uuid: 6777babc-2584-4be6-a8b8-ca7cce1d3ca8
+langcode: und
 status: true
 dependencies:
   config:
     - field.field.node.event.body
+    - field.field.node.event.field_address
     - field.field.node.event.field_cancel_event
     - field.field.node.event.field_city_hall
     - field.field.node.event.field_city_sponsored
     - field.field.node.event.field_components
-    - field.field.node.event.field_contact
+    - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
+    - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
@@ -19,293 +21,451 @@ dependencies:
     - field.field.node.event.field_featured
     - field.field.node.event.field_intro_image
     - field.field.node.event.field_links
+    - field.field.node.event.field_manual_date
     - field.field.node.event.field_multiple_neighborhoods
-    - field.field.node.event.field_people
     - field.field.node.event.field_phone_number
-    - field.field.node.event.field_place
-    - field.field.node.event.field_program_initiative
     - field.field.node.event.field_published_date
-    - field.field.node.event.field_related_content
     - field.field.node.event.field_related_departments
-    - field.field.node.event.field_related_events_notices
-    - field.field.node.event.field_related_guides
-    - field.field.node.event.field_related_posts
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
-    - field.field.node.event.field_type_of_content
     - field.field.node.event.field_updated_date
+    - image.style.thumbnail
     - node.type.event
   module:
+    - address
+    - advanced_text_formatter
     - content_moderation
     - datetime
-    - file
+    - field_group
     - link
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
+third_party_settings:
+  field_group:
+    group_article:
+      children:
+        - group_basic_information
+        - group_event_information
+        - group_event_cancellation
+        - group_components
+        - group_sidebar_components
+        - group_related_content
+        - group_page_metadata
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        label: Event
+        direction: vertical
+        id: ''
+        classes: ''
+      label: Event
+    group_basic_information:
+      children:
+        - title
+        - field_contacts
+        - field_featured
+        - field_intro_image
+        - field_thumbnail
+        - field_description
+        - body
+      parent_name: group_article
+      weight: 1
+      format_type: tab
+      format_settings:
+        label: 'Basic Information'
+        formatter: open
+        description: '<div class="bos-boxed-content"><a href="https://docs.google.com/document/d/1e3hyjdqM9W8M6WQ-VfuBJKy4dJOrp4XwAwqIcek31Hs/edit" target="_blank">Here are some useful tips for creating an event.</a></div>'
+        required_fields: true
+        id: ''
+        classes: ' group-event-basic-info field-group-tab'
+      label: 'Basic Information'
+    group_event_information:
+      children:
+        - field_event_dates
+        - field_city_sponsored
+        - group_event_details
+        - group_event_location
+        - group_event_contact
+        - group_event_date
+      parent_name: group_article
+      weight: 2
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Event Information'
+    group_event_date:
+      children:
+        - field_cost
+      parent_name: group_event_information
+      weight: 26
+      format_type: details
+      format_settings:
+        label: 'Event  Entry Fee'
+        required_fields: true
+        id: ''
+        classes: ''
+        open: false
+      label: 'Event  Entry Fee'
+    group_event_location:
+      children:
+        - field_city_hall
+        - field_address
+        - field_multiple_neighborhoods
+      parent_name: group_event_information
+      weight: 24
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Event Location'
+    group_event_contact:
+      children:
+        - field_event_contact
+        - field_email
+        - field_phone_number
+      parent_name: group_event_information
+      weight: 25
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Event Contact'
+    group_page_metadata:
+      children:
+        - field_manual_date
+        - field_updated_date
+        - field_published_date
+      parent_name: group_article
+      weight: 8
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-page-metadata field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_article
+      weight: 4
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
+    group_sidebar_components:
+      children:
+        - field_sidebar_components
+      parent_name: group_article
+      weight: 6
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+    group_related_content:
+      children:
+        - field_related_departments
+      parent_name: group_article
+      weight: 7
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-related-content field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Related Content'
+    group_event_cancellation:
+      children:
+        - field_cancel_event
+        - field_extra_info_event
+      parent_name: group_article
+      weight: 3
+      format_type: tab
+      format_settings:
+        label: 'Event Cancellation'
+        formatter: closed
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Event Cancellation'
+    group_event_details:
+      children:
+        - field_event_type
+        - field_details_link
+        - field_links
+      parent_name: group_event_information
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Event Details'
 id: node.event.default
 targetEntityType: node
 bundle: event
 mode: default
 content:
   body:
-    weight: 29
     type: text_textarea_with_summary
+    weight: 8
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_cancel_event:
-    weight: 48
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    region: content
-  field_city_hall:
-    weight: 45
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    region: content
-  field_city_sponsored:
-    weight: 50
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    region: content
-  field_components:
+  field_address:
     weight: 7
-    type: entity_reference_paragraphs
     settings:
-      title: Component
-      title_plural: Components
-      edit_mode: open
-      add_mode: select
-      form_display_mode: default
-      default_paragraph_type: ''
+      default_country: US
     third_party_settings: {  }
+    type: address_default
     region: content
-  field_contact:
-    weight: 30
-    type: entity_reference_autocomplete
+  field_cancel_event:
+    type: boolean_checkbox
+    weight: 27
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_city_hall:
+    type: boolean_checkbox
+    weight: 6
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_city_sponsored:
+    type: boolean_checkbox
+    weight: 22
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_components:
+    type: paragraphs
+    weight: 4
+    region: content
+    settings:
+      title: 'Event Component'
+      title_plural: 'Event Components'
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+  field_contacts:
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
-      placeholder: ''
+      placeholder: 'The main department coordinating this Event.'
     third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_cost:
-    weight: 47
     type: string_textfield
+    weight: 24
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_description:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: 'Brief descriptive summary of the Event.'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+    type: text_textarea
     region: content
   field_details_link:
-    weight: 46
     type: link_default
-    settings:
-      placeholder_url: ''
-      placeholder_title: ''
-    third_party_settings: {  }
-    region: content
-  field_email:
-    weight: 41
-    type: string_textfield
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_event_contact:
-    weight: 40
-    type: string_textfield
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_event_dates:
     weight: 6
+    region: content
+    settings:
+      placeholder_url: '(optional) Link to Event Details'
+      placeholder_title: '(optional) Text for the Event details Link'
+    third_party_settings: {  }
+  field_email:
+    type: string_textfield
+    weight: 23
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_event_contact:
+    type: string_textfield
+    weight: 22
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_event_dates:
     type: datetime_default
+    weight: 21
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_event_type:
-    weight: 48
     type: options_select
+    weight: 5
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_extra_info_event:
-    weight: 49
     type: string_textfield
+    weight: 28
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_featured:
-    weight: 25
     type: options_buttons
+    weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_intro_image:
-    weight: 26
-    type: file_generic
+    type: image_image
+    weight: 5
     settings:
+      preview_image_style: thumbnail
       progress_indicator: throbber
-    third_party_settings: {  }
     region: content
+    third_party_settings: {  }
   field_links:
-    weight: 49
-    type: entity_reference_paragraphs
-    settings:
-      title: Download
-      title_plural: Downloads
-      edit_mode: open
-      add_mode: button
-      form_display_mode: default
-      default_paragraph_type: ''
-    third_party_settings: {  }
+    type: paragraphs
+    weight: 7
     region: content
-  field_multiple_neighborhoods:
-    weight: 45
-    type: options_buttons
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_people:
-    weight: 13
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_phone_number:
-    weight: 42
-    type: string_textfield
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_place:
-    weight: 14
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_program_initiative:
-    weight: 16
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_published_date:
-    weight: 41
-    type: datetime_default
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_related_content:
-    weight: 17
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_departments:
-    weight: 10
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_events_notices:
-    weight: 11
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_guides:
-    weight: 12
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_posts:
-    weight: 15
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_sidebar_components:
-    weight: 8
-    type: entity_reference_paragraphs
     settings:
       title: Paragraph
       title_plural: Paragraphs
       edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
-    region: content
-  field_thumbnail:
-    weight: 27
-    type: file_generic
+  field_manual_date:
+    weight: 29
     settings:
-      progress_indicator: throbber
+      display_label: true
     third_party_settings: {  }
+    type: boolean_checkbox
     region: content
-  field_type_of_content:
-    weight: 42
+  field_multiple_neighborhoods:
     type: options_buttons
+    weight: 8
+    region: content
     settings: {  }
     third_party_settings: {  }
+  field_phone_number:
+    type: string_textfield
+    weight: 25
     region: content
-  field_updated_date:
-    weight: 40
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_published_date:
     type: datetime_default
+    weight: 31
+    region: content
     settings: {  }
     third_party_settings: {  }
+  field_related_departments:
+    type: entity_reference_autocomplete
+    weight: 21
     region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_sidebar_components:
+    type: paragraphs
+    weight: 1
+    region: content
+    settings:
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+  field_thumbnail:
+    type: image_image
+    weight: 6
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    region: content
+    third_party_settings: {  }
+  field_updated_date:
+    type: datetime_default
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 2
@@ -315,13 +475,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 10
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -329,12 +489,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 6
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -342,27 +502,29 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 2
     region: content
     settings:
       size: 60
-      placeholder: ''
-    third_party_settings: {  }
+      placeholder: 'Main title for the Event.'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -370,6 +532,8 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 9
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
