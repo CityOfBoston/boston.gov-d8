@@ -1,0 +1,21 @@
+uuid: d11da8a1-e141-4442-b846-cce561ffd254
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_description
+    - node.type.event
+  module:
+    - text
+id: node.event.field_description
+field_name: field_description
+entity_type: node
+bundle: event
+label: 'Event Summary'
+description: 'Appears below the Event title, and used as summary for the event in listings etc.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long
