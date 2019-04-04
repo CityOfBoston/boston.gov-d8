@@ -24,6 +24,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
   protected static $baseUrl = "www.boston.gov";
+  protected static $editUrl = "edit.boston.gov";
   protected static $relativeUrl = "sites/default/files";
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
 
@@ -69,8 +70,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         continue;
       }
       elseif ($this->resolveFileType($src) !== 'image') {
-        // Fail loudly if file type is not what we expect.
-        throw new MigrateException("Unsuported image type: {$src}");
+        // This shouldn't ever be the case based on our query, but better safe
+        // than sorry.
+        continue;
       }
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
         $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
@@ -94,11 +96,12 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        throw new MigrateException("Encountered unexpected external file: {$href}");
+        continue;
       }
       elseif ($this->resolveFileType($href) !== 'file') {
-        // Fail loudly if file type is not what we expect.
-        throw new MigrateException("Why are we linking to an image: {$href}");
+        // This shouldn't ever be the case based on our query, but better safe
+        // than sorry.
+        continue;
       }
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
         // Alter <a> element.
@@ -127,7 +130,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     if (!empty($matches[0])) {
       foreach ($matches[0] as $match) {
         $replacement = $this->mediaWysiwygTokenToMarkup($match);
-        $value = str_replace($match, $replacement, $value, $count);
+        if ($replacement) {
+          $value = str_replace($match, $replacement, $value, $count);
+        }
       }
     }
 
@@ -153,7 +158,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       }
       $tag_info = Json::decode($json);
       if (!$file = \Drupal::service('entity_type.manager')->getStorage('file')->load($tag_info['fid'])) {
-        throw new MigrateException("Could not load file object: {$tag_info['fid']}");
+        // Nothing to do if we can't find the file.
+        return NULL;
       }
       $tag_info['file'] = $file;
       if (!empty($tag_info['attributes']) && is_array($tag_info['attributes'])) {
@@ -182,12 +188,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       }
     }
     catch (Exception $e) {
-      throw new MigrateException("D7 media token decoding has failed: {$token}");
+      // If we hit an error, don't perform replacement.
+      return NULL;
     }
 
     if (isset($tag_info['link_text'])) {
       $file->filename = Html::decodeEntities($tag_info['link_text']);
     }
+
     $document = new \DOMDocument();
     $img = $document->createElement('img');
     $uri = $tag_info['file']->getFileUri();
@@ -214,7 +222,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   Yes or no.
    */
   protected function isExternalFile($src) {
-    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE) {
+    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE && strpos($src, self::$editUrl === FALSE)) {
       return TRUE;
     }
     return FALSE;
@@ -242,7 +250,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     if (!$this->isRelativeUri($src)) {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
-        throw new MigrateException("Unable to extract URI from: {$src}");
+        // Nothing to do if we can't extract the URI.
+        return NULL;
       }
     }
 
@@ -253,7 +262,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $uri = $this->rewriteUri($uri);
     $file = $this->getFile($uri);
     if (!$file) {
-      throw new MigrateException("Failed to find file: {$uri}");
+      // Nothing to do if we can't find the file.
+      return NULL;
     }
     $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
 
@@ -285,7 +295,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   uri.
    */
   protected function getRelativeUrl(string $uri) {
-    $from_main_domain = '@^http(s|)://(www.|)boston.gov[/]+(.*)@';
+    $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
     if (!preg_match($from_main_domain, $uri, $matches)) {
       // Not a searched absolute uri.
       return FALSE;
@@ -428,7 +438,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       }
     }
 
-    throw new MigrateException("Unrecognized file format: {$uri}");
+    // We don't want to process any thing that we can't identify.
+    return NULL;
   }
 
 }
