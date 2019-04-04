@@ -16,7 +16,7 @@ use Drupal\core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use \Drupal\image\Entity\ImageStyle;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -344,7 +344,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
         $variables["attributes"]->addClass("mn");
         $variables["attributes"]->setAttribute("id", "page");
         $variables['background_image'] = $background_image;
-        $variables['xlarge_image'] =  ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')->buildUrl($uri);
+        $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')->buildUrl($uri);
         $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')->buildUrl($uri);
         $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')->buildUrl($uri);
         $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')->buildUrl($uri);

@@ -63,14 +63,15 @@ function node_event_preprocess_node__event(&$variables) {
       'icon' => 'icon-time',
       'label' => 'detail-item--secondary',
       'body' => 'detail-item__body--tertiary',
-      'detail' => 'detail-item--middle'
+      'detail' => 'detail-item--middle',
     ],
   ];
   // Render the time element of the event date into a detail_item.
   if (isset($variables["content"]["field_event_dates"])) {
     // TODO: test when multiple dates. (in twig node-event.html.twig)
     $event_date = $variables["content"]["field_event_dates"]["#object"]->field_event_dates->first()->value;
-    $event_date = strtotime($event_date . " +0000");  //stored in UTC.
+    // All dates stored in UTC in DB.
+    $event_date = strtotime($event_date . " +0000");
     $event_date = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
     $vars["label"] = $event_date;
     $variables["content"]["field_event_times"] = Drupal::theme()->render("detail_item", $vars);
@@ -80,7 +81,7 @@ function node_event_preprocess_node__event(&$variables) {
     'classes' => [
       'label' => 'detail-item--left',
       'body' => 'detail-item--secondary',
-      'detail' => 'detail-item--secondary'
+      'detail' => 'detail-item--secondary',
     ],
   ];
 
@@ -118,12 +119,12 @@ function node_event_preprocess_node__event(&$variables) {
   // Render the downloads (field_links) into a details_item.
   if (isset($variables["content"]["field_links"])) {
     $vars["label"] = $variables["content"]["field_links"]["#title"] . ":";
-    $vars["body"] =  $variables["content"]["field_links"];
+    $vars["body"] = $variables["content"]["field_links"];
     $variables["content"]["field_links"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
 
-  if (!empty($variables["content"]["field_city_hall"]) ) {
+  if (!empty($variables["content"]["field_city_hall"])) {
     // TODO: Ajax back to get the address for CityHall.
   }
 }
