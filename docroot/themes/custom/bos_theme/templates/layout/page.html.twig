@@ -105,7 +105,6 @@
         {% if node and header_image %}
           {% if node.type.entity.label|lower != 'tabbed_content' and node.type.entity.label|lower != 'how_to' %}
             {% if node.type.entity.label|lower != 'topic_page' %}
-              {{ breakpoint() }}
               <style>
                 .hro {
                   background-image: url({{ small_image }});
