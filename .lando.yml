@@ -62,8 +62,7 @@ services:
       #     (Config loaded and enabled by Phing in setup:docker:drupal-terraform)
       - cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${LANDO_MOUNT}/setup/lando.log
       - cp ${LANDO_MOUNT}/scripts/phing/files/boston-dev-php.ini /usr/local/etc/php/conf.d/ >> ${LANDO_MOUNT}/setup/lando.log
-      - if [ ! -f /usr/local/etc/php/conf.d/boston-dev-php.ini ]; then touch /usr/local/etc/php/conf.d/boston-dev-php.ini; fi
-      - ip route | awk 'NR==1 {printf $3}' | xargs echo "xdebug.remote_host=" >>/usr/local/etc/php/conf.d/boston-dev-php.ini
+      #- ip route | awk 'NR==1 {printf $3}' | xargs echo "xdebug.remote_host=" >>/usr/local/etc/php/conf.d/boston-dev-php.ini
       - service apache2 reload >> ${LANDO_MOUNT}/setup/lando.log
     run:
       - echo -e "\033[1;32m[lando]\033[1;33m Installing Drupal and dependencies in appserver & database containers ...\033[0m"
