@@ -362,7 +362,7 @@ function _bos_core_uninstall_boston($module) {
   $path = drupal_get_path("module", $module);
 
   // Get a full list of .yml files defined by this module.
-  foreach (["install", "optional", "required"] as $sub) {
+  foreach (["install"] as $sub) {
     $fullpath = DRUPAL_ROOT . "/" . $path . "/config/" . $sub;
     if (is_dir($fullpath)) {
       $_configs = array_diff(scandir($fullpath), ['.', '..']);
