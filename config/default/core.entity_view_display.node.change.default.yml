@@ -1,0 +1,45 @@
+uuid: 45af148d-57e1-4872-ad42-23ac4114db55
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.change.body
+    - node.type.change
+  module:
+    - fences
+    - text
+    - user
+_core:
+  default_config_hash: hiJ2yT3-9bxI5De8-CtvrCI864ajxtCeivDC1UfMdNU
+id: node.change.default
+targetEntityType: node
+bundle: change
+mode: default
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_default
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    region: content
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  published_at: true

@@ -1,0 +1,37 @@
+uuid: 79105719-46b6-475d-be11-99a9230bfbf3
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.change.body
+    - node.type.change
+  module:
+    - text
+    - user
+_core:
+  default_config_hash: waY4ZS6DL07ikYEFdJgCHlwGRFnHuVk0Fc4e0DyyyZA
+id: node.change.teaser
+targetEntityType: node
+bundle: change
+mode: teaser
+content:
+  body:
+    label: hidden
+    weight: 0
+    type: text_summary_or_trimmed
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true
