@@ -8,12 +8,12 @@
 /**
  * Implements hook_theme().
  */
-function change_theme() {
+function node_change_theme() {
   return [
     'node__change' => [
       'base_hook' => 'node',
       'render element' => 'elements',
-      'path' => 'modules/custom/bos_content/modules/change/templates',
+      'path' => 'modules/custom/bos_content/modules/node_change/templates',
     ],
   ];
 }
