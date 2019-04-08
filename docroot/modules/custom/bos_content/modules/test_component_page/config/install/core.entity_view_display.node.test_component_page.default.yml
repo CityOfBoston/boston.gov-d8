@@ -1,4 +1,3 @@
-uuid: 98c9cc61-f32b-4049-9c0c-c33aad2d25de
 langcode: en
 status: true
 dependencies:
@@ -13,8 +12,6 @@ dependencies:
     - fences
     - text
     - user
-_core:
-  default_config_hash: Kgrw0zB2c3CAkJ9MdTv72WwNAo439kZpdSblk2hTsAA
 id: node.test_component_page.default
 targetEntityType: node
 bundle: test_component_page
@@ -24,6 +21,11 @@ content:
     label: hidden
     type: text_default
     weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: -20
     settings: {  }
     third_party_settings: {  }
     region: content
