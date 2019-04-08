@@ -76,32 +76,26 @@
    {% set lclasses = lclasses|merge(classes) %}
 {% endif %}
 
-<article{{ attributes.addClass(lclasses).setAttribute('typeof', 'sioc:Item foaf:Document') }}>
+<article{{ attributes.addClass(lclasses) }}>
 
-  {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
-    <header>
+  <div class="department-info-wrapper desktop-100">
 
-      {{ title_prefix  }}
+    {{ title_prefix  }}
 
-      {% if (not page) and title %}
-        <h2{{ title_attributes  }}><a href="{{ node_url }}">{{ title.0 }}</a></h2>
-      {% endif %}
+    {% if title %}
+      <h1{{ title_attributes  }}>{{ title.0 }}</h1>
+    {% endif %}
 
-      {{ title_suffix  }}
+    {{ title_suffix }}
 
-      {% if unpublished %}
-        <mark class="watermark">Unpublished</mark>
-      {% elseif preview %}
-        <mark class="watermark">Preview</mark>
-      {% endif %}
+    <div class="body">
+      {{ elements.body }}
+    </div>
 
-    </header>
-  {% endif %}
+    <div id="published">
+      Published by: <span class="created_uid">{{ elements.uid.0 }}</span> - on <span class="created_date">{{ elements.created.0 }}</span>
+    </div>
 
-  {# We hide the comments and links now so that we can render them later. #}
-  {{ elements|without('links','comments') }}
-
-  {{ elements.links }}
-  {{ elements.comments }}
+  </div>
 
 </article>
