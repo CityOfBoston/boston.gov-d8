@@ -612,8 +612,11 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
     $variables['unpublished'] = empty($node->isPublished());
-    $variables['moderation_state'] = Drupal::entityTypeManager()->getStorage("node")->loadRevision(3)->get('moderation_state')->getString();
-
+    $variables['moderation_state'] = Drupal::entityTypeManager()
+      ->getStorage("node")
+      ->loadRevision($node->getLoadedRevisionId())
+      ->get('moderation_state')
+      ->getString();
     $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
     $variables['date'] = format_date($node->get('published_at')->getString(), 'custom', 'c');
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
