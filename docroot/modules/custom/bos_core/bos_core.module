@@ -571,8 +571,11 @@ function _bos_core_moderation_decode(array $node_info) {
  * @return string
  *   Best guess at the users name.
  */
-function _bos_core_name_from_email(string $email) {
-  if (preg_match("/.*\@/", $email, $output)) {
+function _bos_core_name_from_email(string $email = NULL) {
+  if (!isset($email)) {
+    return "unknown";
+  }
+  elseif (preg_match("/.*\@/", $email, $output)) {
     return ucwords(str_replace(".", " ", trim($output[0], "@")));
   }
   else {
