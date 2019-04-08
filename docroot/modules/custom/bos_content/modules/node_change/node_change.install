@@ -8,7 +8,7 @@
 /**
  * Implements hook_uninstall().
  */
-function change_uninstall() {
+function node_change_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
