@@ -3,6 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_entity_browser
     - field.field.node.event.body
     - field.field.node.event.field_address
     - field.field.node.event.field_cancel_event
@@ -36,6 +37,7 @@ dependencies:
     - advanced_text_formatter
     - content_moderation
     - datetime
+    - entity_browser
     - field_group
     - link
     - paragraphs
@@ -371,11 +373,17 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: image_image
+    type: entity_browser_file
     weight: 5
     settings:
+      entity_browser: media_entity_browser
+      field_widget_edit: true
+      field_widget_remove: true
+      selection_mode: selection_append
+      view_mode: default
+      field_widget_replace: false
+      open: false
       preview_image_style: thumbnail
-      progress_indicator: throbber
     region: content
     third_party_settings: {  }
   field_links:
