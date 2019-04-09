@@ -13,31 +13,31 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 /**
  * Implements hook_theme().
  */
-function site_alert_theme() {
+function node_site_alert_theme() {
   return [
     'html__api' => [
       'base hook' => 'html',
-      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
       'template' => 'html--api',
     ],
     'node__site_alert' => [
       'base hook' => 'node',
-      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
       'template' => 'node--site-alert',
     ],
     'container__site_alert' => [
       'base hook' => 'container',
-      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
       'template' => 'container--site-alert',
     ],
     'field__node__field_link__site_alert' => [
       'base hook' => 'field',
-      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
       'template' => 'field--node--field-link--site-alert',
     ],
     'block__views_block__site_alerts_site_alerts' => [
       'base hook' => 'block',
-      'path' => 'modules/custom/bos_content/modules/site_alert/templates',
+      'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
       'template' => 'block--views-block--site-alerts-site-alerts',
     ],
 
@@ -65,7 +65,7 @@ function template_preprocess_site_alert(array &$variables) {
 /**
  * Implements hook_form_alter().
  */
-function site_alert_form_alter(&$form, $form_state, $form_id) {
+function node_site_alert_form_alter(&$form, $form_state, $form_id) {
   if ($form_id == "node_site_alert_form") {
     $field = new TranslatableMarkup("Exclude another page");
     $form["field_excluded_nodes"]["widget"]["add_more"]["#value"] = $field;
@@ -75,7 +75,7 @@ function site_alert_form_alter(&$form, $form_state, $form_id) {
 /**
  * Implements hook_preprocess().
  */
-function site_alert_preprocess(&$variables, $hook) {
+function node_site_alert_preprocess(&$variables, $hook) {
   if ($hook == "image_url_formatter") {
     // Even though a full URL is requested in the view, a relative url is
     // provided.  This manually extends to a full URL.
@@ -121,7 +121,7 @@ function site_alert_preprocess(&$variables, $hook) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function site_alert_preprocess_node(&$variables) {
+function node_site_alert_preprocess_node(&$variables) {
   if ($variables['node']->bundle() != basename(__FILE__, ".module")) {
     return;
   }
@@ -144,7 +144,7 @@ function site_alert_preprocess_node(&$variables) {
  *
  * Rewrites the autocomplete list for excluded pages.
  */
-function site_alert_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+function node_site_alert_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
   if ($view->id() == "site_alerts" && $view->current_display == "exclude_pages_autocomplete") {
     foreach ($output as &$line) {
       $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
@@ -158,7 +158,7 @@ function site_alert_views_post_render(ViewExecutable $view, &$output, CachePlugi
  * This is used to create a cut-down container when site_alert is called from
  * the page display of a view.
  */
-function site_alert_theme_suggestions_container(array $variables) {
+function node_site_alert_theme_suggestions_container(array $variables) {
   if (empty($variables["element"]["#view_id"]) || empty($variables["element"]["#view_display_plugin_id"])) {
     return;
   }
