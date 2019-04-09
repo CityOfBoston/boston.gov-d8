@@ -198,7 +198,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_multiple_neighborhoods %}
+      {% if content.field_multiple_neighborhoods["#items"] %}
         <div class="list-item">
           {{ content.field_multiple_neighborhoods }}
         </div>
@@ -216,7 +216,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_links %}
+      {% if content.field_links["#entity_type"] %}
         <div class="list-item">
           {{ content.field_links }}
         </div>
