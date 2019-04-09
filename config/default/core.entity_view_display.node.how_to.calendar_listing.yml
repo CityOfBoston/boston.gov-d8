@@ -1,4 +1,4 @@
-uuid: 89998d25-ddd2-4ef6-954e-eb83ef4a2a93
+uuid: d45eccd1-7ce4-45a8-a337-42b3ffd4399e
 langcode: en
 status: true
 dependencies:
@@ -10,15 +10,17 @@ dependencies:
     - field.field.node.how_to.field_how_to_tabs
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
+    - field.field.node.how_to.field_manual_date
     - field.field.node.how_to.field_need_to_know
     - field.field.node.how_to.field_payment_info
     - field.field.node.how_to.field_published_date
     - field.field.node.how_to.field_sidebar_components
-    - field.field.node.how_to.field_type_of_content
     - field.field.node.how_to.field_updated_date
     - node.type.how_to
   module:
     - user
+_core:
+  default_config_hash: 5Kk2Y1tQxo1fJWyvddCAw1iOTzHdqlUjj6eFQ-cg7lI
 id: node.how_to.calendar_listing
 targetEntityType: node
 bundle: how_to
@@ -29,16 +31,17 @@ content:
     region: content
 hidden:
   body: true
+  comment_node_how_to: true
   field_components: true
   field_contact: true
   field_how_to_tabs: true
   field_intro_image: true
   field_links: true
+  field_manual_date: true
   field_need_to_know: true
   field_payment_info: true
   field_published_date: true
   field_sidebar_components: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
   published_at: true
