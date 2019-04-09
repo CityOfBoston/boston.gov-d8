@@ -25,10 +25,11 @@ function node_site_alert_theme() {
       'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
       'template' => 'node--site-alert',
     ],
-    'container__site_alert' => [
+    'container__no_wrapper' => [
       'base hook' => 'container',
-      'path' => 'modules/custom/bos_content/modules/node_site_alert/templates',
-      'template' => 'container--site-alert',
+    ],
+    'region__no_wrapper' => [
+      'base hook' => 'region',
     ],
     'field__node__field_link__site_alert' => [
       'base hook' => 'field',
@@ -122,8 +123,8 @@ function node_site_alert_preprocess(&$variables, $hook) {
  * Implements hook_preprocess_HOOK().
  */
 function node_site_alert_preprocess_node(&$variables) {
-  if ($variables['node']->bundle() != basename(__FILE__, ".module")) {
-    return;
+  if ($variables['node']->bundle() != "site_alert") {
+     return;
   }
 
   // Add-in a bit of css.
@@ -137,6 +138,19 @@ function node_site_alert_preprocess_node(&$variables) {
   $variables['attributes']['class'][] = "b";
   $variables['attributes']['class'][] = "b--" . $variables['block_theme'];
   $variables['attributes']['class'][] = "b--fw";
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_site_alert_preprocess_block(&$variables) {
+  if (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "site_alerts") {
+    return;
+  }
+//  $variables["attributes"]["class"][] = "page";
+  $variables["attributes"]["class"][] = "page-wa";
+//  $variables["attributes"]["class"][] = "mn";
+  $variables["attributes"]["id"] = "page";
 }
 
 /**
@@ -159,13 +173,21 @@ function node_site_alert_views_post_render(ViewExecutable $view, &$output, Cache
  * the page display of a view.
  */
 function node_site_alert_theme_suggestions_container(array $variables) {
-  if (empty($variables["element"]["#view_id"]) || empty($variables["element"]["#view_display_plugin_id"])) {
-    return;
-  }
-  if ($variables["element"]["#view_id"] == "site_alerts" && $variables["element"]["#view_display_plugin_id"] == "page") {
+  if (isset($variables["element"]["#view"]) && $variables["element"]["#view"]->current_display == "site_alerts") {
     return [
-      'container__site_alert',
+      'container__no_wrapper',
     ];
+  }
+}
 
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ *
+ * This is used to create a cut-down container when site_alert is called from
+ * the page display of a view.
+ */
+function node_site_alert_theme_suggestions_region(array $variables) {
+  if ($variables["elements"]["#region"] == "site_alert") {
+    return ["region__no_wrapper"];
   }
 }

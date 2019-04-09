@@ -62,6 +62,10 @@ function node_how_to_theme() {
  * Implements hook_preprocess_HOOK().
  */
 function node_how_to_preprocess_node(&$variables) {
+  if ($variables['node']->bundle() != "how_to") {
+    return;
+  }
+
   if ($node = $variables['node']) {
     $type = $node->getType();
     if ($type == 'how_to') {
