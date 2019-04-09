@@ -99,7 +99,7 @@ function node_how_to_preprocess_node(&$variables) {
   $variables["attributes"]->addClass("contextual-region");
   $variables["attributes"]->addClass("tab-pc");
   $variables["attributes"]->addClass("p-t500");
-  $variables["attributes"]->addClass("node-" . $variables["node"]->id);
+  $variables["attributes"]->addClass("node-" . $variables["node"]->id());
   $variables["attributes"]->addClass("clearfix");
 }
 
