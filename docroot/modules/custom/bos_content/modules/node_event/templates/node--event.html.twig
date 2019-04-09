@@ -77,8 +77,6 @@
  *
  * @ingroup themeable
  #}
-{# TODO: Review this: hide($content.comments) #}
-{# TODO: Review this: hide($content.links) #}
 
 {#<script>var event_id = "node-{{ node.nid }}"</script>#}
 <article {{ attributes }}>
@@ -132,13 +130,11 @@
 
       {% if content.body %}
         <div class="body">
-{#           We hide the comments and links now so that we can render them later. #}
-{#          {{ content|without('created', 'uid', 'comments', 'links') }}#}
           {{ content.body|without("comments", "links") }}
         </div>
       {% endif %}
 
-      {% if not content.field_details_link[0].isEmpty %}
+      {% if content.field_details_link[0]["#title"] %}
         <div{% if content.field_details_link[0]["url"].external %} class="external-link external-link--inline" {% endif %}>
           <a class="button" href="{{ content.field_details_link[0]["#url"] }}">
             {{ content.field_details_link[0]["#title"] }}
@@ -153,7 +149,7 @@
     {#  This is the RHS sidebar. #}
     <div class="column mobile-100 desktop-33-right clearfix">
 
-      {% if not content.field_event_dates.isEmpty %}
+      {% if content.field_event_dates %}
         <div class="event-date-wrapper">
           <div class="event-date sidebar-header">
             {% if not content.field_event_dates.isEmpty %}
@@ -162,7 +158,7 @@
           </div>
         </div>
 
-        {% if not content.field_event_times.isEmpty %}
+        {% if content.field_event_times %}
           <div class="list-item event-time-wrapper">
             {{ content.field_event_times }}
           </div>
@@ -170,19 +166,19 @@
 
       {% endif %}
 
-      {% if content.field_address %}
+      {% if content.field_address["#entity_type"] %}
         <div class="list-item">
           {{ content.field_address }}
         </div>
       {% endif %}
 
-      {% if content.field_email %}
+      {% if content.field_email["#entity_type"] %}
         <div class="list-item">
           {{ content.field_email }}
         </div>
       {% endif %}
 
-      {% if content.field_phone_number %}
+      {% if content.field_phone_number["#entity_type"] %}
         <div class="list-item">
           {{ content.field_phone_number }}
         </div>
@@ -200,7 +196,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_multiple_neighborhoods %}
+      {% if content.field_multiple_neighborhoods["#items"] %}
         <div class="list-item">
           {{ content.field_multiple_neighborhoods }}
         </div>
@@ -218,7 +214,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_links %}
+      {% if content.field_links["#entity_type"] %}
         <div class="list-item">
           {{ content.field_links }}
         </div>
