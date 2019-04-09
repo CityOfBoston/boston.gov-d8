@@ -338,16 +338,27 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     if ($path_args[1] == 'node' && is_numeric($nid)) {
       if (isset($variables["node"]->field_intro_image)) {
         $background_image = $variables["node"]->field_intro_image;
-        $uri = $background_image->entity->getFileUri();
-
-        $variables['header_image'] = TRUE;
-        $variables["attributes"]->addClass("mn");
-        $variables["attributes"]->setAttribute("id", "page");
-        $variables['background_image'] = $background_image;
-        $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')->buildUrl($uri);
-        $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')->buildUrl($uri);
-        $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')->buildUrl($uri);
-        $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')->buildUrl($uri);
+        if (isset($background_image->entity)) {
+          $uri = $background_image->entity->getFileUri();
+          // Set $variables["header_image"] to true here.
+          // Individual nodes can disable(false) in their own preprocess hooks.
+          if (!isset($variables['header_image'])) {
+            $variables['header_image'] = TRUE;
+          }
+          if ($variables['header_image']) {
+            $variables["attributes"]->addClass("mn");
+            $variables["attributes"]->setAttribute("id", "page");
+            $variables['background_image'] = $background_image;
+            $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
+              ->buildUrl($uri);
+            $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
+              ->buildUrl($uri);
+            $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
+              ->buildUrl($uri);
+            $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
+              ->buildUrl($uri);
+          }
+        }
       }
     }
   }
