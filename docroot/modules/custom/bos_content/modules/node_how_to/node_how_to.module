@@ -109,6 +109,8 @@ function node_how_to_preprocess_node(&$variables) {
 function node_how_to_preprocess_page(&$variables) {
   // We dont ever want a hero section from the page template.
   $variables['header_image'] = TRUE;
+  _bos_theme_fix_attributes($variables);
+  $variables['attributes']->addClass("mn");
 }
 
 /**
