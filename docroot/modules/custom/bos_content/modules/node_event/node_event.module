@@ -87,14 +87,14 @@ function node_event_preprocess_node__event(&$variables) {
   ];
 
   // Render the cost into a details_item.
-  if (isset($variables["content"]["field_cost"])) {
+  if (isset($variables["content"]["field_cost"]["#title"])) {
     $vars["label"] = $variables["content"]["field_cost"]["#title"] . ":";
     $vars["body"] = $variables["content"]["field_cost"];
     $variables["content"]["cost"] = Drupal::theme()->render("detail_item", $vars);
   }
 
   // Render the event_contact into a details_item.
-  if (isset($variables["content"]["field_event_contact"])) {
+  if (isset($variables["content"]["field_event_contact"]["#title"])) {
     $vars["label"] = $variables["content"]["field_event_contact"]["#title"] . ":";
     $vars["body"] = $variables["content"]["field_event_contact"];
     $variables["content"]["field_event_contact"] = Drupal::theme()
@@ -102,7 +102,7 @@ function node_event_preprocess_node__event(&$variables) {
   }
 
   // Render the published_date into a details_item.
-  if (isset($variables["content"]["field_published_date"])) {
+  if (isset($variables["content"]["field_published_date"]["#title"])) {
     $vars["label"] = "Posted:";
     $vars["body"] = $variables["content"]["field_published_date"];
     $variables["content"]["field_published_date"] = Drupal::theme()
@@ -110,7 +110,7 @@ function node_event_preprocess_node__event(&$variables) {
   }
 
   // Render the event_type into a details_item.
-  if (isset($variables["content"]["field_multiple_neighborhoods"])) {
+  if (isset($variables["content"]["field_multiple_neighborhoods"]["#items"])) {
     $vars["label"] = $variables["content"]["field_multiple_neighborhoods"]["#title"] . ":";
     $vars["body"] = $variables["content"]["field_multiple_neighborhoods"];
     $variables["content"]["field_multiple_neighborhoods"] = Drupal::theme()
@@ -118,15 +118,11 @@ function node_event_preprocess_node__event(&$variables) {
   }
 
   // Render the downloads (field_links) into a details_item.
-  if (isset($variables["content"]["field_links"])) {
+  if (isset($variables["content"]["field_links"]["#title"])) {
     $vars["label"] = $variables["content"]["field_links"]["#title"] . ":";
     $vars["body"] = $variables["content"]["field_links"];
     $variables["content"]["field_links"] = Drupal::theme()
       ->render("detail_item", $vars);
-  }
-
-  if (!empty($variables["content"]["field_city_hall"])) {
-    // TODO: Ajax back to get the address for CityHall.
   }
 }
 
