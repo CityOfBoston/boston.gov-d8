@@ -2,9 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_display.comment.comment_node_how_to.default
     - field.field.node.how_to.body
-    - field.field.node.how_to.comment_node_how_to
     - field.field.node.how_to.field_components
     - field.field.node.how_to.field_contact
     - field.field.node.how_to.field_how_to_tabs
@@ -18,7 +16,6 @@ dependencies:
     - field.field.node.how_to.field_updated_date
     - node.type.how_to
   module:
-    - comment
     - datetime
     - entity_reference_revisions
     - fences
@@ -35,15 +32,6 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  comment_node_how_to:
-    label: hidden
-    type: comment_default
-    weight: 20
-    settings:
-      view_mode: default
-      pager_id: 0
     third_party_settings: {  }
     region: content
   field_components:

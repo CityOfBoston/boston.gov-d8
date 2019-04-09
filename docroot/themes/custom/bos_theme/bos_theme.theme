@@ -338,16 +338,27 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     if ($path_args[1] == 'node' && is_numeric($nid)) {
       if (isset($variables["node"]->field_intro_image)) {
         $background_image = $variables["node"]->field_intro_image;
-        $uri = $background_image->entity->getFileUri();
-
-        $variables['header_image'] = TRUE;
-        $variables["attributes"]->addClass("mn");
-        $variables["attributes"]->setAttribute("id", "page");
-        $variables['background_image'] = $background_image;
-        $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')->buildUrl($uri);
-        $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')->buildUrl($uri);
-        $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')->buildUrl($uri);
-        $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')->buildUrl($uri);
+        if (isset($background_image->entity)) {
+          $uri = $background_image->entity->getFileUri();
+          // Set $variables["header_image"] to true here.
+          // Individual nodes can disable(false) in their own preprocess hooks.
+          if (!isset($variables['header_image'])) {
+            $variables['header_image'] = TRUE;
+          }
+          if ($variables['header_image']) {
+            $variables["attributes"]->addClass("mn");
+            $variables["attributes"]->setAttribute("id", "page");
+            $variables['background_image'] = $background_image;
+            $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
+              ->buildUrl($uri);
+            $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
+              ->buildUrl($uri);
+            $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
+              ->buildUrl($uri);
+            $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
+              ->buildUrl($uri);
+          }
+        }
       }
     }
   }
@@ -415,16 +426,19 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // D8 OK: Create necessary page classes.
   if (isset($variables['node']) && is_object($variables['node'])) {
-    if (!isset($variables["attributes"])) {
-      $variables["attributes"] = new Attribute();
-    }
 
-    if ($variables['node']->getType() !== 'tabbed_content' && $variables['node']->getType() !== 'how_to' && !$variables['header_image']) {
+    if ($variables['node']->getType() !== 'tabbed_content' && !$variables['header_image']) {
       if (!$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
       $variables["attributes"]->setAttribute("id", "page");
     }
+    // This is for the how-to page and others which have a different type of
+    // hero and need to be flush with the top of the page.
+    if ($variables["attributes"]->hasClass("mn")) {
+      $variables["attributes"]->removeClass("page--wa");
+    }
+    // Special settings for homepage.
     if ($variables['is_front']) {
       $variables["attributes"]->addClass("page--fp");
       if (!$variables["attributes"]->hasClass("page--wa") && !$variables["attributes"]->hasClass("page--nm")) {
