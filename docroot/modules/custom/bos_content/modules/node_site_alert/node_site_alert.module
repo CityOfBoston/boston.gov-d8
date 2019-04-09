@@ -124,7 +124,7 @@ function node_site_alert_preprocess(&$variables, $hook) {
  */
 function node_site_alert_preprocess_node(&$variables) {
   if ($variables['node']->bundle() != "site_alert") {
-     return;
+    return;
   }
 
   // Add-in a bit of css.
@@ -147,9 +147,7 @@ function node_site_alert_preprocess_block(&$variables) {
   if (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "site_alerts") {
     return;
   }
-//  $variables["attributes"]["class"][] = "page";
   $variables["attributes"]["class"][] = "page-wa";
-//  $variables["attributes"]["class"][] = "mn";
   $variables["attributes"]["id"] = "page";
 }
 
