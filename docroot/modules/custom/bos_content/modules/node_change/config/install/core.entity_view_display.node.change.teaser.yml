@@ -4,7 +4,6 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.change.body
-    - field.field.node.change.comment_node_change
     - node.type.change
   module:
     - text
@@ -26,6 +25,5 @@ content:
     weight: 100
     region: content
 hidden:
-  comment_node_change: true
   langcode: true
   published_at: true

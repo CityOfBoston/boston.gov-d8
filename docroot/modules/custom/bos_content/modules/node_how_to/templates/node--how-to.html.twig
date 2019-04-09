@@ -6,17 +6,34 @@
  *
  * @see https%0%
  #}
-
 <input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">
 {% for index,tab in tabs %}
 <input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">
 {% endfor %}
-
-{% if not node.field_intro_image.isempty %}
-  {{ content.field_intro_image }}
+{% if background_image_exists %}
+  <style>
+    .hro {
+      background-image: url({{ small_image }});
+    }
+    @media screen and (min-width: 768px) {
+      .hro {
+        background-image: url({{ medium_image }});
+      }
+    }
+    @media screen and (min-width: 1024px) {
+      .hro {
+        background-image: url({{ large_image }});
+      }
+    }
+    @media screen and (min-width: 1200px) {
+      .hro {
+        background-image: url({{ xlarge_image }});
+      }
+    }
+  </style>
 {% endif %}
 
-<div class="hro {% if node.field_intro_image.isempty %}hro--d{% else %}hro--t{% endif %} hro--wh b--fw">
+<div class="hro {% if background_image_exists %}hro--t{% else %}hro--d{% endif %} hro--wh b--fw">
   <div class="hro-c b-c">
     <h1 class="hro-t">{{ node.label }}</h1>
     {% if content.body %}
@@ -38,12 +55,13 @@
   </ul>
 </div>
 
-<article class="{{ classes }} clearfix node-{{ node.id }} tab-pc p-t500"{{ attributes }}>
+<article{{ attributes }}>
   {% if content.field_updated_date %}
     <div class="brc-lu">
       Last updated:{{ content.field_updated_date }}
     </div>
   {% endif %}
+  {{ title_suffix }}
     <div class="tabbed-info-wrapper desktop-100">
       <div class="column mobile-100 desktop-66-left">
         {% if content.field_how_to_tabs %}

@@ -77,6 +77,7 @@
 
   <div class="main">
     <div class="container">
+      <mark class="watermark"></mark>
       <section class="main-content" id="content" role="main">
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
@@ -103,47 +104,48 @@
         {%  endif %}
 
         {% if node and header_image %}
-          {% if node.type.entity.label|lower != 'tabbed_content' and node.type.entity.label|lower != 'how_to' %}
-            {% if node.type.entity.label|lower != 'topic_page' %}
-              <style>
+          {% if node.type.entity.label|lower != 'topic_page' %}
+            <style>
+              .hro {
+                background-image: url({{ small_image }});
+              }
+
+              @media screen and (min-width: 768px) {
                 .hro {
-                  background-image: url({{ small_image }});
+                  background-image: url({{ medium_image }});
                 }
+              }
 
-                @media screen and (min-width: 768px) {
-                  .hro {
-                    background-image: url({{ medium_image }});
-                  }
+              @media screen and (min-width: 1024px) {
+                .hro {
+                  background-image: url({{ large_image }});
                 }
+              }
 
-                @media screen and (min-width: 1024px) {
-                  .hro {
-                    background-image: url({{ large_image }});
-                  }
+              @media screen and (min-width: 1200px) {
+                .hro {
+                  background-image: url({{ xlarge_image }});
                 }
+              }
+            </style>
 
-                @media screen and (min-width: 1200px) {
-                  .hro {
-                    background-image: url({{ xlarge_image }});
-                  }
-                }
-              </style>
-              <div class="b b--fw">
-                <div class="hro hro--pt hro--pb"></div>
+            <div class="b b--fw">
+              <div class="hro hro--pt hro--pb"></div>
+            </div>
+
+          {% else %}
+
+            <div class="hero-image fullwidth">
+              <div class="hero-image-wrapper {{ hero_classes }}">
+                {{ background_image }}
               </div>
-            {% else %}
-              <div class="hero-image fullwidth">
-                <div class="hero-image-wrapper {{ hero_classes }}">
-                  {{ background_image }}
-                </div>
-              </div>
-            {% endif %}
-
-            <div class="brc--wh" data-swiftype-index="false">
-              {{ drupal_block('system_breadcrumb_block') }}
             </div>
 
           {% endif %}
+
+          <div class="brc--wh" data-swiftype-index="false">
+            {{ drupal_block('system_breadcrumb_block') }}
+          </div>
 
         {% endif %}
 

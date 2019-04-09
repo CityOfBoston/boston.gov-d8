@@ -1,4 +1,4 @@
-uuid: 955d6ae6-d78c-42d5-af89-fe3e5aa1675a
+uuid: 94533101-dc97-45ad-ae25-380a4aafda14
 langcode: en
 status: true
 dependencies:
@@ -9,19 +9,22 @@ dependencies:
     - field.field.node.how_to.field_how_to_tabs
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
+    - field.field.node.how_to.field_manual_date
     - field.field.node.how_to.field_need_to_know
     - field.field.node.how_to.field_payment_info
     - field.field.node.how_to.field_published_date
     - field.field.node.how_to.field_sidebar_components
-    - field.field.node.how_to.field_type_of_content
     - field.field.node.how_to.field_updated_date
     - node.type.how_to
   module:
     - datetime
     - entity_reference_revisions
+    - fences
     - svg_image
     - text
     - user
+_core:
+  default_config_hash: NG5w_-myzzMCfusNnk9_OWQg62-vaWtOoQ4jQMLf4Us
 id: node.how_to.default
 targetEntityType: node
 bundle: how_to
@@ -48,9 +51,16 @@ content:
     weight: 4
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: article
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_how_to_tabs:
     label: hidden
@@ -68,6 +78,10 @@ content:
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_links:
@@ -116,14 +130,23 @@ content:
     weight: 9
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  field_type_of_content: true
+  field_manual_date: true
   langcode: true
   published_at: true
