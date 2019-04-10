@@ -29,14 +29,15 @@ function node_emergency_alert_preprocess_form_element(&$variables) {
   if ($variables["name"] == "field_theme") {
     $variables["description"]["attributes"]->addClass("bos-boxed-content-t");
   }
-return;
 }
+
 /**
  * Implements hook_preprocess_HOOK().
  */
 function node_emergency_alert_preprocess_node__emergency_alert(&$variables) {
   $variables["attributes"]->addClass("b");
   $variables["attributes"]->addClass("b--" . $variables["content"]["field_theme"][0]["#markup"]);
+  $variables["attached"]["library"][] = "emergency_alert/emergency_alert.call";
 }
 
 /**
