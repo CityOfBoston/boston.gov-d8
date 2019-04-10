@@ -20,11 +20,6 @@ targetEntityType: node
 bundle: emergency_alert
 mode: default
 content:
-  content_moderation_control:
-    weight: 5
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_description:
     weight: 0
     label: above
@@ -95,6 +90,7 @@ content:
         fences_label_classes: ''
     region: content
 hidden:
+  content_moderation_control: true
   langcode: true
   links: true
   published_at: true
