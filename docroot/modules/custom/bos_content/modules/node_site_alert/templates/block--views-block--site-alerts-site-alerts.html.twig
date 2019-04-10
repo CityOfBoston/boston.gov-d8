@@ -29,5 +29,7 @@
     <h2{{ title_attributes }}>{{ label }}</h2>
   {% endif %}
   {% block content %}
-    {{ content }}
+    <div{{ attributes }}>
+      {{ content }}
+    </div>
   {% endblock %}
