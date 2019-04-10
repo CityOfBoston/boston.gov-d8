@@ -62,6 +62,10 @@ function node_how_to_theme() {
  * Implements hook_preprocess_HOOK().
  */
 function node_how_to_preprocess_node(&$variables) {
+  if ($variables['node']->bundle() != "how_to") {
+    return;
+  }
+
   if ($node = $variables['node']) {
     $type = $node->getType();
     if ($type == 'how_to') {
@@ -94,13 +98,15 @@ function node_how_to_preprocess_node(&$variables) {
   }
 
   // Add markup to locate the contextual editor button.
-  _bos_theme_fix_attributes($variables);
-  $variables["attributes"]->addClass("desktop-100");
-  $variables["attributes"]->addClass("contextual-region");
-  $variables["attributes"]->addClass("tab-pc");
-  $variables["attributes"]->addClass("p-t500");
-  $variables["attributes"]->addClass("node-" . $variables["node"]->id());
-  $variables["attributes"]->addClass("clearfix");
+  if (function_exists("_bos_theme_fix_attributes")) {
+    _bos_theme_fix_attributes($variables);
+    $variables["attributes"]->addClass("desktop-100");
+    $variables["attributes"]->addClass("contextual-region");
+    $variables["attributes"]->addClass("tab-pc");
+    $variables["attributes"]->addClass("p-t500");
+    $variables["attributes"]->addClass("node-" . $variables["node"]->id());
+    $variables["attributes"]->addClass("clearfix");
+  }
 }
 
 /**
@@ -109,7 +115,12 @@ function node_how_to_preprocess_node(&$variables) {
 function node_how_to_preprocess_page(&$variables) {
   // We dont ever want a hero section from the page template.
   $variables['header_image'] = TRUE;
-  _bos_theme_fix_attributes($variables);
+  if (function_exists("_bos_theme_fix_attributes")) {
+    _bos_theme_fix_attributes($variables);
+  }
+  elseif (function_exists("_bos_admin_fix_attributes")) {
+    _bos_admin_fix_attributes($variables);
+  }
   $variables['attributes']->addClass("mn");
 }
 

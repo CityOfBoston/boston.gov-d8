@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.how_to.body
     - field.field.node.how_to.field_components
     - field.field.node.how_to.field_contact
@@ -16,15 +15,16 @@ dependencies:
     - field.field.node.how_to.field_published_date
     - field.field.node.how_to.field_sidebar_components
     - field.field.node.how_to.field_updated_date
+    - image.style.thumbnail
     - node.type.how_to
   module:
     - content_moderation
     - datetime
-    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -200,16 +200,10 @@ content:
     region: content
   field_intro_image:
     weight: 1
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      selection_mode: selection_append
-      view_mode: default
-      field_widget_replace: false
-      open: false
       preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_links:

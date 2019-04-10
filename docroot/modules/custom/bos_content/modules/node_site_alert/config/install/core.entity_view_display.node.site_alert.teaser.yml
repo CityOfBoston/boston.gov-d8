@@ -3,12 +3,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.site_alert.comment_node_site_alert
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
     - field.field.node.site_alert.field_icon
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
+    - field.field.node.site_alert.title_field
     - node.type.site_alert
   module:
     - user
@@ -18,7 +18,6 @@ bundle: site_alert
 mode: teaser
 content: {  }
 hidden:
-  comment_node_site_alert: true
   field_excluded_nodes: true
   field_extra_info: true
   field_icon: true
@@ -27,3 +26,4 @@ hidden:
   langcode: true
   links: true
   published_at: true
+  title_field: true
