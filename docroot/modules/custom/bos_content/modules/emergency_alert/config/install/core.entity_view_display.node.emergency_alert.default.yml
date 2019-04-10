@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.emergency_alert.comment_node_emergency_alert
     - field.field.node.emergency_alert.field_description
     - field.field.node.emergency_alert.field_link
     - field.field.node.emergency_alert.field_theme
@@ -10,7 +9,6 @@ dependencies:
     - node.type.emergency_alert
   module:
     - datetime
-    - entity_reference_revisions
     - options
     - text
     - user
@@ -43,7 +41,7 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
-  comment_node_emergency_alert: true
+  field_link: true
   langcode: true
   links: true
   published_at: true
