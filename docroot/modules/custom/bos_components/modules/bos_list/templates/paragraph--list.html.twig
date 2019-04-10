@@ -25,20 +25,18 @@
  #}
 
 <div class="b b--fw{% if component_theme %} b--{{ component_theme }}{% endif %}">
-  <div class="b-c{% if node.field_component_title.isEmpty and node.field_contact.isEmpty %} b-c--ntp b-c--nbp{% endif %}">
-    {% if node.field_component_title.value or node.field_contact.value %}
-      <div class="sh {{ section_header_theme }} m-b500">
-        {% if node.field_component_title.value %}
-          {{ content.field_component_title }}
-        {% endif %}
-        {% if node.field_short_title.value %}
-          {{ content.field_short_title }}
-        {% endif %}
-        {% if node.field_component_title.value %}
-          {{ content.field_contact }}
-        {% endif %}
-      </div>
-    {% endif %}
+  <div class="b-c{% if node.field_component_title.isempty and node.field_contact.isempty %} b-c--ntp b-c--nbp{% endif %}">
+    <div class="sh {{ section_header_theme }} m-b500">
+      {% if not node.field_component_title.isempty %}
+        {{ content.field_component_title }}
+      {% endif %}
+      {% if not node.field_short_title.isempty %}
+        {{ content.field_short_title }}
+      {% endif %}
+      {% if not node.field_component_title.isempty %}
+        {{ content.field_contact }}
+      {% endif %}
+    </div>
     {{ content.field_list }}
   </div>
 </div>
