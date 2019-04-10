@@ -12,6 +12,7 @@ dependencies:
   module:
     - datetime
     - entity_reference_revisions
+    - fences
     - options
     - text
     - user
@@ -22,6 +23,11 @@ targetEntityType: node
 bundle: emergency_alert
 mode: default
 content:
+  content_moderation_control:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_description:
     weight: 0
     label: above
@@ -29,33 +35,69 @@ content:
     third_party_settings: {  }
     type: text_default
     region: content
+  field_link:
+    type: entity_reference_revisions_entity_view
+    weight: 1
+    region: content
+    label: above
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_status_overrides:
     type: entity_reference_revisions_entity_view
-    weight: 4
+    weight: 3
     label: above
     settings:
       view_mode: default
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_theme:
     label: hidden
-    weight: 3
+    weight: 4
     type: list_key
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_updated_date:
     label: above
     weight: 2
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_long
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
-  field_link: true
   langcode: true
   links: true
   published_at: true
