@@ -15,6 +15,10 @@ function node_status_item_theme() {
     'status_item' => [
       'render element' => 'elements',
     ],
+    'node__status_item' => [
+      'render element' => 'elements',
+      'base hook' => "node",
+    ],
   ];
 }
 
@@ -29,7 +33,7 @@ function node_status_item_theme() {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_status_item(array &$variables) {
+function template_preprocess_node__status_item(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
