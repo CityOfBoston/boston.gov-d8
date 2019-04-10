@@ -38,4 +38,7 @@ function node_emergency_alert_install() {
         ->warning("Could not update content_access settings during module installation.");
     }
   }
+
+  // Copy icons into expected location.
+  _bos_core_install_icons(basename(__FILE__, ".install"));
 }
