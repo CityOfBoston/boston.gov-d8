@@ -15,7 +15,8 @@
  */
 #}
 <article{{ attributes }}>
+  {{ title_suffix }}
   {% if content %}
-    {{ content }}
+    {{ content|without("field_theme") }}
   {% endif %}
 </article>
