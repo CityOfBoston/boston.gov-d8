@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default theme implementation for a single paragraph item.
  *
@@ -23,23 +22,23 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
-?>
-<div class="b b--fw<?php if (isset($component_theme)) : ?> b--<?php print $component_theme; ?><?php endif; ?>">
-  <div class="b-c<?php if (!isset($content['field_component_title']) && !isset($content['field_contact'])): ?> b-c--ntp b-c--nbp<?php endif; ?>">
-    <?php if (isset($content['field_component_title']) || isset($content['field_contact'])): ?>
-      <div class="sh <?php print $section_header_theme; ?> m-b500">
-        <?php if (!empty($content['field_component_title'])) : ?>
-          <?php print render($content['field_component_title']); ?>
-        <?php endif; ?>
-        <?php if (isset($content['field_short_title'])) : ?>
-          <?php print render($content['field_short_title']); ?>
-        <?php endif; ?>
-        <?php if (!empty($content['field_component_title'])) : ?>
-          <?php print render($content['field_contact']); ?>
-        <?php endif; ?>
+ #}
+
+<div class="b b--fw{% if component_theme %} b--{{ component_theme }}{% endif %}">
+  <div class="b-c{% if node.field_component_title.isEmpty and node.field_contact.isEmpty %} b-c--ntp b-c--nbp{% endif %}">
+    {% if node.field_component_title.value or node.field_contact.value %}
+      <div class="sh {{ section_header_theme }} m-b500">
+        {% if node.field_component_title.value %}
+          {{ content.field_component_title }}
+        {% endif %}
+        {% if node.field_short_title.value %}
+          {{ content.field_short_title }}
+        {% endif %}
+        {% if node.field_component_title.value %}
+          {{ content.field_contact }}
+        {% endif %}
       </div>
-    <?php endif; ?>
-    <?php print render($content['field_list']); ?>
+    {% endif %}
+    {{ content.field_list }}
   </div>
 </div>
