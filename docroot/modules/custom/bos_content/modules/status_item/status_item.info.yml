@@ -1,0 +1,18 @@
+name: Status Item
+type: module
+description: 'Provides a status item entity.'
+package: City of Boston (content)
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_content
+config-devel:
+  - core.entity_form_display.node.status_item.default.yml
+  - core.entity_view_display.node.status_item.default.yml
+  - core.entity_view_display.node.status_item.listing.yml
+  - core.entity_view_display.node.status_item.teaser.yml
+  - field.field.node.status_item.field_icon.yml
+  - field.field.node.status_item.field_messages.yml
+  - field.field.node.status_item.field_title.yml
+  - language.content_settings.node.status_item.yml
+  - node.type.status_item.yml
