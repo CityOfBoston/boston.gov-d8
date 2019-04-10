@@ -1,0 +1,23 @@
+uuid: b63f5203-94e8-424f-b786-11e41cbb57c0
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_status_overrides
+    - node.type.emergency_alert
+  module:
+    - entity_reference_revisions
+id: node.emergency_alert.field_status_overrides
+field_name: field_status_overrides
+entity_type: node
+bundle: emergency_alert
+label: 'Status Overrides'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings: {  }
+field_type: entity_reference_revisions

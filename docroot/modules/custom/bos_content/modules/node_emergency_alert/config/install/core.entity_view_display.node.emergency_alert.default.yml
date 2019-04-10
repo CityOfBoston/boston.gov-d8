@@ -4,11 +4,13 @@ dependencies:
   config:
     - field.field.node.emergency_alert.field_description
     - field.field.node.emergency_alert.field_link
+    - field.field.node.emergency_alert.field_status_overrides
     - field.field.node.emergency_alert.field_theme
     - field.field.node.emergency_alert.field_updated_date
     - node.type.emergency_alert
   module:
     - datetime
+    - entity_reference_revisions
     - options
     - text
     - user
@@ -23,6 +25,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_status_overrides:
+    type: entity_reference_revisions_entity_view
+    weight: 4
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
     region: content
   field_theme:
     label: hidden

@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.node.emergency_alert.field_description
     - field.field.node.emergency_alert.field_link
+    - field.field.node.emergency_alert.field_status_overrides
     - field.field.node.emergency_alert.field_theme
     - field.field.node.emergency_alert.field_updated_date
     - node.type.emergency_alert
@@ -41,6 +42,18 @@ content:
       title_plural: Paragraphs
       edit_mode: open
       add_mode: select
+      form_display_mode: default
+      default_paragraph_type: ''
+    third_party_settings: {  }
+    region: content
+  field_status_overrides:
+    type: entity_reference_paragraphs
+    weight: 36
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: ''
     third_party_settings: {  }
