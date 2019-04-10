@@ -1,0 +1,50 @@
+uuid: 4a1c07f4-a1ea-4a3c-8504-4364451ece9f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.emergency_alert.field_description
+    - field.field.node.emergency_alert.field_link
+    - field.field.node.emergency_alert.field_theme
+    - field.field.node.emergency_alert.field_updated_date
+    - node.type.emergency_alert
+  module:
+    - datetime
+    - options
+    - text
+    - user
+_core:
+  default_config_hash: jR1Kr3LWtuZYep9Q_9zjpvTnoALsoRC3u1nu9B9anCw
+id: node.emergency_alert.default
+targetEntityType: node
+bundle: emergency_alert
+mode: default
+content:
+  field_description:
+    weight: 0
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_theme:
+    label: hidden
+    weight: 3
+    type: list_key
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    label: above
+    weight: 2
+    type: datetime_default
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_link: true
+  langcode: true
+  links: true
+  published_at: true
