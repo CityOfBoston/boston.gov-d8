@@ -18,6 +18,7 @@ use Drupal\file\Entity\File;
 use Drupal\Core\Render\Markup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
+use Drupal\media\Entity\Media;
 
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
@@ -423,6 +424,30 @@ function _bos_core_install_icons($module) {
       unlink($path . "/" . $icon);
     }
     copy($modulePath . "/" . $icon, $path . "/" . $icon);
+
+    // Check if the file exists that is listed in para.para_type.module.yml.
+    $filesystem = \Drupal::service('file_system');
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($path . "/" . $icon));
+    $mod = \Drupal::entityTypeManager()
+      ->getStorage("paragraphs_type")->load($entity);
+    if (!empty($mod)) {
+      $destination = "public://paragraphs_type_icon/" . $icon;
+      $image = Drupal::entityTypeManager()->getStorage("file")->loadByProperties(["uri"=>$destination]);
+      if (count($image) == 0) {
+        $image = File::create();
+        $image->setFileUri($destination);
+        $image->setOwnerId(\Drupal::currentUser()->id());
+        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+        $image->setFileName($filesystem->basename($destination));
+        $image->setPermanent();
+        $image->save();
+      }
+      else {
+        $image = end($image);
+      }
+      $file_uuid = $image->get("uuid")->value;
+      $mod->set("icon_uuid", $file_uuid)->save();
+    }
   }
 }
 
