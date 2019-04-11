@@ -897,15 +897,7 @@ function _bos_theme_library() {
  *   The current variables array as generated pre-rendering.
  */
 function _bos_theme_fix_attributes(array &$variables) {
-  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
-    $attribute = new Attribute();
-    if (!empty($variables['attributes'])) {
-      foreach ($variables["attributes"] as $key => $element) {
-        $attribute->setAttribute($key, $element);
-      }
-    }
-    if (!empty($attribute)) {
-      $variables['attributes'] = $attribute;
-    }
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables);
   }
 }
