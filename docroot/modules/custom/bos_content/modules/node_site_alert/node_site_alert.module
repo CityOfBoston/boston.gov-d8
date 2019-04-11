@@ -128,7 +128,7 @@ function node_site_alert_preprocess_node(&$variables) {
   }
 
   // Add-in a bit of css.
-  $variables['#attached']['library'][] = "site_alert/alert.call";
+  $variables['#attached']['library'][] = "node_site_alert/alert.call";
 
   // Used in templates to set the background colors.
   $variables['block_theme'] = $variables["content"]["field_theme"]["#items"]->value;
