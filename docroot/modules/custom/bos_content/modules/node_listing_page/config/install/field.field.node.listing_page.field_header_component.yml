@@ -1,11 +1,9 @@
-uuid: 597796b1-7498-43c1-b3c1-9b5925fd8b7f
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_header_component
     - node.type.listing_page
-    - paragraphs.paragraphs_type.featured_item
     - paragraphs.paragraphs_type.header_text
   module:
     - entity_reference_revisions
@@ -23,7 +21,6 @@ settings:
   handler_settings:
     negate: 0
     target_bundles:
-      featured_item: featured_item
       header_text: header_text
     target_bundles_drag_drop:
       3_column_w_image:

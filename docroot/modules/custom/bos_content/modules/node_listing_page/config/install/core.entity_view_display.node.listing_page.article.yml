@@ -1,10 +1,8 @@
-uuid: 1b5f52a9-d1af-486e-b192-fb384020dcf9
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.calendar_listing
-    - field.field.node.listing_page.comment_node_listing_page
+    - core.entity_view_mode.node.article
     - field.field.node.listing_page.field_components
     - field.field.node.listing_page.field_header_component
     - field.field.node.listing_page.field_intro_image
@@ -13,16 +11,15 @@ dependencies:
     - node.type.listing_page
   module:
     - user
-id: node.listing_page.calendar_listing
+id: node.listing_page.article
 targetEntityType: node
 bundle: listing_page
-mode: calendar_listing
+mode: article
 content:
   links:
     weight: 100
     region: content
 hidden:
-  comment_node_listing_page: true
   field_components: true
   field_header_component: true
   field_intro_image: true

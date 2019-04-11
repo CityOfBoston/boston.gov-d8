@@ -10,9 +10,9 @@ use Drupal\Core\Render\Element;
 /**
  * Implements hook_theme().
  */
-function listing_page_theme() {
+function node_listing_page_theme() {
   return [
-    'listing_page' => [
+    'node__listing_page' => [
       'render element' => 'elements',
     ],
   ];
