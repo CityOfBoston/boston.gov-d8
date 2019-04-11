@@ -19,6 +19,23 @@ function node_listing_page_theme() {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_listing_page_preprocess_paragraph__header_text(&$variables) {
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_listing_page_preprocess_node__listing_page(&$variables) {
+  _bos_theme_fix_attributes($variables);
+  $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->addClass("clearfix");
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']['#node']->id());
+}
+
+/**
  * Prepares variables for listing page templates.
  *
  * Default template: listing-page.html.twig.
@@ -29,7 +46,7 @@ function node_listing_page_theme() {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_listing_page(array &$variables) {
+function template_preprocess_node__listing_page(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }

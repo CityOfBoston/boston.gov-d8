@@ -77,8 +77,6 @@
  *
  * @ingroup themeable
  #}
-{# TODO: Review this: hide($content.comments) #}
-{# TODO: Review this: hide($content.links) #}
 {% if with_image_title %}
   <div class="title-wrapper">
     <div class="title-inner-wrapper">
@@ -86,7 +84,14 @@
     </div>
   </div>
 {% endif %}
-<article id="node-{{ node.nid }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
+<article{{ attributes }}>
+
+  {{ title_prefix }}
+  {% if title %}
+    <h1{{ title_attributes }}>{{ title.0 }}</h1>
+  {%  endif %}
+  {{ title_suffix }}
+
   {% if content.field_header_component %}
     {{ content.field_header_component }}
   {% endif %}

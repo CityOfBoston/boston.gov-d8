@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.listing_page.field_components
     - field.field.node.listing_page.field_header_component
     - field.field.node.listing_page.field_intro_image
+    - field.field.node.listing_page.field_manual_date
     - field.field.node.listing_page.field_published_date
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
@@ -37,6 +38,16 @@ content:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    region: content
+  field_manual_date:
+    weight: 101
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
   field_published_date:
     label: hidden
