@@ -95,7 +95,7 @@
                     <then>
                         <echo message="Config Import Failed." level="error"/>
                         <echo message="=== Log Output ===."/>
-                        <exec command="cat ${project.basedir}/setup/config-import.log"
+                        <exec command="tail -50 ${project.basedir}/setup/config-import.log"
                               passthru="true" logoutput="true"/>
                         <fail message="Fail - Config Import from ${project.sync} failed."/>
                     </then>
