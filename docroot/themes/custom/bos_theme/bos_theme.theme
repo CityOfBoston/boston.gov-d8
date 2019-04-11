@@ -650,6 +650,8 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['attributes']->addClass('node');
     $variables['attributes']->addClass('clearfix');
     $variables['attributes']->addClass(Html::cleanCssIdentifier('node-' . $variables['node_type']));
+    // Add this attribute so that js can change the tooltip and menu text.
+    $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['node_type'])));
     if ($variables['unpublished'] || $variables['preview']) {
       // TODO: These are probably not both required ...
       $variables['attributes']->addClass('node-unpublished');
@@ -760,6 +762,8 @@ function bos_theme_preprocess_paragraph(&$variables) {
   if (!empty($variables['paragraph'])) {
     $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
     $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
+    // Add this attribute so that js can change the tooltip and menu text.
+    $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['paragraph']->bundle())));
   }
 }
 

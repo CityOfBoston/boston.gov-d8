@@ -6,7 +6,11 @@ dependencies:
     - menu_ui
 third_party_settings:
   menu_ui:
-    parent: 'main-menu:0:'
+    parent: 'main:'
+    available_menus:
+      - main
+_core:
+  default_config_hash: 7fB59zkBH8ZPnYlSBN6eXUVhFHq_AMKp1LbUWLH3hLw
 name: 'Status Item'
 type: status_item
 description: 'Create a status item to be displayed dynamically through status views. Status views can be selected through a List component and placed on a page.'
