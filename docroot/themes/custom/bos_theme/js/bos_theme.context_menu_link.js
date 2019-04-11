@@ -32,7 +32,7 @@
       }
       type = type + " (" + entityType + ")";
 
-      if (links.length != 0 ) {
+      if (links.length != 0) {
         if (links.length == 1) {
           links.parents("ul").hide();
           links.parents(".contextual").attr({"title": "Click to Edit " + type + "."});

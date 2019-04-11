@@ -583,13 +583,13 @@ function _bos_core_name_from_email(string $email = NULL) {
   }
 }
 
-/*
+/**
  * Ensures the attributes element of a preprocess_hook is an attributes object.
  *
- * @param $variables
+ * @param array $variables
  *   The variables object from a preprocess hook.
  */
-function _bos_core_fix_attributes(&$variables) {
+function _bos_core_fix_attributes(array &$variables) {
   if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
     $attribute = new Attribute();
     if (!empty($variables['attributes'])) {
