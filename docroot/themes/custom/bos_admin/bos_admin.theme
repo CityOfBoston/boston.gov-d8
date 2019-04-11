@@ -305,7 +305,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
   $form["moderation_state"]["widget"][0]["#changed"] = FALSE;
   $new_value = $form_state->getValue('moderation_state');
-  if (strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
+  if (isset($form["moderation_state"]["widget"][0]["current"]) && strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
     $form["moderation_state"]["widget"][0]["#changed"] = TRUE;
   }
   if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
@@ -372,15 +372,7 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  *   The current variables array as generated pre-rendering.
  */
 function _bos_admin_fix_attributes(array &$variables) {
-  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
-    $attribute = new Attribute();
-    if (!empty($variables['attributes'])) {
-      foreach ($variables["attributes"] as $key => $element) {
-        $attribute->setAttribute($key, $element);
-      }
-    }
-    if (!empty($attribute)) {
-      $variables['attributes'] = $attribute;
-    }
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables);
   }
 }

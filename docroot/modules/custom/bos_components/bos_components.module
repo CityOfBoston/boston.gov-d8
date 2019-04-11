@@ -317,3 +317,15 @@ function _paragraph_is_direct_child_of($entity, $bundle) {
   }
   return FALSE;
 }
+
+/**
+ * Ensures the attributes element of a preprocess_hook is an attributes object.
+ *
+ * @param $variables
+ *   The variables object from a preprocess hook.
+ */
+function _bos_components_fix_attributes(&$variables) {
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables);
+  }
+}
