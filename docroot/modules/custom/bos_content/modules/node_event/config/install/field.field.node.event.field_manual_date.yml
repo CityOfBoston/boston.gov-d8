@@ -1,21 +1,22 @@
-langcode: en
+langcode: und
 status: true
 dependencies:
   config:
+    - field.storage.node.field_manual_date
     - node.type.event
-id: node.event.status
-field_name: status
+id: node.event.field_manual_date
+field_name: field_manual_date
 entity_type: node
 bundle: event
-label: Published
+label: 'Manual Date'
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value:
   -
     value: 0
 default_value_callback: ''
 settings:
-  on_label: 'On'
-  off_label: 'Off'
+  on_label: Manual
+  off_label: Automatic
 field_type: boolean
