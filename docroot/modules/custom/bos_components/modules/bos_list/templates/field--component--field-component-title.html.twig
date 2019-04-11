@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default template implementation to display the value of a field.
  *
@@ -42,11 +41,11 @@
  * @see theme_field()
  *
  * @ingroup themeable
- */
-?>
-<?php foreach ($items as $delta => $item): ?>
-  <?php if(isset($short_title)) { ?>
-    <a name="<?php print $short_title_link; ?>" data-text="<?php print $short_title ?>" class="subnav-anchor"></a>
-  <?php } ?>
-  <h2 class="sh-title"><?php print render($item); ?></h2>
-<?php endforeach; ?>
+ #}
+
+{% for item in items %}
+  {% if short_title %}
+    <a name="{{ short_title_link }}" data-text="{{ short_title }}" class="subnav-anchor"></a>
+  {% endif %}
+  <h2 class="sh-title">{{ item }}</h2>
+{% endfor %}
