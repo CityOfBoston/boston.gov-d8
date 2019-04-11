@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.landing_page.comment_node_landing_page
     - field.field.node.landing_page.field_components
     - field.field.node.landing_page.field_contacts
     - field.field.node.landing_page.field_manual_date
@@ -10,7 +9,6 @@ dependencies:
     - field.field.node.landing_page.field_updated_date
     - node.type.landing_page
   module:
-    - comment
     - content_moderation
     - datetime
     - field_group
@@ -80,12 +78,6 @@ targetEntityType: node
 bundle: landing_page
 mode: default
 content:
-  comment_node_landing_page:
-    type: comment_default
-    weight: 7
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
