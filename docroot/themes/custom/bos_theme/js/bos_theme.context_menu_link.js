@@ -9,7 +9,7 @@
   'use strict';
   $(document).ready(function () {
     // Var contextButtons are a list of context buttons on the page.
-    var contextButtons = $("button.trigger"); //.parent().find("[class^=entitynode]");
+    var contextButtons = $("button.trigger");
     // Create a default type for dropdowns.
     var type = "Element";
 
@@ -17,7 +17,7 @@
     // only one link and adds the node type to the links list.
     if (contextButtons.length == 1) {
       var links = contextButtons.parent().find("[class^=entitynode]");
-      if (links.length == 0 ) {
+      if (links.length == 0) {
         links = contextButtons.parent().find("[class^=paragraphs]");
       }
       links.parents("ul").hide();
@@ -29,9 +29,11 @@
     else if (contextButtons.length > 1) {
       contextButtons.each(function (key, button) {
         type = $(button).parents(".contextual-region").attr("bos_context_type");
-        if (typeof type === "undefined") {type = "Element";}
+        if (typeof type === "undefined") {
+          type = "Element";
+        }
         var links = $(button).parent().find("[class^=entitynode]");
-        if (links.length == 0 ) {
+        if (links.length == 0) {
           links = contextButtons.parent().find("[class^=paragraphs]");
         }
         links.each(function (key, listItem) {
