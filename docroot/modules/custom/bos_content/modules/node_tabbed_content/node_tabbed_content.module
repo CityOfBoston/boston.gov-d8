@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * Provides a tabbed content entity type.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function node_tabbed_content_theme() {
+  return [
+    'node__tabbed_content' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_tabbed_content_preprocess_node__tabbed_content(&$variables){}
+
+/**
+ * Prepares variables for tabbed content templates.
+ *
+ * Default template: tabbed-content.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the tabbed content information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__tabbed_content(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
