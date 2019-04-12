@@ -38,4 +38,8 @@ function node_tabbed_content_install() {
         ->warning("Could not update content_access settings during module installation.");
     }
   }
+  // Install paragraph icons.
+  if (function_exists("_bos_core_install_icons")) {
+    _bos_core_install_icons(basename(__FILE__, ".install"));
+  }
 }

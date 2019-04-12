@@ -312,6 +312,12 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
     if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
       $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
     }
+    if ($form_state->getValue('field_manual_date')[0]['value'] == 1 && $form_state->getValue('field_updated_date')[0]['value'] == "") {
+      $form_state->setErrorByName('field_updated_date', "Please provide a date for the (metadata) Updated Date field.")->sete;
+    }
+    if ($form_state->getValue('field_manual_date')[0]['value'] == 1 && $form_state->getValue('field_published_date')[0]['value'] == "") {
+      $form_state->setErrorByName('field_published_date', "Please provide a date for the (metadata) Published Date field.");
+    }
   }
 }
 

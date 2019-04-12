@@ -1,20 +1,20 @@
-langcode: en
+langcode: und
 status: true
 dependencies:
   config:
-    - field.storage.node.field_updated_date
+    - field.storage.node.field_intro_text
     - node.type.tabbed_content
   module:
-    - datetime
-id: node.tabbed_content.field_updated_date
-field_name: field_updated_date
+    - text
+id: node.tabbed_content.field_intro_text
+field_name: field_intro_text
 entity_type: node
 bundle: tabbed_content
-label: 'Updated Date'
+label: 'Intro Text'
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: datetime
+field_type: text_long
