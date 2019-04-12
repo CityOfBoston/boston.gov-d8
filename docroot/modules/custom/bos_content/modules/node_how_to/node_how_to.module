@@ -61,23 +61,16 @@ function node_how_to_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_how_to_preprocess_node(&$variables) {
-  if ($variables['node']->bundle() != "how_to") {
-    return;
-  }
+function node_how_to_preprocess_node__how_to(&$variables) {
 
-  if ($node = $variables['node']) {
-    $type = $node->getType();
-    if ($type == 'how_to') {
-      $field_how_to_tabs = $node->get('field_how_to_tabs');
-      $tab_paragraphs = $field_how_to_tabs->referencedEntities();
-      $tabs = [];
-      foreach ($tab_paragraphs as $tab_paragraph) {
-        $tabs[] = $tab_paragraph->field_how_to_title->value;
-      }
-      $variables['tabs'] = $tabs;
-    }
+  $node = $variables['node'];
+  $field_how_to_tabs = $node->get('field_how_to_tabs');
+  $tab_paragraphs = $field_how_to_tabs->referencedEntities();
+  $tabs = [];
+  foreach ($tab_paragraphs as $tab_paragraph) {
+    $tabs[] = $tab_paragraph->field_how_to_title->value;
   }
+  $variables['tabs'] = $tabs;
 
   // Add intro_image as background to the title panel.
   if (isset($variables["node"]->field_intro_image)) {
@@ -114,7 +107,7 @@ function node_how_to_preprocess_node(&$variables) {
  */
 function node_how_to_preprocess_page(&$variables) {
   // We dont ever want a hero section from the page template.
-  $variables['header_image'] = TRUE;
+  $variables['header_image'] = FALSE;
   if (function_exists("_bos_theme_fix_attributes")) {
     _bos_theme_fix_attributes($variables);
   }

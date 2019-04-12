@@ -332,7 +332,9 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // as opposed to the rendered node output in the system block.
   $current_path = \Drupal::service('path.current')->getPath();
   $path_args = explode('/', $current_path);
-  $variables['header_image'] = FALSE;
+  if (!isset($variables['header_image'])) {
+    $variables['header_image'] = FALSE;
+  }
   if (!empty($path_args[2])) {
     $nid = $path_args[2];
     if ($path_args[1] == 'node' && is_numeric($nid)) {
