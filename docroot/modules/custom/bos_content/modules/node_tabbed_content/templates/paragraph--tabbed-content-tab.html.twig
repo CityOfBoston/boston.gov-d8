@@ -23,8 +23,7 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-{# TODO: review variable assignment: title = $content.field_component_title[0]['#markup #}
-{# TODO: review variable assignment: title_id = drupal_clean_css_identifier(drupal_html_class($title)) #}
-<div class="tab-p tab-p-{{ tabbed_content_tabs_count }}" id="{{ title_id }}_content" {{ content_attributes }}>
-	{{ content.field_components }}
+{{ breakpoint() }}
+<div{{ content_attributes }}>
+	{{ elements.field_components }}
 </div>

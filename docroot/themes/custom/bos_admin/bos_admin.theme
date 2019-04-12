@@ -377,6 +377,8 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  *
  * @param array $variables
  *   The current variables array as generated pre-rendering.
+ * @param string $check_field
+ *   The attribute field.
  */
 function _bos_admin_fix_attributes(array &$variables) {
   if (function_exists("_bos_core_fix_attributes")) {
