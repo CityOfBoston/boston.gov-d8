@@ -15,6 +15,6 @@
  */
 function _bos_content_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
-    _bos_core_fix_attributes($variables);
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }

@@ -41,7 +41,7 @@ function node_tabbed_content_preprocess_page(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_tabbed_content_preprocess_node__tabbed_content(&$variables){
+function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
 
   $node = $variables['elements']['#node'];
   $tab_paragraphs = $node->get('field_tabbed_content');
@@ -91,7 +91,7 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables){
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_tabbed_content_preprocess_paragraph__tabbed_content_tab(&$variables){
+function node_tabbed_content_preprocess_paragraph__tabbed_content_tab(&$variables) {
   _bos_core_fix_attributes($variables, "content_attributes");
   $variables["content_attributes"]->addClass("tab-p");
   $variables["content_attributes"]->addClass("tab-p-" . $variables["attributes"]["cob-data-index"]);
@@ -102,7 +102,7 @@ function node_tabbed_content_preprocess_paragraph__tabbed_content_tab(&$variable
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_tabbed_content_preprocess_field__field_tabbed_content(&$variables){
+function node_tabbed_content_preprocess_field__field_tabbed_content(&$variables) {
   foreach ($variables["items"] as $key => &$item) {
     // Add the index item so that this can be used to set the correct tab index
     // in the hook_preprocess_paragraph__tabbed_content_tab.
@@ -117,8 +117,8 @@ function node_tabbed_content_preprocess_field__field_tabbed_content(&$variables)
  *
  * @param array $variables
  *   An associative array containing:
- *   - elements: An associative array containing the tabbed content information and any
- *     fields attached to the entity.
+ *   - elements: An associative array containing the tabbed content information
+ *     and any fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
 function template_preprocess_node__tabbed_content(array &$variables) {

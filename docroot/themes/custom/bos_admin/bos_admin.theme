@@ -380,8 +380,8 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  * @param string $check_field
  *   The attribute field.
  */
-function _bos_admin_fix_attributes(array &$variables) {
+function _bos_admin_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
-    _bos_core_fix_attributes($variables);
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }
