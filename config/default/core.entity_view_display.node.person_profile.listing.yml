@@ -17,13 +17,13 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
-    - image.style.medium_square
     - node.type.person_profile
   module:
-    - fences
     - options
     - svg_image
     - user
+_core:
+  default_config_hash: 34vVJ5Pywu0zh3D9wIRJn0w9sM0f7-oxTXd8htY2cwo
 id: node.person_profile.listing
 targetEntityType: node
 bundle: person_profile
@@ -31,53 +31,28 @@ mode: listing
 content:
   field_email:
     label: hidden
-    weight: 4
+    weight: 3
     type: string
     settings:
       link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
     region: content
   field_person_photo:
     label: hidden
     weight: 0
     type: image
     settings:
-      image_style: medium_square
+      image_style: ''
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
     region: content
   field_phone_number:
     label: hidden
-    weight: 3
+    weight: 2
     type: string
     settings:
       link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
     region: content
   field_position_title:
     label: hidden
@@ -85,28 +60,17 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
     region: content
   field_preferred_contact:
     label: hidden
-    weight: 2
+    weight: 4
     type: list_default
     settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
     region: content
 hidden:
   field_components: true
@@ -118,5 +82,4 @@ hidden:
   field_sidebar_components: true
   field_year_elected: true
   langcode: true
-  links: true
   published_at: true

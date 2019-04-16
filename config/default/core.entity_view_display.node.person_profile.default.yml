@@ -21,6 +21,8 @@ dependencies:
     - entity_reference_revisions
     - svg_image
     - user
+_core:
+  default_config_hash: YCRrR7soKVrqK8YZ3egYRg9tEJwvT2S7uG7B_W4FvnI
 id: node.person_profile.default
 targetEntityType: node
 bundle: person_profile
@@ -74,10 +76,6 @@ content:
     settings:
       image_style: ''
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_phone_number:
@@ -124,8 +122,6 @@ content:
   links:
     weight: 100
     region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   field_preferred_contact: true
   field_profile_type: true
