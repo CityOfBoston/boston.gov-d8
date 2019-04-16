@@ -33,6 +33,26 @@ function bos_components_theme() {
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--component--field-contact',
   ];
+  $theme['field__field_subcomponents'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--field-subcomponents',
+  ];
+  $theme['field__subcomponent__field_component_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--subcomponent--field-component-title',
+  ];
+  $theme['field__subcomponent__field_short_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--subcomponent--field-short-title',
+  ];
+  $theme['field__subcomponent__field_contact'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--subcomponent--field-contact',
+  ];
   return $theme;
 }
 
