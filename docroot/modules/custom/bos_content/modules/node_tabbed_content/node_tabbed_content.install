@@ -2,13 +2,13 @@
 
 /**
  * @file
- * The install file for node_landing_page module.
+ * The install file for node_tabbed_content module.
  */
 
 /**
  * Implements hook_uninstall().
  */
-function node_landing_page_uninstall() {
+function node_tabbed_content_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
@@ -17,7 +17,7 @@ function node_landing_page_uninstall() {
 /**
  * Implements hook_install().
  */
-function node_landing_page_install() {
+function node_tabbed_content_install() {
   // Ensure the translation fields are created in the database.
   // @see: https://www.drupal.org/project/drupal/issues/2599228
   // patch is in place - this is just to be sure ...
@@ -34,8 +34,12 @@ function node_landing_page_install() {
       content_access_set_settings($settings, basename(__FILE__, ".install"));
     }
     catch (ErrorException $e) {
-      \Drupal::logger('node_landing_page')
+      \Drupal::logger('tabbed content')
         ->warning("Could not update content_access settings during module installation.");
     }
+  }
+  // Install paragraph icons.
+  if (function_exists("_bos_core_install_icons")) {
+    _bos_core_install_icons(basename(__FILE__, ".install"));
   }
 }

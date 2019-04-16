@@ -332,7 +332,9 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // as opposed to the rendered node output in the system block.
   $current_path = \Drupal::service('path.current')->getPath();
   $path_args = explode('/', $current_path);
-  $variables['header_image'] = FALSE;
+  if (!isset($variables['header_image'])) {
+    $variables['header_image'] = FALSE;
+  }
   if (!empty($path_args[2])) {
     $nid = $path_args[2];
     if ($path_args[1] == 'node' && is_numeric($nid)) {
@@ -687,13 +689,15 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     }
 
     // Add the squiggle bottom onto the page, below the intro-text.
-    if (isset($variables["content"]["field_intro_text"])) {
-      if (!isset($variables["content"]["field_intro_text"]["#attributes"])) {
-        $variables["content"]["field_intro_text"]["#attributes"] = new Attribute();
+    if ($node->getType() != "tabbed_content" && $node->getType() != "how_to") {
+      if (isset($variables["content"]["field_intro_text"])) {
+        if (!isset($variables["content"]["field_intro_text"]["#attributes"])) {
+          $variables["content"]["field_intro_text"]["#attributes"] = new Attribute();
+        }
+        $variables["content"]["field_intro_text"]["#attributes"]->addClass("intro-text");
+        $variables["content"]["field_intro_text"]["#attributes"]->addClass("supporting-text");
+        $variables["content"]["field_intro_text"]["#attributes"]->addClass("squiggle-border-bottom");
       }
-      $variables["content"]["field_intro_text"]["#attributes"]->addClass("intro-text");
-      $variables["content"]["field_intro_text"]["#attributes"]->addClass("supporting-text");
-      $variables["content"]["field_intro_text"]["#attributes"]->addClass("squiggle-border-bottom");
     }
 
     // Addin a theme override for the contextual_links.
@@ -895,9 +899,11 @@ function _bos_theme_library() {
  *
  * @param array $variables
  *   The current variables array as generated pre-rendering.
+ * @param string $check_field
+ *   The attribute field.
  */
-function _bos_theme_fix_attributes(array &$variables) {
+function _bos_theme_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
-    _bos_core_fix_attributes($variables);
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }
