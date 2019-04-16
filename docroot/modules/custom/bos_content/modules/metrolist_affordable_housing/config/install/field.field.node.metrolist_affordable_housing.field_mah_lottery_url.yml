@@ -1,19 +1,22 @@
-uuid: 65a6fb1e-5d15-462e-bc5f-fb72da45e328
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_mah_contact
+    - field.storage.node.field_mah_lottery_url
     - node.type.metrolist_affordable_housing
-id: node.metrolist_affordable_housing.field_mah_contact
-field_name: field_mah_contact
+  module:
+    - link
+id: node.metrolist_affordable_housing.field_mah_lottery_url
+field_name: field_mah_lottery_url
 entity_type: node
 bundle: metrolist_affordable_housing
-label: 'Property Manager Contact'
+label: 'Lottery URL'
 description: ''
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings: {  }
-field_type: string
+settings:
+  title: 0
+  link_type: 17
+field_type: link

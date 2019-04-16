@@ -1,22 +1,18 @@
-uuid: 90617935-e8cc-431d-bf69-f3af2de3735c
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.body
+    - field.storage.node.field_mah_lottery_indicator
     - node.type.metrolist_affordable_housing
-  module:
-    - text
-id: node.metrolist_affordable_housing.body
-field_name: body
+id: node.metrolist_affordable_housing.field_mah_lottery_indicator
+field_name: field_mah_lottery_indicator
 entity_type: node
 bundle: metrolist_affordable_housing
-label: Body
+label: Lottery
 description: ''
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  display_summary: true
-field_type: text_with_summary
+settings: {  }
+field_type: string

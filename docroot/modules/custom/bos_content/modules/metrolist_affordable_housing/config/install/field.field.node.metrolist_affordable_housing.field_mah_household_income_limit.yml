@@ -1,18 +1,18 @@
-uuid: 7d10c2e2-f3ad-4e01-a398-ad57140709d9
 langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.field_mah_household_income_limit
     - node.type.metrolist_affordable_housing
-id: node.metrolist_affordable_housing.created
-field_name: created
+id: node.metrolist_affordable_housing.field_mah_household_income_limit
+field_name: field_mah_household_income_limit
 entity_type: node
 bundle: metrolist_affordable_housing
-label: 'Authored on'
-description: 'The time that the node was created.'
+label: 'Household Income Limits (AMI)'
+description: ''
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: created
+field_type: string
