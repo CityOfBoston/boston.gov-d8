@@ -10,7 +10,7 @@ use Drupal\Core\Render\Element;
 /**
  * Implements hook_theme().
  */
-function metrolist_affordable_housing_theme() {
+function node_metrolist_theme() {
   return [
     'metrolist_affordable_housing' => [
       'render element' => 'elements',
@@ -29,7 +29,7 @@ function metrolist_affordable_housing_theme() {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_metrolist_affordable_housing(array &$variables) {
+function template_preprocess_node_metrolist(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }

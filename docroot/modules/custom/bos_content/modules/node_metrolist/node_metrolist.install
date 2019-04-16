@@ -2,13 +2,13 @@
 
 /**
  * @file
- * The install file for metrolist_affordable_housing module.
+ * The install file for node_metrolist module.
  */
 
 /**
  * Implements hook_uninstall().
  */
-function metrolist_affordable_housing_uninstall() {
+function node_metrolist_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
@@ -17,7 +17,7 @@ function metrolist_affordable_housing_uninstall() {
 /**
  * Implements hook_install().
  */
-function metrolist_affordable_housing_install() {
+function node_metrolist_install() {
   // Ensure the translation fields are created in the database.
   // @see: https://www.drupal.org/project/drupal/issues/2599228
   // patch is in place - this is just to be sure ...
