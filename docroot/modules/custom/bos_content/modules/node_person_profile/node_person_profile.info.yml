@@ -1,0 +1,41 @@
+name: Person Profile
+type: module
+description: 'Provides a person profile entity.'
+package: City of Boston (content)
+core: 8.x
+version: 8.x.1.0
+dependencies:
+  - bos_content
+config_devel:
+  - core.entity_form_display.node.person_profile.default
+  - core.entity_view_display.node.person_profile.article
+  - core.entity_view_display.node.person_profile.calendar_listing
+  - core.entity_view_display.node.person_profile.contact
+  - core.entity_view_display.node.person_profile.default
+  - core.entity_view_display.node.person_profile.department_listing
+  - core.entity_view_display.node.person_profile.embed
+  - core.entity_view_display.node.person_profile.featured_item
+  - core.entity_view_display.node.person_profile.featured_topics
+  - core.entity_view_display.node.person_profile.listing
+  - core.entity_view_display.node.person_profile.listing_long
+  - core.entity_view_display.node.person_profile.poll_stub
+  - core.entity_view_display.node.person_profile.popup_icon
+  - core.entity_view_display.node.person_profile.published_by
+  - core.entity_view_display.node.person_profile.teaser
+  - core.entity_view_display.node.person_profile.topics_list
+  - field.field.node.person_profile.field_components
+  - field.field.node.person_profile.field_contact
+  - field.field.node.person_profile.field_email
+  - field.field.node.person_profile.field_first_name
+  - field.field.node.person_profile.field_last_name
+  - field.field.node.person_profile.field_person_photo
+  - field.field.node.person_profile.field_phone_number
+  - field.field.node.person_profile.field_political_party
+  - field.field.node.person_profile.field_position_title
+  - field.field.node.person_profile.field_preferred_contact
+  - field.field.node.person_profile.field_profile_type
+  - field.field.node.person_profile.field_sidebar_components
+  - field.field.node.person_profile.field_year_elected
+  - language.content_settings.node.person_profile
+  - node.type.person_profile
+  - xmlsitemap.settings.node.person_profile
