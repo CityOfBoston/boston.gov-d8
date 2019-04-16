@@ -12,10 +12,20 @@ use Drupal\Core\Render\Element;
  */
 function node_metrolist_theme() {
   return [
-    'metrolist_affordable_housing' => [
+    'node__metrolist_affordable_housing' => [
       'render element' => 'elements',
     ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_metrolist_preprocess_node__metrolist_affordable_housing(&$variables) {
+  _bos_content_fix_attributes($variables);
+  $variables['attributes']->addClass("contextual-region");
+  $variables['attributes']->addClass("node-" . $variables["elements"]["#node"]->id());
+  $variables['attributes']->addClass("clearfix");
 }
 
 /**

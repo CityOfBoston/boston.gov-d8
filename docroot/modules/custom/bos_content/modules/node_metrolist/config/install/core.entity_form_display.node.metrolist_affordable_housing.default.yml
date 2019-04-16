@@ -22,6 +22,8 @@ dependencies:
     - datetime
     - field_group
     - link
+    - path
+    - publication_date
     - text
 third_party_settings:
   field_group:
@@ -38,10 +40,9 @@ third_party_settings:
       label: MAH
     group_imported_data:
       children:
-        - field_mah_not_active
+        - group_status
         - title
         - body
-        - field_mah_publish_to_metrolist
         - field_mah_household_income_limit
         - group_address_
         - group_lottery_info
@@ -49,11 +50,12 @@ third_party_settings:
       weight: 20
       format_type: tab
       format_settings:
+        label: 'Imported Data'
+        formatter: closed
+        description: "<b>Data imported from salesforce.</b><br/>\r\nNOTE: Any changes made here will be overwritten on next salesforce sync."
+        required_fields: true
         id: ''
         classes: ''
-        formatter: closed
-        description: "Data imported from salesforce.\r\nNOTE: Any changes made here will be overwritten on next salesforce sync."
-        required_fields: true
       label: 'Imported Data'
     group_lottery_info:
       children:
@@ -62,7 +64,7 @@ third_party_settings:
         - field_mah_lottery_url
         - field_mah_lottery_deadline
       parent_name: group_imported_data
-      weight: 9
+      weight: 27
       format_type: details
       format_settings:
         id: ''
@@ -80,7 +82,7 @@ third_party_settings:
         - field_mah_phone
         - field_mah_email
       parent_name: group_imported_data
-      weight: 8
+      weight: 26
       format_type: details
       format_settings:
         id: ''
@@ -88,13 +90,26 @@ third_party_settings:
         open: false
         required_fields: true
       label: 'Address Info'
+    group_status:
+      children:
+        - field_mah_not_active
+        - field_mah_publish_to_metrolist
+      parent_name: group_imported_data
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Property Status'
 id: node.metrolist_affordable_housing.default
 targetEntityType: node
 bundle: metrolist_affordable_housing
 mode: default
 content:
   body:
-    weight: 5
+    weight: 24
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -102,6 +117,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
+  created:
+    type: datetime_timestamp
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_mah_address:
     weight: 6
     type: string_textfield
@@ -127,7 +148,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_household_income_limit:
-    weight: 7
+    weight: 25
     type: string_textfield
     settings:
       size: 60
@@ -171,7 +192,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_not_active:
-    weight: 3
+    weight: 21
     type: boolean_checkbox
     settings:
       display_label: true
@@ -194,7 +215,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_publish_to_metrolist:
-    weight: 6
+    weight: 22
     type: boolean_checkbox
     settings:
       display_label: true
@@ -208,22 +229,74 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  title:
+  langcode:
+    type: language_select
+    weight: 7
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
     type: string_textfield
-    weight: 4
+    weight: 1
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden:
-  created: true
-  langcode: true
-  moderation_state: true
-  path: true
-  promote: true
-  published_at: true
-  status: true
-  sticky: true
-  uid: true
-  url_redirects: true
+  path:
+    type: path
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 6
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 10
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 23
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

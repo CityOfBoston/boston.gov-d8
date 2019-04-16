@@ -20,6 +20,7 @@ dependencies:
     - node.type.metrolist_affordable_housing
   module:
     - datetime
+    - fences
     - link
     - text
     - user
@@ -30,18 +31,30 @@ mode: default
 content:
   body:
     label: hidden
-    weight: 0
+    weight: 1
     type: text_default
     settings: {  }
     third_party_settings: {  }
     region: content
+  content_moderation_control:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_mah_address:
     label: above
     weight: 7
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_contact:
     label: above
@@ -49,7 +62,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_email:
     label: above
@@ -57,78 +77,141 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_household_income_limit:
     label: above
-    weight: 21
+    weight: 15
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_lottery_deadline:
     label: above
-    weight: 11
+    weight: 8
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_long
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_lottery_indicator:
     label: above
-    weight: 19
+    weight: 13
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_lottery_type:
     label: above
-    weight: 18
+    weight: 12
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_lottery_url:
     label: above
-    weight: 17
+    weight: 11
     type: link
     settings:
       trim_length: 80
       url_only: false
       url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
+      rel: '0'
+      target: '0'
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_neighborhood:
     label: above
     weight: 3
     type: entity_reference_label
     settings:
-      link: true
-    third_party_settings: {  }
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_not_active:
     label: above
-    weight: 20
+    weight: 14
     type: boolean
     settings:
-      format: default
-      format_custom_false: ''
+      format: true-false
       format_custom_true: ''
-    third_party_settings: {  }
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_outer_location:
     label: above
-    weight: 16
+    weight: 10
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_phone:
     label: above
@@ -136,17 +219,31 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_publish_to_metrolist:
     label: above
-    weight: 14
+    weight: 9
     type: boolean
     settings:
-      format: default
-      format_custom_false: ''
+      format: yes-no
       format_custom_true: ''
-    third_party_settings: {  }
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
   field_mah_zipcode:
     label: above
@@ -154,13 +251,16 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
     region: content
-  links:
-    weight: 100
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   langcode: true
+  links: true
   published_at: true
