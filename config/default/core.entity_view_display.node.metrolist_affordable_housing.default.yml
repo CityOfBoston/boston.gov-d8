@@ -22,7 +22,6 @@ dependencies:
   module:
     - datetime
     - link
-    - options
     - text
     - user
 _core:
@@ -119,8 +118,11 @@ content:
   field_mah_not_active:
     label: above
     weight: 20
-    type: list_default
-    settings: {  }
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
     region: content
   field_mah_outer_location:
@@ -142,8 +144,11 @@ content:
   field_mah_publish_to_metrolist:
     label: above
     weight: 14
-    type: list_default
-    settings: {  }
+    type: boolean
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
     region: content
   field_mah_zipcode:
@@ -157,6 +162,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   langcode: true
   published_at: true
