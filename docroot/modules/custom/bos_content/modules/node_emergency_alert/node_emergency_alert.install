@@ -40,5 +40,7 @@ function node_emergency_alert_install() {
   }
 
   // Copy icons into expected location.
-  _bos_core_install_icons(basename(__FILE__, ".install"));
+  if (function_exists("_bos_core_install_icons")) {
+    _bos_core_install_icons(basename(__FILE__, ".install"));
+  }
 }

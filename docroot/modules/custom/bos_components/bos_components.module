@@ -33,6 +33,26 @@ function bos_components_theme() {
     'path' => 'modules/custom/bos_components/templates',
     'template' => 'field--component--field-contact',
   ];
+  $theme['field__field_subcomponents'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--field-subcomponents',
+  ];
+  $theme['field__subcomponent__field_component_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--subcomponent--field-component-title',
+  ];
+  $theme['field__subcomponent__field_short_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--subcomponent--field-short-title',
+  ];
+  $theme['field__subcomponent__field_contact'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/templates',
+    'template' => 'field--subcomponent--field-contact',
+  ];
   return $theme;
 }
 
@@ -51,13 +71,15 @@ function bos_components_preprocess_field(&$variables) {
           if (empty($language)) {
             $language = "und";
           }
-          $short_title = $component->getTranslation($language)
-            ->get('field_short_title')
-            ->getValue();
-          if (!empty($short_title)) {
-            $variables['short_title'] = $short_title[0]['value'];
-            $short_title_link = preg_replace('@^[0-9\s]+@', '', strtolower($short_title[0]['value']));
-            $variables['short_title_link'] = preg_replace('@[^a-z0-9-]+@', '-', $short_title_link);
+          if ($component->hasField("field_short_title")) {
+            $short_title = $component->getTranslation($language)
+              ->get('field_short_title')
+              ->getValue();
+            if (!empty($short_title)) {
+              $variables['short_title'] = $short_title[0]['value'];
+              $short_title_link = preg_replace('@^[0-9\s]+@', '', strtolower($short_title[0]['value']));
+              $variables['short_title_link'] = preg_replace('@[^a-z0-9-]+@', '-', $short_title_link);
+            }
           }
         }
         break;
@@ -323,9 +345,11 @@ function _paragraph_is_direct_child_of($entity, $bundle) {
  *
  * @param array $variables
  *   The variables object from a preprocess hook.
+ * @param string $check_field
+ *   The attribute field.
  */
-function _bos_components_fix_attributes(array &$variables) {
+function _bos_components_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
-    _bos_core_fix_attributes($variables);
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }

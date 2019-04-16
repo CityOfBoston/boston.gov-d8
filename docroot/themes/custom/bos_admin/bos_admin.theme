@@ -312,6 +312,14 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
     if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
       $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
     }
+    if (NULL != $form_state->getValue('field_manual_date') && $form_state->getValue('field_manual_date')['value'] == 1) {
+      if ($form_state->getValue('field_updated_date')[0]['value'] == "") {
+        $form_state->setErrorByName('field_updated_date', "Please provide a date for the (metadata) Updated Date field.")->sete;
+      }
+      if ($form_state->getValue('field_published_date')[0]['value'] == "") {
+        $form_state->setErrorByName('field_published_date', "Please provide a date for the (metadata) Published Date field.");
+      }
+    }
   }
 }
 
@@ -369,9 +377,11 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  *
  * @param array $variables
  *   The current variables array as generated pre-rendering.
+ * @param string $check_field
+ *   The attribute field.
  */
-function _bos_admin_fix_attributes(array &$variables) {
+function _bos_admin_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
-    _bos_core_fix_attributes($variables);
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }
