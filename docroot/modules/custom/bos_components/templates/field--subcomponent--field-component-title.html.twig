@@ -45,7 +45,7 @@
 {% set class = "sh-title" %}
 
 {% for item in items %}
-    <h2{{ item.attributes.addClass(class) }} {{ attributes }}>
+    <h2{{ attributes.addClass(class)  }}>
         {{ item.content }}
     </h2>
 {% endfor %}
