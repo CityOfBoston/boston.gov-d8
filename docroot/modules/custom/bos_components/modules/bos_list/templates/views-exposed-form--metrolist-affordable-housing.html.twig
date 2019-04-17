@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * This template handles the layout of the views exposed filter form.
  *
@@ -20,74 +18,72 @@
  * - $button: The submit button for the form.
  *
  * @ingroup views_templates
- */
+ #}
 
-?>
-<?php if (!empty($q)): ?>
-  <?php
-  // This ensures that, if clean URLs are off, the 'q' is added first so that
-  // it shows up first in the URL.
-  print $q;
-  ?>
-<?php endif; ?>
+{% if q %}
+  {{ q }}
+  {# This ensures that, if clean URLs are off, the 'q' is added first so that
+  it shows up first in the URL. #}
+{% endif %}
+
 <div class="drawer-trigger mobile-only ">
   <div class="drawer-trigger-chevron"></div>
   Filter
 </div>
 <div class="views-exposed-form drawer mobile-only">
   <div class="views-exposed-widgets clearfix">
-    <?php foreach($widget_groups as $group_id => $widget_group): ?>
+    {% for group_id,widget_group in widget_groups %}
       <div class="drawer-wrapper">
         <div class="drawer-trigger">
             <div class="drawer-trigger-chevron"></div>
-            <?php print $group_id; ?>
+            {{ group_id }}
         </div>
         <div class="drawer drawer-<?php print $group_id; ?>">
-          <?php foreach ($widget_group as $widget_id => $widget): ?>
-            <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $widget_id; ?>">
-              <?php if (!empty($widget->label)): ?>
-                <label for="<?php print $widget->id; ?>">
-                  <?php print $widget->label; ?>
+          {% for widget_id,widget in widget_group %}
+            <div id="{{ widget.id }}-wrapper" class="views-exposed-widget views-widget-{{ widget_id }}">
+              {% if widget.label %}
+                <label for="{{ widget.id }}">
+                  {{ widget.label }}
                 </label>
-              <?php endif; ?>
-              <?php if (!empty($widget->operator)): ?>
+              {% endif %}
+              {% if widget.operator %}
                 <div class="views-operator">
-                  <?php print $widget->operator; ?>
+                  {{ widget.operator }}
                 </div>
-              <?php endif; ?>
+              {% endif %}
               <div class="views-widget">
-                <?php print $widget->widget; ?>
+                {{ widget.widget }}
               </div>
             </div>
-          <?php endforeach; ?>
+          {% endfor %}
         </div>
       </div>
-    <?php endforeach; ?>
-    <?php if (!empty($sort_by)): ?>
+    {% endfor %}
+    {% if sort_by %}
       <div class="views-exposed-widget views-widget-sort-by">
-        <?php print $sort_by; ?>
+        {{ sort_by }}
       </div>
       <div class="views-exposed-widget views-widget-sort-order">
-        <?php print $sort_order; ?>
+        {{ sort_order }}
       </div>
-    <?php endif; ?>
-    <?php if (!empty($items_per_page)): ?>
+    {% endif %}
+    {% if items_per_page %}
       <div class="views-exposed-widget views-widget-per-page">
-        <?php print $items_per_page; ?>
+        {{ items_per_page }}
       </div>
-    <?php endif; ?>
-    <?php if (!empty($offset)): ?>
+    {% endif %}
+    {% if offset %}
       <div class="views-exposed-widget views-widget-offset">
-        <?php print $offset; ?>
+        {{ offset }}
       </div>
-    <?php endif; ?>
+    {% endif %}
     <div class="views-exposed-widget views-submit-button">
-      <?php print $button; ?>
+      {{ button }}
     </div>
-    <?php if (!empty($reset_button)): ?>
+    {% if reset_button %}
       <div class="views-exposed-widget views-reset-button">
-        <?php print $reset_button; ?>
+        {{ reset_button }}
       </div>
-    <?php endif; ?>
+    {% endif %}
   </div>
 </div>
