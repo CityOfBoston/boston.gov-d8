@@ -20,10 +20,12 @@
  * @ingroup views_templates
  #}
 
-{% if q %}
-  {{ q }}
-  {# This ensures that, if clean URLs are off, the 'q' is added first so that
-  it shows up first in the URL. #}
+{% if q is not empty %}
+  {#
+    This ensures that, if clean URLs are off, the 'q' is added first,
+    as a hidden form element, so that it shows up first in the POST URL.
+  #}
+{{ q }}
 {% endif %}
 
 <div class="drawer-trigger mobile-only ">
@@ -38,7 +40,7 @@
             <div class="drawer-trigger-chevron"></div>
             {{ group_id }}
         </div>
-        <div class="drawer drawer-<?php print $group_id; ?>">
+        <div class="drawer drawer-{{ group_id }}">
           {% for widget_id,widget in widget_group %}
             <div id="{{ widget.id }}-wrapper" class="views-exposed-widget views-widget-{{ widget_id }}">
               {% if widget.label %}
