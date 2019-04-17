@@ -3,8 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_description
     - field.field.node.person_profile.field_email
     - field.field.node.person_profile.field_first_name
     - field.field.node.person_profile.field_last_name
@@ -18,8 +20,10 @@ dependencies:
     - field.field.node.person_profile.field_year_elected
     - node.type.person_profile
   module:
+    - address
     - entity_reference_revisions
     - svg_image
+    - text
     - user
 _core:
   default_config_hash: YCRrR7soKVrqK8YZ3egYRg9tEJwvT2S7uG7B_W4FvnI
@@ -28,9 +32,16 @@ targetEntityType: node
 bundle: person_profile
 mode: default
 content:
+  field_address:
+    weight: 10
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_components:
     label: hidden
-    weight: 14
+    weight: 11
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -39,15 +50,22 @@ content:
     region: content
   field_contact:
     label: hidden
-    weight: 5
+    weight: 3
     type: entity_reference_label
     settings:
       link: true
     third_party_settings: {  }
     region: content
+  field_description:
+    weight: 4
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_email:
     label: hidden
-    weight: 11
+    weight: 9
     type: string
     settings:
       link_to_entity: false
@@ -55,7 +73,7 @@ content:
     region: content
   field_first_name:
     label: hidden
-    weight: 1
+    weight: 0
     type: string
     settings:
       link_to_entity: false
@@ -63,7 +81,7 @@ content:
     region: content
   field_last_name:
     label: hidden
-    weight: 2
+    weight: 1
     type: string
     settings:
       link_to_entity: false
@@ -71,16 +89,20 @@ content:
     region: content
   field_person_photo:
     label: hidden
-    weight: 7
+    weight: 5
     type: image
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_phone_number:
     label: hidden
-    weight: 10
+    weight: 8
     type: string
     settings:
       link_to_entity: false
@@ -88,7 +110,7 @@ content:
     region: content
   field_political_party:
     label: hidden
-    weight: 9
+    weight: 7
     type: entity_reference_label
     settings:
       link: true
@@ -96,7 +118,7 @@ content:
     region: content
   field_position_title:
     label: hidden
-    weight: 3
+    weight: 2
     type: string
     settings:
       link_to_entity: false
@@ -104,7 +126,7 @@ content:
     region: content
   field_sidebar_components:
     label: hidden
-    weight: 15
+    weight: 12
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: sidebar
@@ -113,17 +135,16 @@ content:
     region: content
   field_year_elected:
     label: hidden
-    weight: 8
+    weight: 6
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-  links:
-    weight: 100
-    region: content
 hidden:
+  content_moderation_control: true
   field_preferred_contact: true
   field_profile_type: true
   langcode: true
+  links: true
   published_at: true

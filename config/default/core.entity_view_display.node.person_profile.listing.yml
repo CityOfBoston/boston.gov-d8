@@ -4,8 +4,10 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.listing
+    - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_description
     - field.field.node.person_profile.field_email
     - field.field.node.person_profile.field_first_name
     - field.field.node.person_profile.field_last_name
@@ -44,6 +46,10 @@ content:
     settings:
       image_style: ''
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
     third_party_settings: {  }
     region: content
   field_phone_number:
@@ -69,12 +75,12 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-  links:
-    weight: 100
-    region: content
 hidden:
+  content_moderation_control: true
+  field_address: true
   field_components: true
   field_contact: true
+  field_description: true
   field_first_name: true
   field_last_name: true
   field_political_party: true
@@ -82,4 +88,5 @@ hidden:
   field_sidebar_components: true
   field_year_elected: true
   langcode: true
+  links: true
   published_at: true

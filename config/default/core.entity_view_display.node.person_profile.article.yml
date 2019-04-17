@@ -1,11 +1,13 @@
 uuid: 5f6054a0-8608-48f3-9b72-ce871855836a
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.article
+    - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_description
     - field.field.node.person_profile.field_email
     - field.field.node.person_profile.field_first_name
     - field.field.node.person_profile.field_last_name
@@ -27,12 +29,19 @@ targetEntityType: node
 bundle: person_profile
 mode: article
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
 hidden:
+  field_address: true
   field_components: true
   field_contact: true
+  field_description: true
   field_email: true
   field_first_name: true
   field_last_name: true

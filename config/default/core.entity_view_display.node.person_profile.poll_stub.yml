@@ -1,11 +1,13 @@
 uuid: 08a808d7-e8eb-4ca5-ba0f-9d1570bc13ae
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.poll_stub
+    - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_description
     - field.field.node.person_profile.field_email
     - field.field.node.person_profile.field_first_name
     - field.field.node.person_profile.field_last_name
@@ -27,12 +29,19 @@ targetEntityType: node
 bundle: person_profile
 mode: poll_stub
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
 hidden:
+  field_address: true
   field_components: true
   field_contact: true
+  field_description: true
   field_email: true
   field_first_name: true
   field_last_name: true
