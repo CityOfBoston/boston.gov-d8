@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\core\Template\Attribute;
 
 /**
  * Implements hook_theme().
@@ -14,6 +15,9 @@ function node_person_profile_theme() {
   return [
     'node__person_profile' => [
       'render element' => 'elements',
+    ],
+    'field__field_political_party__person_profile__mode__full' => [
+      'base_hook' => 'field',
     ],
   ];
 }
@@ -26,6 +30,9 @@ function node_person_profile_preprocess_node__person_profile(&$variables) {
   $variables['attributes']->addClass("contextual-region");
   $variables['attributes']->addClass("node-" . $variables["elements"]["#node"]->id());
   $variables['attributes']->addClass("clearfix");
+
+  // Set some attributes for page elements to be used in the node template.
+  $variables["title_attributes"] = new Attribute(["class" => ["person-profile-display-name"],]);
 }
 
 /**
@@ -39,7 +46,7 @@ function node_person_profile_preprocess_node__person_profile(&$variables) {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_node_person_profile(array &$variables) {
+function template_preprocess_node__person_profile(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
