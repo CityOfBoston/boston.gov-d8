@@ -1,19 +1,16 @@
-uuid: 23468c37-86c0-4f15-af44-10c12ddd91af
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_features
+    - field.storage.node.field_single_neighborhood
     - node.type.place_profile
-    - taxonomy.vocabulary.features
-_core:
-  default_config_hash: eJhE2mfFpmcRHuI9BaZ7JH6JJ8kYmz-yveYKv4dvvo4
-id: node.place_profile.field_features
-field_name: field_features
+    - taxonomy.vocabulary.neighborhoods
+id: node.place_profile.field_single_neighborhood
+field_name: field_single_neighborhood
 entity_type: node
 bundle: place_profile
-label: Features
-description: 'Select place features.'
+label: Neighborhood
+description: 'Please select the Neighborhood for this place.'
 required: false
 translatable: false
 default_value: {  }
@@ -28,5 +25,5 @@ settings:
       field: name
       direction: ASC
     target_bundles:
-      features: features
+      neighborhoods: neighborhoods
 field_type: entity_reference

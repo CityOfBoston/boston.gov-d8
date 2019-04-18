@@ -22,10 +22,10 @@ dependencies:
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
   module:
-    - fences
     - image_url_formatter
-    - text
     - user
+_core:
+  default_config_hash: oKnDM90bEtXC1F9ZvDjYFd7YJMGR3J2104UpVG4yp_M
 id: node.place_profile.listing
 targetEntityType: node
 bundle: place_profile
@@ -36,46 +36,19 @@ content:
     weight: 0
     type: image_url
     settings:
-      url_type: '0'
-      image_style: grid_card_image
-      image_link: ''
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+      image_style: ''
+    third_party_settings: {  }
     region: content
-  field_intro_text:
-    type: text_default
-    weight: 1
-    region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_single_neighborhood:
     label: hidden
     weight: 2
     type: entity_reference_label
     settings:
       link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
     region: content
 hidden:
   body: true
@@ -83,6 +56,7 @@ hidden:
   field_contact: true
   field_did_you_know: true
   field_features: true
+  field_intro_text: true
   field_links: true
   field_operation_hours: true
   field_phone_number: true
@@ -92,5 +66,4 @@ hidden:
   field_sidebar_components: true
   field_updated_date: true
   langcode: true
-  links: true
   published_at: true
