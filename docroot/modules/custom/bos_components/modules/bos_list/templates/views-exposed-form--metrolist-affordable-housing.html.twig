@@ -50,24 +50,6 @@
         </div>
       </div>
     </div>
-    {% if sort_by %}
-      <div class="views-exposed-widget views-widget-sort-by">
-        {{ sort_by }}
-      </div>
-      <div class="views-exposed-widget views-widget-sort-order">
-        {{ sort_order }}
-      </div>
-    {% endif %}
-    {% if items_per_page %}
-      <div class="views-exposed-widget views-widget-per-page">
-        {{ items_per_page }}
-      </div>
-    {% endif %}
-    {% if offset %}
-      <div class="views-exposed-widget views-widget-offset">
-        {{ offset }}
-      </div>
-    {% endif %}
     {% if form.actions.submit %}
       <div class="views-exposed-widget views-submit-button">
         {{ form.actions.submit }}
