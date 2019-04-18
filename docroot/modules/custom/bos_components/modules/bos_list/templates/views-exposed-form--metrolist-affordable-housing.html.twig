@@ -1,23 +1,13 @@
 {#
+/**
  * @file
- * This template handles the layout of the views exposed filter form.
+ * Theme override of a views exposed form.
  *
- * Variables available:
- * - $widgets: An array of exposed form widgets. Each widget contains:
- * - $widget->label: The visible label to print. May be optional.
- * - $widget->operator: The operator for the widget. May be optional.
- * - $widget->widget: The widget itself.
- * - $sort_by: The select box to sort the view using an exposed form.
- * - $sort_order: The select box with the ASC, DESC options to define order. May
- *                be optional.
- * - $items_per_page: The select box with the available items per page. May be
- *                    optional.
- * - $offset: A textfield to define the offset of the view. May be optional.
- * - $reset_button: A button to reset the exposed filter applied. May be
- *                  optional.
- * - $button: The submit button for the form.
+ * Available variables:
+ * - form: A render element representing the form.
  *
- * @ingroup views_templates
+ * @see template_preprocess_views_exposed_form()
+ */
  #}
 
 {% if q is not empty %}
@@ -28,39 +18,36 @@
 {{ q }}
 {% endif %}
 
-<div class="drawer-trigger mobile-only ">
+<div class="drawer-trigger mobile-only">
   <div class="drawer-trigger-chevron"></div>
   Filter
 </div>
 <div class="views-exposed-form drawer mobile-only">
   <div class="views-exposed-widgets clearfix">
-    {% for group_id,widget_group in widget_groups %}
       <div class="drawer-wrapper">
         <div class="drawer-trigger">
             <div class="drawer-trigger-chevron"></div>
-            {{ group_id }}
+            {{ form.combine['#title'] }}
         </div>
-        <div class="drawer drawer-{{ group_id }}">
-          {% for widget_id,widget in widget_group %}
-            <div id="{{ widget.id }}-wrapper" class="views-exposed-widget views-widget-{{ widget_id }}">
-              {% if widget.label %}
-                <label for="{{ widget.id }}">
-                  {{ widget.label }}
-                </label>
-              {% endif %}
-              {% if widget.operator %}
-                <div class="views-operator">
-                  {{ widget.operator }}
-                </div>
-              {% endif %}
-              <div class="views-widget">
-                {{ widget.widget }}
+        <div class="drawer drawer-{{ form.combine['#name'] }}">
+          <div id="{{ form.combine['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.combine['#id'] }}">
+            {% if form.combine['#title'] %}
+              <label for="{{ form.combine['#id'] }}">
+                {{ form.combine['#title'] }}
+              </label>
+            {% endif %}
+            {% if widget.operator %}
+              <div class="views-operator">
+                {{ widget.operator }}
               </div>
+            {% endif %}
+            <div class="views-widget">
+              {{ widget.widget }}
+              {{ form.combine }}
             </div>
-          {% endfor %}
+          </div>
         </div>
       </div>
-    {% endfor %}
     {% if sort_by %}
       <div class="views-exposed-widget views-widget-sort-by">
         {{ sort_by }}
@@ -82,9 +69,10 @@
     <div class="views-exposed-widget views-submit-button">
       {{ button }}
     </div>
-    {% if reset_button %}
+    {% if reset %}
       <div class="views-exposed-widget views-reset-button">
-        {{ reset_button }}
+        {# reset_button #}
+        {{ reset }}
       </div>
     {% endif %}
   </div>
