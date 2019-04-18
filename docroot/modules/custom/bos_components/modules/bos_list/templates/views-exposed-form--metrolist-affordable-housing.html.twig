@@ -24,30 +24,32 @@
 </div>
 <div class="views-exposed-form drawer mobile-only">
   <div class="views-exposed-widgets clearfix">
-      <div class="drawer-wrapper">
-        <div class="drawer-trigger">
-            <div class="drawer-trigger-chevron"></div>
-            {{ form.combine['#title'] }}
-        </div>
-        <div class="drawer drawer-{{ form.combine['#name'] }}">
-          <div id="{{ form.combine['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.combine['#id'] }}">
-            {% if form.combine['#title'] %}
-              <label for="{{ form.combine['#id'] }}">
-                {{ form.combine['#title'] }}
-              </label>
-            {% endif %}
-            {% if widget.operator %}
-              <div class="views-operator">
-                {{ widget.operator }}
-              </div>
-            {% endif %}
-            <div class="views-widget">
-              {{ widget.widget }}
-              {{ form.combine }}
-            </div>
+    <div class="drawer-wrapper">
+      <div class="drawer-trigger">
+          <div class="drawer-trigger-chevron"></div>
+          {{ form.combine['#title'] }}
+      </div>
+      <div class="drawer drawer-{{ form.combine['#name'] }}">
+        <div id="{{ form.combine['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.combine['#id'] }}">
+          <div class="views-widget">
+            {{ form.combine }}
           </div>
         </div>
       </div>
+    </div>
+    <div class="drawer-wrapper">
+      <div class="drawer-trigger">
+          <div class="drawer-trigger-chevron"></div>
+          {{ form.tid['#title'] }}
+      </div>
+      <div class="drawer drawer-{{ form.tid['#name'] }}">
+        <div id="{{ form.tid['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.tid['#id'] }}">
+          <div class="views-widget">
+            {{ form.tid }}
+          </div>
+        </div>
+      </div>
+    </div>
     {% if sort_by %}
       <div class="views-exposed-widget views-widget-sort-by">
         {{ sort_by }}
@@ -66,13 +68,14 @@
         {{ offset }}
       </div>
     {% endif %}
-    <div class="views-exposed-widget views-submit-button">
-      {{ button }}
-    </div>
-    {% if reset %}
+    {% if form.actions.submit %}
+      <div class="views-exposed-widget views-submit-button">
+        {{ form.actions.submit }}
+      </div>
+    {% endif %}
+    {% if form.actions.reset %}
       <div class="views-exposed-widget views-reset-button">
-        {# reset_button #}
-        {{ reset }}
+        {{ form.actions.reset }}
       </div>
     {% endif %}
   </div>
