@@ -104,6 +104,7 @@ function node_site_alert_preprocess(&$variables, $hook) {
       $path = ltrim(\Drupal::service('path.alias_manager')->getPathByAlias($here), "/");
 
       $variables['has_site_alert'] = TRUE;
+      _bos_content_fix_attributes($variables);
       if ($variables["attributes"]->hasClass("page-nm")) {
         $variables["attributes"]->addClass("page-wa");
         $variables["attributes"]->removeClass("page-nm");
