@@ -640,7 +640,7 @@ function _bos_core_fix_attributes(array &$variables, string $check_field = "attr
  *  and $3=last 4 numbers.
  *
  * @return string
- *   Output in a standard XXX-XXX-XXXX format.
+ *   Output (default in a standard XXX-XXX-XXXX format).
  */
 function bos_core_format_telephone(string $phone, string $output = "$1-$2-$3") {
   return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', $output, $phone);
