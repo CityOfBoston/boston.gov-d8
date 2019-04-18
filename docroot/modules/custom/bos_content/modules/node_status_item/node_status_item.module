@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Provides a status item entity type.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function node_status_item_theme() {
+  return [
+    'status_item' => [
+      'render element' => 'elements',
+    ],
+    'node__status_item' => [
+      'render element' => 'elements',
+      'base hook' => "node",
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for status item templates.
+ *
+ * Default template: status-item.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the status item information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__status_item(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}

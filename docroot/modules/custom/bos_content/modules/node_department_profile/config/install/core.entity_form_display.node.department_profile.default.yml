@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.field.node.department_profile.body
-    - field.field.node.department_profile.comment_node_department_profile
     - field.field.node.department_profile.field_address
     - field.field.node.department_profile.field_components
     - field.field.node.department_profile.field_department_type
@@ -21,7 +20,6 @@ dependencies:
     - node.type.department_profile
   module:
     - address
-    - comment
     - content_moderation
     - datetime
     - field_group
@@ -149,12 +147,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  comment_node_department_profile:
-    type: comment_default
-    weight: 8
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 4

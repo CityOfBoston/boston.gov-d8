@@ -7,7 +7,6 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
-use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -305,13 +304,21 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
   $form["moderation_state"]["widget"][0]["#changed"] = FALSE;
   $new_value = $form_state->getValue('moderation_state');
-  if (strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
+  if (isset($form["moderation_state"]["widget"][0]["current"]) && strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
     $form["moderation_state"]["widget"][0]["#changed"] = TRUE;
   }
   if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
     // If the moderation state has changed require a log message.
     if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
       $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
+    }
+    if (NULL != $form_state->getValue('field_manual_date') && $form_state->getValue('field_manual_date')['value'] == 1) {
+      if ($form_state->getValue('field_updated_date')[0]['value'] == "") {
+        $form_state->setErrorByName('field_updated_date', "Please provide a date for the (metadata) Updated Date field.")->sete;
+      }
+      if ($form_state->getValue('field_published_date')[0]['value'] == "") {
+        $form_state->setErrorByName('field_published_date', "Please provide a date for the (metadata) Published Date field.");
+      }
     }
   }
 }
@@ -370,17 +377,11 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  *
  * @param array $variables
  *   The current variables array as generated pre-rendering.
+ * @param string $check_field
+ *   The attribute field.
  */
-function _bos_admin_fix_attributes(array &$variables) {
-  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
-    $attribute = new Attribute();
-    if (!empty($variables['attributes'])) {
-      foreach ($variables["attributes"] as $key => $element) {
-        $attribute->setAttribute($key, $element);
-      }
-    }
-    if (!empty($attribute)) {
-      $variables['attributes'] = $attribute;
-    }
+function _bos_admin_fix_attributes(array &$variables, string $check_field = "attributes") {
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }

@@ -103,6 +103,16 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'path' => 'themes/custom/bos_theme/templates/field',
       'template' => 'field--node--field-intro-text',
     ],
+    'field__field_year_elected__person_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'themes/custom/bos_theme/templates/field',
+      'template' => 'field--sidebar-left',
+    ],
+    'field__field_political_party__person_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'themes/custom/bos_theme/templates/field',
+      'template' => 'field--sidebar-left',
+    ],
   ];
 }
 
@@ -332,7 +342,9 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // as opposed to the rendered node output in the system block.
   $current_path = \Drupal::service('path.current')->getPath();
   $path_args = explode('/', $current_path);
-  $variables['header_image'] = FALSE;
+  if (!isset($variables['header_image'])) {
+    $variables['header_image'] = FALSE;
+  }
   if (!empty($path_args[2])) {
     $nid = $path_args[2];
     if ($path_args[1] == 'node' && is_numeric($nid)) {
@@ -650,6 +662,8 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['attributes']->addClass('node');
     $variables['attributes']->addClass('clearfix');
     $variables['attributes']->addClass(Html::cleanCssIdentifier('node-' . $variables['node_type']));
+    // Add this attribute so that js can change the tooltip and menu text.
+    $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['node_type'])));
     if ($variables['unpublished'] || $variables['preview']) {
       // TODO: These are probably not both required ...
       $variables['attributes']->addClass('node-unpublished');
@@ -685,13 +699,15 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     }
 
     // Add the squiggle bottom onto the page, below the intro-text.
-    if (isset($variables["content"]["field_intro_text"])) {
-      if (!isset($variables["content"]["field_intro_text"]["#attributes"])) {
-        $variables["content"]["field_intro_text"]["#attributes"] = new Attribute();
+    if ($node->getType() != "tabbed_content" && $node->getType() != "how_to") {
+      if (isset($variables["content"]["field_intro_text"])) {
+        if (!isset($variables["content"]["field_intro_text"]["#attributes"])) {
+          $variables["content"]["field_intro_text"]["#attributes"] = new Attribute();
+        }
+        $variables["content"]["field_intro_text"]["#attributes"]->addClass("intro-text");
+        $variables["content"]["field_intro_text"]["#attributes"]->addClass("supporting-text");
+        $variables["content"]["field_intro_text"]["#attributes"]->addClass("squiggle-border-bottom");
       }
-      $variables["content"]["field_intro_text"]["#attributes"]->addClass("intro-text");
-      $variables["content"]["field_intro_text"]["#attributes"]->addClass("supporting-text");
-      $variables["content"]["field_intro_text"]["#attributes"]->addClass("squiggle-border-bottom");
     }
 
     // Addin a theme override for the contextual_links.
@@ -760,6 +776,8 @@ function bos_theme_preprocess_paragraph(&$variables) {
   if (!empty($variables['paragraph'])) {
     $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
     $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
+    // Add this attribute so that js can change the tooltip and menu text.
+    $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['paragraph']->bundle())));
   }
 }
 
@@ -891,17 +909,11 @@ function _bos_theme_library() {
  *
  * @param array $variables
  *   The current variables array as generated pre-rendering.
+ * @param string $check_field
+ *   The attribute field.
  */
-function _bos_theme_fix_attributes(array &$variables) {
-  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
-    $attribute = new Attribute();
-    if (!empty($variables['attributes'])) {
-      foreach ($variables["attributes"] as $key => $element) {
-        $attribute->setAttribute($key, $element);
-      }
-    }
-    if (!empty($attribute)) {
-      $variables['attributes'] = $attribute;
-    }
+function _bos_theme_fix_attributes(array &$variables, string $check_field = "attributes") {
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }
