@@ -107,14 +107,16 @@ function node_how_to_preprocess_node__how_to(&$variables) {
  */
 function node_how_to_preprocess_page(&$variables) {
   // We dont ever want a hero section from the page template.
-  $variables['header_image'] = FALSE;
-  if (function_exists("_bos_theme_fix_attributes")) {
-    _bos_theme_fix_attributes($variables);
+  if (isset($variables["node"]) && $variables["node"]->bundle() == "how_to") {
+    $variables['header_image'] = FALSE;
+    if (function_exists("_bos_theme_fix_attributes")) {
+      _bos_theme_fix_attributes($variables);
+    }
+    elseif (function_exists("_bos_admin_fix_attributes")) {
+      _bos_admin_fix_attributes($variables);
+    }
+    $variables['attributes']->addClass("mn");
   }
-  elseif (function_exists("_bos_admin_fix_attributes")) {
-    _bos_admin_fix_attributes($variables);
-  }
-  $variables['attributes']->addClass("mn");
 }
 
 /**
