@@ -100,7 +100,7 @@ third_party_settings:
     group_additional_information:
       children:
         - field_features
-        - field_links
+        - group_resources
         - field_did_you_know
       parent_name: group_place_profile
       weight: 22
@@ -153,6 +153,19 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+    group_resources:
+      children:
+        - field_links
+      parent_name: group_additional_information
+      weight: 8
+      format_type: fieldset
+      format_settings:
+        label: 'Profile Resources'
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Profile Resources'
 id: node.place_profile.default
 targetEntityType: node
 bundle: place_profile
@@ -190,14 +203,21 @@ content:
     region: content
   field_components:
     weight: 12
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Component
-      title_plural: Components
-      edit_mode: open
-      add_mode: select
+      title: 'Profile Component'
+      title_plural: 'Profile Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_contact:
@@ -210,7 +230,7 @@ content:
     third_party_settings: {  }
     region: content
   field_did_you_know:
-    weight: 9
+    weight: 10
     type: text_textarea
     settings:
       rows: 5
@@ -246,15 +266,22 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_links:
-    weight: 8
-    type: entity_reference_paragraphs
+    weight: 9
+    type: paragraphs
     settings:
       title: Resource
       title_plural: Resources
-      edit_mode: open
-      add_mode: select
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_manual_date:
@@ -266,14 +293,21 @@ content:
     region: content
   field_operation_hours:
     weight: 19
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: select
+      title: 'Hours of Business'
+      title_plural: 'Hours of Business'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_phone_number:
@@ -305,14 +339,21 @@ content:
     region: content
   field_sidebar_components:
     weight: 34
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: select
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_single_neighborhood:
