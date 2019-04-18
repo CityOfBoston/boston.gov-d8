@@ -5,10 +5,14 @@ dependencies:
   config:
     - node.type.article
     - node.type.department_profile
+    - node.type.emergency_alert
     - node.type.event
     - node.type.how_to
     - node.type.landing_page
+    - node.type.person_profile
     - node.type.site_alert
+    - node.type.status_item
+    - node.type.tabbed_content
   module:
     - content_moderation
 id: city_of_boston_workflows
@@ -89,7 +93,11 @@ type_settings:
     node:
       - article
       - department_profile
+      - emergency_alert
       - event
       - how_to
       - landing_page
+      - person_profile
       - site_alert
+      - status_item
+      - tabbed_content

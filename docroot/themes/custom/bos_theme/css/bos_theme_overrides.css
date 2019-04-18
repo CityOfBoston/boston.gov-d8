@@ -245,7 +245,8 @@ button.lity-close {
 }
 .contextual-region .contextual .contextual-links a,
 .contextual-region .contextual .contextual-links a:hover {
-  font-size: 80%;
+  font-size: small;
+  font-style:normal;
 }
 
 .contextual {
@@ -299,4 +300,17 @@ button.lity-close {
 }
 .node-change #published .created_uid {
   margin-right: 5px;
+}
+
+/* Places updated date over the breadcrumb */
+article.node-event .brc-lu {
+  z-index: 100;
+}
+
+/* css previously in fences/css/field.css */
+.field .field-label {
+  font-weight: bold;
+}
+.field .field-label.bos-suffix:after {
+  content: ": ";
 }

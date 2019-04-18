@@ -1,0 +1,266 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.metrolist_affordable_housing.body
+    - field.field.node.metrolist_affordable_housing.field_mah_address
+    - field.field.node.metrolist_affordable_housing.field_mah_contact
+    - field.field.node.metrolist_affordable_housing.field_mah_email
+    - field.field.node.metrolist_affordable_housing.field_mah_household_income_limit
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_deadline
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_indicator
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_type
+    - field.field.node.metrolist_affordable_housing.field_mah_lottery_url
+    - field.field.node.metrolist_affordable_housing.field_mah_neighborhood
+    - field.field.node.metrolist_affordable_housing.field_mah_not_active
+    - field.field.node.metrolist_affordable_housing.field_mah_outer_location
+    - field.field.node.metrolist_affordable_housing.field_mah_phone
+    - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
+    - field.field.node.metrolist_affordable_housing.field_mah_zipcode
+    - node.type.metrolist_affordable_housing
+  module:
+    - datetime
+    - fences
+    - link
+    - text
+    - user
+id: node.metrolist_affordable_housing.default
+targetEntityType: node
+bundle: metrolist_affordable_housing
+mode: default
+content:
+  body:
+    label: hidden
+    weight: 1
+    type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_mah_address:
+    label: above
+    weight: 7
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_contact:
+    label: above
+    weight: 6
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_email:
+    label: above
+    weight: 5
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_household_income_limit:
+    label: above
+    weight: 15
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_lottery_deadline:
+    label: above
+    weight: 8
+    type: datetime_default
+    settings:
+      timezone_override: ''
+      format_type: date_format_long
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_lottery_indicator:
+    label: above
+    weight: 13
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_lottery_type:
+    label: above
+    weight: 12
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_lottery_url:
+    label: above
+    weight: 11
+    type: link
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_neighborhood:
+    label: above
+    weight: 3
+    type: entity_reference_label
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_not_active:
+    label: above
+    weight: 14
+    type: boolean
+    settings:
+      format: true-false
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_outer_location:
+    label: above
+    weight: 10
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_phone:
+    label: above
+    weight: 4
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_publish_to_metrolist:
+    label: above
+    weight: 9
+    type: boolean
+    settings:
+      format: yes-no
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+  field_mah_zipcode:
+    label: above
+    weight: 2
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: span
+        fences_label_classes: bos-suffix
+    region: content
+hidden:
+  langcode: true
+  links: true
+  published_at: true
