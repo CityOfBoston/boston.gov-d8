@@ -17,7 +17,7 @@ function bos_cabinet_uninstall() {
 /**
  * Implements hook_install().
  */
-function bos_bid_install() {
+function bos_cabinet_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
 }
