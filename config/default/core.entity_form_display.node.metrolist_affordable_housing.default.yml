@@ -1,4 +1,4 @@
-uuid: f9a2952d-e672-4084-9850-6a336ab900c6
+uuid: 0cc3f799-d0e5-480a-9932-b3746065acbf
 langcode: en
 status: true
 dependencies:
@@ -21,17 +21,98 @@ dependencies:
     - node.type.metrolist_affordable_housing
   module:
     - datetime
+    - field_group
     - link
     - path
     - publication_date
     - text
+third_party_settings:
+  field_group:
+    group_mah:
+      children:
+        - group_imported_data
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: MAH
+    group_imported_data:
+      children:
+        - group_status
+        - title
+        - body
+        - field_mah_household_income_limit
+        - group_address_
+        - group_lottery_info
+      parent_name: group_mah
+      weight: 20
+      format_type: tab
+      format_settings:
+        label: 'Imported Data'
+        formatter: closed
+        description: "<b>Data imported from salesforce.</b><br/>\r\nNOTE: Any changes made here will be overwritten on next salesforce sync."
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Imported Data'
+    group_lottery_info:
+      children:
+        - field_mah_lottery_indicator
+        - field_mah_lottery_type
+        - field_mah_lottery_url
+        - field_mah_lottery_deadline
+      parent_name: group_imported_data
+      weight: 27
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Lottery Info'
+    group_address_:
+      children:
+        - field_mah_address
+        - field_mah_neighborhood
+        - field_mah_zipcode
+        - field_mah_outer_location
+        - field_mah_contact
+        - field_mah_phone
+        - field_mah_email
+      parent_name: group_imported_data
+      weight: 26
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Address Info'
+    group_status:
+      children:
+        - field_mah_not_active
+        - field_mah_publish_to_metrolist
+      parent_name: group_imported_data
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Property Status'
+_core:
+  default_config_hash: BsZ0GZAH2MqZ_owOb_gj92D97A4ptXJxpnHWP_NocPg
 id: node.metrolist_affordable_housing.default
 targetEntityType: node
 bundle: metrolist_affordable_housing
 mode: default
 content:
   body:
-    weight: 5
+    weight: 24
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -41,7 +122,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -54,7 +135,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_contact:
-    weight: 9
+    weight: 10
     type: string_textfield
     settings:
       size: 60
@@ -62,7 +143,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_email:
-    weight: 11
+    weight: 12
     type: string_textfield
     settings:
       size: 60
@@ -70,7 +151,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_household_income_limit:
-    weight: 20
+    weight: 25
     type: string_textfield
     settings:
       size: 60
@@ -78,13 +159,13 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_lottery_deadline:
-    weight: 13
+    weight: 15
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_mah_lottery_indicator:
-    weight: 17
+    weight: 12
     type: string_textfield
     settings:
       size: 60
@@ -92,7 +173,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_lottery_type:
-    weight: 16
+    weight: 13
     type: string_textfield
     settings:
       size: 60
@@ -108,20 +189,20 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_neighborhood:
-    weight: 8
+    weight: 7
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_mah_not_active:
-    weight: 18
+    weight: 21
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
   field_mah_outer_location:
-    weight: 15
+    weight: 9
     type: string_textfield
     settings:
       size: 60
@@ -129,7 +210,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_phone:
-    weight: 10
+    weight: 11
     type: string_textfield
     settings:
       size: 60
@@ -137,14 +218,14 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_publish_to_metrolist:
-    weight: 12
+    weight: 22
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
   field_mah_zipcode:
-    weight: 7
+    weight: 8
     type: string_textfield
     settings:
       size: 60
@@ -153,53 +234,55 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 7
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
-    type: moderation_state_default
-    weight: 100
-    settings: {  }
+    type: string_textfield
+    weight: 1
     region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
+    weight: 6
+    region: content
     settings:
       display_label: true
-    weight: 15
-    region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 5
+    region: content
     settings:
       display_label: true
-    weight: 120
-    region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
+    weight: 10
+    region: content
     settings:
       display_label: true
-    weight: 16
-    region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 23
     region: content
     settings:
       size: 60
@@ -207,14 +290,16 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
-    region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 9
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

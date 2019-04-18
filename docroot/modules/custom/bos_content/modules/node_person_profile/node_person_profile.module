@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Provides a person profile entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\core\Template\Attribute;
+
+/**
+ * Implements hook_theme().
+ */
+function node_person_profile_theme() {
+  return [
+    'node__person_profile' => [
+      'render element' => 'elements',
+    ],
+    'field__field_political_party__person_profile__mode__full' => [
+      'base_hook' => 'field',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_person_profile_preprocess_node__person_profile(&$variables) {
+  _bos_content_fix_attributes($variables);
+  $variables['attributes']->addClass("contextual-region");
+  $variables['attributes']->addClass("node-" . $variables["elements"]["#node"]->id());
+  $variables['attributes']->addClass("clearfix");
+
+  // Set some attributes for page elements to be used in the node template.
+  $variables["title_attributes"] = new Attribute(
+    ["class" => ["person-profile-display-name"]]
+  );
+}
+
+/**
+ * Prepares variables for person profile templates.
+ *
+ * Default template: person-profile.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the person profile information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__person_profile(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
