@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.node.place_profile.body
+    - field.field.node.place_profile.field_additional_information
+    - field.field.node.place_profile.field_address
     - field.field.node.place_profile.field_components
     - field.field.node.place_profile.field_contact
     - field.field.node.place_profile.field_did_you_know
@@ -11,6 +13,7 @@ dependencies:
     - field.field.node.place_profile.field_intro_image
     - field.field.node.place_profile.field_intro_text
     - field.field.node.place_profile.field_links
+    - field.field.node.place_profile.field_manual_date
     - field.field.node.place_profile.field_operation_hours
     - field.field.node.place_profile.field_phone_number
     - field.field.node.place_profile.field_place_neighborhood
@@ -21,13 +24,136 @@ dependencies:
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
   module:
+    - address
     - content_moderation
     - datetime
-    - file
+    - entity_browser
+    - field_group
     - paragraphs
     - path
     - publication_date
     - text
+third_party_settings:
+  field_group:
+    group_basic_information:
+      children:
+        - title
+        - field_intro_image
+        - field_place_type
+        - group_is_a
+        - field_intro_text
+        - body
+        - field_additional_information
+      parent_name: group_place_profile
+      weight: 20
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_place_profile:
+      children:
+        - group_basic_information
+        - group_contact_info
+        - group_additional_information
+        - group_sidebar_components
+        - group_components
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Place Profile'
+    group_is_a:
+      children:
+        - field_place_neighborhood
+      parent_name: group_basic_information
+      weight: 3
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: 'group-is-neighborhood field-group-fieldset'
+        description: ''
+        required_fields: true
+      label: 'Is a Neighborhood'
+    group_contact_info:
+      children:
+        - field_single_neighborhood
+        - field_address
+        - field_phone_number
+        - field_operation_hours
+        - field_contact
+      parent_name: group_place_profile
+      weight: 21
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-contact-information field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Contact Info'
+    group_additional_information:
+      children:
+        - field_features
+        - field_links
+        - field_did_you_know
+      parent_name: group_place_profile
+      weight: 22
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-additional-information field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Additional Information'
+    group_sidebar_components:
+      children:
+        - field_sidebar_components
+      parent_name: group_place_profile
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-sidebar-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_place_profile
+      weight: 24
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
+    group_page_metadata:
+      children:
+        - field_manual_date
+        - field_published_date
+        - field_updated_date
+      parent_name: ''
+      weight: 1
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-metadata field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
 _core:
   default_config_hash: 6KvdatBOmRAQg9ooKhvx5ba8w2gSSrOScRZQMveJhSQ
 id: node.place_profile.default
@@ -36,7 +162,7 @@ bundle: place_profile
 mode: default
 content:
   body:
-    weight: 4
+    weight: 5
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -46,12 +172,27 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_additional_information:
+    weight: 6
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_address:
+    weight: 17
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
+    region: content
   field_components:
-    weight: 11
+    weight: 12
     type: entity_reference_paragraphs
     settings:
       title: Component
@@ -63,7 +204,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 18
+    weight: 20
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -72,7 +213,7 @@ content:
     third_party_settings: {  }
     region: content
   field_did_you_know:
-    weight: 12
+    weight: 9
     type: text_textarea
     settings:
       rows: 5
@@ -80,20 +221,35 @@ content:
     third_party_settings: {  }
     region: content
   field_features:
-    weight: 9
+    weight: 7
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_intro_image:
     weight: 1
-    type: file_generic
+    type: entity_browser_file
     settings:
-      progress_indicator: throbber
+      entity_browser: null
+      open: false
+      field_widget_edit: true
+      field_widget_remove: true
+      field_widget_replace: false
+      selection_mode: selection_append
+      view_mode: default
+      preview_image_style: thumbnail
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    type: text_textarea
+    weight: 4
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
   field_links:
-    weight: 11
+    weight: 8
     type: entity_reference_paragraphs
     settings:
       title: Resource
@@ -104,8 +260,15 @@ content:
       default_paragraph_type: ''
     third_party_settings: {  }
     region: content
+  field_manual_date:
+    weight: 12
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_operation_hours:
-    weight: 17
+    weight: 19
     type: entity_reference_paragraphs
     settings:
       title: Paragraph
@@ -117,7 +280,7 @@ content:
     third_party_settings: {  }
     region: content
   field_phone_number:
-    weight: 16
+    weight: 18
     type: string_textfield
     settings:
       size: 60
@@ -125,7 +288,7 @@ content:
     third_party_settings: {  }
     region: content
   field_place_neighborhood:
-    weight: 7
+    weight: 8
     type: boolean_checkbox
     settings:
       display_label: true
@@ -138,7 +301,7 @@ content:
     third_party_settings: {  }
     region: content
   field_published_date:
-    weight: 4
+    weight: 13
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -156,33 +319,33 @@ content:
     third_party_settings: {  }
     region: content
   field_single_neighborhood:
-    weight: 14
+    weight: 16
     type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 5
+    weight: 14
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 10
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 6
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -190,12 +353,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 3
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -203,19 +366,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 2
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
@@ -223,7 +386,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 7
     settings:
       match_operator: CONTAINS
       size: 60
@@ -231,7 +394,8 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 5
     region: content
-hidden:
-  field_intro_text: true
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
