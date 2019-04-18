@@ -13,3 +13,11 @@ function bos_cabinet_uninstall() {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
 }
+
+/**
+ * Implements hook_install().
+ */
+function bos_bid_install() {
+  // Copy icons into expected location.
+  _bos_core_install_icons(basename(__FILE__, ".install"));
+}

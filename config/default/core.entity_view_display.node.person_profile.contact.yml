@@ -4,8 +4,10 @@ status: false
 dependencies:
   config:
     - core.entity_view_mode.node.contact
+    - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_description
     - field.field.node.person_profile.field_email
     - field.field.node.person_profile.field_first_name
     - field.field.node.person_profile.field_last_name
@@ -20,17 +22,26 @@ dependencies:
     - node.type.person_profile
   module:
     - user
+_core:
+  default_config_hash: 98InkGwP31rfaJ3Fqpih7Ffn6rUY2g3RVnMN5DlbDwI
 id: node.person_profile.contact
 targetEntityType: node
 bundle: person_profile
 mode: contact
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
 hidden:
+  field_address: true
   field_components: true
   field_contact: true
+  field_description: true
   field_email: true
   field_first_name: true
   field_last_name: true
