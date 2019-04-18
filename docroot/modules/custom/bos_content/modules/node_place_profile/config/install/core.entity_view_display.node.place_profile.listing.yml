@@ -1,9 +1,8 @@
-uuid: 1908e93d-1c15-4ec9-9f92-631979101def
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing
     - field.field.node.place_profile.body
     - field.field.node.place_profile.field_components
     - field.field.node.place_profile.field_contact
@@ -22,32 +21,38 @@ dependencies:
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
   module:
-    - text
+    - image_url_formatter
     - user
-_core:
-  default_config_hash: iVvfe-IUzaTLR4boos7wApZmrIZDyBPcjE6r-5j6Prg
-id: node.place_profile.teaser
+id: node.place_profile.listing
 targetEntityType: node
 bundle: place_profile
-mode: teaser
+mode: listing
 content:
-  body:
+  field_intro_image:
     label: hidden
     weight: 0
-    type: text_summary_or_trimmed
+    type: image_url
     settings:
-      trim_length: 600
+      image_style: ''
+    third_party_settings: {  }
+    region: content
+  field_single_neighborhood:
+    label: hidden
+    weight: 2
+    type: entity_reference_label
+    settings:
+      link: true
     third_party_settings: {  }
     region: content
   links:
     weight: 100
     region: content
 hidden:
+  body: true
   field_components: true
   field_contact: true
   field_did_you_know: true
   field_features: true
-  field_intro_image: true
   field_intro_text: true
   field_links: true
   field_operation_hours: true
@@ -56,7 +61,6 @@ hidden:
   field_place_type: true
   field_published_date: true
   field_sidebar_components: true
-  field_single_neighborhood: true
   field_updated_date: true
   langcode: true
   published_at: true

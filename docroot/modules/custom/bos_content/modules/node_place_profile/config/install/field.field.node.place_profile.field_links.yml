@@ -1,22 +1,20 @@
-uuid: 7ab97c5a-9267-45ac-8de3-5a247ff07ba2
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_operation_hours
+    - field.storage.node.field_links
     - node.type.place_profile
-    - paragraphs.paragraphs_type.custom_hours_text
-    - paragraphs.paragraphs_type.daily_hours
+    - paragraphs.paragraphs_type.document
+    - paragraphs.paragraphs_type.external_link
+    - paragraphs.paragraphs_type.internal_link
   module:
     - entity_reference_revisions
-_core:
-  default_config_hash: d8HzPSg0ICxYw6061PK9mWVvLqFWMrvvcJNk5RDWvG8
-id: node.place_profile.field_operation_hours
-field_name: field_operation_hours
+id: node.place_profile.field_links
+field_name: field_links
 entity_type: node
 bundle: place_profile
-label: 'Operation Hours'
-description: 'Please provide the hours that this location is open.'
+label: Resources
+description: 'Use this field to provide users with resources about this place. These resources can be internal links, external links or documents.'
 required: false
 translatable: false
 default_value: {  }
@@ -25,23 +23,24 @@ settings:
   handler_settings:
     negate: 0
     target_bundles:
-      custom_hours_text: custom_hours_text
-      daily_hours: daily_hours
+      document: document
+      external_link: external_link
+      internal_link: internal_link
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: false
         weight: 2
       custom_hours_text:
-        enabled: true
-        weight: 26
-      daily_hours:
-        enabled: true
-        weight: 27
-      document:
         enabled: false
+        weight: 22
+      daily_hours:
+        enabled: false
+        weight: 23
+      document:
+        enabled: true
         weight: 3
       external_link:
-        enabled: false
+        enabled: true
         weight: 4
       featured_item:
         enabled: false
@@ -63,15 +62,15 @@ settings:
         weight: 10
       how_to_contact_step:
         enabled: false
-        weight: 36
+        weight: 32
       how_to_tab:
         enabled: false
-        weight: 37
+        weight: 33
       how_to_text_step:
         enabled: false
-        weight: 38
+        weight: 34
       internal_link:
-        enabled: false
+        enabled: true
         weight: 11
       list:
         enabled: false
@@ -81,165 +80,165 @@ settings:
         weight: 14
       sidebar_item:
         enabled: false
-        weight: 15
+        weight: 38
       sidebar_item_w_icon:
         enabled: false
-        weight: 16
+        weight: 39
       social_media_links:
         enabled: false
-        weight: 17
+        weight: 40
       social_networking:
         enabled: false
-        weight: 18
+        weight: 41
       text:
         enabled: false
-        weight: 19
+        weight: 15
       text_one_column:
         enabled: false
-        weight: 20
+        weight: 16
       text_three_column:
         enabled: false
-        weight: 21
+        weight: 17
       text_two_column:
         enabled: false
-        weight: 22
+        weight: 18
       transaction_grid:
         enabled: false
-        weight: 23
+        weight: 19
       bid:
         enabled: false
-        weight: 39
+        weight: 42
       bos311:
         enabled: false
-        weight: 40
+        weight: 43
       bos_signup_emergency_alerts:
         enabled: false
-        weight: 41
+        weight: 44
       cabinet:
         enabled: false
-        weight: 42
+        weight: 45
       card:
         enabled: false
-        weight: 43
+        weight: 46
       city_score_dashboard:
         enabled: false
-        weight: 44
+        weight: 47
       columns:
         enabled: false
-        weight: 45
+        weight: 48
       commission_contact_info:
         enabled: false
-        weight: 46
+        weight: 49
       commission_info:
         enabled: false
-        weight: 47
+        weight: 50
       commission_members:
         enabled: false
-        weight: 48
+        weight: 51
       commission_summary:
         enabled: false
-        weight: 49
+        weight: 52
       discussion_topic:
         enabled: false
-        weight: 50
+        weight: 53
       drawer:
         enabled: false
-        weight: 51
+        weight: 54
       drawers:
         enabled: false
-        weight: 52
+        weight: 55
       election_results:
         enabled: false
-        weight: 53
+        weight: 56
       fyi:
         enabled: false
-        weight: 54
+        weight: 57
       gol_list_links:
         enabled: false
-        weight: 55
+        weight: 58
       grid_links:
         enabled: false
-        weight: 56
+        weight: 59
       grid_of_cards:
         enabled: false
-        weight: 57
+        weight: 60
       grid_of_people:
         enabled: false
-        weight: 58
+        weight: 61
       grid_of_places:
         enabled: false
-        weight: 59
+        weight: 62
       grid_of_programs_initiatives:
         enabled: false
-        weight: 60
+        weight: 63
       grid_of_quotes:
         enabled: false
-        weight: 61
+        weight: 64
       grid_of_topics:
         enabled: false
-        weight: 62
+        weight: 65
       group_of_links_list:
         enabled: false
-        weight: 63
+        weight: 66
       group_of_links_mini_grid:
         enabled: false
-        weight: 64
+        weight: 67
       iframe:
         enabled: false
-        weight: 65
+        weight: 68
       lightbox_link:
         enabled: false
-        weight: 66
+        weight: 69
       map:
         enabled: false
-        weight: 67
+        weight: 70
       map_coordinates:
         enabled: false
-        weight: 68
+        weight: 71
       map_esri_feed:
         enabled: false
-        weight: 69
+        weight: 72
       map_pin:
         enabled: false
-        weight: 70
+        weight: 73
       message_for_the_day:
         enabled: false
-        weight: 71
+        weight: 74
       news_announcements:
         enabled: false
-        weight: 72
+        weight: 75
       newsletter:
         enabled: false
-        weight: 73
+        weight: 76
       quote:
         enabled: false
-        weight: 74
+        weight: 77
       recollect_widget:
         enabled: false
-        weight: 75
+        weight: 78
       script_embed:
         enabled: false
-        weight: 76
+        weight: 79
       seamless_doc:
         enabled: false
-        weight: 77
+        weight: 80
       status_override:
         enabled: false
-        weight: 78
+        weight: 81
       tabbed_content_tab:
         enabled: false
-        weight: 79
+        weight: 82
       transactions:
         enabled: false
-        weight: 80
+        weight: 83
       upcoming_events:
         enabled: false
-        weight: 81
+        weight: 84
       user_action:
         enabled: false
-        weight: 82
+        weight: 85
       video:
         enabled: false
-        weight: 83
+        weight: 86
   handler: 'default:paragraph'
 field_type: entity_reference_revisions

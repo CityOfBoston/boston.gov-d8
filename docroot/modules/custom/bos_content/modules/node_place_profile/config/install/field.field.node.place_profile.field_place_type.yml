@@ -1,20 +1,17 @@
-uuid: 23468c37-86c0-4f15-af44-10c12ddd91af
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_features
+    - field.storage.node.field_place_type
     - node.type.place_profile
-    - taxonomy.vocabulary.features
-_core:
-  default_config_hash: eJhE2mfFpmcRHuI9BaZ7JH6JJ8kYmz-yveYKv4dvvo4
-id: node.place_profile.field_features
-field_name: field_features
+    - taxonomy.vocabulary.place_type
+id: node.place_profile.field_place_type
+field_name: field_place_type
 entity_type: node
 bundle: place_profile
-label: Features
-description: 'Select place features.'
-required: false
+label: 'Place Type'
+description: 'Please select the place type for this page.'
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
@@ -25,8 +22,8 @@ settings:
       views-select-list:
         status: 0
     sort:
-      field: name
+      field: _none
       direction: ASC
     target_bundles:
-      features: features
+      place_type: place_type
 field_type: entity_reference
