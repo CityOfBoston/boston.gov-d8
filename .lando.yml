@@ -51,7 +51,6 @@ services:
       - mv -f /etc/apt/sources.list /etc/apt/sources.list.bak
       - sed -n '/jessie-updates/!p' /etc/apt/sources.list.bak > /etc/apt/sources.list
       - apt-get update -y  > ${LANDO_MOUNT}/setup/lando.log
-      - composer self-update
       # Installs linux apps and extensions into the appserver container.
       - apt-get install -y --no-install-recommends apt-utils zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron >> ${LANDO_MOUNT}/setup/lando.log
       - docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ >> ${LANDO_MOUNT}/setup/lando.log

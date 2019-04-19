@@ -151,6 +151,7 @@
     "drupal/stage_file_proxy": "^1.0",
     "drupal/twig_xdebug": "1.x-dev",
     "drush/drush": "^9.0",
+    "fenetikm/autoload-drupal": "^0.2.0",
     "jarnaiz/behat-junit-formatter": "^1.3",
     "phpunit/phpunit": "*",
     "squizlabs/php_codesniffer": "2.*",
@@ -199,6 +200,13 @@
         "Add helper for exdate retreival": "patches/exdate_helper.patch",
         "Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
       }
+    },
+    "autoload-drupal": {
+      "modules": [
+        "web/modules/contrib/",
+        "web/core/modules/",
+        "web/modules/custom/"
+      ]
     }
   }
 }

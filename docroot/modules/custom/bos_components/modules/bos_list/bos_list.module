@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_list module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_list_theme() {
+  $theme['paragraph__list'] = [
+    'base hook' => 'paragraph',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['field__component__field_component_title'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view__metrolist_affordable_housing'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__metrolist_affordable_housing'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  return $theme;
+}
