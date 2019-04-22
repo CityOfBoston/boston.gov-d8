@@ -24,11 +24,13 @@
  */
 #}
 {%  set cleanname = name.0["#context"].value %}
-<div{{ attributes }}>
-  {{ title_prefix }}
-  {% if not page %}
+  <div class="detail-item detail-item--middle detail-item--listed">
+    <div class="detail-item__left">
       <img src="{{ content.field_icon|render|striptags|trim }}" alt="{{ cleanname }}" title="{{ cleanname }}" />
-      {{ cleanname }}
-  {% endif %}
-  {{ title_suffix }}
-</div>
+    </div>
+    <div class="detail-item__content">
+      <div class="detail-item__body detail-item__body--secondary">
+        {{ cleanname }}
+      </div>
+    </div>
+  </div>

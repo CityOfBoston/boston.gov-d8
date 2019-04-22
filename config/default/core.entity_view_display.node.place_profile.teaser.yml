@@ -39,10 +39,17 @@ content:
       trim_length: 600
     third_party_settings: {  }
     region: content
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
 hidden:
+  field_additional_information: true
+  field_address: true
   field_components: true
   field_contact: true
   field_did_you_know: true
@@ -50,6 +57,7 @@ hidden:
   field_intro_image: true
   field_intro_text: true
   field_links: true
+  field_manual_date: true
   field_operation_hours: true
   field_phone_number: true
   field_place_neighborhood: true
