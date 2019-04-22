@@ -12,10 +12,32 @@ use Drupal\Core\Render\Element;
  */
 function node_place_profile_theme() {
   return [
-    'place_profile' => [
+    'node__place_profile' => [
       'render element' => 'elements',
     ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_place_profile_preprocess_node__place_profile(&$variables) {
+  _bos_content_fix_attributes($variables);
+  $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->addClass("clearfix");
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']['#node']->id());
+
+  $variables['attributes']->addClass("with-hero");
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_place_profile_preprocess_page(&$variables) {
+  if (isset($variables["node"]) && $variables["node"]->bundle() == "place_profile") {
+    $variables['header_image'] = TRUE;
+  }
 }
 
 /**

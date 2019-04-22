@@ -77,87 +77,80 @@
  *
  * @ingroup themeable
  #}
-{# TODO: Review this: hide($content.comments) #}
-{# TODO: Review this: hide($content.links) #}
-<article id="node-{{ node.nid }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
+
+<article{{ attributes }}>
+
   {% if content.field_updated_date %}
     <div class="brc-lu">
       Last updated: {{ content.field_updated_date }}
     </div>
   {% endif %}
+
   <div class="program-info-wrapper desktop-100">
     <div class="column mobile-100 desktop-66-left">
-      <h1 class="title">{{ title }}</h1>
-      {% if content.field_intro_text %}
-        {{ content.field_intro_text }}
+
+      {{ title_prefix }}
+
+      {% if title %}
+        <h1{{ title_attributes }}>{{ title }}</h1>
+      {%  endif %}
+
+      {{ title_suffix }}
+
+      {{ content.field_intro_text }}
+
+      {% if navOutput %}
+        <div class="sub-nav-trigger drawer-trigger">
+          <div class="sub-nav-chevron">
+            {{ sub_nav|raw }}
+          </div>
+          Page Sections
+        </div>
+        <nav class="topic-nav topic-nav__left">
+          <a name="section-nav"></a>
+          {{ navOutput }}
+        </nav>
       {% endif %}
-      <div class="sub-nav-trigger drawer-trigger">
-        <div class="sub-nav-chevron">{{ file_get_contents(drupal_get_path('theme', $GLOBALS.theme) . '/dist/img/subnav-toggle.svg') }}</div>
-        Page Sections
-      </div>
-      <nav class="topic-nav topic-nav__left">
-        <ul></ul>
-        <a name="section-nav"></a>
-      </nav>
+
       <div class="body">
         {{ content.body }}
       </div>
-      {% if content.field_additional_information %}
-        <div class="additional_info supporting-sm">
-          {{ content.field_additional_information }}
-        </div>
-      {% endif %}
+
+      {{ content.field_additional_information }}
+
     </div>
+
     <div class="column mobile-100 desktop-33-right">
-      {% if content.field_address %}
-        <div class="list-item">
-          {{ content.field_address }}
-        </div>
-      {% endif %}
-      {% if content.field_phone_number %}
-        <div class="list-item">
-          {{ content.field_phone_number }}
-        </div>
-      {% endif %}
-      {% if content.field_operation_hours %}
-        {{ content.field_operation_hours }}
-      {% endif %}
-      {% if content.field_contact %}
-        <div class="list-item">
-          {{ content.field_contact }}
-        </div>
-      {% endif %}
-      {% if content.field_single_neighborhood %}
-        <div class="list-item">
-          {{ content.field_single_neighborhood }}
-        </div>
-      {% endif %}
-      {% if content.field_sidebar_components %}
+
+      {{ content.field_address }}
+
+      {{ content.field_phone_number }}
+
+      {{ content.field_operation_hours }}
+
+      {{ content.field_contact }}
+
+      {{ content.field_single_neighborhood }}
+
+      {% if content.field_sidebar_components["#items"] %}
         {{ content.field_sidebar_components }}
       {% endif %}
-      {% if content.field_features %}
-        <div class="list-item">
-          {{ content.field_features }}
-        </div>
-      {% endif %}
-      {% if content.field_links %}
-        <div class="list-item">
-          {{ content.field_links }}
-        </div>
-      {% endif %}
-      {% if content.field_did_you_know %}
-        <div class="place-did-you-know">
-          <h5>Did you know...</h5>
+
+      {{ content.field_features }}
+
+      {{ content.field_links }}
+
+      {% if content.field_did_you_know["#entity_type"] %}
           {{ content.field_did_you_know }}
           <div class="bubble-tail"></div>
-        </div>
       {% endif %}
+
     </div>
     <div class="clearfix"></div>
   </div>
-  {% if content.field_components %}
-  <div class="program-components desktop-100" {{ content_attributes }}>
+
+  {% if content.field_components["#items"] %}
     {{ content.field_components }}
-  </div>
   {% endif %}
+
 </article>
