@@ -27,12 +27,12 @@
     <div class="drawer-wrapper">
       <div class="drawer-trigger">
           <div class="drawer-trigger-chevron"></div>
-          {{ form.combine['#title'] }}
+          {{ form.title['#title'] }}
       </div>
-      <div class="drawer drawer-{{ form.combine['#name'] }}">
-        <div id="{{ form.combine['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.combine['#id'] }}">
+      <div class="drawer drawer-{{ form.title['#name'] }}">
+        <div id="{{ form.title['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.title['#id'] }}">
           <div class="views-widget">
-            {{ form.combine }}
+            {{ form.title }}
           </div>
         </div>
       </div>
@@ -40,12 +40,25 @@
     <div class="drawer-wrapper">
       <div class="drawer-trigger">
           <div class="drawer-trigger-chevron"></div>
-          {{ form.tid['#title'] }}
+          {{ form.field_contact_target_id['#title'] }}
       </div>
-      <div class="drawer drawer-{{ form.tid['#name'] }}">
-        <div id="{{ form.tid['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.tid['#id'] }}">
+      <div class="drawer drawer-{{ form.field_contact_target_id['#name'] }}">
+        <div id="{{ form.field_contact_target_id['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.field_contact_target_id['#id'] }}">
           <div class="views-widget">
-            {{ form.tid }}
+            {{ form.field_contact_target_id }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-wrapper">
+      <div class="drawer-trigger">
+          <div class="drawer-trigger-chevron"></div>
+          {{ form.field_published_date_value['#title'] }}
+      </div>
+      <div class="drawer drawer-{{ form.field_published_date_value['#name'] }}">
+        <div id="{{ form.field_published_date_value['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.field_published_date_value['#id'] }}">
+          <div class="views-widget">
+            {{ form.field_published_date_value }}
           </div>
         </div>
       </div>
