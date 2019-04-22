@@ -21,16 +21,17 @@ dependencies:
     - field.field.node.place_profile.field_sidebar_components
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
+    - image.style.thumbnail
     - node.type.place_profile
   module:
     - address
     - content_moderation
     - datetime
-    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -245,16 +246,10 @@ content:
     region: content
   field_intro_image:
     weight: 1
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: null
-      open: false
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: false
-      selection_mode: selection_append
-      view_mode: default
       preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_intro_text:
