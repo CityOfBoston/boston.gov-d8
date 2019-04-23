@@ -22,17 +22,17 @@
   <div class="drawer-trigger-chevron"></div>
   Filter
 </div>
-<div class="views-exposed-form drawer mobile-only">
   <div class="views-exposed-widgets clearfix">
     <div class="drawer-wrapper">
       <div class="drawer-trigger">
           <div class="drawer-trigger-chevron"></div>
-          {{ form.combine['#title'] }}
+          {{ form.field_event_dates_value['#title'] }}
       </div>
-      <div class="drawer drawer-{{ form.combine['#name'] }}">
-        <div id="{{ form.combine['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.combine['#id'] }}">
+      <div class="drawer drawer-{{ form.field_event_dates_value['#name'] }}">
+        <div id="{{ form.field_event_dates_value['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.field_event_dates_value['#id'] }}">
           <div class="views-widget">
-            {{ form.combine }}
+            {{ form.field_event_dates_value }}
+            {{ form.field_event_dates_value_1 }}
           </div>
         </div>
       </div>
