@@ -42,7 +42,7 @@ function bos_sidebar_theme() {
 
   // Now create mappings from theme suggestions for various node elements back
   // to the default sidebar-left and side-bar right templates.
-  // PLACE_PROFILE
+  // PLACE_PROFILE.
   $theme += [
     'field__field_single_neighborhood__place_profile__mode__full' => [
       'base hook' => 'field',
@@ -70,7 +70,7 @@ function bos_sidebar_theme() {
       'template' => 'field--sidebar-right',
     ],
   ];
-
+  // PERSON PROFILE.
   $theme += [
     'field__field_year_elected__person_profile__mode__full' => [
       'base hook' => 'field',

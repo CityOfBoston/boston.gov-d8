@@ -887,13 +887,14 @@ function _bos_theme_fix_attributes(array &$variables, string $check_field = "att
 }
 
 /**
- *  Make the navigation menu.
- *  @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/content-type-back-end/in-page-navigation-menu
+ * Make the navigation menu.
  *
- * @param $variables
+ * @param array $variables
  *   The preprocess variables array passed by ref.
+ *
+ * @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/content-type-back-end/in-page-navigation-menu
  */
-function _bos_theme_make_nav(&$variables) {
+function _bos_theme_make_nav(array &$variables) {
 
   if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
     $variables['navOutput'] = [
