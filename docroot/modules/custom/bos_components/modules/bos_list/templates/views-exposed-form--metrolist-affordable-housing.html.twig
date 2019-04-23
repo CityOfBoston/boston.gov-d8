@@ -18,38 +18,28 @@
 {{ q }}
 {% endif %}
 
-<div class="drawer-trigger mobile-only">
-  <div class="drawer-trigger-chevron"></div>
-  Filter
-</div>
 <div class="views-exposed-form drawer mobile-only">
   <div class="views-exposed-widgets clearfix">
-    <div class="drawer-wrapper">
-      <div class="drawer-trigger">
-          <div class="drawer-trigger-chevron"></div>
-          {{ form.combine['#title'] }}
+    {% for i,filter in form['#info'] %}
+      {% set filter_name = filter.value %}
+      <div class="drawer-trigger mobile-only">
+        <div class="drawer-trigger-chevron"></div>
+        Filter {{ filter.label }}
       </div>
-      <div class="drawer drawer-{{ form.combine['#name'] }}">
-        <div id="{{ form.combine['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.combine['#id'] }}">
-          <div class="views-widget">
-            {{ form.combine }}
+      <div class="drawer-wrapper">
+        <div class="drawer-trigger">
+            <div class="drawer-trigger-chevron"></div>
+            {{ form[filter_name]['#title'] }}
+        </div>
+        <div class="drawer drawer-{{ form[filter_name]['#name'] }}">
+          <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+            <div class="views-widget">
+              {{ form[filter_name] }}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="drawer-wrapper">
-      <div class="drawer-trigger">
-          <div class="drawer-trigger-chevron"></div>
-          {{ form.tid['#title'] }}
-      </div>
-      <div class="drawer drawer-{{ form.tid['#name'] }}">
-        <div id="{{ form.tid['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.tid['#id'] }}">
-          <div class="views-widget">
-            {{ form.tid }}
-          </div>
-        </div>
-      </div>
-    </div>
+    {% endfor %}
     {% if form.actions.submit %}
       <div class="views-exposed-widget views-submit-button">
         {{ form.actions.submit }}
