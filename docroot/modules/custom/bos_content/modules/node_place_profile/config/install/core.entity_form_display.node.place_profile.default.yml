@@ -1,0 +1,434 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.place_profile.body
+    - field.field.node.place_profile.field_additional_information
+    - field.field.node.place_profile.field_address
+    - field.field.node.place_profile.field_components
+    - field.field.node.place_profile.field_contact
+    - field.field.node.place_profile.field_did_you_know
+    - field.field.node.place_profile.field_features
+    - field.field.node.place_profile.field_intro_image
+    - field.field.node.place_profile.field_intro_text
+    - field.field.node.place_profile.field_links
+    - field.field.node.place_profile.field_manual_date
+    - field.field.node.place_profile.field_operation_hours
+    - field.field.node.place_profile.field_phone_number
+    - field.field.node.place_profile.field_place_neighborhood
+    - field.field.node.place_profile.field_place_type
+    - field.field.node.place_profile.field_published_date
+    - field.field.node.place_profile.field_sidebar_components
+    - field.field.node.place_profile.field_single_neighborhood
+    - field.field.node.place_profile.field_updated_date
+    - image.style.thumbnail
+    - node.type.place_profile
+  module:
+    - address
+    - content_moderation
+    - datetime
+    - field_group
+    - paragraphs
+    - path
+    - publication_date
+    - svg_image
+    - text
+third_party_settings:
+  field_group:
+    group_basic_information:
+      children:
+        - title
+        - field_intro_image
+        - field_place_type
+        - group_is_a
+        - field_intro_text
+        - body
+        - field_additional_information
+      parent_name: group_place_profile
+      weight: 20
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_place_profile:
+      children:
+        - group_basic_information
+        - group_contact_info
+        - group_additional_information
+        - group_sidebar_components
+        - group_components
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Place Profile'
+    group_is_a:
+      children:
+        - field_place_neighborhood
+      parent_name: group_basic_information
+      weight: 3
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: 'group-is-neighborhood field-group-fieldset'
+        description: ''
+        required_fields: true
+      label: 'Is a Neighborhood'
+    group_contact_info:
+      children:
+        - field_single_neighborhood
+        - field_address
+        - field_phone_number
+        - field_operation_hours
+        - field_contact
+      parent_name: group_place_profile
+      weight: 21
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-contact-information field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Contact Info'
+    group_additional_information:
+      children:
+        - field_features
+        - group_resources
+        - field_did_you_know
+      parent_name: group_place_profile
+      weight: 22
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-additional-information field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Additional Information'
+    group_sidebar_components:
+      children:
+        - field_sidebar_components
+      parent_name: group_place_profile
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-sidebar-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_place_profile
+      weight: 24
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
+    group_page_metadata:
+      children:
+        - field_manual_date
+        - field_published_date
+        - field_updated_date
+      parent_name: ''
+      weight: 1
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-metadata field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
+    group_resources:
+      children:
+        - field_links
+      parent_name: group_additional_information
+      weight: 8
+      format_type: fieldset
+      format_settings:
+        label: 'Profile Resources'
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: 'Profile Resources'
+id: node.place_profile.default
+targetEntityType: node
+bundle: place_profile
+mode: default
+content:
+  body:
+    weight: 5
+    type: text_textarea_with_summary
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_additional_information:
+    weight: 6
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_address:
+    weight: 17
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_components:
+    weight: 12
+    type: paragraphs
+    settings:
+      title: 'Profile Component'
+      title_plural: 'Profile Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 20
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_did_you_know:
+    weight: 10
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_features:
+    weight: 7
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_intro_image:
+    weight: 1
+    type: image_image
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_intro_text:
+    type: text_textarea
+    weight: 4
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_links:
+    weight: 9
+    type: paragraphs
+    settings:
+      title: Resource
+      title_plural: Resources
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_manual_date:
+    weight: 12
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_operation_hours:
+    weight: 19
+    type: paragraphs
+    settings:
+      title: 'Hours of Business'
+      title_plural: 'Hours of Business'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    weight: 18
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_place_neighborhood:
+    weight: 8
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_place_type:
+    weight: 2
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_published_date:
+    weight: 13
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    weight: 34
+    type: paragraphs
+    settings:
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_single_neighborhood:
+    weight: 16
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    weight: 14
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  langcode:
+    type: language_select
+    weight: 10
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 6
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 3
+    region: content
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 11
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 2
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

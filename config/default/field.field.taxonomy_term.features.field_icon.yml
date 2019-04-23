@@ -1,4 +1,4 @@
-uuid: 125f29fb-a5f8-48c9-8c18-a28243c41e18
+uuid: 7cd2d3c3-586b-4548-bb4f-5b22840d5380
 langcode: en
 status: true
 dependencies:
@@ -7,8 +7,6 @@ dependencies:
     - taxonomy.vocabulary.features
   module:
     - image
-_core:
-  default_config_hash: b5Yt_7YUTrZIdv8cA9w2GZTSNVCYvPTFbhgjs07ueAw
 id: taxonomy_term.features.field_icon
 field_name: field_icon
 entity_type: taxonomy_term
@@ -20,16 +18,21 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  alt_field: false
-  default_image: 0
-  file_directory: 'features-icon-[current-date:file_directory_storage_date]'
+  file_directory: 'features-icon/[current-date:date_format_file_directory_storage_date]'
   file_extensions: 'png gif jpg jpeg svg'
   max_filesize: ''
   max_resolution: ''
   min_resolution: ''
-  title_field: false
+  alt_field: false
   alt_field_required: true
+  title_field: false
   title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
   handler: 'default:file'
   handler_settings: {  }
 field_type: image

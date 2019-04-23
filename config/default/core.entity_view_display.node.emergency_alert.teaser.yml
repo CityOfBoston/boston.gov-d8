@@ -18,12 +18,18 @@ targetEntityType: node
 bundle: emergency_alert
 mode: teaser
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
 hidden:
   field_description: true
   field_link: true
+  field_status_overrides: true
   field_theme: true
   field_updated_date: true
   langcode: true

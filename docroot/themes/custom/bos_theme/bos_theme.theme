@@ -103,16 +103,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'path' => 'themes/custom/bos_theme/templates/field',
       'template' => 'field--node--field-intro-text',
     ],
-    'field__field_year_elected__person_profile__mode__full' => [
-      'base hook' => 'field',
-      'path' => 'themes/custom/bos_theme/templates/field',
-      'template' => 'field--sidebar-left',
-    ],
-    'field__field_political_party__person_profile__mode__full' => [
-      'base hook' => 'field',
-      'path' => 'themes/custom/bos_theme/templates/field',
-      'template' => 'field--sidebar-left',
-    ],
   ];
 }
 
@@ -673,30 +663,8 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
     }
 
-    // Make the navigation menu.
-    /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
-    if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
-      $variables['navOutput'] = [
-        '#theme' => 'item_list',
-        '#list_type' => 'ul',
-        '#items' => [],
-        '#attributes' => [],
-      ];
-      foreach ($variables["content"]["field_components"] as $key => $component) {
-        if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
-          // Add js to enable component_navigation in-page menu (and scroll).
-          $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
-          // Build the in-page navigation menu and links.
-          $title = $component['#paragraph']->field_short_title->value;
-          $url = Url::fromUserInput("#" . Html::cleanCssIdentifier(strtolower($title)), ["attributes" => ["class" => ["scroll-link-js"]]]);
-          $anchor = \Drupal::service('link_generator')->generate($title, $url);
-          $variables['navOutput']["#items"][] = $anchor;
-        }
-      }
-
-      // Add in the chevron used in mobile UX.
-      $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
-    }
+    // Create the nav menu.
+    _bos_theme_make_nav($variables);
 
     // Add the squiggle bottom onto the page, below the intro-text.
     if ($node->getType() != "tabbed_content" && $node->getType() != "how_to") {
@@ -915,5 +883,40 @@ function _bos_theme_library() {
 function _bos_theme_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
     _bos_core_fix_attributes($variables, $check_field);
+  }
+}
+
+/**
+ * Make the navigation menu.
+ *
+ * @param array $variables
+ *   The preprocess variables array passed by ref.
+ *
+ * @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/content-type-back-end/in-page-navigation-menu
+ */
+function _bos_theme_make_nav(array &$variables) {
+
+  if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
+    $variables['navOutput'] = [
+      '#theme' => 'item_list',
+      '#list_type' => 'ul',
+      '#items' => [],
+      '#attributes' => [],
+    ];
+    foreach ($variables["content"]["field_components"] as $key => $component) {
+      if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
+        // Add js to enable component_navigation in-page menu (and scroll).
+        $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+        // Build the in-page navigation menu and links.
+        $title = $component['#paragraph']->field_short_title->value;
+        $url = Url::fromUserInput("#" . Html::cleanCssIdentifier(strtolower($title)), ["attributes" => ["class" => ["scroll-link-js"]]]);
+        $anchor = \Drupal::service('link_generator')->generate($title, $url);
+        $variables['navOutput']["#items"][] = $anchor;
+      }
+    }
+
+    // Add in the chevron used in mobile UX.
+    $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
+
   }
 }
