@@ -15,7 +15,9 @@
  */
 #}
 <article{{ attributes }}>
-  {% if content %}
-    {{- content -}}
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {% if elements %}
+    {{ elements|without("uid","created") }}
   {% endif %}
 </article>
