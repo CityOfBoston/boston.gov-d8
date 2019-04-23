@@ -18,38 +18,47 @@
 {{ q }}
 {% endif %}
 
-<div class="drawer-trigger mobile-only">
-  <div class="drawer-trigger-chevron"></div>
-  Filter
-</div>
-  <div class="views-exposed-widgets clearfix">
-    <div class="drawer-wrapper">
-      <div class="drawer-trigger">
-          <div class="drawer-trigger-chevron"></div>
-          {{ form.field_event_dates_value['#title'] }}
-      </div>
-      <div class="drawer drawer-{{ form.field_event_dates_value['#name'] }}">
-        <div id="{{ form.field_event_dates_value['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.field_event_dates_value['#id'] }}">
-          <div class="views-widget">
-            {{ form.field_event_dates_value }}
-            {{ form.field_event_dates_value_1 }}
+<div class="co views-exposed-topbar">
+  <input id="collapsible" type="checkbox" class="co-f d-n" aria-hidden=true>
+  <label for="collapsible" class="co-t">Filter</label>
+  <div class="co-b p-t200 p-a000--s view-filters">
+    {% for i,filter in form['#info'] %}
+      {% set filter_name = filter.value %}
+      <div class="dr dr--sm">
+        <button type="button" aria-expanded="true/false" aria-controls="drawer-<?php print $i; ?>" class="drawer-trigger dr-h">
+          <div class="drawer-trigger-chevron xdr-ic"></div>
+          Filter by {{ filter.label }}
+        </button>
+        <div id="drawer-{{ i }}" class="dr-c drawer">
+          <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+            <label for="{{ form[filter_name]['#id'] }}">
+              {{ form[filter_name]['#title'] }}
+            </label>
+            <div class="views-widget">
+              {{ form[filter_name] }}
+            </div>
           </div>
         </div>
+      </div>  
+    {% endfor %}
+    {% if sort_by %}
+      <div class="views-exposed-widget views-widget-sort-by">
+        {{ sort_by }}
       </div>
-    </div>
-    <div class="drawer-wrapper">
-      <div class="drawer-trigger">
-          <div class="drawer-trigger-chevron"></div>
-          {{ form.tid['#title'] }}
+      <div class="views-exposed-widget views-widget-sort-order">
+        {{ sort_order }}
       </div>
-      <div class="drawer drawer-{{ form.tid['#name'] }}">
-        <div id="{{ form.tid['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form.tid['#id'] }}">
-          <div class="views-widget">
-            {{ form.tid }}
-          </div>
-        </div>
+    {% endif %}
+    {% if items_per_page %}
+      <div class="views-exposed-widget views-widget-per-page">
+        {{ items_per_page }}
       </div>
-    </div>
+    {% endif %}
+    {% if offset %}
+      <div class="views-exposed-widget views-widget-offset">
+        {{ offset }}
+      </div>
+    {% endif %}
     {% if form.actions.submit %}
       <div class="views-exposed-widget views-submit-button">
         {{ form.actions.submit }}
