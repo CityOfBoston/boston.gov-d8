@@ -5,10 +5,11 @@ dependencies:
   config:
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.transactions
   module:
-    - file
     - paragraphs
+    - svg_image
 _core:
   default_config_hash: I4wbqvPzy-Abf8Aixqq300Utr0LfH6Y9ggeD-0OfUHw
 id: paragraph.transactions.default
@@ -18,20 +19,28 @@ mode: default
 content:
   field_grid_link:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Link
       title_plural: Links
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_icon:
     weight: 2
-    type: file_generic
+    type: image_image
     settings:
+      preview_image_style: thumbnail
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
