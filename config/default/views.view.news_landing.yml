@@ -1,4 +1,4 @@
-uuid: 92cd78c4-0451-4bdb-bcdf-e3788900c977
+uuid: 52e77ed8-718c-47ab-9ff7-ecf8af26754f
 langcode: en
 status: true
 dependencies:
@@ -12,6 +12,8 @@ dependencies:
     - node
     - taxonomy
     - user
+_core:
+  default_config_hash: 7nVlymJq6c69tDdYD-mMzJ1S-FCCKGOUrIO-0M5qLjc
 id: news_landing
 label: 'News Landing'
 module: views
@@ -238,7 +240,7 @@ display:
           exposed: true
           expose:
             operator_id: field_contact_target_id_op
-            label: 'Contact (field_contact)'
+            label: Author
             description: ''
             use_operator: false
             operator: field_contact_target_id_op
@@ -297,7 +299,7 @@ display:
           exposed: true
           expose:
             operator_id: field_published_date_value_op
-            label: 'Published Date (field_published_date)'
+            label: Date
             description: ''
             use_operator: false
             operator: field_published_date_value_op

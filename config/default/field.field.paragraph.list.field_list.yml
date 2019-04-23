@@ -1,4 +1,4 @@
-uuid: 321d8d95-e4b4-4f12-b70f-672cc8a7001b
+uuid: f74ce3da-b628-4bb9-a79f-7d54f088df12
 langcode: en
 status: true
 dependencies:
@@ -7,6 +7,8 @@ dependencies:
     - paragraphs.paragraphs_type.list
   module:
     - viewfield
+_core:
+  default_config_hash: wRH1cA70tIMPMdtgnmOjIlgNwq9KmxmGCUENYZkEkO0
 id: paragraph.list.field_list
 field_name: field_list
 entity_type: paragraph
@@ -20,21 +22,43 @@ default_value_callback: ''
 settings:
   force_default: 0
   allowed_views:
-    comment: 0
+    bids_rfps: bids_rfps
+    calendar: calendar
+    departments_listing: departments_listing
+    metrolist_affordable_housing: metrolist_affordable_housing
+    news_landing: news_landing
+    places: places
+    public_notice: public_notice
+    status_displays: status_displays
+    topic_landing_page: topic_landing_page
+    transactions: transactions
+    change: 0
+    cityscore: 0
     content: 0
     block_content: 0
+    entity_reference_filters: 0
     file_entity_files: 0
     frontpage: 0
+    poll_list: 0
     media: 0
-    moderated_content: 0
+    media_entity_browser: 0
+    media_library: 0
+    message_for_the_day: 0
+    migrate_paragraphs: 0
+    migrate_taxonomy: 0
+    news_and_announcements: 0
     paragraphs_library: 0
+    paragraphs_library_browser: 0
     user_admin_people: 0
+    poll_admin: 0
     profiles: 0
-    comments_recent: 0
     content_recent: 0
     redirect: 0
+    related_events: 0
     salesforce_mapped_objects: 0
+    site_alerts: 0
     taxonomy_term: 0
+    upcoming_events: 0
     watchdog: 0
     who_s_new: 0
     who_s_online: 0
@@ -42,11 +66,15 @@ settings:
     workbench_edited: 0
     workbench_recent_content: 0
   allowed_display_types:
-    block: block
+    attachment: 0
+    block: 0
     embed: 0
+    entity_browser: 0
+    entity_reference: 0
     feed: 0
     default: 0
     page: 0
+    rest_export: 0
   handler: 'default:view'
   handler_settings: {  }
 field_type: viewfield

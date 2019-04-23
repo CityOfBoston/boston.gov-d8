@@ -1,4 +1,4 @@
-uuid: 3193f657-6945-4704-801b-b126676999e2
+uuid: 7ca504fa-7097-4343-af8e-8d0ae64d0e7b
 langcode: en
 status: true
 dependencies:
@@ -11,19 +11,21 @@ dependencies:
     - paragraphs.paragraphs_type.list
   module:
     - viewfield
+_core:
+  default_config_hash: MUOLDyCDKq2ZS31NtEaQLRTl9rCfOOBIgR8H6N2Kak0
 id: paragraph.list.default
 targetEntityType: paragraph
 bundle: list
 mode: default
 content:
   field_component_theme:
-    weight: 6
+    weight: 4
     type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_component_title:
-    weight: 2
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -31,7 +33,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 4
+    weight: 2
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -40,13 +42,13 @@ content:
     third_party_settings: {  }
     region: content
   field_list:
-    weight: 7
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     type: viewfield_select
     region: content
   field_short_title:
-    weight: 3
+    weight: 1
     type: string_textfield
     settings:
       size: 60
