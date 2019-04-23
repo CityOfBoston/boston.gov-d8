@@ -47,6 +47,18 @@ function vocab_contact_token_info() {
 }
 
 /**
+ * Reformat the phone number.
+ *
+ * Implements hook_preprocess_HOOK().
+ */
+function vocab_contact_preprocess_field__field_phone_number(&$variables) {
+  foreach ($variables['items'] as $key => &$phone) {
+    $phone["phone"] = $phone['content']["#context"]["value"];
+    $phone['content']["#context"]["value"] = bos_core_format_telephone($phone['content']["#context"]["value"]);
+  }
+}
+
+/**
  * Implements hook_tokens().
  */
 function vocab_contact_tokens($type, $tokens, array $data = [], array $options = []) {

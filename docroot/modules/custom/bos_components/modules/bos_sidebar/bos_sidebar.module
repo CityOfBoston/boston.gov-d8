@@ -39,6 +39,51 @@ function bos_sidebar_theme() {
     'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
     'template' => 'paragraph--social-networking',
   ];
+
+  // Now create mappings from theme suggestions for various node elements back
+  // to the default sidebar-left and side-bar right templates.
+  // PLACE_PROFILE.
+  $theme += [
+    'field__field_single_neighborhood__place_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-right',
+    ],
+    'field__field_contact__place_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-right',
+    ],
+    'field__field_features__place_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-right',
+    ],
+    'field__field_links__place_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-right',
+    ],
+    'field__field_links__place_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-right',
+    ],
+  ];
+  // PERSON PROFILE.
+  $theme += [
+    'field__field_year_elected__person_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-left',
+    ],
+    'field__field_political_party__person_profile__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
+      'template' => 'field--sidebar-left',
+    ],
+  ];
+
   return $theme;
 }
 
