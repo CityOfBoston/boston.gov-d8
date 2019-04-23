@@ -1,18 +1,30 @@
-uuid: cd5a802a-c41c-4c81-9818-fe0037b09fc9
+uuid: 16848bd4-e500-4a95-9d4e-5efc2a674be4
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.discussion_topic.field_description
     - field.field.paragraph.discussion_topic.field_links
     - field.field.paragraph.discussion_topic.field_title
     - paragraphs.paragraphs_type.discussion_topic
   module:
     - paragraphs
+    - text
+_core:
+  default_config_hash: UGldGp61BJvcpuEzVJiTBiSnkCT2eBQVmBrsmvqZI8s
 id: paragraph.discussion_topic.default
 targetEntityType: paragraph
 bundle: discussion_topic
 mode: default
 content:
+  field_description:
+    weight: 1
+    type: text_textarea
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
   field_links:
     weight: 3
     type: entity_reference_paragraphs
