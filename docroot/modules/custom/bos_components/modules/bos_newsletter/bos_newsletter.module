@@ -16,6 +16,7 @@ function bos_newsletter_theme() {
   $theme['paragraph__newsletter__sidebar'] = [
     'base hook' => 'paragraph',
     'path' => 'modules/custom/bos_components/modules/bos_newsletter/templates',
+    'template' => 'paragraph--newsletter--sidebar',
   ];
   return $theme;
 }
@@ -23,7 +24,7 @@ function bos_newsletter_theme() {
 /**
  * Implements hook_preprocess_HOOK__TYPE().
  */
-function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
+function bos_newsletter_preprocess_paragraph(&$variables) {
 
   // Newsletter ID.
   if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_newsletter')) {

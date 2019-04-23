@@ -1,4 +1,4 @@
-uuid: 03e26594-75d3-4631-a616-81a35d630f7e
+uuid: 401eba83-bdd9-49db-b55b-34c86856f9c1
 langcode: en
 status: true
 dependencies:
@@ -7,9 +7,12 @@ dependencies:
     - field.field.paragraph.newsletter.field_component_theme
     - field.field.paragraph.newsletter.field_component_title
     - field.field.paragraph.newsletter.field_contact
+    - field.field.paragraph.newsletter.field_description
     - field.field.paragraph.newsletter.field_newsletter
     - field.field.paragraph.newsletter.field_short_title
     - paragraphs.paragraphs_type.newsletter
+_core:
+  default_config_hash: WLR79nR9oRj2Bb7DFd2WlpR4OQU3F5pZGgYnLRagY0o
 id: paragraph.newsletter.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: newsletter
@@ -19,5 +22,6 @@ hidden:
   field_component_theme: true
   field_component_title: true
   field_contact: true
+  field_description: true
   field_newsletter: true
   field_short_title: true
