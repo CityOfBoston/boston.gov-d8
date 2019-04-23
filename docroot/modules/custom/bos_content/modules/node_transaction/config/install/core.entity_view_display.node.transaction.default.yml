@@ -1,28 +1,24 @@
-uuid: a42e75dc-30e4-4302-a4fa-0687abf21253
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.listing
     - field.field.node.transaction.field_link
     - field.field.node.transaction.field_sticky
     - node.type.transaction
   module:
     - entity_reference_revisions
     - user
-_core:
-  default_config_hash: jRve_eQjc84lyZICsNAW0LAZr6HWlU6aWiDgWxd9CPE
-id: node.transaction.listing
+id: node.transaction.default
 targetEntityType: node
 bundle: transaction
-mode: listing
+mode: default
 content:
   field_link:
     label: hidden
     weight: 1
     type: entity_reference_revisions_entity_view
     settings:
-      view_mode: ribbon_link
+      view_mode: full
       link: ''
     third_party_settings: {  }
     region: content
