@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_news_tags
+    - node.type.post
+    - taxonomy.vocabulary.news_tags
+id: node.post.field_news_tags
+field_name: field_news_tags
+entity_type: node
+bundle: post
+label: 'News Tags'
+description: 'Add Tags to group similar news Posts together.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      news_tags: news_tags
+field_type: entity_reference

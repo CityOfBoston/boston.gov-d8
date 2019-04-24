@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
     - field.field.node.post.field_intro_text
+    - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
@@ -22,18 +23,24 @@ dependencies:
     - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
-    - field.field.node.post.field_type_of_content
     - field.field.node.post.field_updated_date
     - node.type.post
   module:
     - datetime
     - svg_image
     - user
+_core:
+  default_config_hash: mMDbSc1ZTaqr_Qu8edTVMKXTSQckSVXwAH06W5U2X7s
 id: node.post.listing
 targetEntityType: node
 bundle: post
 mode: listing
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   field_contact:
     label: hidden
     weight: 3
@@ -69,6 +76,7 @@ hidden:
   field_components: true
   field_intro_image: true
   field_intro_text: true
+  field_manual_date: true
   field_news_tags: true
   field_people: true
   field_place: true
@@ -80,7 +88,6 @@ hidden:
   field_related_guides: true
   field_related_posts: true
   field_sidebar_components: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
   published_at: true
