@@ -181,6 +181,9 @@
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
     "patches": {
+      "drupal/advanced_text_formatter": {
+        "Fix incorrect UI warning.": "https://www.drupal.org/files/issues/invalid_placeholder_in_formatter_summary-2867200-3.patch"
+      },
       "drupal/field_group": {
         "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
         "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
