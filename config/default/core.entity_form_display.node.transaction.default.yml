@@ -1,16 +1,50 @@
-uuid: 3be02ff9-c019-4ce4-ac40-eb0994fc9c19
+uuid: 8daab3bd-7bb8-40f3-8c85-8e1672940f86
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.transaction.field_description
     - field.field.node.transaction.field_link
     - field.field.node.transaction.field_sticky
     - node.type.transaction
   module:
     - content_moderation
+    - field_group
     - paragraphs
     - path
     - publication_date
+    - text
+third_party_settings:
+  field_group:
+    group_transaction:
+      children:
+        - group_basic_information
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: Transaction
+    group_basic_information:
+      children:
+        - title
+        - field_description
+        - field_link
+        - field_sticky
+      parent_name: group_transaction
+      weight: 15
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-basic-information field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+_core:
+  default_config_hash: DC0Qym_TwMaQ3hmXeOTFB4rNqi_lMwraVe-I112hOr4
 id: node.transaction.default
 targetEntityType: node
 bundle: transaction
@@ -18,24 +52,39 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_link:
+  field_description:
     weight: 3
-    type: entity_reference_paragraphs
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_link:
+    weight: 4
+    type: paragraphs
     settings:
       title: Link
       title_plural: Links
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_sticky:
-    weight: 4
+    weight: 5
     type: boolean_checkbox
     settings:
       display_label: true
@@ -43,20 +92,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 9
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -64,12 +113,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 5
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -77,19 +126,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 10
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 1
     region: content
     settings:
       size: 60
@@ -97,7 +146,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60
@@ -105,6 +154,8 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 8
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
