@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
     - field.field.node.post.field_intro_text
+    - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
@@ -21,7 +22,6 @@ dependencies:
     - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
-    - field.field.node.post.field_type_of_content
     - field.field.node.post.field_updated_date
     - node.type.post
   module:
@@ -30,6 +30,8 @@ dependencies:
     - svg_image
     - text
     - user
+_core:
+  default_config_hash: QHfqYtoXT6CMANU_cbrtljNJRToxWhWQJBLUU6klpvU
 id: node.post.default
 targetEntityType: node
 bundle: post
@@ -39,6 +41,11 @@ content:
     label: hidden
     weight: 0
     type: text_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: -20
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -60,12 +67,15 @@ content:
       link: false
     third_party_settings: {  }
     region: content
-  field_intro_text:
-    weight: 102
+  field_manual_date:
+    weight: 101
     label: above
-    settings: {  }
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
     third_party_settings: {  }
-    type: text_default
+    type: boolean
     region: content
   field_news_tags:
     label: hidden
@@ -107,14 +117,6 @@ content:
       format_type: medium
       timezone_override: ''
     third_party_settings: {  }
-    region: content
-  field_related:
-    weight: 101
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
     region: content
   field_related_content:
     label: above
@@ -188,6 +190,7 @@ content:
     region: content
 hidden:
   field_intro_image: true
-  field_type_of_content: true
+  field_intro_text: true
+  field_related: true
   langcode: true
   published_at: true
