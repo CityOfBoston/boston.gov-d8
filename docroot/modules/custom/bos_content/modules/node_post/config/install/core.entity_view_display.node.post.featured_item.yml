@@ -25,7 +25,9 @@ dependencies:
     - field.field.node.post.field_updated_date
     - node.type.post
   module:
+    - advanced_text_formatter
     - datetime
+    - fences
     - svg_image
     - user
 id: node.post.featured_item
@@ -33,28 +35,65 @@ targetEntityType: node
 bundle: post
 mode: featured_item
 content:
-  content_moderation_control:
-    weight: -20
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_contact:
     label: hidden
     weight: 3
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: popup_icon
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
+  field_intro_text:
+    type: advanced_text
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      trim_length: '200'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: php
+      format: plain_text
+      allowed_html:
+        - b
+        - em
+        - i
+        - strong
+        - u
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_published_date:
     label: hidden
     weight: 2
     type: datetime_default
     settings:
-      format_type: medium
       timezone_override: ''
-    third_party_settings: {  }
+      format_type: date_format_boston_featured
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_thumbnail:
     label: hidden
@@ -63,16 +102,24 @@ content:
     settings:
       image_style: ''
       image_link: ''
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
+      svg_render_as_image: '1'
+      svg_attributes:
+        width: ''
+        height: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   body: true
+  content_moderation_control: true
   field_components: true
   field_intro_image: true
-  field_intro_text: true
   field_manual_date: true
   field_news_tags: true
   field_people: true
@@ -87,4 +134,5 @@ hidden:
   field_sidebar_components: true
   field_updated_date: true
   langcode: true
+  links: true
   published_at: true
