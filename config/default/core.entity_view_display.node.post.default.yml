@@ -43,7 +43,14 @@ content:
     weight: 0
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: body
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_components:
     label: hidden
@@ -105,25 +112,25 @@ content:
     settings: {  }
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_tag: div
+        fences_field_classes: 'intro-text supporting-text squiggle-border-bottom'
         fences_field_item_tag: none
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
   field_news_tags:
-    label: hidden
+    label: above
     weight: 8
     type: entity_reference_label
     settings:
       link: false
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_tag: div
+        fences_field_classes: news-tags
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: none
+        fences_label_tag: label
         fences_label_classes: ''
     region: content
   field_people:
