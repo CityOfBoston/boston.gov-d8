@@ -77,55 +77,68 @@
  *
  * @ingroup themeable
  #}
-{# TODO: Review this: hide($content.comments) #}
-{# TODO: Review this: hide($content.links) #}
-<article id="node-{{ node.nid }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
+
+{{ breakpoint() }}
+
+<article{{ attributes }}>
   <div class="department-info-wrapper desktop-100">
-    <h1 class="title">{{ title }}</h1>
+
+    {{ title_prefix }}
+
+    {% if title %}
+      <h1{{ title_attributes }}>{{ title.0 }}</h1>
+    {%  endif %}
+
+    {{ title_suffix }}
+
 <!--
     Do not add additional content to the following right column.
     Secondary content should be included in a new right column below the left (main) column.
  -->
     <div class="column mobile-100 desktop-33-right">
       <p class="published-by-date">
-        {{ content.field_published_date }}
+        {{ elements.field_published_date }}
       </p>
       <div class="list-item detail-list-item published-by-detail">
-        {{ content.field_contact }}
+        {{ elements.field_contact }}
       </div>
     </div>
+
     <div class="column mobile-100 desktop-66-left">
-      {% if content.field_intro_text %}
-        {{ content.field_intro_text }}
+
+      {{ elements.field_intro_text }}
+
+      {% if navOutput %}
+        <div class="sub-nav-trigger drawer-trigger">
+          <div class="sub-nav-chevron">
+            {{ sub_nav|raw }}
+          </div>
+          Page Sections
+        </div>
+        <nav class="topic-nav topic-nav__left">
+          <a name="section-nav"></a>
+          {{ navOutput }}
+        </nav>
       {% endif %}
-      <div class="sub-nav-trigger drawer-trigger">
-        <div class="sub-nav-chevron">{{ file_get_contents(drupal_get_path('theme', $GLOBALS.theme) . '/dist/img/subnav-toggle.svg') }}</div>
-        Page Sections
-      </div>
-      <nav class="topic-nav topic-nav__left">
-        <ul></ul>
-        <a name="section-nav"></a>
-      </nav>
-      <div class="body">
-        {{ content.body }}
-        {% if content.field_news_tags %}
-          <div class="news-tags"><label>Tags:</label>{{ content.field_news_tags }}</div>
-        {% endif %}
-      </div>
+
+      {{ elements.body }}
+
+      {{ elements.field_news_tags }}
+
     </div>
     <div class="column mobile-100 desktop-33-right">
-      {% if content.field_sidebar_components %}
-        {{ content.field_sidebar_components }}
+      {% if elements.field_sidebar_components %}
+        {{ elements.field_sidebar_components }}
       {% endif %}
     </div>
     <div class="clearfix"></div>
   </div>
-  {% if content.field_components %}
+  {% if elements.field_components %}
   <div class="department-components desktop-100" {{ content_attributes }}>
-    {{ content.field_components }}
+    {{ elements.field_components }}
   </div>
   {% endif %}
-  {% if content.field_contacts %}
-    {{ theme('page_contacts', 'title': "Who's Involved", 'contacts': $content.field_contacts) }}
+  {% if elements.field_contacts %}
+    {{ elements.field_contacts }}
   {% endif %}
 </article>
