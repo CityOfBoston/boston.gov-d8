@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Main view template.
  *
@@ -25,68 +23,68 @@
  * - $more: A link to view more, if any
  *
  * @ingroup views_templates
- */
-?>
+ #}
+
 <div class="p-v700">
-  <?php print render($title_prefix); ?>
-  <?php if ($title): ?>
-    <?php print $title; ?>
-  <?php endif; ?>
-  <?php print render($title_suffix); ?>
-  <?php if ($header): ?>
+  {{ title_prefix }}
+  {% if title %}
+    {{ title }}
+  {% endif %}
+  {{ title_suffix }}
+  {% if header %}
     <div class="view-header">
-      <?php print $header; ?>
+      {{ header }}
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-  <?php if ($exposed): ?>
+  {% if exposed %}
     <div class="view-filters">
-      <?php print $exposed; ?>
+      {{ exposed }}
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-  <?php if ($attachment_before): ?>
+  {% if attachment_before %}
     <div class="attachment attachment-before">
-      <?php print $attachment_before; ?>
+      {{ attachment_before }}
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-  <?php if ($rows): ?>
+  {% if rows %}
     <div class="view-content">
-      <?php print $rows; ?>
+      {{ rows }}
     </div>
-  <?php elseif ($empty): ?>
+  {% elseif empty %}
     <div class="container">
       <div class="view-empty">
-        <?php print $empty; ?>
+        {{ empty }}
       </div>
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-  <?php if ($pager): ?>
-    <?php print $pager; ?>
-  <?php endif; ?>
+  {% if pager %}
+    {{ pager }}
+  {% endif %}
 
-  <?php if ($attachment_after): ?>
+  {% if attachment_after %}
     <div class="attachment attachment-after">
-      <?php print $attachment_after; ?>
+      {{ attachment_after }}
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-  <?php if ($more): ?>
-    <?php print $more; ?>
-  <?php endif; ?>
+  {% if more %}
+    {{ more }}
+  {% endif %}
 
-  <?php if ($footer): ?>
+  {% if footer %}
     <div class="view-footer">
-      <?php print $footer; ?>
+      {{ footer }}
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-  <?php if ($feed_icon): ?>
+  {% if feed_icon %}
     <div class="feed-icon">
-      <?php print $feed_icon; ?>
+      {{ feed_icon }}
     </div>
-  <?php endif; ?>
+  {% endif %}
 
-</div><?php /* class view */ ?>
+</div>
