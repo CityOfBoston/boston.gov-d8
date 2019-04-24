@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * This template handles the layout of the views exposed filter form.
  *
@@ -17,13 +15,15 @@
  * - $button: The submit button for the form.
  *
  * @ingroup views_templates
- */
-?>
+ #}
+
 <div class="sf">
   <div class="sf-i">
-    <?php foreach ($widgets as $id => $widget): ?>
-      <?php print $widget->widget; ?>
-    <?php endforeach; ?>
-    <?php print $button; ?>
+    {% for id,widget in widgets %}
+      {{ widget }}
+    {% endfor %}
+    {% if form.actions.submit %}
+      {{ form.actions.submit }}
+    {% endif %}
   </div>
 </div>
