@@ -1,0 +1,23 @@
+uuid: 6cec37ab-340f-44a2-8ebd-be7e2462b372
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_manual_date
+    - node.type.post
+id: node.post.field_manual_date
+field_name: field_manual_date
+entity_type: node
+bundle: post
+label: 'Manual Date'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Manual
+  off_label: Automatic
+field_type: boolean
