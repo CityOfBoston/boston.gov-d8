@@ -21,6 +21,15 @@ function node_post_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
+function node_post_preprocess_page(&$variables) {
+  if (isset($variables["node"]) && $variables["node"]->bundle() == "post") {
+    $variables['header_image'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function node_post_preprocess_node__post(&$variables) {
   _bos_components_fix_attributes($variables);
   $variables['attributes']->addClass("desktop-100");
@@ -43,3 +52,4 @@ function template_preprocess_post(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 }
+
