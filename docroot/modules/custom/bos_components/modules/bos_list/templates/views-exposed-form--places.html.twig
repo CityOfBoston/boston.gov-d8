@@ -19,8 +19,9 @@
 
 <div class="sf">
   <div class="sf-i">
-    {% for id,widget in widgets %}
-      {{ widget }}
+    {% for i,filter in form['#info'] %}
+      {% set filter_name = filter.value %}
+      {{ form[filter_name] }}
     {% endfor %}
     {% if form.actions.submit %}
       {{ form.actions.submit }}
