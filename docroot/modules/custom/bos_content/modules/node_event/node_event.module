@@ -124,4 +124,11 @@ function node_event_preprocess_node__event(&$variables) {
     $variables["content"]["field_links"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
+
+  // Check for cancelled state.
+  $node = $variables['elements']['#node'];;
+  if ($node->hasField("field_cancelled")) {
+    $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
+  }
+
 }
