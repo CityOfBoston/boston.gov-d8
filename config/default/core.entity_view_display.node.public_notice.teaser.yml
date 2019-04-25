@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.public_notice.body
+    - field.field.node.public_notice.field_address
     - field.field.node.public_notice.field_cancelled
     - field.field.node.public_notice.field_city_hall
     - field.field.node.public_notice.field_components
@@ -14,8 +15,10 @@ dependencies:
     - field.field.node.public_notice.field_event_contact
     - field.field.node.public_notice.field_extra_info
     - field.field.node.public_notice.field_featured
+    - field.field.node.public_notice.field_intro_text
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
+    - field.field.node.public_notice.field_manual_date
     - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_people
     - field.field.node.public_notice.field_phone_number
@@ -31,7 +34,8 @@ dependencies:
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
   module:
-    - text
+    - advanced_text_formatter
+    - fences
     - user
 _core:
   default_config_hash: tHa2-M0cjfU5XQ8fnteIsD0QR5aj0LXfudNMfvpOqgQ
@@ -43,15 +47,43 @@ content:
   body:
     label: hidden
     weight: 0
-    type: text_summary_or_trimmed
+    type: advanced_text
     settings:
-      trim_length: 600
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
+      trim_length: '600'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: input
+      format: plain_text
+      allowed_html:
+        - a
+        - b
+        - br
+        - dd
+        - dl
+        - dt
+        - em
+        - i
+        - li
+        - ol
+        - p
+        - strong
+        - u
+        - ul
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
+  content_moderation_control: true
+  field_address: true
   field_cancelled: true
   field_city_hall: true
   field_components: true
@@ -61,8 +93,10 @@ hidden:
   field_event_contact: true
   field_extra_info: true
   field_featured: true
+  field_intro_text: true
   field_is_there_public_testimony: true
   field_links: true
+  field_manual_date: true
   field_multiple_neighborhoods: true
   field_people: true
   field_phone_number: true
@@ -77,4 +111,5 @@ hidden:
   field_time: true
   field_updated_date: true
   langcode: true
+  links: true
   published_at: true
