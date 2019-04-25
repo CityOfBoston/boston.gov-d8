@@ -25,5 +25,61 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['views_view__bids_rfps'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__bids_rfps'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view_unformatted__departments_listing'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__departments_listing'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view__news_landing'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__news_landing'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view__calendar'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__calendar'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__calendar'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view__places'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_exposed_form__places'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   return $theme;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
+  if ($form["#id"] == 'views-exposed-form-places-page-1') {
+    $form['title']['#attributes']['class'] = ['sf-i-f', 'form-text'];
+    $form['title']['#attributes']['placeholder'] = 'Search...';
+    $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
+    unset($form["#info"]["filter-title"]["label"]);
+  }
 }
