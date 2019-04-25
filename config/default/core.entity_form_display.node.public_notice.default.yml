@@ -265,14 +265,21 @@ content:
     region: content
   field_components:
     weight: 16
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Component
-      title_plural: Components
+      title: 'Public Notice Component'
+      title_plural: 'Public Notice Components'
       edit_mode: closed
-      add_mode: select
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_contact:
@@ -286,14 +293,21 @@ content:
     region: content
   field_drawer:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Topic
-      title_plural: Topics
-      edit_mode: open
-      add_mode: select
+      title: 'Discussion Topic'
+      title_plural: 'Discussion Topics'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: discussion_topic
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_email:
@@ -343,14 +357,21 @@ content:
     region: content
   field_links:
     weight: 20
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Download
       title_plural: Downloads
-      edit_mode: open
-      add_mode: select
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: document
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_manual_date:
