@@ -1,4 +1,4 @@
-uuid: 6f67b5d6-ffdd-4afd-908a-1ee3db36953d
+uuid: 3f70547b-759a-4897-97e2-e31d80165199
 langcode: en
 status: true
 dependencies:
@@ -7,7 +7,7 @@ dependencies:
     - paragraphs.paragraphs_type.transaction_grid
     - taxonomy.vocabulary.contact
 _core:
-  default_config_hash: Ei0YeE-M-k4UuwJHq2TX438b8c1vqwAK8oghVEUPYfU
+  default_config_hash: Iqflc8FZw09Vxy_q6MJvabZ6sSnngfiFba7YRdMn4Hc
 id: paragraph.transaction_grid.field_contact
 field_name: field_contact
 entity_type: paragraph
@@ -21,11 +21,12 @@ default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    target_bundles:
-      contact: contact
+    behaviors:
+      views-select-list:
+        status: 1
     sort:
       field: name
       direction: ASC
-    auto_create: false
-    auto_create_bundle: ''
+    target_bundles:
+      contact: contact
 field_type: entity_reference
