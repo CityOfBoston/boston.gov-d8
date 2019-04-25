@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * Provides a public notice entity type.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function node_public_notice_theme() {
+  return [
+    'node__public_notice' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_public_notice_preprocess_node__public_notice(&$variables) {
+  _bos_components_fix_attributes($variables);
+  $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->addClass("clearfix");
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
+}
+/**
+ * Prepares variables for public notice templates.
+ *
+ * Default template: public-notice.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the public notice information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_public_notice(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
