@@ -300,8 +300,11 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
  * Implements hook_preprocess_page().
  */
 function bos_theme_preprocess_page(array &$variables, $hook) {
-  // D8-OK: Add in the js required by each page.
+  // Add in the js required by each page.
   $variables['#attached']['library'][] = "bos_theme/page.assets";
+
+  // Ensure the $variables{"attribute"] is an Attribute object.
+  _bos_theme_fix_attributes($variables);
 
   // TODO: review this theme suggestion.
   // This is probably related to (site_alert) api calls (built in views) which
@@ -309,10 +312,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // view-controlled html and not a fully drupal-themed page.
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
     $variables['theme_hook_suggestions'][] = 'page__embed';
-  }
-
-  if (empty($variables["attributes"])) {
-    $variables["attributes"] = new Attribute();
   }
 
   // TODO: Review if needed in D8.
@@ -326,47 +325,12 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
-  // TODO: Review.  This D8 converted, but is it needed / best way ?
-  // This is done to bring the hero image rendered output to the page level
-  // of rendering. Hero image styling fits more naturally at the page level
-  // as opposed to the rendered node output in the system block.
+  // Setup hero style page banner images.
   $current_path = \Drupal::service('path.current')->getPath();
-  $path_args = explode('/', $current_path);
-  if (!isset($variables['header_image'])) {
-    $variables['header_image'] = FALSE;
-  }
-  if (!empty($path_args[2])) {
-    $nid = $path_args[2];
-    if ($path_args[1] == 'node' && is_numeric($nid)) {
-      if (isset($variables["node"]->field_intro_image)) {
-        $background_image = $variables["node"]->field_intro_image;
-        if (isset($background_image->entity)) {
-          $uri = $background_image->entity->getFileUri();
-          // Set $variables["header_image"] to true here.
-          // Individual nodes can disable(false) in their own preprocess hooks.
-          if (!isset($variables['header_image'])) {
-            $variables['header_image'] = TRUE;
-          }
-          if ($variables['header_image']) {
-            $variables["attributes"]->addClass("mn");
-            $variables["attributes"]->setAttribute("id", "page");
-            $variables['background_image'] = $background_image;
-            $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
-              ->buildUrl($uri);
-            $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
-              ->buildUrl($uri);
-            $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
-              ->buildUrl($uri);
-            $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
-              ->buildUrl($uri);
-          }
-        }
-      }
-    }
-  }
+  _bos_theme_manage_hero($variables, $current_path);
 
   // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
-  // D8 OK: Custom 404/403 pages.
+  // Custom 404/403 pages.
   if (!empty($variables['status_code'])) {
     switch ($variables['status_code']) {
       case "404":
@@ -389,83 +353,17 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
-  // D8 OK: MetaTags Block
-  // Some content types aren't special.
-  $no_type_needed = [
-    'listing_page',
-    'landing_page',
-  ];
-  // TODO: Check swift type search settings.
-  // Add a site priority meta tag for swiftype.
-  $metaTags[] = [
-    [
-      '#tag' => 'meta',
-      '#attributes' => [
-        'class' => 'swiftype',
-        'name' => 'site-priority',
-        'data-type' => 'integer',
-        'content' => 5,
-      ],
-    ],
-    "swiftype_priority",
-  ];
-  // Dependent on content-type (i.e node), register a swiftType type metatag.
-  if (isset($variables['node']) && is_object($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
-    $metaTags[] = [
-      [
-        '#tag' => 'meta',
-        '#attributes' => [
-          'class' => 'swiftype',
-          'name' => 'type',
-          'data-type' => 'enum',
-          'content' => $variables['node']->getType(),
-        ],
-      ],
-      "swiftype_type",
-    ];
-  }
-  $variables['#attached']['html_head'] = $metaTags;
+  // Create $variable elements for metatag injections.
+  _bos_theme_metatags($variables);
 
-  // D8 OK: Create necessary page classes.
-  if (isset($variables['node']) && is_object($variables['node'])) {
+  // Create necessary page classes.
+  _bos_theme_page_classes($variables, $current_path);
 
-    if ($variables['node']->getType() !== 'tabbed_content' && !$variables['header_image']) {
-      if (!$variables["attributes"]->hasClass("page--nm")) {
-        $variables["attributes"]->addClass("page--wa");
-      }
-      $variables["attributes"]->setAttribute("id", "page");
-    }
-    // This is for the how-to page and others which have a different type of
-    // hero and need to be flush with the top of the page.
-    if ($variables["attributes"]->hasClass("mn")) {
-      $variables["attributes"]->removeClass("page--wa");
-    }
-    // Special settings for homepage.
-    if ($variables['is_front']) {
-      $variables["attributes"]->addClass("page--fp");
-      if (!$variables["attributes"]->hasClass("page--wa") && !$variables["attributes"]->hasClass("page--nm")) {
-        $variables["attributes"]->addClass("page--wa");
-      }
-    }
-  }
-
-  // D8 OK: If we are on the employee directory page, change the title.
-  if (strpos($current_path, 'user') === 0) {
-    if (!$variables["attributes"]->hasClass("page")) {
-      $variables["attributes"]->addClass("page");
-    }
-    if (!$variables["attributes"]->hasClass("page--wa")) {
-      $variables["attributes"]->addClass("page--wa");
-    }
-  }
-
-  // D8 OK:  By default, there is no site alert.
+  // By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
-  if (empty($variables['has_site_alert'])) {
-    $variables['has_site_alert'] = FALSE;
-  }
+  $variables['has_site_alert'] = !empty($variables['has_site_alert']) ?: FALSE;
 
-  // D8 OK: Legacy, set data-target.
+  // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
     $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
   }
@@ -495,30 +393,8 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $tree = $menu_tree->transform($tree, $manipulators);
   $variables['secondary_menu'] = $menu_tree->build($tree);
 
-  // D8 OK - Render the header elements here so just markup is passed to tmplt.
-  $arr_base = [
-    '#site_name' => $variables['site_name'],
-    '#front_page' => $variables['front_page'],
-    '#asset_url' => $variables['asset_url'],
-    '#asset_name' => $variables['asset_name'],
-    '#cache_buster' => $variables['cache_buster'],
-    '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
-    '#secondary_menu' => $variables['secondary_menu'],
-    '#theme' => '',
-  ];
-  $arr_base['#theme'] = 'burger';
-  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'logo';
-  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'secondary_nav';
-  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'search';
-  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
-  if ($variables['has_site_alert']) {
-    $arr_base["#hidden"] = " hidden";
-  }
-  $arr_base['#theme'] = 'seal';
-  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
+  // Render the header elements here so just markup is passed to tmplt.
+  _bos_theme_render_snippets($variables);
 }
 
 /**
@@ -569,20 +445,6 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   if (empty($variables['title'])) {
     $variables['title'] = t('You are here');
   }
-}
-
-/**
- * Override or insert variables for the breadcrumb theme function.
- *
- * @param array $variables
- *   An array of variables to pass to the theme function.
- * @param string $hook
- *   The name of the theme hook being called ("breadcrumb" in this case).
- *
- * @see boston_breadcrumb()
- */
-function bos_theme_preprocess_block(array &$variables, $hook) {
-
 }
 
 /**
@@ -851,7 +713,7 @@ function _bos_theme_findsvg($image) {
 }
 
 /**
- * Helper function to determine which patterns library is being used.
+ * Helper: Determine which patterns library is being used.
  *
  * @return string
  *   Returns one of 'local' | 'patterns' | 'heroku-patterns'.
@@ -870,7 +732,7 @@ function _bos_theme_library() {
 }
 
 /**
- * Ensure attributes element of variables array is an Attribute object.
+ * Helper: Ensure attributes element of variables array is an Attribute object.
  *
  * This snippet fixes the situation where a module has defined an attributes
  * element as an array and not a Drupal\core\Template\Attribute object.
@@ -887,7 +749,7 @@ function _bos_theme_fix_attributes(array &$variables, string $check_field = "att
 }
 
 /**
- * Make the navigation menu.
+ * Helper: Make the navigation menu.
  *
  * @param array $variables
  *   The preprocess variables array passed by ref.
@@ -895,7 +757,6 @@ function _bos_theme_fix_attributes(array &$variables, string $check_field = "att
  * @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/content-type-back-end/in-page-navigation-menu
  */
 function _bos_theme_make_nav(array &$variables) {
-
   if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
     $variables['navOutput'] = [
       '#theme' => 'item_list',
@@ -918,5 +779,178 @@ function _bos_theme_make_nav(array &$variables) {
     // Add in the chevron used in mobile UX.
     $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
 
+  }
+}
+
+/**
+ * Helper: Manage intro_image and hero image headers on a node.
+ *
+ * This is done to bring the hero image rendered output to the page level
+ * of rendering. Hero image styling fits more naturally at the page level
+ * as opposed to the rendered node output in the system block.
+ *
+ * @param array $variables
+ *   The standard variable array from a preprocess hook.
+ */
+function _bos_theme_manage_hero(array &$variables, $current_path) {
+  $path_args = explode('/', $current_path);
+  if (!isset($variables['header_image'])) {
+    $variables['header_image'] = FALSE;
+  }
+
+  $nid = NULL;
+  if (!empty($variables["node"])) {
+    $nid = $variables["node"]->id();
+  }
+  elseif ($path_args[1] == "node" && !empty($path_args[2]) && is_numeric($path_args[2])) {
+    $nid = $path_args[2];
+  }
+
+  if (!empty($nid)) {
+    if (isset($variables["node"]->field_intro_image) && $variables["node"]->field_intro_image->count()) {
+      $background_image = $variables["node"]->field_intro_image;
+      if (isset($background_image->entity)) {
+        $uri = $background_image->entity->getFileUri();
+        // Set $variables["header_image"] to true here.
+        // Individual nodes can disable(false) in their own preprocess hooks.
+        if (!isset($variables['header_image'])) {
+          $variables['header_image'] = TRUE;
+        }
+        if ($variables['header_image']) {
+          $variables["attributes"]->addClass("mn");
+          $variables["attributes"]->setAttribute("id", "page");
+          $variables['background_image'] = $background_image;
+          $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
+            ->buildUrl($uri);
+          $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
+            ->buildUrl($uri);
+          $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
+            ->buildUrl($uri);
+          $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
+            ->buildUrl($uri);
+        }
+      }
+    }
+    else {
+      $variables["header_image"] = FALSE;
+    }
+  }
+}
+
+/**
+ * Helper:   Add a site priority meta tag for swiftype.
+ *
+ * @param array $variables
+ *   The usual $variables array from a hook preprocess.
+ */
+function _bos_theme_metatags(array &$variables) {
+  // TODO: Check swift type search settings.
+  // Define content types which don't need metatag injections.
+  $no_type_needed = [
+    'listing_page',
+    'landing_page',
+  ];
+
+  $metaTags[] = [
+    [
+      '#tag' => 'meta',
+      '#attributes' => [
+        'class' => 'swiftype',
+        'name' => 'site-priority',
+        'data-type' => 'integer',
+        'content' => 5,
+      ],
+    ],
+    "swiftype_priority",
+  ];
+  // Dependent on content-type (i.e node), register a swiftType type metatag.
+  if (isset($variables['node']) && is_object($variables['node']) && !in_array($variables['node']->getType(), $no_type_needed)) {
+    $metaTags[] = [
+      [
+        '#tag' => 'meta',
+        '#attributes' => [
+          'class' => 'swiftype',
+          'name' => 'type',
+          'data-type' => 'enum',
+          'content' => $variables['node']->getType(),
+        ],
+      ],
+      "swiftype_type",
+    ];
+  }
+  $variables['#attached']['html_head'] = $metaTags;
+}
+
+/**
+ * Helper: Renders the snippets used in the menu area.
+ *
+ * @param array $variables
+ *   The usual $variables array from hook reprocess.
+ */
+function _bos_theme_render_snippets(array &$variables) {
+  $arr_base = [
+    '#site_name' => $variables['site_name'],
+    '#front_page' => $variables['front_page'],
+    '#asset_url' => $variables['asset_url'],
+    '#asset_name' => $variables['asset_name'],
+    '#cache_buster' => $variables['cache_buster'],
+    '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
+    '#secondary_menu' => $variables['secondary_menu'],
+    '#theme' => '',
+  ];
+  $arr_base['#theme'] = 'burger';
+  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'logo';
+  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'secondary_nav';
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
+  $arr_base['#theme'] = 'search';
+  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
+  if ($variables['has_site_alert']) {
+    $arr_base["#hidden"] = " hidden";
+  }
+  $arr_base['#theme'] = 'seal';
+  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
+}
+
+/**
+ * Helper: Create necessary page classes.
+ *
+ * @param array $variables
+ *   The usual variables array from a hook preprocess.
+ * @param string $current_path
+ *   The current path.
+ */
+function _bos_theme_page_classes(array &$variables, string $current_path) {
+  if (isset($variables['node']) && is_object($variables['node'])) {
+
+    if ($variables['node']->getType() !== 'tabbed_content' && !$variables['header_image']) {
+      if (!$variables["attributes"]->hasClass("page--nm")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
+      $variables["attributes"]->setAttribute("id", "page");
+    }
+    // This is for the how-to page and others which have a different type of
+    // hero and need to be flush with the top of the page.
+    if ($variables["attributes"]->hasClass("mn")) {
+      $variables["attributes"]->removeClass("page--wa");
+    }
+    // Special settings for homepage.
+    if ($variables['is_front']) {
+      $variables["attributes"]->addClass("page--fp");
+      if (!$variables["attributes"]->hasClass("page--wa") && !$variables["attributes"]->hasClass("page--nm")) {
+        $variables["attributes"]->addClass("page--wa");
+      }
+    }
+  }
+
+  // D8 OK: If we are on the employee directory page, change the title.
+  if (strpos($current_path, 'user') === 0) {
+    if (!$variables["attributes"]->hasClass("page")) {
+      $variables["attributes"]->addClass("page");
+    }
+    if (!$variables["attributes"]->hasClass("page--wa")) {
+      $variables["attributes"]->addClass("page--wa");
+    }
   }
 }
