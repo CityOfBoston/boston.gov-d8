@@ -617,7 +617,7 @@ function _bos_core_name_from_email(string $email = NULL) {
  *   The attribute field.
  */
 function _bos_core_fix_attributes(array &$variables, string $check_field = "attributes") {
-  if(isset($variables[$check_field]) && is_object(($variables[$check_field]))) {
+  if (isset($variables[$check_field]) && is_object(($variables[$check_field]))) {
     return;
   }
   if (isset($variables[$check_field]) && is_array($variables[$check_field]) && class_exists(Attribute::class)) {

@@ -33,7 +33,7 @@ function node_post_preprocess_page(&$variables) {
 function node_post_preprocess_node__post(&$variables) {
   _bos_components_fix_attributes($variables);
   $variables['attributes']->addClass("desktop-100");
-  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id() );
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
 }
 
 /**
@@ -52,4 +52,3 @@ function template_preprocess_post(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 }
-
