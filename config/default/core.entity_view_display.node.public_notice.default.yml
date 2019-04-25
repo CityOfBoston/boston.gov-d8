@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.public_notice.body
+    - field.field.node.public_notice.field_address
     - field.field.node.public_notice.field_cancelled
     - field.field.node.public_notice.field_city_hall
     - field.field.node.public_notice.field_components
@@ -13,8 +14,10 @@ dependencies:
     - field.field.node.public_notice.field_event_contact
     - field.field.node.public_notice.field_extra_info
     - field.field.node.public_notice.field_featured
+    - field.field.node.public_notice.field_intro_text
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
+    - field.field.node.public_notice.field_manual_date
     - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_people
     - field.field.node.public_notice.field_phone_number
@@ -30,11 +33,14 @@ dependencies:
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
   module:
+    - address
     - datetime
     - entity_reference_revisions
     - options
     - text
     - user
+_core:
+  default_config_hash: r58DZEK3VzHOUS4B2AXQC_tsJnQkoVQjzJxdm19V_M4
 id: node.public_notice.default
 targetEntityType: node
 bundle: public_notice
@@ -46,6 +52,18 @@ content:
     type: text_default
     settings: {  }
     third_party_settings: {  }
+    region: content
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_address:
+    weight: 102
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
     region: content
   field_cancelled:
     label: hidden
@@ -119,6 +137,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    weight: 101
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_is_there_public_testimony:
     label: hidden
     weight: 18
@@ -134,6 +159,16 @@ content:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    region: content
+  field_manual_date:
+    weight: 103
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
   field_multiple_neighborhoods:
     label: hidden
