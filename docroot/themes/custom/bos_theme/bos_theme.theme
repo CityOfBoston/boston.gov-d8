@@ -800,7 +800,7 @@ function _bos_theme_manage_hero(array &$variables, $current_path) {
 
   $nid = NULL;
   if (!empty($variables["node"])) {
-    $nid =  $variables["node"]->id();
+    $nid = $variables["node"]->id();
   }
   elseif ($path_args[1] == "node" && !empty($path_args[2]) && is_numeric($path_args[2])) {
     $nid = $path_args[2];
@@ -919,7 +919,7 @@ function _bos_theme_render_snippets(array &$variables) {
  * @param array $variables
  *   The usual variables array from a hook preprocess.
  * @param string $current_path
- *   the current path.
+ *   The current path.
  */
 function _bos_theme_page_classes(array &$variables, string $current_path) {
   if (isset($variables['node']) && is_object($variables['node'])) {
