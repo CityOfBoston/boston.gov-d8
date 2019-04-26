@@ -525,8 +525,17 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
     }
 
-    // Create the nav menu.
-    _bos_theme_make_nav($variables);
+    // If not already created (by a hook_node in a module), create the nav menu.
+    if (!isset($variables['navOutput'])) {
+      // Use $variables["content"] if it exists ...
+      if (isset($variables["content"]["field_components"])) {
+        _bos_theme_make_nav($variables, $variables["content"]["field_components"], 2);
+      }
+      // Otherwise use $variables["elements"] if it exists ...
+      elseif (isset($variables["elements"]["field_components"])) {
+        _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 2);
+      }
+    }
 
     // Add the squiggle bottom onto the page, below the intro-text.
     if ($node->getType() != "tabbed_content" && $node->getType() != "how_to") {
@@ -753,21 +762,27 @@ function _bos_theme_fix_attributes(array &$variables, string $check_field = "att
  *
  * @param array $variables
  *   The preprocess variables array passed by ref.
+ * @param int $threshold
+ *   The minimum number of embedded components (paras) b4 the menu is shown.
  *
  * @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/content-type-back-end/in-page-navigation-menu
  */
-function _bos_theme_make_nav(array &$variables) {
-  if (isset($variables["content"]["field_components"]["#items"]) && $variables["content"]["field_components"]["#items"]->count() > 1) {
+function _bos_theme_make_nav(array &$variables, array $components, int $threshold = 2) {
+  if (isset($components["#items"]) && $components["#items"]->count() >= $threshold) {
     $variables['navOutput'] = [
       '#theme' => 'item_list',
       '#list_type' => 'ul',
       '#items' => [],
       '#attributes' => [],
     ];
-    foreach ($variables["content"]["field_components"] as $key => $component) {
+    $attached = FALSE;
+    foreach ($components as $key => $component) {
       if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
         // Add js to enable component_navigation in-page menu (and scroll).
-        $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+        if (!$attached) {
+          $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+          $attached = TRUE;
+        }
         // Build the in-page navigation menu and links.
         $title = $component['#paragraph']->field_short_title->value;
         $url = Url::fromUserInput("#" . Html::cleanCssIdentifier(strtolower($title)), ["attributes" => ["class" => ["scroll-link-js"]]]);
