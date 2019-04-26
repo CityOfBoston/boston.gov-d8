@@ -1,4 +1,3 @@
-uuid: d8bbd063-d128-4533-862f-5e4780f7c8a4
 langcode: en
 status: true
 dependencies:
@@ -11,9 +10,67 @@ dependencies:
     - node.type.script_page
   module:
     - content_moderation
+    - field_group
     - paragraphs
     - path
     - publication_date
+third_party_settings:
+  field_group:
+    group_script_page:
+      children:
+        - group_basic_information
+        - group_script_information
+        - group_components
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Script Page'
+    group_basic_information:
+      children:
+        - title
+        - field_contact
+      parent_name: group_script_page
+      weight: 5
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_script_information:
+      children:
+        - field_embed_list
+        - field_link
+      parent_name: group_script_page
+      weight: 6
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Script Information'
+    group_components:
+      children:
+        - field_components
+        - field_sidebar_components
+      parent_name: group_script_page
+      weight: 7
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
 id: node.script_page.default
 targetEntityType: node
 bundle: script_page
@@ -21,12 +78,12 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 11
+    weight: 8
     type: entity_reference_paragraphs
     settings:
       title: Component
@@ -38,13 +95,13 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 3
+    weight: 2
     type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_embed_list:
-    weight: 13
+    weight: 3
     type: entity_reference_paragraphs
     settings:
       title: 'Embed Script'
@@ -56,7 +113,7 @@ content:
     third_party_settings: {  }
     region: content
   field_link:
-    weight: 14
+    weight: 4
     type: entity_reference_paragraphs
     settings:
       title: Reference
@@ -68,7 +125,7 @@ content:
     third_party_settings: {  }
     region: content
   field_sidebar_components:
-    weight: 12
+    weight: 9
     type: entity_reference_paragraphs
     settings:
       title: 'Sidebar Component'
@@ -81,20 +138,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 14
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -102,12 +159,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 10
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -115,19 +172,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 15
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 11
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 1
     region: content
     settings:
       size: 60
@@ -135,7 +192,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -143,6 +200,8 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 13
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
