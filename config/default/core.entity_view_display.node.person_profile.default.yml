@@ -3,8 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
+    - field.field.node.person_profile.field_description
     - field.field.node.person_profile.field_email
     - field.field.node.person_profile.field_first_name
     - field.field.node.person_profile.field_last_name
@@ -16,118 +18,177 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
+    - image.style.med_large_square_360x360_
     - node.type.person_profile
   module:
+    - address
     - entity_reference_revisions
+    - fences
     - svg_image
+    - text
     - user
+_core:
+  default_config_hash: YCRrR7soKVrqK8YZ3egYRg9tEJwvT2S7uG7B_W4FvnI
 id: node.person_profile.default
 targetEntityType: node
 bundle: person_profile
 mode: default
 content:
+  field_address:
+    weight: 5
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: list-item
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: address_default
+    region: content
   field_components:
     label: hidden
-    weight: 14
+    weight: 9
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
     region: content
-  field_contact:
+  field_description:
+    weight: 1
     label: hidden
-    weight: 5
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'person-profile-bio squiggle-border-top'
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: text_default
     region: content
   field_email:
     label: hidden
-    weight: 11
+    weight: 4
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
-    region: content
-  field_first_name:
-    label: hidden
-    weight: 1
-    type: string
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    region: content
-  field_last_name:
-    label: hidden
-    weight: 2
-    type: string
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: list-item
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_person_photo:
     label: hidden
-    weight: 7
+    weight: 2
     type: image
     settings:
-      image_style: ''
+      image_style: med_large_square_360x360_
       image_link: ''
       svg_attributes:
         width: ''
         height: ''
-      svg_render_as_image: true
-    third_party_settings: {  }
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'list-item person-profile-photo'
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_phone_number:
-    label: hidden
-    weight: 10
-    type: string
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    region: content
-  field_political_party:
-    label: hidden
-    weight: 9
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_position_title:
     label: hidden
     weight: 3
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: list-item
+        fences_field_item_tag: none
+        fences_field_item_classes: list-item
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_political_party:
+    type: entity_reference_label
+    weight: 8
+    region: content
+    label: inline
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'detail-item detail-item--secondary'
+        fences_field_item_tag: div
+        fences_field_item_classes: detail-item__body--secondary
+        fences_label_tag: div
+        fences_label_classes: detail-item__left
+  field_position_title:
+    label: hidden
+    weight: 0
+    type: string
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: person-profile-position-title
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_sidebar_components:
     label: hidden
-    weight: 15
+    weight: 10
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: sidebar
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'detail-item detail-item--secondary'
+        fences_field_item_tag: div
+        fences_field_item_classes: detail-item__body--secondary
+        fences_label_tag: div
+        fences_label_classes: detail-item__left
     region: content
   field_year_elected:
-    label: hidden
-    weight: 8
     type: string
+    weight: 7
+    region: content
+    label: inline
     settings:
       link_to_entity: false
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
-    region: content
-    settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'detail-item detail-item--secondary'
+        fences_field_item_tag: div
+        fences_field_item_classes: detail-item__body--secondary
+        fences_label_tag: div
+        fences_label_classes: detail-item__left
 hidden:
+  content_moderation_control: true
+  field_contact: true
+  field_first_name: true
+  field_last_name: true
   field_preferred_contact: true
   field_profile_type: true
   langcode: true
+  links: true
   published_at: true

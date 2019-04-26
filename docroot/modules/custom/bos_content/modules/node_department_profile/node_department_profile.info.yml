@@ -8,13 +8,10 @@ dependencies:
   - bos_content
   - bos_components
 config_devel:
-  - comment.type.comment_node_department_profile
   - core.entity_form_display.node.department_profile.default
-  - core.entity_view_display.comment.comment_node_department_profile.default
   - core.entity_view_display.node.department_profile.default
-  - field.field.comment.comment_node_department_profile.comment_body
+  - core.entity_view_display.node.department_profile.published_by
   - field.field.node.department_profile.body
-  - field.field.node.department_profile.comment_node_department_profile
   - field.field.node.department_profile.field_address
   - field.field.node.department_profile.field_components
   - field.field.node.department_profile.field_department_type
@@ -28,8 +25,6 @@ config_devel:
   - field.field.node.department_profile.field_published_date
   - field.field.node.department_profile.field_sidebar_components
   - field.field.node.department_profile.field_updated_date
-  - field.storage.node.comment_node_department_profile
-  - language.content_settings.comment.comment_node_department_profile
   - language.content_settings.node.department_profile
   - node.type.department_profile
   - xmlsitemap.settings.node.department_profile

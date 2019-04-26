@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.field.node.department_profile.body
-    - field.field.node.department_profile.comment_node_department_profile
     - field.field.node.department_profile.field_address
     - field.field.node.department_profile.field_components
     - field.field.node.department_profile.field_department_type
@@ -21,7 +20,6 @@ dependencies:
     - node.type.department_profile
   module:
     - address
-    - comment
     - content_moderation
     - datetime
     - field_group
@@ -67,7 +65,6 @@ third_party_settings:
         - title
         - field_intro_text
         - body
-        - group_alternative_display
       parent_name: group_department_profile
       weight: 20
       format_type: tab
@@ -78,21 +75,9 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
-    group_alternative_display:
-      children:
-        - field_icon
-      parent_name: group_basic_in
-      weight: 3
-      format_type: tab
-      format_settings:
-        id: ''
-        classes: ''
-        formatter: closed
-        description: ''
-        required_fields: true
-      label: 'Alternative Display'
     group_contact_information:
       children:
+        - field_icon
         - field_phone_number
         - field_email
         - field_hide_contact_form
@@ -149,12 +134,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  comment_node_department_profile:
-    type: comment_default
-    weight: 8
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 4
@@ -162,7 +141,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_address:
-    weight: 12
+    weight: 14
     settings:
       default_country: US
     third_party_settings: {  }
@@ -188,13 +167,13 @@ content:
     third_party_settings: {  }
     region: content
   field_department_type:
-    weight: 13
+    weight: 15
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_email:
-    weight: 10
+    weight: 12
     type: string_textfield
     settings:
       size: 60
@@ -202,14 +181,14 @@ content:
     third_party_settings: {  }
     region: content
   field_hide_contact_form:
-    weight: 11
+    weight: 13
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
   field_icon:
-    weight: 8
+    weight: 10
     type: image_image
     settings:
       preview_image_style: thumbnail
@@ -232,7 +211,7 @@ content:
     type: boolean_checkbox
     region: content
   field_operation_hours:
-    weight: 14
+    weight: 16
     type: paragraphs
     settings:
       title: 'Hours of Operation'
@@ -250,7 +229,7 @@ content:
     third_party_settings: {  }
     region: content
   field_phone_number:
-    weight: 9
+    weight: 11
     type: string_textfield
     settings:
       size: 60
@@ -356,4 +335,4 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden:
+hidden: {  }

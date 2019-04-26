@@ -79,7 +79,7 @@
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/libraries": "^3.0",
     "drupal/lightning_media": "^3.6.0",
-    "drupal/lightning_scheduler": "1.x-dev",
+    "drupal/lightning_workflow": " ^3.6",
     "drupal/linkit": "^5.0",
     "drupal/login_security": "^1.4",
     "drupal/media_entity_browser": "^2.0",
@@ -151,6 +151,7 @@
     "drupal/stage_file_proxy": "^1.0",
     "drupal/twig_xdebug": "1.x-dev",
     "drush/drush": "^9.0",
+    "fenetikm/autoload-drupal": "^0.2.0",
     "jarnaiz/behat-junit-formatter": "^1.3",
     "phpunit/phpunit": "*",
     "squizlabs/php_codesniffer": "2.*",
@@ -180,6 +181,12 @@
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
     "patches": {
+      "drupal/advanced_text_formatter": {
+        "Fix incorrect UI warning.": "https://www.drupal.org/files/issues/invalid_placeholder_in_formatter_summary-2867200-3.patch"
+      },
+      "drupal/migrate_drupal": {
+        "Fix 'Call to a member function getSetting() on null' in migrate_drupal.": "https://www.drupal.org/files/issues/2018-07-08/2984460-3.patch"
+      },
       "drupal/field_group": {
         "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
         "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
@@ -199,6 +206,13 @@
         "Add helper for exdate retreival": "patches/exdate_helper.patch",
         "Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
       }
+    },
+    "autoload-drupal": {
+      "modules": [
+        "web/modules/contrib/",
+        "web/core/modules/",
+        "web/modules/custom/"
+      ]
     }
   }
 }

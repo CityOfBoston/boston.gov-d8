@@ -1,20 +1,68 @@
-uuid: 99a418a0-9a51-4ecc-bc92-b80c52859e4a
+uuid: 9df82d49-0677-47de-82db-871c0d4466ba
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.node.emergency_alert.field_description
     - field.field.node.emergency_alert.field_link
+    - field.field.node.emergency_alert.field_status_overrides
     - field.field.node.emergency_alert.field_theme
     - field.field.node.emergency_alert.field_updated_date
     - node.type.emergency_alert
   module:
     - content_moderation
     - datetime
+    - field_group
     - paragraphs
     - path
     - publication_date
     - text
+third_party_settings:
+  field_group:
+    group_emergency_alert:
+      children:
+        - group_basic_information
+        - group_status_overrides
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Emergency Alert'
+    group_basic_information:
+      children:
+        - title
+        - field_theme
+        - field_description
+        - field_link
+        - field_updated_date
+      parent_name: group_emergency_alert
+      weight: 20
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_status_overrides:
+      children:
+        - field_status_overrides
+      parent_name: group_emergency_alert
+      weight: 21
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Status Overrides'
+_core:
+  default_config_hash: aUmK8I6KuPdxw3HCil_vI45asoahB2WcnsLYCk6ltrw
 id: node.emergency_alert.default
 targetEntityType: node
 bundle: emergency_alert
@@ -27,7 +75,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_description:
-    weight: 2
+    weight: 4
     settings:
       rows: 5
       placeholder: ''
@@ -35,25 +83,51 @@ content:
     type: text_textarea
     region: content
   field_link:
-    weight: 35
-    type: entity_reference_paragraphs
+    weight: 5
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: select
+      title: 'Call to Action'
+      title_plural: 'Calls to Action'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_status_overrides:
+    type: paragraphs
+    weight: 16
+    settings:
+      title: 'Status Override'
+      title_plural: 'Status Overrides'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: status_overrides
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_theme:
-    weight: 0
+    weight: 3
     type: options_select
     settings: {  }
     third_party_settings: {  }
     region: content
   field_updated_date:
-    weight: 12
+    weight: 6
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -67,13 +141,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 14
+    weight: 13
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 11
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -94,7 +168,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 14
     region: content
     third_party_settings: {  }
   sticky:
@@ -106,7 +180,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 2
     region: content
     settings:
       size: 60
@@ -122,7 +196,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 13
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }

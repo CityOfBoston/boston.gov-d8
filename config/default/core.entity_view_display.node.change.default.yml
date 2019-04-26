@@ -1,4 +1,4 @@
-uuid: bb091bc3-69cb-4cf5-8ed2-71d61d934451
+uuid: 45af148d-57e1-4872-ad42-23ac4114db55
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: YeLoByvbbSRHHib6O3l-P6kmiNC0x6JXJTcelaQ-ZR0
+  default_config_hash: hiJ2yT3-9bxI5De8-CtvrCI864ajxtCeivDC1UfMdNU
 id: node.change.default
 targetEntityType: node
 bundle: change
@@ -23,23 +23,15 @@ content:
     settings: {  }
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
     region: content
-  content_moderation_control:
-    weight: -20
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
+  content_moderation_control: true
   langcode: true
+  links: true
   published_at: true

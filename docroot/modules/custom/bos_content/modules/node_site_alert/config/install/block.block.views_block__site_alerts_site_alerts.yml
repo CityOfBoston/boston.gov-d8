@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.site_alerts
+  module:
+    - views
+  theme:
+    - bos_theme
+id: views_block__site_alerts_site_alerts
+theme: bos_theme
+region: site_alert
+weight: -2
+provider: null
+plugin: 'views_block:site_alerts-site_alerts'
+settings:
+  id: 'views_block:site_alerts-site_alerts'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: '5'
+visibility: {  }

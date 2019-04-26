@@ -1,4 +1,4 @@
-uuid: ea3c32e2-1669-48ff-876a-f23bd789ca7e
+uuid: 6bf5e562-8bfc-412c-87eb-a72a680c5507
 langcode: en
 status: true
 dependencies:
@@ -6,10 +6,14 @@ dependencies:
     - field.field.paragraph.upcoming_events.field_component_title
     - field.field.paragraph.upcoming_events.field_featured_item
     - field.field.paragraph.upcoming_events.field_link
+    - field.field.paragraph.upcoming_events.field_list
     - field.field.paragraph.upcoming_events.field_short_title
     - paragraphs.paragraphs_type.upcoming_events
   module:
     - entity_reference_revisions
+    - viewfield
+_core:
+  default_config_hash: 2b3tGS0SraEI_gPXUisolOELExzrn505DBB2Gfnc1dg
 id: paragraph.upcoming_events.default
 targetEntityType: paragraph
 bundle: upcoming_events
@@ -40,6 +44,16 @@ content:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    region: content
+  field_list:
+    weight: 2
+    label: hidden
+    settings:
+      view_title: hidden
+      always_build_output: 0
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
     region: content
   field_short_title:
     label: above
