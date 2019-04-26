@@ -77,7 +77,7 @@
  *
  * @ingroup themeable
  #}
-
+{{ breakpoint() }}
 <article{{ attributes }}>
 
   {% if elements.field_updated_date %}
@@ -88,40 +88,61 @@
 
   <div class="department-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-left">
+
       <h1 class="title">
-        {% if is_cancelled %}
-          <span class='t--err t--s60pct'>Canceled:</span><br>
-        {% endif %}
-        {{ title }}
+
+        {{ title_prefix }}
+
+        {% if title %}
+          <h1{{ title_attributes }}>
+            {% if is_cancelled %}
+              <span class='t--err t--s60pct'>Canceled:</span><br>
+            {% endif %}
+            {{ title.0 }}
+          </h1>
+        {%  endif %}
+
+        {{ title_suffix }}
+
       </h1>
+
       {% if is_cancelled %}
-        <div class="supporting-text squiggle-border-bottom">Reason for cancellation:
-          {% if elements.field_extra_info %}
-            {{ elements.field_extra_info }}
-          {% else %}
-            {{ "Please contact organizer." }}
-          {% endif %}
-        </div>
+        {{ elements.field_extra_info }}
       {% else %}
-        {% if elements.field_intro_text %}
-          {{ elements.field_intro_text }}
-        {% endif %}
+        {{ elements.field_intro_text }}
       {% endif %}
+
       {% if elements.body %}
         <div class="body">
           {{ elements.body }}
         </div>
       {% endif %}
+
       {% if has_testimony %}
         <div class="b b--g b--p300">
-          {% if elements.field_time %}
+          {% if elements.field_time["#entity_type"] %}
             <div class="n-li-a">Public testimony begins at {{ elements.field_time }}</div>
           {% else %}
             <div class="n-li-a">The public can offer testimony.</div>
           {% endif %}
         </div>
       {% endif %}
+
+      {% if navOutput %}
+        <div class="sub-nav-trigger drawer-trigger">
+          <div class="sub-nav-chevron">
+            {{ sub_nav|raw }}
+          </div>
+          Page Sections
+        </div>
+        <nav class="topic-nav topic-nav__left">
+          <a name="section-nav"></a>
+          {{ navOutput }}
+        </nav>
+      {% endif %}
+
       {% if elements.field_drawer %}
+        <a name="topics" data-text="topics" class="subnav-anchor"></a>
         <h2 class="header-border-bottom">Discussion Topics</h2>
         <div class="body">
           <ol>
@@ -129,12 +150,15 @@
           </ol>
         </div>
       {% endif %}
+
       {% if elements.field_details_link %}
         <div class="external-link external-link--inline">
           <a class="button" href="{{ elements.field_details_link }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
         </div>
       {% endif %}
+
     </div>
+
     <div class="column sidebar mobile-100 desktop-33-right">
       <!-- DATE OUTPUT PLACEHOLDER -->
       <div class="event-date-wrapper">
@@ -193,13 +217,17 @@
         {{ elements.field_sidebar_components }}
       {% endif %}
     </div>
+
   </div>
+
   {% if elements.field_components %}
-  <div class="department-components desktop-100" {{ content_attributes }}>
-    {{ elements.field_components }}
-  </div>
+    <div class="department-components desktop-100" {{ content_attributes }}>
+      {{ elements.field_components }}
+    </div>
   {% endif %}
-    {% if elements.field_contacts %}
-      {{ elements.field_contacts }}
-    {% endif %}
+
+  {% if elements.field_contacts %}
+    {{ elements.field_contacts }}
+  {% endif %}
+
 </article>

@@ -5,7 +5,11 @@
  * Provides a public notice entity type.
  */
 
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -19,6 +23,13 @@ function node_public_notice_theme() {
 }
 
 /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function node_public_notice_form_node_public_notice_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form["#validate"][] = "_node_public_notice_form_validate";
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function node_public_notice_preprocess_node__public_notice(&$variables) {
@@ -26,7 +37,31 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
   $variables['attributes']->addClass("desktop-100");
   $variables['attributes']->addClass("clearfix");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
+
+  // Handle cancelled notices.
+  _node_public_notice_is_cancelled($variables);
+
+  $node = $variables['elements']['#node'];
+  if ($node->hasField("field_is_there_public_testimony")) {
+    $variables["has_testimony"] = ($node->field_is_there_public_testimony->value == "1");
+  }
+
+  // Theme the notice time-range.
+  _bos_public_notice_date_range($variables);
+
+// Manage the in-page-menu.
+  _bos_theme_make_nav($variables, $variables["elements"]["field_components"],1);
+  // If we have any components, prepend the discussion topics as well
+  // because we will want discussion topic to appear in the menu ...
+  if (isset($variables["elements"]["field_components"]["#items"])) {
+    $url = Url::fromUserInput("#" . Html::cleanCssIdentifier("topics"), ["attributes" => ["class" => ["scroll-link-js"]]]);
+    $anchor = \Drupal::service('link_generator')->generate("topics", $url);
+    // Add the topic title to the start.
+    array_unshift($variables['navOutput']["#items"], $anchor);
+  }
+
 }
+
 /**
  * Prepares variables for public notice templates.
  *
@@ -42,4 +77,65 @@ function template_preprocess_public_notice(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
+}
+
+/**
+ * Handles validation during input of public notice content.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormState $form_state
+ *   The form_state.
+ */
+function _node_public_notice_form_validate(array &$form, FormState &$form_state) {
+  // Ensures that an explanation is provided when the node is marked cancelled.
+  if ($form_state->getValue("field_cancelled")["value"] == 1) {
+    if (empty($form_state->getValue("field_extra_info")[0]["value"])) {
+      $form_state->setValue("field_extra_info", [["value" => "Please contact organizer."]]);
+    }
+  }
+  else {
+    // Make sure the field_extra_info is empty if the event is not cancelled.
+    $form_state->setValue("field_extra_info", [["value" => NULL]]);
+  }
+}
+
+/**
+ * Helpre: To set variables for themeing of cancelled notices.
+ *
+ * @param array $variables
+ *   The usual hook preprocess variables array.
+ */
+function _node_public_notice_is_cancelled(array &$variables) {
+  // Check for cancelled state.
+  $node = $variables['elements']['#node'];
+  if ($node->hasField("field_cancelled")) {
+    $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
+    if ($variables["is_cancelled"]) {
+      $variables["elements"]["field_extra_info"]["#title"] .= ":";
+    }
+  }
+}
+
+/**
+ * Helper: To format the meeting time in RHS sidebar.
+ *
+ * @param array $variables
+ *   The usual preprocess hook variables.
+ */
+function _bos_public_notice_date_range(&$variables) {
+  $date_vars = array(
+    'label' => $time_range,
+    'classes' => array(
+      'icon' => 'icon-time',
+      'body' => 'detail-item__body--tertiary',
+    ),
+  );
+  if (isset($repeat_rule)) {
+    $date_vars['body'] = $repeat_rule;
+  }
+  else {
+    $date_vars['classes']['detail'] = 'detail-item--middle';
+  }
+  print theme('detail_item', $date_vars);
 }
