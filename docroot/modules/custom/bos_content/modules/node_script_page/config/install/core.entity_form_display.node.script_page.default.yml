@@ -5,6 +5,7 @@ dependencies:
     - field.field.node.script_page.field_components
     - field.field.node.script_page.field_contact
     - field.field.node.script_page.field_embed_list
+    - field.field.node.script_page.field_intro_text
     - field.field.node.script_page.field_link
     - field.field.node.script_page.field_sidebar_components
     - node.type.script_page
@@ -14,6 +15,7 @@ dependencies:
     - paragraphs
     - path
     - publication_date
+    - text
 third_party_settings:
   field_group:
     group_script_page:
@@ -32,6 +34,7 @@ third_party_settings:
     group_basic_information:
       children:
         - title
+        - field_intro_text
         - field_contact
       parent_name: group_script_page
       weight: 5
@@ -95,7 +98,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 2
+    weight: 3
     type: options_select
     settings: {  }
     third_party_settings: {  }
@@ -112,6 +115,14 @@ content:
       default_paragraph_type: ''
     third_party_settings: {  }
     region: content
+  field_intro_text:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
   field_link:
     weight: 4
     type: entity_reference_paragraphs
