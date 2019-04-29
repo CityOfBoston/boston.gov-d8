@@ -12,7 +12,7 @@ id: node.public_notice.field_multiple_neighborhoods
 field_name: field_multiple_neighborhoods
 entity_type: node
 bundle: public_notice
-label: 'Related Neighborhoods'
+label: Neighborhoods
 description: 'The neighborhoods that this notice relates to.'
 required: true
 translatable: false
@@ -21,12 +21,10 @@ default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 1
-    sort:
-      field: _none
-      direction: ASC
     target_bundles:
       neighborhoods: neighborhoods
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

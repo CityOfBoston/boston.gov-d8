@@ -160,12 +160,17 @@
     </div>
 
     <div class="column sidebar mobile-100 desktop-33-right">
-      <!-- DATE OUTPUT PLACEHOLDER -->
+
       <div class="event-date-wrapper">
-        <div class="event-date sidebar-header">{{ elements.field_public_notice_date }}</div>
+        <div class="event-date sidebar-header">
+          {{ elements.field_public_notice_date.0.start_date }}
+        </div>
       </div>
+
       <div class="list-item event-time-wrapper">
+        {{ field_date }}
       </div>
+
       {% if elements.field_address %}
         <div class="list-item">
           {{ elements.field_address }}
@@ -181,39 +186,35 @@
           {{ elements.field_phone_number }}
         </div>
       {% endif %}
-      {% if elements.field_event_contact %}
-        <div class="list-item">
-          {{ elements.field_event_contact }}
-        </div>
-      {% endif %}
-      {% if elements.field_multiple_neighborhoods %}
-        <div class="list-item">
-          {{ elements.field_multiple_neighborhoods }}
-        </div>
-      {% endif %}
+
+      {{ elements.field_event_contact }}
+
+      {{ elements.field_multiple_neighborhoods }}
+
       {% if elements.field_event_type %}
         <div class="list-item">
           {{ elements.field_event_type }}
         </div>
       {% endif %}
-      {% if notice_date_long %}
-        <div class="list-item">
-          <div class="detail-item detail-item--secondary">
-            <div class="detail-item__left">
-              <div>Posted:</div>
-            </div>
-            <div class="detail-item__content">
-              <div class="detail-item__body detail-item__body--secondary">{{ notice_date_short }}</div>
-            </div>
+
+      <div class="list-item">
+        <div class="detail-item detail-item--secondary">
+          <div class="detail-item__left">
+            <div>Posted:</div>
+          </div>
+          <div class="detail-item__content">
+            <div class="detail-item__body detail-item__body--secondary">{{ notice_date_short }}</div>
           </div>
         </div>
-      {% endif %}
-      {% if elements.field_links %}
+      </div>
+
+      {% if elements.field_links["#items"] %}
         <div class="list-item">
           {{ elements.field_links }}
         </div>
       {% endif %}
-      {% if elements.field_sidebar_components %}
+
+      {% if elements.field_sidebar_components["#items"] %}
         {{ elements.field_sidebar_components }}
       {% endif %}
     </div>
