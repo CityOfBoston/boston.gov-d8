@@ -33,16 +33,23 @@ function bos_link_preprocess_paragraph(&$vars) {
     $document = $paragraph->get('field_document')->getValue();
     $title = $paragraph->get('field_title')->getValue();
     if (!empty($document['0']['target_id']) && !empty($title['0']['value'])) {
-      $vars['link'] = _bos_core_get_file_link(
-        $document['0']['target_id'],
-        $title['0']['value'],
-        [
-          'attributes' => [
+      $arr = [];
+      switch ($paragraph->getParentEntity()->bundle()) {
+        case "public_notice":
+          break;
+
+        default:
+          $arr['attributes'] = [
             'class' => [
               'fyi-l',
             ],
-          ],
-        ]
+          ];
+          break;
+      }
+      $vars['link'] = _bos_core_get_file_link(
+        $document['0']['target_id'],
+        $title['0']['value'],
+        $arr
       );
     }
   }
@@ -62,4 +69,48 @@ function bos_link_preprocess_field(&$vars) {
   if ($field_name == 'field_external_link') {
     $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
   }
+}
+
+/**
+ * Implements hook_contact_token_info().
+ */
+function bos_link_token_info() {
+  $info = [];
+  // Define our new token.
+  $info['tokens']['boston']['entity-type'] = [
+    'name' => t('Current entitytype'),
+    'description' => t('A token to replace the entity type (e.g. public_notice).'),
+  ];
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function bos_link_tokens($type, $tokens, array $data = [], array $options = []) {
+  $replacements = [];
+
+  if ($type == 'boston') {
+    // Loop through the available tokens.
+    foreach ($tokens as $name => $original) {
+      // Find our custom tokens by name.
+      switch ($name) {
+        case 'entity-type':
+          // Give our token it's final value!
+          $replacements[$original] = "unknown_type";
+          if (\Drupal::request()->get('ajax_form')) {
+            $uri_parts = explode("/", \Drupal::request()->getRequestUri());
+            if ($uri_parts[1] == "node") {
+              $node = \Drupal::entityTypeManager()->getStorage("node")->load($uri_parts[2]);
+              if (isset($node) && NULL != $node->bundle()) {
+                $replacements[$original] = $node->bundle();
+              }
+            }
+          }
+          break;
+      }
+    }
+  }
+
+  return $replacements;
 }

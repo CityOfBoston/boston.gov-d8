@@ -1,0 +1,554 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.public_notice.body
+    - field.field.node.public_notice.field_address
+    - field.field.node.public_notice.field_cancelled
+    - field.field.node.public_notice.field_city_hall
+    - field.field.node.public_notice.field_components
+    - field.field.node.public_notice.field_contact
+    - field.field.node.public_notice.field_drawer
+    - field.field.node.public_notice.field_email
+    - field.field.node.public_notice.field_event_contact
+    - field.field.node.public_notice.field_extra_info
+    - field.field.node.public_notice.field_featured
+    - field.field.node.public_notice.field_intro_text
+    - field.field.node.public_notice.field_is_there_public_testimony
+    - field.field.node.public_notice.field_links
+    - field.field.node.public_notice.field_manual_date
+    - field.field.node.public_notice.field_multiple_neighborhoods
+    - field.field.node.public_notice.field_people
+    - field.field.node.public_notice.field_phone_number
+    - field.field.node.public_notice.field_place
+    - field.field.node.public_notice.field_program_initiative
+    - field.field.node.public_notice.field_public_notice_date
+    - field.field.node.public_notice.field_related_content
+    - field.field.node.public_notice.field_related_departments
+    - field.field.node.public_notice.field_related_events_notices
+    - field.field.node.public_notice.field_related_guides
+    - field.field.node.public_notice.field_related_posts
+    - field.field.node.public_notice.field_time
+    - field.field.node.public_notice.field_updated_date
+    - node.type.public_notice
+  module:
+    - address
+    - content_moderation
+    - datetime
+    - datetime_range
+    - field_group
+    - paragraphs
+    - path
+    - publication_date
+    - text
+third_party_settings:
+  field_group:
+    group_public_notice:
+      children:
+        - group_basic_information
+        - group_contact_info
+        - group_details
+        - group_discussion_topics
+        - group_components
+        - group_related_content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Public Notice'
+    group_basic_information:
+      children:
+        - field_contact
+        - title
+        - field_featured
+        - field_intro_text
+        - body
+      parent_name: group_public_notice
+      weight: 25
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-basic field-group-tab'
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_contact_info:
+      children:
+        - field_event_contact
+        - field_email
+        - field_phone_number
+      parent_name: group_public_notice
+      weight: 26
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Contact Info'
+    group_details:
+      children:
+        - field_public_notice_date
+        - group_meeting_location
+        - group_public_testimony
+        - group_cancel_public_notice
+        - group_downloads
+      parent_name: group_public_notice
+      weight: 27
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Details
+    group_meeting_location:
+      children:
+        - field_city_hall
+        - field_address
+      parent_name: group_details
+      weight: 43
+      format_type: details
+      format_settings:
+        id: ''
+        classes: 'group-meeting-location field-group-fieldset'
+        open: false
+        required_fields: true
+      label: 'Meeting Location'
+    group_public_testimony:
+      children:
+        - field_is_there_public_testimony
+        - field_time
+      parent_name: group_details
+      weight: 44
+      format_type: details
+      format_settings:
+        id: ''
+        classes: 'group-public-testimony field-group-fieldset'
+        open: false
+        required_fields: true
+      label: 'Public Testimony'
+    group_cancel_public_notice:
+      children:
+        - field_cancelled
+        - field_extra_info
+      parent_name: group_details
+      weight: 45
+      format_type: details
+      format_settings:
+        id: ''
+        classes: 'group-cancelled field-group-fieldset'
+        open: false
+        required_fields: true
+      label: 'Cancel Public Notice'
+    group_downloads:
+      children:
+        - field_links
+      parent_name: group_details
+      weight: 46
+      format_type: details
+      format_settings:
+        id: ''
+        classes: 'group-downloads field-group-fieldset'
+        open: false
+        required_fields: true
+      label: Downloads
+    group_discussion_topics:
+      children:
+        - field_drawer
+      parent_name: group_public_notice
+      weight: 28
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-topics field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Discussion Topics'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_public_notice
+      weight: 29
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-components field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
+    group_related_content:
+      children:
+        - field_multiple_neighborhoods
+        - field_related_departments
+        - field_related_events_notices
+        - field_related_guides
+        - field_people
+        - field_place
+        - field_related_posts
+        - field_program_initiative
+        - field_related_content
+      parent_name: group_public_notice
+      weight: 30
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-related field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Related Content'
+    group_page_metadata:
+      children:
+        - field_manual_date
+        - field_updated_date
+      parent_name: ''
+      weight: 1
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
+id: node.public_notice.default
+targetEntityType: node
+bundle: public_notice
+mode: default
+content:
+  body:
+    weight: 6
+    type: text_textarea_with_summary
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_address:
+    weight: 39
+    settings:
+      default_country: null
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_cancelled:
+    weight: 21
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_city_hall:
+    weight: 38
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_components:
+    weight: 16
+    type: paragraphs
+    settings:
+      title: 'Public Notice Component'
+      title_plural: 'Public Notice Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 2
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_drawer:
+    weight: 4
+    type: paragraphs
+    settings:
+      title: 'Discussion Topic'
+      title_plural: 'Discussion Topics'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: discussion_topic
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_email:
+    weight: 11
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_event_contact:
+    weight: 10
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_extra_info:
+    weight: 22
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_featured:
+    weight: 4
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_intro_text:
+    weight: 5
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_is_there_public_testimony:
+    weight: 18
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    region: content
+  field_links:
+    weight: 20
+    type: paragraphs
+    settings:
+      title: Download
+      title_plural: Downloads
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: document
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_manual_date:
+    weight: 40
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_multiple_neighborhoods:
+    weight: 8
+    type: options_buttons
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_people:
+    weight: 12
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_phone_number:
+    weight: 12
+    type: string_textfield
+    settings:
+      size: 20
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_place:
+    weight: 13
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_program_initiative:
+    weight: 15
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_public_notice_date:
+    weight: 42
+    settings: {  }
+    third_party_settings: {  }
+    type: daterange_default
+    region: content
+  field_related_content:
+    weight: 16
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_departments:
+    weight: 9
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_events_notices:
+    weight: 10
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_guides:
+    weight: 11
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_related_posts:
+    weight: 14
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_time:
+    weight: 19
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    weight: 41
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 10
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 6
+    region: content
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 11
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 7
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 3
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
