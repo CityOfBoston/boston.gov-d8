@@ -24,7 +24,6 @@ dependencies:
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_place
     - field.field.node.public_notice.field_program_initiative
-    - field.field.node.public_notice.field_public_notice_date
     - field.field.node.public_notice.field_related_content
     - field.field.node.public_notice.field_related_departments
     - field.field.node.public_notice.field_related_events_notices
@@ -245,22 +244,6 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    region: content
-  field_public_notice_date:
-    label: hidden
-    weight: 7
-    type: datetime_default
-    settings:
-      timezone_override: ''
-      format_type: date_format_boston_featured
     third_party_settings:
       fences:
         fences_field_tag: none

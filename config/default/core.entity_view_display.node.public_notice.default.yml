@@ -35,6 +35,7 @@ dependencies:
   module:
     - address
     - datetime
+    - datetime_range
     - entity_reference_revisions
     - fences
     - options
@@ -149,19 +150,19 @@ content:
         fences_label_classes: ''
     region: content
   field_event_contact:
-    label: hidden
+    label: inline
     weight: 4
     type: string
     settings:
       link_to_entity: false
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+        fences_field_tag: div
+        fences_field_classes: 'detail-item detail-item--secondary detail-item--middle'
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
+        fences_label_tag: div
+        fences_label_classes: detail-item__left
     region: content
   field_extra_info:
     label: inline
@@ -217,7 +218,7 @@ content:
     third_party_settings: {  }
     region: content
   field_links:
-    label: hidden
+    label: inline
     weight: 14
     type: entity_reference_revisions_entity_view
     settings:
@@ -225,20 +226,27 @@ content:
       link: ''
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
+        fences_field_tag: div
+        fences_field_classes: detail-item__content
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body--secondary link-wrapper download-link'
+        fences_label_tag: div
         fences_label_classes: ''
     region: content
   field_multiple_neighborhoods:
-    label: hidden
+    label: inline
     weight: 10
     type: entity_reference_label
     settings:
       link: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'detail-item detail-item--secondary detail-item--middle'
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
+        fences_label_tag: div
+        fences_label_classes: detail-item__left
     region: content
   field_people:
     label: above
@@ -280,20 +288,21 @@ content:
     third_party_settings: {  }
     region: content
   field_public_notice_date:
-    label: hidden
     weight: 7
-    type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_normal_date
+      separator: '-'
     third_party_settings:
       fences:
         fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_classes: 'detail-item detail-item--middle'
         fences_field_item_tag: none
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    type: daterange_default
     region: content
   field_related_content:
     label: hidden

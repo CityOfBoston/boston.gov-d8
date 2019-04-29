@@ -26,6 +26,7 @@ function node_public_notice_theme() {
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function node_public_notice_form_node_public_notice_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Validate the cancellation message on save.
   $form["#validate"][] = "_node_public_notice_form_validate";
 }
 
@@ -48,17 +49,10 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
 
   // Theme the notice time-range.
   _bos_public_notice_date_range($variables);
+  $variables['notice_date_short'] = \Drupal::service('date.formatter')->format((int) $node->published_at->value, 'custom', 'm/d/Y - H:iA');
 
-// Manage the in-page-menu.
-  _bos_theme_make_nav($variables, $variables["elements"]["field_components"],1);
-  // If we have any components, prepend the discussion topics as well
-  // because we will want discussion topic to appear in the menu ...
-  if (isset($variables["elements"]["field_components"]["#items"])) {
-    $url = Url::fromUserInput("#" . Html::cleanCssIdentifier("topics"), ["attributes" => ["class" => ["scroll-link-js"]]]);
-    $anchor = \Drupal::service('link_generator')->generate("topics", $url);
-    // Add the topic title to the start.
-    array_unshift($variables['navOutput']["#items"], $anchor);
-  }
+  // Create the in-page-menu.
+  _bos_public_notice_make_nav($variables);
 
 }
 
@@ -101,7 +95,7 @@ function _node_public_notice_form_validate(array &$form, FormState &$form_state)
 }
 
 /**
- * Helpre: To set variables for themeing of cancelled notices.
+ * Helper: To set variables for themeing of cancelled notices.
  *
  * @param array $variables
  *   The usual hook preprocess variables array.
@@ -125,17 +119,28 @@ function _node_public_notice_is_cancelled(array &$variables) {
  */
 function _bos_public_notice_date_range(&$variables) {
   $date_vars = array(
-    'label' => $time_range,
     'classes' => array(
       'icon' => 'icon-time',
-      'body' => 'detail-item__body--tertiary',
+      'detail' => 'detail-item--middle',
+      'body' => 'detail-item__label',
     ),
   );
-  if (isset($repeat_rule)) {
-    $date_vars['body'] = $repeat_rule;
+  $date_vars['body'] = $variables["elements"]["#node"]->field_public_notice_date->end_date->format("h:iA - ") . $variables["elements"]["#node"]->field_public_notice_date->start_date->format("h:iA");
+  $variables['field_date'] = \Drupal::theme()->render('detail_item', $date_vars);
+}
+
+/**
+ * Helper: To create the in-page navigation menu for Public Notices (new D8).
+ * @param $variables
+ */
+function _bos_public_notice_make_nav(&$variables) {
+  _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 1);
+  // If we have any components, prepend the discussion topics as well
+  // because we will want discussion topic to appear in the menu ...
+  if (isset($variables["elements"]["field_components"]["#items"])) {
+    $url = Url::fromUserInput("#" . Html::cleanCssIdentifier("topics"), ["attributes" => ["class" => ["scroll-link-js"]]]);
+    $anchor = \Drupal::service('link_generator')->generate("topics", $url);
+    // Add the topic title to the start.
+    array_unshift($variables['navOutput']["#items"], $anchor);
   }
-  else {
-    $date_vars['classes']['detail'] = 'detail-item--middle';
-  }
-  print theme('detail_item', $date_vars);
 }
