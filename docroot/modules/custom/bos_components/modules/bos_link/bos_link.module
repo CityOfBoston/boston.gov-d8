@@ -63,3 +63,47 @@ function bos_link_preprocess_field(&$vars) {
     $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
   }
 }
+
+/**
+ * Implements hook_contact_token_info().
+ */
+function bos_link_token_info() {
+  $info = [];
+  // Define our new token.
+  $info['tokens']['boston']['entity-type'] = [
+    'name' => t('Current entitytype'),
+    'description' => t('A token to replace the entity type (e.g. public_notice).'),
+  ];
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function bos_link_tokens($type, $tokens, array $data = [], array $options = []) {
+  $replacements = [];
+
+  if ($type == 'boston') {
+    // Loop through the available tokens.
+    foreach ($tokens as $name => $original) {
+      // Find our custom tokens by name.
+      switch ($name) {
+        case 'entity-type':
+          // Give our token it's final value!
+          $replacements[$original] = "unknown_type";
+          if (\Drupal::request()->get('ajax_form')) {
+            $uri_parts = explode("/", \Drupal::request()->getRequestUri());
+            if ($uri_parts[1] == "node") {
+              $node = \Drupal::entityTypeManager()->getStorage("node")->load($uri_parts[2]);
+              if (isset($node) && NULL != $node->bundle()) {
+                $replacements[$original] = $node->bundle();
+              }
+            }
+          }
+          break;
+      }
+    }
+  }
+
+  return $replacements;
+}
