@@ -17,10 +17,10 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  description_field: false
-  file_directory: 'document-file-[current-date:file_directory_storage_date]'
+  file_directory: 'documents/[boston:entity-type]/[current-date:date_format_file_directory_storage_date]'
   file_extensions: pdf
   max_filesize: ''
+  description_field: false
   handler: 'default:file'
   handler_settings: {  }
 field_type: file

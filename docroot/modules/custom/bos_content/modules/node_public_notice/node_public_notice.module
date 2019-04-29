@@ -1,0 +1,148 @@
+<?php
+
+/**
+ * @file
+ * Provides a public notice entity type.
+ */
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormState;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function node_public_notice_theme() {
+  return [
+    'node__public_notice' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function node_public_notice_form_node_public_notice_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Validate the cancellation message on save.
+  $form["#validate"][] = "_node_public_notice_form_validate";
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_public_notice_preprocess_node__public_notice(&$variables) {
+  _bos_components_fix_attributes($variables);
+  $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->addClass("clearfix");
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
+
+  // Handle cancelled notices.
+  _node_public_notice_is_cancelled($variables);
+
+  $node = $variables['elements']['#node'];
+  if ($node->hasField("field_is_there_public_testimony")) {
+    $variables["has_testimony"] = ($node->field_is_there_public_testimony->value == "1");
+  }
+
+  // Theme the notice time-range.
+  _bos_public_notice_date_range($variables);
+  $variables['notice_date_short'] = \Drupal::service('date.formatter')->format((int) $node->published_at->value, 'custom', 'm/d/Y - H:iA');
+
+  // Create the in-page-menu.
+  _bos_public_notice_make_nav($variables);
+
+}
+
+/**
+ * Prepares variables for public notice templates.
+ *
+ * Default template: public-notice.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the public notice information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_public_notice(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Handles validation during input of public notice content.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormState $form_state
+ *   The form_state.
+ */
+function _node_public_notice_form_validate(array &$form, FormState &$form_state) {
+  // Ensures that an explanation is provided when the node is marked cancelled.
+  if ($form_state->getValue("field_cancelled")["value"] == 1) {
+    if (empty($form_state->getValue("field_extra_info")[0]["value"])) {
+      $form_state->setValue("field_extra_info", [["value" => "Please contact organizer."]]);
+    }
+  }
+  else {
+    // Make sure the field_extra_info is empty if the event is not cancelled.
+    $form_state->setValue("field_extra_info", [["value" => NULL]]);
+  }
+}
+
+/**
+ * Helper: To set variables for themeing of cancelled notices.
+ *
+ * @param array $variables
+ *   The usual hook preprocess variables array.
+ */
+function _node_public_notice_is_cancelled(array &$variables) {
+  // Check for cancelled state.
+  $node = $variables['elements']['#node'];
+  if ($node->hasField("field_cancelled")) {
+    $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
+    if ($variables["is_cancelled"]) {
+      $variables["elements"]["field_extra_info"]["#title"] .= ":";
+    }
+  }
+}
+
+/**
+ * Helper: To format the meeting time in RHS sidebar.
+ *
+ * @param array $variables
+ *   The usual preprocess hook variables.
+ */
+function _bos_public_notice_date_range(array &$variables) {
+  $date_vars = [
+    'classes' => [
+      'icon' => 'icon-time',
+      'detail' => 'detail-item--middle',
+      'body' => 'detail-item__label',
+    ],
+  ];
+  $date_vars['body'] = $variables["elements"]["#node"]->field_public_notice_date->end_date->format("h:iA - ") . $variables["elements"]["#node"]->field_public_notice_date->start_date->format("h:iA");
+  $variables['field_date'] = \Drupal::theme()->render('detail_item', $date_vars);
+}
+
+/**
+ * Helper: To create the in-page navigation menu for Public Notices (new D8).
+ *
+ * @param array $variables
+ *   The usual hook preprocess variables.
+ */
+function _bos_public_notice_make_nav(array &$variables) {
+  _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 1);
+  // If we have any components, prepend the discussion topics as well
+  // because we will want discussion topic to appear in the menu ...
+  if (isset($variables["elements"]["field_components"]["#items"])) {
+    $url = Url::fromUserInput("#" . Html::cleanCssIdentifier("topics"), ["attributes" => ["class" => ["scroll-link-js"]]]);
+    $anchor = \Drupal::service('link_generator')->generate("topics", $url);
+    // Add the topic title to the start.
+    array_unshift($variables['navOutput']["#items"], $anchor);
+  }
+}

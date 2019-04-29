@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Render\Element;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -124,86 +123,11 @@ function node_event_preprocess_node__event(&$variables) {
     $variables["content"]["field_links"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
-}
 
-/**
- * Implements hook_form_alter().
- */
-function node_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id == "node_event_form" || $form_id == "node_event_edit_form") {
-    $form["field_city_hall"]["widget"]["value"]["#ajax"] = [
-      'callback' => 'node_event_city_hall_ajax_callback',
-      'event' => 'change',
-      'wrapper' => 'edit-field-address-wrapper',
-      'progress' => [
-        'type' => 'throbber',
-        'message' => t('Updating...'),
-      ],
-    ];
+  // Check for cancelled state.
+  $node = $variables['elements']['#node'];;
+  if ($node->hasField("field_cancelled")) {
+    $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
   }
-}
 
-/**
- * Callback when clicking the "Event is at City Hall checkbox".
- *
- * @param array $form
- *   The form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   The form_state.
- *
- * @return mixed
- *   The location element.
- */
-function node_event_city_hall_ajax_callback(array &$form, FormStateInterface $form_state) {
-  $city_hall = [
-    "address_line1" => "1 City Hall Square",
-    "address_line2" => "",
-    "locality" => "Boston",
-    "state" => "Massachusetts",
-    "postal_code" => "02201-2006",
-    "country" => "US",
-  ];
-  $elem = $form["field_address"];
-  $elem["#id"] = $elem["#wrapper_id"] = "edit-field-address-wrapper";
-  $history = [];
-  if ($form_state->getValue("field_city_hall")["value"]) {
-    if (!empty($form_state->getValue("field_address")[0]["address"]["address_line1"])) {
-      $history["address_line1"] = $form_state->getValue("field_address")[0]["address"]["address_line1"];
-      $history["address_line2"] = $form_state->getValue("field_address")[0]["address"]["address_line2"];
-      $history["locality"] = $form_state->getValue("field_address")[0]["address"]["locality"];
-      $history["administrative_area"] = $form_state->getValue("field_address")[0]["address"]["administrative_area"];
-      $history["postal_code"] = $form_state->getValue("field_address")[0]["address"]["postal_code"];
-      $elem["cob_history"] = [
-        "#id" => "cob_history",
-        "#attributes" => ["id" => "cob_history", "name" => "cob_history"],
-        "#type" => "hidden",
-        "#value" => json_encode($history),
-      ];
-    }
-    $elem["widget"][0]["address"]["address_line1"]["#value"] = $city_hall["address_line1"];
-    $elem["widget"][0]["address"]["address_line2"]["#value"] = $city_hall["address_line2"];
-    $elem["widget"][0]["address"]["locality"]["#value"] = $city_hall["locality"];
-    $elem["widget"][0]["address"]["postal_code"]["#value"] = $city_hall["postal_code"];
-    $elem["widget"][0]["address"]["country_code"]["#value"] = $city_hall["country_code"];
-  }
-  else {
-    // Restore saved values.
-    if (NULL != Drupal::request()->request) {
-      if (NULL != $history = Drupal::request()->request->get("cob_history")) {
-        $history = (array) json_decode($history);
-        $elem["widget"][0]["address"]["address_line1"]["#value"] = $history["address_line1"];
-        $elem["widget"][0]["address"]["address_line2"]["#value"] = $history["address_line2"];
-        $elem["widget"][0]["address"]["locality"]["#value"] = $history["locality"];
-        $elem["widget"][0]["address"]["administrative_area"]["#value"] = $history["administrative_area"];
-        $elem["widget"][0]["address"]["postal_code"]["#value"] = $history["postal_code"];
-      }
-    }
-    else {
-      $elem["widget"][0]["address"]["country_code"]["#value"] = "US";
-    }
-    if (isset($elem["cob_history"])) {
-      unset($elem["cob_history"]);
-    }
-  }
-  return $elem;
 }
