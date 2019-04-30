@@ -13,27 +13,66 @@ dependencies:
     - field.field.node.program_initiative_profile.field_program_type
     - field.field.node.program_initiative_profile.field_published_date
     - field.field.node.program_initiative_profile.field_sidebar_components
-    - field.field.node.program_initiative_profile.field_type_of_content
     - field.field.node.program_initiative_profile.field_updated_date
-    - image.style.grid_card_image
     - node.type.program_initiative_profile
   module:
-    - advanced_text_formatter
+    - datetime
+    - entity_reference_revisions
     - fences
     - svg_image
+    - text
     - user
 id: node.program_initiative_profile.default
 targetEntityType: node
 bundle: program_initiative_profile
 mode: default
 content:
-  field_intro_image:
-    type: image
-    weight: 1
+  body:
+    type: text_default
+    weight: 0
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_components:
+    type: entity_reference_revisions_entity_view
+    weight: 5
     region: content
     label: hidden
     settings:
-      image_style: grid_card_image
+      view_mode: full
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+  field_contacts:
+    type: entity_reference_entity_view
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      view_mode: department_listing
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+  field_intro_image:
+    type: image
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      image_style: wide_2000x460
       image_link: ''
       svg_attributes:
         width: ''
@@ -48,45 +87,85 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_intro_text:
-    type: advanced_text
-    weight: 0
+    type: text_default
+    weight: 1
     region: content
     label: hidden
-    settings:
-      trim_length: '120'
-      ellipsis: '1'
-      word_boundary: '1'
-      filter: php
-      format: plain_text
-      allowed_html:
-        - b
-        - em
-        - i
-        - strong
-      use_summary: 0
-      token_replace: 0
-      autop: 0
+    settings: {  }
     third_party_settings:
       fences:
         fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_classes: 'intro-text supporting-text squiggle-border-bottom'
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_program_logo:
+    type: image
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: true
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+  field_published_date:
+    type: datetime_default
+    weight: 7
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_sidebar_components:
+    type: entity_reference_revisions_entity_view
+    weight: 6
+    region: content
+    label: hidden
+    settings:
+      view_mode: sidebar
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_updated_date:
+    type: datetime_default
+    weight: 8
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: date_format_boston_short
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
         fences_label_classes: ''
 hidden:
-  body: true
   content_moderation_control: true
-  field_components: true
-  field_contacts: true
   field_manual_date: true
   field_metatags: true
-  field_program_logo: true
   field_program_type: true
-  field_published_date: true
-  field_sidebar_components: true
-  field_type_of_content: true
-  field_updated_date: true
   langcode: true
   links: true
   published_at: true
