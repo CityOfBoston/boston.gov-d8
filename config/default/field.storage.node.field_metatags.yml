@@ -1,16 +1,16 @@
+uuid: d8467636-eee9-412f-893f-80069f357d8a
 langcode: und
 status: true
 dependencies:
   module:
+    - metatag
     - node
-    - paragraphs
-id: paragraph.field_status_item
-field_name: field_status_item
-entity_type: paragraph
-type: entity_reference
-settings:
-  target_type: node
-module: core
+id: node.field_metatags
+field_name: field_metatags
+entity_type: node
+type: metatag
+settings: {  }
+module: metatag
 locked: false
 cardinality: 1
 translatable: true
