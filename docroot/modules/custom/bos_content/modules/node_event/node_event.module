@@ -67,7 +67,7 @@ function node_event_preprocess_node__event(&$variables) {
     ],
   ];
   // Render the time element of the event date into a detail_item.
-  if (isset($variables["content"]["field_event_dates"])) {
+  if (isset($variables["content"]["field_event_dates"]["#object"])) {
     // TODO: test when multiple dates. (in twig node-event.html.twig)
     $event_date = $variables["content"]["field_event_dates"]["#object"]->field_event_dates->first()->value;
     // All dates stored in UTC in DB.
