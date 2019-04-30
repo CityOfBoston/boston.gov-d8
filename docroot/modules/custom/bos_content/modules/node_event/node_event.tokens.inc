@@ -1,8 +1,13 @@
 <?php
 
-/** @file */
+/**
+ * @file
+ * Module to manage token replacements (for metatags).
+ *
+ * @see: https://michaeltroutt.com/custom-tokens-in-drupal-8/
+ */
 
-/** @see: https://michaeltroutt.com/custom-tokens-in-drupal-8/ */
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Implements hook_token_info().
@@ -75,7 +80,7 @@ function node_event_token_info() {
 /**
  * Implements hook_tokens().
  */
-function node_event_tokens($type, $tokens, array $data, array $options, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
+function node_event_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
 
   if ($type != "boston") {
