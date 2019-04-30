@@ -22,12 +22,12 @@
  * - $pager: The pager next/prev links to display, if any
  * - $exposed: Exposed widget form/info to display
  * - $feed_icon: Feed icon to display, if any
- * - $more: A link to view more, if any
+ * - $more: A link to view more, if any.
  *
  * @ingroup views_templates
  */
 ?>
-<?php if ($exposed): ?>
+<?php if ($exposed) : ?>
   <div class="b b--fw b--w">
     <div class="b-c">
       <?php print $exposed; ?>
@@ -36,15 +36,15 @@
 <?php endif; ?>
 
 <div class="p-v700">
-  <?php if ($header): ?>
+  <?php if ($header) : ?>
     <div class="t--intro"><?php print $header; ?></div>
   <?php endif; ?>
-  <?php if ($rows): ?>
+  <?php if ($rows) : ?>
     <?php print $rows; ?>
-  <?php elseif ($empty): ?>
+  <?php elseif ($empty) : ?>
     <?php print $empty; ?>
   <?php endif; ?>
-  <?php if ($pager): ?>
+  <?php if ($pager) : ?>
     <?php print $pager; ?>
   <?php endif; ?>
 </div>

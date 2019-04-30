@@ -4,9 +4,9 @@
  *
  * Available variables:
  * - $title: the (sanitized) title of the node.
- * - $content: An array of node items. Use render($content) to print them all,
- *   or print a subset such as render($content['field_example']). Use
- *   hide($content['field_example']) to temporarily suppress the printing of a
+ * - $elements: An array of node items. Use render($elements) to print them all,
+ *   or print a subset such as render($elements['field_example']). Use
+ *   hide($elements['field_example']) to temporarily suppress the printing of a
  *   given element.
  * - $user_picture: The node author's picture from user-picture.tpl.php.
  * - $date: Formatted creation date. Preprocess functions can reformat it by
@@ -58,8 +58,8 @@
  * - $sticky: Flags for sticky post setting.
  * - $status: Flag for published status.
  * - $comment: State of comment settings for the node.
- * - $readmore: Flags true if the teaser content of the node cannot hold the
- *   main body content.
+ * - $readmore: Flags true if the teaser elements of the node cannot hold the
+ *   main body elements.
  * - $is_front: Flags true when presented in the front page.
  * - $logged_in: Flags true when the current user is a logged-in member.
  * - $is_admin: Flags true when the current user is an administrator.
@@ -77,57 +77,75 @@
  *
  * @ingroup themeable
  #}
-{# TODO: Review this: hide($content.comments) #}
-{# TODO: Review this: hide($content.links) #}
 
-{# TODO: review variable assignment: has_sidebar = $content.field_sidebar_components or $content.field_program_logo #}
+{# TODO: review variable assignment: has_sidebar = $elements.field_sidebar_components or $elements.field_program_logo #}
 
-<article id="node-{{ node.nid }}" class="relative-free-article clearfix">
-  {% if content.field_updated_date %}
-    <div class="brc-lu brc-lu--hack">
-      Last updated: {{ content.field_updated_date }}
+<article{{ attributes }}>
+
+  {% if elements.field_updated_date %}
+    <div class="brc-lu">
+      Last updated: {{ elements.field_updated_date }}
     </div>
   {% endif %}
+
   <div class="program-info-wrapper desktop-100">
-    <div class="column mobile-100{{ if ($has_sidebar) {  }} desktop-66-left{{ }  }}">
-      <h1 class="title">{{ title }}</h1>
-      {% if content.field_intro_text %}
-        {{ content.field_intro_text }}
+    <div class="column mobile-100 desktop-66-left">
+
+      {{ title_prefix }}
+
+      {% if title %}
+        <h1{{ title_attributes }}>{{ title.0 }}</h1>
+      {%  endif %}
+
+      {{ title_suffix }}
+
+      {% if elements.field_intro_text %}
+        {{ elements.field_intro_text }}
       {% endif %}
-      <div class="sub-nav-trigger drawer-trigger">
-        <div class="sub-nav-chevron">{{ file_get_contents(drupal_get_path('theme', $GLOBALS.theme) . '/dist/img/subnav-toggle.svg') }}</div>
-        Program Menu
-      </div>
-      <nav class="topic-nav topic-nav__left">
-        <ul></ul>
-        <a name="section-nav"></a>
-      </nav>
-      {% if content.body %}
+
+      {% if navOutput %}
+        <div class="sub-nav-trigger drawer-trigger">
+          <div class="sub-nav-chevron">
+            {{ sub_nav|raw }}
+          </div>
+          Page Sections
+        </div>
+        <nav class="topic-nav topic-nav__left">
+          <a name="section-nav"></a>
+          {{ navOutput }}
+        </nav>
+      {% endif %}
+
+      {% if elements.body %}
         <div class="body">
-          {{ content.body }}
+          {{ elements.body }}
         </div>
       {% endif %}
+
     </div>
-    {{ if ($has_sidebar) {  }}
-      <div class="column mobile-100 desktop-33-right">
-        {% if content.field_program_logo %}
-          <div class="program-logo">
-            {{ content.field_program_logo }}
-          </div>
-        {% endif %}
-        {% if content.field_sidebar_components %}
-          {{ content.field_sidebar_components }}
-        {% endif %}
-      </div>
-    {{ }  }}
+
+    <div class="column mobile-100 desktop-33-right">
+
+      {% if elements.field_program_logo %}
+        <div class="program-logo">
+          {{ elements.field_program_logo }}
+        </div>
+      {% endif %}
+
+      {% if elements.field_sidebar_components["#items"] %}
+        {{ elements.field_sidebar_components }}
+      {% endif %}
+
+    </div>
     <div class="clearfix"></div>
+
   </div>
-  {% if content.field_components %}
-  <div class="program-components desktop-100" {{ content_attributes }}>
-    {{ content.field_components }}
-  </div>
+
+  {% if elements.field_components["#items"] %}
+    <div class="program-components desktop-100" {{ elements_attributes }}>
+      {{ elements.field_components }}
+    </div>
   {% endif %}
-  {{ theme('page_contacts', 'title': "Who's Involved", 'contacts': $content.field_contacts) }}
 
 
 </article>
