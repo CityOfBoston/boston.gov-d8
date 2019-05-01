@@ -1,6 +1,6 @@
 uuid: 4bb80010-5a8f-4f29-baea-5932202ca8d4
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.published_by
@@ -29,6 +29,11 @@ targetEntityType: node
 bundle: department_profile
 mode: published_by
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   field_icon:
     label: hidden
     weight: 0
@@ -36,15 +41,13 @@ content:
     settings:
       image_style: ''
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
     third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
     region: content
 hidden:
   body: true
-  content_moderation_control: true
   field_address: true
   field_components: true
   field_department_type: true
@@ -58,5 +61,4 @@ hidden:
   field_sidebar_components: true
   field_updated_date: true
   langcode: true
-  links: true
   published_at: true

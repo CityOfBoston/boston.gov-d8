@@ -1,20 +1,20 @@
-uuid: a391d757-ba07-49fd-9ccc-4e7dfd444015
+uuid: 96372bc5-4d40-42d6-8041-15f02316dd14
 langcode: en
 status: true
 dependencies:
   config:
-    - node.type.script_page
-id: node.script_page.promote
-field_name: promote
+    - node.type.transaction
+id: node.transaction.sticky
+field_name: sticky
 entity_type: node
-bundle: script_page
-label: 'Promoted to front page'
+bundle: transaction
+label: 'Sticky at top of lists'
 description: ''
 required: false
 translatable: false
 default_value:
   -
-    value: 1
+    value: 0
 default_value_callback: ''
 settings:
   on_label: 'On'

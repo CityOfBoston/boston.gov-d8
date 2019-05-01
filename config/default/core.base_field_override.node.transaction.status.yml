@@ -1,11 +1,9 @@
-uuid: f01c1e6b-ffd1-44c1-8a3c-85ca8fa1d443
-langcode: und
+uuid: 874c26ff-c3fc-4a5a-a42f-d977c2d5abc3
+langcode: en
 status: true
 dependencies:
   config:
     - node.type.transaction
-_core:
-  default_config_hash: caHVBUxt8rtgVWoiECfia55xnFkr4VkWW6v1J0eFJJw
 id: node.transaction.status
 field_name: status
 entity_type: node
@@ -13,10 +11,10 @@ bundle: transaction
 label: Published
 description: ''
 required: false
-translatable: true
+translatable: false
 default_value:
   -
-    value: 0
+    value: 1
 default_value_callback: ''
 settings:
   on_label: 'On'

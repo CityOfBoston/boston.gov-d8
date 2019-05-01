@@ -1,0 +1,21 @@
+uuid: 9ba0cd08-738c-4809-91c9-89f6ea1d5133
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.seamless_doc.field_document_id
+    - paragraphs.paragraphs_type.seamless_doc
+id: paragraph.seamless_doc.default
+targetEntityType: paragraph
+bundle: seamless_doc
+mode: default
+content:
+  field_document_id:
+    type: string
+    weight: 0
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden: {  }

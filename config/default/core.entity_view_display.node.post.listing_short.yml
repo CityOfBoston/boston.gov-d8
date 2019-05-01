@@ -9,7 +9,6 @@ dependencies:
     - field.field.node.post.field_contact
     - field.field.node.post.field_intro_image
     - field.field.node.post.field_intro_text
-    - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_people
     - field.field.node.post.field_place
@@ -23,8 +22,8 @@ dependencies:
     - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
+    - field.field.node.post.field_type_of_content
     - field.field.node.post.field_updated_date
-    - image.style.news_item_thumb
     - node.type.post
   module:
     - advanced_text_formatter
@@ -32,8 +31,6 @@ dependencies:
     - fences
     - svg_image
     - user
-_core:
-  default_config_hash: L6hQu8ZjEw6G1uqkYKQrg7Hi7beFNHrhaRI-PA6FMcA
 id: node.post.listing_short
 targetEntityType: node
 bundle: post
@@ -90,11 +87,11 @@ content:
       format_type: date_format_boston_featured
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: div
         fences_field_classes: ''
-        fences_field_item_tag: none
+        fences_field_item_tag: div
         fences_field_item_classes: ''
-        fences_label_tag: none
+        fences_label_tag: div
         fences_label_classes: ''
     region: content
   field_thumbnail:
@@ -102,27 +99,18 @@ content:
     weight: 3
     type: image
     settings:
-      image_style: news_item_thumb
+      image_style: ''
       image_link: ''
-      svg_render_as_image: '1'
       svg_attributes:
         width: ''
         height: ''
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+      svg_render_as_image: true
+    third_party_settings: {  }
     region: content
 hidden:
   body: true
-  content_moderation_control: true
   field_components: true
   field_intro_image: true
-  field_manual_date: true
   field_news_tags: true
   field_people: true
   field_place: true
@@ -134,6 +122,7 @@ hidden:
   field_related_guides: true
   field_related_posts: true
   field_sidebar_components: true
+  field_type_of_content: true
   field_updated_date: true
   langcode: true
   links: true
