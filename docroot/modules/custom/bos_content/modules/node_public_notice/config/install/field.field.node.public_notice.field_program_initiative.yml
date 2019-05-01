@@ -1,0 +1,30 @@
+uuid: d7d21613-d48a-4036-9f3a-d77ebc07a90a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_program_initiative
+    - node.type.program_initiative_profile
+    - node.type.public_notice
+id: node.public_notice.field_program_initiative
+field_name: field_program_initiative
+entity_type: node
+bundle: public_notice
+label: 'Related programs / initiatives'
+description: 'Which programs or initiatives are relevant for this public notice?'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      program_initiative_profile: program_initiative_profile
+field_type: entity_reference
