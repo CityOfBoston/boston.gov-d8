@@ -1,0 +1,54 @@
+uuid: 90362586-2155-437d-9899-c6936c69e4fc
+langcode: und
+status: true
+dependencies:
+  config:
+    - image.style.resp_wide_2000x460custom_boston_desktop_1x
+    - image.style.resp_wide_2000x460custom_boston_desktop_2x
+    - image.style.resp_wide_2000x460custom_boston_mobile_1x
+    - image.style.resp_wide_2000x460custom_boston_mobile_2x
+    - image.style.resp_wide_2000x460custom_boston_tablet_1x
+    - image.style.resp_wide_2000x460custom_boston_tablet_2x
+    - image.style.resp_wide_2000x460custom_boston_wide_1x
+  theme:
+    - bos_theme
+id: wide_2000x460
+label: wide_2000x460
+image_style_mappings:
+  -
+    breakpoint_id: boston.hero.wide
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_wide_1x
+  -
+    breakpoint_id: boston.hero.desktop
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_desktop_1x
+  -
+    breakpoint_id: boston.hero.desktop
+    multiplier: 2x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_desktop_2x
+  -
+    breakpoint_id: boston.hero.tablet
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_tablet_1x
+  -
+    breakpoint_id: boston.hero.tablet
+    multiplier: 2x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_tablet_2x
+  -
+    breakpoint_id: boston.hero.mobile
+    multiplier: 1x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_mobile_1x
+  -
+    breakpoint_id: boston.hero.mobile
+    multiplier: 2x
+    image_mapping_type: image_style
+    image_mapping: resp_wide_2000x460custom_boston_mobile_2x
+breakpoint_group: hero
+fallback_image_style: resp_wide_2000x460custom_boston_wide_1x
