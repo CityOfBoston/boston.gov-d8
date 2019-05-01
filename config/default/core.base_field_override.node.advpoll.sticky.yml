@@ -1,0 +1,24 @@
+uuid: 7a42b750-b1cf-4d65-beba-bb15ac2ffa9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.advpoll
+_core:
+  default_config_hash: CzVRRUIA7n2OvsAGukhsBbJ_klSDGSOv5Mf06TfD_UA
+id: node.advpoll.sticky
+field_name: sticky
+entity_type: node
+bundle: advpoll
+label: 'Sticky at top of lists'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

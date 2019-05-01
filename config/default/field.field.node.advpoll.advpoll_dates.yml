@@ -1,0 +1,23 @@
+uuid: 998dd87f-189b-4563-8c6e-68240b50851c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.advpoll_dates
+    - node.type.advpoll
+  module:
+    - datetime
+_core:
+  default_config_hash: SgbtbsfjycDU5-aE4zFX4BJXWDI2MafwYnGKrprMuA0
+id: node.advpoll.advpoll_dates
+field_name: advpoll_dates
+entity_type: node
+bundle: advpoll
+label: 'Poll availability'
+description: 'Select the date range that controls the availability of this poll.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

@@ -1,0 +1,25 @@
+uuid: 37a25970-c6db-41cc-acc5-a606d9a1cd5c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.advpoll_closed
+    - node.type.advpoll
+  module:
+    - options
+_core:
+  default_config_hash: 6TAmtw_hytjzbK88fa2Trg4HAbPvPWOBynVFBmp7I_Y
+id: node.advpoll.advpoll_closed
+field_name: advpoll_closed
+entity_type: node
+bundle: advpoll
+label: 'Close poll'
+description: 'When closed, a poll may no longer be voted upon but will display its results if settings allow.  For blocks, polls that are enabled to show results will show results, otherwise the block will no longer be available.'
+required: true
+translatable: false
+default_value:
+  -
+    value: open
+default_value_callback: ''
+settings: {  }
+field_type: list_string

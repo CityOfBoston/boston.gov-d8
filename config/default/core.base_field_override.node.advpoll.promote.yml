@@ -1,0 +1,24 @@
+uuid: baa51a6f-0c29-4b2e-b37a-4a942fbcdeef
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.advpoll
+_core:
+  default_config_hash: 9PkWgSGimVH0dROdYC8HQpsEB4QcthJrLAtqsI-s0FI
+id: node.advpoll.promote
+field_name: promote
+entity_type: node
+bundle: advpoll
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,25 @@
+uuid: 7df23b3b-207e-4af0-a1ef-1dcbe44b9d7c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.advpoll_options
+    - node.type.advpoll
+  module:
+    - options
+_core:
+  default_config_hash: vEDFUJAlDztm2O9TSP-wy8Eu3CTxm77WEmKDU9BA8p8
+id: node.advpoll.advpoll_options
+field_name: advpoll_options
+entity_type: node
+bundle: advpoll
+label: 'Voting options'
+description: 'Permission settings are necessary for allowing write-in voting, visibility of individual votes and administration of electoral lists.'
+required: false
+translatable: false
+default_value:
+  -
+    value: showvotes
+default_value_callback: ''
+settings: {  }
+field_type: list_string

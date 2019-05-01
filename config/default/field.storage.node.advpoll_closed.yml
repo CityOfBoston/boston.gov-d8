@@ -1,0 +1,29 @@
+uuid: 0b005072-96a3-4390-9b1f-3102d1141cb4
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+    - options
+_core:
+  default_config_hash: XEgrQyY864o16Nh6SuZVy1LlO-ZFptlACt-yQyVDq-M
+id: node.advpoll_closed
+field_name: advpoll_closed
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: close
+      label: 'Close poll'
+    -
+      value: open
+      label: 'Open poll'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
