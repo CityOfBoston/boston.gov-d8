@@ -1,9 +1,8 @@
-uuid: 34843bcb-b76b-4ff0-a419-4bf4396c3fac
 langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.listing
+    - core.entity_view_mode.node.listing_long
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
@@ -16,12 +15,10 @@ dependencies:
   module:
     - svg_image
     - user
-_core:
-  default_config_hash: PEcIMfDJ32M86BIu2yKAbCl1bf-rlzI7XewsoucU5Kc
-id: node.topic_page.listing
+id: node.topic_page.listing_long
 targetEntityType: node
 bundle: topic_page
-mode: listing
+mode: listing_long
 content:
   field_intro_image:
     label: hidden

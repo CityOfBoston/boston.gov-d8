@@ -1,28 +1,25 @@
-uuid: 1fdab923-be8e-42c9-99a0-e42efd39653a
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_thumbnail
+    - field.storage.node.field_intro_image
     - node.type.topic_page
   module:
     - image
-_core:
-  default_config_hash: BMct9yFzlDQhQndExHo87fH2YSx7c0-VrERVPb9mBGc
-id: node.topic_page.field_thumbnail
-field_name: field_thumbnail
+id: node.topic_page.field_intro_image
+field_name: field_intro_image
 entity_type: node
 bundle: topic_page
-label: Thumbnail
+label: 'Intro Image'
 description: ''
-required: false
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
   alt_field: false
   default_image: 0
-  file_directory: 'topic-thumbnail-[current-date:file_directory_storage_date]'
+  file_directory: 'topic-intro-image-[current-date:file_directory_storage_date]'
   file_extensions: 'png gif jpg jpeg svg'
   max_filesize: ''
   max_resolution: ''
