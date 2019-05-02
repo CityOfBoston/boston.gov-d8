@@ -12,7 +12,6 @@ migration_dependencies:
     - d7_user
   optional:
     - d7_field_instance
-    - d7_comment_field_instance
 
 source:
   plugin: d7_node
@@ -42,8 +41,6 @@ process:
   revision_uid: revision_uid
   revision_log: log
   revision_timestamp: timestamp
-  comment_node_article:
-    status: comment
   body:
     plugin: get
     source: body
