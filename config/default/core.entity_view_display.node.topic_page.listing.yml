@@ -8,10 +8,11 @@ dependencies:
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
     - field.field.node.topic_page.field_intro_text
+    - field.field.node.topic_page.field_manual_date
+    - field.field.node.topic_page.field_metatags
     - field.field.node.topic_page.field_published_date
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
-    - field.field.node.topic_page.field_type_of_content
     - field.field.node.topic_page.field_updated_date
     - image.style.news_item_thumb
     - node.type.topic_page
@@ -19,6 +20,8 @@ dependencies:
     - fences
     - svg_image
     - user
+_core:
+  default_config_hash: PEcIMfDJ32M86BIu2yKAbCl1bf-rlzI7XewsoucU5Kc
 id: node.topic_page.listing
 targetEntityType: node
 bundle: topic_page
@@ -45,13 +48,15 @@ content:
         fences_label_classes: ''
     region: content
 hidden:
+  content_moderation_control: true
   field_components: true
   field_contacts: true
   field_intro_text: true
+  field_manual_date: true
+  field_metatags: true
   field_published_date: true
   field_thumbnail: true
   field_topic_category: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
   links: true

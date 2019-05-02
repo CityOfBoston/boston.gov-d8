@@ -25,9 +25,10 @@
  * @see template_process()
  */
 #}
+{{ breakpoint() }}
 <a href="{{ link }}" class="lwi g--3 g--3--sl m-t200 m-t500--m" target="_blank">
     <span class="lwi-ic">
-        {{ content.field_icon }}
+        {{ content.field_icon.0 }}
     </span>
     <span class="lwi-t">
         {{ title }}
