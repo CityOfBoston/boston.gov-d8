@@ -25,6 +25,8 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_mini_grid
     - paragraphs.paragraphs_type.hero_image
     - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.list
+    - paragraphs.paragraphs_type.map
     - paragraphs.paragraphs_type.news_announcements
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.photo
@@ -34,6 +36,8 @@ dependencies:
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
+_core:
+  default_config_hash: B3QCwa6QdUEWJogYVQCfKkumkIIpPT15CRfhsaFtOYI
 id: node.topic_page.field_components
 field_name: field_components
 entity_type: node
@@ -68,6 +72,8 @@ settings:
       group_of_links_mini_grid: group_of_links_mini_grid
       hero_image: hero_image
       iframe: iframe
+      list: list
+      map: map
       news_announcements: news_announcements
       newsletter: newsletter
       photo: photo
@@ -124,9 +130,6 @@ settings:
       featured_topics:
         enabled: true
         weight: -89
-      feedback:
-        enabled: true
-        weight: -83
       fyi:
         enabled: true
         weight: -78
