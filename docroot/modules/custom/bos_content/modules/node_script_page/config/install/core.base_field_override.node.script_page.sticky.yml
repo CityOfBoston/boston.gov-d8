@@ -2,18 +2,18 @@ langcode: en
 status: true
 dependencies:
   config:
-    - paragraphs.paragraphs_type.seamless_doc
-id: paragraph.seamless_doc.status
-field_name: status
-entity_type: paragraph
-bundle: seamless_doc
-label: Published
+    - node.type.script_page
+id: node.script_page.sticky
+field_name: sticky
+entity_type: node
+bundle: script_page
+label: 'Sticky at top of lists'
 description: ''
 required: false
 translatable: false
 default_value:
   -
-    value: 1
+    value: 0
 default_value_callback: ''
 settings:
   on_label: 'On'

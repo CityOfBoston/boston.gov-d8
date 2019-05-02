@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - paragraphs.paragraphs_type.seamless_doc
+    - node.type.script_page
   module:
     - content_translation
 third_party_settings:
@@ -10,8 +10,8 @@ third_party_settings:
     enabled: false
     bundle_settings:
       untranslatable_fields_hide: '0'
-id: paragraph.seamless_doc
-target_entity_type_id: paragraph
-target_bundle: seamless_doc
+id: node.script_page
+target_entity_type_id: node
+target_bundle: script_page
 default_langcode: site_default
 language_alterable: false
