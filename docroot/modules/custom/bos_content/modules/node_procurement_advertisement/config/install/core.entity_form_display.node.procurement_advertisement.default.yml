@@ -2,6 +2,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - field.field.node.procurement_advertisement.body
     - field.field.node.procurement_advertisement.field_award_date
     - field.field.node.procurement_advertisement.field_awarded_by
     - field.field.node.procurement_advertisement.field_bid
@@ -13,6 +14,7 @@ dependencies:
     - field.field.node.procurement_advertisement.field_document
     - field.field.node.procurement_advertisement.field_email
     - field.field.node.procurement_advertisement.field_event_project_number
+    - field.field.node.procurement_advertisement.field_intro_text
     - field.field.node.procurement_advertisement.field_ma_general_law
     - field.field.node.procurement_advertisement.field_multi_year_contract
     - field.field.node.procurement_advertisement.field_not_awarded
@@ -31,6 +33,7 @@ dependencies:
     - paragraphs
     - path
     - publication_date
+    - text
 third_party_settings:
   field_group:
     group_procurement_advertisement:
@@ -120,6 +123,15 @@ targetEntityType: node
 bundle: procurement_advertisement
 mode: default
 content:
+  body:
+    weight: 41
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea_with_summary
+    region: content
   created:
     type: datetime_timestamp
     weight: 3
@@ -215,6 +227,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_intro_text:
+    weight: 42
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
   field_ma_general_law:
     type: entity_reference_autocomplete
     weight: 27

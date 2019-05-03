@@ -1,4 +1,4 @@
-langcode: en
+langcode: und
 status: true
 dependencies:
   config:
@@ -6,16 +6,14 @@ dependencies:
     - node.type.procurement_advertisement
   module:
     - text
-_core:
-  default_config_hash: uB6hUCbw-tKrDG5OlasU8OHFLqH39ASCiP1gwKOUlcA
 id: node.procurement_advertisement.body
 field_name: body
 entity_type: node
 bundle: procurement_advertisement
 label: Body
 description: ''
-required: true
-translatable: false
+required: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
