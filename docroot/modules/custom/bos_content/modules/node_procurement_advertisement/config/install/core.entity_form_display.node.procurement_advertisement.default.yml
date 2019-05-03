@@ -53,11 +53,13 @@ third_party_settings:
       children:
         - title
         - field_event_project_number
+        - field_intro_text
+        - body
+        - field_ma_general_law
         - field_offering
-        - field_contract_length
         - field_contact
         - field_multi_year_contract
-        - field_ma_general_law
+        - field_contract_length
       parent_name: group_procurement_advertisement
       weight: 20
       format_type: tab
@@ -70,16 +72,16 @@ third_party_settings:
       label: 'Basic Information'
     group_sidebar:
       children:
+        - field_date_range
         - field_awarded_by
         - field_bid_type
-        - field_date_range
         - field_url
         - field_document
         - field_unspsc
         - group_contact
         - field_related_links
       parent_name: group_procurement_advertisement
-      weight: 22
+      weight: 21
       format_type: tab
       format_settings:
         id: ''
@@ -94,7 +96,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_sidebar
-      weight: 39
+      weight: 42
       format_type: tab
       format_settings:
         id: ''
@@ -109,7 +111,7 @@ third_party_settings:
         - field_award_date
         - field_bid
       parent_name: group_procurement_advertisement
-      weight: 23
+      weight: 22
       format_type: tab
       format_settings:
         id: ''
@@ -124,7 +126,7 @@ bundle: procurement_advertisement
 mode: default
 content:
   body:
-    weight: 41
+    weight: 24
     settings:
       rows: 9
       summary_rows: 3
@@ -140,13 +142,13 @@ content:
     third_party_settings: {  }
   field_award_date:
     type: datetime_default
-    weight: 26
+    weight: 27
     region: content
     settings: {  }
     third_party_settings: {  }
   field_awarded_by:
     type: entity_reference_autocomplete
-    weight: 33
+    weight: 37
     region: content
     settings:
       match_operator: CONTAINS
@@ -155,7 +157,7 @@ content:
     third_party_settings: {  }
   field_bid:
     type: entity_reference_paragraphs
-    weight: 27
+    weight: 28
     region: content
     settings:
       title: Paragraph
@@ -167,7 +169,7 @@ content:
     third_party_settings: {  }
   field_bid_type:
     type: entity_reference_autocomplete
-    weight: 34
+    weight: 38
     region: content
     settings:
       match_operator: CONTAINS
@@ -176,7 +178,7 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 25
+    weight: 27
     region: content
     settings:
       match_operator: CONTAINS
@@ -185,14 +187,14 @@ content:
     third_party_settings: {  }
   field_contract_length:
     type: number
-    weight: 24
+    weight: 29
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_date_range:
     type: datetime_default
-    weight: 35
+    weight: 36
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -206,7 +208,7 @@ content:
     third_party_settings: {  }
   field_document:
     type: file_generic
-    weight: 37
+    weight: 40
     region: content
     settings:
       progress_indicator: throbber
@@ -228,7 +230,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_intro_text:
-    weight: 42
+    weight: 23
     settings:
       rows: 5
       placeholder: ''
@@ -237,7 +239,7 @@ content:
     region: content
   field_ma_general_law:
     type: entity_reference_autocomplete
-    weight: 27
+    weight: 25
     region: content
     settings:
       match_operator: CONTAINS
@@ -246,7 +248,7 @@ content:
     third_party_settings: {  }
   field_multi_year_contract:
     type: boolean_checkbox
-    weight: 26
+    weight: 28
     region: content
     settings:
       display_label: true
@@ -260,7 +262,7 @@ content:
     third_party_settings: {  }
   field_offering:
     type: entity_reference_autocomplete
-    weight: 23
+    weight: 26
     region: content
     settings:
       match_operator: CONTAINS
@@ -277,7 +279,7 @@ content:
     third_party_settings: {  }
   field_related_links:
     type: link_default
-    weight: 40
+    weight: 43
     region: content
     settings:
       placeholder_url: ''
@@ -285,14 +287,14 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 38
+    weight: 41
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_url:
     type: string_textfield
-    weight: 36
+    weight: 39
     region: content
     settings:
       size: 60
