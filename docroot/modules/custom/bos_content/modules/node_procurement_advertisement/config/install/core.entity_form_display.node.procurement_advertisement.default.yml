@@ -36,27 +36,8 @@ third_party_settings:
     group_procurement_advertisement:
       children:
         - group_basic_information
-        - field_award_date
-        - uid
-        - field_not_awarded
-        - field_unspsc
-        - field_related_links
-        - field_ma_general_law
-        - field_offering
-        - field_awarded_by
-        - field_awarding_authority
-        - field_bid
-        - field_bid_type
-        - field_contact
-        - field_contract_length
-        - field_date_range
-        - field_department
-        - field_details_link
-        - field_document
-        - field_email
-        - field_multi_year_contract
-        - field_phone_number
-        - field_url
+        - group_sidebar
+        - group_submissions
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -69,6 +50,11 @@ third_party_settings:
       children:
         - title
         - field_event_project_number
+        - field_offering
+        - field_contract_length
+        - field_contact
+        - field_multi_year_contract
+        - field_ma_general_law
       parent_name: group_procurement_advertisement
       weight: 20
       format_type: tab
@@ -79,6 +65,56 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+    group_sidebar:
+      children:
+        - field_awarded_by
+        - field_bid_type
+        - field_date_range
+        - field_url
+        - field_document
+        - field_unspsc
+        - group_contact
+        - field_related_links
+      parent_name: group_procurement_advertisement
+      weight: 22
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Sidebar
+    group_contact:
+      children:
+        - field_department
+        - field_email
+        - field_phone_number
+      parent_name: group_sidebar
+      weight: 39
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Contact
+    group_submissions:
+      children:
+        - field_not_awarded
+        - field_award_date
+        - field_bid
+      parent_name: group_procurement_advertisement
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Submissions
 id: node.procurement_advertisement.default
 targetEntityType: node
 bundle: procurement_advertisement
@@ -86,19 +122,19 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 2
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_award_date:
     type: datetime_default
-    weight: 21
+    weight: 26
     region: content
     settings: {  }
     third_party_settings: {  }
   field_awarded_by:
     type: entity_reference_autocomplete
-    weight: 28
+    weight: 33
     region: content
     settings:
       match_operator: CONTAINS
@@ -107,7 +143,7 @@ content:
     third_party_settings: {  }
   field_bid:
     type: entity_reference_paragraphs
-    weight: 30
+    weight: 27
     region: content
     settings:
       title: Paragraph
@@ -119,7 +155,7 @@ content:
     third_party_settings: {  }
   field_bid_type:
     type: entity_reference_autocomplete
-    weight: 31
+    weight: 34
     region: content
     settings:
       match_operator: CONTAINS
@@ -128,7 +164,7 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 32
+    weight: 25
     region: content
     settings:
       match_operator: CONTAINS
@@ -137,20 +173,20 @@ content:
     third_party_settings: {  }
   field_contract_length:
     type: number
-    weight: 33
+    weight: 24
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_date_range:
     type: datetime_default
-    weight: 34
+    weight: 35
     region: content
     settings: {  }
     third_party_settings: {  }
   field_department:
     type: string_textfield
-    weight: 35
+    weight: 34
     region: content
     settings:
       size: 60
@@ -165,7 +201,7 @@ content:
     third_party_settings: {  }
   field_email:
     type: string_textfield
-    weight: 38
+    weight: 36
     region: content
     settings:
       size: 60
@@ -181,7 +217,7 @@ content:
     third_party_settings: {  }
   field_ma_general_law:
     type: entity_reference_autocomplete
-    weight: 26
+    weight: 27
     region: content
     settings:
       match_operator: CONTAINS
@@ -190,21 +226,21 @@ content:
     third_party_settings: {  }
   field_multi_year_contract:
     type: boolean_checkbox
-    weight: 39
+    weight: 26
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_not_awarded:
     type: boolean_checkbox
-    weight: 23
+    weight: 25
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_offering:
     type: entity_reference_autocomplete
-    weight: 27
+    weight: 23
     region: content
     settings:
       match_operator: CONTAINS
@@ -213,7 +249,7 @@ content:
     third_party_settings: {  }
   field_phone_number:
     type: string_textfield
-    weight: 40
+    weight: 37
     region: content
     settings:
       size: 60
@@ -221,7 +257,7 @@ content:
     third_party_settings: {  }
   field_related_links:
     type: link_default
-    weight: 25
+    weight: 40
     region: content
     settings:
       placeholder_url: ''
@@ -229,14 +265,14 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 24
+    weight: 38
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_url:
     type: string_textfield
-    weight: 41
+    weight: 36
     region: content
     settings:
       size: 60
@@ -244,20 +280,20 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 1
+    weight: 2
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 8
+    weight: 9
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -265,12 +301,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 4
+    weight: 5
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -278,14 +314,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 10
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
@@ -298,7 +334,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 22
+    weight: 1
     settings:
       match_operator: CONTAINS
       size: 60
@@ -306,7 +342,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
