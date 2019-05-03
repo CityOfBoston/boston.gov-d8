@@ -1,1 +1,23 @@
-{  }
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.procurement_advertisement
+  module:
+    - text
+_core:
+  default_config_hash: uB6hUCbw-tKrDG5OlasU8OHFLqH39ASCiP1gwKOUlcA
+id: node.procurement_advertisement.body
+field_name: body
+entity_type: node
+bundle: procurement_advertisement
+label: Body
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary
