@@ -1,0 +1,30 @@
+uuid: 0ff0032d-f712-4685-8150-0a70ac0ae195
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_program_initiative
+    - node.type.procurement_advertisement
+    - node.type.program_initiative_profile
+id: node.procurement_advertisement.field_program_initiative
+field_name: field_program_initiative
+entity_type: node
+bundle: procurement_advertisement
+label: 'Related programs / initiatives'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      program_initiative_profile: program_initiative_profile
+field_type: entity_reference

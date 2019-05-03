@@ -1,0 +1,30 @@
+uuid: b9c8db22-5ec7-4d3b-b87a-900e13db62da
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_awarded_by
+    - node.type.person_profile
+    - node.type.procurement_advertisement
+id: node.procurement_advertisement.field_awarded_by
+field_name: field_awarded_by
+entity_type: node
+bundle: procurement_advertisement
+label: 'Awarded By'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      person_profile: person_profile
+field_type: entity_reference

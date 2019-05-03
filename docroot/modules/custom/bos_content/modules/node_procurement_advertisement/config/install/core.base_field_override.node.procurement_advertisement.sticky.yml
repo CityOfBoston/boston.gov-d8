@@ -1,0 +1,22 @@
+uuid: 794cf0b7-0c5a-4847-9800-231330c2983f
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.procurement_advertisement
+id: node.procurement_advertisement.sticky
+field_name: sticky
+entity_type: node
+bundle: procurement_advertisement
+label: 'Sticky at top of lists'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
