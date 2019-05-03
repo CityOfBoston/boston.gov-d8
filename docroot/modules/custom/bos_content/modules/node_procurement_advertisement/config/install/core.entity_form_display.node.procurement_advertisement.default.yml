@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.procurement_advertisement.field_not_awarded
     - field.field.node.procurement_advertisement.field_offering
     - field.field.node.procurement_advertisement.field_phone_number
+    - field.field.node.procurement_advertisement.field_procurement_footer
     - field.field.node.procurement_advertisement.field_related_links
     - field.field.node.procurement_advertisement.field_unspsc
     - field.field.node.procurement_advertisement.field_url
@@ -55,6 +56,7 @@ third_party_settings:
         - field_event_project_number
         - field_intro_text
         - body
+        - field_procurement_footer
         - field_ma_general_law
         - field_offering
         - field_contact
@@ -96,7 +98,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_sidebar
-      weight: 42
+      weight: 51
       format_type: tab
       format_settings:
         id: ''
@@ -148,7 +150,7 @@ content:
     third_party_settings: {  }
   field_awarded_by:
     type: entity_reference_autocomplete
-    weight: 37
+    weight: 46
     region: content
     settings:
       match_operator: CONTAINS
@@ -169,7 +171,7 @@ content:
     third_party_settings: {  }
   field_bid_type:
     type: entity_reference_autocomplete
-    weight: 38
+    weight: 47
     region: content
     settings:
       match_operator: CONTAINS
@@ -178,7 +180,7 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 27
+    weight: 28
     region: content
     settings:
       match_operator: CONTAINS
@@ -187,14 +189,14 @@ content:
     third_party_settings: {  }
   field_contract_length:
     type: number
-    weight: 29
+    weight: 30
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_date_range:
     type: datetime_default
-    weight: 36
+    weight: 45
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -208,7 +210,7 @@ content:
     third_party_settings: {  }
   field_document:
     type: file_generic
-    weight: 40
+    weight: 49
     region: content
     settings:
       progress_indicator: throbber
@@ -239,7 +241,7 @@ content:
     region: content
   field_ma_general_law:
     type: entity_reference_autocomplete
-    weight: 25
+    weight: 26
     region: content
     settings:
       match_operator: CONTAINS
@@ -248,7 +250,7 @@ content:
     third_party_settings: {  }
   field_multi_year_contract:
     type: boolean_checkbox
-    weight: 28
+    weight: 29
     region: content
     settings:
       display_label: true
@@ -262,7 +264,7 @@ content:
     third_party_settings: {  }
   field_offering:
     type: entity_reference_autocomplete
-    weight: 26
+    weight: 27
     region: content
     settings:
       match_operator: CONTAINS
@@ -277,9 +279,18 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_procurement_footer:
+    weight: 25
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_related_links:
     type: link_default
-    weight: 43
+    weight: 52
     region: content
     settings:
       placeholder_url: ''
@@ -287,14 +298,14 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 41
+    weight: 50
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_url:
     type: string_textfield
-    weight: 39
+    weight: 48
     region: content
     settings:
       size: 60
