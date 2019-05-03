@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.procurement_advertisement.field_not_awarded
     - field.field.node.procurement_advertisement.field_offering
     - field.field.node.procurement_advertisement.field_phone_number
+    - field.field.node.procurement_advertisement.field_procurement
     - field.field.node.procurement_advertisement.field_procurement_footer
     - field.field.node.procurement_advertisement.field_related_links
     - field.field.node.procurement_advertisement.field_unspsc
@@ -59,6 +60,7 @@ third_party_settings:
         - field_procurement_footer
         - field_ma_general_law
         - field_offering
+        - field_procurement
         - field_contact
         - field_multi_year_contract
         - field_contract_length
@@ -98,7 +100,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_sidebar
-      weight: 51
+      weight: 52
       format_type: tab
       format_settings:
         id: ''
@@ -171,7 +173,7 @@ content:
     third_party_settings: {  }
   field_bid_type:
     type: entity_reference_autocomplete
-    weight: 47
+    weight: 48
     region: content
     settings:
       match_operator: CONTAINS
@@ -180,7 +182,7 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 28
+    weight: 29
     region: content
     settings:
       match_operator: CONTAINS
@@ -189,7 +191,7 @@ content:
     third_party_settings: {  }
   field_contract_length:
     type: number
-    weight: 30
+    weight: 31
     region: content
     settings:
       placeholder: ''
@@ -210,7 +212,7 @@ content:
     third_party_settings: {  }
   field_document:
     type: file_generic
-    weight: 49
+    weight: 50
     region: content
     settings:
       progress_indicator: throbber
@@ -250,7 +252,7 @@ content:
     third_party_settings: {  }
   field_multi_year_contract:
     type: boolean_checkbox
-    weight: 29
+    weight: 30
     region: content
     settings:
       display_label: true
@@ -279,6 +281,15 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_procurement:
+    weight: 28
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_procurement_footer:
     weight: 25
     settings:
@@ -290,7 +301,7 @@ content:
     region: content
   field_related_links:
     type: link_default
-    weight: 52
+    weight: 53
     region: content
     settings:
       placeholder_url: ''
@@ -298,14 +309,14 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 50
+    weight: 51
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_url:
     type: string_textfield
-    weight: 48
+    weight: 49
     region: content
     settings:
       size: 60
