@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -78,108 +76,105 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
-hide($content['comments']);
-hide($content['links']);
-?>
-<article id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix desktop-100"<?php print $attributes; ?>>
-  <?php if (isset($content['field_updated_date'])): ?>
+ #}
+<article id="node-{{ node.id }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
+  {% if content.field_updated_date %}
     <div class="brc-lu">
-      Last updated:<?php print render($content['field_updated_date']); ?>
+      Last updated: {{ content.field_updated_date }}
     </div>
-  <?php endif; ?>
+  {% endif %}
   <div class="department-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-left">
-      <h1 class="title"><?php print $title; ?></h1>
-      <?php if (isset($content['field_intro_text'])): ?>
-        <?php print render($content['field_intro_text']); ?>
-      <?php endif; ?>
-      <?php if (isset($content['body'])): ?>
+      <h1 class="title">{{ title }}</h1>
+      {% if content.field_intro_text %}
+        {{ content.field_intro_text }}
+      {% endif %}
+      {% if content.body %}
         <div class="body">
-          <?php print render($content['body']); ?>
-          <?php if (isset($content['field_procurement_footer'])): ?>
-            <?php print render($content['field_procurement_footer']); ?>
-          <?php endif; ?>
+          {{ content.body }}
+          {% if content.field_procurement_footer %}
+            {{ content.field_procurement_footer }}
+          {% endif %}
         </div>
-      <?php endif; ?>
+      {% endif %}
     </div>
     <div class="column sidebar mobile-100 desktop-33-right">
       <div class="p-t500">
         <ul class="dl">
           <li class="dl-i">
-            <?php if ($is_closed) { ?>
-              <?php if ($bid_awarded) { ?>
+            {% if is_closed %}
+              {% if bid_awarded %}
                 <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
-              <?php } else { ?>
-                <?php if ($not_awarded) { ?>
+              {% else %}
+                {% if not_awarded %}
                   <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Not Awarded</strong></div>
-                <?php } else { ?>
+                {% else %}
                   <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Closed</strong></div>
-                <?php } ?>
-              <?php } ?>
-            <?php } else { ?>
-              <div class="t--intro">Due: <?php print $due_date ?></div>
-            <?php } ?>
+                {% endif %}
+              {% endif %}
+            {% else %}
+              <div class="t--intro">Due: {{ due_date }}</div>
+            {% endif %}
           </li>
           <li class="dl-i">
-            <span class="t--sans t--upper t--cb t--s100"><?php print render($content['field_procurement']) ?></span>
+            <span class="t--sans t--upper t--cb t--s100">{{ content.field_procurement }}</span>
           </li>
           <li class="dl-i">
             <span class="dl-t">Posted</span>
-            <span class="dl-d"><?php print $start_date ?></span>
+            <span class="dl-d">{{ start_date }}</span>
           </li>
           <li class="dl-i">
-            <span class="dl-t">Close<?php if ($is_closed) { ?>d<?php } else { ?>s<?php } ?></span>
-            <span class="dl-d"><?php print $end_date ?></span>
+            <span class="dl-t">Close{% if is_closed %}d{% else %}s{% endif %}</span>
+            <span class="dl-d">{{ end_date }}</span>
           </li>
           <li class="dl-i">
             <span class="dl-t">Type</span>
-            <span class="dl-d"><?php print render($content['field_bid_type']) ?></span>
+            <span class="dl-d">{{ content.field_bid_type }}</span>
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Awarded by</div>
-            <div class="dl-d"><?php print render($content['field_awarded_by']) ?></div>
+            <div class="dl-d">{{ content.field_awarded_by }}</div>
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Project Number</div>
-            <div class="dl-d"><?php print render($content['field_event_project_number']) ?></div>
+            <div class="dl-d">{{ content.field_event_project_number }}</div>
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">UNSPSC</div>
-            <div class="dl-d"><?php print render($content['field_unspsc']) ?></div>
+            <div class="dl-d">{{ content.field_unspsc }}</div>
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Questions about this page? Contact:</div>
             <div class="dl-d">
-              <div><?php print render($content['field_department']) ?></div>
-              <div><?php print render($content['field_address']) ?></div>
-              <div><?php print render($content['field_email']) ?></div>
-              <div><?php print render($content['field_phone_number']) ?></div>
+              <div>{{ content.field_department }}</div>
+              <div>{{ content.field_address }}</div>
+              <div>{{ content.field_email }}</div>
+              <div>{{ content.field_phone_number }}</div>
             </div>
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Related Links</div>
-            <div class="dl-d"><?php print render($content['field_related_links']) ?></div>
+            <div class="dl-d">{{ content.field_related_links }}</div>
           </li>
         </ul>
       </div>
-      <?php if (isset($content['field_sidebar_components'])): ?>
-        <?php print render($content['field_sidebar_components']); ?>
-      <?php endif; ?>
+      {% if content.field_sidebar_components %}
+        {{ content.field_sidebar_components }}
+      {% endif %}
     </div>
   </div>
-  <?php if (count($bid_other) > 0 || count($bid_awarded) > 0): ?>
+  {% if bid_other|length > 0 or $bid_awarded|length > 0 %}
     <div class="b b--b b--fw">
       <div class="b-c">
         <div class="sh sh--w">
           <h2 class="sh-title">Submissions</h2>
         </div>
-        <?php if ($not_awarded && $is_closed): ?>
+        {% if not_awarded and is_closed %}
           <div class="m-t500">
             <div class="g">This was not awarded</div>
           </div>
-        <?php endif; ?>
-        <?php if (count($bid_awarded) > 0 && $content['field_not_awarded'] == 0): ?>
+        {% endif %}
+        {% if bid_awarded|length > 0 and content.field_not_awarded == 0 %}
           <div class="m-t500">
             <div class="g">
               <div class="g--2">
@@ -189,62 +184,55 @@ hide($content['links']);
               </div>
               <div class="g--10">
                 <div class="g p-t500">
-                  <div class="g--4 t--w t--s400"><strong class="t--upper t--sans">Awarded to:</strong> <span class="t--w"><?php print $bid_awarded[0]['company'] ?></span></div>
-                  <div class="g--3 t--w t--s400"><strong class="t--upper t--sans">Amount:</strong> <span class="t--w">$<?php print number_format($bid_awarded[0]['amount']) ?></span></div>
-                  <div class="g--5 t--w t--s400"><strong class="t--upper t--sans">Awarded on:</strong> <span class="t--w"><?php print $award_date ?></span></div>
+                  <div class="g--4 t--w t--s400"><strong class="t--upper t--sans">Awarded to:</strong> <span class="t--w">{{ bid_awarded[0]['company'] }}</span></div>
+                  <div class="g--3 t--w t--s400"><strong class="t--upper t--sans">Amount:</strong> <span class="t--w">${{ bid_awarded[0]['amount'] }}</span></div>
+                  <div class="g--5 t--w t--s400"><strong class="t--upper t--sans">Awarded on:</strong> <span class="t--w">{{ award_date }}</span></div>
                 </div>
               </div>
             </div>
           </div>
-        <?php endif; ?>
-        <?php if (count($bid_other) > 0): ?>
+        {% endif %}
+        {% if bid_other|length > 0 %}
           <div>
             <div class="dr">
               <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
               <label for="dr-tr1" class="dr-h">
                 <div class="dr-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25"><path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/></svg></div>
-                <div class="dr-t">See <?php print count($bid_other) ?><?php if (count($bid_awarded) > 0): ?> other<?php endif; ?> submission<?php if (count($bid_other) > 1): ?>s<?php endif; ?></div>
+                <div class="dr-t">See {{ bid_other|length }}{% if bid_awarded|length > 0 %} other{% endif %} submission{% if bid_other|length > 1 %}s{% endif %}</div>
               </label>
               <div class="dr-c">
-                <?php 
-                  $i = 0;
-                  $len = count($array);
-                  foreach($bid_other as $bid) { 
-                ?>
-                  <?php if ($i != 0) { ?>
+                {% for bid in bid_other %}
+                  {% if loop.index != 0 %}
                     <hr class="m-t200 m-b200" />
-                  <?php } ?>
+                  {% endif %}
                   <div class="g t--cb">
-                    <div class="g--4"><strong><?php print $bid['company'] ?></strong></div>
+                    <div class="g--4"><strong>{{ bid.company }}</strong></div>
                     <div class="g--8">
-                      <?php if ($bid['amount']) { ?>
-                        <strong class="t--upper t--sans">Amount:</strong> $<?php print number_format($bid['amount'], 2) ?>
-                      <?php } ?>
+                      {% if bid.amount %}
+                        <strong class="t--upper t--sans">Amount:</strong> ${{ bid.amount }}
+                      {% endif %}
                     </div>
                   </div>
-                <?php 
-                    $i++;
-                  } 
-                ?>
+                {% endfor %}
               </div>
             </div>
           </div>
-        <?php endif; ?>
+        {% endif %}
       </div>
     </div>
-  <?php endif; ?>
-  <?php if (isset($content['field_components']) || isset($content['field_ma_general_law'])): ?>
-    <div class="department-components desktop-100" <?php print $content_attributes; ?>>
-      <?php if (isset($content['field_ma_general_law'])): ?>
-        <?php print render($content['field_ma_general_law']) ?>
+  {% endif %}
+  {% if content.field_components or content.field_ma_general_law %}
+    <div class="department-components desktop-100" {{ content_attributes }}>
+      {% if $content.field_ma_general_law %}
+        {{ content.field_ma_general_law }}
       </div>
-      <?php endif; ?>
-      <?php if (isset($content['field_components'])): ?>
-        <?php print render($content['field_components']); ?>
-      <?php endif; ?>
+      {% endif %}
+      {% if content.field_components %}
+        {{ content.field_components }}
+      {% endif %}
     </div>
-  <?php endif; ?>
-  <?php if (isset($content['field_contacts'])): ?>
-    <?php print theme('page_contacts', array('title' => "Who's Involved", 'contacts' => $content['field_contacts'])); ?>
-  <?php endif; ?>
+  {% endif %}
+  {% if content.field_contacts %}
+    {# print theme('page_contacts', array('title' => "Who's Involved", 'contacts' => $content['field_contacts']) #}
+  {% endif %}
 </article>
