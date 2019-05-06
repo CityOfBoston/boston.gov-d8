@@ -163,7 +163,7 @@
       {% endif %}
     </div>
   </div>
-  {% if bid_other|length > 0 or $bid_awarded|length > 0 %}
+  {% if bid_other|length > 0 or bid_awarded|length > 0 %}
     <div class="b b--b b--fw">
       <div class="b-c">
         <div class="sh sh--w">
@@ -184,8 +184,8 @@
               </div>
               <div class="g--10">
                 <div class="g p-t500">
-                  <div class="g--4 t--w t--s400"><strong class="t--upper t--sans">Awarded to:</strong> <span class="t--w">{{ bid_awarded[0]['company'] }}</span></div>
-                  <div class="g--3 t--w t--s400"><strong class="t--upper t--sans">Amount:</strong> <span class="t--w">${{ bid_awarded[0]['amount'] }}</span></div>
+                  <div class="g--4 t--w t--s400"><strong class="t--upper t--sans">Awarded to:</strong> <span class="t--w">{{ bid_awarded[0].company }}</span></div>
+                  <div class="g--3 t--w t--s400"><strong class="t--upper t--sans">Amount:</strong> <span class="t--w">${{ bid_awarded[0].amount }}</span></div>
                   <div class="g--5 t--w t--s400"><strong class="t--upper t--sans">Awarded on:</strong> <span class="t--w">{{ award_date }}</span></div>
                 </div>
               </div>
@@ -223,7 +223,7 @@
   {% endif %}
   {% if content.field_components or content.field_ma_general_law %}
     <div class="department-components desktop-100" {{ content_attributes }}>
-      {% if $content.field_ma_general_law %}
+      {% if content.field_ma_general_law %}
         {{ content.field_ma_general_law }}
       </div>
       {% endif %}
