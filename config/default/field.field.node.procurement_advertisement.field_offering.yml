@@ -1,0 +1,32 @@
+uuid: 7a6b65a7-4a41-4b0e-ab0f-bf1226068dd1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_offering
+    - node.type.procurement_advertisement
+    - taxonomy.vocabulary.bid_offering
+_core:
+  default_config_hash: JqPhNK-crn3wmXXHJAWD_ua-P_MCQSbKvAjBPlmIWEA
+id: node.procurement_advertisement.field_offering
+field_name: field_offering
+entity_type: node
+bundle: procurement_advertisement
+label: Offering
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 0
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      bid_offering: bid_offering
+field_type: entity_reference

@@ -1,0 +1,20 @@
+uuid: cb967f2a-8d56-4086-9899-8627c4f32caa
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.procurement_advertisement
+id: node.procurement_advertisement.uid
+field_name: uid
+entity_type: node
+bundle: procurement_advertisement
+label: 'Authored by'
+description: 'The username of the content author.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\node\Entity\Node::getCurrentUserId'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference
