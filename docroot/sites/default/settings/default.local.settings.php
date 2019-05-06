@@ -27,7 +27,7 @@ else {
     'database' => 'drupal',
     'username' => 'drupal',
     'password' => 'drupal',
-    'host' => 'database',
+    'host' => 'boston_database_1',
     'port' => '3306',
   ];
 }
