@@ -1,0 +1,29 @@
+uuid: 9280951c-d544-40b0-8df9-bdf4979b4b9f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_document
+    - node.type.procurement_advertisement
+  module:
+    - file
+_core:
+  default_config_hash: rFpIS_d8qFKvXCI6u9LLACVN9MwONK40mu-hyyOZjTM
+id: node.procurement_advertisement.field_document
+field_name: field_document
+entity_type: node
+bundle: procurement_advertisement
+label: Document
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  description_field: false
+  file_directory: ''
+  file_extensions: txt
+  max_filesize: ''
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: file

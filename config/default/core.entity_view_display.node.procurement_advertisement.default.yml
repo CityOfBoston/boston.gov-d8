@@ -1,0 +1,89 @@
+uuid: 1c54f51f-77d0-4736-ab7d-59835d95d62e
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.node.procurement_advertisement.field_award_date
+    - field.field.node.procurement_advertisement.field_awarded_by
+    - field.field.node.procurement_advertisement.field_bid
+    - field.field.node.procurement_advertisement.field_bid_type
+    - field.field.node.procurement_advertisement.field_contact
+    - field.field.node.procurement_advertisement.field_contract_length
+    - field.field.node.procurement_advertisement.field_date_range
+    - field.field.node.procurement_advertisement.field_department
+    - field.field.node.procurement_advertisement.field_document
+    - field.field.node.procurement_advertisement.field_email
+    - field.field.node.procurement_advertisement.field_event_project_number
+    - field.field.node.procurement_advertisement.field_ma_general_law
+    - field.field.node.procurement_advertisement.field_multi_year_contract
+    - field.field.node.procurement_advertisement.field_not_awarded
+    - field.field.node.procurement_advertisement.field_offering
+    - field.field.node.procurement_advertisement.field_phone_number
+    - field.field.node.procurement_advertisement.field_related_links
+    - field.field.node.procurement_advertisement.field_unspsc
+    - field.field.node.procurement_advertisement.field_url
+    - node.type.procurement_advertisement
+  module:
+    - user
+id: node.procurement_advertisement.default
+targetEntityType: node
+bundle: procurement_advertisement
+mode: default
+content:
+  body:
+    weight: 101
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_intro_text:
+    weight: 102
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_procurement:
+    weight: 104
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_procurement_footer:
+    weight: 103
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_award_date: true
+  field_awarded_by: true
+  field_bid: true
+  field_bid_type: true
+  field_contact: true
+  field_contract_length: true
+  field_date_range: true
+  field_department: true
+  field_document: true
+  field_email: true
+  field_event_project_number: true
+  field_ma_general_law: true
+  field_multi_year_contract: true
+  field_not_awarded: true
+  field_offering: true
+  field_phone_number: true
+  field_related_links: true
+  field_unspsc: true
+  field_url: true
+  langcode: true
+  published_at: true

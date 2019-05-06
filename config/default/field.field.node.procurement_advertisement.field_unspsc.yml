@@ -1,0 +1,25 @@
+uuid: ed7a4d7e-46dd-4ae7-8240-14bc74ebb9ee
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_unspsc
+    - node.type.procurement_advertisement
+_core:
+  default_config_hash: bnFVkPoVTAhfAp3u-q5l_JrhZ0NlPZ1RKwzs_jLM6Q8
+id: node.procurement_advertisement.field_unspsc
+field_name: field_unspsc
+entity_type: node
+bundle: procurement_advertisement
+label: UNSPSC
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  max: 99999999
+  min: 10000000
+  prefix: ''
+  suffix: ''
+field_type: integer
