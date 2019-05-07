@@ -25,5 +25,9 @@ function node_procurement_advertisement_theme() {
     'base hook' => 'taxonomy_term',
     'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
+  $theme['node__person_profile__department_listing'] = [
+    'base hook' => 'node',
+    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
+  ];
   return $theme;
 }
