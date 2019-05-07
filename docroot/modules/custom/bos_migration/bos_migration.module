@@ -6,9 +6,6 @@
  */
 
 use Drupal\Core\Database\Database;
-use Drupal\migrate\Row;
-use Drupal\migrate\Plugin\MigrateSourceInterface;
-use Drupal\migrate\Plugin\MigrationInterface;
 
 /**
  * Implements hook_migration_plugins_alter().
@@ -21,13 +18,6 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
 
   \Drupal::logger('migrate')
     ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, TRUE)]);
-}
-
-/**
- * Implements hook_migrate_prepare_row().
- */
-function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
-  return;
 }
 
 /*
@@ -100,7 +90,7 @@ function _get_unused_migrations() {
     'd7_comment',
     'd7_authmap',
     'd7_field_instance_widget_settings',
-//    'd7_node_revision',
+  /* 'd7_node_revision', */
     'd7_node_title_label',
     'd7_file',
   ];
@@ -160,13 +150,4 @@ function _rich_text_field_alter(&$migrations) {
  */
 function _node__department_profile(array &$migrations) {
   $migrations["d7_node:department_profile"]["process"]["field_address"]['plugin'] = "addressfield";
-}
-
-/**
- * Implements hook_file_copy().
- *
- * TODO: During migration, use this to move the file into a better folder location.
- */
-function bos_migration_file_copy(Drupal\file\FileInterface $file, Drupal\file\FileInterface $source) {
-  return;
 }
