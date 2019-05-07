@@ -161,13 +161,21 @@ content:
     type: text_default
     region: content
   field_ma_general_law:
-    type: entity_reference_label
+    type: entity_reference_entity_view
     weight: 3
     region: content
-    label: above
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
+      view_mode: default
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_multi_year_contract:
     type: boolean
     weight: 16
