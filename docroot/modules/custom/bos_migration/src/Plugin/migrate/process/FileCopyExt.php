@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\bos_migration\Plugin\migrate\process;
 
 use Drupal\migrate\MigrateExecutableInterface;
@@ -9,6 +8,8 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
 
 /**
+ * Extends the file_copy plugin (class fileCopy).
+ *
  * @code
  * process:
  *   path_to_file:
@@ -24,7 +25,6 @@ use Drupal\migrate\Row;
  *   id = "file_copy_ext"
  * )
  */
-
 class FileCopyExt extends FileCopy {
 
   /**
@@ -44,7 +44,7 @@ class FileCopyExt extends FileCopy {
     }
 
     if (!file_exists($source)) {
-      $fid=$row->getSource()['fid'];
+      $fid = $row->getSource()['fid'];
       $migrate_executable->saveMessage("File (fid:$fid) '$source' does not exist", MigrationInterface::MESSAGE_NOTICE);
       return $destination;
     }
