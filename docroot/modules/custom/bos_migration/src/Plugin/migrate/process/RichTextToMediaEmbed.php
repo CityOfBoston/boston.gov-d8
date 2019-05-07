@@ -2,6 +2,14 @@
 
 namespace Drupal\bos_migration\Plugin\migrate\process;
 
+/*
+ * COB NOTE:
+ * In this boston.gov implementation, this class/plugin is added by
+ *   bos_migration->bos_migration_migration_plugins_alter()
+ * which adds this plugin to the process of 'text_long', 'text_with_summary'
+ * fields.
+ */
+
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
