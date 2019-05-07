@@ -1,29 +1,29 @@
-uuid: bdcc3255-9379-4b5c-8b53-3651c41847c1
-langcode: en
+uuid: c62028fa-134d-4162-8853-1f3de9dfdb9c
+langcode: und
 status: true
 dependencies:
   config:
-    - field.storage.node.field_contact
+    - field.storage.node.field_procurement
     - node.type.procurement_advertisement
-    - taxonomy.vocabulary.contact
-id: node.procurement_advertisement.field_contact
-field_name: field_contact
+    - taxonomy.vocabulary.procurement_type
+id: node.procurement_advertisement.field_procurement
+field_name: field_procurement
 entity_type: node
 bundle: procurement_advertisement
-label: 'Awarding Authority'
+label: 'Procurement Type'
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      contact: contact
+      procurement_type: procurement_type
     sort:
       field: name
-      direction: ASC
+      direction: asc
     auto_create: false
     auto_create_bundle: ''
 field_type: entity_reference
