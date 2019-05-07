@@ -218,3 +218,74 @@ function bos_content_type_procurement_advertisement_form_validate($form, $form_s
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK__ID().
+ */
+function node_procurement_advertisement_preprocess_node__procurement_advertisement(&$variables) {
+  $dates = field_get_items('node', $variables['node'], 'field_date_range');
+
+  if ($dates !== FALSE) {
+    $timezone = $dates[0]['timezone'];
+    // Add '+0000' so that strtotime doesn't try to convert a UTC time,
+    // we'll do that in format_date().
+    $start_date = strtotime($dates[0]['value'] . " +0000");
+    $end_date = strtotime($dates[0]['value2'] . " +0000");
+    $now = time();
+
+    $variables['bidding_has_ended'] = $end_date < $now;
+
+    $variables['start_date'] = date('n/j/Y - g:ia', $start_date);
+    $variables['end_date'] = date('n/j/Y - g:ia', $end_date);
+    $variables['due_date'] = date('F j, Y', $end_date);
+  }
+  else {
+    $variables['time_range'] = '';
+  }
+
+  $field_advertisement_date = field_get_items('node', $variables['node'], 'field_advertisement_date');
+  if ($field_advertisement_date !== FALSE) {
+    $advertisement_date = strtotime($field_advertisement_date[0]['value']);
+    $variables['advert_date'] = date('n/j/Y', $advertisement_date);
+  }
+
+  $submissions = $variables['field_bid'];
+
+  $bid_entity_id_array = array();
+  foreach ($submissions as $submission) {
+    $bid_entity_id_array[] = $submission['value'];
+  }
+
+  $awarded = array();
+  $other = array();
+
+  // Here we need to load all the components because
+  // the not all components have a short title
+  // required so we do not create nav link for it.
+  $submissions = entity_load('paragraphs_item', $bid_entity_id_array);
+  foreach ($submissions as $submission) {
+    $bid = array(
+      'company' => $submission->field_company_name['und'][0]['value'],
+      'amount' => $submission->field_bid_amount['und'][0]['value'],
+      'awarded' => $submission->field_awarded['und'][0]['value'],
+    );
+
+    if ($bid['awarded'] === '1') {
+      $awarded[] = $bid;
+    }
+    else {
+      $other[] = $bid;
+    }
+  }
+
+  $variables['bid_awarded'] = $awarded;
+  $variables['bid_other'] = $other;
+
+  $award_date = field_get_items('node', $variables['node'], 'field_award_date');
+  $awarded = strtotime($award_date[0]['value']);
+
+  $variables['award_date'] = date('F j, Y', $awarded);
+
+  $not_awarded = field_get_items('node', $variables['node'], 'field_not_awarded');
+  $variables['not_awarded'] = $not_awarded[0]['value'] === "1";
+}
