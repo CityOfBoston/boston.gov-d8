@@ -21,5 +21,9 @@ function node_procurement_advertisement_theme() {
     'base hook' => 'field',
     'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
+  $theme['taxonomy_term__massachusetts_general_law'] = [
+    'base hook' => 'taxonomy_term',
+    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
+  ];
   return $theme;
 }
