@@ -29,6 +29,7 @@ dependencies:
   module:
     - datetime
     - entity_reference_revisions
+    - fences
     - file
     - link
     - text
@@ -55,13 +56,21 @@ content:
       timezone_override: ''
     third_party_settings: {  }
   field_awarded_by:
-    type: entity_reference_label
+    type: entity_reference_entity_view
     weight: 22
     region: content
-    label: above
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
+      view_mode: department_listing
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_bid:
     type: entity_reference_revisions_entity_view
     weight: 8
@@ -75,10 +84,17 @@ content:
     type: entity_reference_label
     weight: 4
     region: content
-    label: above
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_contact:
     type: entity_reference_label
     weight: 11
@@ -109,7 +125,7 @@ content:
     type: string
     weight: 15
     region: content
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -125,7 +141,7 @@ content:
     type: string
     weight: 14
     region: content
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -133,7 +149,7 @@ content:
     type: string
     weight: 6
     region: content
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -184,7 +200,7 @@ content:
     type: string
     weight: 13
     region: content
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -220,7 +236,7 @@ content:
     type: number_integer
     weight: 7
     region: content
-    label: above
+    label: hidden
     settings:
       thousand_separator: ''
       prefix_suffix: true
