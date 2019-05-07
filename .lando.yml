@@ -97,7 +97,7 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
-    - /app/vendor/bin/drush
+    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && /app/vendor/bin/drush
 
   drupal:
     service: appserver
