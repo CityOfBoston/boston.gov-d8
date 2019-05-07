@@ -14,9 +14,15 @@ process:
   changed: timestamp
   uri:
     plugin: file_copy_ext
+    copy: false
+    move: false
     source:
       - source_base_path
       - uri
   filemime: filemime
   filename: filename
+  filesize: filesize
   uid: uid
+  rh_action: rh_action
+  rh_redirect: rh_redirect
+  rh_redirect_response: rh_redirect_response
