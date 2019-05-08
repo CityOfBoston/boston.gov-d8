@@ -14,6 +14,7 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
   // Pass array into functions that alter each entity as needed.
   _migration_housekeeping($migrations);
   _node__department_profile($migrations);
+  _node_paragraph_alterations($migrations);
   _rich_text_field_alter($migrations);
 
   \Drupal::logger('migrate')
@@ -150,4 +151,244 @@ function _rich_text_field_alter(&$migrations) {
  */
 function _node__department_profile(array &$migrations) {
   $migrations["d7_node:department_profile"]["process"]["field_address"]['plugin'] = "addressfield";
+}
+
+/**
+ * Alters configuration for paragraph fields.
+ *
+ * @param array $migrations
+ */
+function _node_paragraph_alterations(&$migrations) {
+  // Select fields which are marked as paragraphs in the D7 database.
+  $result = Database::getConnection('default', 'migrate')
+    ->query("SELECT field_name FROM field_config WHERE type IN ('paragraphs')")
+    ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+
+  // TODO: Should set default value for new fields being added into V8.
+  // e.g. field_manual_date.
+  if (!empty($result)) {
+    $paragraphs = array_keys($result);
+    $paragraphs = array_flip($paragraphs);
+
+    foreach ($migrations as $mkey => &$migration) {
+      // Only need to process nodes and taxonomies b/c only they have paras.
+      if ($migration["provider"] == "node" || $migration["provider"] == "taxonomy") {
+
+        // Find any paragraph fields.
+        foreach ($paragraphs as $fieldname => $paragraph) {
+          if (!empty($migration["process"][$fieldname])) {
+            $migration["process"][$fieldname] = _field_definition($fieldname);
+          }
+        }
+
+        // Update the langcode to fallback somewhere sensible.
+        if (isset($migration["process"]["langcode"])) {
+          $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
+        }
+
+        // Cull any comment field operations.
+        foreach ($migration['process'] as $fieldname => $process) {
+          if (stripos($fieldname, "comment") !== FALSE) {
+            unset($migration['process'][$fieldname]);
+          }
+        }
+
+      }
+    }
+
+  }
+
+}
+
+/**
+ * Defines the process array for a paragraph field.
+ *
+ * @param string $fieldName
+ *   The fieldname.
+ *
+ * @return array|bool
+ *   The process array or FALSE.
+ */
+function _field_definition(string $fieldName) {
+  // Try to get the fieldType paragraph config.
+  if (!($process = _paragraph_process_defintions($fieldName))) {
+    return FALSE;
+  }
+
+  return [
+    "plugin" => "sub_process",
+    "process" => $process,
+    "source" => $fieldName,
+  ];
+}
+
+/**
+ * Defines the paragraph parts of the process array.
+ *
+ * @param string $fieldName
+ *   Fieldname.
+ *
+ * @return array|bool
+ *   A config array or False.
+ */
+function _paragraph_process_defintions(string $fieldName) {
+  $para_lists = [
+    "full_list" => [
+      'paragraph__3_column_w_image',
+      'paragraph__bid',
+      'paragraph__bos311',
+      'paragraph__bos_signup_emergency_alerts',
+      'paragraph__cabinet',
+      'paragraph__card',
+      'paragraph__city_score_dashboard',
+      'paragraph__columns',
+      'paragraph__commission_contact_info',
+      'paragraph__commission_members',
+      'paragraph__commission_summary',
+      'paragraph__custom_hours_text',
+      'paragraph__daily_hours',
+      'paragraph__discussion_topic',
+      'paragraph__document',
+      'paragraph__drawer',
+      'paragraph__drawers',
+      'paragraph__election_results',
+      'paragraph__external_link',
+      'paragraph__featured_topics',
+      'paragraph__from_library',
+      'paragraph__fyi',
+      'paragraph__gol_list_links',
+      'paragraph__grid_links',
+      'paragraph__grid_of_cards',
+      'paragraph__grid_of_people',
+      'paragraph__grid_of_places',
+      'paragraph__grid_of_programs_initiatives',
+      'paragraph__grid_of_quotes',
+      'paragraph__grid_of_topics',
+      'paragraph__group_of_links_grid',
+      'paragraph__group_of_links_list',
+      'paragraph__group_of_links_mini_grid',
+      'paragraph__header_text',
+      'paragraph__hero_image',
+      'paragraph__how_to_contact_step',
+      'paragraph__how_to_tab',
+      'paragraph__how_to_text_step',
+      'paragraph__iframe',
+      'paragraph__internal_link',
+      'paragraph__lightbox_link',
+      'paragraph__list',
+      'paragraph__map',
+      'paragraph__message_for_the_day',
+      'paragraph__news_announcements',
+      'paragraph__newsletter',
+      'paragraph__photo',
+      'paragraph__quote',
+      'paragraph__seamless_doc',
+      'paragraph__sidebar_item',
+      'paragraph__sidebar_item_w_icon',
+      'paragraph__social_media_links',
+      'paragraph__social_networking',
+      'paragraph__text',
+      'paragraph__text_one_column',
+      'paragraph__text_three_column',
+      'paragraph__text_two_column',
+      'paragraph__transaction_grid',
+      'paragraph__transactions',
+      'paragraph__upcoming_events',
+    ],
+    "field_components" => [
+      'paragraph__3_column_w_image',
+      'paragraph__bid',
+      'paragraph__bos311',
+      'paragraph__bos_signup_emergency_alerts',
+      'paragraph__cabinet',
+      'paragraph__card',
+      'paragraph__city_score_dashboard',
+      'paragraph__columns',
+      'paragraph__commission_contact_info',
+      'paragraph__commission_members',
+      'paragraph__commission_summary',
+      'paragraph__custom_hours_text',
+      'paragraph__daily_hours',
+      'paragraph__discussion_topic',
+      'paragraph__document',
+      'paragraph__drawer',
+      'paragraph__drawers',
+      'paragraph__election_results',
+      'paragraph__external_link',
+      'paragraph__featured_topics',
+      'paragraph__from_library',
+      'paragraph__fyi',
+      'paragraph__gol_list_links',
+      'paragraph__grid_links',
+      'paragraph__grid_of_cards',
+      'paragraph__grid_of_people',
+      'paragraph__grid_of_places',
+      'paragraph__grid_of_programs_initiatives',
+      'paragraph__grid_of_quotes',
+      'paragraph__grid_of_topics',
+      'paragraph__group_of_links_grid',
+      'paragraph__group_of_links_list',
+      'paragraph__group_of_links_mini_grid',
+      'paragraph__header_text',
+      'paragraph__hero_image',
+      'paragraph__how_to_contact_step',
+      'paragraph__how_to_tab',
+      'paragraph__how_to_text_step',
+      'paragraph__iframe',
+      'paragraph__internal_link',
+      'paragraph__lightbox_link',
+      'paragraph__list',
+      'paragraph__map',
+      'paragraph__message_for_the_day',
+      'paragraph__news_announcements',
+      'paragraph__newsletter',
+      'paragraph__photo',
+      'paragraph__quote',
+      'paragraph__seamless_doc',
+      'paragraph__social_media_links',
+      'paragraph__social_networking',
+      'paragraph__text',
+      'paragraph__text_one_column',
+      'paragraph__text_three_column',
+      'paragraph__text_two_column',
+      'paragraph__transaction_grid',
+      'paragraph__transactions',
+      'paragraph__upcoming_events',
+    ],
+    "field_sidebar_components" => [
+      'paragraph__sidebar_item',
+      'paragraph__sidebar_item_w_icon',
+    ],
+  ];
+
+  // If an unknown type is reqested, return FALSE.
+  if (!isset($para_lists[$fieldName])) {
+    return FALSE;
+  }
+
+  return [
+    "target_id" => [
+      [
+        'plugin' => 'migration_lookup',
+        'migration' => $para_lists[$fieldName],
+        'source' => 'value',
+      ],
+      [
+        'plugin' => 'extract',
+        'index' => [0],
+      ],
+    ],
+    "target_revision_id" => [
+      [
+        'plugin' => 'migration_lookup',
+        'migration' => $para_lists[$fieldName],
+        'source' => 'value',
+      ],
+      [
+        'plugin' => 'extract',
+        'index' => [1],
+      ],
+    ],
+  ];
+
 }
