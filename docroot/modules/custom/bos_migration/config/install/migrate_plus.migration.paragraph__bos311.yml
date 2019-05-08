@@ -12,12 +12,14 @@ source:
   plugin: d7_paragraphs_item
   bundle: bos311
 process:
+  id: item_id
+  revision_id: revision_id
   field_component_title: field_component_title
   field_short_title: field_short_title
   field_311_request: field_311_request
   field_311_external_link: field_external_link
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: bos311
   new_revisions: true
 migration_dependencies:

@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: list
 process:
+  id: item_id
+  revision_id: revision_id
   field_component_theme: field_component_theme
   field_contact: field_contact
   field_short_title: field_short_title
@@ -30,7 +32,7 @@ process:
       langcode: language
       delta: delta
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: list
   new_revisions: true
 migration_dependencies:

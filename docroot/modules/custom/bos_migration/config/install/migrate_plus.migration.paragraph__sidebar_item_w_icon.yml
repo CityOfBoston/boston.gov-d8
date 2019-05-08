@@ -12,11 +12,13 @@ source:
   plugin: d7_paragraphs_item
   bundle: sidebar_item_w_icon
 process:
+  id: item_id
+  revision_id: revision_id
   field_sidebar_icon: field_sidebar_icon
   field_sidebar_text: field_sidebar_text
   field_title: field_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: sidebar_item_w_icon
   new_revisions: true
 migration_dependencies:

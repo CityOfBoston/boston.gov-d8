@@ -12,9 +12,11 @@ source:
   plugin: d7_paragraphs_item
   bundle: seamless_doc
 process:
+  id: item_id
+  revision_id: revision_id
   field_document_id: field_document_id
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: seamless_doc
   new_revisions: true
 migration_dependencies:

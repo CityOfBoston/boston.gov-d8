@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: map
 process:
+  id: item_id
+  revision_id: revision_id
   field_contact: field_contact
   field_extra_info: field_extra_info
   field_hide_title_bar: field_hide_title_bar
@@ -23,7 +25,7 @@ process:
   field_component_title: field_component_title
   field_map_type: field_map_type
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: map
   new_revisions: true
 migration_dependencies:

@@ -12,9 +12,11 @@ source:
   plugin: d7_paragraphs_item
   bundle: text_one_column
 process:
+  id: item_id
+  revision_id: revision_id
   field_middle_column: field_middle_column
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: text_one_column
   new_revisions: true
 migration_dependencies:

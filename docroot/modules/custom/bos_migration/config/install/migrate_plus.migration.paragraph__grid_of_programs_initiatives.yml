@@ -12,13 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: grid_of_programs_initiatives
 process:
+  id: item_id
+  revision_id: revision_id
   field_component_theme: field_component_theme
   field_contact: field_contact
   field_program_initiative: field_program_initiative
   field_short_title: field_short_title
   field_component_title: field_component_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: grid_of_programs_initiatives
   new_revisions: true
 migration_dependencies:

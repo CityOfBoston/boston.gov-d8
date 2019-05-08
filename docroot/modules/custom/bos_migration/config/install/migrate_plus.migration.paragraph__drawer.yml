@@ -12,11 +12,13 @@ source:
   plugin: d7_paragraphs_item
   bundle: drawer
 process:
+  id: item_id
+  revision_id: revision_id
   field_short_description: field_short_description
   field_text_blocks: field_text_blocks
   field_title: field_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: drawer
   new_revisions: true
 migration_dependencies:

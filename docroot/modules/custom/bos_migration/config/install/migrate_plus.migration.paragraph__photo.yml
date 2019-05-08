@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: photo
 process:
+  id: item_id
+  revision_id: revision_id
   field_link: field_link
   field_photo_caption: field_photo_caption
   field_contacts: field_contacts
@@ -20,7 +22,7 @@ process:
   field_short_title: field_short_title
   field_component_title: field_component_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: photo
   new_revisions: true
 migration_dependencies:
