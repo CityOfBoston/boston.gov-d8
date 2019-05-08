@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: columns
 process:
+  id: item_id
+  revision_id: revision_id
   field_column_title: field_column_title
   field_image: field_image
   field_column_description: field_column_description
@@ -25,7 +27,7 @@ process:
       title: title
       options: attributes
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: columns
   new_revisions: true
 migration_dependencies:
