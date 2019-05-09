@@ -28,6 +28,7 @@ dependencies:
     - node.type.procurement_advertisement
   module:
     - datetime
+    - datetime_range
     - entity_reference_revisions
     - fences
     - file
@@ -113,14 +114,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
   field_date_range:
-    type: datetime_default
     weight: 12
-    region: content
     label: above
     settings:
-      format_type: medium
+      separator: '-'
       timezone_override: ''
     third_party_settings: {  }
+    type: daterange_plain
+    region: content
   field_department:
     type: string
     weight: 15

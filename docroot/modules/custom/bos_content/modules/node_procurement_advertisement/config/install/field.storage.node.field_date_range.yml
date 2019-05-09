@@ -1,16 +1,16 @@
-langcode: en
+langcode: und
 status: true
 dependencies:
   module:
-    - datetime
+    - datetime_range
     - node
 id: node.field_date_range
 field_name: field_date_range
 entity_type: node
-type: datetime
+type: daterange
 settings:
   datetime_type: datetime
-module: datetime
+module: datetime_range
 locked: false
 cardinality: 1
 translatable: true
