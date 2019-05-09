@@ -82,13 +82,18 @@
 {% set not_awarded = node.field_not_awarded.value %}
 
 {% set bids = [] %}
-{% for item in node.field_bid %}
-  {% if item.entity.field_awarded.value == 1 %}
-    {% set item = item|merge({'winner': TRUE}) %}
+{% for bid in node.field_bid %}
+  {{ dd(bid.entity) }}
+  {% if bid.entity.field_awarded.value == 1 %}
+    {% set bid = bid|merge({
+      'winner': TRUE,
+      'company': bid.entity.field_company_name.value,
+      'amount': bid.entity.field_bid_amount.value,
+    }) %}
   {% else %}
-    {% set item = item|merge({'winner': FALSE}) %}
+    {% set bid = bid|merge({'winner': FALSE}) %}
   {% endif %}
-  {% set bids = bids|merge([item]) %}
+  {% set bids = bids|merge([bid]) %}
 {% endfor %}
 {% for i in bids %}
   {% if i.winner %}
@@ -197,7 +202,9 @@
             </div>
           </div>
         {% endif %}
-        {% if bid_awarded|length > 0 and content.field_not_awarded == 0 %}
+        {% for bid in bids %}
+          {% if bid.winner and not_awarded == FALSE %}
+            {{ dd(bid) }}
           <div class="m-t500">
             <div class="g">
               <div class="g--2">
@@ -207,14 +214,15 @@
               </div>
               <div class="g--10">
                 <div class="g p-t500">
-                  <div class="g--4 t--w t--s400"><strong class="t--upper t--sans">Awarded to:</strong> <span class="t--w">{{ bid_awarded[0].company }}</span></div>
-                  <div class="g--3 t--w t--s400"><strong class="t--upper t--sans">Amount:</strong> <span class="t--w">${{ bid_awarded[0].amount }}</span></div>
+                  <div class="g--4 t--w t--s400"><strong class="t--upper t--sans">Awarded to:</strong> <span class="t--w">{{ bid.company }}</span></div>
+                  <div class="g--3 t--w t--s400"><strong class="t--upper t--sans">Amount:</strong> <span class="t--w">${{ bid.amount }}</span></div>
                   <div class="g--5 t--w t--s400"><strong class="t--upper t--sans">Awarded on:</strong> <span class="t--w">{{ award_date }}</span></div>
                 </div>
               </div>
             </div>
           </div>
-        {% endif %}
+          {% endif %}
+        {% endfor %}
         {% if bid_other|length > 0 %}
           <div>
             <div class="dr">
