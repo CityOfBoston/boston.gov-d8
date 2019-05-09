@@ -223,6 +223,7 @@ function bos_content_type_procurement_advertisement_form_validate($form, $form_s
  * Implements hook_preprocess_HOOK__ID().
  */
 function node_procurement_advertisement_preprocess_node__procurement_advertisement(&$variables) {
+  /*
   $dates = field_get_items('node', $variables['node'], 'field_date_range');
 
   if ($dates !== FALSE) {
@@ -288,4 +289,5 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
 
   $not_awarded = field_get_items('node', $variables['node'], 'field_not_awarded');
   $variables['not_awarded'] = $not_awarded[0]['value'] === "1";
+   */
 }
