@@ -1,4 +1,4 @@
-uuid: b2696980-3284-4451-b49c-91d2a3eef677
+uuid: a7175620-d032-45b0-88fa-64793df11cfc
 langcode: und
 status: true
 dependencies:
@@ -29,6 +29,7 @@ dependencies:
     - node.type.procurement_advertisement
   module:
     - datetime
+    - datetime_range
     - entity_reference_revisions
     - fences
     - file
@@ -114,14 +115,14 @@ content:
       prefix_suffix: true
     third_party_settings: {  }
   field_date_range:
-    type: datetime_default
     weight: 12
-    region: content
     label: above
     settings:
-      format_type: medium
+      separator: '-'
       timezone_override: ''
     third_party_settings: {  }
+    type: daterange_plain
+    region: content
   field_department:
     type: string
     weight: 15
@@ -215,10 +216,17 @@ content:
     third_party_settings: {  }
   field_procurement:
     weight: 2
-    label: above
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     type: entity_reference_label
     region: content
   field_procurement_footer:
