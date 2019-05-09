@@ -113,7 +113,7 @@
                 {% endif %}
               {% endif %}
             {% else %}
-              <div class="t--intro">Due: {{ content.field_date_range.value|date('F j, Y') }}</div>
+              <div class="t--intro">Due: {{ node.field_date_range.value|date('F j, Y') }}</div>
             {% endif %}
           </li>
           <li class="dl-i">
@@ -121,11 +121,11 @@
           </li>
           <li class="dl-i">
             <span class="dl-t">Posted</span>
-            <span class="dl-d">{{ content.field_date_range.value|date('n/j/Y - g:ia') }}</span>
+            <span class="dl-d">{{ node.field_date_range.value|date('n/j/Y - g:ia') }}</span>
           </li>
           <li class="dl-i">
-            <span class="dl-t">Close{% if date(content.field_date_range.end_value) < date() %}d{% else %}s{% endif %}</span>
-            <span class="dl-d">{{ content.field_date_range.end_value|date('n/j/Y - g:ia') }}</span>
+            <span class="dl-t">Close{% if date(node.field_date_range.end_value) < date() %}d{% else %}s{% endif %}</span>
+            <span class="dl-d">{{ node.field_date_range.end_value|date('n/j/Y - g:ia') }}</span>
           </li>
           <li class="dl-i">
             <span class="dl-t">Type</span>
