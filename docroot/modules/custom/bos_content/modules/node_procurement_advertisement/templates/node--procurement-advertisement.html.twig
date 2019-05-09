@@ -192,6 +192,7 @@
         {% endif %}
         {% for bid in bids %}
           {% if bid.winner and not_awarded == FALSE %}
+            {% set winner_exists = TRUE %}
             <div class="m-t500">
               <div class="g">
                 <div class="g--2">
@@ -215,22 +216,18 @@
                 <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
                 <label for="dr-tr1" class="dr-h">
                   <div class="dr-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25"><path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/></svg></div>
-                  <div class="dr-t">See {{ bid_other|length }}{% if bid_awarded|length > 0 %} other{% endif %} submission{% if bid_other|length > 1 %}s{% endif %}</div>
+                  <div class="dr-t">See {{ loop.last }}{% if winner_exists %} other{% endif %} submission{% if loop.last > 1 %}s{% endif %}</div>
                 </label>
                 <div class="dr-c">
-                  {# for bid in bid_other #}
-                    {# if loop.index != 0 #}
-                      <hr class="m-t200 m-b200" />
-                    {# endif #}
-                    <div class="g t--cb">
-                      <div class="g--4"><strong>{{ bid.company }}</strong></div>
-                      <div class="g--8">
-                        {% if bid.amount %}
-                          <strong class="t--upper t--sans">Amount:</strong> ${{ bid.amount }}
-                        {% endif %}
-                      </div>
+                  <hr class="m-t200 m-b200" />
+                  <div class="g t--cb">
+                    <div class="g--4"><strong>{{ bid.company }}</strong></div>
+                    <div class="g--8">
+                      {% if bid.amount %}
+                        <strong class="t--upper t--sans">Amount:</strong> ${{ bid.amount }}
+                      {% endif %}
                     </div>
-                  {# endfor #}
+                  </div>
                 </div>
               </div>
             </div>
