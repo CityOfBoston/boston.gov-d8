@@ -113,7 +113,7 @@
                 {% endif %}
               {% endif %}
             {% else %}
-              <div class="t--intro">Due: {{ due_date }}</div>
+              <div class="t--intro">Due: {{ content.field_date_range.value|date('F j, Y') }}</div>
             {% endif %}
           </li>
           <li class="dl-i">
@@ -121,11 +121,11 @@
           </li>
           <li class="dl-i">
             <span class="dl-t">Posted</span>
-            <span class="dl-d">{{ start_date }}</span>
+            <span class="dl-d">{{ content.field_date_range.value|date('n/j/Y') }}</span>
           </li>
           <li class="dl-i">
             <span class="dl-t">Close{% if is_closed %}d{% else %}s{% endif %}</span>
-            <span class="dl-d">{{ end_date }}</span>
+            <span class="dl-d">{{ content.field_date_range.end_value|date('n/j/Y') }}</span>
           </li>
           <li class="dl-i">
             <span class="dl-t">Type</span>
