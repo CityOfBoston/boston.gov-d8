@@ -102,18 +102,18 @@
       <div class="p-t500">
         <ul class="dl">
           <li class="dl-i">
-            {% if is_closed %}
-              {% if bid_awarded %}
+            {% if date(node.field_date_range.end_value) < date() %}
+              {% if node.field_not_awarded.value == FALSE %}
                 <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
               {% else %}
-                {% if not_awarded %}
+                {% if node.field_not_awarded.value == TRUE %}
                   <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Not Awarded</strong></div>
                 {% else %}
                   <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Closed</strong></div>
                 {% endif %}
               {% endif %}
             {% else %}
-              <div class="t--intro">Due: {{ node.field_date_range.value|date('F j, Y') }}</div>
+              <div class="t--intro">Due: {{ node.field_date_range.end_value|date('F j, Y') }}</div>
             {% endif %}
           </li>
           <li class="dl-i">
