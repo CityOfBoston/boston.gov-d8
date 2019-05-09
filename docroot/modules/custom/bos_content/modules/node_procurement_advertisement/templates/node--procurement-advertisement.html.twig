@@ -82,13 +82,19 @@
 {% set not_awarded = node.field_not_awarded.value %}
 
 {% set bids = [] %}
+{% set winner_exists = FALSE %}
+{% set bid_count = 0 %}
 {% for bid in node.field_bid %}
+  {% if bid.entity.field_awarded.value == 1 %}
+    {% set winner_exists = TRUE %}
+  {% endif %}
   {% set bid = bid|merge({
     'winner': bid.entity.field_awarded.value,
     'company': bid.entity.field_company_name.value,
     'amount': bid.entity.field_bid_amount.value,
   }) %}
   {% set bids = bids|merge([bid]) %}
+  {% set bid_count = bids|length %}
 {% endfor %}
 
 <article id="node-{{ node.id }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
@@ -192,7 +198,6 @@
         {% endif %}
         {% for bid in bids %}
           {% if bid.winner and not_awarded == FALSE %}
-            {% set winner_exists = TRUE %}
             <div class="m-t500">
               <div class="g">
                 <div class="g--2">
@@ -210,14 +215,20 @@
               </div>
             </div>
           {% endif %}
-          {% if not bid.winner %}
-            <div>
-              <div class="dr">
-                <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
-                <label for="dr-tr1" class="dr-h">
-                  <div class="dr-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25"><path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/></svg></div>
-                  <div class="dr-t">See {{ loop.last }}{% if winner_exists %} other{% endif %} submission{% if loop.last > 1 %}s{% endif %}</div>
-                </label>
+        {% endfor %}
+        <div>
+          <div class="dr">
+            <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
+            <label for="dr-tr1" class="dr-h">
+              <div class="dr-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25"><path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/></svg></div>
+              {% if winner_exists %}
+                <div class="dr-t">See {{ bid_count - 1 }} other submission{% if (bid_count - 1) > 1 %}s{% endif %}</div>
+              {% else %}
+                <div class="dr-t">See {{ bid_count }} submission{% if bid_count > 1 %}s{% endif %}</div>
+              {% endif %}
+            </label>
+            {% for bid in bids %}
+              {% if not bid.winner %}
                 <div class="dr-c">
                   <hr class="m-t200 m-b200" />
                   <div class="g t--cb">
@@ -229,10 +240,10 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          {% endif %}
-        {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
   {% endif %}
