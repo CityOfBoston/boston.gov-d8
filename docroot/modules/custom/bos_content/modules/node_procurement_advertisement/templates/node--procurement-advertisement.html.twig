@@ -81,6 +81,23 @@
 {% set is_closed = date(node.field_date_range.end_value) < date() %}
 {% set not_awarded = node.field_not_awarded.value %}
 
+{% set bids = [] %}
+{% for item in node.field_bid %}
+  {% if item.entity.field_awarded.value == 1 %}
+    {% set item = item|merge({'winner': TRUE}) %}
+  {% else %}
+    {% set item = item|merge({'winner': FALSE}) %}
+  {% endif %}
+  {% set bids = bids|merge([item]) %}
+{% endfor %}
+{% for i in bids %}
+  {% if i.winner %}
+    HEY!
+  {% else %}
+    SORRY
+  {% endif %}
+{% endfor %}
+
 <article id="node-{{ node.id }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
   {% if content.field_updated_date %}
     <div class="brc-lu">
@@ -175,7 +192,9 @@
         </div>
         {% if not_awarded and is_closed %}
           <div class="m-t500">
-            <div class="g">This was not awarded</div>
+            <div class="g">
+              <strong class="t--upper t--sans">This Advertisement was not awarded</strong>
+            </div>
           </div>
         {% endif %}
         {% if bid_awarded|length > 0 and content.field_not_awarded == 0 %}
