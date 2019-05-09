@@ -121,11 +121,11 @@
           </li>
           <li class="dl-i">
             <span class="dl-t">Posted</span>
-            <span class="dl-d">{{ content.field_date_range.value|date('n/j/Y') }}</span>
+            <span class="dl-d">{{ content.field_date_range.value|date('n/j/Y - g:ia') }}</span>
           </li>
           <li class="dl-i">
-            <span class="dl-t">Close{% if is_closed %}d{% else %}s{% endif %}</span>
-            <span class="dl-d">{{ content.field_date_range.end_value|date('n/j/Y') }}</span>
+            <span class="dl-t">Close{% if date(content.field_date_range.end_value) < date() %}d{% else %}s{% endif %}</span>
+            <span class="dl-d">{{ content.field_date_range.end_value|date('n/j/Y - g:ia') }}</span>
           </li>
           <li class="dl-i">
             <span class="dl-t">Type</span>
