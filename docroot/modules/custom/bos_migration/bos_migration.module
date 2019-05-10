@@ -85,6 +85,8 @@ function _get_unused_migrations() {
     'd7_comment_entity_form_display_subject',
     'd7_comment_entity_display',
     'd7_taxonomy_vocabulary',
+    'd7_taxonomy_term:maps_esri_feed',
+    'd7_taxonomy_term_entity_translation:maps_esri_feed',
     'd7_field_collection_type',
     'd7_paragraphs_type',
     'd7_node_translation',
@@ -172,23 +174,27 @@ function _node_paragraph_alterations(&$migrations) {
 
     foreach ($migrations as $mkey => &$migration) {
       // Only need to process nodes and taxonomies b/c only they have paras.
-      if ($migration["provider"] == "node" || $migration["provider"] == "taxonomy") {
-
+      if ($migration["id"] == "d7_node" || $migration["id"] == "d7_taxonomy_term" || $migration["source"]["plugin"] = "d7_paragraphs_item") {
         // Find any paragraph fields.
         foreach ($paragraphs as $fieldname => $paragraph) {
           if (!empty($migration["process"][$fieldname])) {
-            $migration["process"][$fieldname] = _field_definition($fieldname);
+            if ($process = _field_definition($fieldname)) {
+              $migration["process"][$fieldname] = $process;
+            }
+            else {
+              echo "Missing paragraph: " . $fieldname . " in " . $mkey . "\n";
+            }
           }
         }
 
         // Update the langcode to fallback somewhere sensible.
-        if (isset($migration["process"]["langcode"])) {
+        if (isset($migration["process"]["langcode"]) && is_array($migration["process"]["langcode"])) {
           $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
         }
 
         // Cull any comment field operations.
-        foreach ($migration['process'] as $fieldname => $process) {
-          if (stripos($fieldname, "comment") !== FALSE) {
+        foreach ($migration['process'] as $fieldname => $map) {
+          if ($map == "comment") {
             unset($migration['process'][$fieldname]);
           }
         }
@@ -295,31 +301,81 @@ function _paragraph_process_defintions(string $fieldName) {
       'paragraph__transactions',
       'paragraph__upcoming_events',
     ],
+    "field_text_blocks" => [
+      'paragraph__text_one_column',
+      'paragraph__text_three_column',
+      'paragraph__text_two_column',
+    ],
+    "field_grid_link" => [
+      'paragraph__document',
+      'paragraph__external_link',
+      'paragraph__internal_link',
+    ],
+    "field_grid_of_quotes" => [
+      'paragraph__quote',
+    ],
+    "field_how_to_steps" => [
+      'paragraph__how_to_contact_step',
+      'paragraph__how_to_text_step',
+    ],
+    "field_social_media_link" => [
+      'paragraph__social_networking',
+    ],
+    "field_tabbed_content" => [
+      'paragraph__tabbed_content_tab', //todo:
+    ],
+    "field_map_default_coordinates" => [
+      'paragraph__message_for_the_day',
+    ],
+    "field_messages" => [
+      'paragraph__message_for_the_day',
+    ],
+    "field_embed_list" => [
+      'paragraph__seamless_doc',
+    ],
+    "field_drawer" => [
+      'paragraph__discussion_topic',
+      'paragraph__drawer',
+      'paragraph__card',
+    ],
+    "field_bid" => [
+      'paragraph__bid',
+    ],
+    "field_header_component" => [
+      'paragraph__header_text',
+    ],
+    "field_how_to_tabs" => [
+      'paragraph__how_to_tab',
+    ],
+    "field_links" => [
+      'paragraph__document',
+      'paragraph__external_link',
+      'paragraph__internal_link',
+    ],
+    "field_status_overrides" => [ // todo
+      'paragraph__status_overrides',
+    ],
+    "field_link" => [
+      'paragraph__document',
+      'paragraph__external_link',
+      'paragraph__internal_link',
+    ],
+    "field_operation_hours" => [
+      'paragraph__custom_hours_text',
+      'paragraph__daily_hours',
+    ],
     "field_components" => [
       'paragraph__3_column_w_image',
-      'paragraph__bid',
       'paragraph__bos311',
       'paragraph__bos_signup_emergency_alerts',
       'paragraph__cabinet',
       'paragraph__card',
-      'paragraph__city_score_dashboard',
-      'paragraph__columns',
       'paragraph__commission_contact_info',
       'paragraph__commission_members',
       'paragraph__commission_summary',
-      'paragraph__custom_hours_text',
-      'paragraph__daily_hours',
-      'paragraph__discussion_topic',
-      'paragraph__document',
-      'paragraph__drawer',
       'paragraph__drawers',
-      'paragraph__election_results',
-      'paragraph__external_link',
       'paragraph__featured_topics',
-      'paragraph__from_library',
       'paragraph__fyi',
-      'paragraph__gol_list_links',
-      'paragraph__grid_links',
       'paragraph__grid_of_cards',
       'paragraph__grid_of_people',
       'paragraph__grid_of_places',
@@ -329,30 +385,16 @@ function _paragraph_process_defintions(string $fieldName) {
       'paragraph__group_of_links_grid',
       'paragraph__group_of_links_list',
       'paragraph__group_of_links_mini_grid',
-      'paragraph__header_text',
       'paragraph__hero_image',
-      'paragraph__how_to_contact_step',
-      'paragraph__how_to_tab',
-      'paragraph__how_to_text_step',
       'paragraph__iframe',
-      'paragraph__internal_link',
       'paragraph__lightbox_link',
       'paragraph__list',
       'paragraph__map',
-      'paragraph__message_for_the_day',
-      'paragraph__news_announcements',
+      'paragraph__news_and_announcements',
       'paragraph__newsletter',
       'paragraph__photo',
-      'paragraph__quote',
-      'paragraph__seamless_doc',
-      'paragraph__social_media_links',
-      'paragraph__social_networking',
       'paragraph__text',
-      'paragraph__text_one_column',
-      'paragraph__text_three_column',
-      'paragraph__text_two_column',
       'paragraph__transaction_grid',
-      'paragraph__transactions',
       'paragraph__upcoming_events',
     ],
     "field_sidebar_components" => [
