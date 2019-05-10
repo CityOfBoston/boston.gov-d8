@@ -1,0 +1,25 @@
+id: d7_field_collection_columns
+label: 'Columns field-collection to paragraph'
+migration_group: bos_field_collection
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_field_collection_item
+  key: migrate
+  field_name: field_columns
+process:
+  field_link: field_link
+  field_column_description: field_column_description
+  field_image: field_image
+  field_column_title: field_column_title
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: columns
+migration_dependencies:
+  required: {  }
+  optional: {  }
