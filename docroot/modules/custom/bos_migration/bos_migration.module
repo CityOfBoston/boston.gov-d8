@@ -173,6 +173,11 @@ function _node_paragraph_alterations(&$migrations) {
     $paragraphs = array_flip($paragraphs);
 
     foreach ($migrations as $mkey => &$migration) {
+      // Add some groupings.
+      if (empty($migration['migration_group'])) {
+        $migration['migration_group'] = $migration['id'];
+      }
+
       // Only need to process nodes and taxonomies b/c only they have paras.
       if ($migration["id"] == "d7_node" || $migration["id"] == "d7_taxonomy_term" || $migration["source"]["plugin"] = "d7_paragraphs_item") {
         // Find any paragraph fields.
