@@ -2,6 +2,10 @@ status: true
 id: managed_files
 label: 'All managed files'
 migration_group: bos_media
+dependencies:
+  enforced:
+    module:
+      - bos_migration
 source:
   plugin: managed_files
   key: migrate
@@ -26,3 +30,10 @@ process:
   rh_action: rh_action
   rh_redirect: rh_redirect
   rh_redirect_response: rh_redirect_response
+migration_dependencies:
+  required:
+    - d7_user
+    - d7_user_role
+    - d7_url_alias
+    - d7_path_redirect
+  optional: {  }
