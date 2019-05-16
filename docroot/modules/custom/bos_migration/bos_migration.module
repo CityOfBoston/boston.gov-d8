@@ -6,19 +6,55 @@
  */
 
 use Drupal\Core\Database\Database;
-
+use Drupal\migrate\Row;
+use Drupal\migrate\Plugin\MigrateSourceInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 /**
  * Implements hook_migration_plugins_alter().
  */
 function bos_migration_migration_plugins_alter(array &$migrations) {
   // Pass array into functions that alter each entity as needed.
+
+  // Do housekeeping first as it significantly reduces the size of $migrations.
   _migration_housekeeping($migrations);
+
+  // Alter node migrations created by core (and possibly contributed) definers.
   _node__department_profile($migrations);
-  _node_paragraph_alterations($migrations);
+  _taxonomy_contact($migrations);
+  foreach (['field_collection', 'paragraph', 'taxonomy', 'node'] as $entityType) {
+    _entity_migration_alterations($migrations, $entityType);
+  }
+
+
+  // Add plugin to process http links in all rich-text capable fields of all
+  // entity types in migration objects.
   _rich_text_field_alter($migrations);
 
+  // Log the final array that is output for debug purposes.
+  // (This is a big entry so can be removed on release).
   \Drupal::logger('migrate')
     ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, TRUE)]);
+}
+
+/**
+ * Implements hook_migrate_prepare_row().
+ *
+ * @see https://www.mtech-llc.com/blog/ada-hernandez/migration-field-collection-d7-paragraphs-node-d8
+ */
+function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
+  $fieldCollections = _field_collection_definition();
+  if (NULL != $migration->id() && in_array($migration->id(), $fieldCollections)) {
+    foreach ($fieldCollections[$migration['id']] as $key => $fieldName) {
+      $values = $row->getSourceProperty($fieldName);
+      $value_new = [];
+      if ($values) {
+        foreach ($values as $value) {
+          $value_new[] = ['item_id' => $value['value']];
+        }
+        $row->setSourceProperty($fieldName . '_new', $value_new);
+      }
+    }
+  }
 }
 
 /*
@@ -35,17 +71,26 @@ function _migration_housekeeping(array &$migrations) {
     if (in_array('Drupal 6', $tags)) {
       return FALSE;
     }
-    if (in_array($migration['id'], _get_unused_migrations())) {
+    if (in_array($migration['id'], _get_unused_migrations_byId())) {
       return FALSE;
     }
+    if (isset($migration['destination']['default_bundle'])) {
+      $entity = trim($migration['destination']['plugin'] . ":" . $migration['destination']['default_bundle']);
+      if (in_array($entity, _get_unused_migrations_byBundle())) {
+        return FALSE;
+      }
+    }
+
     return TRUE;
   });
 }
 
 /**
- * Defines list of migrations to filter out.
+ * Defines list of migration IDs to filter out.
+ *
+ * Add entity ID matching the $migrations[id] field to exclude a config.
  */
-function _get_unused_migrations() {
+function _get_unused_migrations_byId() {
   return [
     'd7_blocked_ips',
     'd7_color',
@@ -93,9 +138,22 @@ function _get_unused_migrations() {
     'd7_comment',
     'd7_authmap',
     'd7_field_instance_widget_settings',
-  /* 'd7_node_revision', */
+    /* 'd7_node_revision', */
     'd7_node_title_label',
-    'd7_file',
+    'd7_file', /* Replaced with custom ManageFiles migrate_plus config */
+  ];
+}
+
+/**
+ * Defines list of migrations to filter out.
+ *
+ * Add bundle matching the name of the bundle in the destination (i.e. D8)
+ * to exclude a config.
+ */
+function _get_unused_migrations_byBundle() {
+  return [
+    'entity:taxonomy_term:maps_esri_feed',
+    'entity:taxonomy_term:maps_basemap',
   ];
 }
 
@@ -156,286 +214,619 @@ function _node__department_profile(array &$migrations) {
 }
 
 /**
- * Alters configuration for paragraph fields.
+ * Updates d7_taxonomy_term:contact to accomodate node reference in field.
  *
  * @param array $migrations
+ *   The migrations array.
  */
-function _node_paragraph_alterations(&$migrations) {
-  // Select fields which are marked as paragraphs in the D7 database.
-  $result = Database::getConnection('default', 'migrate')
-    ->query("SELECT field_name FROM field_config WHERE type IN ('paragraphs')")
-    ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+function _taxonomy_contact(array &$migrations) {
+  // Give the vid a default value.
+  $a = $migrations["d7_taxonomy_term:contact"]["process"]["vid"];
+  $migrations["d7_taxonomy_term:contact"]["process"]["vid"] = [
+    $a,
+    [
+      "plugin" => "default_value",
+      "default_value" => "contact",
+    ],
+  ];
 
-  // TODO: Should set default value for new fields being added into V8.
-  // e.g. field_manual_date.
-  if (!empty($result)) {
-    $paragraphs = array_keys($result);
-    $paragraphs = array_flip($paragraphs);
+  // Add in a dependency that the department_profile node is already migrated.
+  $migrations["d7_taxonomy_term:contact"]["migration_dependencies"]["required"] = [
+    "d7_node:department_profile",
+  ];
+}
 
-    foreach ($migrations as $mkey => &$migration) {
-      // Add some groupings.
-      if (empty($migration['migration_group'])) {
-        $migration['migration_group'] = $migration['id'];
-      }
+/**
+ * Alters configuration for fields of the type paragraph, taxonomy and node
+ * within each $migration defined in $migrations.
+ * (provided the $migration is a migration of a node, taxonomy or paragraph).
+ *
+ * @param $migrations
+ *   The migrations array.
+ * @param string $entityType
+ *   The entity type of fields in $migration to scan & update.
+ */
+function _entity_migration_alterations(&$migrations, string $entityType) {
+  switch ($entityType) {
+    case "paragraph":
+      $result = Database::getConnection('default', 'migrate')
+        ->query("SELECT field_name FROM field_config WHERE type IN ('paragraphs')")
+        ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+      break;
 
-      // Only need to process nodes and taxonomies b/c only they have paras.
-      if ($migration["id"] == "d7_node" || $migration["id"] == "d7_taxonomy_term" || $migration["source"]["plugin"] = "d7_paragraphs_item") {
-        // Find any paragraph fields.
-        foreach ($paragraphs as $fieldname => $paragraph) {
-          if (!empty($migration["process"][$fieldname])) {
-            if ($process = _field_definition($fieldname)) {
-              $migration["process"][$fieldname] = $process;
-            }
-            else {
-              echo "Missing paragraph: " . $fieldname . " in " . $mkey . "\n";
-            }
-          }
-        }
+    case "field_collection":
+      $result = Database::getConnection('default', 'migrate')
+        ->query("SELECT field_name FROM field_config WHERE type IN ('field_collection')")
+        ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+      break;
 
-        // Update the langcode to fallback somewhere sensible.
-        if (isset($migration["process"]["langcode"]) && is_array($migration["process"]["langcode"])) {
-          $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
-        }
+    case "taxonomy":
+      $result = Database::getConnection('default', 'migrate')
+        ->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
+        ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+      break;
 
-        // Cull any comment field operations.
-        foreach ($migration['process'] as $fieldname => $map) {
-          if ($map == "comment") {
-            unset($migration['process'][$fieldname]);
-          }
-        }
+    case "node":
+      $result = Database::getConnection('default', 'migrate')
+        ->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
+        ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+      break;
 
-      }
+    default:
+      $result = [];
+  }
+
+  // If nothing found, then exit here.
+  if (empty($result)) {
+     return;
+  }
+
+  // Re-organize the fields we have found in D7 for this $entityType.
+  $fields = array_keys($result);
+  $fields = array_flip($fields);
+
+  // Cycle through all defined migrations.
+  foreach ($migrations as $mkey => &$migration) {
+    $dependencies = ["required" => [], "optional" => []];
+
+    // Update the grouping if its not yet set (i.e. when built by a definer).
+    // Enables `drush mim --group` option to import groups in a single command.
+    if (empty($migration['migration_group'])) {
+      $migration['migration_group'] = $migration['id'];
     }
 
+    // Only need to process para's, nodes and taxonomies because they are the
+    // only entities which contain entity fields which need to be overridden.
+    if (in_array($migration["id"], ["d7_node", "d7_taxonomy_term"]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
+
+      // Cycle through the fields we have made manual process overrides for.
+      // If this $migration contains any of the fields, then update the process
+      // and dependency array elements of the $migration.
+      foreach ($fields as $fieldname => $field) {
+        if (!empty($migration["process"][$fieldname])) {
+          // Use $entityType so that same-named fields on different entities are
+          // not mixed up.
+          if ($process = _get_process_definition($entityType, $fieldname)) {
+            $migration["process"][$fieldname] = $process;
+            // Record the process's migration field values so we can add as a
+            // dependency for this $migration later.
+            switch($entityType) {
+              case "node":
+              case "paragraph":
+                $dependencies["required"] += $process["process"]["target_id"][0]["migration"];
+                break;
+
+              case "taxonomy":
+                $dependencies["required"] += $process["process"]["target_id"]["migration"];
+                break;
+
+              case "field_collection":
+                $dependencies["required"] += $process[1]["migration"];
+                break;
+            }
+          }
+          else {
+            // Useful if using drush ...
+            echo "Notice: Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey . "\n";
+          }
+        }
+      }
+
+      // Update the langcode to fallback somewhere sensible.
+      if (isset($migration["process"]["langcode"]) && is_array($migration["process"]["langcode"])) {
+        $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
+      }
+
+      // Cull any unwanted field/field operations.
+      if (isset($migration['process']['field_type_of_content'])) {
+        echo "WARNING: " . $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.\n";
+        unset($migration['process']['field_type_of_content']);
+      }
+      foreach ($migration['process'] as $fieldname => $map) {
+        if ($map == "comment") {
+          echo "WARNING: " . $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.\n";
+          unset($migration['process'][$fieldname]);
+        }
+      }
+
+      // Add in paragraph dependencies for this entity migration.
+      if (!empty($dependencies["required"]) || !empty($dependencies["optional"])) {
+        $migration["migration_dependencies"] = array_merge($migration["migration_dependencies"], $dependencies);
+      }
+    }
   }
+
 
 }
 
 /**
- * Defines the process array for a paragraph field.
+ * Defines the process array for a requested entityreference/revisions field.
  *
+ * @param string $entityType
+ *   The entity type being fetched.
  * @param string $fieldName
  *   The fieldname.
  *
  * @return array|bool
  *   The process array or FALSE.
  */
-function _field_definition(string $fieldName) {
-  // Try to get the fieldType paragraph config.
-  if (!($process = _paragraph_process_defintions($fieldName))) {
+function _get_process_definition(string $entityType, string $fieldName) {
+  if (!($entity_field_deps = _get_field_dependencies($entityType, $fieldName))) {
+    // The $entityType field has no "manually" defined dependencies.
     return FALSE;
   }
 
-  return [
-    "plugin" => "sub_process",
-    "process" => $process,
-    "source" => $fieldName,
-  ];
+  // Build the process array using the dependencies found.
+  switch ($entityType) {
+    // Creates a process element for node (entityreference) fields which are
+    // embedded within a node, taxonomy and paragraph (migration) entities.
+    case "node":
+      // Creates a process element for paragraph (entityreferencerevision) fields
+      // which are embedded within node, taxonomy and paragraph (migration)
+      // entities.
+    case "paragraph":
+      $process = [
+        "plugin" => "sub_process",
+        "source" => $fieldName,
+        "process" => [
+          "target_id" => [
+            [
+              'plugin' => 'migration_lookup',
+              'migration' => $entity_field_deps,
+              'source' => 'value',
+            ],
+            [
+              'plugin' => 'extract',
+              'index' => [0],
+            ],
+          ],
+          "target_revision_id" => [
+            [
+              'plugin' => 'migration_lookup',
+              'migration' => $entity_field_deps,
+              'source' => 'value',
+            ],
+            [
+              'plugin' => 'extract',
+              'index' => [1],
+            ],
+          ],
+        ]
+      ];
+      break;
+
+    case "taxonomy":
+      // Creates a process element for taxonomy (entityreference) fields which
+      // are embedded within node, taxonomy and paragraph (migration) entities.
+      $process = [
+        "plugin" => "sub_process",
+        "source" => $fieldName,
+        "process" => [
+          "target_id" => [
+            "plugin" => "migration_lookup",
+            "migration" => $entity_field_deps,
+            "source" => "target_id",
+          ],
+        ],
+      ];
+      break;
+
+    case "field_collection":
+      $process = [
+        "plugin" => "sub_process",
+        "source" => $fieldName,
+        "process" => [
+          "target_id" => "value",
+          "target_revision_id" => [
+            [
+              "plugin" => "migration_lookup",
+              "migration" => $entity_field_deps,
+              "source" => "value",
+            ],
+            [
+              "plugin" => "extract",
+              "index" => [ 1 ],
+            ]
+          ],
+        ],
+      ];
+      break;
+
+    default:
+      return FALSE;
+  }
+
+  return $process;
 }
 
 /**
- * Defines the paragraph parts of the process array.
- *
+ * @param string $entityType
+ *   The entity type to be searched.
  * @param string $fieldName
- *   Fieldname.
+ *   The name of the entityType field to be returned.
  *
- * @return array|bool
- *   A config array or False.
+ * @return bool|mixed
+ *   An array of dependencies.
  */
-function _paragraph_process_defintions(string $fieldName) {
-  $para_lists = [
-    "full_list" => [
-      'paragraph__3_column_w_image',
-      'paragraph__bid',
-      'paragraph__bos311',
-      'paragraph__bos_signup_emergency_alerts',
-      'paragraph__cabinet',
-      'paragraph__card',
-      'paragraph__city_score_dashboard',
-      'paragraph__columns',
-      'paragraph__commission_contact_info',
-      'paragraph__commission_members',
-      'paragraph__commission_summary',
-      'paragraph__custom_hours_text',
-      'paragraph__daily_hours',
-      'paragraph__discussion_topic',
-      'paragraph__document',
-      'paragraph__drawer',
-      'paragraph__drawers',
-      'paragraph__election_results',
-      'paragraph__external_link',
-      'paragraph__featured_topics',
-      'paragraph__from_library',
-      'paragraph__fyi',
-      'paragraph__gol_list_links',
-      'paragraph__grid_links',
-      'paragraph__grid_of_cards',
-      'paragraph__grid_of_people',
-      'paragraph__grid_of_places',
-      'paragraph__grid_of_programs_initiatives',
-      'paragraph__grid_of_quotes',
-      'paragraph__grid_of_topics',
-      'paragraph__group_of_links_grid',
-      'paragraph__group_of_links_list',
-      'paragraph__group_of_links_mini_grid',
-      'paragraph__header_text',
-      'paragraph__hero_image',
-      'paragraph__how_to_contact_step',
-      'paragraph__how_to_tab',
-      'paragraph__how_to_text_step',
-      'paragraph__iframe',
-      'paragraph__internal_link',
-      'paragraph__lightbox_link',
-      'paragraph__list',
-      'paragraph__map',
-      'paragraph__message_for_the_day',
-      'paragraph__news_announcements',
-      'paragraph__newsletter',
-      'paragraph__photo',
-      'paragraph__quote',
-      'paragraph__seamless_doc',
-      'paragraph__sidebar_item',
-      'paragraph__sidebar_item_w_icon',
-      'paragraph__social_media_links',
-      'paragraph__social_networking',
-      'paragraph__text',
-      'paragraph__text_one_column',
-      'paragraph__text_three_column',
-      'paragraph__text_two_column',
-      'paragraph__transaction_grid',
-      'paragraph__transactions',
-      'paragraph__upcoming_events',
+function _get_field_dependencies(string $entityType, string $fieldName) {
+  // Define lists of dependencies for entityType fields.
+  $entity_field_deps = [
+    "paragraph" => [
+      "full_list" => [
+        'paragraph__3_column_w_image',
+        'paragraph__bid',
+        'paragraph__bos311',
+        'paragraph__bos_signup_emergency_alerts',
+        'paragraph__cabinet',
+        'paragraph__card',
+        'paragraph__city_score_dashboard',
+        'paragraph__columns',
+        'paragraph__commission_contact_info',
+        'paragraph__commission_members',
+        'paragraph__commission_summary',
+        'paragraph__custom_hours_text',
+        'paragraph__daily_hours',
+        'paragraph__discussion_topic',
+        'paragraph__document',
+        'paragraph__drawer',
+        'paragraph__drawers',
+        'paragraph__election_results',
+        'paragraph__external_link',
+        'paragraph__featured_topics',
+        'paragraph__from_library',
+        'paragraph__fyi',
+        'paragraph__gol_list_links',
+        'paragraph__grid_links',
+        'paragraph__grid_of_cards',
+        'paragraph__grid_of_people',
+        'paragraph__grid_of_places',
+        'paragraph__grid_of_programs_initiatives',
+        'paragraph__grid_of_quotes',
+        'paragraph__grid_of_topics',
+        'paragraph__group_of_links_grid',
+        'paragraph__group_of_links_list',
+        'paragraph__group_of_links_mini_grid',
+        'paragraph__header_text',
+        'paragraph__hero_image',
+        'paragraph__how_to_contact_step',
+        'paragraph__how_to_tab',
+        'paragraph__how_to_text_step',
+        'paragraph__iframe',
+        'paragraph__internal_link',
+        'paragraph__lightbox_link',
+        'paragraph__list',
+        'paragraph__map',
+        'paragraph__message_for_the_day',
+        'paragraph__news_announcements',
+        'paragraph__newsletter',
+        'paragraph__photo',
+        'paragraph__quote',
+        'paragraph__seamless_doc',
+        'paragraph__sidebar_item',
+        'paragraph__sidebar_item_w_icon',
+        'paragraph__social_media_links',
+        'paragraph__social_networking',
+        'paragraph__text',
+        'paragraph__text_one_column',
+        'paragraph__text_three_column',
+        'paragraph__text_two_column',
+        'paragraph__transaction_grid',
+        'paragraph__transactions',
+        'paragraph__upcoming_events',
+      ],
+      "field_text_blocks" => [
+        'paragraph__text_one_column',
+        'paragraph__text_three_column',
+        'paragraph__text_two_column',
+      ],
+      "field_grid_link" => [
+        'paragraph__document',
+        'paragraph__external_link',
+        'paragraph__internal_link',
+      ],
+      "field_grid_of_quotes" => [
+        'paragraph__quote',
+      ],
+      "field_how_to_steps" => [
+        'paragraph__how_to_contact_step',
+        'paragraph__how_to_text_step',
+      ],
+      "field_social_media_link" => [
+        'paragraph__social_networking',
+      ],
+      "field_tabbed_content" => [
+        'paragraph__tabbed_content_tab', //todo:
+      ],
+      "field_map_default_coordinates" => [
+        'paragraph__message_for_the_day',
+      ],
+      "field_messages" => [
+        'paragraph__message_for_the_day',
+      ],
+      "field_embed_list" => [
+        'paragraph__seamless_doc',
+      ],
+      "field_drawer" => [
+        'paragraph__discussion_topic',
+        'paragraph__drawer',
+        'paragraph__card',
+      ],
+      "field_bid" => [
+        'paragraph__bid',
+      ],
+      "field_header_component" => [
+        'paragraph__header_text',
+      ],
+      "field_how_to_tabs" => [
+        'paragraph__how_to_tab',
+      ],
+      "field_links" => [
+        'paragraph__grid_links',
+      ],
+      "field_list_links" => [
+        'paragraph__document',
+        'paragraph__external_link',
+        'paragraph__internal_link',
+      ],
+      "field_status_overrides" => [ // todo
+        'paragraph__status_overrides',
+      ],
+      "field_link" => [
+        'paragraph__document',
+        'paragraph__external_link',
+        'paragraph__internal_link',
+      ],
+      "field_operation_hours" => [
+        'paragraph__custom_hours_text',
+        'paragraph__daily_hours',
+      ],
+      "field_components" => [
+        'paragraph__3_column_w_image',
+        'paragraph__bos311',
+        'paragraph__bos_signup_emergency_alerts',
+        'paragraph__cabinet',
+        'paragraph__card',
+        'paragraph__commission_contact_info',
+        'paragraph__commission_members',
+        'paragraph__commission_summary',
+        'paragraph__drawers',
+        'paragraph__featured_topics',
+        'paragraph__fyi',
+        'paragraph__grid_of_cards',
+        'paragraph__grid_of_people',
+        'paragraph__grid_of_places',
+        'paragraph__grid_of_programs_initiatives',
+        'paragraph__grid_of_quotes',
+        'paragraph__grid_of_topics',
+        'paragraph__group_of_links_grid',
+        'paragraph__group_of_links_list',
+        'paragraph__group_of_links_mini_grid',
+        'paragraph__hero_image',
+        'paragraph__iframe',
+        'paragraph__lightbox_link',
+        'paragraph__list',
+        'paragraph__map',
+        'paragraph__news_and_announcements',
+        'paragraph__newsletter',
+        'paragraph__photo',
+        'paragraph__text',
+        'paragraph__transaction_grid',
+        'paragraph__upcoming_events',
+      ],
+      "field_sidebar_components" => [
+        'paragraph__sidebar_item',
+        'paragraph__sidebar_item_w_icon',
+      ],
     ],
-    "field_text_blocks" => [
-      'paragraph__text_one_column',
-      'paragraph__text_three_column',
-      'paragraph__text_two_column',
+    "taxonomy" => [
+      "field_311_request" => [
+        "d7_taxonomy_term:311_request",
+      ],
+      "field_awarding_authority" => [
+        "d7_taxonomy_term:contact",
+      ],
+      "field_bid_type" => [
+        "d7_taxonomy_term:bid_type",
+      ],
+      "field_contact" => [
+        "d7_taxonomy_term:contact",
+      ],
+      "field_contacts" => [
+        "d7_taxonomy_term:contact",
+      ],
+      "field_event_type" => [
+        "d7_taxonomy_term:event_type",
+      ],
+      "field_features" => [
+        "d7_taxonomy_term:features",
+      ],
+      "field_ma_general_law" => [
+        "d7_taxonomy_term:massachusetts_general_law",
+      ],
+      "field_mah_neighborhood" => [
+        "d7_taxonomy_term:neighborhoods",
+      ],
+      "field_multiple_neighborhoods" => [
+        "d7_taxonomy_term:neighborhoods",
+      ],
+      "field_news_tags" => [
+        "d7_taxonomy_term:news_tags",
+      ],
+      "field_newsletter" => [
+        "d7_taxonomy_term:newsletters",
+      ],
+      "field_offering" => [
+        "d7_taxonomy_term:bid_offering",
+      ],
+      "field_place_type" => [
+        "d7_taxonomy_term:place_type",
+      ],
+      "field_political_party" => [
+        "d7_taxonomy_term:political_party",
+      ],
+      "field_program_type" => [
+        "d7_taxonomy_term:program_type",
+      ],
+      "field_procurement" => [
+        "d7_taxonomy_term:procurement_type",
+      ],
+      "field_procurement_footer" => [
+        "d7_taxonomy_term:procurement_footer",
+      ],
+      "field_profile_type" => [
+        "d7_taxonomy_term:profile_type",
+      ],
+      "field_single_neighborhood" => [
+        "d7_taxonomy_term:neighborhoods",
+      ],
+      "field_topic_category" => [
+        "d7_taxonomy_term:topic_category",
+      ],
     ],
-    "field_grid_link" => [
-      'paragraph__document',
-      'paragraph__external_link',
-      'paragraph__internal_link',
+    "node" => [
+      "all" => [
+        "d7_node:advpoll",
+        "d7_node:article",
+        "d7_node:change",
+        "d7_node:department_profile",
+        "d7_node:emergency_alert",
+        "d7_node:event",
+        "d7_node:topic_page",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:listing_page",
+        "d7_node:metrolist_affordable_housing",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:post",
+        "d7_node:procurement_advertisement",
+        "d7_node:program_initiative_profile",
+        "d7_node:public_notice",
+        "d7_node:script_page",
+        "d7_node:site_alert",
+        "d7_node:status_item",
+        "d7_node:tabbed_content",
+        "d7_node:transaction",
+      ],
+      "field_awarded_by" => [
+        "d7_node:person_profile",
+      ],
+      "field_department_profile" => [
+        "d7_node:department_profile",
+      ],
+      "field_excluded_nodes" => [
+        "d7_node:article",
+        "d7_node:change",
+        "d7_node:department_profile",
+        "d7_node:event",
+        "d7_node:topic_page",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:listing_page",
+        "d7_node:metrolist_affordable_housing",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:post",
+        "d7_node:procurement_advertisement",
+        "d7_node:program_initiative_profile",
+        "d7_node:public_notice",
+      ],
+      "field_featured_item" => [
+        "d7_node:post",
+      ],
+      "field_featured_post" => [
+        "d7_node:post",
+      ],
+      "field_people" => [
+        "d7_node:person_profile",
+      ],
+      "field_person" => [
+        "d7_node:person_profile",
+      ],
+      "field_place" => [
+        "d7_node:place_profile",
+      ],
+      "field_program_initiative" => [
+        "d7_node:program_initiative_profile",
+      ],
+      "field_related_content" => [
+        "d7_node:article",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:script_page",
+        "d7_node:tabbed_content",
+      ],
+      "field_related_departments" => [
+        "d7_node:department_profile",
+      ],
+      "field_related_events_notices" => [
+        "d7_node:event",
+        "d7_node:public_notices",
+      ],
+      "field_related_guides" => [
+        "d7_node:topic_page",
+      ],
+      "field_related_posts" => [
+        "d7_node:post",
+      ],
+      "field_topics" => [
+        "d7_node:topic_page",
+      ],
     ],
-    "field_grid_of_quotes" => [
-      'paragraph__quote',
-    ],
-    "field_how_to_steps" => [
-      'paragraph__how_to_contact_step',
-      'paragraph__how_to_text_step',
-    ],
-    "field_social_media_link" => [
-      'paragraph__social_networking',
-    ],
-    "field_tabbed_content" => [
-      'paragraph__tabbed_content_tab', //todo:
-    ],
-    "field_map_default_coordinates" => [
-      'paragraph__message_for_the_day',
-    ],
-    "field_messages" => [
-      'paragraph__message_for_the_day',
-    ],
-    "field_embed_list" => [
-      'paragraph__seamless_doc',
-    ],
-    "field_drawer" => [
-      'paragraph__discussion_topic',
-      'paragraph__drawer',
-      'paragraph__card',
-    ],
-    "field_bid" => [
-      'paragraph__bid',
-    ],
-    "field_header_component" => [
-      'paragraph__header_text',
-    ],
-    "field_how_to_tabs" => [
-      'paragraph__how_to_tab',
-    ],
-    "field_links" => [
-      'paragraph__document',
-      'paragraph__external_link',
-      'paragraph__internal_link',
-    ],
-    "field_status_overrides" => [ // todo
-      'paragraph__status_overrides',
-    ],
-    "field_link" => [
-      'paragraph__document',
-      'paragraph__external_link',
-      'paragraph__internal_link',
-    ],
-    "field_operation_hours" => [
-      'paragraph__custom_hours_text',
-      'paragraph__daily_hours',
-    ],
-    "field_components" => [
-      'paragraph__3_column_w_image',
-      'paragraph__bos311',
-      'paragraph__bos_signup_emergency_alerts',
-      'paragraph__cabinet',
-      'paragraph__card',
-      'paragraph__commission_contact_info',
-      'paragraph__commission_members',
-      'paragraph__commission_summary',
-      'paragraph__drawers',
-      'paragraph__featured_topics',
-      'paragraph__fyi',
-      'paragraph__grid_of_cards',
-      'paragraph__grid_of_people',
-      'paragraph__grid_of_places',
-      'paragraph__grid_of_programs_initiatives',
-      'paragraph__grid_of_quotes',
-      'paragraph__grid_of_topics',
-      'paragraph__group_of_links_grid',
-      'paragraph__group_of_links_list',
-      'paragraph__group_of_links_mini_grid',
-      'paragraph__hero_image',
-      'paragraph__iframe',
-      'paragraph__lightbox_link',
-      'paragraph__list',
-      'paragraph__map',
-      'paragraph__news_and_announcements',
-      'paragraph__newsletter',
-      'paragraph__photo',
-      'paragraph__text',
-      'paragraph__transaction_grid',
-      'paragraph__upcoming_events',
-    ],
-    "field_sidebar_components" => [
-      'paragraph__sidebar_item',
-      'paragraph__sidebar_item_w_icon',
+    "field_collection" => [
+      "field_columns" => [
+        "d7_field_collection_columns",
+      ],
+      "field_grid_links" => [
+        "d7_field_collection_grid_links",
+      ],
+      "field_transactions" => [
+        "d7_field_collection_transactions",
+      ],
     ],
   ];
 
-  // If an unknown type is reqested, return FALSE.
-  if (!isset($para_lists[$fieldName])) {
+  // If an undefined type is reqested, return FALSE.
+  // Note: this is not necessarily an error, just a fact that the entity type
+  // field has no dependencies defined in this function.
+  if (!isset($entity_field_deps[$entityType][$fieldName])) {
     return FALSE;
   }
 
+  return $entity_field_deps[$entityType][$fieldName];
+
+}
+
+/**
+ * Defines an array for field_collection->paragraph migrations
+ *
+ * An array with elements for each field collection parent migration id,
+ * and array of fields mapping info for hook_prepare_row().
+ */
+function _field_collection_definition() {
   return [
-    "target_id" => [
-      [
-        'plugin' => 'migration_lookup',
-        'migration' => $para_lists[$fieldName],
-        'source' => 'value',
-      ],
-      [
-        'plugin' => 'extract',
-        'index' => [0],
-      ],
-    ],
-    "target_revision_id" => [
-      [
-        'plugin' => 'migration_lookup',
-        'migration' => $para_lists[$fieldName],
-        'source' => 'value',
-      ],
-      [
-        'plugin' => 'extract',
-        'index' => [1],
-      ],
+    "paragraph__3_column_w_image" => [
+      "field_columns"
     ],
   ];
-
 }
