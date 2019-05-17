@@ -86,6 +86,7 @@ function _get_unused_migrations_byId() {
     'd7_custom_block_translation',
     'd7_dblog_settings',
 //    'd7_file', /* Replaced with custom ManageFiles migrate_plus config */
+    'd7_file_private',
     'd7_filter_format',
     'd7_field',
     'd7_field_collection_type',
@@ -296,15 +297,15 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
             switch($entityType) {
               case "node":
               case "paragraph":
-                $dependencies["required"] += $process["process"]["target_id"][0]["migration"];
+                $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
                 break;
 
               case "taxonomy":
-                $dependencies["required"] += $process["process"]["target_id"]["migration"];
+                $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
                 break;
 
               case "field_collection":
-                $dependencies["required"] += [$process["process"]["target_revision_id"][0]["migration"]];
+                $dependencies["required"] += [$process["process"]["target_revision_id"][1]["migration"]];
                 break;
             }
           }
@@ -350,14 +351,15 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
 
   }
 
-  // Replace the core Drupal source plugin with our customized plugin and the
-  // core Drupal process plugin (file_copy) with customized plugin.
+  // For file migrations only, replace the core Drupal source plugin with our
+  // customized plugin and also the core Drupal process plugin (file_copy) with
+  // our customized plugin.
   if ($entityType == 'file') {
     $file_ops = \Drupal::state()->get("bos_migration.fileOps", "copy");
     echo "Migration uses file-" . $file_ops . "\n";
     $file_copy = $file_ops == "copy" ? "true" : "false";
     $file_move = $file_ops == "move" ? "true" : "false";
-    foreach (["d7_file", "d7_file_private"] as $type) {
+    foreach (["d7_file"] as $type) {
       $migrations[$type]['migration_group'] = "bos_media";
       $migrations[$type]['source'] = [
         'plugin' => 'managed_files',
@@ -377,7 +379,15 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
       ];
     }
   }
-
+  // Break cyclical dependency.
+  if (!empty($migrations['d7_taxonomy:contact']['migration_dependencies']['required'])) {
+    $migrations['d7_taxonomy:contact']['migration_dependencies']['optional'] = $migrations['d7_taxonomy:contact']['migration_dependencies']['required'];
+    $migrations['d7_taxonomy:contact']['migration_dependencies']['required'] = [];
+  }
+  if (!empty($migrations['d7_node:department_profile']['migration_dependencies']['required'])) {
+    $migrations['d7_node:department_profile']['migration_dependencies']['optional'] = $migrations['d7_node:department_profile']['migration_dependencies']['required'];
+    $migrations['d7_node:department_profile']['migration_dependencies']['required'] = [];
+  }
 }
 
 /**
@@ -412,6 +422,11 @@ function _get_process_definition(string $entityType, string $fieldName) {
         "process" => [
           "target_id" => [
             [
+              "plugin" => "skip_on_empty",
+              "method" => "process",
+              'source' => "value",
+            ],
+            [
               'plugin' => 'migration_lookup',
               'migration' => $entity_field_deps,
               'source' => 'value',
@@ -422,6 +437,11 @@ function _get_process_definition(string $entityType, string $fieldName) {
             ],
           ],
           "target_revision_id" => [
+            [
+              "plugin" => "skip_on_empty",
+              "method" => "process",
+              'source' => "value",
+            ],
             [
               'plugin' => 'migration_lookup',
               'migration' => $entity_field_deps,
@@ -444,9 +464,16 @@ function _get_process_definition(string $entityType, string $fieldName) {
         "source" => $fieldName,
         "process" => [
           "target_id" => [
-            "plugin" => "migration_lookup",
-            "migration" => $entity_field_deps,
-            "source" => "target_id",
+            [
+              "plugin" => "skip_on_empty",
+              "method" => "process",
+              'source' => "value",
+            ],
+            [
+              "plugin" => "migration_lookup",
+              "migration" => $entity_field_deps,
+              "source" => "target_id",
+            ],
           ],
         ],
       ];
@@ -459,6 +486,11 @@ function _get_process_definition(string $entityType, string $fieldName) {
         "process" => [
           "target_id" => [
             [
+              "plugin" => "skip_on_empty",
+              "method" => "process",
+              'source' => "value",
+            ],
+            [
               "plugin" => "migration_lookup",
               "migration" => $entity_field_deps[0],
               'source' => 'value',
@@ -469,6 +501,11 @@ function _get_process_definition(string $entityType, string $fieldName) {
             ],
           ],
           "target_revision_id" => [
+            [
+              "plugin" => "skip_on_empty",
+              "method" => "process",
+              'source' => "value",
+            ],
             [
               "plugin" => "migration_lookup",
               "migration" => $entity_field_deps[0],
