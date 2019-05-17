@@ -9,6 +9,7 @@ use Drupal\Core\Database\Database;
 use Drupal\migrate\Row;
 use Drupal\migrate\Plugin\MigrateSourceInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
+
 /**
  * Implements hook_migration_plugins_alter().
  */
@@ -21,7 +22,7 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
   // Alter node migrations created by core (and possibly contributed) definers.
   _node__department_profile($migrations);
   _taxonomy_contact($migrations);
-  foreach (['field_collection', 'paragraph', 'taxonomy', 'node'] as $entityType) {
+  foreach (['field_collection', 'paragraph', 'taxonomy', 'node', 'file'] as $entityType) {
     _entity_migration_alterations($migrations, $entityType);
   }
 
@@ -34,27 +35,6 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
   // (This is a big entry so can be removed on release).
   \Drupal::logger('migrate')
     ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, TRUE)]);
-}
-
-/**
- * Implements hook_migrate_prepare_row().
- *
- * @see https://www.mtech-llc.com/blog/ada-hernandez/migration-field-collection-d7-paragraphs-node-d8
- */
-function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
-  $fieldCollections = _field_collection_definition();
-  if (NULL != $migration->id() && in_array($migration->id(), $fieldCollections)) {
-    foreach ($fieldCollections[$migration['id']] as $key => $fieldName) {
-      $values = $row->getSourceProperty($fieldName);
-      $value_new = [];
-      if ($values) {
-        foreach ($values as $value) {
-          $value_new[] = ['item_id' => $value['value']];
-        }
-        $row->setSourceProperty($fieldName . '_new', $value_new);
-      }
-    }
-  }
 }
 
 /*
@@ -92,22 +72,42 @@ function _migration_housekeeping(array &$migrations) {
  */
 function _get_unused_migrations_byId() {
   return [
+    'd7_authmap',
     'd7_blocked_ips',
     'd7_color',
+    'd7_comment',
+    'd7_comment_type',
+    'd7_comment_field',
+    'd7_comment_field_instance',
+    'd7_comment_entity_form_display',
+    'd7_comment_entity_form_display_subject',
+    'd7_comment_entity_display',
+    'd7_custom_block',
+    'd7_custom_block_translation',
     'd7_dblog_settings',
+//    'd7_file', /* Replaced with custom ManageFiles migrate_plus config */
     'd7_filter_format',
-    'd7_field_instance',
-    'd7_view_modes',
-    'd7_field_formatter_settings',
     'd7_field',
-    'd7_language_content_settings',
+    'd7_field_collection_type',
+    'd7_field_formatter_settings',
+    'd7_field_group',
+    'd7_field_instance',
+    'd7_field_instance_widget_settings',
     'd7_filter_settings',
     'd7_global_theme_settings',
     'd7_image_settings',
     'd7_image_styles',
+    'd7_language_content_settings',
     'd7_language_negotiation_settings',
     'd7_language_types',
+    /* 'd7_node_revision', */
     'd7_node_settings',
+    'd7_node_title_label',
+    'd7_node_translation',
+    'd7_node_type',
+    'd7_paragraphs_type',
+    'd7_pathauto_patterns',
+    'd7_pathauto_settings',
     'd7_realname_settings',
     'd7_syslog_settings',
     'd7_system_authorize',
@@ -116,31 +116,14 @@ function _get_unused_migrations_byId() {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
-    'd7_theme_settings',
-    'd7_user_flood',
-    'd7_user_mail',
-    'd7_vote',
-    'd7_custom_block',
-    'd7_custom_block_translation',
-    'd7_node_type',
-    'd7_comment_type',
-    'd7_comment_field',
-    'd7_comment_field_instance',
-    'd7_comment_entity_form_display',
-    'd7_comment_entity_form_display_subject',
-    'd7_comment_entity_display',
     'd7_taxonomy_vocabulary',
     'd7_taxonomy_term:maps_esri_feed',
     'd7_taxonomy_term_entity_translation:maps_esri_feed',
-    'd7_field_collection_type',
-    'd7_paragraphs_type',
-    'd7_node_translation',
-    'd7_comment',
-    'd7_authmap',
-    'd7_field_instance_widget_settings',
-    /* 'd7_node_revision', */
-    'd7_node_title_label',
-    'd7_file', /* Replaced with custom ManageFiles migrate_plus config */
+    'd7_theme_settings',
+    'd7_user_flood',
+    'd7_user_mail',
+    'd7_view_modes',
+    'd7_vote',
   ];
 }
 
@@ -277,7 +260,7 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
   }
 
   // If nothing found, then exit here.
-  if (empty($result)) {
+  if ($entityType != "file" &&  empty($result)) {
      return;
   }
 
@@ -321,7 +304,7 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
                 break;
 
               case "field_collection":
-                $dependencies["required"] += $process[1]["migration"];
+                $dependencies["required"] += [$process["process"]["target_revision_id"][0]["migration"]];
                 break;
             }
           }
@@ -330,11 +313,6 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
             echo "Notice: Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey . "\n";
           }
         }
-      }
-
-      // Update the langcode to fallback somewhere sensible.
-      if (isset($migration["process"]["langcode"]) && is_array($migration["process"]["langcode"])) {
-        $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
       }
 
       // Cull any unwanted field/field operations.
@@ -354,8 +332,51 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
         $migration["migration_dependencies"] = array_merge($migration["migration_dependencies"], $dependencies);
       }
     }
+
+    // Regardless of entity type, Update langcode to set itself sensibly.
+    if (isset($migration["process"]["langcode"])) {
+      if (is_array($migration["process"]["langcode"]) && $migration["process"]["langcode"]["plugin"] == "default_value") {
+        $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
+      }
+      elseif (!isset($migration["process"]["langcode"]["plugin"]) || $migration["process"]["langcode"]["plugin"] != "default_value") {
+        $migration["process"]["langcode"] = [
+          "plugin" => "default_value",
+          "source" => "language",
+          "default_value" => "und",
+          "fallback_to_site_default" => TRUE,
+        ];
+      }
+    }
+
   }
 
+  // Replace the core Drupal source plugin with our customized plugin and the
+  // core Drupal process plugin (file_copy) with customized plugin.
+  if ($entityType == 'file') {
+    $file_ops = \Drupal::state()->get("bos_migration.fileOps", "copy");
+    echo "Migration uses file-" . $file_ops . "\n";
+    $file_copy = $file_ops == "copy" ? "true" : "false";
+    $file_move = $file_ops == "move" ? "true" : "false";
+    foreach (["d7_file", "d7_file_private"] as $type) {
+      $migrations[$type]['migration_group'] = "bos_media";
+      $migrations[$type]['source'] = [
+        'plugin' => 'managed_files',
+        'key' => 'migrate',
+      ];
+      $migrations[$type]['process']['uri']['plugin'] = "file_copy_ext";
+      $migrations[$type]['process']['uri']['copy'] = $file_copy;
+      $migrations[$type]['process']['uri']['move'] = $file_move;
+      $migrations[$type]['process']['rh_actions'] = 'rh_actions';
+      $migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
+      $migrations[$type]['process']['rh_redirect_response'] = 'rh_redirect_response';
+      $migrations[$type]['migration_dependencies']['required'] = [
+        'd7_user',
+        'd7_user_role',
+        'd7_url_alias',
+        'd7_path_redirect',
+      ];
+    }
+  }
 
 }
 
@@ -436,17 +457,27 @@ function _get_process_definition(string $entityType, string $fieldName) {
         "plugin" => "sub_process",
         "source" => $fieldName,
         "process" => [
-          "target_id" => "value",
+          "target_id" => [
+            [
+              "plugin" => "migration_lookup",
+              "migration" => $entity_field_deps[0],
+              'source' => 'value',
+            ],
+            [
+              'plugin' => 'extract',
+              'index' => [0],
+            ],
+          ],
           "target_revision_id" => [
             [
               "plugin" => "migration_lookup",
-              "migration" => $entity_field_deps,
-              "source" => "value",
+              "migration" => $entity_field_deps[0],
+              'source' => 'value',
             ],
             [
-              "plugin" => "extract",
-              "index" => [ 1 ],
-            ]
+              'plugin' => 'extract',
+              'index' => [1],
+            ],
           ],
         ],
       ];
@@ -815,18 +846,4 @@ function _get_field_dependencies(string $entityType, string $fieldName) {
 
   return $entity_field_deps[$entityType][$fieldName];
 
-}
-
-/**
- * Defines an array for field_collection->paragraph migrations
- *
- * An array with elements for each field collection parent migration id,
- * and array of fields mapping info for hook_prepare_row().
- */
-function _field_collection_definition() {
-  return [
-    "paragraph__3_column_w_image" => [
-      "field_columns"
-    ],
-  ];
 }
