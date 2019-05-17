@@ -80,6 +80,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       elseif ($this->resolveFileType($src) !== 'image') {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
+        // TODO: should we allow pdfs here?
         \Drupal::logger('Migrate')->notice('1:Unexpected file type.');
         continue;
       }
@@ -111,6 +112,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       elseif ($this->resolveFileType($href) !== 'file') {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
+        // TODO: Should we allow a png here?
         \Drupal::logger('Migrate')->notice('3:Unexpected file type.');
         continue;
       }
@@ -233,7 +235,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   Yes or no.
    */
   protected function isExternalFile($src) {
-    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE && strpos($src, self::$editUrl === FALSE)) {
+    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE && strpos($src, self::$editUrl) === FALSE) {
       return TRUE;
     }
     return FALSE;
@@ -313,7 +315,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Not a searched absolute uri.
       return FALSE;
     }
-
+    if (substr($matches[3],1,1) != "/") {
+      $matches[3] = "/" . $matches[3];
+    }
     return $matches[3];
   }
 
