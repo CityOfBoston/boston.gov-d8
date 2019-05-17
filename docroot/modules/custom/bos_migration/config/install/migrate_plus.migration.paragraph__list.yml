@@ -29,7 +29,11 @@ process:
       entity_id: entity_id
       revision_id: revision_id
       deleted: deleted
-      langcode: language
+      langcode:
+        plugin: default_value
+        source: language
+        default_value: und
+        fallback_to_site_default: true
       delta: delta
 destination:
   plugin: 'entity_reference_revisions:paragraph'
