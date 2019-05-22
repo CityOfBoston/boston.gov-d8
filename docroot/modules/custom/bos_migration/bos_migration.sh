@@ -1,13 +1,17 @@
 #!/bin/bash
 # Lowest level safe-dependencies.
-drush mim d7_user_role,d7_user                      # OK
-drush mim d7_url_alias,d7_path_redirect             # OK
-drush mim d7_file                                   # OK
+drush mim --tag="bos:initial:1" --force     #OK
+
 # First pass.
-drush mim --group=d7_taxonomy_term --force          # OK - 30sec
-drush mim --group=bos_paragraphs --force
-drush mim --group=d7_nodes --force
+drush mim --tag="bos:taxonomy:1" --force
+drush mim --tag="bos:paragraph:1" --force
 drush mim --group=bos_field_collection --force
+drush mim --tag="bos:taxonomy:2" --force
+drush mim --tag="bos:paragraph:2" --force # deps:tax/fc/para1
+drush mim --tag="bos:paragraph:3" --force # deps:para2
+drush mim --tag="bos:paragraph:4" --force # Components/sidebar-components
+drush mim --tag="bos:node:1" --force
+drush mim --tag="bos:paragraph:5" --force # deps:nodes
 # Second pass.
 drush mim --group=d7_taxonomy_term --update
 drush mim --group=bos_paragraphs --update
