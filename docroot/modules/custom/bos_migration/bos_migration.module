@@ -449,7 +449,7 @@ function _get_process_definition(string $entityType, string $fieldName) {
               'migration' => $entity_field_deps,
             ],
             [
-              'plugin' => 'extract',
+              'plugin' => 'extract_ext',
               'index' => [$lookupkeys[0]],
             ],
           ],
@@ -464,7 +464,7 @@ function _get_process_definition(string $entityType, string $fieldName) {
               'migration' => $entity_field_deps,
             ],
             [
-              'plugin' => 'extract',
+              'plugin' => 'extract_ext',
               'index' => [$lookupkeys[1]],
             ],
           ],
@@ -669,6 +669,7 @@ function _get_field_dependencies(string $entityType, string $fieldName) {
         'paragraph__document',
         'paragraph__external_link',
         'paragraph__internal_link',
+        'paragraph__lightbox_link',
       ],
       "field_grid_of_quotes" => [
         'paragraph__quote',
@@ -687,15 +688,14 @@ function _get_field_dependencies(string $entityType, string $fieldName) {
         'paragraph__document',
         'paragraph__external_link',
         'paragraph__internal_link',
+        'paragraph__lightbox_link',
       ],
       "field_links" => [
 //        'paragraph__grid_links',
         'd7_field_collection_grid_links',
       ],
       "field_list_links" => [
-        'paragraph__document',
-        'paragraph__external_link',
-        'paragraph__internal_link',
+        'paragraph__gol_list_links',
       ],
       "field_map_default_coordinates" => [
         'paragraph__message_for_the_day',
@@ -916,10 +916,10 @@ function _get_field_dependencies(string $entityType, string $fieldName) {
  */
 function _get_field_lookups(string $entityType, string $entityName) {
   switch ($entityType . ":" . $entityName) {
-    case "paragraph:paragraph__document":
+//    case "paragraph:paragraph__document":
 //    case "field_collection:d7_field_collection_grid_links":
-      return ["id", "revision_id"];
-      break;
+//      return ["id", "revision_id"];
+//      break;
 
     default:
       return [0, 1];
@@ -946,11 +946,11 @@ function _get_migration_tags(string $migration = "") {
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
     "paragraph__bos_signup_emergency_alerts" => ["bos:paragraph:2"],
-    "paragraph__cabinet" => ["bos:paragraph:4"],
-    "paragraph__card" => ["bos:paragraph:1"],
+    "paragraph__cabinet" => ["bos:paragraph:5"],
+    "paragraph__card" => ["bos:paragraph:2"],
     "paragraph__city_score_dashboard" => ["bos:paragraph:1"],
     "paragraph__commission_contact_info" => ["bos:paragraph:1"],
-    "paragraph__commission_members" => ["bos:paragraph:3"],
+    "paragraph__commission_members" => ["bos:paragraph:1"],
     "paragraph__commission_summary" => ["bos:paragraph:1"],
     "paragraph__custom_hours_text" => ["bos:paragraph:1"],
     "paragraph__daily_hours" => ["bos:paragraph:1"],
@@ -976,8 +976,8 @@ function _get_migration_tags(string $migration = "") {
     "paragraph__header_text" => ["bos:paragraph:2"],
     "paragraph__hero_image" => ["bos:paragraph:3"],
     "paragraph__how_to_contact_step" => ["bos:paragraph:2"],
-    "paragraph__how_to_tab" => ["bos:paragraph:2"],
-    "paragraph__how_to_text_step" => ["bos:paragraph:3"],
+    "paragraph__how_to_tab" => ["bos:paragraph:3"],
+    "paragraph__how_to_text_step" => ["bos:paragraph:2"],
     "paragraph__iframe" => ["bos:paragraph:1"],
     "paragraph__internal_link" => ["bos:paragraph:1"],
     "paragraph__lightbox_link" => ["bos:paragraph:2"],
@@ -991,7 +991,7 @@ function _get_migration_tags(string $migration = "") {
     "paragraph__seamless_doc" => ["bos:paragraph:1"],
     "paragraph__sidebar_item" => ["bos:paragraph:1"],
     "paragraph__sidebar_item_w_icon" => ["bos:paragraph:1"],
-    "paragraph__social_media_links" => ["bos:paragraph:1"],
+    "paragraph__social_media_links" => ["bos:paragraph:2"],
     "paragraph__social_networking" => ["bos:paragraph:1"],
     "paragraph__text" => ["bos:paragraph:3"],
     "paragraph__text_one_column" => ["bos:paragraph:1"],
@@ -1032,7 +1032,7 @@ function _get_migration_tags(string $migration = "") {
     "d7_taxonomy_term:features" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:icons" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:topic_category" => ["bos:taxonomy:1"],
-    "d7_taxonomy_term:311_request" => ["bos:taxonomy:2"], /* dep external-links */
+    "d7_taxonomy_term:311_request" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:holidays" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:public_notice_type" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:newsletters" => ["bos:taxonomy:1"],
