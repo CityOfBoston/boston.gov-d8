@@ -30,19 +30,13 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
   // entity types in migration objects.
   _rich_text_field_alter($migrations);
 
-  // Tag up the migrations
-  $tags = _get_migration_tags();
-  foreach ($migrations as $id => &$migration) {
-    if (isset($tags[$id])) {
-      $migration["migration_tags"] =  array_merge($migration["migration_tags"],$tags[$id]);
-    }
-  }
-
   // Log the final array that is output for debug purposes.
   // (This is a big entry so can be removed on release).
   \Drupal::logger('migrate')
     ->info("After alter:<br><pre>@output</pre>", ["@output" => print_r($migrations, TRUE)]);
 }
+
+
 
 /*
  * Helper functions.
@@ -70,6 +64,14 @@ function _migration_housekeeping(array &$migrations) {
 
     return TRUE;
   });
+
+  // Tag up the remaining migrations.
+  $custom_tags = _get_migration_tags();
+  foreach ($migrations as $id => &$migration) {
+    if (isset($custom_tags[$id])) {
+      $migration["migration_tags"] =  array_merge($migration["migration_tags"],$custom_tags[$id]);
+    }
+  }
 }
 
 /**
@@ -245,6 +247,8 @@ function _taxonomy_contact(array &$migrations) {
  *   The entity type of fields in $migration to scan & update.
  */
 function _entity_migration_alterations(&$migrations, string $entityType) {
+  $logging = ["warning" => [], "notice" => [],];
+
   switch ($entityType) {
     case "paragraph":
       $result = Database::getConnection('default', 'migrate')
@@ -275,8 +279,8 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
   }
 
   // If nothing found, then exit here.
-  if ($entityType != "file" &&  empty($result)) {
-     return;
+  if ($entityType != "file" && empty($result)) {
+    return;
   }
 
   // Re-organize the fields we have found in D7 for this $entityType.
@@ -295,7 +299,10 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
 
     // Only need to process para's, nodes and taxonomies because they are the
     // only entities which contain entity fields which need to be overridden.
-    if (in_array($migration["id"], ["d7_node", "d7_taxonomy_term"]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
+    if (in_array($migration["id"], [
+        "d7_node",
+        "d7_taxonomy_term"
+      ]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
 
       // Cycle through the fields we have made manual process overrides for.
       // If this $migration contains any of the fields, then update the process
@@ -308,7 +315,7 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
             $migration["process"][$fieldname] = $process;
             // Record the process's migration field values so we can add as a
             // dependency for this $migration later.
-            switch($entityType) {
+            switch ($entityType) {
               case "node":
               case "paragraph":
                 $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
@@ -325,19 +332,19 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
           }
           else {
             // Useful if using drush ...
-            echo "Notice: Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey . "\n";
+            $logging["warning"][] = "Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey;
           }
         }
       }
 
       // Cull any unwanted field/field operations.
       if (isset($migration['process']['field_type_of_content'])) {
-        echo "WARNING: " . $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.\n";
+        $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
         unset($migration['process']['field_type_of_content']);
       }
       foreach ($migration['process'] as $fieldname => $map) {
         if ($map == "comment") {
-          echo "WARNING: " . $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.\n";
+          $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
           unset($migration['process'][$fieldname]);
         }
       }
@@ -365,12 +372,36 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
 
   }
 
+  // Need to update the process for a date_recur type.
+  $migrations["d7_node_revision:public_notice"]["process"]["field_public_notice_date"]["process"]["value2"] = [
+    "plugin" => "format_date",
+    "from_format" => "Y-m-d H:i:s",
+    "to_format" => "Y-m-d\TH:i:s",
+    "source" => "value2",
+  ];
+  $migrations["d7_node_entity_translation:public_notice"]["process"]["field_public_notice_date"]["process"]["value2"] = [
+    "plugin" => "format_date",
+    "from_format" => "Y-m-d H:i:s",
+    "to_format" => "Y-m-d\TH:i:s",
+    "source" => "value2",
+  ];
+  $migrations["d7_node:public_notice"]["process"]["field_public_notice_date"]["process"]["value2"] = [
+    "plugin" => "format_date",
+    "from_format" => "Y-m-d H:i:s",
+    "to_format" => "Y-m-d\TH:i:s",
+    "source" => "value2",
+  ];
+
   // For file migrations only, replace the core Drupal source plugin with our
   // customized plugin and also the core Drupal process plugin (file_copy) with
   // our customized plugin.
   if ($entityType == 'file') {
     $file_ops = \Drupal::state()->get("bos_migration.fileOps", "copy");
-    echo "Migration uses file-" . $file_ops . "\n";
+    $msg = "Migration will " . $file_ops . " file entities and embedded files.";
+    if ($file_ops == "none") {
+      $msg = "Migration does not move or copy file entities and embedded files.";
+    }
+    \Drupal::logger("migration")->info($msg);
     $file_copy = $file_ops == "copy" ? "true" : "false";
     $file_move = $file_ops == "move" ? "true" : "false";
     foreach (["d7_file"] as $type) {
@@ -402,6 +433,14 @@ function _entity_migration_alterations(&$migrations, string $entityType) {
     $migrations['d7_node:department_profile']['migration_dependencies']['optional'] = $migrations['d7_node:department_profile']['migration_dependencies']['required'];
     $migrations['d7_node:department_profile']['migration_dependencies']['required'] = [];
   }
+
+  // Finally, make log-report entry.
+  foreach (["notice", "warning"] as $logType) {
+    if (!empty($logging[$logType])) {
+      $msg = implode("<br> \n", $logging[$logType]);
+      Drupal::logger('Migrate')->{$logType}(trim($msg));
+    }
+  }
 }
 
 /**
@@ -431,8 +470,6 @@ function _get_process_definition(string $entityType, string $fieldName) {
       // entities.
     case "paragraph":
       // Grab the migration llokup keys for the fields being processed.
-      // TODO: what if the dependencies have different lookup values ??
-      $lookupkeys = _get_field_lookups($entityType, $entity_field_deps[0]);
 
       $process = [
         "plugin" => "sub_process",
@@ -449,8 +486,12 @@ function _get_process_definition(string $entityType, string $fieldName) {
               'migration' => $entity_field_deps,
             ],
             [
+              "plugin" => "skip_on_empty",
+              "method" => "process",
+            ],
+            [
               'plugin' => 'extract_ext',
-              'index' => [$lookupkeys[0]],
+              'index' => [0],
             ],
           ],
           "target_revision_id" => [
@@ -464,9 +505,14 @@ function _get_process_definition(string $entityType, string $fieldName) {
               'migration' => $entity_field_deps,
             ],
             [
-              'plugin' => 'extract_ext',
-              'index' => [$lookupkeys[1]],
+              "plugin" => "skip_on_empty",
+              "method" => "process",
             ],
+            [
+              'plugin' => 'extract_ext',
+              'index' => [1],
+            ],
+
           ],
         ]
       ];
@@ -496,7 +542,6 @@ function _get_process_definition(string $entityType, string $fieldName) {
       break;
 
     case "field_collection":
-      $lookupkeys = _get_field_lookups($entityType, $entity_field_deps[0]);
 
       $process = [
         "plugin" => "sub_process",
@@ -514,7 +559,7 @@ function _get_process_definition(string $entityType, string $fieldName) {
             ],
             [
               'plugin' => 'extract',
-              'index' => [$lookupkeys[0]],
+              'index' => [0],
             ],
           ],
           "target_revision_id" => [
@@ -529,7 +574,7 @@ function _get_process_definition(string $entityType, string $fieldName) {
             ],
             [
               'plugin' => 'extract',
-              'index' => [$lookupkeys[1]],
+              'index' => [1],
             ],
           ],
         ],
@@ -691,7 +736,7 @@ function _get_field_dependencies(string $entityType, string $fieldName) {
         'paragraph__lightbox_link',
       ],
       "field_links" => [
-//        'paragraph__grid_links',
+        'paragraph__grid_links',
         'd7_field_collection_grid_links',
       ],
       "field_list_links" => [
@@ -906,28 +951,6 @@ function _get_field_dependencies(string $entityType, string $fieldName) {
 }
 
 /**
- * @param string $entityType
- *   The entity type to be searched.
- * @param string $entityName
- *   The migration name of the entity to be returned.
- *
- * @return bool|mixed
- *   An array of the names of the value element returned by migration_lookup.
- */
-function _get_field_lookups(string $entityType, string $entityName) {
-  switch ($entityType . ":" . $entityName) {
-//    case "paragraph:paragraph__document":
-//    case "field_collection:d7_field_collection_grid_links":
-//      return ["id", "revision_id"];
-//      break;
-
-    default:
-      return [0, 1];
-      break;
-  }
-}
-
-/**
  * @param string $migration
  *   NULL, empty string or the name/id of a migration.
  *
@@ -946,7 +969,7 @@ function _get_migration_tags(string $migration = "") {
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
     "paragraph__bos_signup_emergency_alerts" => ["bos:paragraph:2"],
-    "paragraph__cabinet" => ["bos:paragraph:5"],
+    "paragraph__cabinet" => ["bos:paragraph:4"],
     "paragraph__card" => ["bos:paragraph:2"],
     "paragraph__city_score_dashboard" => ["bos:paragraph:1"],
     "paragraph__commission_contact_info" => ["bos:paragraph:1"],
@@ -1001,25 +1024,25 @@ function _get_migration_tags(string $migration = "") {
     "paragraph__upcoming_events" => ["bos:paragraph:2"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
-    "d7_node:article" => ["bos:node:1"],
+    "d7_node:article" => ["bos:node:3"],
     "d7_node:change" => ["bos:node:1"],
     "d7_node:department_profile" => ["bos:node:1"],
     "d7_node:emergency_alert" => ["bos:node:1"],
-    "d7_node:event" => ["bos:node:1"],
-    "d7_node:topic_page" => ["bos:node:1"],
-    "d7_node:how_to" => ["bos:node:1"],
-    "d7_node:landing_page" => ["bos:node:1"],
+    "d7_node:event" => ["bos:node:2"],
+    "d7_node:topic_page" => ["bos:node:2"],
+    "d7_node:how_to" => ["bos:node:2"],
+    "d7_node:landing_page" => ["bos:node:2"],
     "d7_node:listing_page" => ["bos:node:1"],
     "d7_node:person_profile" => ["bos:node:1"],
-    "d7_node:place_profile" => ["bos:node:1"],
-    "d7_node:post" => ["bos:node:1"],
+    "d7_node:place_profile" => ["bos:node:2"],
+    "d7_node:post" => ["bos:node:2"],
     "d7_node:procurement_advertisement" => ["bos:node:1"],
-    "d7_node:program_initiative_profile" => ["bos:node:1"],
-    "d7_node:public_notice" => ["bos:node:1"],
+    "d7_node:program_initiative_profile" => ["bos:node:2"],
+    "d7_node:public_notice" => ["bos:node:2"],
     "d7_node:script_page" => ["bos:node:1"],
     "d7_node:site_alert" => ["bos:node:1"],
     "d7_node:status_item" => ["bos:node:1"],
-    "d7_node:tabbed_content" => ["bos:node:1"],
+    "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
     "d7_taxonomy_term:contact" => ["bos:taxonomy:2"],
     "d7_taxonomy_term:news_tags" => ["bos:taxonomy:1"],
