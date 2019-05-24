@@ -37,8 +37,7 @@ class ExtractExt extends Extract {
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     try {
-      $new_value = NULL;
-      parent::transform($value, $migrate_executable, $row, $destination_property);
+      return parent::transform($value, $migrate_executable, $row, $destination_property);
     }
     catch(MigrateException $e) {
       if ($e->getMessage() == "Array index missing, extraction failed.") {
