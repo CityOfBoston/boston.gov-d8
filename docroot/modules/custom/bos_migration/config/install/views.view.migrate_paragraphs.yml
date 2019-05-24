@@ -3,7 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.paragraph.field_column_description
     - field.storage.paragraph.field_component_title
+    - field.storage.paragraph.field_description
     - field.storage.paragraph.field_extra_info
     - field.storage.paragraph.field_short_description
     - field.storage.paragraph.field_short_title
@@ -11,6 +13,7 @@ dependencies:
     - system.menu.admin
   module:
     - paragraphs
+    - text
 id: migrate_paragraphs
 label: 'Migrate Paragraphs'
 module: views
@@ -169,6 +172,137 @@ display:
       row:
         type: fields
       fields:
+        id:
+          id: id
+          table: paragraphs_item_field_data
+          field: id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: pid
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: paragraph
+          entity_field: id
+          plugin_id: field
+        type:
+          id: type
+          table: paragraphs_item_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Paragraph type'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: paragraph
+          entity_field: type
+          plugin_id: field
         field_title:
           id: field_title
           table: paragraph__field_title
@@ -295,6 +429,69 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_component_title_1:
+          id: field_component_title_1
+          table: paragraph__field_component_title
+          field: field_component_title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Title
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         field_short_description:
           id: field_short_description
           table: paragraph__field_short_description
@@ -358,80 +555,15 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        type:
-          id: type
-          table: paragraphs_item_field_data
-          field: type
+        field_column_description:
+          id: field_column_description
+          table: paragraph__field_column_description
+          field: field_column_description
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Paragraph type'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: paragraph
-          entity_field: type
-          plugin_id: field
-        id:
-          id: id
-          table: paragraphs_item_field_data
-          field: id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: pid
-          exclude: false
+          label: ''
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -472,75 +604,8 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: number_integer
-          settings:
-            thousand_separator: ''
-            prefix_suffix: true
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          entity_type: paragraph
-          entity_field: id
-          plugin_id: field
-        field_component_title:
-          id: field_component_title
-          table: paragraph__field_component_title
-          field: field_component_title
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Title
-          exclude: false
-          alter:
-            alter_text: true
-            text: "{% if  field_title %}\r\n{{ field_title }}\r\n{% elseif  field_short_title %}\r\n{{ field_short_title }} \r\n{% elseif  field_component_title %}\r\n{{ field_component_title }} \r\n{% endif %}"
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
+          type: text_default
+          settings: {  }
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -559,8 +624,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: Description
-          exclude: false
+          label: ''
+          exclude: true
           alter:
             alter_text: true
             text: "{% if field_extra_info %}\r\n{{ field_extra_info }}\r\n{% elseif field_short_description %}\r\n{{ field_short_description }}\r\n{% endif %}"
@@ -615,18 +680,18 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        parent_type:
-          id: parent_type
-          table: paragraphs_item_field_data
-          field: parent_type
+        field_description:
+          id: field_description
+          table: paragraph__field_description
+          field: field_description
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Parent type'
+          label: Description
           exclude: false
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: "{% if  field_description %}\r\n{{ field_description }}\r\n{% elseif  field_short_description %}\r\n{{ field_short_description }} \r\n{% elseif  field_column_description %}\r\n{{ field_column_description }} \r\n{% elseif  field_extra_info %}\r\n{{ field_extra_info }} \r\n{% endif %}"
             make_link: false
             path: ''
             absolute: false
@@ -655,7 +720,69 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: text_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        parent_field_name_1:
+          id: parent_field_name_1
+          table: paragraphs_item_revision_field_data
+          field: parent_field_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Parent
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ parent_type }}({{ parent_id }}): {{ parent_field_name_1 }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: true
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: true
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -678,17 +805,17 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: paragraph
-          entity_field: parent_type
+          entity_field: parent_field_name
           plugin_id: field
-        parent_id:
-          id: parent_id
-          table: paragraphs_item_field_data
+        parent_id_1:
+          id: parent_id_1
+          table: paragraphs_item_revision_field_data
           field: parent_id
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Parent ID'
-          exclude: false
+          label: ''
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -720,7 +847,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -745,15 +872,15 @@ display:
           entity_type: paragraph
           entity_field: parent_id
           plugin_id: field
-        parent_field_name:
-          id: parent_field_name
-          table: paragraphs_item_field_data
-          field: parent_field_name
+        parent_type_1:
+          id: parent_type_1
+          table: paragraphs_item_revision_field_data
+          field: parent_type
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Parent field name'
-          exclude: false
+          label: ''
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -785,7 +912,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -808,7 +935,7 @@ display:
           separator: ', '
           field_api_classes: false
           entity_type: paragraph
-          entity_field: parent_field_name
+          entity_field: parent_type
           plugin_id: field
       filters:
         status:
@@ -931,7 +1058,9 @@ display:
         - url
         - url.query_args
       tags:
+        - 'config:field.storage.paragraph.field_column_description'
         - 'config:field.storage.paragraph.field_component_title'
+        - 'config:field.storage.paragraph.field_description'
         - 'config:field.storage.paragraph.field_extra_info'
         - 'config:field.storage.paragraph.field_short_description'
         - 'config:field.storage.paragraph.field_short_title'
@@ -961,7 +1090,9 @@ display:
         - url
         - url.query_args
       tags:
+        - 'config:field.storage.paragraph.field_column_description'
         - 'config:field.storage.paragraph.field_component_title'
+        - 'config:field.storage.paragraph.field_description'
         - 'config:field.storage.paragraph.field_extra_info'
         - 'config:field.storage.paragraph.field_short_description'
         - 'config:field.storage.paragraph.field_short_title'
