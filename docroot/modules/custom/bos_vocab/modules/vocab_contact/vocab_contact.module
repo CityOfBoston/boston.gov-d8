@@ -78,7 +78,7 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
             $langcode = ($this_node->language()->getId() ?: "und");
             // Find the contact and get the last part of it's alias.
             $contact_field = $this_node->getTranslation($langcode)->field_contact;
-            if (!empty($contact_field)) {
+            if (!empty($contact_field) && $contact_field->count() > 0) {
               $tid = $contact_field->first()->target_id;
               $term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
               $path_array = explode('/', $term_path);
