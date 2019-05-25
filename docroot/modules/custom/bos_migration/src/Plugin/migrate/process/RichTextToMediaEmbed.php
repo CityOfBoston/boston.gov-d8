@@ -19,6 +19,7 @@ use Drupal\media\MediaInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
+use \Exception;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -36,10 +37,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   protected static $relativeUrl = "sites/default/files";
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
 
+  protected $source = [];
+
   /**
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
+    $this->source = $row->getSource();
+
     if (empty($value['value'] || !is_string($value['value']))) {
       throw new MigrateException('RichTextToMediaEmbed process plugin only accepts rich text inputs.');
     }
@@ -81,7 +86,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         // TODO: should we allow pdfs here?
-        \Drupal::logger('Migrate')->notice('1:Unexpected file type.');
+        $parts = explode('/', $src);
+        $extension = $parts[count($parts) - 1];
+        \Drupal::logger('Migrate')->notice('Expected an image but got "' . $extension . '" in ');
         continue;
       }
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
@@ -113,7 +120,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         // TODO: Should we allow a png here?
-        \Drupal::logger('Migrate')->notice('3:Unexpected file type.');
+        \Drupal::logger('Migrate')->notice('Expected a file but got ' . $href);
         continue;
       }
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
@@ -443,6 +450,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.rtf',
         '.ppt',
         '.xlsm',
+//        '.jpg',    /* Added DU: Don't see the harm in adding an image here. */
       ],
     ];
     $parts = explode('/', $uri);
@@ -456,7 +464,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     // We don't want to process any thing that we can't identify.
-    \Drupal::logger('Migrate')->notice('6:Unexpected file type.');
+    throw new Exception('Unexpected file type (' . $parts[$index] . ').');
+    \Drupal::logger('Migrate')->notice();
     return NULL;
   }
 
