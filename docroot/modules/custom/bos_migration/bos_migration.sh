@@ -11,10 +11,11 @@ drush mim --group=bos_field_collection --force
 drush mim --tag="bos:taxonomy:2" --force
 drush mim --tag="bos:paragraph:2" --force # deps:tax/fc/para1
 drush mim --tag="bos:paragraph:3" --force # deps:para2
-#drush mim --tag="bos:paragraph:4" --force # Components/sidebar-components
+drush mim --tag="bos:paragraph:4" --force # Components/sidebar-components
 drush mim --tag="bos:node:1" --force
-drush mim --tag="bos:node:2" --force
 drush mim --tag="bos:paragraph:5" --force # deps:nodes
+drush mim --tag="bos:node:2" --force
+
 # Second pass.
 drush mim --group=d7_taxonomy_term --update
 drush mim --group=bos_paragraphs --update
