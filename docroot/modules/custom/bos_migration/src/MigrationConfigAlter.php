@@ -445,6 +445,8 @@ class MigrationConfigAlter {
       "field_sidebar_components" => [
         'paragraph__sidebar_item',
         'paragraph__sidebar_item_w_icon',
+        'paragraph__newsletter',
+        'paragraph__social_media_links',
       ],
       "field_social_media_link" => [
         'paragraph__social_networking',
@@ -1194,7 +1196,15 @@ class MigrationConfigAlter {
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps,
-                "source" => "target_id",
+//                "source" => "target_id",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
+              ],
+              [
+                'plugin' => 'extract_ext',
+                'index' => [0],
               ],
             ],
           ],
