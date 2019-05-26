@@ -4,10 +4,14 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
     - paragraphs.paragraphs_type.cabinet
+  module:
+    - fences
+    - text
 id: paragraph.cabinet.default
 targetEntityType: paragraph
 bundle: cabinet
@@ -21,14 +25,28 @@ content:
       link: true
     third_party_settings: {  }
     region: content
+  field_description:
+    weight: 2
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
   field_person:
     label: hidden
     weight: 1
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: embed
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: above
