@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\bos_migration\Plugin\migrate\process;
-
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\migrate\MigrateException;
