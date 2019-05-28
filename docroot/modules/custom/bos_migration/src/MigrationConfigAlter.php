@@ -391,6 +391,7 @@ class MigrationConfigAlter {
         'paragraph__text',
         'paragraph__transaction_grid',
         'paragraph__upcoming_events',
+        'paragraph__video',
       ],
       "field_drawer" => [
         'paragraph__discussion_topic',
