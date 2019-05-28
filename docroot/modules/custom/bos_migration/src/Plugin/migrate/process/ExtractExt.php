@@ -30,6 +30,7 @@ use Drupal\migrate\Row;
  * )
  */
 class ExtractExt extends Extract {
+
   /**
    * {@inheritdoc}
    */
@@ -37,7 +38,7 @@ class ExtractExt extends Extract {
     try {
       return parent::transform($value, $migrate_executable, $row, $destination_property);
     }
-    catch(MigrateException $e) {
+    catch (MigrateException $e) {
       if ($e->getMessage() == "Array index missing, extraction failed.") {
 
         // Some paragraphs seem to be returning $value arrays with different
@@ -58,4 +59,5 @@ class ExtractExt extends Extract {
       throw new MigrateException($e->getMessage());
     }
   }
+
 }

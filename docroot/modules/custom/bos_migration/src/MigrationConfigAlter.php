@@ -1,37 +1,48 @@
 <?php
 
-
 namespace Drupal\bos_migration;
 
 use Drupal;
 use Drupal\Core\Database\Database;
 use PDO;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Controller\ControllerBase;
 
 /**
  * Makes a class with the migration configs..
- *
  */
 class MigrationConfigAlter {
 
-  // Store for the altered migration object.
+  /**
+   * Store for the altered migration object.
+   *
+   * @var array
+   */
   protected $migrations = [];
 
-  // Store for messages to be logged.
+  /**
+   * Store for messages to be logged.
+   *
+   * @var array
+   */
   protected $logMsg = [];
 
-  // Flag for storing the migrations in a state variable.
-  // (dont want this in prod)
+  /**
+   * Flag for storing the migrations in a state variable.
+   *
+   * Set default file operations for rich-text and media migrations.
+   * Note: Set to FALSE in production.
+   *
+   * @var bool
+   */
   protected $saveState = FALSE;
 
-  // Set default file operations for rich-text and media migrations.
-  protected $file_copy = TRUE;
-  protected $file_move = FALSE;
-
-  // Defines list of migration IDs to filter out.
-  // Add entity ID matching the $this->migrations[id] field to exclude a config.
-  protected static $unused_migrations_byId = [
+  /**
+   * Defines list of migration IDs to filter out.
+   *
+   * Add entity ID matching the $this->migrations[id] field to exclude a config.
+   *
+   * @var array
+   */
+  protected static $unusedMigrationsById = [
     'd7_authmap',
     'd7_blocked_ips',
     'd7_color',
@@ -90,10 +101,15 @@ class MigrationConfigAlter {
     'paragraph__transactions',
   ];
 
-  //Defines list of migrations to filter out.
-  // Add bundle matching the name of the bundle in the destination (i.e. D8)
-  // to exclude a config.
-  protected static $unused_migrations_byBundle = [
+  /**
+   * Defines list of migrations to filter out.
+   *
+   * Add bundle matching the name of the bundle in the destination (i.e. D8)
+   * to exclude a config.
+   *
+   * @var array
+   */
+  protected static $unusedMigrationsByBundle = [
     'entity:taxonomy_term:maps_esri_feed',
     'entity:taxonomy_term:maps_basemap',
     'entity:d7_taxonomy_term:type_of_content',
@@ -101,7 +117,11 @@ class MigrationConfigAlter {
     'entity_revision:node:metrolist_affordable_housing',
   ];
 
-  // Defines tags per migration config element in this->migrations.
+  /**
+   * Defines tags per migration config element in this->migrations.
+   *
+   * @var array
+   */
   protected static $migrationTags = [
     "d7_user_role" => ["bos:initial:1"],
     "d7_userd7_url_alias" => ["bos:initial:1"],
@@ -211,27 +231,31 @@ class MigrationConfigAlter {
     "d7_taxonomy_term:cityscore_metrics" => ["bos:taxonomy:1"],
   ];
 
-  // Defines specific overrides to $this->migrations array.
-  protected static $migration_override = [
+  /**
+   * Defines specific overrides to $this->migrations array.
+   *
+   * @var array
+   */
+  protected static $migrationOverride = [
     // Migrate the addressfield.
     "d7_node:department_profile" => [
       "process" => [
         "field_address" => [
-          "plugin" => "addressfield"
+          "plugin" => "addressfield",
         ],
       ],
     ],
     "d7_node_revision:department_profile" => [
       "process" => [
         "field_address" => [
-          "plugin" => "addressfield"
+          "plugin" => "addressfield",
         ],
       ],
     ],
     "d7_node_entity_translation:department_profile" => [
       "process" => [
         "field_address" => [
-          "plugin" => "addressfield"
+          "plugin" => "addressfield",
         ],
       ],
     ],
@@ -282,14 +306,18 @@ class MigrationConfigAlter {
     "d7_taxonomy_term:contact" => [
       "migration_dependencies" => [
         "required" => [
-          "d7_node:department_profile"
+          "d7_node:department_profile",
         ],
       ],
     ],
   ];
 
-  // Defines the dependencies for the processing of fields.
-  protected static $field_subprocess_deps = [
+  /**
+   * Defines the dependencies for the processing of fields.
+   *
+   * @var array
+   */
+  protected static $fieldSubprocessDeps = [
     "paragraph" => [
       "full_list" => [
         'paragraph__3_column_w_image',
@@ -299,7 +327,6 @@ class MigrationConfigAlter {
         'paragraph__cabinet',
         'paragraph__card',
         'paragraph__city_score_dashboard',
-        //        'paragraph__columns',
         'd7_field_collection_columns',
         'paragraph__commission_contact_info',
         'paragraph__commission_members',
@@ -316,7 +343,6 @@ class MigrationConfigAlter {
         'paragraph__from_library',
         'paragraph__fyi',
         'paragraph__gol_list_links',
-        //        'paragraph__grid_links',
         'd7_field_collection_grid_links',
         'paragraph__grid_of_cards',
         'paragraph__grid_of_people',
@@ -352,7 +378,6 @@ class MigrationConfigAlter {
         'paragraph__text_three_column',
         'paragraph__text_two_column',
         'paragraph__transaction_grid',
-        //        'paragraph__transactions',
         'd7_field_collection_transactions',
         'paragraph__upcoming_events',
       ],
@@ -452,11 +477,11 @@ class MigrationConfigAlter {
       "field_social_media_link" => [
         'paragraph__social_networking',
       ],
-      "field_status_overrides" => [ // todo
+      "field_status_overrides" => [
         'paragraph__status_overrides',
       ],
       "field_tabbed_content" => [
-        'paragraph__tabbed_content_tab', //todo:
+        'paragraph__tabbed_content_tab',
       ],
       "field_text_blocks" => [
         'paragraph__text_one_column',
@@ -541,7 +566,6 @@ class MigrationConfigAlter {
         "d7_node:how_to",
         "d7_node:landing_page",
         "d7_node:listing_page",
-        //        "d7_node:metrolist_affordable_housing",
         "d7_node:person_profile",
         "d7_node:place_profile",
         "d7_node:post",
@@ -569,7 +593,6 @@ class MigrationConfigAlter {
         "d7_node:how_to",
         "d7_node:landing_page",
         "d7_node:listing_page",
-        //        "d7_node:metrolist_affordable_housing",
         "d7_node:person_profile",
         "d7_node:place_profile",
         "d7_node:post",
@@ -630,7 +653,7 @@ class MigrationConfigAlter {
         "d7_field_collection_transactions",
       ],
     ],
-    "link" =>[
+    "link" => [
       'field_external_link' => ['field_external_link'],
       'field_details_link' => ['field_details_link'],
       'field_mah_lottery_url' => ['field_mah_lottery_url'],
@@ -641,9 +664,11 @@ class MigrationConfigAlter {
   ];
 
   /**
+   * Usual.
+   *
    * @inheritDoc
    */
-  function __construct(array $migrations =[], bool $save = FALSE) {
+  public function __construct(array $migrations = [], bool $save = FALSE) {
     if (empty($migrations)) {
       \Drupal::logger('migration')
         ->error("No migrations provided to MigrationConfigAlter.");
@@ -657,8 +682,9 @@ class MigrationConfigAlter {
   }
 
   /**
-   * Return migrations set in this class, if none then try to get array saved
-   * in state.
+   * Return migrations set in this class.
+   *
+   * If none then try to get array saved in state.
    *
    * @return array|mixed
    *   The migrations array as best known.
@@ -681,7 +707,14 @@ class MigrationConfigAlter {
     $this->tagMigrations();
 
     // Execute global alterations based on patterns/forumula.
-    foreach (['field_collection', 'paragraph', 'taxonomy', 'node', 'file', 'link'] as $entityType) {
+    foreach ([
+      'field_collection',
+      'paragraph',
+      'taxonomy',
+      'node',
+      'file',
+      'link',
+    ] as $entityType) {
       $this->globalAlterations($entityType);
     }
 
@@ -711,19 +744,20 @@ class MigrationConfigAlter {
   }
 
   /**
-   * Alters configuration for fields of the type paragraph, taxonomy and node
-   * within each $migration defined in $migrations.
+   * Alters configuration for fields of the type paragraph, taxonomy and node.
+   *
+   * For each $migration defined in $migrations.
    * (provided the $migration is a migration of a node, taxonomy or paragraph).
    *
    * @param string $entityType
    *   The entity type of fields in $migration to scan & update.
    */
-  function globalAlterations(string $entityType) {
-    $logging = ["warning" => [], "notice" => [],];
+  private function globalAlterations(string $entityType) {
+    $logging = ["warning" => [], "notice" => []];
 
     // For file migrations only, replace the core Drupal source plugin with our
-    // customized plugin and also the core Drupal process plugin (file_copy) with
-    // our customized plugin.
+    // customized plugin and also the core Drupal process plugin (file_copy)
+    // with our customized plugin.
     if ($entityType == 'file') {
 
       foreach (["d7_file"] as $type) {
@@ -763,35 +797,38 @@ class MigrationConfigAlter {
       foreach ($this->migrations as $mkey => &$migration) {
         $dependencies = ["required" => [], "optional" => []];
 
-        // Update the grouping if its not yet set (i.e. when built by a definer).
-        // Enables `drush mim --group` option to import groups in a single command.
+        // Update the grouping if its not yet set (i.e when built by a definer).
+        // Enables `drush mim --group` option to import groups in a single
+        // command.
         if (empty($migration['migration_group'])) {
           $migration['migration_group'] = $migration['id'];
         }
 
-        // Only need to process para's, nodes and taxonomies because they are the
-        // only entities which contain entity fields which need to be overridden.
+        // Only need to process para's, nodes and taxonomies because they are
+        // the only entities which contain entity fields which need to be
+        // overridden.
         if (in_array($migration["id"], [
-            "d7_node",
-            "d7_node_revision",
-            "d7_node_entity_translation",
-            "d7_taxonomy_term",
-            "d7_taxonomy_term_entity_translation",
-          ]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
+          "d7_node",
+          "d7_node_revision",
+          "d7_node_entity_translation",
+          "d7_taxonomy_term",
+          "d7_taxonomy_term_entity_translation",
+        ]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
 
           // Create dependencies for translations and revisions.
           switch ($migration["id"]) {
             case "d7_taxonomy_term_entity_translation":
               $dependencies["required"][] = str_replace($migration["id"], "d7_taxonomy_term", $mkey);
               break;
+
             case "d7_node_entity_translation":
               $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
               break;
+
             case "d7_node":
               $dependencies["required"][] = str_replace($migration["id"], "d7_node_revisions", $mkey);
               break;
           }
-
 
           // Cycle through the fields we have made manual process overrides for.
           // If this $migration contains any of the fields, then update the
@@ -876,10 +913,7 @@ class MigrationConfigAlter {
             ];
           }
         }
-
       }
-
-
     }
 
     // Finally, make log-report entry.
@@ -894,11 +928,11 @@ class MigrationConfigAlter {
   /**
    * Run a targetted specific change to a migration.
    *
-   * @param null $migration
+   * @param string $migration
    *   The name of a migration which matches a key in $this::migration_override
    *   and $this->migrations.
    */
-  private function customAlteration($migration = NULL) {
+  private function customAlteration(string $migration = NULL) {
     switch ($migration) {
       case "d7_taxonomy_term:contact":
         $tmp = $this->migrations["d7_taxonomy_term:contact"]["process"]["vid"];
@@ -914,13 +948,14 @@ class MigrationConfigAlter {
   }
 
   /**
-   * Overrides $migration element settings with those in $migration_overrides.
+   * Overrides $migration element settings with those in $migrationOverrides.
+   *
    * (This is a targetted/specific element substitution rather than the process
    * in $this->  which overrides using patterns.)
    */
   private function customAlterations() {
     // Make substitutions from override array.
-    foreach ($this::$migration_override as $migration => $new_element) {
+    foreach ($this::$migrationOverride as $migration => $new_element) {
       $this->migrations[$migration] = array_replace_recursive($this->migrations[$migration], $new_element);
     }
   }
@@ -934,12 +969,12 @@ class MigrationConfigAlter {
       if (in_array('Drupal 6', $tags)) {
         return FALSE;
       }
-      if (in_array($migration['id'], $this::$unused_migrations_byId)) {
+      if (in_array($migration['id'], $this::$unusedMigrationsById)) {
         return FALSE;
       }
       if (isset($migration['destination']['default_bundle'])) {
         $entity = trim($migration['destination']['plugin'] . ":" . $migration['destination']['default_bundle']);
-        if (in_array($entity, $this::$unused_migrations_byBundle)) {
+        if (in_array($entity, $this::$unusedMigrationsByBundle)) {
           return FALSE;
         }
       }
@@ -955,7 +990,7 @@ class MigrationConfigAlter {
     $custom_tags = $this::$migrationTags;
     foreach ($this->migrations as $id => &$migration) {
       if (isset($custom_tags[$id])) {
-        $migration["migration_tags"] =  array_merge($migration["migration_tags"], $custom_tags[$id]);
+        $migration["migration_tags"] = array_merge($migration["migration_tags"], $custom_tags[$id]);
       }
     }
   }
@@ -1030,8 +1065,9 @@ class MigrationConfigAlter {
   }
 
   /**
-   * Reads whether files should be copied, moved or not touched when migrating
-   * media and rich-text objects.
+   * Reads whether files should be copied, moved or not touched.
+   *
+   * Used when migrating media and rich-text objects.
    */
   private function setFileOps() {
     $file_ops = \Drupal::state()->get("bos_migration.fileOps", "copy");
@@ -1053,23 +1089,23 @@ class MigrationConfigAlter {
    * @return array|bool|mixed
    *   The tags for this igration id, or false if not found.
    */
-  static function getMigrationTags(string $migration = "") {
+  protected static function getMigrationTags(string $migration = "") {
     $tags = self::$migrationTags;
     if (empty($migration)) {
       return $tags;
     }
-    return isset($tags[$migration]) ? $tags[$migration] : false;
+    return isset($tags[$migration]) ? $tags[$migration] : FALSE;
   }
 
   /**
    * Get an assoc array of all fields in the DB of an EntityType.
    *
    * @param string $entityType
-   *  The entity type to find fields for.
+   *   The entity type to find fields for.
    * @param string $dbTarget
-   *  The target from $database setting array ($databases[target][key]).
+   *   The target from $database setting array ($databases[target][key]).
    * @param string $dbKey
-   *  The key from $database setting array ($databases[target][key]).
+   *   The key from $database setting array ($databases[target][key]).
    *
    * @return array
    *   Array of fields in the (source) DB of this entity Type
@@ -1088,22 +1124,18 @@ class MigrationConfigAlter {
       case "paragraph":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('paragraphs')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
-        break;
 
       case "field_collection":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('field_collection')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
-        break;
 
       case "taxonomy":
         return $con->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
-        break;
 
       case "node":
         return $con->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
-        break;
 
       case "rich-text":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('text_long', 'text_with_summary')")
@@ -1112,7 +1144,6 @@ class MigrationConfigAlter {
       case "link":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('link_field')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
-
 
       default:
         return [];
@@ -1141,12 +1172,11 @@ class MigrationConfigAlter {
       // Creates a process element for node (entityreference) fields which are
       // embedded within a node, taxonomy and paragraph (migration) entities.
       case "node":
-        // Creates a process element for paragraph (entityreferencerevision) fields
-        // which are embedded within node, taxonomy and paragraph (migration)
-        // entities.
+        // Creates a process element for paragraph (entityreferencerevision)
+        // fields which are embedded within node, taxonomy and paragraph
+        // (migration) entities.
       case "paragraph":
-        // Grab the migration llokup keys for the fields being processed.
-
+        // Grab the migration lookup keys for the fields being processed.
         $process = [
           "plugin" => "sub_process",
           "source" => $fieldName,
@@ -1190,13 +1220,13 @@ class MigrationConfigAlter {
               ],
 
             ],
-          ]
+          ],
         ];
         break;
 
       case "taxonomy":
         // Creates a process element for taxonomy (entityreference) fields which
-        // are embedded within node, taxonomy and paragraph (migration) entities.
+        // are embedded within node, taxonomy & paragraph (migration) entities.
         $process = [
           "plugin" => "sub_process",
           "source" => $fieldName,
@@ -1210,7 +1240,6 @@ class MigrationConfigAlter {
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps,
-//                "source" => "target_id",
               ],
               [
                 "plugin" => "skip_on_empty",
@@ -1289,6 +1318,8 @@ class MigrationConfigAlter {
   }
 
   /**
+   * Finds dependencies for a specific entity:field.
+   *
    * @param string $entityType
    *   The entity type to be searched.
    * @param string $fieldName
@@ -1299,7 +1330,7 @@ class MigrationConfigAlter {
    */
   protected function getFieldDependencies(string $entityType, string $fieldName) {
     // Define lists of dependencies for entityType fields.
-    $entity_field_deps = $this::$field_subprocess_deps;
+    $entity_field_deps = $this::$fieldSubprocessDeps;
 
     // If an undefined type is reqested, return FALSE.
     // Note: this is not necessarily an error, just a fact that the entity type
@@ -1311,4 +1342,5 @@ class MigrationConfigAlter {
     return $entity_field_deps[$entityType][$fieldName];
 
   }
+
 }
