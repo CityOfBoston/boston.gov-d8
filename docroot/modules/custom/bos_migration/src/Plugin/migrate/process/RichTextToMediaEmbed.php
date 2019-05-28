@@ -32,11 +32,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   use \Drupal\bos_migration\HtmlParsingTrait;
   use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
-  protected static $baseUrl = "www.boston.gov";
-  protected static $editUrl = "edit.boston.gov";
-  protected static $relativeUrl = "sites/default/files";
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
-
+  protected static $localReferenceREGEX =  '((http(s)?://)??(edit|www)\.boston\.gov|^(/)?sites/default/files/)';
   protected $source = [];
 
   /**
@@ -79,16 +76,19 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
       $src = $image_node->getAttribute('src');
+      $src = str_replace('blob:htt', 'htt', $src);
+      if (strpos("modules/", $src) == 0) {
+        $src = str_replace('/modules/file/', '/sites/modules/files/', $src);
+      }
       if ($this->isExternalFile($src)) {
         continue;
       }
-      elseif ($this->resolveFileType($src) !== 'image') {
+      elseif (!in_array("image", $this->resolveFileType($src))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        // TODO: should we allow pdfs here?
         $parts = explode('/', $src);
         $extension = $parts[count($parts) - 1];
-        \Drupal::logger('Migrate')->notice('Expected an image but got "' . $extension . '" in ');
+        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
         continue;
       }
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
@@ -113,14 +113,13 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('2:Unexpected file type.');
+        \Drupal::logger('Migrate')->notice('Expected an internal "link" but got ' . $href);
         continue;
       }
-      elseif ($this->resolveFileType($href) !== 'file') {
+      elseif (!in_array("file", $this->resolveFileType($href))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        // TODO: Should we allow a png here?
-        \Drupal::logger('Migrate')->notice('Expected a file but got ' . $href);
+        \Drupal::logger('Migrate')->notice('Expected a link to a "file" but got ' . $href);
         continue;
       }
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
@@ -242,10 +241,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   Yes or no.
    */
   protected function isExternalFile($src) {
-    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE && strpos($src, self::$editUrl) === FALSE) {
-      return TRUE;
-    }
-    return FALSE;
+    return !preg_match(self::$localReferenceREGEX, $src);
   }
 
   /**
@@ -437,6 +433,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.svg',
         '.gif',
         '.tif',
+        '.pdf',   /* Technically not correct but ... */
       ],
       'file' => [
         '.pdf',
@@ -450,21 +447,30 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.rtf',
         '.ppt',
         '.xlsm',
-//        '.jpg',    /* Added DU: Don't see the harm in adding an image here. */
+        '.mp3',
+        '.mp4',
+        '.jpg',     /* These are images, but could also be. */
+        '.png',     /* Downloadable files. */
+        '.jpeg',    /* ... */
       ],
     ];
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
+    $type = [];
     foreach ($allowed_formats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if (strpos($parts[$index], $extension) !== FALSE) {
-          return $file_type;
+          $type[] = $file_type;
         }
       }
     }
+    if (!empty($type)) {
+      return $type;
+    }
 
+    return "link";
     // We don't want to process any thing that we can't identify.
-    throw new Exception('Unexpected file type (' . $parts[$index] . ').');
+    // throw new Exception('Unexpected file type (' . $parts[$index] . ').');
     \Drupal::logger('Migrate')->notice();
     return NULL;
   }
