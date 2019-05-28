@@ -6,7 +6,7 @@ use Drupal\migrate\Row;
 use Drupal\migrate_drupal\Plugin\migrate\source\d7\FieldableEntity;
 
 /**
- * d7_field_collection_item source.
+ * Migration d7_field_collection_item source.
  *
  * @MigrateSource(
  *   id = "d7_bos_field_collection_item",
@@ -24,11 +24,16 @@ class FieldCollection extends FieldableEntity {
       ->fields('fci', [
         'item_id',
         'field_name',
-        'revision_id'
+        'revision_id',
       ]);
     if (isset($this->configuration['field_name'])) {
       $query->innerJoin('field_data_' . $this->configuration['field_name'], 'fd', 'fd.' . $this->configuration['field_name'] . '_value = fci.item_id');
-      $query->fields('fd', ['entity_type', 'bundle', 'entity_id', $this->configuration['field_name'] . '_revision_id']);
+      $query->fields('fd', [
+        'entity_type',
+        'bundle',
+        'entity_id',
+        $this->configuration['field_name'] . '_revision_id',
+      ]);
       $query->condition('fci.field_name', $this->configuration['field_name']);
     }
     return $query;
@@ -39,7 +44,7 @@ class FieldCollection extends FieldableEntity {
    */
   public function prepareRow(Row $row) {
     // If field specified, get field revision ID so there aren't issues mapping.
-    if(isset($this->configuration['field_name'])) {
+    if (isset($this->configuration['field_name'])) {
       $row->setSourceProperty('revision_id', $row->getSourceProperty($this->configuration['field_name'] . '_revision_id'));
     }
 
@@ -59,7 +64,7 @@ class FieldCollection extends FieldableEntity {
     $fields = [
       'item_id' => $this->t('Item ID'),
       'revision_id' => $this->t('Revision ID'),
-      'field_name' => $this->t('Name of field')
+      'field_name' => $this->t('Name of field'),
     ];
     return $fields;
   }

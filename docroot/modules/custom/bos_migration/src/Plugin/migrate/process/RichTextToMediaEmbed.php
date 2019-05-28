@@ -19,7 +19,7 @@ use Drupal\media\MediaInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
-use \Exception;
+use Exception;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -29,11 +29,11 @@ use \Exception;
  * )
  */
 class RichTextToMediaEmbed extends ProcessPluginBase {
-  use \Drupal\bos_migration\HtmlParsingTrait;
-  use \Drupal\bos_migration\FilesystemReorganizationTrait;
+  use Drupal\bos_migration\HtmlParsingTrait;
+  use Drupal\bos_migration\FilesystemReorganizationTrait;
 
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
-  protected static $localReferenceREGEX =  '((http(s)?://)??(edit|www)\.boston\.gov|^(/)?sites/default/files/)';
+  protected static $localReferenceREGEX = '((http(s)?://)??(edit|www)\.boston\.gov|^(/)?sites/default/files/)';
   protected $source = [];
 
   /**
@@ -318,7 +318,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Not a searched absolute uri.
       return FALSE;
     }
-    if (substr($matches[3],1,1) != "/") {
+    if (substr($matches[3], 1, 1) != "/") {
       $matches[3] = "/" . $matches[3];
     }
     return $matches[3];
@@ -433,7 +433,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.svg',
         '.gif',
         '.tif',
-        '.pdf',   /* Technically not correct but ... */
+        '.pdf', /* Technically not correct but ... */
       ],
       'file' => [
         '.pdf',
@@ -449,9 +449,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.xlsm',
         '.mp3',
         '.mp4',
-        '.jpg',     /* These are images, but could also be. */
-        '.png',     /* Downloadable files. */
-        '.jpeg',    /* ... */
+        '.jpg', /* These are images, but could also be. */
+        '.png', /* Downloadable files. */
+        '.jpeg', /* ... */
       ],
     ];
     $parts = explode('/', $uri);
@@ -468,11 +468,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       return $type;
     }
 
+    // If there is no extension, or the extension is not matched, then return
+    // a type of "link".
     return "link";
-    // We don't want to process any thing that we can't identify.
-    // throw new Exception('Unexpected file type (' . $parts[$index] . ').');
-    \Drupal::logger('Migrate')->notice();
-    return NULL;
   }
 
 }
