@@ -18,15 +18,7 @@ process:
   field_short_description: field_short_description
   field_thumbnail: field_thumbnail
   field_subheader: field_subheader
-  field_link:
-    plugin: iterator
-    source: field_link
-    process:
-      uri:
-        plugin: fix_uri
-        source: url
-      title: title
-      options: attributes
+  field_link: field_link
 destination:
   plugin: 'entity_reference_revisions:paragraph'
   default_bundle: card

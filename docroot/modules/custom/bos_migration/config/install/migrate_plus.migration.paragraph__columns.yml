@@ -17,15 +17,7 @@ process:
   field_column_title: field_column_title
   field_image: field_image
   field_column_description: field_column_description
-  field_link:
-    plugin: iterator
-    source: field_link
-    process:
-      uri:
-        plugin: fix_uri
-        source: url
-      title: title
-      options: attributes
+  field_link: field_link
 destination:
   plugin: 'entity_reference_revisions:paragraph'
   default_bundle: columns

@@ -629,6 +629,14 @@ class MigrationConfigAlter {
         "d7_field_collection_transactions",
       ],
     ],
+    "link" =>[
+      'field_external_link' => ['field_external_link'],
+      'field_details_link' => ['field_details_link'],
+      'field_mah_lottery_url' => ['field_mah_lottery_url'],
+      'field_pin_name' => ['field_pin_name'],
+      'field_related_links' => ['field_related_links'],
+      'field_lightbox_link' => ['field_lightbox_link'],
+    ],
   ];
 
   /**
@@ -672,7 +680,7 @@ class MigrationConfigAlter {
     $this->tagMigrations();
 
     // Execute global alterations based on patterns/forumula.
-    foreach (['field_collection', 'paragraph', 'taxonomy', 'node', 'file'] as $entityType) {
+    foreach (['field_collection', 'paragraph', 'taxonomy', 'node', 'file', 'link'] as $entityType) {
       $this->globalAlterations($entityType);
     }
 
@@ -1100,6 +1108,11 @@ class MigrationConfigAlter {
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('text_long', 'text_with_summary')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
+      case "link":
+        return $con->query("SELECT field_name FROM field_config WHERE type IN ('link_field')")
+          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+
+
       default:
         return [];
     }
@@ -1247,6 +1260,22 @@ class MigrationConfigAlter {
                 'index' => [1],
               ],
             ],
+          ],
+        ];
+        break;
+
+      case "link":
+        // Note: There are no dependencies of this process type.
+        $process = [
+          "plugin" => "iterator",
+          "source" => $fieldName,
+          "process" => [
+            'uri' => [
+              "plugin" => "fix_uri",
+              'source' => 'url',
+            ],
+            'title' => 'title',
+            'options' => 'attributes',
           ],
         ];
         break;
