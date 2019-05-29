@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: text
 process:
+  id: item_id
+  revision_id: revision_id
   field_background_image: field_background_image
   field_contact: field_contact
   field_hide_title_bar: field_hide_title_bar
@@ -19,9 +21,9 @@ process:
   field_text_blocks: field_text_blocks
   field_component_title: field_component_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: text
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

@@ -12,12 +12,14 @@ source:
   plugin: d7_paragraphs_item
   bundle: social_networking
 process:
+  id: item_id
+  revision_id: revision_id
   field_external_link: field_external_link
   field_social_icon: field_social_icon
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: social_networking
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

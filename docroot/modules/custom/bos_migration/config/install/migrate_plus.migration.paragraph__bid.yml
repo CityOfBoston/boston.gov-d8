@@ -12,13 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: bid
 process:
+  id: item_id
+  revision_id: revision_id
   field_awarded: field_awarded
   field_bid_amount: field_bid_amount
   field_company_name: field_company_name
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: bid
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

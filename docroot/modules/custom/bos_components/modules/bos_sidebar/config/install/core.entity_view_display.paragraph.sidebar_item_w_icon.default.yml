@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.sidebar_item_w_icon.field_title
     - paragraphs.paragraphs_type.sidebar_item_w_icon
   module:
+    - fences
     - options
     - text
 id: paragraph.sidebar_item_w_icon.default
@@ -26,7 +27,14 @@ content:
     weight: 2
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_title:
     label: hidden

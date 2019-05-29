@@ -12,13 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: how_to_tab
 process:
+  id: item_id
+  revision_id: revision_id
   field_how_to_steps: field_how_to_steps
   field_keep_in_mind: field_keep_in_mind
   field_how_to_title: field_how_to_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: how_to_tab
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

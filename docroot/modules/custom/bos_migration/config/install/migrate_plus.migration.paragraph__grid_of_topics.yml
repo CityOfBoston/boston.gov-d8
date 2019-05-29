@@ -12,14 +12,16 @@ source:
   plugin: d7_paragraphs_item
   bundle: grid_of_topics
 process:
+  id: item_id
+  revision_id: revision_id
   field_contact: field_contact
   field_topics: field_topics
   field_short_title: field_short_title
   field_component_title: field_component_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: grid_of_topics
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

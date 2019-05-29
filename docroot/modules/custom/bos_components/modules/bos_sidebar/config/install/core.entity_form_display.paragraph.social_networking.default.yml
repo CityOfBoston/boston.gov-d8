@@ -6,14 +6,15 @@ dependencies:
     - field.field.paragraph.social_networking.field_social_icon
     - paragraphs.paragraphs_type.social_networking
   module:
-    - link
+    - content_moderation
     - field_group
+    - link
 third_party_settings:
   field_group:
     group_social_network_info:
       children:
-      - field_external_link
-      - field_social_icon
+        - field_external_link
+        - field_social_icon
       parent_name: ''
       weight: 20
       format_type: fieldset

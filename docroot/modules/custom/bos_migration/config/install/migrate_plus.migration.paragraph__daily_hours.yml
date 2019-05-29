@@ -12,13 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: daily_hours
 process:
+  id: item_id
+  revision_id: revision_id
   field_daily_hours: field_daily_hours
   field_hours_icon: field_hours_icon
   field_title: field_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: daily_hours
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

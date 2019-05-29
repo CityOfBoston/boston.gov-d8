@@ -2,6 +2,14 @@
 
 namespace Drupal\bos_migration\Plugin\migrate\process;
 
+/*
+ * COB NOTE:
+ * In this boston.gov implementation, this class/plugin is added by
+ *   bos_migration->bos_migration_migration_plugins_alter()
+ * which adds this plugin to the process of 'text_long', 'text_with_summary'
+ * fields.
+ */
+
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -11,6 +19,7 @@ use Drupal\media\MediaInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
+use Exception;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -20,18 +29,19 @@ use Drupal\Component\Serialization\Json;
  * )
  */
 class RichTextToMediaEmbed extends ProcessPluginBase {
-  use \Drupal\bos_migration\HtmlParsingTrait;
-  use \Drupal\bos_migration\FilesystemReorganizationTrait;
+  use Drupal\bos_migration\HtmlParsingTrait;
+  use Drupal\bos_migration\FilesystemReorganizationTrait;
 
-  protected static $baseUrl = "www.boston.gov";
-  protected static $editUrl = "edit.boston.gov";
-  protected static $relativeUrl = "sites/default/files";
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
+  protected static $localReferenceREGEX = '((http(s)?://)??(edit|www)\.boston\.gov|^(/)?sites/default/files/)';
+  protected $source = [];
 
   /**
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
+    $this->source = $row->getSource();
+
     if (empty($value['value'] || !is_string($value['value']))) {
       throw new MigrateException('RichTextToMediaEmbed process plugin only accepts rich text inputs.');
     }
@@ -66,13 +76,19 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
       $src = $image_node->getAttribute('src');
+      $src = str_replace('blob:htt', 'htt', $src);
+      if (strpos("modules/", $src) == 0) {
+        $src = str_replace('/modules/file/', '/sites/modules/files/', $src);
+      }
       if ($this->isExternalFile($src)) {
         continue;
       }
-      elseif ($this->resolveFileType($src) !== 'image') {
+      elseif (!in_array("image", $this->resolveFileType($src))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('1:Unexpected file type.');
+        $parts = explode('/', $src);
+        $extension = $parts[count($parts) - 1];
+        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
         continue;
       }
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
@@ -97,13 +113,13 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('2:Unexpected file type.');
+        \Drupal::logger('Migrate')->notice('Expected an internal "link" but got ' . $href);
         continue;
       }
-      elseif ($this->resolveFileType($href) !== 'file') {
+      elseif (!in_array("file", $this->resolveFileType($href))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('3:Unexpected file type.');
+        \Drupal::logger('Migrate')->notice('Expected a link to a "file" but got ' . $href);
         continue;
       }
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
@@ -225,10 +241,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   Yes or no.
    */
   protected function isExternalFile($src) {
-    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE && strpos($src, self::$editUrl === FALSE)) {
-      return TRUE;
-    }
-    return FALSE;
+    return !preg_match(self::$localReferenceREGEX, $src);
   }
 
   /**
@@ -305,7 +318,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Not a searched absolute uri.
       return FALSE;
     }
-
+    if (substr($matches[3], 1, 1) != "/") {
+      $matches[3] = "/" . $matches[3];
+    }
     return $matches[3];
   }
 
@@ -418,6 +433,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.svg',
         '.gif',
         '.tif',
+        '.pdf', /* Technically not correct but ... */
       ],
       'file' => [
         '.pdf',
@@ -431,21 +447,30 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.rtf',
         '.ppt',
         '.xlsm',
+        '.mp3',
+        '.mp4',
+        '.jpg', /* These are images, but could also be. */
+        '.png', /* Downloadable files. */
+        '.jpeg', /* ... */
       ],
     ];
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
+    $type = [];
     foreach ($allowed_formats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if (strpos($parts[$index], $extension) !== FALSE) {
-          return $file_type;
+          $type[] = $file_type;
         }
       }
     }
+    if (!empty($type)) {
+      return $type;
+    }
 
-    // We don't want to process any thing that we can't identify.
-    \Drupal::logger('Migrate')->notice('6:Unexpected file type.');
-    return NULL;
+    // If there is no extension, or the extension is not matched, then return
+    // a type of "link".
+    return "link";
   }
 
 }

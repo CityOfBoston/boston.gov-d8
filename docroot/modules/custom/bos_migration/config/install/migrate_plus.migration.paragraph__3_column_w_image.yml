@@ -12,16 +12,16 @@ source:
   plugin: d7_paragraphs_item
   bundle: 3_column_w_image
 process:
-#  field_background_image: field_background_image   # Set to nothing
+  id: item_id
+  revision_id: revision_id
   field_component_title: field_component_title
-#  field_hide_title_bar: field_hide_title_bar   # Set to nothing
   field_short_title: field_short_title
   field_contact: field_contact
-  field_columns: field_columns #Revisit: Field collection -> paragraph
+  field_columns: field_columns
 destination:
-  plugin: entity:paragraph
-  default_bundle: text    # Re-maps to the text paragraph.
-  new_revisions: true
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: text
+
 migration_dependencies:
   required: {  }
   optional: {  }

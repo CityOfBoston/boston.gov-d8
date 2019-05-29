@@ -1,0 +1,23 @@
+id: d7_field_collection_transactions
+label: 'Transactions field-collection to paragraph'
+migration_group: bos_field_collection
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_field_collection_item
+  key: migrate
+  field_name: field_transactions
+process:
+  field_grid_link: field_grid_link
+  field_icon: field_icon
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: transactions
+migration_dependencies:
+  required: {  }
+  optional: {  }
