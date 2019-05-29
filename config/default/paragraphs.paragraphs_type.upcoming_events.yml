@@ -1,7 +1,12 @@
 uuid: b3cc2d44-79d4-4930-afc2-912bc658ac38
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - paragraphs_library
+third_party_settings:
+  paragraphs_library:
+    allow_library_conversion: true
 _core:
   default_config_hash: LaiBzk_RE6qsYGpjgY9QBtgttvhk5i6WWxJgSG5yZ0Y
 id: upcoming_events
