@@ -108,7 +108,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     // Now links to the local filesystem.
-    foreach ($xpath->query('//a[contains(@href, "/sites/default/files")]') as $link_node) {
+    foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
       $href = $link_node->getAttribute('href');
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
