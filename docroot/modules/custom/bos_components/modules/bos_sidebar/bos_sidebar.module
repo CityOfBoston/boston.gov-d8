@@ -150,14 +150,17 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
 
     case "social_networking":
       $variables['icon'] = $variables["content"]["field_social_icon"]["#items"]->getString();
-      $variables['link'] = $variables["content"]["field_external_link"]["#items"]->getString();
-      $variables['link_options'] = [
-        'target' => "_blank",
-      ];
-      if (!empty($variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'])) {
-        $variables['link_options'] += $variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'];
+      if (isset($variables["content"]["field_external_link"]["#items"])) {
+        $variables['link'] = $variables["content"]["field_external_link"]["#items"]->getString();
+
+        $variables['link_options'] = [
+          'target' => "_blank",
+        ];
+        if (!empty($variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'])) {
+          $variables['link_options'] += $variables["content"]["field_external_link"]["#items"]->getValue()[0]['options'];
+        }
+        $variables['attributes']['target'] = "_blank";
       }
-      $variables['attributes']['target'] = "_blank";
       break;
 
     default:

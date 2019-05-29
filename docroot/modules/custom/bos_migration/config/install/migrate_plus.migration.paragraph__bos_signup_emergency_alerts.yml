@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: bos_signup_emergency_alerts
 process:
+  id: item_id
+  revision_id: revision_id
   field_component_title: field_component_title
   field_component_theme: field_component_theme
   field_contact: field_contact
@@ -20,9 +22,9 @@ process:
   field_intro_text: field_intro_text
   field_description: field_description
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: bos_signup_emergency_alerts
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

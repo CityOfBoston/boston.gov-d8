@@ -12,14 +12,16 @@ source:
   plugin: d7_paragraphs_item
   bundle: message_for_the_day
 process:
+  id: item_id
+  revision_id: revision_id
   field_date: field_date
   field_link: field_link
   field_message: field_message
   field_use_alert: field_use_alert
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: message_for_the_day
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

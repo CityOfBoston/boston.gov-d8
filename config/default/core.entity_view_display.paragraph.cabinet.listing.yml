@@ -1,10 +1,11 @@
 uuid: 57696270-9fc8-4964-ab01-8fa6898367b9
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.paragraph.listing
     - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
@@ -34,5 +35,6 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_description: true
   field_short_title: true
   field_title: true

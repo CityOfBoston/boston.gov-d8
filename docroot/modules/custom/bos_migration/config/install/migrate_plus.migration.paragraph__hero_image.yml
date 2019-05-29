@@ -12,15 +12,17 @@ source:
   plugin: d7_paragraphs_item
   bundle: hero_image
 process:
+  id: item_id
+  revision_id: revision_id
   field_grid_link: field_grid_link
   field_header: field_header
   field_image: field_image
   field_short_title: field_short_title
   field_subheader: field_subheader
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: hero_image
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

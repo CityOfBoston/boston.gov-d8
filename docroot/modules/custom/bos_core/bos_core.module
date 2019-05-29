@@ -485,11 +485,14 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'internal_link':
         $link = $paragraph->get('field_internal_link')->getValue();
-        preg_match('~/(.*)~', $link['0']['uri'], $match);
-        $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
-        $results['url'] = $url->toString();
-        $results['title'] = $link['0']['title'];
-        $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
+        if (!empty($link)) {
+          preg_match('~/(.*)~', $link['0']['uri'], $match);
+          $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
+          $results['url'] = $url->toString();
+          $results['title'] = $link['0']['title'];
+          $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
+            ->toString();
+        }
         break;
     }
   }

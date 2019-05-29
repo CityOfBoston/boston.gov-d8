@@ -12,13 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: how_to_contact_step
 process:
+  id: item_id
+  revision_id: revision_id
   field_step_details: field_step_details
   field_operation_hours: field_operation_hours
   field_title: field_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: how_to_contact_step
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

@@ -1,6 +1,6 @@
 id: paragraph__internal_link
 label: 'Internal Link Paragraph'
-migration_group: bos_paragraphs_failing
+migration_group: bos_paragraphs
 migration_tags:
   - Drupal 7
   - Content
@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: internal_link
 process:
+  id: item_id
+  revision_id: revision_id
   field_internal_link/title:
     -
       plugin: get
@@ -46,9 +48,9 @@ process:
       - d7_node:transaction
     source: field_internal_link/0/target_id
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: internal_link
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

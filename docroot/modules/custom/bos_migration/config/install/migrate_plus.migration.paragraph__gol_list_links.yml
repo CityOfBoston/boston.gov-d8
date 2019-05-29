@@ -12,11 +12,13 @@ source:
   plugin: d7_paragraphs_item
   bundle: gol_list_links
 process:
+  id: item_id
+  revision_id: revision_id
   field_link: field_link
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: gol_list_links
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }
