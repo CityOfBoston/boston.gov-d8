@@ -89,10 +89,17 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
 
       case 'grid_links':
         if ($parent = $paragraph->getParentEntity()) {
-          if ($parent->get('field_subheader')->isEmpty() && $parent->get('field_description')->isEmpty() && $parent->get('field_link')->isEmpty()) {
-            $vars['attributes']['class'][] = 'desktop-4-col';
+          try {
+            if ($parent->get('field_subheader')
+                ->isEmpty() && $parent->get('field_description')
+                ->isEmpty() && $parent->get('field_link')->isEmpty()) {
+              $vars['attributes']['class'][] = 'desktop-4-col';
+            }
+            else {
+              $vars['attributes']['class'][] = 'desktop-3-col';
+            }
           }
-          else {
+          catch (Exception $e) {
             $vars['attributes']['class'][] = 'desktop-3-col';
           }
         }
