@@ -91,8 +91,8 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
         if ($parent = $paragraph->getParentEntity()) {
           try {
             if ($parent->get('field_subheader')
-                ->isEmpty() && $parent->get('field_description')
-                ->isEmpty() && $parent->get('field_link')->isEmpty()) {
+              ->isEmpty() && $parent->get('field_description')
+              ->isEmpty() && $parent->get('field_link')->isEmpty()) {
               $vars['attributes']['class'][] = 'desktop-4-col';
             }
             else {
