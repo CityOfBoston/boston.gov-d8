@@ -29,11 +29,11 @@ use Exception;
  * )
  */
 class RichTextToMediaEmbed extends ProcessPluginBase {
-  use Drupal\bos_migration\HtmlParsingTrait;
-  use Drupal\bos_migration\FilesystemReorganizationTrait;
+  use \Drupal\bos_migration\HtmlParsingTrait;
+  use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
-  protected static $localReferenceREGEX = '((http(s)?://)??(edit|www)\.boston\.gov|^(/)?sites/default/files/)';
+  protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
   protected $source = [];
 
   /**
@@ -119,7 +119,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       elseif (!in_array("file", $this->resolveFileType($href))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('Expected a link to a "file" but got ' . $href);
+        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
         continue;
       }
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
@@ -452,6 +452,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.jpg', /* These are images, but could also be. */
         '.png', /* Downloadable files. */
         '.jpeg', /* ... */
+        '.tif', /* ... */
       ],
     ];
     $parts = explode('/', $uri);

@@ -454,6 +454,10 @@ class MigrationConfigAlter {
       "field_links" => [
         'paragraph__grid_links',
         'd7_field_collection_grid_links',
+        'paragraph__document',
+        'paragraph__external_link',
+        'paragraph__internal_link',
+        'paragraph__lightbox_link',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
