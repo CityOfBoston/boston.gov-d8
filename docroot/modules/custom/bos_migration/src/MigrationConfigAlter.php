@@ -310,9 +310,44 @@ class MigrationConfigAlter {
         ],
       ],
     ],
-    // Map entity reference field to link field in internal_links para.
+    // Map "entity_reference" field to "link" field in internal_links para.
     "paragraph__internal_link" => [
       'process' => [
+        '_entity_type' => [
+          'plugin' => 'default_value',
+          'default_value' => 'entity:node',
+        ],
+        '_orig' => 'field_internal_link/0/target_id',
+        '_target_id' => [
+          [
+            'plugin' => 'migration',
+            'migration' => [
+            'd7_node:advpoll',
+            'd7_node:article',
+            'd7_node:change',
+            'd7_node:department_profile',
+            'd7_node:emergency_alert',
+            'd7_node:event',
+            'd7_node:how_to',
+            'd7_node:landing_page',
+            'd7_node:listing_page',
+            'd7_node:metrolist_affordable_housing',
+            'd7_node:person_profile',
+            'd7_node:place_profile',
+            'd7_node:post',
+            'd7_node:procurement_advertisement',
+            'd7_node:program_initiative_profile',
+            'd7_node:public_notice',
+            'd7_node:script_page',
+            'd7_node:site_alert',
+            'd7_node:status_item',
+            'd7_node:tabbed_content',
+            'd7_node:topic_page',
+            'd7_node:transaction',
+          ],
+            'source' => 'field_internal_link/0/target_id',
+          ],
+        ],
         'field_internal_link/title' => [
           [
             'plugin' => 'get',
@@ -324,33 +359,15 @@ class MigrationConfigAlter {
             ],
         ],
         'field_internal_link/uri' => [
-        'plugin' => 'migration',
-        'migration' => [
-          'd7_node:advpoll',
-          'd7_node:article',
-          'd7_node:change',
-          'd7_node:department_profile',
-          'd7_node:emergency_alert',
-          'd7_node:event',
-          'd7_node:how_to',
-          'd7_node:landing_page',
-          'd7_node:listing_page',
-          'd7_node:metrolist_affordable_housing',
-          'd7_node:person_profile',
-          'd7_node:place_profile',
-          'd7_node:post',
-          'd7_node:procurement_advertisement',
-          'd7_node:program_initiative_profile',
-          'd7_node:public_notice',
-          'd7_node:script_page',
-          'd7_node:site_alert',
-          'd7_node:status_item',
-          'd7_node:tabbed_content',
-          'd7_node:topic_page',
-          'd7_node:transaction',
+          [
+            'plugin' => 'concat',
+            'delimiter' => "/",
+            'source' => [
+              '@_entity_type',
+              '@_target_id',
+            ],
+          ],
         ],
-        'source' => 'field_internal_link/0/target_id',
-      ],
       ],
       'migration_dependencies' => [
         'required' => [
