@@ -17,9 +17,7 @@ drush mim --tag="bos:paragraph:5" --force # deps:nodes
 drush mim --tag="bos:node:2" --force
 
 # Second pass.
-drush mim --group=d7_taxonomy_term --update
-drush mim --group=bos_paragraphs --update
-drush mim --group=d7_nodes --update
+drush mim --group=d7_nodes --update --execute-dependencies
 # Finish off.
 drush mim d7_menu_links,d7_menu,d7_block
 drush mim d7_rdf_mapping
