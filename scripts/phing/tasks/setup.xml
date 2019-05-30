@@ -295,12 +295,12 @@
     </if>
 
     <exec command="echo '\033[1;33m -> see ${lando.url.url}/sites/default/files/setup/composer.log for output.\033[0m'" logoutput="true"/>
-    <echo message="Executes: > composer install ${composer.mode} --no-suggest${line.separator}${line.separator}"
+    <echo message="Executes: > composer install ${composer.mode} --no-suggest --no-interaction${line.separator}${line.separator}"
           file="${project.basedir}/setup/composer.log" append="true"/>
-    <echo message="composer install ${composer.mode} --no-suggest --prefer-dist"/>
+    <echo message="composer install ${composer.mode} --no-suggest --prefer-dist --no-interaction"/>
     <!-- Install composer (using lock file fif present) -->
     <exec description="Installs the modules per composer.lock (or composer.json if no .lock file)."
-          command="composer install ${composer.mode} --no-suggest --prefer-dist >> ${project.basedir}/setup/composer.log"
+          command="composer install ${composer.mode} --no-suggest --prefer-dist --no-interaction >> ${project.basedir}/setup/composer.log"
           dir="${project.basedir}/" outputProperty="composer.result" checkreturn="true"
           logoutput="true"/>
     <echo message="${line.separator} > composer drupal:scaffold"
