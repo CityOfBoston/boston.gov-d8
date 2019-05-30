@@ -454,6 +454,10 @@ class MigrationConfigAlter {
       "field_links" => [
         'paragraph__grid_links',
         'd7_field_collection_grid_links',
+        'paragraph__document',
+        'paragraph__external_link',
+        'paragraph__internal_link',
+        'paragraph__lightbox_link',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
@@ -721,6 +725,7 @@ class MigrationConfigAlter {
     // Execute targeted alternations to $this->migrations.
     $this->customAlterations();
     $this->customAlteration("d7_taxonomy_term:contact");
+    $this->customAlteration("d7_taxonomy_term:newsletters");
     $this->richTextFieldAlter();
     $this->breakCyclicalDependencies();
 
@@ -933,14 +938,20 @@ class MigrationConfigAlter {
    *   and $this->migrations.
    */
   private function customAlteration(string $migration = NULL) {
+    $defVals = [
+      "d7_taxonomy_term:newsletters" => "newsletters",
+      "d7_taxonomy_term:contact" => "contact",
+    ];
+
     switch ($migration) {
       case "d7_taxonomy_term:contact":
-        $tmp = $this->migrations["d7_taxonomy_term:contact"]["process"]["vid"];
-        $this->migrations["d7_taxonomy_term:contact"]["process"]["vid"] = [
+      case "d7_taxonomy_term:newsletters":
+        $tmp = $this->migrations[$migration]["process"]["vid"];
+        $this->migrations[$migration]["process"]["vid"] = [
           $tmp,
           [
             "plugin" => "default_value",
-            "default_value" => "contact",
+            "default_value" => $defVals[$migration],
           ],
         ];
         break;
