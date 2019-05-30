@@ -333,3 +333,16 @@ function _bos_components_fix_attributes(array &$variables, string $check_field =
     _bos_core_fix_attributes($variables, $check_field);
   }
 }
+
+/**
+ * Runs a process which updates the icons for each module.
+ */
+function _bos_components_update_all_icons() {
+  $modules = system_get_info('module');
+  foreach ($modules as $moduleName => $module) {
+    if (preg_match("/^(bos_)/", $moduleName)) {
+      _bos_core_install_icons($moduleName);
+    }
+  }
+
+}
