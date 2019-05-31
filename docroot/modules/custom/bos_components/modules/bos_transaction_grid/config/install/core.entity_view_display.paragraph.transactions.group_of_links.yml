@@ -1,4 +1,3 @@
-uuid: be20d2c4-1a2c-4f4c-bb18-c3af103ade0a
 langcode: en
 status: true
 dependencies:
@@ -6,12 +5,44 @@ dependencies:
     - core.entity_view_mode.paragraph.group_of_links
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.transactions
+  module:
+    - entity_reference_revisions
+    - fences
+    - svg_image
 id: paragraph.transactions.group_of_links
 targetEntityType: paragraph
 bundle: transactions
 mode: group_of_links
-content: {  }
-hidden:
-  field_grid_link: true
-  field_icon: true
+content:
+  field_grid_link:
+    type: entity_reference_revisions_entity_view
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+  field_icon:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: thumbnail
+      image_link: ''
+      svg_render_as_image: '1'
+      svg_attributes:
+        width: ''
+        height: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+hidden: {  }
