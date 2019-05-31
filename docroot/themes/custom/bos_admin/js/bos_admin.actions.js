@@ -3,7 +3,7 @@
 */
 
 /**
- *
+ * Shows additional buttons when page length extends.
  */
 (function ($, window, document) {
   'use strict';
@@ -24,7 +24,12 @@
           }
         });
       };
-      $(".bos_admin .vertical-tabs__menu-item").click(function () {
+      $(".bos_admin .vertical-tabs__menu-item, .bos_admin summary, .bos_admin .paragraphs-actions input.button").click(function () {
+        setTimeout(function() {
+          showActions();
+        }, 500);
+      });
+      $(document).ajaxStop(function() {
         showActions();
       });
       showActions();
