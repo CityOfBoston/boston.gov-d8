@@ -651,3 +651,22 @@ function _bos_core_fix_attributes(array &$variables, string $check_field = "attr
 function bos_core_format_telephone(string $phone, string $output = "$1-$2-$3") {
   return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', $output, $phone);
 }
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_core_update_all_configs() {
+  require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
+  drush_config_devel_export("bos_core");
+}
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_core_global_update_configs() {
+  _bos_content_update_all_configs();
+  _bos_components_update_all_configs();
+  _bos_vocab_update_all_configs();
+  _bos_core_update_all_configs();
+
+}
