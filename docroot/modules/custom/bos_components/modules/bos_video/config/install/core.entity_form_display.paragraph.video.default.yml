@@ -8,9 +8,10 @@ dependencies:
     - field.field.paragraph.video.field_image
     - field.field.paragraph.video.field_is_channel
     - field.field.paragraph.video.field_short_title
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.video
   module:
-    - file
+    - svg_image
 id: paragraph.video.default
 targetEntityType: paragraph
 bundle: video
@@ -43,9 +44,10 @@ content:
     region: content
   field_image:
     weight: 6
-    type: file_generic
+    type: image_image
     settings:
       progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
     region: content
   field_is_channel:

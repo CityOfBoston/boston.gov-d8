@@ -1,4 +1,3 @@
-uuid: d302dda6-9e6b-4b62-8e39-f6afe582b5ea
 langcode: en
 status: true
 dependencies:
@@ -42,14 +41,21 @@ content:
     region: content
   field_transactions:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
+      title: Transaction
+      title_plural: Transactions
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: transactions
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   moderation_state:

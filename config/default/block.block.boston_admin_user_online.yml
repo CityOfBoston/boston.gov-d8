@@ -1,0 +1,24 @@
+uuid: b2dc52e9-ad03-43b6-8bf7-cc5657a64d93
+langcode: und
+status: true
+dependencies:
+  config:
+    - views.view.who_s_online
+  module:
+    - views
+  theme:
+    - bos_admin
+id: boston_admin_user_online
+theme: bos_admin
+region: content
+weight: 4
+provider: null
+plugin: 'views_block:who_s_online-who_s_online_block'
+settings:
+  id: 'views_block:who_s_online-who_s_online_block'
+  label: ''
+  provider: views
+  label_display: '0'
+  views_label: ''
+  items_per_page: '10'
+visibility: {  }
