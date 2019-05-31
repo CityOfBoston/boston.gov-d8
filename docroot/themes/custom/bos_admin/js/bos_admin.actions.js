@@ -25,11 +25,11 @@
         });
       };
       $(".bos_admin .vertical-tabs__menu-item, .bos_admin summary, .bos_admin .paragraphs-actions input.button").click(function () {
-        setTimeout(function() {
+        setTimeout(function () {
           showActions();
         }, 500);
       });
-      $(document).ajaxStop(function() {
+      $(document).ajaxStop(function () {
         showActions();
       });
       showActions();
