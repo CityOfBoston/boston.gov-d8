@@ -22,6 +22,9 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
         'message' => t('Updating...'),
       ],
     ];
+
+    // Adds a flag used in datetime-wrapper.html.twig.
+    $form["field_public_notice_date"]["widget"][0]["end_value"]["#show_checkbox"] = TRUE;
   }
 }
 

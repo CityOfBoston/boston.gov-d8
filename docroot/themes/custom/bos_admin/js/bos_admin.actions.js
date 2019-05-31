@@ -2,6 +2,9 @@
 * @file
 */
 
+/**
+ *
+ */
 (function ($, window, document) {
   'use strict';
   $(document).ready(function () {
@@ -25,6 +28,22 @@
         showActions();
       });
       showActions();
+    }
+  });
+})(jQuery, this, this.document);
+
+/**
+ * Adds a checkbox to datetime_range on public notices.
+ */
+(function ($, window, document) {
+  'use strict';
+  $(document).ready(function () {
+    var actions = $(".field--name-field-public-notice-date #cbx-field-end-date");
+    if (actions.length) {
+      actions.click(function () {
+        $(this).parent().next().show();
+        $(this).parent().hide();
+      });
     }
   });
 })(jQuery, this, this.document);
