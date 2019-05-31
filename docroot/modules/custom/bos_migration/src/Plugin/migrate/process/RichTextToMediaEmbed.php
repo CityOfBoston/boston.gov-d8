@@ -42,8 +42,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     $this->source = $row->getSource();
 
-    if (empty($value['value'] || !is_string($value['value']))) {
-      throw new MigrateException('RichTextToMediaEmbed process plugin only accepts rich text inputs.');
+    if (empty($value['value']) || !is_string($value['value'])) {
+      \Drupal::logger('migrate')->warning("RichTextToMediaEmbed process plugin only accepts rich text inputs.");
+      return $value;
     }
 
     if (!empty($value['format']) && $value['format'] == 'plain_text') {
@@ -446,6 +447,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.ppt',
         '.rtf',
         '.ppt',
+        '.jnlp', /* Not sure we should allow this. */
         '.xlsm',
         '.mp3',
         '.mp4',
@@ -453,6 +455,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.png', /* Downloadable files. */
         '.jpeg', /* ... */
         '.tif', /* ... */
+        '.svg', /* ... */
       ],
     ];
     $parts = explode('/', $uri);
