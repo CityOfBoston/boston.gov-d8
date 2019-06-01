@@ -95,10 +95,6 @@ class MigrationConfigAlter {
     'd7_view_modes',
     'd7_vote',
     'd7_rdf_mapping',
-    'managed_files',
-    'paragraph__columns',
-    'paragraph__grid_links',
-    'paragraph__transactions',
   ];
 
   /**
@@ -124,7 +120,8 @@ class MigrationConfigAlter {
    */
   protected static $migrationTags = [
     "d7_user_role" => ["bos:initial:1"],
-    "d7_userd7_url_alias" => ["bos:initial:1"],
+    "d7_user" => ["bos:initial:1"],
+    "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
     "d7_file" => ["bos:initial:1"],
 //    "d7_block" => ["bos:initial:1"],
