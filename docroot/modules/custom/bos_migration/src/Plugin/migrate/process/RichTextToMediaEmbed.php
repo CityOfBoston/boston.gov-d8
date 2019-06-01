@@ -77,10 +77,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
       $src = $image_node->getAttribute('src');
-      $src = str_replace('blob:htt', 'htt', $src);
-      if (strpos("modules/", $src) == 0) {
-        $src = str_replace('/modules/file/', '/sites/modules/files/', $src);
-      }
+
+      // Tidyup for strange content in COB D7 site.
+      $src = str_replace('blob:http', 'http', $src);
+      $src = preg_replace("~^((/)?modules/file)~", "/sites/modules/file", $src);
+
+      // Change references to pre-production or editor sites.
+      $src = $this->correctSubDomain($src);
+
       if ($this->isExternalFile($src)) {
         continue;
       }
@@ -92,6 +96,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
         continue;
       }
+
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
         $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
         // Build <drupal-entity> element.
@@ -123,6 +128,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
         continue;
       }
+
+      // Change references to pre-production or editor sites.
+      $href = $this->correctSubDomain($href);
+
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
         // Alter <a> element.
         $link_node->setAttribute('data-entity-substitution', 'media');
@@ -359,6 +368,37 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     return $new_uri;
+  }
+
+  /**
+   * Replaces domain/uri strings.
+   *
+   * E.g: edit.boston.gov with www.boston.gov.
+   *
+   * @param string $uri
+   *    The original URI (or source or whatever)
+   *
+   * @return string
+   *   The source with correct destintaion mapped in.
+   *
+   */
+  protected function correctSubDomain(string $uri) {
+    $regex_swaps = [
+      "~(edit|edit-stg).boston.gov~" => "www.boston.gov",
+    ];
+    foreach ($regex_swaps as $find => $replace) {
+      $swap = $uri;
+      try {
+        $uri = preg_replace($find, $replace, $uri);
+        if (is_null($uri)) {
+          $uri = $swap;
+        }
+      }
+      catch (Exception $e) {
+        return $swap;
+      }
+    }
+    return $uri;
   }
 
   /**
