@@ -28,10 +28,9 @@ lando drush mim --tag="bos:paragraph:5" --force # deps:nodes
 lando drush mim --tag="bos:node:2" --force
 
 # Second pass.
-drush mim --group=d7_nodes --update --execute-dependencies
+lando drush mim --group=d7_node --update --execute-dependencies
 # Finish off.
-drush mim d7_menu_links,d7_menu,d7_block
-drush mim d7_rdf_mapping
+lando drush mim d7_menu_links,d7_menu,d7_block
 
 #lando drush sdel "bos_migration.active"
 #lando drush sset "bos_migration.fileOps" "copy"
