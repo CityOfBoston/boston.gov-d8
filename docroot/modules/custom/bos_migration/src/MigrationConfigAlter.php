@@ -124,7 +124,7 @@ class MigrationConfigAlter {
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
     "d7_file" => ["bos:initial:1"],
-//    "d7_block" => ["bos:initial:1"],
+    /* "d7_block" => ["bos:initial:1"], */
     "paragraph__3_column_w_image" => ["bos:paragraph:3"],
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
@@ -1362,14 +1362,6 @@ class MigrationConfigAlter {
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps,
               ],
-//              [
-//                "plugin" => "skip_on_empty",
-//                "method" => "process",
-//              ],
-//              [
-//                'plugin' => 'extract_ext',
-//                'index' => [0],
-//              ],
             ],
           ],
         ];
