@@ -42,13 +42,18 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     $this->source = $row->getSource();
 
-    if (empty($value['value']) || !is_string($value['value'])) {
-      \Drupal::logger('migrate')->warning("RichTextToMediaEmbed process plugin only accepts rich text inputs.");
+    if (empty($value['value'])) {
+      // Skips null and empty values.
       return $value;
     }
-
-    if (!empty($value['format']) && $value['format'] == 'plain_text') {
-      // Nothing to do here.
+    elseif (!empty($value['format']) && $value['format'] == 'plain_text') {
+      // Nothing to do here (not a rich text field).
+      return $value;
+    }
+    elseif (!is_string($value['value'])) {
+      // Will flag this, but in the end just return the value without trying
+      // to do anything with it.
+      \Drupal::logger('migrate')->warning("RichTextToMediaEmbed process plugin only accepts rich text inputs.");
       return $value;
     }
 
@@ -64,7 +69,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
    *   The migrate executable.
    *
-   * @returns string
+   * @return string
+   *   Process rich text string (html string).
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function convertToEntityEmbed($value, MigrateExecutableInterface $migrate_executable) {
     // D7 media embeds get stored as funky tokens. Replace them with valid HTML
@@ -376,11 +384,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * E.g: edit.boston.gov with www.boston.gov.
    *
    * @param string $uri
-   *    The original URI (or source or whatever)
+   *   The original URI (or source or whatever).
    *
    * @return string
    *   The source with correct destintaion mapped in.
-   *
    */
   protected function correctSubDomain(string $uri) {
     $regex_swaps = [
