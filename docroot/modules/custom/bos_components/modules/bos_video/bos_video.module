@@ -30,14 +30,22 @@ function bos_video_preprocess_paragraph(&$vars) {
         $vars['attributes']['id'] = Html::getUniqueId('vid');
         $vars['attributes']['class'][] = 'vid';
         $image = $paragraph->get('field_image')->getValue();
-        $image_url = _bos_core_get_file_link($image['0']['target_id']);
-        $vars['attributes']['style'][] = "background-image: url({$image_url})";
+        if($image && isset($image['0'])) {
+          $image_url = _bos_core_get_file_link($image['0']['target_id']);
+          $vars['attributes']['style'][] = "background-image: url({$image_url})";
+        }
         $vid_id = $paragraph->get('field_extra_info')->getValue();
+        if($vid_id && isset($vid_id['0'])) {
+          $vars['attributes']['data-vid-id'] = $vid_id['0']['value'];
+        }
         $vid_channel = $paragraph->get('field_is_channel')->getValue();
-        $vars['attributes']['data-vid-id'] = $vid_id['0']['value'];
-        $vars['attributes']['data-vid-channel'] = !empty($vid_channel['0']['value']) ? $vid_channel['0']['value'] : FALSE;
+        if($vid_channel && isset($vid_channel['0'])) {
+          $vars['attributes']['data-vid-channel'] = !empty($vid_channel['0']['value']) ? $vid_channel['0']['value'] : FALSE;
+        }
         $lib = \Drupal::service('library.discovery')->getLibraryByName('bos_theme', 'global-styling.patterns');
-        $vars['play_image_url'] = $lib['remote'] . '/images/global/icons/play.svg';
+        if (isset($lib)) {
+          $vars['play_image_url'] = $lib['remote'] . '/images/global/icons/play.svg';
+        }
         if (!$paragraph->get('field_contact')->isEmpty()) {
           $contact = $paragraph->get('field_contact')->getValue();
           $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($contact['0']['target_id']);
