@@ -88,24 +88,26 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
               // department, so set $node to the department_profile node
               // so we can get the department_type.
               $term_dept_profile = $term->field_department_profile;
-              if ($term_dept_profile) {
+              if ($term_dept_profile && $term_dept_profile->count() > 0) {
                 $dept_node = Drupal::entityTypeManager()->getStorage("node")->load($term_dept_profile->first()->target_id);
               }
             }
             // Figure out which type of department we have
             // and get it's replacement.
-            $dept_type = $dept_node->getTranslation("und")->field_department_type;
-            if (!empty($dept_type)) {
-              switch ($dept_type->value) {
-                case 'cabinet':
-                  $dept_prefix = 'government/cabinets/';
-                  break;
+            if (!empty($dept_node)) {
+              $dept_type = $dept_node->getTranslation("und")->field_department_type;
+              if (!empty($dept_type)) {
+                switch ($dept_type->value) {
+                  case 'cabinet':
+                    $dept_prefix = 'government/cabinets/';
+                    break;
 
-                case 'department':
-                default:
-                  $dept_prefix = 'departments/';
-                  break;
+                  case 'department':
+                  default:
+                    $dept_prefix = 'departments/';
+                    break;
 
+                }
               }
             }
           }
