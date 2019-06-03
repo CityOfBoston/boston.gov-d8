@@ -289,13 +289,56 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     }
   }
 
-  // Add  class to edit pages which are created from contextual editor.
+  // Add  class to edit pages which are created from contextual editor.->getEntityTypeId()
   if (preg_match("/.*?_entity_edit_form/",$form_id)) {
     $form_uri = \Drupal::request()->getRequestUri();
     $form_uri = parse_url($form_uri);
     $form_uri = explode('/', $form_uri['path']);
     if (is_array($form_uri) && in_array("paragraphs_edit", $form_uri)) {
       $form["#attributes"]["class"][] = "context_editor-wrapper";
+
+      // Walk up the lineage chain.
+      if (isset($form_state->getBuildInfo()['args'][0]) && NULL != $form_state->getFormObject()->getEntity()) {
+        // Get this entity to start from.
+        $this_entity = $form_state->getFormObject()->getEntity();
+        $chain = [$this_entity];
+        while ($this_entity->hasField("parent_id")) {
+          $this_entity = $this_entity->getParentEntity();
+          $chain[] = $this_entity;
+        }
+        $chain = array_reverse($chain);
+        // Check the 'top' $chain entity is the entity reported by the form.
+        if ($chain[0]->id() == $form_state->getBuildInfo()['args'][0]->id()) {
+
+          // Make the lineage into an array of strings.
+          $title[0] = "<h2>" . ucwords(str_replace(['-', '_'], " ", $chain[0]->bundle())) . ": <u>" . $chain[0]->getTitle() . "</u> (nid " . $chain[0]->id() . ")" . "</h2>";
+          switch ($chain[1]->getEntityTypeId()) {
+            case "node":
+              $title[] = "<h3> > <u>" . $chain[1]->getTitle() . "</u> (nid " . $chain[1]->id() . ")</h3>";
+              break;
+
+            case "paragraph":
+              foreach ($chain[1]->getFields() as $fieldName => $field) {
+                $crumb = ucwords(str_replace(['-', '_'], " ",$chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
+                if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
+                  $title[] = "<h3>" . $crumb . " > <u>" . $field->getValue()[0]['value'] . "</u> (nid " . $chain[1]->id() . ")</h3>";
+                  break;
+                }
+              }
+              break;
+
+            case "taxonomy":
+              break;
+          }
+
+          // Add this title to the form.
+          $form['lineage'] = [
+            '#type' => 'markup',
+            "#weight" => -100,
+            '#markup' => implode("", $title) . "<hr>",
+          ];
+        }
+      }
     }
   }
 
