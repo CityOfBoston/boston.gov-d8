@@ -22,6 +22,9 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
         'message' => t('Updating...'),
       ],
     ];
+
+    // Adds a flag used in datetime-wrapper.html.twig.
+    $form["field_public_notice_date"]["widget"][0]["end_value"]["#show_checkbox"] = TRUE;
   }
 }
 
@@ -102,4 +105,18 @@ function _city_hall_ajax_callback(array &$form, FormStateInterface $form_state) 
     }
   }
   return $elem;
+}
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_content_update_all_configs() {
+  require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
+  $modules = system_get_info('module');
+  foreach ($modules as $moduleName => $module) {
+    if (preg_match("/^(node_)/", $moduleName)) {
+      drush_config_devel_export($moduleName);
+    }
+  }
+  drush_config_devel_export("bos_content");
 }

@@ -38,7 +38,9 @@ function bos_photo_preprocess_paragraph(&$vars) {
             $paragraph->get('field_link')->getValue(),
             ['class' => 'btn']
           );
-          $vars['cta'] = $cta['link'];
+          if (!empty($cta['link'])) {
+            $vars['cta'] = $cta['link'];
+          }
         }
         break;
     }

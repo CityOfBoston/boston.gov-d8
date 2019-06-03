@@ -31,10 +31,13 @@
       {{ title_suffix }}
     </div>
   	<div class="sh">
-	    {{ content.field_component_title }}
-	    {% if content.field_contact %}
+
+      {{ content.field_component_title }}
+
+      {% if content.field_contact %}
           {{ content.field_contact }}
 	    {% endif %}
+
     </div>
     <div class="g">
       {% if content.field_transactions %}

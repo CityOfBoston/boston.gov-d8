@@ -1,4 +1,3 @@
-uuid: 5bd76196-7d76-4ba6-a00a-4491bc4bd887
 langcode: en
 status: true
 dependencies:
@@ -13,9 +12,16 @@ id: paragraph.transaction_grid.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: transaction_grid
 mode: paragraphs_editor_preview
-content: {  }
+content:
+  field_component_title:
+    type: string
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
-  field_component_title: true
   field_contact: true
   field_short_title: true
   field_transactions: true

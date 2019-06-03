@@ -1,0 +1,14 @@
+uuid: da5c0489-5f24-4b0b-8389-0932c3d8e9c1
+langcode: und
+status: true
+dependencies:
+  config:
+    - user.role.procurement_editor
+  module:
+    - user
+id: user_remove_role_action.procurement_editor
+label: 'Remove the Procurement Editor role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: procurement_editor
