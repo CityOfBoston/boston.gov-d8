@@ -289,8 +289,8 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     }
   }
 
-  // Add  class to edit pages which are created from contextual editor.->getEntityTypeId()
-  if (preg_match("/.*?_entity_edit_form/",$form_id)) {
+  // Add class to edit pages which are created from contextual editor.
+  if (preg_match("/.*?_entity_edit_form/", $form_id)) {
     $form_uri = \Drupal::request()->getRequestUri();
     $form_uri = parse_url($form_uri);
     $form_uri = explode('/', $form_uri['path']);
@@ -319,7 +319,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 
             case "paragraph":
               foreach ($chain[1]->getFields() as $fieldName => $field) {
-                $crumb = ucwords(str_replace(['-', '_'], " ",$chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
+                $crumb = ucwords(str_replace(['-', '_'], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
                 if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
                   $title[] = "<h3>" . $crumb . " > <u>" . $field->getValue()[0]['value'] . "</u> (nid " . $chain[1]->id() . ")</h3>";
                   break;
