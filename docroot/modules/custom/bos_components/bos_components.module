@@ -333,3 +333,38 @@ function _bos_components_fix_attributes(array &$variables, string $check_field =
     _bos_core_fix_attributes($variables, $check_field);
   }
 }
+
+/**
+ * Runs a process which updates the icons for each module.
+ */
+function _bos_components_update_all_icons() {
+  $modules = system_get_info('module');
+  foreach ($modules as $moduleName => $module) {
+    if (preg_match("/^(bos_)/", $moduleName)) {
+      _bos_core_install_icons($moduleName);
+    }
+  }
+}
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_components_update_all_configs() {
+  require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
+  $modules = system_get_info('module');
+  $ignore = [
+    "bos_migration",
+    "bos_components",
+    "bos_content",
+    "bos_core",
+    "bos_vocab",
+  ];
+  foreach ($modules as $moduleName => $module) {
+    if (preg_match("/^(bos_)/", $moduleName)) {
+      if (!in_array($moduleName, $ignore)) {
+        drush_config_devel_export($moduleName);
+      }
+    }
+  }
+  drush_config_devel_export("bos_components");
+}

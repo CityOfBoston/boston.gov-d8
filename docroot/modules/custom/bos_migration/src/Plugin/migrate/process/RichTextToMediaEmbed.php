@@ -42,12 +42,18 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     $this->source = $row->getSource();
 
-    if (empty($value['value'] || !is_string($value['value']))) {
-      throw new MigrateException('RichTextToMediaEmbed process plugin only accepts rich text inputs.');
+    if (empty($value['value'])) {
+      // Skips null and empty values.
+      return $value;
     }
-
-    if (!empty($value['format']) && $value['format'] == 'plain_text') {
-      // Nothing to do here.
+    elseif (!empty($value['format']) && $value['format'] == 'plain_text') {
+      // Nothing to do here (not a rich text field).
+      return $value;
+    }
+    elseif (!is_string($value['value'])) {
+      // Will flag this, but in the end just return the value without trying
+      // to do anything with it.
+      \Drupal::logger('migrate')->warning("RichTextToMediaEmbed process plugin only accepts rich text inputs.");
       return $value;
     }
 
@@ -63,7 +69,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
    *   The migrate executable.
    *
-   * @returns string
+   * @return string
+   *   Process rich text string (html string).
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function convertToEntityEmbed($value, MigrateExecutableInterface $migrate_executable) {
     // D7 media embeds get stored as funky tokens. Replace them with valid HTML
@@ -76,10 +85,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
       $src = $image_node->getAttribute('src');
-      $src = str_replace('blob:htt', 'htt', $src);
-      if (strpos("modules/", $src) == 0) {
-        $src = str_replace('/modules/file/', '/sites/modules/files/', $src);
-      }
+
+      // Tidyup for strange content in COB D7 site.
+      $src = str_replace('blob:http', 'http', $src);
+      $src = preg_replace("~^((/)?modules/file)~", "/sites/modules/file", $src);
+
+      // Change references to pre-production or editor sites.
+      $src = $this->correctSubDomain($src);
+
       if ($this->isExternalFile($src)) {
         continue;
       }
@@ -91,6 +104,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
         continue;
       }
+
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
         $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
         // Build <drupal-entity> element.
@@ -122,6 +136,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
         continue;
       }
+
+      // Change references to pre-production or editor sites.
+      $href = $this->correctSubDomain($href);
+
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
         // Alter <a> element.
         $link_node->setAttribute('data-entity-substitution', 'media');
@@ -361,6 +379,36 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   }
 
   /**
+   * Replaces domain/uri strings.
+   *
+   * E.g: edit.boston.gov with www.boston.gov.
+   *
+   * @param string $uri
+   *   The original URI (or source or whatever).
+   *
+   * @return string
+   *   The source with correct destintaion mapped in.
+   */
+  protected function correctSubDomain(string $uri) {
+    $regex_swaps = [
+      "~(edit|edit-stg).boston.gov~" => "www.boston.gov",
+    ];
+    foreach ($regex_swaps as $find => $replace) {
+      $swap = $uri;
+      try {
+        $uri = preg_replace($find, $replace, $uri);
+        if (is_null($uri)) {
+          $uri = $swap;
+        }
+      }
+      catch (Exception $e) {
+        return $swap;
+      }
+    }
+    return $uri;
+  }
+
+  /**
    * Retrieves the corresponding file entity.
    *
    * Best effort search.
@@ -446,6 +494,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.ppt',
         '.rtf',
         '.ppt',
+        '.jnlp', /* Not sure we should allow this. */
         '.xlsm',
         '.mp3',
         '.mp4',
@@ -453,6 +502,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.png', /* Downloadable files. */
         '.jpeg', /* ... */
         '.tif', /* ... */
+        '.svg', /* ... */
       ],
     ];
     $parts = explode('/', $uri);

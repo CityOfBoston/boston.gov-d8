@@ -15,3 +15,17 @@
 function bos_vocab_theme() {
   return [];
 }
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_vocab_update_all_configs() {
+  require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
+  $modules = system_get_info('module');
+  foreach ($modules as $moduleName => $module) {
+    if (preg_match("/^(vocab_)/", $moduleName)) {
+      drush_config_devel_export($moduleName);
+    }
+  }
+  drush_config_devel_export("bos_vocab");
+}

@@ -95,10 +95,6 @@ class MigrationConfigAlter {
     'd7_view_modes',
     'd7_vote',
     'd7_rdf_mapping',
-    'managed_files',
-    'paragraph__columns',
-    'paragraph__grid_links',
-    'paragraph__transactions',
   ];
 
   /**
@@ -124,10 +120,11 @@ class MigrationConfigAlter {
    */
   protected static $migrationTags = [
     "d7_user_role" => ["bos:initial:1"],
-    "d7_userd7_url_alias" => ["bos:initial:1"],
+    "d7_user" => ["bos:initial:1"],
+    "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
     "d7_file" => ["bos:initial:1"],
-    "d7_block" => ["bos:initial:1"],
+    /* "d7_block" => ["bos:initial:1"], */
     "paragraph__3_column_w_image" => ["bos:paragraph:3"],
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
@@ -207,6 +204,27 @@ class MigrationConfigAlter {
     "d7_node:status_item" => ["bos:node:1"],
     "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
+    "d7_node_revision:advpoll" => ["bos:node:1"],
+    "d7_node_revision:article" => ["bos:node:3"],
+    "d7_node_revision:change" => ["bos:node:1"],
+    "d7_node_revision:department_profile" => ["bos:node:1"],
+    "d7_node_revision:emergency_alert" => ["bos:node:1"],
+    "d7_node_revision:event" => ["bos:node:2"],
+    "d7_node_revision:topic_page" => ["bos:node:2"],
+    "d7_node_revision:how_to" => ["bos:node:2"],
+    "d7_node_revision:landing_page" => ["bos:node:2"],
+    "d7_node_revision:listing_page" => ["bos:node:1"],
+    "d7_node_revision:person_profile" => ["bos:node:1"],
+    "d7_node_revision:place_profile" => ["bos:node:2"],
+    "d7_node_revision:post" => ["bos:node:2"],
+    "d7_node_revision:procurement_advertisement" => ["bos:node:1"],
+    "d7_node_revision:program_initiative_profile" => ["bos:node:2"],
+    "d7_node_revision:public_notice" => ["bos:node:2"],
+    "d7_node_revision:script_page" => ["bos:node:1"],
+    "d7_node_revision:site_alert" => ["bos:node:1"],
+    "d7_node_revision:status_item" => ["bos:node:1"],
+    "d7_node_revision:tabbed_content" => ["bos:node:2"],
+    "d7_node_revision:transaction" => ["bos:node:1"],
     "d7_taxonomy_term:contact" => ["bos:taxonomy:2"],
     "d7_taxonomy_term:news_tags" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:event_type" => ["bos:taxonomy:1"],
@@ -264,11 +282,18 @@ class MigrationConfigAlter {
       "process" => [
         "field_public_notice_date" => [
           "process" => [
-            "value2" => [
-              "plugin" => "format_date",
-              "from_format" => "Y-m-d H:i:s",
-              "to_format" => "Y-m-d\TH:i:s",
-              "source" => "value2",
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
             ],
           ],
         ],
@@ -278,11 +303,18 @@ class MigrationConfigAlter {
       "process" => [
         "field_public_notice_date" => [
           "process" => [
-            "value2" => [
-              "plugin" => "format_date",
-              "from_format" => "Y-m-d H:i:s",
-              "to_format" => "Y-m-d\TH:i:s",
-              "source" => "value2",
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
             ],
           ],
         ],
@@ -292,11 +324,18 @@ class MigrationConfigAlter {
       "process" => [
         "field_public_notice_date" => [
           "process" => [
-            "value2" => [
-              "plugin" => "format_date",
-              "from_format" => "Y-m-d H:i:s",
-              "to_format" => "Y-m-d\TH:i:s",
-              "source" => "value2",
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
             ],
           ],
         ],
@@ -307,6 +346,91 @@ class MigrationConfigAlter {
       "migration_dependencies" => [
         "required" => [
           "d7_node:department_profile",
+        ],
+      ],
+    ],
+    // Map "entity_reference" field to "link" field in internal_links para.
+    "paragraph__internal_link" => [
+      'process' => [
+        '_entity_type' => [
+          'plugin' => 'default_value',
+          'default_value' => 'entity:node',
+        ],
+        '_target_id' => [
+          [
+            'plugin' => 'migration',
+            'migration' => [
+              'd7_node:advpoll',
+              'd7_node:article',
+              'd7_node:change',
+              'd7_node:department_profile',
+              'd7_node:emergency_alert',
+              'd7_node:event',
+              'd7_node:how_to',
+              'd7_node:landing_page',
+              'd7_node:listing_page',
+              'd7_node:metrolist_affordable_housing',
+              'd7_node:person_profile',
+              'd7_node:place_profile',
+              'd7_node:post',
+              'd7_node:procurement_advertisement',
+              'd7_node:program_initiative_profile',
+              'd7_node:public_notice',
+              'd7_node:script_page',
+              'd7_node:site_alert',
+              'd7_node:status_item',
+              'd7_node:tabbed_content',
+              'd7_node:topic_page',
+              'd7_node:transaction',
+            ],
+            'source' => 'field_internal_link/0/target_id',
+          ],
+        ],
+        'field_internal_link/title' => [
+          [
+            'plugin' => 'get',
+            'source' => 'field_title/0/value',
+          ],
+          [
+            'plugin' => 'default_value',
+            'default_value' => 'Migration stub: link title',
+          ],
+        ],
+        'field_internal_link/uri' => [
+          [
+            'plugin' => 'concat',
+            'delimiter' => "/",
+            'source' => [
+              '@_entity_type',
+              '@_target_id',
+            ],
+          ],
+        ],
+      ],
+      'migration_dependencies' => [
+        'required' => [
+          'd7_node:advpoll',
+          'd7_node:article',
+          'd7_node:change',
+          'd7_node:department_profile',
+          'd7_node:emergency_alert',
+          'd7_node:event',
+          'd7_node:how_to',
+          'd7_node:landing_page',
+          'd7_node:listing_page',
+          'd7_node:metrolist_affordable_housing',
+          'd7_node:person_profile',
+          'd7_node:place_profile',
+          'd7_node:post',
+          'd7_node:procurement_advertisement',
+          'd7_node:program_initiative_profile',
+          'd7_node:public_notice',
+          'd7_node:script_page',
+          'd7_node:site_alert',
+          'd7_node:status_item',
+          'd7_node:tabbed_content',
+          'd7_node:topic_page',
+          'd7_node:transaction',
         ],
       ],
     ],
@@ -1246,19 +1370,11 @@ class MigrationConfigAlter {
               [
                 "plugin" => "skip_on_empty",
                 "method" => "process",
-                'source' => "value",
+                'source' => "target_id",
               ],
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps,
-              ],
-              [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-              ],
-              [
-                'plugin' => 'extract_ext',
-                'index' => [0],
               ],
             ],
           ],

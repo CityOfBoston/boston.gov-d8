@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.field.node.article.body
-    - field.field.node.article.comment
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_intro_text
@@ -13,7 +12,6 @@ dependencies:
     - field.field.node.article.field_updated_date
     - node.type.article
   module:
-    - comment
     - content_moderation
     - datetime
     - field_group
@@ -109,12 +107,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  comment:
-    type: comment_default
-    weight: 8
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 4

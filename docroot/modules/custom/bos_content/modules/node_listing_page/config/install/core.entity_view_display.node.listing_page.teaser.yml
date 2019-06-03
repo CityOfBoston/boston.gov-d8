@@ -16,6 +16,11 @@ targetEntityType: node
 bundle: listing_page
 mode: teaser
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
@@ -23,6 +28,7 @@ hidden:
   field_components: true
   field_header_component: true
   field_intro_image: true
+  field_manual_date: true
   field_published_date: true
   field_updated_date: true
   langcode: true

@@ -8,37 +8,7 @@ dependencies:
     - field.field.paragraph.transaction_grid.field_transactions
     - paragraphs.paragraphs_type.transaction_grid
   module:
-    - field_group
     - paragraphs
-third_party_settings:
-  field_group:
-    group_transaction_grid:
-      children:
-        - field_component_title
-        - field_short_title
-        - field_contact
-        - field_transactions
-      parent_name: group_transaction_grid2
-      weight: 5
-      format_type: tab
-      format_settings:
-        id: ''
-        classes: 'group-transaction-info field-group-fieldset'
-        formatter: open
-        description: ''
-        required_fields: true
-      label: 'Transaction Info'
-    group_transaction_grid2:
-      children:
-        - group_transaction_grid
-      parent_name: ''
-      weight: 0
-      format_type: tabs
-      format_settings:
-        id: ''
-        classes: ''
-        direction: vertical
-      label: 'Transaction Grid'
 id: paragraph.transaction_grid.default
 targetEntityType: paragraph
 bundle: transaction_grid
