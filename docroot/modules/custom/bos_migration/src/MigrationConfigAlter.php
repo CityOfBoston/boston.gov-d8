@@ -282,11 +282,18 @@ class MigrationConfigAlter {
       "process" => [
         "field_public_notice_date" => [
           "process" => [
-            "value2" => [
-              "plugin" => "format_date",
-              "from_format" => "Y-m-d H:i:s",
-              "to_format" => "Y-m-d\TH:i:s",
-              "source" => "value2",
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
             ],
           ],
         ],
@@ -296,13 +303,19 @@ class MigrationConfigAlter {
       "process" => [
         "field_public_notice_date" => [
           "process" => [
-            "value2" => [
-              "plugin" => "format_date",
-              "from_format" => "Y-m-d H:i:s",
-              "to_format" => "Y-m-d\TH:i:s",
-              "source" => "value2",
-            ],
-          ],
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],          ],
         ],
       ],
     ],
