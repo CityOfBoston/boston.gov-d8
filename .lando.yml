@@ -43,10 +43,6 @@ services:
       database: drupal
 
   appserver:
-    overrides:
-      ports:
-        - 80:80
-        - 443:443
     run_as_root:
       - echo -e "\033[1;32m[lando]\033[1;33m Building; Installing Linux packages in appserver container...\033[0m"
       - if [ ! -e  /app/setup ]; then mkdir /app/setup && chown www-data:www-data /app/setup && chmod 777 /app/setup; fi
