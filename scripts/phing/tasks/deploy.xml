@@ -152,6 +152,7 @@
         <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
       </then>
       <else>
+        <exec command='find . -type f -name ".gitignore" -delete' dir="${docroot}/modules"/>
         <phingcall target="deploy:artifact:commitd8"
                    description="Commit copied files into the the repo."/>
         <phingcall target="deploy:artifact:push-all"
