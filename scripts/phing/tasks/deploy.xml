@@ -36,6 +36,9 @@
 
   <target name="deploy:artifact:commitd8" description="*Commits deployment files to repo.">
 
+    <echo message="Prepare custom modules." level="info"/>
+    <exec command='find . -type f -name ".gitignore" -delete -print' dir="${docroot}/modules/custom/" passthru="true"/>
+
     <echo message="Add modified files to git (git add --all)." level="info"/>
     <exec command="git add --all" dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
@@ -152,7 +155,6 @@
         <echo message="DRY RUN: Creating build artifact, will not be deployed."/>
       </then>
       <else>
-        <exec command='find . -type f -name ".gitignore" -delete' dir="${docroot}/modules"/>
         <phingcall target="deploy:artifact:commitd8"
                    description="Commit copied files into the the repo."/>
         <phingcall target="deploy:artifact:push-all"
