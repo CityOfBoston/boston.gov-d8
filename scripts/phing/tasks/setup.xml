@@ -63,6 +63,8 @@
     <phingcall target="setup:type" inheritRefs="true" inheritAll="true"/>
     <!--<phingcall target="setup:drupal:download-modules" />-->
     <phingcall target="setup:drupal:clone_private_repo"/>
+    <exec command='find . -type f -name ".gitignore" -delete -print' dir="${docroot}/modules/custom/" passthru="true"
+          description="Removes gitignore from custom modules to they are copied and merged during deploy."/>
     <phingcall target="setup:drupal:site-install"/>
     <phingcall target="setup:drush:local-config"/>
 
