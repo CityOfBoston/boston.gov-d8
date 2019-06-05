@@ -434,6 +434,17 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    // Add a default value to field description which is changing type.
+    "paragraph__newsletter" => [
+      "process" => [
+        "field_description/0/format" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "full_html",
+          ],
+        ],
+      ],
+    ],
   ];
 
   /**
@@ -555,6 +566,7 @@ class MigrationConfigAlter {
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
+        'paragraph__commission_contact_info',
       ],
       "field_grid_of_quotes" => [
         'paragraph__quote',
@@ -574,6 +586,7 @@ class MigrationConfigAlter {
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
+        'paragraph__commission_contact_info',
       ],
       "field_links" => [
         'paragraph__grid_links',
@@ -582,6 +595,7 @@ class MigrationConfigAlter {
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
+        'paragraph__commission_contact_info',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
@@ -789,6 +803,14 @@ class MigrationConfigAlter {
       'field_related_links' => ['field_related_links'],
       'field_lightbox_link' => ['field_lightbox_link'],
     ],
+    "image" => [
+      'field_icon' => ['field_icon'],
+      'field_image' => ['field_image'],
+      'field_intro_image' => ['field_intro_image'],
+      'field_thumbnail' => ['field_thumbnail'],
+      'field_person_photo' => ['field_person_photo'],
+      'field_program_logo' => ['field_program_logo'],
+    ],
   ];
 
   /**
@@ -842,6 +864,7 @@ class MigrationConfigAlter {
       'node',
       'file',
       'link',
+      'image',
     ] as $entityType) {
       $this->globalAlterations($entityType);
     }
@@ -942,7 +965,9 @@ class MigrationConfigAlter {
           "d7_node_entity_translation",
           "d7_taxonomy_term",
           "d7_taxonomy_term_entity_translation",
-        ]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
+        ]) || $migration["source"]["plugin"] == "d7_paragraphs_item"
+        || $migration["source"]["plugin"] == "d7_field_collection_item"
+        ) {
 
           // Create dependencies for translations and revisions.
           switch ($migration["id"]) {
@@ -1280,6 +1305,10 @@ class MigrationConfigAlter {
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('link_field')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
+      case "image":
+        return $con->query("SELECT field_name FROM field_config WHERE type IN ('image')")
+          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+
       default:
         return [];
     }
@@ -1307,9 +1336,28 @@ class MigrationConfigAlter {
       // Creates a process element for node (entityreference) fields which are
       // embedded within a node, taxonomy and paragraph (migration) entities.
       case "node":
-        // Creates a process element for paragraph (entityreferencerevision)
-        // fields which are embedded within node, taxonomy and paragraph
-        // (migration) entities.
+        $process = [
+          "plugin" => "sub_process",
+          "source" => $fieldName,
+          "process" => [
+            "target_id" => [
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
+                'source' => "target_id",
+              ],
+              [
+                'plugin' => 'migration_lookup',
+                'migration' => $entity_field_deps,
+              ],
+            ],
+          ],
+        ];
+        break;
+
+      // Creates a process element for paragraph (entityreferencerevision)
+      // fields which are embedded within node, taxonomy and paragraph
+      // (migration) entities.
       case "paragraph":
         // Grab the migration lookup keys for the fields being processed.
         $process = [
@@ -1433,6 +1481,20 @@ class MigrationConfigAlter {
             ],
             'title' => 'title',
             'options' => 'attributes',
+          ],
+        ];
+        break;
+
+      case "image":
+        $process = [
+          "plugin" => "sub_process",
+          "source" => $fieldName,
+          "process" => [
+            "target_id" => 'fid',
+            "alt" => 'alt',
+            "title" => 'title',
+            "width" => 'width',
+            "height" => 'height',
           ],
         ];
         break;
