@@ -64,11 +64,11 @@
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
 
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
-    {{ burger }}
-    {{ logo }}
-    {{ seal }}
-    {{ secondary_nav }}
-    {{ search }}
+    {% include '@bos_theme/snippets/burger.html.twig' %}
+    {% include '@bos_theme/snippets/logo.html.twig' %}
+    {% include '@bos_theme/snippets/seal.html.twig' %}
+    {% include '@bos_theme/snippets/secondary-nav.html.twig' %}
+    {% include '@bos_theme/snippets/search.html.twig' %}
   </header>
 
   {% if has_site_alert %}
