@@ -1,5 +1,5 @@
 id: paragraph__news_and_announcements
-label: 'News % Announcements Paragraph'
+label: 'News and Announcements Paragraph'
 migration_group: bos_paragraphs
 migration_tags:
   - Drupal 7
@@ -15,12 +15,13 @@ process:
   id: item_id
   revision_id: revision_id
   field_featured_post: field_featured_post
+  field_list: field_list
   field_link: field_link
   field_short_title: field_short_title
   field_component_title: field_component_title
 destination:
   plugin: 'entity_reference_revisions:paragraph'
-  default_bundle: news_announcements
+  default_bundle: news_and_announcements
 
 migration_dependencies:
   required: {  }
