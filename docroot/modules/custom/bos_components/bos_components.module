@@ -339,11 +339,25 @@ function _bos_components_fix_attributes(array &$variables, string $check_field =
  */
 function _bos_components_update_all_icons() {
   $modules = system_get_info('module');
+  $ignore = [
+    "bos_migration",
+    "bos_components",
+    "bos_content",
+    "bos_core",
+    "bos_vocab",
+  ];
   foreach ($modules as $moduleName => $module) {
     if (preg_match("/^(bos_)/", $moduleName)) {
-      _bos_core_install_icons($moduleName);
+      if (!in_array($moduleName, $ignore)) {
+        _bos_core_install_icons($moduleName);
+      }
     }
   }
+  // Content Type modules with paragraphs ...
+  _bos_core_install_icons("node_how_to");
+  _bos_core_install_icons("node_emergency_alert");
+  _bos_core_install_icons("node_tabbed_content");
+
 }
 
 /**

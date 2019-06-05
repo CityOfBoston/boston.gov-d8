@@ -51,8 +51,12 @@ function bos_transaction_grid_preprocess_paragraph(&$variables) {
         break;
 
       case "internal_link":
-        $uri = "/" . explode(":", $para->field_internal_link->uri)[1];
-        $variables['link'] = \Drupal::service('path.alias_manager')->getAliasByPath($uri, "en");
+        $uri = explode(":", $para->field_internal_link->uri);
+        if (count($uri) > 1) {
+          $uri = "/" . $uri[1];
+          $variables['link'] = \Drupal::service('path.alias_manager')
+            ->getAliasByPath($uri, "en");
+        }
         $variables['title'] = $para->field_internal_link->title;
         break;
 
