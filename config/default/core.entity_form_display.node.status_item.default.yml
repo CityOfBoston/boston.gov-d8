@@ -10,10 +10,55 @@ dependencies:
     - node.type.status_item
   module:
     - content_moderation
+    - field_group
     - paragraphs
     - path
     - publication_date
     - svg_image
+third_party_settings:
+  field_group:
+    group_status_item:
+      children:
+        - group_basic_information
+        - group_messages
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: 'Status Item'
+    group_basic_information:
+      children:
+        - title
+        - field_title
+        - field_icon
+      parent_name: group_status_item
+      weight: 20
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-basic-information field-group-tab r'
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_messages:
+      children:
+        - field_messages
+      parent_name: group_status_item
+      weight: 21
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-messages field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Messages
+_core:
+  default_config_hash: bjotN0ZOH2QCl6-XNJmD02C68QghlD1Z6Ahh9zOMyvM
 id: node.status_item.default
 targetEntityType: node
 bundle: status_item
@@ -21,7 +66,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -34,7 +79,7 @@ content:
     third_party_settings: {  }
     region: content
   field_messages:
-    weight: 6
+    weight: 5
     type: paragraphs
     settings:
       title: Message
@@ -62,20 +107,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 2
+    weight: 6
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 13
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -83,12 +128,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 9
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -96,19 +141,19 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 14
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 16
+    weight: 10
     region: content
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: -5
+    weight: 1
     region: content
     settings:
       size: 60
@@ -116,7 +161,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
@@ -124,7 +169,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 12
     region: content
     settings: {  }
     third_party_settings: {  }

@@ -8,6 +8,8 @@ dependencies:
     - paragraphs.paragraphs_type.message_for_the_day
   module:
     - entity_reference_revisions
+_core:
+  default_config_hash: 1enLbUwail5LRNFK6-OagGf_pN_ipkWLc2kCJSQKPjg
 id: node.status_item.field_messages
 field_name: field_messages
 entity_type: node
@@ -209,12 +211,15 @@ settings:
         weight: 72
         enabled: false
       commission_search:
-        weight: 75
+        weight: 76
         enabled: false
       from_library:
-        weight: 87
+        weight: 88
         enabled: false
       news_and_announcements:
         weight: 112
+        enabled: false
+      status_overrides:
+        weight: 122
         enabled: false
 field_type: entity_reference_revisions

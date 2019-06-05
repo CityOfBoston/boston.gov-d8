@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_place
+    - node.type.place_profile
+    - node.type.post
+id: node.post.field_place
+field_name: field_place
+entity_type: node
+bundle: post
+label: 'Related places'
+description: 'Are any cemeteries, parks, historic districts, or community centers relevant for this post?'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    behaviors:
+      views-select-list:
+        status: 1
+    sort:
+      field: _none
+      direction: ASC
+    target_bundles:
+      place_profile: place_profile
+field_type: entity_reference

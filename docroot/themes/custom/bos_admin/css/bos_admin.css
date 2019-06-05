@@ -927,16 +927,32 @@ body.bos_admin {
   background-color: #f6f6f6;
 }
 
+.bos_admin .details-wrapper .form-wrapper thead tr {
+  border: none;
+}
+.bos_admin .details-wrapper .form-wrapper th.field-label {
+  color: inherit;
+  background: transparent;
+  padding-left: 0;
+}
+
+.bos_admin .details-wrapper .form-wrapper th.field-label h4,
 .bos_admin .details-wrapper .form-wrapper .form-type-managed-file label,
 .bos_admin .details-wrapper .form-wrapper .form-type-entity-autocomplete label,
-.bos_admin .details-wrapper .form-wrapper .field--widget-options-buttons .fieldset-legend,
+.bos_admin .details-wrapper .form-wrapper.field--widget-options-buttons .fieldset-legend,
 .bos_admin .details-wrapper .form-wrapper .form-type-select label div:not(.filter-wrapper),
+.bos_admin .details-wrapper .field--widget-options-select .form-type-select label,
 .bos_admin .details-wrapper .form-wrapper .form-type-textfield label,
 .bos_admin .entity-content-form-revision-information .form-wrapper .form-type-textarea label,
 .bos_admin .details-wrapper .form-wrapper .form-type-textarea label {
   font-size: 1.5rem;
   padding: .5rem 0;
   font-variant: all-small-caps;
+}
+
+.bos_admin #edit-field-sidebar-components--description,
+.bos_admin #edit-field-components--description {
+  margin-bottom: 5px;
 }
 
 /* Theme for admin configuration page. */
@@ -1024,4 +1040,28 @@ body.bos_admin {
 }
 .bos_admin .admin-salesforce h3.panel__title {
   background-image: url(../images/config/gears-small.png);
+}
+
+/* Style text added into a group details section. */
+.bos_admin .details-wrapper .bos-boxed-content {
+  border: 1px solid #c5c5c5;
+  padding: 3px;
+  background-color: #fbe3cf;
+}
+.bos_admin .details-wrapper .bos-boxed-content-t {
+  border: 1px solid #c5c5c5;
+  padding: 5px;
+  background-color: transparent;
+}
+.bos_admin .details-wrapper .bos-boxed-content a {
+  background: url(../images/info.svg) no-repeat -2px -1px;
+  background-size: 20px;
+  padding-left: 25px
+}
+ /* Editor pages for contextual editing. */
+.bos_admin .context_editor-wrapper {
+  width: 50%;
+  margin: 0 5%;
+  border: 1px solid #555;
+  padding: 10px;
 }

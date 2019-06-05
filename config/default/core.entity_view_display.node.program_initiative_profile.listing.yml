@@ -9,11 +9,12 @@ dependencies:
     - field.field.node.program_initiative_profile.field_contacts
     - field.field.node.program_initiative_profile.field_intro_image
     - field.field.node.program_initiative_profile.field_intro_text
+    - field.field.node.program_initiative_profile.field_manual_date
+    - field.field.node.program_initiative_profile.field_metatags
     - field.field.node.program_initiative_profile.field_program_logo
     - field.field.node.program_initiative_profile.field_program_type
     - field.field.node.program_initiative_profile.field_published_date
     - field.field.node.program_initiative_profile.field_sidebar_components
-    - field.field.node.program_initiative_profile.field_type_of_content
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
   module:
@@ -21,6 +22,8 @@ dependencies:
     - fences
     - image_url_formatter
     - user
+_core:
+  default_config_hash: zCk81BKV0vdITJMe6NBnCLEzXW2Ob6H1_eyWd6xR8n0
 id: node.program_initiative_profile.listing
 targetEntityType: node
 bundle: program_initiative_profile
@@ -36,11 +39,11 @@ content:
       image_link: ''
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: div
         fences_field_classes: ''
-        fences_field_item_tag: none
+        fences_field_item_tag: div
         fences_field_item_classes: ''
-        fences_label_tag: none
+        fences_label_tag: div
         fences_label_classes: ''
     region: content
   field_intro_text:
@@ -52,43 +55,35 @@ content:
       trim_length: '120'
       ellipsis: '1'
       word_boundary: '1'
-      filter: input
+      filter: php
       format: plain_text
       allowed_html:
-        - a
         - b
-        - br
-        - dd
-        - dl
-        - dt
         - em
         - i
-        - li
-        - ol
-        - p
         - strong
-        - u
-        - ul
       use_summary: 0
       token_replace: 0
       autop: 0
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: div
         fences_field_classes: ''
-        fences_field_item_tag: none
+        fences_field_item_tag: div
         fences_field_item_classes: ''
-        fences_label_tag: none
+        fences_label_tag: div
         fences_label_classes: ''
 hidden:
   body: true
+  content_moderation_control: true
   field_components: true
   field_contacts: true
+  field_manual_date: true
+  field_metatags: true
   field_program_logo: true
   field_program_type: true
   field_published_date: true
   field_sidebar_components: true
-  field_type_of_content: true
   field_updated_date: true
   langcode: true
   links: true

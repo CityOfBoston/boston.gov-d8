@@ -1,6 +1,6 @@
 id: paragraph__card
 label: 'Card Paragraph'
-migration_group: bos_paragraphs_failing
+migration_group: bos_paragraphs
 migration_tags:
   - Drupal 7
   - Content
@@ -12,23 +12,17 @@ source:
   plugin: d7_paragraphs_item
   bundle: card
 process:
+  id: item_id
+  revision_id: revision_id
   field_title: field_title
   field_short_description: field_short_description
   field_thumbnail: field_thumbnail
   field_subheader: field_subheader
-  field_link:
-    plugin: iterator
-    source: field_link
-    process:
-      uri:
-        plugin: fix_uri
-        source: url
-      title: title
-      options: attributes
+  field_link: field_link
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: card
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

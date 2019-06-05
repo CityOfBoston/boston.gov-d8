@@ -12,6 +12,8 @@ source:
   plugin: d7_paragraphs_item
   bundle: video
 process:
+  id: item_id
+  revision_id: revision_id
   field_contact: field_contact
   field_is_channel: field_is_channel
   field_image: field_image
@@ -19,9 +21,9 @@ process:
   field_component_title: field_component_title
   field_extra_info: field_extra_info
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: video
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

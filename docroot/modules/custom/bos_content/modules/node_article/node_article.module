@@ -30,11 +30,11 @@ function node_article_theme() {
     ],
     'field__node__body__article' => [
       'base_hook' => 'field',
-      'path' => 'modules/custom/bos_content/modules/article/templates',
+      'path' => 'modules/custom/bos_content/modules/node_article/templates',
     ],
     'field__node__field_contact__article' => [
       'base_hook' => 'field',
-      'path' => 'modules/custom/bos_content/modules/article/templates',
+      'path' => 'modules/custom/bos_content/modules/node_article/templates',
     ],
   ];
 }
@@ -49,10 +49,10 @@ function node_article_preprocess_page(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_article_preprocess_node(&$variables) {
-  if (!isset($variables["node"]) || $variables["node"]->bundle() != 'article') {
-    return;
-  }
+function node_article_preprocess_node__article(&$variables) {
+  _bos_content_fix_attributes($variables);
+  $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->addClass("clearfix");
 }
 
 /**

@@ -1,4 +1,4 @@
-uuid: d302dda6-9e6b-4b62-8e39-f6afe582b5ea
+uuid: a0e5ede6-9bdb-4e42-aac9-17811727719d
 langcode: en
 status: true
 dependencies:
@@ -9,27 +9,9 @@ dependencies:
     - field.field.paragraph.transaction_grid.field_transactions
     - paragraphs.paragraphs_type.transaction_grid
   module:
-    - field_group
     - paragraphs
-third_party_settings:
-  field_group:
-    group_transaction_info:
-      children:
-        - field_component_title
-        - field_short_title
-        - field_contact
-        - field_transactions
-      parent_name: ''
-      weight: 0
-      format_type: fieldset
-      format_settings:
-        id: ''
-        classes: ''
-        description: ''
-        required_fields: true
-      label: 'Transaction Info'
 _core:
-  default_config_hash: 7LryD1XwXWTCxSd5hO-TqlTp7O7VFN-s-3IGfEtjVIU
+  default_config_hash: qI75gk_fT3qysRzzwa0Fc95i8-2wWVbba4ouBhFqd1w
 id: paragraph.transaction_grid.default
 targetEntityType: paragraph
 bundle: transaction_grid
@@ -45,7 +27,7 @@ content:
     region: content
   field_contact:
     weight: 3
-    type: entity_reference_autocomplete_tags
+    type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
       size: 60
@@ -64,7 +46,7 @@ content:
     weight: 4
     type: paragraphs
     settings:
-      title: Transactions
+      title: Transaction
       title_plural: Transactions
       edit_mode: closed
       closed_mode: summary

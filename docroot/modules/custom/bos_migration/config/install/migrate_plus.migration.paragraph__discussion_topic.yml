@@ -12,12 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: discussion_topic
 process:
+  id: item_id
+  revision_id: revision_id
   field_links: field_links
   field_title: field_title
+  field_description: field_description
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: discussion_topic
-  new_revisions: true
+
 migration_dependencies:
   required: {  }
   optional: {  }

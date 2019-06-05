@@ -1,0 +1,87 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.script_page.field_components
+    - field.field.node.script_page.field_contact
+    - field.field.node.script_page.field_embed_list
+    - field.field.node.script_page.field_intro_text
+    - field.field.node.script_page.field_link
+    - field.field.node.script_page.field_sidebar_components
+    - node.type.script_page
+  module:
+    - entity_reference_revisions
+    - text
+    - user
+id: node.script_page.default
+targetEntityType: node
+bundle: script_page
+mode: default
+content:
+  field_components:
+    label: hidden
+    weight: 4
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    label: hidden
+    weight: 1
+    type: entity_reference_entity_view
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
+  field_embed_list:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: full
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_intro_text:
+    type: text_default
+    weight: 0
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_link:
+    label: hidden
+    weight: 3
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: listing
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    label: hidden
+    weight: 5
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: sidebar
+      link: ''
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  published_at: true

@@ -12,14 +12,15 @@ source:
   plugin: d7_paragraphs_item
   bundle: grid_of_quotes
 process:
+  id: item_id
+  revision_id: revision_id
   field_grid_of_quotes: field_grid_of_quotes
   field_short_title: field_short_title
   field_component_title: field_component_title
 destination:
-  plugin: entity:paragraph
+  plugin: 'entity_reference_revisions:paragraph'
   default_bundle: grid_of_quotes
-  new_revisions: true
+
 migration_dependencies:
-  required:
-    - paragraph__quote
+  required: {  }
   optional: {  }

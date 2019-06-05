@@ -1,6 +1,6 @@
-uuid: 5bd76196-7d76-4ba6-a00a-4491bc4bd887
+uuid: 3b8dd321-bd1e-4815-9043-2d3ec0c87735
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
@@ -10,14 +10,21 @@ dependencies:
     - field.field.paragraph.transaction_grid.field_transactions
     - paragraphs.paragraphs_type.transaction_grid
 _core:
-  default_config_hash: HKEHeNvAAP0xvQOtoyUe63275S6BZ4rQgTFUFnXA1nA
+  default_config_hash: TOsT6VkBcPuqxrxLmXmHtQpOLXqsVZeCV0RXg-M_uzk
 id: paragraph.transaction_grid.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: transaction_grid
 mode: paragraphs_editor_preview
-content: {  }
+content:
+  field_component_title:
+    type: string
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
-  field_component_title: true
   field_contact: true
   field_short_title: true
   field_transactions: true

@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Provides an emergency alert entity type.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function node_emergency_alert_theme() {
+  return [
+    'emergency_alert' => [
+      'render element' => 'elements',
+    ],
+    'node__emergency_alert' => [
+      'render element' => 'elements',
+      'base hook' => 'node',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_emergency_alert_preprocess_form_element(&$variables) {
+  if (isset($variables["element"]["#bundle"]) && $variables["element"]["#bundle"] == "emergency_alert") {
+    if (isset($variables["name"]) && $variables["name"] == "field_theme") {
+      $variables["description"]["attributes"]->addClass("bos-boxed-content-t");
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_emergency_alert_preprocess_node__emergency_alert(&$variables) {
+  $variables["attributes"]->addClass("b");
+  $variables["attributes"]->addClass("b--" . $variables["content"]["field_theme"][0]["#markup"]);
+  $variables["attached"]["library"][] = "emergency_alert/emergency_alert.call";
+}
+
+/**
+ * Prepares variables for emergency alert templates.
+ *
+ * Default template: emergency-alert.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the emergency alert information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_emergency_alert(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}

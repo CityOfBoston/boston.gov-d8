@@ -1,0 +1,24 @@
+id: d7_field_collection_grid_links
+label: 'Grid Links field-collection to paragraph'
+migration_group: bos_field_collection
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+      - bos_migration
+source:
+  plugin: d7_field_collection_item
+  key: migrate
+  field_name: field_grid_links
+process:
+  field_grid_link: field_grid_link
+  field_short_description: field_short_description
+  field_extra_info: field_extra_info
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: grid_links
+migration_dependencies:
+  required: {  }
+  optional: {  }

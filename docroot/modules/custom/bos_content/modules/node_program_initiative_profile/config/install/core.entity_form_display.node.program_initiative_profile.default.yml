@@ -1,0 +1,307 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.program_initiative_profile.body
+    - field.field.node.program_initiative_profile.field_components
+    - field.field.node.program_initiative_profile.field_contacts
+    - field.field.node.program_initiative_profile.field_intro_image
+    - field.field.node.program_initiative_profile.field_intro_text
+    - field.field.node.program_initiative_profile.field_manual_date
+    - field.field.node.program_initiative_profile.field_metatags
+    - field.field.node.program_initiative_profile.field_program_logo
+    - field.field.node.program_initiative_profile.field_program_type
+    - field.field.node.program_initiative_profile.field_published_date
+    - field.field.node.program_initiative_profile.field_sidebar_components
+    - field.field.node.program_initiative_profile.field_updated_date
+    - image.style.thumbnail
+    - node.type.program_initiative_profile
+  module:
+    - content_moderation
+    - datetime
+    - field_group
+    - metatag
+    - paragraphs
+    - path
+    - publication_date
+    - svg_image
+    - text
+third_party_settings:
+  field_group:
+    group_pip:
+      children:
+        - group_ba
+        - group_additional_information
+        - group_s
+        - group_components
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        id: ''
+        classes: ''
+        direction: vertical
+      label: PIP
+    group_ba:
+      children:
+        - title
+        - field_intro_image
+        - field_intro_text
+        - body
+        - field_contacts
+      parent_name: group_pip
+      weight: 20
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: open
+        description: ''
+        required_fields: true
+      label: 'Basic Information'
+    group_additional_information:
+      children:
+        - field_program_type
+        - field_program_logo
+      parent_name: group_pip
+      weight: 21
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Additional Information'
+    group_page_metadata:
+      children:
+        - field_manual_date
+        - field_updated_date
+        - field_published_date
+      parent_name: ''
+      weight: 1
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: 'group-page-metadata field-group-tab'
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Page Metadata'
+    group_s:
+      children:
+        - field_sidebar_components
+      parent_name: group_pip
+      weight: 22
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: 'Sidebar Components'
+    group_components:
+      children:
+        - field_components
+      parent_name: group_pip
+      weight: 23
+      format_type: tab
+      format_settings:
+        id: ''
+        classes: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+      label: Components
+id: node.program_initiative_profile.default
+targetEntityType: node
+bundle: program_initiative_profile
+mode: default
+content:
+  body:
+    weight: 4
+    type: text_textarea_with_summary
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_components:
+    weight: 7
+    type: paragraphs
+    settings:
+      title: Component
+      title_plural: Components
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_contacts:
+    weight: 5
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_intro_image:
+    weight: 2
+    type: image_image
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_intro_text:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_manual_date:
+    weight: 19
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_metatags:
+    weight: 13
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+    region: content
+  field_program_logo:
+    weight: 4
+    type: image_image
+    settings:
+      preview_image_style: thumbnail
+      progress_indicator: throbber
+    third_party_settings: {  }
+    region: content
+  field_program_type:
+    weight: 3
+    type: options_select
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_published_date:
+    weight: 21
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_sidebar_components:
+    weight: 4
+    type: paragraphs
+    settings:
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_updated_date:
+    weight: 20
+    type: datetime_default
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 11
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 6
+    region: content
+    third_party_settings: {  }
+  published_at:
+    type: publication_date_timestamp
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 12
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 8
+    region: content
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  url_redirects:
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

@@ -304,6 +304,15 @@ function bos_core_token_info() {
 }
 
 /**
+ * Implements hook_media_embed_alter().
+ */
+function bos_core_media_embed_alter(&$build, $entity, $context) {
+  if (!empty($context['data-style'])) {
+    $build['#attributes']['style'][] = $context['data-style'];
+  }
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
@@ -353,7 +362,7 @@ function _bos_core_uninstall_boston($module) {
   $path = drupal_get_path("module", $module);
 
   // Get a full list of .yml files defined by this module.
-  foreach (["install", "optional", "required"] as $sub) {
+  foreach (["install"] as $sub) {
     $fullpath = DRUPAL_ROOT . "/" . $path . "/config/" . $sub;
     if (is_dir($fullpath)) {
       $_configs = array_diff(scandir($fullpath), ['.', '..']);
@@ -414,6 +423,31 @@ function _bos_core_install_icons($module) {
       unlink($path . "/" . $icon);
     }
     copy($modulePath . "/" . $icon, $path . "/" . $icon);
+
+    // Check if the file exists that is listed in para.para_type.module.yml.
+    $filesystem = \Drupal::service('file_system');
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($path . "/" . $icon));
+    $mod = \Drupal::entityTypeManager()
+      ->getStorage("paragraphs_type")->load($entity);
+    if (!empty($mod)) {
+      $destination = "public://paragraphs_type_icon/" . $icon;
+      $image = Drupal::entityTypeManager()->getStorage("file")
+        ->loadByProperties(["uri" => $destination]);
+      if (count($image) == 0) {
+        $image = File::create();
+        $image->setFileUri($destination);
+        $image->setOwnerId(\Drupal::currentUser()->id());
+        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+        $image->setFileName($filesystem->basename($destination));
+        $image->setPermanent();
+        $image->save();
+      }
+      else {
+        $image = end($image);
+      }
+      $file_uuid = $image->get("uuid")->value;
+      $mod->set("icon_uuid", $file_uuid)->save();
+    }
   }
 }
 
@@ -451,11 +485,14 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'internal_link':
         $link = $paragraph->get('field_internal_link')->getValue();
-        preg_match('~/(.*)~', $link['0']['uri'], $match);
-        $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
-        $results['url'] = $url->toString();
-        $results['title'] = $link['0']['title'];
-        $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
+        if (!empty($link)) {
+          preg_match('~/(.*)~', $link['0']['uri'], $match);
+          $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
+          $results['url'] = $url->toString();
+          $results['title'] = $link['0']['title'];
+          $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
+            ->toString();
+        }
         break;
     }
   }
@@ -562,11 +599,74 @@ function _bos_core_moderation_decode(array $node_info) {
  * @return string
  *   Best guess at the users name.
  */
-function _bos_core_name_from_email(string $email) {
-  if (preg_match("/.*\@/", $email, $output)) {
+function _bos_core_name_from_email(string $email = NULL) {
+  if (!isset($email)) {
+    return "unknown";
+  }
+  elseif (preg_match("/.*\@/", $email, $output)) {
     return ucwords(str_replace(".", " ", trim($output[0], "@")));
   }
   else {
     return $email;
   }
+}
+
+/**
+ * Ensures the attributes element of a preprocess_hook is an attributes object.
+ *
+ * @param array $variables
+ *   The variables object from a preprocess hook.
+ * @param string $check_field
+ *   The attribute field.
+ */
+function _bos_core_fix_attributes(array &$variables, string $check_field = "attributes") {
+  if (isset($variables[$check_field]) && is_object(($variables[$check_field]))) {
+    return;
+  }
+  if (isset($variables[$check_field]) && is_array($variables[$check_field]) && class_exists(Attribute::class)) {
+    $attribute = new Attribute();
+    if (!empty($variables[$check_field])) {
+      foreach ($variables[$check_field] as $key => $element) {
+        $attribute->setAttribute($key, $element);
+      }
+    }
+    if (!empty($attribute)) {
+      $variables[$check_field] = $attribute;
+    }
+  }
+}
+
+/**
+ * Formats free text-string number into approved format. Strips non-numerics.
+ *
+ * @param string $phone
+ *   A 10-digit phone number in a range of formats.
+ * @param string $output
+ *   A format guide for output - uses $1=first 3 numbers, $2=second 3 numbers,
+ *   and $3=last 4 numbers.
+ *
+ * @return string
+ *   Output (default in a standard XXX-XXX-XXXX format).
+ */
+function bos_core_format_telephone(string $phone, string $output = "$1-$2-$3") {
+  return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', $output, $phone);
+}
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_core_update_all_configs() {
+  require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
+  drush_config_devel_export("bos_core");
+}
+
+/**
+ * Runs an iteration over all custom modules and exports configs (drush cde).
+ */
+function _bos_core_global_update_configs() {
+  _bos_content_update_all_configs();
+  _bos_components_update_all_configs();
+  _bos_vocab_update_all_configs();
+  _bos_core_update_all_configs();
+
 }

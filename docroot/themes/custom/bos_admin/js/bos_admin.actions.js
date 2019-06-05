@@ -2,6 +2,9 @@
 * @file
 */
 
+/**
+ * Shows additional buttons when page length extends.
+ */
 (function ($, window, document) {
   'use strict';
   $(document).ready(function () {
@@ -21,10 +24,31 @@
           }
         });
       };
-      $(".bos_admin .vertical-tabs__menu-item").click(function () {
+      $(".bos_admin .vertical-tabs__menu-item, .bos_admin summary, .bos_admin .paragraphs-actions input.button").click(function () {
+        setTimeout(function () {
+          showActions();
+        }, 500);
+      });
+      $(document).ajaxStop(function () {
         showActions();
       });
       showActions();
+    }
+  });
+})(jQuery, this, this.document);
+
+/**
+ * Adds a checkbox to datetime_range on public notices.
+ */
+(function ($, window, document) {
+  'use strict';
+  $(document).ready(function () {
+    var actions = $(".field--name-field-public-notice-date #cbx-field-end-date");
+    if (actions.length) {
+      actions.click(function () {
+        $(this).parent().next().show();
+        $(this).parent().hide();
+      });
     }
   });
 })(jQuery, this, this.document);

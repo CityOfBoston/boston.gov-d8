@@ -9,6 +9,7 @@ dependencies:
     - paragraphs.paragraphs_type.drawer
   module:
     - entity_reference_revisions
+    - fences
 _core:
   default_config_hash: fynMubqAl3bwnIrJhD3TaaN9VolOU9rrlv-dZcQsERk
 id: paragraph.drawer.default
@@ -16,15 +17,36 @@ targetEntityType: paragraph
 bundle: drawer
 mode: default
 content:
+  field_short_description:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   field_text_blocks:
     label: hidden
-    weight: 2
+    weight: 0
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
-hidden:
-  field_short_description: true
-  field_title: true
+  field_title:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden: {  }

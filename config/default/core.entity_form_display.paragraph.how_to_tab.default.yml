@@ -1,4 +1,4 @@
-uuid: 1d1f694d-4a32-4796-bedd-9ae3ff7aa2c8
+uuid: e47c9b37-fea8-4c8f-a745-fdadfede2995
 langcode: en
 status: true
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
     - paragraphs
     - text
 _core:
-  default_config_hash: bP8X5LJa477Xm6BMjIlzUZARTyn4Y_-LX4gOIWgMaRE
+  default_config_hash: ijrzKeQnZsbhdQEhmyJjz1sQTkNepfaYbtk2UkW8Q8I
 id: paragraph.how_to_tab.default
 targetEntityType: paragraph
 bundle: how_to_tab
@@ -19,14 +19,21 @@ mode: default
 content:
   field_how_to_steps:
     weight: 2
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: 'How-To Step'
       title_plural: 'How-To Steps'
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_how_to_title:

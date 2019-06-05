@@ -26,9 +26,11 @@
 <div class="b b--fw b--{{ component_theme }}">
   <div class="b-c">
     <div class="sh m-b300 {{ section_header_theme }}">
+      {{ title_prefix }}
       {% if content.field_component_title %}
         {{ content.field_component_title }}
       {% endif %}
+      {{ title_suffix }}
       {% if content.field_contact %}
         {{ content.field_contact }}
       {% endif %}

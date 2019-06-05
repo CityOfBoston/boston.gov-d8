@@ -7,13 +7,11 @@ version: 8.x.1.0
 dependencies:
   - bos_content
   - bos_components
-  - vocab_contact
+  - bos_vocab
 config_devel:
   - core.base_field_override.node.landing_page.status
   - core.base_field_override.node.landing_page.promote
-  - core.entity_form_display.comment.comment_node_landing_page.default
   - core.entity_form_display.node.landing_page.default
-  - core.entity_view_display.comment.comment_node_landing_page.default
   - core.entity_view_display.node.landing_page.article
   - core.entity_view_display.node.landing_page.calendar_listing
   - core.entity_view_display.node.landing_page.contact
@@ -27,15 +25,11 @@ config_devel:
   - core.entity_view_display.node.landing_page.published_by
   - core.entity_view_display.node.landing_page.teaser
   - core.entity_view_display.node.landing_page.topics_list
-  - field.field.comment.comment_node_landing_page.comment_body
-  - field.field.node.landing_page.comment_node_landing_page
   - field.field.node.landing_page.field_components
   - field.field.node.landing_page.field_contacts
   - field.field.node.landing_page.field_manual_date
   - field.field.node.landing_page.field_published_date
   - field.field.node.landing_page.field_updated_date
-  - field.storage.node.comment_node_landing_page
-  - language.content_settings.comment.comment_node_landing_page
   - language.content_settings.node.landing_page
   - node.type.landing_page
   - rabbit_hole.behavior_settings.node_type_landing_page

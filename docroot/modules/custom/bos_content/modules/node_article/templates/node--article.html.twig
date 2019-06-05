@@ -16,12 +16,7 @@
  */
 #}
 
-{% set lclasses = ['clearfix', 'desktop-100'] %}
-{% if classes %}
-    {% set lclasses = lclasses|merge(classes) %}
-{% endif %}
-
-<article {{ attributes.addClass(lclasses) }}>
+<article{{ attributes }}>
 
     {% if (content.field_updated_date) %}
         <div class="brc-lu">

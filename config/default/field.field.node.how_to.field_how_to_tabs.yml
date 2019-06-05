@@ -1,12 +1,15 @@
-uuid: 2cb26006-fdb1-4054-90f7-2c99474cea0e
+uuid: ec075beb-578e-45aa-b605-839a4293ec79
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_how_to_tabs
     - node.type.how_to
+    - paragraphs.paragraphs_type.how_to_tab
   module:
     - entity_reference_revisions
+_core:
+  default_config_hash: K3kqVWGGlzPUzefUSFToYRoFVI-SHg4DDrApq7v_zPM
 id: node.how_to.field_how_to_tabs
 field_name: field_how_to_tabs
 entity_type: node
@@ -20,7 +23,8 @@ default_value_callback: ''
 settings:
   handler_settings:
     negate: 0
-    target_bundles: {  }
+    target_bundles:
+      how_to_tab: how_to_tab
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: false

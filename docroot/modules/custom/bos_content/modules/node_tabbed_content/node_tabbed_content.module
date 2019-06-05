@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * @file
+ * Provides a tabbed content entity type.
+ */
+
+use Drupal\Core\Render\Element;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+ */
+function node_tabbed_content_theme() {
+  return [
+    'node__tabbed_content' => [
+      'render element' => 'elements',
+    ],
+    'paragraph__tabbed_content_tab' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_tabbed_content_preprocess_page(&$variables) {
+  // We dont ever want a hero section from the page template.
+  if (isset($variables["node"]) && $variables["node"]->bundle() == "tabbed_content") {
+    $variables['header_image'] = FALSE;
+    if (function_exists("_bos_theme_fix_attributes")) {
+      _bos_theme_fix_attributes($variables);
+    }
+    elseif (function_exists("_bos_admin_fix_attributes")) {
+      _bos_admin_fix_attributes($variables);
+    }
+    $variables['attributes']->addClass("mn");
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
+
+  $node = $variables['elements']['#node'];
+  $tab_paragraphs = $node->get('field_tabbed_content');
+  $tab_paragraphs = $tab_paragraphs->referencedEntities();
+  $tabs = [];
+  foreach ($tab_paragraphs as $tab_paragraph) {
+    $tabs[] = [
+      'id' => strtolower(Html::cleanCssIdentifier($tab_paragraph->field_component_title->value)),
+      'title' => $tab_paragraph->field_component_title->value,
+    ];
+  }
+  $variables['tabs'] = $tabs;
+
+  // Add intro_image as background to the title panel.
+  if (isset($node->field_intro_image)) {
+    $background_image = $node->field_intro_image;
+    if (isset($background_image->entity)) {
+      $uri = $background_image->entity->getFileUri();
+      $variables['background_image_exists'] = TRUE;
+      $variables['background_image'] = $background_image;
+      $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
+        ->buildUrl($uri);
+      $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
+        ->buildUrl($uri);
+      $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
+        ->buildUrl($uri);
+      $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
+        ->buildUrl($uri);
+    }
+  }
+
+  // Add markup to locate the contextual editor button.
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables);
+    $variables["attributes"]->addClass("node");
+    $variables["attributes"]->addClass("node-tabbed-content");
+    $variables["attributes"]->addClass("tab-pc");
+    $variables["attributes"]->addClass("p-t500");
+    $variables["attributes"]->addClass("node-" . $node->id());
+    $variables["attributes"]->addClass("clearfix");
+    if (!$node->status->value) {
+      $variables["attributes"]->addClass("node-unpublished");
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_tabbed_content_preprocess_paragraph__tabbed_content_tab(&$variables) {
+  _bos_core_fix_attributes($variables, "content_attributes");
+  $variables["content_attributes"]->addClass("tab-p");
+  $variables["content_attributes"]->addClass("tab-p-" . $variables["attributes"]["cob-data-index"]);
+  $id = strtolower(Html::cleanCssIdentifier($variables["elements"]["#paragraph"]->field_component_title->value));
+  $variables["content_attributes"]->setAttribute("id", $id . "_content");
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_tabbed_content_preprocess_field__field_tabbed_content(&$variables) {
+  foreach ($variables["items"] as $key => &$item) {
+    // Add the index item so that this can be used to set the correct tab index
+    // in the hook_preprocess_paragraph__tabbed_content_tab.
+    $item["content"]["#attributes"]["cob-data-index"] = $key;
+  }
+}
+
+/**
+ * Prepares variables for tabbed content templates.
+ *
+ * Default template: tabbed-content.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the tabbed content information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__tabbed_content(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}

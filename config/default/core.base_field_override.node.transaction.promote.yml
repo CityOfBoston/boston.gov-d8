@@ -1,9 +1,11 @@
-uuid: d632aa20-b41b-4242-8f4b-52d72b4823b1
-langcode: en
+uuid: 006aa92e-cf60-46a6-9861-a49b8a04da0c
+langcode: und
 status: true
 dependencies:
   config:
     - node.type.transaction
+_core:
+  default_config_hash: HGf6hD06qfro_6zgk5V_aUOkYt5Lk9jLnMcz6RMX9F8
 id: node.transaction.promote
 field_name: promote
 entity_type: node
@@ -11,10 +13,10 @@ bundle: transaction
 label: 'Promoted to front page'
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value:
   -
-    value: 1
+    value: 0
 default_value_callback: ''
 settings:
   on_label: 'On'
