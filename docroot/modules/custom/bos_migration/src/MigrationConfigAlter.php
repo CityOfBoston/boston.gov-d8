@@ -566,6 +566,7 @@ class MigrationConfigAlter {
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
+        'paragraph__commission_contact_info',
       ],
       "field_grid_of_quotes" => [
         'paragraph__quote',
@@ -585,6 +586,7 @@ class MigrationConfigAlter {
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
+        'paragraph__commission_contact_info',
       ],
       "field_links" => [
         'paragraph__grid_links',
@@ -593,6 +595,7 @@ class MigrationConfigAlter {
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
+        'paragraph__commission_contact_info',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
@@ -807,7 +810,7 @@ class MigrationConfigAlter {
       'field_thumbnail' => ['field_thumbnail'],
       'field_person_photo' => ['field_person_photo'],
       'field_program_logo' => ['field_program_logo'],
-    ]
+    ],
   ];
 
   /**
