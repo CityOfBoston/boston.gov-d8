@@ -14,7 +14,7 @@ field_name: field_text_blocks
 entity_type: paragraph
 bundle: text
 label: 'Text Blocks'
-description: 'Optional - Limited to One Column, Two Column Text and Three Column Text paragraphs. Should be buttons not select list.'
+description: ''
 required: false
 translatable: false
 default_value: {  }
@@ -85,9 +85,6 @@ settings:
       commission_contact_info:
         weight: -2
         enabled: false
-      commission_info:
-        weight: -1
-        enabled: false
       commission_members:
         weight: 0
         enabled: false
@@ -112,14 +109,8 @@ settings:
       election_results:
         weight: 7
         enabled: false
-      featured_item:
-        weight: 8
-        enabled: false
       featured_topics:
         weight: 9
-        enabled: false
-      feedback:
-        weight: 10
         enabled: false
       fyi:
         weight: 11
@@ -181,19 +172,10 @@ settings:
       map:
         weight: 30
         enabled: false
-      map_coordinates:
-        weight: 31
-        enabled: false
-      map_esri_feed:
-        weight: 32
-        enabled: false
-      map_pin:
-        weight: 33
-        enabled: false
       message_for_the_day:
         weight: 34
         enabled: false
-      news_announcements:
+      news_and_announcements:
         weight: 35
         enabled: false
       newsletter:
@@ -201,12 +183,6 @@ settings:
         enabled: false
       quote:
         weight: 37
-        enabled: false
-      recollect_widget:
-        weight: 38
-        enabled: false
-      script_embed:
-        weight: 39
         enabled: false
       seamless_doc:
         weight: 40
@@ -223,9 +199,6 @@ settings:
       social_networking:
         weight: 44
         enabled: false
-      status_override:
-        weight: 45
-        enabled: false
       tabbed_content_tab:
         weight: 46
         enabled: false
@@ -235,13 +208,16 @@ settings:
       upcoming_events:
         weight: 48
         enabled: false
-      user_action:
-        weight: 49
-        enabled: false
       video:
         weight: 50
         enabled: false
       from_library:
         weight: 51
+        enabled: false
+      commission_search:
+        weight: 76
+        enabled: false
+      status_overrides:
+        weight: 121
         enabled: false
 field_type: entity_reference_revisions

@@ -14,7 +14,7 @@ bundle: grid_links
 mode: default
 content:
   field_extra_info:
-    weight: 2
+    weight: 1
     type: string_textfield
     settings:
       size: 60
@@ -22,19 +22,26 @@ content:
     third_party_settings: {  }
     region: content
   field_grid_link:
-    weight: 0
-    type: entity_reference_paragraphs
+    weight: 2
+    type: paragraphs
     settings:
-      title: Component
-      title_plural: Components
-      edit_mode: open
+      title: Link
+      title_plural: Links
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_short_description:
-    weight: 1
+    weight: 0
     type: string_textfield
     settings:
       size: 60
