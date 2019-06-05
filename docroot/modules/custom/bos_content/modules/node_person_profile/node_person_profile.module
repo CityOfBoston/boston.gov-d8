@@ -35,6 +35,23 @@ function node_person_profile_preprocess_node__person_profile(&$variables) {
   $variables["title_attributes"] = new Attribute(
     ["class" => ["person-profile-display-name"]]
   );
+
+  // This is when sed in a person-profile-listing () in bos_grid.
+  if ($variables['elements']['#view_mode'] == 'listing') {
+    $node = $variables['elements']['#node'];
+    $variables['title_raw'] = $node->getTitle();
+    $preferred_contact = $node->get('field_preferred_contact')->getValue();
+    if (!empty($preferred_contact)) {
+      if ($preferred_contact['0']['value'] == 'email' && !$node->get('field_email')
+          ->isEmpty()) {
+        $variables['preferred_contact'] = 'email';
+      }
+      elseif ($preferred_contact['0']['value'] == 'phone' && !$node->get('field_phone_number')
+          ->isEmpty()) {
+        $variables['preferred_contact'] = 'phone';
+      }
+    }
+  }
 }
 
 /**
