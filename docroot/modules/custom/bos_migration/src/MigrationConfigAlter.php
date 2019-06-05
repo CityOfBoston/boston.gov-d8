@@ -499,7 +499,7 @@ class MigrationConfigAlter {
         'paragraph__list',
         'paragraph__map',
         'paragraph__message_for_the_day',
-        'paragraph__news_announcements',
+        'paragraph__news_and_announcements',
         'paragraph__newsletter',
         'paragraph__photo',
         'paragraph__quote',
