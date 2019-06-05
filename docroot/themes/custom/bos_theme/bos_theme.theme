@@ -208,11 +208,12 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $variables['attributes']->addClass($newClass);
   $newClass = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
   $variables['attributes']->addClass($newClass);
-  if ($node = drupal::request()->get('node')) {
-    $nid = $node->id();
+  if ($nid = drupal::request()->get('node')) {
+    if (!is_numeric($nid)) {
+      $nid = $nid->id();
+    }
     $newClass = "page-node-" . (isset($nid) ? $nid : "");
     $variables['attributes']->addClass($newClass);
-
   }
 
   // Detect 400-status pages.
@@ -814,7 +815,7 @@ function _bos_theme_manage_hero(array &$variables, $current_path) {
   }
 
   $nid = NULL;
-  if (!empty($variables["node"])) {
+  if (!empty($variables["node"]) && is_object($variables["node"])) {
     $nid = $variables["node"]->id();
   }
   elseif ($path_args[1] == "node" && !empty($path_args[2]) && is_numeric($path_args[2])) {

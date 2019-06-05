@@ -27,17 +27,24 @@ function bos_hero_image_preprocess_paragraph(&$vars) {
         $lib = \Drupal::service('library.discovery')
           ->getLibraryByName('bos_theme', 'global-styling.patterns');
         $vars['asset_url'] = $lib['remote'];
-        $image = $paragraph->get('field_image')->getValue();
-        $base_url = file_load($image['0']['target_id'])->getFileUri();
-        $styles = [
-          'xlarge_image' => 'rep_wide_2000x700custom_boston_desktop_2x',
-          'large_image' => 'rep_wide_2000x700custom_boston_desktop_1x',
-          'medium_image' => 'rep_wide_2000x700custom_boston_tablet_2x',
-          'small_image' => 'rep_wide_2000x700custom_boston_mobile_2x',
-        ];
-        foreach ($styles as $name => $style) {
-          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load($style);
-          $vars[$name] = $style->buildUrl($base_url);
+        if ($paragraph->get('field_image')->count()) {
+          $image = $paragraph->get('field_image')->getValue();
+          $base_url = \Drupal::entityTypeManager()
+            ->getStorage("file")
+            ->load($image['0']['target_id']);
+          $base_url = file_load($image['0']['target_id'])->getFileUri();
+          $styles = [
+            'xlarge_image' => 'rep_wide_2000x700custom_boston_desktop_2x',
+            'large_image' => 'rep_wide_2000x700custom_boston_desktop_1x',
+            'medium_image' => 'rep_wide_2000x700custom_boston_tablet_2x',
+            'small_image' => 'rep_wide_2000x700custom_boston_mobile_2x',
+          ];
+          foreach ($styles as $name => $style) {
+            $style = \Drupal::entityTypeManager()
+              ->getStorage('image_style')
+              ->load($style);
+            $vars[$name] = $style->buildUrl($base_url);
+          }
         }
         break;
     }
