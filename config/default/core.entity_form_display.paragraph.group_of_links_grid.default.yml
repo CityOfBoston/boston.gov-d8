@@ -48,26 +48,40 @@ content:
     region: content
   field_grid_links:
     weight: 6
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
+      title: 'Grid Link'
+      title_plural: 'Grid Links'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_link:
     weight: 5
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Link
-      title_plural: Links
-      edit_mode: open
+      title: 'Call to Action'
+      title_plural: 'Call to Action'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_short_title:
