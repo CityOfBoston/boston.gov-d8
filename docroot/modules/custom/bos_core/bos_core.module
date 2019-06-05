@@ -470,9 +470,12 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'document':
         $link = $paragraph->get('field_document')->getValue();
-        $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
-        $results['title'] = 'TMP';
-        $results['link'] = Link::fromTextAndUrl($results['title'], $url)->toString();
+        if (isset($link['0']['target_id'])) {
+          $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
+          $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
+          $results['title'] = 'TMP';
+          $results['link'] = Link::fromTextAndUrl($results['title'], $url)->toString();
+        }
         break;
 
       case 'external_link':
@@ -514,6 +517,7 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
     $fid = $fid['0']['target_id'];
   }
 
+  Drupal::entityTypeManager()->getStorage("file")->load($fid)->getFileUri();
   $uri = file_load($fid)->getFileUri();
   if (!$link_text) {
     return Url::fromUri(file_create_url($uri, $attributes))->toString();

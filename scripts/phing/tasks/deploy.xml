@@ -36,9 +36,6 @@
 
   <target name="deploy:artifact:commitd8" description="*Commits deployment files to repo.">
 
-    <echo message="Prepare custom modules." level="info"/>
-    <exec command='find . -type f -name ".gitignore" -delete -print' dir="${docroot}/modules/custom/" passthru="true"/>
-
     <echo message="Add modified files to git (git add --all)." level="info"/>
     <exec command="git add --all" dir="${deploy.dir}" logoutput="true" passthru="true"/>
 
@@ -54,6 +51,8 @@
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
     <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
     <delete file="${repo.root}/hooks/.gitignore" description="Remove this so the hook files are managed by git."></delete>
+    <exec command='find . -type f -name ".gitignore" -delete -print' dir="${docroot}/modules/custom/" passthru="true"
+          description="Removes gitignore from custom modules to they are copied and merged."/>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
 
