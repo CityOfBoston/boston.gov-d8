@@ -36,7 +36,7 @@ function node_person_profile_preprocess_node__person_profile(&$variables) {
     ["class" => ["person-profile-display-name"]]
   );
 
-  // This is when sed in a person-profile-listing () in bos_grid.
+  // This is when used in a person-profile-listing () in bos_grid.
   if ($variables['elements']['#view_mode'] == 'listing') {
     $node = $variables['elements']['#node'];
     $variables['title_raw'] = $node->getTitle();
