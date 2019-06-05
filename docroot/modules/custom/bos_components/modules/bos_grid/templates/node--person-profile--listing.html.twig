@@ -27,10 +27,17 @@
   </a>
 
   {% if preferred_contact %}
+
     {% if preferred_contact == 'email' %}
+
       {{ content.field_email }}
+
     {% elseif preferred_contact == 'phone' %}
+
       {{ content.field_phone_number }}
+
     {% endif %}
+
   {% endif %}
+
 </article>

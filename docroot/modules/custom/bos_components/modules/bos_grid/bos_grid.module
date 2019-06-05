@@ -89,7 +89,7 @@ function bos_grid_preprocess_paragraph(&$vars) {
 function bos_grid_preprocess_node(&$vars) {
   //TODO: This wont be called for anything except nodes defined in the
   // hook_theme of this module ...
-  if (!empty($vars['elements']['node'] && $vars['elements']['#view_mode']  == 'listing')) {
+  if (!empty($vars['elements']['node']) && $vars['elements']['#view_mode']  == 'listing') {
     $node = $vars['elements']['#node'];
     switch ($node->bundle()) {
       case 'topic_page':
