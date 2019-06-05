@@ -1,4 +1,4 @@
-uuid: c85ee8c7-e1cd-4068-9e20-4b7132425973
+uuid: 38baf259-17ff-4e61-bff4-e5c4cb1557fc
 langcode: en
 status: true
 dependencies:
@@ -10,23 +10,20 @@ id: node.procurement_advertisement.field_contact
 field_name: field_contact
 entity_type: node
 bundle: procurement_advertisement
-label: Department
+label: 'Awarding Authority'
 description: ''
 required: false
 translatable: false
-default_value:
-  -
-    target_id: '771'
+default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 1
+    target_bundles:
+      contact: contact
     sort:
       field: name
       direction: ASC
-    target_bundles:
-      contact: contact
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

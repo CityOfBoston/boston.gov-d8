@@ -2,30 +2,28 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.how_to.body
-    - field.field.node.how_to.comment_node_how_to
     - field.field.node.how_to.field_components
     - field.field.node.how_to.field_contact
     - field.field.node.how_to.field_how_to_tabs
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
+    - field.field.node.how_to.field_manual_date
     - field.field.node.how_to.field_need_to_know
     - field.field.node.how_to.field_payment_info
     - field.field.node.how_to.field_published_date
     - field.field.node.how_to.field_sidebar_components
-    - field.field.node.how_to.field_type_of_content
     - field.field.node.how_to.field_updated_date
+    - image.style.thumbnail
     - node.type.how_to
   module:
-    - comment
     - content_moderation
     - datetime
-    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -91,9 +89,9 @@ third_party_settings:
       label: 'Sidebar Info'
     group_page_metadata:
       children:
+        - field_manual_date
         - field_published_date
         - field_updated_date
-        - field_type_of_content
       parent_name: group_how_to
       weight: 4
       format_type: tab
@@ -144,12 +142,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  comment_node_how_to:
-    type: comment_default
-    weight: 7
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 3
@@ -160,13 +152,13 @@ content:
     weight: 0
     type: paragraphs
     settings:
-      title: Component
-      title_plural: Components
+      title: 'How-to Component'
+      title_plural: 'How-to Components'
       edit_mode: closed
       closed_mode: summary
       autocollapse: none
       closed_mode_threshold: 0
-      add_mode: select
+      add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: _none
       features:
@@ -192,7 +184,7 @@ content:
       title_plural: 'How-To Tabs'
       edit_mode: closed
       closed_mode: summary
-      autocollapse: none
+      autocollapse: all
       closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
@@ -205,30 +197,38 @@ content:
     region: content
   field_intro_image:
     weight: 1
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      selection_mode: selection_append
-      view_mode: default
-      field_widget_replace: false
-      open: false
       preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_links:
     weight: 2
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Download
-      title_plural: Downloads
-      edit_mode: open
+      title: 'Download Link'
+      title_plural: 'Download Links'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
+  field_manual_date:
+    type: boolean_checkbox
+    weight: 0
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_need_to_know:
     weight: 0
     type: text_textarea
@@ -246,7 +246,7 @@ content:
     third_party_settings: {  }
     region: content
   field_published_date:
-    weight: 0
+    weight: 1
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -255,13 +255,13 @@ content:
     weight: 0
     type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
+      title: 'Sidebar Component'
+      title_plural: 'Sidebar Components'
       edit_mode: closed
       closed_mode: summary
-      autocollapse: none
+      autocollapse: all
       closed_mode_threshold: 0
-      add_mode: button
+      add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: _none
       features:
@@ -270,14 +270,8 @@ content:
         add_above: '0'
     third_party_settings: {  }
     region: content
-  field_type_of_content:
-    weight: 2
-    type: options_buttons
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_updated_date:
-    weight: 1
+    weight: 2
     type: datetime_default
     settings: {  }
     third_party_settings: {  }

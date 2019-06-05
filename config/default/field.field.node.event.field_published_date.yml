@@ -7,6 +7,8 @@ dependencies:
     - node.type.event
   module:
     - datetime
+_core:
+  default_config_hash: WHmZZlmgqAAco_Ogy5-MP5CpUJ9YPTGA3ceQbR0XscI
 id: node.event.field_published_date
 field_name: field_published_date
 entity_type: node
@@ -15,7 +17,10 @@ label: 'Published Date'
 description: 'Use this field to display a date to the user audience indicating when this event was published.'
 required: true
 translatable: false
-default_value: {  }
+default_value:
+  -
+    default_date_type: now
+    default_date: now
 default_value_callback: ''
 settings: {  }
 field_type: datetime

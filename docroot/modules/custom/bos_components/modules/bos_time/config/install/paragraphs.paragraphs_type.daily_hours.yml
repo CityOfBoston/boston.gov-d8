@@ -1,11 +1,15 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  content:
+    - 'file:image:cfb80738-6b28-4e27-abb1-c4012f3f99c9'
+  module:
+    - paragraphs_browser
 third_party_settings:
   paragraphs_browser:
-    image_path: 'sites/default/files/paragraphs_type_icon/daily_hours_icon.svg'
+    image_path: sites/default/files/paragraphs_type_icon/daily_hours_icon.svg
 id: daily_hours
 label: 'Daily Hours'
-icon_uuid: null
+icon_uuid: cfb80738-6b28-4e27-abb1-c4012f3f99c9
 description: 'Migrated from paragraph bundle Daily Hours'
 behavior_plugins: {  }

@@ -47,6 +47,18 @@ function vocab_contact_token_info() {
 }
 
 /**
+ * Reformat the phone number.
+ *
+ * Implements hook_preprocess_HOOK().
+ */
+function vocab_contact_preprocess_field__field_phone_number(&$variables) {
+  foreach ($variables['items'] as $key => &$phone) {
+    $phone["phone"] = $phone['content']["#context"]["value"];
+    $phone['content']["#context"]["value"] = bos_core_format_telephone($phone['content']["#context"]["value"]);
+  }
+}
+
+/**
  * Implements hook_tokens().
  */
 function vocab_contact_tokens($type, $tokens, array $data = [], array $options = []) {
@@ -66,7 +78,7 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
             $langcode = ($this_node->language()->getId() ?: "und");
             // Find the contact and get the last part of it's alias.
             $contact_field = $this_node->getTranslation($langcode)->field_contact;
-            if (!empty($contact_field)) {
+            if (!empty($contact_field) && $contact_field->count() > 0) {
               $tid = $contact_field->first()->target_id;
               $term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
               $path_array = explode('/', $term_path);
@@ -76,24 +88,26 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
               // department, so set $node to the department_profile node
               // so we can get the department_type.
               $term_dept_profile = $term->field_department_profile;
-              if ($term_dept_profile) {
+              if ($term_dept_profile && $term_dept_profile->count() > 0) {
                 $dept_node = Drupal::entityTypeManager()->getStorage("node")->load($term_dept_profile->first()->target_id);
               }
             }
             // Figure out which type of department we have
             // and get it's replacement.
-            $dept_type = $dept_node->getTranslation("und")->field_department_type;
-            if (!empty($dept_type)) {
-              switch ($dept_type->value) {
-                case 'cabinet':
-                  $dept_prefix = 'government/cabinets/';
-                  break;
+            if (!empty($dept_node)) {
+              $dept_type = $dept_node->getTranslation("und")->field_department_type;
+              if (!empty($dept_type)) {
+                switch ($dept_type->value) {
+                  case 'cabinet':
+                    $dept_prefix = 'government/cabinets/';
+                    break;
 
-                case 'department':
-                default:
-                  $dept_prefix = 'departments/';
-                  break;
+                  case 'department':
+                  default:
+                    $dept_prefix = 'departments/';
+                    break;
 
+                }
               }
             }
           }

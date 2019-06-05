@@ -1,13 +1,48 @@
-uuid: 3d831915-c1b4-4595-a54e-718970c7a42e
+uuid: e50b11bb-717b-4749-80a7-b0ec2ef938cc
 langcode: en
 status: true
 dependencies:
   config:
     - field.field.paragraph.cabinet.field_contacts
+    - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
     - field.field.paragraph.cabinet.field_short_title
     - field.field.paragraph.cabinet.field_title
     - paragraphs.paragraphs_type.cabinet
+  module:
+    - field_group
+    - text
+third_party_settings:
+  field_group:
+    group_details:
+      children:
+        - field_title
+        - field_short_title
+        - field_person
+        - field_description
+      parent_name: ''
+      weight: 20
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: true
+        required_fields: true
+      label: Details
+    group_contacts:
+      children:
+        - field_contacts
+      parent_name: ''
+      weight: 20
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: Contacts
+_core:
+  default_config_hash: keSy_lWihaistuUZ4MEa9N9HX_0aPClTy0_3kRD5DdE
 id: paragraph.cabinet.default
 targetEntityType: paragraph
 bundle: cabinet
@@ -21,6 +56,14 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_description:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
     region: content
   field_person:
     weight: 6

@@ -41,8 +41,9 @@ function bos_messages_preprocess_paragraph(&$vars) {
         if ($host = $paragraph->getParentEntity()) {
           if ($host->hasField('field_icon') && !$host->get('field_icon')->isEmpty()) {
             $fid = $host->get('field_icon')->getValue()['0']['target_id'];
-            $uri = file_load($fid)->getFileUri();
-            $icon = file_get_contents(file_create_url($uri));
+            $uri = Drupal::entityTypeManager()->getStorage('file')->load($fid)->getFileUri();
+            $uri = \Drupal::service('file_system')->realpath($uri);
+            $icon = file_get_contents($uri);
             $vars['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
           }
           $vars['title'] = $host->label();

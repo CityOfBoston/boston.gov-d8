@@ -7,7 +7,6 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
-use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
@@ -290,6 +289,59 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     }
   }
 
+  // Add class to edit pages which are created from contextual editor.
+  if (preg_match("/.*?_entity_edit_form/", $form_id)) {
+    $form_uri = \Drupal::request()->getRequestUri();
+    $form_uri = parse_url($form_uri);
+    $form_uri = explode('/', $form_uri['path']);
+    if (is_array($form_uri) && in_array("paragraphs_edit", $form_uri)) {
+      $form["#attributes"]["class"][] = "context_editor-wrapper";
+
+      // Walk up the lineage chain.
+      if (isset($form_state->getBuildInfo()['args'][0]) && NULL != $form_state->getFormObject()->getEntity()) {
+        // Get this entity to start from.
+        $this_entity = $form_state->getFormObject()->getEntity();
+        $chain = [$this_entity];
+        while ($this_entity->hasField("parent_id")) {
+          $this_entity = $this_entity->getParentEntity();
+          $chain[] = $this_entity;
+        }
+        $chain = array_reverse($chain);
+        // Check the 'top' $chain entity is the entity reported by the form.
+        if ($chain[0]->id() == $form_state->getBuildInfo()['args'][0]->id()) {
+
+          // Make the lineage into an array of strings.
+          $title[0] = "<h2>" . ucwords(str_replace(['-', '_'], " ", $chain[0]->bundle())) . ": <u>" . $chain[0]->getTitle() . "</u> (nid " . $chain[0]->id() . ")" . "</h2>";
+          switch ($chain[1]->getEntityTypeId()) {
+            case "node":
+              $title[] = "<h3> > <u>" . $chain[1]->getTitle() . "</u> (nid " . $chain[1]->id() . ")</h3>";
+              break;
+
+            case "paragraph":
+              foreach ($chain[1]->getFields() as $fieldName => $field) {
+                $crumb = ucwords(str_replace(['-', '_'], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
+                if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
+                  $title[] = "<h3>" . $crumb . " > <u>" . $field->getValue()[0]['value'] . "</u> (nid " . $chain[1]->id() . ")</h3>";
+                  break;
+                }
+              }
+              break;
+
+            case "taxonomy":
+              break;
+          }
+
+          // Add this title to the form.
+          $form['lineage'] = [
+            '#type' => 'markup',
+            "#weight" => -100,
+            '#markup' => implode("", $title) . "<hr>",
+          ];
+        }
+      }
+    }
+  }
+
   // TODO: When the moderation state is Published, make default save to draft
   // plus manage other situations sensibly ...
 }
@@ -305,13 +357,21 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
   $form["moderation_state"]["widget"][0]["#changed"] = FALSE;
   $new_value = $form_state->getValue('moderation_state');
-  if (strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
+  if (isset($form["moderation_state"]["widget"][0]["current"]) && strtolower($form["moderation_state"]["widget"][0]["current"]["#markup"]) != strtolower($new_value[0]["value"])) {
     $form["moderation_state"]["widget"][0]["#changed"] = TRUE;
   }
   if ((string) $form_state->getTriggeringElement()['#value'] == "Save") {
     // If the moderation state has changed require a log message.
     if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
       $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
+    }
+    if (NULL != $form_state->getValue('field_manual_date') && $form_state->getValue('field_manual_date')['value'] == 1) {
+      if ($form_state->getValue('field_updated_date')[0]['value'] == "") {
+        $form_state->setErrorByName('field_updated_date', "Please provide a date for the (metadata) Updated Date field.")->sete;
+      }
+      if ($form_state->getValue('field_published_date')[0]['value'] == "") {
+        $form_state->setErrorByName('field_published_date', "Please provide a date for the (metadata) Published Date field.");
+      }
     }
   }
 }
@@ -370,17 +430,11 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  *
  * @param array $variables
  *   The current variables array as generated pre-rendering.
+ * @param string $check_field
+ *   The attribute field.
  */
-function _bos_admin_fix_attributes(array &$variables) {
-  if (isset($variables['attributes']) && is_array($variables['attributes']) && class_exists(Attribute::class)) {
-    $attribute = new Attribute();
-    if (!empty($variables['attributes'])) {
-      foreach ($variables["attributes"] as $key => $element) {
-        $attribute->setAttribute($key, $element);
-      }
-    }
-    if (!empty($attribute)) {
-      $variables['attributes'] = $attribute;
-    }
+function _bos_admin_fix_attributes(array &$variables, string $check_field = "attributes") {
+  if (function_exists("_bos_core_fix_attributes")) {
+    _bos_core_fix_attributes($variables, $check_field);
   }
 }

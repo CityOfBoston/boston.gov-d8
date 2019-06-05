@@ -37,15 +37,23 @@
 <div{{ attributes.addClass(classes) }}>
   <div class="content container"{{ content_attributes }}>
   	  <div class="sh">
+
+        {{ title_prefix }}
+
         {% if content.field_component_title %}
           {{ content.field_component_title }}
         {% endif %}
+
+        {{ title_suffix }}
+
         {% if content.field_short_title %}
           {{ content.field_short_title }}
         {% endif %}
+
         {% if content.field_contact %}
           {{ content.field_contact }}
         {% endif %}
+
       </div>
      <div>
        {% if content.field_featured_item %}

@@ -9,7 +9,7 @@ dependencies:
     - field.field.paragraph.upcoming_events.field_short_title
     - paragraphs.paragraphs_type.upcoming_events
   module:
-    - paragraphs
+    - paragraphs_browser
     - viewfield
 id: paragraph.upcoming_events.default
 targetEntityType: paragraph
@@ -35,14 +35,24 @@ content:
     region: content
   field_link:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs_browser
     settings:
-      title: Link
-      title_plural: Links
-      edit_mode: open
-      add_mode: select
+      title: 'Event Link'
+      title_plural: 'Event Links'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: '0'
+      add_mode: paragraphs_browser
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: 0
+      paragraphs_browser: _na
+      modal_width: 80%
+      modal_height: auto
     third_party_settings: {  }
     region: content
   field_list:

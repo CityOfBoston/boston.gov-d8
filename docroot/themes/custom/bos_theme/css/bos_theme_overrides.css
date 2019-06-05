@@ -136,25 +136,25 @@ button.lity-close {
 
 /** Buttons provided by workflow */
 .bos_theme .moderation-sidebar-actions input.button--delete {
-  background: url("../images/moderation_sidebar/delete.svg") #db2727 no-repeat 2px center !important;
+  background: url("../images/moderation_sidebar/delete.svg") #db2727 no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 .bos_theme .moderation-sidebar-actions input#draft_from_archived {
-  background: url("../images/moderation_sidebar/new draft.svg") #ffae00 no-repeat 2px center !important;
+  background: url("../images/moderation_sidebar/new draft.svg") #ffae00 no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 .bos_theme .moderation-sidebar-actions input#submit_for_review {
-  background: url("../images/moderation_sidebar/review.svg") #277abd no-repeat 2px center !important;
+  background: url("../images/moderation_sidebar/review.svg") #277abd no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 .bos_theme .moderation-sidebar-actions input#reject {
-  background: url(../images/moderation_sidebar/delete.svg) #ffae00 no-repeat 2px center !important;
+  background: url(../images/moderation_sidebar/delete.svg) #ffae00 no-repeat 6px -10px !important;
   background-size: 50px !important;
   color: maroon !important;
   font-weight: bold !important;
 }
 .bos_theme .moderation-sidebar-actions input#publish {
-  background: url("../images/moderation_sidebar/publish.svg") #00B000 no-repeat 2px center !important;
+  background: url("../images/moderation_sidebar/publish.svg") #00B000 no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 
@@ -245,12 +245,24 @@ button.lity-close {
 }
 .contextual-region .contextual .contextual-links a,
 .contextual-region .contextual .contextual-links a:hover {
-  font-size: 80%;
+  font-size: small;
+  font-style:normal;
 }
 
+/*
+David
+Where: All node displays
+What: Moves the context icon to the left to avoid being cutoff by overflow
+      on parent containers.
+ */
 .contextual {
-  right: -8px;
+  right: 0px;
 }
+/**
+David
+Where: All node displays
+What: Changes style of contextual edit button on all node displays on boston_theme.
+ */
 .contextual .trigger:active,
 .contextual .trigger:visited,
 .contextual .trigger:focus,
@@ -288,4 +300,73 @@ button.lity-close {
 
 .bos_theme #toolbar-bar.toolbar-space {
   padding-right: 5px;
+}
+
+/*
+David
+Where: For node change.
+What: Locates the published info fields.
+ */
+.node-change #published {
+    position: absolute;
+    top: 0;
+    width:  100%;
+    text-align: right;
+    font-style: italic;
+}
+.node-change #published .created_uid {
+  margin-right: 5px;
+}
+
+/*
+David
+Where: Event node.
+What: Places updated date over the breadcrumb
+*/
+article.node-event .brc-lu {
+  z-index: 100;
+}
+
+/*
+David
+Where: All fields
+What: Adds css previously found in fences/css/field.css
+*/
+.field .field-label {
+  font-weight: bold;
+}
+.field .field-label.bos-suffix:after {
+  content: ": ";
+}
+
+/*
+David
+Where: Place_profile, but affects all sidebar displays containing address field.
+What: Moves address block down a bit in sidebar components.
+*/
+.node-place-profile .list-item address {
+  margin-top:5px;
+}
+
+/*
+David
+Where: Para features (bos_features) spacing in sidebar.
+       Applied in place_profile but affects all diaplys with features in sidebar
+What: Adjusts feature spacing in right sidebar
+*/
+.field-name-field-features .detail-item__content {
+  padding-top: 10px
+}
+
+/*
+David
+Where: All modules, display on RHS sidebar
+What: Fixes right sidebar label:content alignment - Fixes issue also present in D7
+*/
+.detail-item__body--secondary, .detail-item__body--tertiary {
+  line-height: 1.5rem;
+  margin-top: 2px;
+}
+.detail-item__body--secondary, .detail-item__body--tertiary a {
+  vertical-align: middle;
 }

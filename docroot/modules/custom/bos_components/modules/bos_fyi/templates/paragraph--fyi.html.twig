@@ -32,11 +32,15 @@
         </div>
       {% endif %}
 
+      {{ title_prefix }}
+
       {% if content.field_title %}
         <div class="fyi-t">
           {{ content.field_title }}
         </div>
       {% endif %}
+
+      {{ title_suffix }}
 
       <div class="fyi-s">/</div>
 

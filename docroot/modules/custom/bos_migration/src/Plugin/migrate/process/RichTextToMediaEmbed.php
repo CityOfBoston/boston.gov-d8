@@ -2,6 +2,14 @@
 
 namespace Drupal\bos_migration\Plugin\migrate\process;
 
+/*
+ * COB NOTE:
+ * In this boston.gov implementation, this class/plugin is added by
+ *   bos_migration->bos_migration_migration_plugins_alter()
+ * which adds this plugin to the process of 'text_long', 'text_with_summary'
+ * fields.
+ */
+
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -10,6 +18,8 @@ use Drupal\Component\Utility\Html;
 use Drupal\media\MediaInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
+use Drupal\Component\Serialization\Json;
+use Exception;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -22,19 +32,28 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   use \Drupal\bos_migration\HtmlParsingTrait;
   use \Drupal\bos_migration\FilesystemReorganizationTrait;
 
-  protected static $baseUrl = "www.boston.gov";
-  protected static $relativeUrl = "sites/default/files";
+  protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
+  protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
+  protected $source = [];
 
   /**
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    if (empty($value['value'] || !is_string($value['value']))) {
-      throw new MigrateException('RichTextToMediaEmbed process plugin only accepts rich text inputs.');
-    }
+    $this->source = $row->getSource();
 
-    if (!empty($value['format']) && $value['format'] == 'plain_text') {
-      // Nothing to do here.
+    if (empty($value['value'])) {
+      // Skips null and empty values.
+      return $value;
+    }
+    elseif (!empty($value['format']) && $value['format'] == 'plain_text') {
+      // Nothing to do here (not a rich text field).
+      return $value;
+    }
+    elseif (!is_string($value['value'])) {
+      // Will flag this, but in the end just return the value without trying
+      // to do anything with it.
+      \Drupal::logger('migrate')->warning("RichTextToMediaEmbed process plugin only accepts rich text inputs.");
       return $value;
     }
 
@@ -50,22 +69,42 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
    *   The migrate executable.
    *
-   * @returns string
+   * @return string
+   *   Process rich text string (html string).
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function convertToEntityEmbed($value, MigrateExecutableInterface $migrate_executable) {
+    // D7 media embeds get stored as funky tokens. Replace them with valid HTML
+    // so that the preceeding processing works smoothly.
+    $this->replaceD7MediaEmbeds($value);
+
     $document = $this->getDocument($value, $migrate_executable);
     $xpath = new \DOMXPath($document);
 
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
       $src = $image_node->getAttribute('src');
+
+      // Tidyup for strange content in COB D7 site.
+      $src = str_replace('blob:http', 'http', $src);
+      $src = preg_replace("~^((/)?modules/file)~", "/sites/modules/file", $src);
+
+      // Change references to pre-production or editor sites.
+      $src = $this->correctSubDomain($src);
+
       if ($this->isExternalFile($src)) {
         continue;
       }
-      elseif ($this->resolveFileType($src) !== 'image') {
-        // Fail loudly if file type is not what we expect.
-        throw new MigrateException("Unsuported image type: {$src}");
+      elseif (!in_array("image", $this->resolveFileType($src))) {
+        // This shouldn't ever be the case based on our query, but better safe
+        // than sorry.
+        $parts = explode('/', $src);
+        $extension = $parts[count($parts) - 1];
+        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
+        continue;
       }
+
       if ($media_entity = $this->createMediaEntity($src, 'image')) {
         $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
         // Build <drupal-entity> element.
@@ -74,6 +113,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         $drupal_entity_node->setAttribute('data-entity-embed-display', 'bos_media_image');
         $drupal_entity_node->setAttribute('data-entity-type', 'media');
         $drupal_entity_node->setAttribute('data-entity-uuid', $media_entity->uuid());
+        $drupal_entity_node->setAttribute('data-style', $image_node->getAttribute('style'));
         // Replace the image node with the created element.
         $image_node->parentNode->insertBefore($drupal_entity_node, $image_node);
         $image_node->parentNode->removeChild($image_node);
@@ -82,17 +122,24 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     // Now links to the local filesystem.
-    foreach ($xpath->query('//a[contains(@href, "/sites/default/files")]') as $link_node) {
+    foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
       $href = $link_node->getAttribute('href');
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        throw new MigrateException("Encountered unexpected external file: {$href}");
+        \Drupal::logger('Migrate')->notice('Expected an internal "link" but got ' . $href);
+        continue;
       }
-      elseif ($this->resolveFileType($href) !== 'file') {
-        // Fail loudly if file type is not what we expect.
-        throw new MigrateException("Why are we linking to an image: {$href}");
+      elseif (!in_array("file", $this->resolveFileType($href))) {
+        // This shouldn't ever be the case based on our query, but better safe
+        // than sorry.
+        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
+        continue;
       }
+
+      // Change references to pre-production or editor sites.
+      $href = $this->correctSubDomain($href);
+
       if ($media_entity = $this->createMediaEntity($href, 'document')) {
         // Alter <a> element.
         $link_node->setAttribute('data-entity-substitution', 'media');
@@ -106,6 +153,103 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   }
 
   /**
+   * Replaces D7 media embeds with valid HTML.
+   *
+   * @param string $value
+   *   Raw value.
+   *
+   * @return string
+   *   Value with media embeds replaced as HTML.
+   */
+  protected function replaceD7MediaEmbeds(&$value) {
+    $count = 1;
+    preg_match_all(self::$MediaWYSIWYGTokenREGEX, $value, $matches);
+    if (!empty($matches[0])) {
+      foreach ($matches[0] as $match) {
+        $replacement = $this->mediaWysiwygTokenToMarkup($match);
+        if ($replacement) {
+          $value = str_replace($match, $replacement, $value, $count);
+        }
+      }
+    }
+
+    return $value;
+  }
+
+  /**
+   * Transform media embed token to markup.
+   *
+   * @param string $token
+   *   The token value.
+   *
+   * @return string
+   *   Token with replacements made.
+   */
+  protected function mediaWysiwygTokenToMarkup(string $token) {
+    $json = str_replace("[[", "", $token);
+    $json = str_replace("]]", "", $json);
+
+    try {
+      if (!is_string($json)) {
+        throw new Exception('Unable to find matching tag');
+      }
+      $tag_info = Json::decode($json);
+      if (!$file = \Drupal::service('entity_type.manager')->getStorage('file')->load($tag_info['fid'])) {
+        // Nothing to do if we can't find the file.
+        return NULL;
+      }
+      $tag_info['file'] = $file;
+      if (!empty($tag_info['attributes']) && is_array($tag_info['attributes'])) {
+        if (isset($tag_info['attributes']['style'])) {
+          $css_properties = [];
+          foreach (array_map('trim', explode(";", $tag_info['attributes']['style'])) as $declaration) {
+            if ($declaration != '') {
+              list($name, $value) = array_map('trim', explode(':', $declaration, 2));
+              $css_properties[strtolower($name)] = $value;
+            }
+          }
+          foreach (['width', 'height'] as $dimension) {
+            if (isset($css_properties[$dimension]) && substr($css_properties[$dimension], -2) == 'px') {
+              $tag_info[$dimension] = substr($css_properties[$dimension], 0, -2);
+            }
+            elseif (isset($tag_info['attributes'][$dimension])) {
+              $tag_info[$dimension] = $tag_info['attributes'][$dimension];
+            }
+          }
+        }
+        foreach (['title', 'alt'] as $field_type) {
+          if (isset($tag_info['attributes'][$field_type])) {
+            $tag_info['attributes'][$field_type] = Html::decodeEntities($tag_info['attributes'][$field_type]);
+          }
+        }
+      }
+    }
+    catch (Exception $e) {
+      // If we hit an error, don't perform replacement.
+      return NULL;
+    }
+
+    if (isset($tag_info['link_text'])) {
+      $file->filename = Html::decodeEntities($tag_info['link_text']);
+    }
+
+    $document = new \DOMDocument();
+    $img = $document->createElement('img');
+    $uri = $tag_info['file']->getFileUri();
+    $url = file_create_url($uri);
+    $img->setAttribute('src', file_url_transform_relative($url));
+    foreach ($tag_info['attributes'] as $attribute => $value) {
+      $img->setAttribute($attribute, $value);
+    }
+    $document->appendChild($img);
+    $document_parts = explode("\n", $document->saveXML());
+    $image = array_filter($document_parts, function ($value) {
+      return strpos($value, '<img') === 0;
+    });
+    return array_pop($image);
+  }
+
+  /**
    * Determines if file is external.
    *
    * @param string $src
@@ -115,10 +259,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   Yes or no.
    */
   protected function isExternalFile($src) {
-    if (strpos($src, self::$baseUrl) === FALSE && strpos($src, self::$relativeUrl) === FALSE) {
-      return TRUE;
-    }
-    return FALSE;
+    return !preg_match(self::$localReferenceREGEX, $src);
   }
 
   /**
@@ -143,7 +284,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     if (!$this->isRelativeUri($src)) {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
-        throw new MigrateException("Unable to extract URI from: {$src}");
+        // Nothing to do if we can't extract the URI.
+        \Drupal::logger('Migrate')->notice('4:URI extraction failed.');
+        return NULL;
       }
     }
 
@@ -154,7 +297,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $uri = $this->rewriteUri($uri);
     $file = $this->getFile($uri);
     if (!$file) {
-      throw new MigrateException("Failed to find file: {$uri}");
+      // Nothing to do if we can't find the file.
+      \Drupal::logger('Migrate')->notice('5:File lookup failed.');
+      return NULL;
     }
     $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
 
@@ -186,12 +331,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   uri.
    */
   protected function getRelativeUrl(string $uri) {
-    $from_main_domain = '@^http(s|)://(www.|)boston.gov[/]+(.*)@';
+    $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
     if (!preg_match($from_main_domain, $uri, $matches)) {
       // Not a searched absolute uri.
       return FALSE;
     }
-
+    if (substr($matches[3], 1, 1) != "/") {
+      $matches[3] = "/" . $matches[3];
+    }
     return $matches[3];
   }
 
@@ -229,6 +376,36 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
 
     return $new_uri;
+  }
+
+  /**
+   * Replaces domain/uri strings.
+   *
+   * E.g: edit.boston.gov with www.boston.gov.
+   *
+   * @param string $uri
+   *   The original URI (or source or whatever).
+   *
+   * @return string
+   *   The source with correct destintaion mapped in.
+   */
+  protected function correctSubDomain(string $uri) {
+    $regex_swaps = [
+      "~(edit|edit-stg).boston.gov~" => "www.boston.gov",
+    ];
+    foreach ($regex_swaps as $find => $replace) {
+      $swap = $uri;
+      try {
+        $uri = preg_replace($find, $replace, $uri);
+        if (is_null($uri)) {
+          $uri = $swap;
+        }
+      }
+      catch (Exception $e) {
+        return $swap;
+      }
+    }
+    return $uri;
   }
 
   /**
@@ -304,6 +481,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.svg',
         '.gif',
         '.tif',
+        '.pdf', /* Technically not correct but ... */
       ],
       'file' => [
         '.pdf',
@@ -316,20 +494,34 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         '.ppt',
         '.rtf',
         '.ppt',
+        '.jnlp', /* Not sure we should allow this. */
         '.xlsm',
+        '.mp3',
+        '.mp4',
+        '.jpg', /* These are images, but could also be. */
+        '.png', /* Downloadable files. */
+        '.jpeg', /* ... */
+        '.tif', /* ... */
+        '.svg', /* ... */
       ],
     ];
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
+    $type = [];
     foreach ($allowed_formats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if (strpos($parts[$index], $extension) !== FALSE) {
-          return $file_type;
+          $type[] = $file_type;
         }
       }
     }
+    if (!empty($type)) {
+      return $type;
+    }
 
-    throw new MigrateException("Unrecognized file format: {$uri}");
+    // If there is no extension, or the extension is not matched, then return
+    // a type of "link".
+    return "link";
   }
 
 }

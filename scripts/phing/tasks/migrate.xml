@@ -17,7 +17,7 @@
           checkreturn="true"/>
   </target>
   <target name="migrate:all:sequenced" description="Runs all migration tasks defined here in a sequence."
-          depends=" migrate:field,
+          depends=" migrate:file,
                     migrate:user,
                     migrate:taxonomy,
                     migrate:menu,
@@ -29,8 +29,7 @@
                     migrate:finalize"
   />
   <target name="migrate:all:config" description="Runs all configuration-migration tasks defined here."
-          depends=" migrate:field:config,
-                    migrate:user:config,
+          depends=" migrate:user:config,
                     migrate:taxonomy:config,
                     migrate:menu:config,
                     migrate:paragraphs:config,
@@ -41,16 +40,14 @@
                     migrate:finalize:config"
   />
   <target name="migrate:all:settings" description="Runs all settings-migration tasks defined here."
-          depends=" migrate:field:settings,
-                    migrate:user:settings,
+          depends=" migrate:user:settings,
                     migrate:taxonomy:settings,
                     migrate:menu:settings,
                     migrate:nodes:settings,
                     migrate:system:settings"
   />
   <target name="migrate:all:content" description="Runs all content-migration tasks defined here."
-          depends=" migrate:field:content,
-                    migrate:field:custom:content,
+          depends=" migrate:file,
                     migrate:user:content,
                     migrate:taxonomy:content,
                     migrate:menu:content,
@@ -61,37 +58,14 @@
   />
 
   <!-- Migrate fields -->
-  <target name="migrate:field" description="Runs all field migration tasks."
-          depends=" migrate:field:config,
-                    migrate:field:settings,
-                    migrate:field:content,
-                    migrate:field:custom:content">
+  <target name="migrate:file" description="Runs all file migration tasks."
+          depends=" migrate:file:content">
     <echo message="Field migration completed." level="info"/>
   </target>
-  <target name="migrate:field:content">
+  <target name="migrate:file:content">
     <echo message="Migrates field content into site." level="info"/>
     <property name="migration.configs" override="true"
-              value="d7_file,d7_file_private"/>
-    <phingcall target="migrate:execute" inheritAll="true"/>
-  </target>
-  <target name="migrate:field:custom:content">
-    <echo message="Migrates custom field content into site." level="info"/>
-    <property name="migration.configs" override="true"
-              value="--group=bos_fields"/>
-    <phingcall target="migrate:execute" inheritAll="true"/>
-  </target>
-  <target name="migrate:field:config">
-    <echo message="Migrates field configuration into site." level="info"/>
-    <property name="migration.configs" override="true"
-              value="d7_field,d7_field_instance,d7_field_formatter_settings,\
-              d7_field_instance_widget_settings,d7_view_modes,d7_field_group,\
-              d7_image_settings,d7_image_styles"/>
-    <phingcall target="migrate:execute" inheritAll="true"/>
-  </target>
-  <target name="migrate:field:settings">
-    <echo message="Migrates field settings into site." level="info"/>
-    <property name="migration.configs" override="true"
-              value="file_settings,text_settings"/>
+              value="managed_files,d7_file_private"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
   </target>
 
@@ -110,6 +84,7 @@
     </property>
     <exec description="Fixes the init name for uid=101."
           command="${drush.cmd} eval '${php.command}'" level="info"/>
+    <property name="migration.options" value="-v --update=true --force=true"/>
     <property name="migration.configs" override="true"
               value="d7_user,d7_authmap"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
@@ -365,30 +340,34 @@
     <echo message="Migrate Users."/>
     <exec description="Fixes the init name for uid=101."
           command="${drush.cmd} eval '${php.command}'" level="info"/>
-    <property name="migration.options" value="-v --update"/>
+    <property name="migration.options" value="--force=true -v --update=true --execute-dependencies=false"/>
     <phingcall target="migrate:user" inheritAll="true"/>
 
+    <echo message="Migrate Files."/>
+    <property name="migration.options" value="--force=true -v --update=true --execute-dependencies=false"/>
+    <phingcall target="migrate:file" inheritAll="true"/>
+
     <echo message="Migrate Taxonomy."/>
-    <property name="migration.options" value="--force -v --update"/>
-    <phingcall target="migrate:taxonomy:config" inheritAll="true"/>
-    <phingcall target="migrate:taxonomy:content" inheritAll="true"/>
-
-    <echo message="Migrate Paragraphs."/>
-    <property name="migration.options" value="--force -v --update"/>
-    <phingcall target="migrate:paragraphs:content" inheritAll="true"/>
-
-    <echo message="Migrate Nodes."/>
-    <property name="migration.options" value="--force -v --update"/>
+    <property name="migration.options" value="--force=true -v --update=true --execute-dependencies=false"/>
     <property name="migration.configs" override="true"
-              description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."
-              value="d7_node_type,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article"/>
+              value="d7_taxonomy_term:cityscore_metrics,,d7_taxonomy_term:commissions,,d7_taxonomy_term:procurement_footer,,d7_taxonomy_term:procurement_type,d7_taxonomy_term:massachusetts_general_law,d7_taxonomy_term:bid_type,d7_taxonomy_term:bid_offering,d7_taxonomy_term:newsletters,d7_taxonomy_term:public_notice_type,d7_taxonomy_term:holidays,d7_taxonomy_term:311_request,d7_taxonomy_term:type_of_content,d7_taxonomy_term:topic_category,d7_taxonomy_term:icons,d7_taxonomy_term:features,d7_taxonomy_term:place_type,d7_taxonomy_term:program_type,d7_taxonomy_term:profile_type,d7_taxonomy_term:political_party,d7_taxonomy_term:neighborhoods,d7_taxonomy_term:event_type,d7_taxonomy_term:news_tags,d7_taxonomy_term:contact"/>
     <phingcall target="migrate:execute" inheritAll="true"/>
+<!--    <echo message="Migrate Paragraphs."/>-->
+<!--    <property name="migration.options" value="&#45;&#45;force -v &#45;&#45;update"/>-->
+<!--    <phingcall target="migrate:paragraphs:content" inheritAll="true"/>-->
 
-    <!-- Menu should go last -->
-    <echo message="Migrate Menus and Paths."/>
-    <property name="migration.options" value="--force -v --update"/>
-    <phingcall target="migrate:menu:config" inheritAll="true"/>
-    <phingcall target="migrate:menu:content" inheritAll="true"/>
+<!--    <echo message="Migrate Nodes."/>-->
+<!--    <property name="migration.options" value="&#45;&#45;force -v &#45;&#45;update"/>-->
+<!--    <property name="migration.configs" override="true"-->
+<!--              description="Imports custom list - NOTE ENSURE NO SPACES IN VALUE FIELD BELOW."-->
+<!--              value="d7_node_type,node_translation_menu_links,d7_node:department_profile,d7_node:change,d7_node:article"/>-->
+<!--    <phingcall target="migrate:execute" inheritAll="true"/>-->
+
+<!--    &lt;!&ndash; Menu should go last &ndash;&gt;-->
+<!--    <echo message="Migrate Menus and Paths."/>-->
+<!--    <property name="migration.options" value="&#45;&#45;force -v &#45;&#45;update"/>-->
+<!--    <phingcall target="migrate:menu:config" inheritAll="true"/>-->
+<!--    <phingcall target="migrate:menu:content" inheritAll="true"/>-->
   </target>
 
 </project>

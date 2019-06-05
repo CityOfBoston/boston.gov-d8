@@ -12,11 +12,18 @@ dependencies:
     - node.type.listing_page
   module:
     - user
+_core:
+  default_config_hash: et24XQqXIsNHO5HAPdcfHr6sBJuwOrcBp12l-bGYmHY
 id: node.listing_page.topics_list
 targetEntityType: node
 bundle: listing_page
 mode: topics_list
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
@@ -24,6 +31,7 @@ hidden:
   field_components: true
   field_header_component: true
   field_intro_image: true
+  field_manual_date: true
   field_published_date: true
   field_updated_date: true
   langcode: true

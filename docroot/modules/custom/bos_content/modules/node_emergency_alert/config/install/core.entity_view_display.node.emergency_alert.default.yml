@@ -1,0 +1,96 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.emergency_alert.field_description
+    - field.field.node.emergency_alert.field_link
+    - field.field.node.emergency_alert.field_status_overrides
+    - field.field.node.emergency_alert.field_theme
+    - field.field.node.emergency_alert.field_updated_date
+    - node.type.emergency_alert
+  module:
+    - datetime
+    - entity_reference_revisions
+    - fences
+    - options
+    - text
+    - user
+id: node.emergency_alert.default
+targetEntityType: node
+bundle: emergency_alert
+mode: default
+content:
+  field_description:
+    weight: 0
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_link:
+    type: entity_reference_revisions_entity_view
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_status_overrides:
+    type: entity_reference_revisions_entity_view
+    weight: 3
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_theme:
+    label: hidden
+    weight: 4
+    type: list_key
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+  field_updated_date:
+    label: hidden
+    weight: 2
+    type: datetime_default
+    settings:
+      timezone_override: ''
+      format_type: date_format_long
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
+hidden:
+  content_moderation_control: true
+  langcode: true
+  links: true
+  published_at: true

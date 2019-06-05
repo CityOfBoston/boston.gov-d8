@@ -16,7 +16,7 @@ bundle: grid_of_cards
 mode: default
 content:
   field_component_theme:
-    weight: 4
+    weight: 3
     type: options_select
     settings: {  }
     third_party_settings: {  }
@@ -36,15 +36,22 @@ content:
     third_party_settings: {  }
     region: content
   field_drawer:
-    weight: 3
-    type: entity_reference_paragraphs
+    weight: 4
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: button
+      title: 'Grid of Cards'
+      title_plural: 'Grid of Cards'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: card
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_short_title:

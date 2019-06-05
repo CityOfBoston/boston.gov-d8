@@ -8,37 +8,45 @@
 (function ($, window, document) {
   'use strict';
   $(document).ready(function () {
-    var links = $("button.trigger").parent().find("[class^=entitynode]");
-    var type = "Node";
-
-    /*
-      Attempts to determine what sort of node this is from the classes applied.
-     */
-    var findNode = function () {
-      var classes = links.parents("article").attr("class").split(/\s+/);
-      $(classes).each(function (key, value) {
-        if (value == "node-article") {
-          type = "Article";
-        }
-      });
-    };
+    // Var contextButtons are a list of context buttons on the page.
+    var contextButtons = $("button.trigger");
+    // Create a default type for dropdowns.
+    var type = "Element";
+    var links;
+    var entityType;
 
     // Adds a tooltip to the button, changes the click funtion of the contextual button when
     // only one link and adds the node type to the links list.
-    if (links.length == 1) {
-      findNode();
-      links.parents("ul").hide();
-      links.parents(".contextual").attr({"title": "Click to Edit " + type + "."});
-      links.parent().parent().click(function () {
-        window.location.href = links.first().find("a").prop("href");
-      });
-    }
-    else if (links.length > 1) {
-      findNode();
-      links.each(function (key, listItem) {
-        $(listItem).find("a").text($(listItem).find("a").text() + " " + type);
-      });
-      links.parents(".contextual").attr({"title": "Click for " + type + " admin options."});
-    }
+    contextButtons.each(function (key, button) {
+      links = $(button).parent().find("[class^=entitynode]");
+      if (links.length == 0) {
+        links = $(button).parent().find("[class^=paragraphs]");
+        entityType = "paragraph";
+      }
+      else {
+        entityType = "node";
+      }
+      type = $(button).parents(".contextual-region").attr("bos_context_type")
+      if (typeof type === "undefined") {
+        type = "Element";
+      }
+      type = type + " (" + entityType + ")";
+
+      if (links.length != 0) {
+        if (links.length == 1) {
+          links.parents("ul").hide();
+          links.parents(".contextual").attr({"title": "Click to Edit " + type + "."});
+          links.parent().parent().click(function () {
+            window.location.href = links.first().find("a").prop("href");
+          });
+        }
+        else if (links.length > 1) {
+          links.each(function (key, listItem) {
+            $(listItem).find("a").text($(listItem).find("a").text() + " " + type);
+          });
+          links.parents(".contextual").attr({"title": "Click for editor options (" + entityType + ")."});
+        }
+      }
+    });
   });
 })(jQuery, this, this.document);

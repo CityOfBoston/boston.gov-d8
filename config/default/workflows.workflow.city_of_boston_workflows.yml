@@ -4,10 +4,22 @@ status: true
 dependencies:
   config:
     - node.type.article
-    - node.type.change
     - node.type.department_profile
+    - node.type.emergency_alert
     - node.type.event
+    - node.type.how_to
     - node.type.landing_page
+    - node.type.listing_page
+    - node.type.person_profile
+    - node.type.place_profile
+    - node.type.post
+    - node.type.program_initiative_profile
+    - node.type.public_notice
+    - node.type.site_alert
+    - node.type.status_item
+    - node.type.tabbed_content
+    - node.type.topic_page
+    - node.type.transaction
   module:
     - content_moderation
 id: city_of_boston_workflows
@@ -87,7 +99,19 @@ type_settings:
   entity_types:
     node:
       - article
-      - change
       - department_profile
+      - emergency_alert
       - event
+      - how_to
       - landing_page
+      - listing_page
+      - person_profile
+      - place_profile
+      - post
+      - program_initiative_profile
+      - public_notice
+      - site_alert
+      - status_item
+      - tabbed_content
+      - topic_page
+      - transaction
