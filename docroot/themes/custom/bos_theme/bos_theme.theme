@@ -596,7 +596,7 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
       foreach ($variables["items"] as $key => &$component) {
         // Only add if the component has a short_title set.
         if (!empty($component['content']['#paragraph']->field_short_title->value)) {
-          $component['content']['nav_title']['attributes'] = new Attribute([
+          $component['content']['nav_title']['#attributes'] = new Attribute([
             "class" => ["subnav-anchor"],
             "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
             "data-text" => $component['content']['#paragraph']->field_short_title->value,
