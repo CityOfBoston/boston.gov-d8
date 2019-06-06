@@ -12,7 +12,8 @@ use Drupal\Core\Render\Element;
  */
 function node_landing_page_theme() {
   return [
-    'landing_page' => [
+    'node__landing_page__full' => [
+      'base_hook' => 'node',
       'render element' => 'elements',
     ],
   ];
@@ -29,12 +30,20 @@ function node_landing_page_theme() {
  *     and any fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_landing_page(array &$variables) {
+function template_preprocess_node__landing_page__full(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_landing_page_preprocess_node(&$variables) {
+  if ($variables["node"]->bundle()  == "landing_page") {
+//    $variables['attributes']['class'][] = "contextual-region";
+  }
+}
 /**
  * Implements hook_preprocess_HOOK().
  */
