@@ -50,12 +50,12 @@
     <property name="build.type" value="${build.travis.type}"/>
     <property name="build.type.long" value="production"/>
     <property name="composer.mode" value="--dev"/>
-    <property name="build.config.site-uuid" value="${build.travis.config.site-uuid}"/>
-    <property name="build.config.sync" value="${build.travis.config.sync}"/>
-    <property name="build.config.develop" value="${build.travis.config.develop}"/>
-    <property name="build.config.prod" value="${build.travis.config.prod}"/>
-    <property name="build.database.source" value="${build.travis.database.source}"/>
-    <property name="build.database.drush-alias" value="${build.travis.database.drush-alias}"/>
+    <property name="build.config.site-uuid" value="${build.local.config.site-uuid}"/>
+    <property name="build.config.sync" value="${build.travis.${travis.branch}.config.sync}"/>
+<!--    <property name="build.config.develop" value="${build.travis.config.develop}"/>  &lt;!&ndash; du &ndash;&gt;-->
+<!--    <property name="build.config.prod" value="${build.travis.config.prod}"/> &lt;!&ndash; du &ndash;&gt;-->
+    <property name="build.database.source" value="${build.travis.${travis.branch}.database.source}"/>
+    <property name="build.database.drush-alias" value="${build.travis.${travis.branch}.database.drush-alias}"/>
     <!-- Builds using the deploy branch of the private-repo. -->
     <property name="git.private_repo.branch" value="${git.private_repo.deploy-branch}"/>
 

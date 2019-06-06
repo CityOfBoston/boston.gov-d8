@@ -3,7 +3,7 @@ project:
     name: 'bos_profile'
   themes:
     - bos_theme
-    -
+
 # Drupal Account Credentials. These are used for installing Drupal.
 drupal:
   account:
@@ -33,18 +33,32 @@ build:
       drush-alias: "@bostond8.dev"
 
   travis:
-    # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
-    type: dev
-    config:
-      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
-      # aquia require ./config/default:
-      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
-      sync: "../config/default"
-    database:
-      # Set source to 'initialize' to start a fresh install.
-      # Otherwise set it to sync to sync from the drush-alias environment.
-      source: initialize
-      drush-alias: "@bostond8.test"
+    develop:
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+      type: dev
+      database:
+        # Set source to 'initialize' to start a fresh install.
+        # Otherwise set it to sync to sync from the drush-alias environment.
+        source: initialize
+        drush-alias: "@bostond8.test"
+      config:
+        # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+        # aquia require ./config/default:
+        #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+        sync: "../config/default"
+    master:
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+      type: prod
+      database:
+        # Set source to 'initialize' to start a fresh install.
+        # Otherwise set it to sync to sync from the drush-alias environment.
+        source: initialize
+        drush-alias: "@bostond8.test"
+      config:
+        # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+        # aquia require ./config/default:
+        #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+        sync: "../config/default"
 
   terraform:
     type: prod
@@ -96,7 +110,7 @@ deploy:
     dry-run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy-db: false
-    drush-db-source: ""
+    drush-db-source: "@bostond8.prod"
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
