@@ -1,0 +1,11 @@
+--- a/modules/contrib/imagemagick/src/Plugin/ImageToolkit/ImagemagickToolkit.php
++++ b/modules/contrib/imagemagick/src/Plugin/ImageToolkit/ImagemagickToolkit.php
+@@ -1220,7 +1220,7 @@
+     }
+ 
+     // No data, return.
+-    if (!$data) {
++    if (empty($data)) {
+       return FALSE;
+     }
+ 

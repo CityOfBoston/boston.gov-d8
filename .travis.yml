@@ -44,10 +44,11 @@ install:
   - composer install --no-suggest
   - composer drupal:scaffold
   - if [ ! -e  /usr/local/bin/drupal ]; then sudo ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
+  - if [ $TRAVIS_BRANCH == "master" ]; then export AH_SITE_ENVIRONMENT="prod"; else export AH_SITE_ENVIRONMENT="dev"; fi
   # Make an account for drupal in MySQL (better than using root a/c).
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
   - $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml validate:all
-  - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"  setup:docker:drupal-travis
+  - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/" -Dtravis.branch=${TRAVIS_BRANCH} setup:docker:drupal-travis
   # Build the drupal site using Phing.
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
 

@@ -15,7 +15,23 @@
  */
 #}
 <article{{ attributes }}>
-  {% if content %}
-    {{- content -}}
+  {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
+    <header>
+
+      {{ title_prefix  }}
+
+      {{ title_suffix  }}
+
+      {% if unpublished %}
+        <mark class="watermark">Unpublished</mark>
+      {% elseif preview %}
+        <mark class="watermark">Preview</mark>
+      {% endif %}
+
+    </header>
   {% endif %}
+
+  {# We hide the comments and links now so that we can render them later. #}
+  {{ content }}
+
 </article>
