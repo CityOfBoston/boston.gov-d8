@@ -914,19 +914,19 @@ function _bos_theme_render_snippets(array &$variables) {
     '#secondary_menu' => $variables['secondary_menu'],
     '#theme' => '',
   ];
-  $arr_base['#theme'] = 'burger';
-  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'logo';
-  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'secondary_nav';
-  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'search';
-  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
+  $vars = array_merge($arr_base, ['#theme' => 'burger']);
+  $variables['burger'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'logo']);
+  $variables['logo'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'secondary_nav']);
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'search']);
+  $variables['search'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'seal']);
   if ($variables['has_site_alert']) {
-    $arr_base["#hidden"] = " hidden";
+    $vars["#hidden"] = " hidden";
   }
-  $arr_base['#theme'] = 'seal';
-  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
+  $variables['seal'] = \Drupal::service('renderer')->render($vars);
 }
 
 /**
@@ -939,6 +939,8 @@ function _bos_theme_render_snippets(array &$variables) {
  */
 function _bos_theme_page_classes(array &$variables, string $current_path) {
   if (isset($variables['node']) && is_object($variables['node'])) {
+
+    $variables["attributes"]->addClass("mn");
 
     if ($variables['node']->getType() !== 'tabbed_content' && !$variables['header_image']) {
       if (!$variables["attributes"]->hasClass("page--nm")) {
