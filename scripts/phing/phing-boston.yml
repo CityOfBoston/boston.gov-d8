@@ -110,7 +110,7 @@ deploy:
     dry-run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy-db: false
-    drush-db-source: """@bostond8.prod"
+    drush-db-source: "@bostond8.prod"
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
