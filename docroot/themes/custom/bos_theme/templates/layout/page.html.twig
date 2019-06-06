@@ -66,7 +66,9 @@
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
     {% include '@bos_theme/snippets/burger.html.twig' %}
     {% include '@bos_theme/snippets/logo.html.twig' %}
-    {% include '@bos_theme/snippets/seal.html.twig' %}
+    {% if not has_site_alert %}
+      {% include '@bos_theme/snippets/seal.html.twig' %}
+    {% endif %}
     {% include '@bos_theme/snippets/secondary-nav.html.twig' %}
     {% include '@bos_theme/snippets/search.html.twig' %}
   </header>
