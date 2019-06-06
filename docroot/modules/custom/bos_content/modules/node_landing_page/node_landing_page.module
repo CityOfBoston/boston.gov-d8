@@ -39,14 +39,6 @@ function template_preprocess_node__landing_page__full(array &$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_landing_page_preprocess_node(&$variables) {
-  if ($variables["node"]->bundle()  == "landing_page") {
-//    $variables['attributes']['class'][] = "contextual-region";
-  }
-}
-/**
- * Implements hook_preprocess_HOOK().
- */
 function node_landing_page_preprocess_page(&$variables) {
 
   if (isset($variables["node"]) && $variables["node"]->getType() == "landing_page") {
