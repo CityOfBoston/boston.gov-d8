@@ -356,6 +356,7 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+
     // Map "entity_reference" field to "link" field in internal_links para.
     "paragraph__internal_link" => [
       'process' => [
