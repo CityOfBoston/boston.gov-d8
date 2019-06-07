@@ -26,6 +26,13 @@ class MigrationConfigAlter {
   protected $logMsg = [];
 
   /**
+   * Defines where the source files will be taken from (for d7_file).
+   *
+   * @var array
+   */
+  public $source = "https://www.boston.gov/";
+
+  /**
    * Flag for storing the migrations in a state variable.
    *
    * Set default file operations for rich-text and media migrations.
@@ -919,8 +926,12 @@ class MigrationConfigAlter {
           'key' => 'migrate',
         ];
         $this->migrations[$type]['process']['uri']['plugin'] = "file_copy_ext";
+        // Adds directives to copy or move. (Cannot move remote files)
         $this->migrations[$type]['process']['uri']['copy'] = $this->file_copy;
         $this->migrations[$type]['process']['uri']['move'] = $this->file_move;
+        // Adds directive to point at remote URL from which to download content.
+        $this->migrations[$type]['process']['uri']['remote_source'] = $this->source;
+        $this->migrations[$type]['process']['uri']['file_exists'] = "use existing";
         $this->migrations[$type]['process']['rh_actions'] = 'rh_actions';
         $this->migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
         $this->migrations[$type]['process']['rh_redirect_response'] = 'rh_redirect_response';

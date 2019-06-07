@@ -35,19 +35,41 @@ class FileCopyExt extends FileCopy {
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
+    // If we're stubbing a file entity, return a uri of NULL so it will get
+    // stubbed by the general process.
+    if ($row->isStub()) {
+      return NULL;
+    }
 
     list($source, $destination) = $value;
 
+    // Ovveride the config with state settings.
+    if (\Drupal::state()->get("bos_migration.active", 0) == 1) {
+      if (\Drupal::state()->get("bos_migration.fileOps", "none") != "none") {
+        $this->configuration['copy'] = (\Drupal::state()->get("bos_migration.fileOps") == "copy" ? "true" : "false");
+        $this->configuration['move'] = (\Drupal::state()->get("bos_migration.fileOps") == "move" ? "true" : "false");
+      }
+    }
+
     // If we don't have an actual file action, then dont do anything.
-    if (!empty($this->configuration['move']) || !empty($this->configuration['copy'])) {
+    if ((!isset($this->configuration['move']) || $this->configuration['move'] === "false") && (!isset($this->configuration['copy']) || $this->configuration['copy'] === "false")) {
       return $destination;
     }
 
-    if (!file_exists($source)) {
+    // Map our reote_source path prefix onto the source so we can download it.
+    if (isset($this->configuration["remote_source"])) {
+      $source = $this->configuration["remote_source"] . $source;
+      $source = preg_replace("~([A-Za-z0-9])//~", "$1/", $source);
+    }
+
+    if (parent::isLocalUri($source) && !file_exists($source)) {
       $fid = $row->getSource()['fid'];
       $migrate_executable->saveMessage("File (fid:$fid) '$source' does not exist", MigrationInterface::MESSAGE_NOTICE);
       return $destination;
     }
+
+    // Save the newly created source.
+    $value[0] = $source;
 
     return parent::transform($value, $migrate_executable, $row, $destination_property);
 
