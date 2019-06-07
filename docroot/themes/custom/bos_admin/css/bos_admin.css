@@ -84,11 +84,37 @@ div.status-published {
   color: #333;
 }
 
+/* Provides better column layout on editor pages */
+@media screen and (min-width: 780px), (min-device-height: 780px) and (orientation: landscape) {
+  .bos_admin .layout-region-node-main, .layout-region-node-footer {
+    width: 80%;
+  }
+  .bos_admin .layout-region-node-secondary {
+    width: 20%;
+  }
+}
+
 .bos_admin .layout-region-node-secondary {
   margin-top: 10px;
 }
 .bos_admin .layout-region-node-secondary .entity-meta__header {
   background-color: #d2e4fb;
+}
+
+.js .bos_admin .paragraph-type-icon {
+  height: 30px;
+  width: 30px;
+}
+@media (min-width: 780px) {
+  .js .bos_admin.paragraph-top {
+    -ms-grid-columns: 170px auto 1fr auto;
+    grid-template-columns: 170px auto 1fr auto;
+  }
+}
+
+.js .bos_admin .paragraph-top .paragraph-type {
+  font-weight: bold;
+  color: navy;
 }
 
 .bos_admin .block-page-title-block:before {
