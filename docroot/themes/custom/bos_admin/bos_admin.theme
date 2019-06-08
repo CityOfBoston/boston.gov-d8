@@ -11,6 +11,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -338,6 +339,23 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
             '#type' => 'markup',
             "#weight" => -100,
             '#markup' => implode("", $title) . "<hr>",
+          ];
+
+          // Add a cancel button.
+          $form["actions"]["delete"] = [
+            "#access" => true,
+            "#attributes" => [
+              "class" => [
+                "button",
+                "button-danger",
+              ],
+            ],
+            "#button_type" => "danger",
+            "#title" => new TranslatableMarkup("Cancel"),
+            "#value" => new TranslatableMarkup("Cancel"),
+            "#type" => "link",
+            "#url" => Url::fromRoute("entity.node.canonical" ,["node" => $this_entity->id()]),
+            "#weight" => 100,
           ];
         }
       }
