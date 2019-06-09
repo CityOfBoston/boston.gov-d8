@@ -116,6 +116,18 @@ div.status-published {
   font-weight: bold;
   color: navy;
 }
+@media (min-width: 780px) {
+  .js .bos_admin .paragraph-top {
+    -ms-grid-columns: 180px auto 1fr auto;
+    grid-template-columns: 180px auto 1fr auto;
+  }
+}
+@media (min-width: 992px) {
+  .js .bos_admin .paragraph-top {
+    -ms-grid-columns: 200px auto 1fr auto;
+    grid-template-columns: 200px auto 1fr auto;
+  }
+}
 
 .bos_admin .block-page-title-block:before {
   content: url("/themes/custom/bos_admin/images/B_50px.png");
