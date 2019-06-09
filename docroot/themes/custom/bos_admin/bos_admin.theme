@@ -343,7 +343,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 
           // Add a cancel button.
           $form["actions"]["delete"] = [
-            "#access" => true,
+            "#access" => TRUE,
             "#attributes" => [
               "class" => [
                 "button",
@@ -354,7 +354,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
             "#title" => new TranslatableMarkup("Cancel"),
             "#value" => new TranslatableMarkup("Cancel"),
             "#type" => "link",
-            "#url" => Url::fromRoute("entity.node.canonical" ,["node" => $this_entity->id()]),
+            "#url" => Url::fromRoute("entity.node.canonical", ["node" => $this_entity->id()]),
             "#weight" => 100,
           ];
         }
