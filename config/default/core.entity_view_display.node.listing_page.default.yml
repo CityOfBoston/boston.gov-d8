@@ -21,6 +21,11 @@ targetEntityType: node
 bundle: listing_page
 mode: default
 content:
+  content_moderation_control:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_components:
     label: hidden
     weight: 2
@@ -40,16 +45,25 @@ content:
     third_party_settings: {  }
     region: content
   field_manual_date:
-    weight: 101
+    type: boolean
+    weight: 5
+    region: content
     label: above
     settings:
       format: default
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    type: boolean
-    region: content
   field_published_date:
+    type: datetime_default
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_updated_date:
     label: hidden
     weight: 3
     type: datetime_default
@@ -58,18 +72,11 @@ content:
       timezone_override: ''
     third_party_settings: {  }
     region: content
-  field_updated_date:
-    label: hidden
-    weight: 4
-    type: datetime_default
-    settings:
-      format_type: medium
-      timezone_override: ''
-    third_party_settings: {  }
-    region: content
   links:
-    weight: 100
+    weight: 6
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_intro_image: true
   langcode: true
