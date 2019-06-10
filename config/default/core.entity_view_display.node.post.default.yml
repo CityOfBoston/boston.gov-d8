@@ -10,16 +10,8 @@ dependencies:
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
-    - field.field.node.post.field_people
-    - field.field.node.post.field_place
-    - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
-    - field.field.node.post.field_related_content
-    - field.field.node.post.field_related_departments
-    - field.field.node.post.field_related_events_notices
-    - field.field.node.post.field_related_guides
-    - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
@@ -133,30 +125,6 @@ content:
         fences_label_tag: label
         fences_label_classes: ''
     region: content
-  field_people:
-    label: hidden
-    weight: 11
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_place:
-    label: hidden
-    weight: 12
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_program_initiative:
-    label: hidden
-    weight: 10
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
   field_published_date:
     label: hidden
     weight: 4
@@ -181,46 +149,6 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-  field_related_content:
-    label: above
-    weight: 13
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_departments:
-    label: above
-    weight: 17
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_events_notices:
-    label: above
-    weight: 14
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_guides:
-    label: above
-    weight: 16
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_posts:
-    label: above
-    weight: 15
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
   field_sidebar_components:
     label: hidden
     weight: 9
