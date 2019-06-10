@@ -18,16 +18,8 @@ dependencies:
     - field.field.node.public_notice.field_links
     - field.field.node.public_notice.field_manual_date
     - field.field.node.public_notice.field_multiple_neighborhoods
-    - field.field.node.public_notice.field_people
     - field.field.node.public_notice.field_phone_number
-    - field.field.node.public_notice.field_place
-    - field.field.node.public_notice.field_program_initiative
     - field.field.node.public_notice.field_public_notice_date
-    - field.field.node.public_notice.field_related_content
-    - field.field.node.public_notice.field_related_departments
-    - field.field.node.public_notice.field_related_events_notices
-    - field.field.node.public_notice.field_related_guides
-    - field.field.node.public_notice.field_related_posts
     - field.field.node.public_notice.field_time
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
@@ -385,15 +377,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_people:
-    weight: 12
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_phone_number:
     weight: 12
     type: string_textfield
@@ -402,74 +385,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_place:
-    weight: 13
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_program_initiative:
-    weight: 15
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_public_notice_date:
     weight: 42
     settings: {  }
     third_party_settings: {  }
     type: daterange_default
-    region: content
-  field_related_content:
-    weight: 16
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_departments:
-    weight: 9
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_events_notices:
-    weight: 10
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_guides:
-    weight: 11
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_posts:
-    weight: 14
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     region: content
   field_time:
     weight: 19
