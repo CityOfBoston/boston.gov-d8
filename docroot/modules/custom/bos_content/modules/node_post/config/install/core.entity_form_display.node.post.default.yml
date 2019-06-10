@@ -10,16 +10,8 @@ dependencies:
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
-    - field.field.node.post.field_people
-    - field.field.node.post.field_place
-    - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
-    - field.field.node.post.field_related_content
-    - field.field.node.post.field_related_departments
-    - field.field.node.post.field_related_events_notices
-    - field.field.node.post.field_related_guides
-    - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
@@ -217,82 +209,10 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_people:
-    weight: 17
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_place:
-    weight: 18
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_program_initiative:
-    weight: 20
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_published_date:
     weight: 32
     type: datetime_default
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_related_content:
-    weight: 21
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_departments:
-    weight: 14
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_events_notices:
-    weight: 15
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_guides:
-    weight: 16
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_posts:
-    weight: 19
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
     region: content
   field_sidebar_components:
