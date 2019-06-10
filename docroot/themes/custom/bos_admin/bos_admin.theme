@@ -11,6 +11,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -311,17 +312,18 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
         if ($chain[0]->id() == $form_state->getBuildInfo()['args'][0]->id()) {
 
           // Make the lineage into an array of strings.
-          $title[0] = "<h2>" . ucwords(str_replace(['-', '_'], " ", $chain[0]->bundle())) . ": <u>" . $chain[0]->getTitle() . "</u> (nid " . $chain[0]->id() . ")" . "</h2>";
+          $title[0] = "<div class='ce-pretty'>";
+          $title[] = "<h2>" . ucwords(str_replace(['-', '_'], " ", $chain[0]->bundle())) . ": <u>" . $chain[0]->getTitle() . "</u> (nid " . $chain[0]->id() . ")" . "</h2>";
           switch ($chain[1]->getEntityTypeId()) {
             case "node":
-              $title[] = "<h3> > <u>" . $chain[1]->getTitle() . "</u> (nid " . $chain[1]->id() . ")</h3>";
+              $title[] = "<h3 class='ce-pretty'> > <u>" . $chain[1]->getTitle() . "</u> (nid " . $chain[1]->id() . ")</h3>";
               break;
 
             case "paragraph":
               foreach ($chain[1]->getFields() as $fieldName => $field) {
                 $crumb = ucwords(str_replace(['-', '_'], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
                 if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
-                  $title[] = "<h3>" . $crumb . " > <u>" . $field->getValue()[0]['value'] . "</u> (nid " . $chain[1]->id() . ")</h3>";
+                  $title[] = "<h3 class='ce-pretty'>" . $crumb . " > <u>" . $field->getValue()[0]['value'] . "</u> (nid " . $chain[1]->id() . ")</h3>";
                   break;
                 }
               }
@@ -330,12 +332,30 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
             case "taxonomy":
               break;
           }
+          $title[] = "</div>";
 
           // Add this title to the form.
           $form['lineage'] = [
             '#type' => 'markup',
             "#weight" => -100,
             '#markup' => implode("", $title) . "<hr>",
+          ];
+
+          // Add a cancel button.
+          $form["actions"]["delete"] = [
+            "#access" => TRUE,
+            "#attributes" => [
+              "class" => [
+                "button",
+                "button-danger",
+              ],
+            ],
+            "#button_type" => "danger",
+            "#title" => new TranslatableMarkup("Cancel"),
+            "#value" => new TranslatableMarkup("Cancel"),
+            "#type" => "link",
+            "#url" => Url::fromRoute("entity.node.canonical", ["node" => $this_entity->id()]),
+            "#weight" => 100,
           ];
         }
       }
