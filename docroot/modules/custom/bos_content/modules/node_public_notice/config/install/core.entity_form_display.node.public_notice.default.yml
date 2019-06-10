@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_public_notice_date
+    - field.field.node.public_notice.field_related
     - field.field.node.public_notice.field_time
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
@@ -390,6 +391,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: daterange_default
+    region: content
+  field_related:
+    weight: 47
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_time:
     weight: 19

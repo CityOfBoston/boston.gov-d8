@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_public_notice_date
+    - field.field.node.public_notice.field_related
     - field.field.node.public_notice.field_time
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
@@ -268,6 +269,14 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     type: daterange_default
+    region: content
+  field_related:
+    weight: 19
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
   field_time:
     label: hidden
