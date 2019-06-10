@@ -105,14 +105,7 @@ third_party_settings:
       label: Components
     group_related_content:
       children:
-        - field_related_departments
-        - field_related_events_notices
-        - field_related_guides
-        - field_people
-        - field_place
-        - field_related_posts
-        - field_program_initiative
-        - field_related_content
+        - field_related
       parent_name: group_post
       weight: 29
       format_type: tab
@@ -215,6 +208,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_related:
+    type: entity_reference_autocomplete
+    weight: 3
+    region: content
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_sidebar_components:
     weight: 10
     type: paragraphs
@@ -316,5 +318,4 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden:
-  field_related: true
+hidden: {  }
