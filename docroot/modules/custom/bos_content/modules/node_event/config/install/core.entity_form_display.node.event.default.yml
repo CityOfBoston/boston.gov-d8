@@ -26,6 +26,7 @@ dependencies:
     - field.field.node.event.field_multiple_neighborhoods
     - field.field.node.event.field_phone_number
     - field.field.node.event.field_published_date
+    - field.field.node.event.field_related
     - field.field.node.event.field_related_departments
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
@@ -440,6 +441,15 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_related:
+    weight: 32
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_related_departments:
     type: entity_reference_autocomplete
     weight: 21
