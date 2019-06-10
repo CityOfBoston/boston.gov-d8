@@ -27,7 +27,6 @@ dependencies:
     - field.field.node.event.field_phone_number
     - field.field.node.event.field_published_date
     - field.field.node.event.field_related
-    - field.field.node.event.field_related_departments
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
@@ -449,15 +448,6 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
-  field_related_departments:
-    type: entity_reference_autocomplete
-    weight: 21
-    region: content
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_sidebar_components:
     type: paragraphs
     weight: 1
