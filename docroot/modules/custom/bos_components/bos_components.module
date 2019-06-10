@@ -314,7 +314,7 @@ function walk_recursive_remove(array $array, callable $callback) {
  *   If this is a child of FYI.
  */
 function _paragraph_is_direct_child_of($entity, $bundle) {
-  if (!empty($entity) && is_a($entity, 'Drupal\paragraphs\Entity\Paragraph') && $entity->getParentEntity()->bundle() == $bundle) {
+  if (!empty($entity) && is_a($entity, 'Drupal\paragraphs\Entity\Paragraph') && $entity->getParentEntity() != NULL && $entity->getParentEntity()->bundle() == $bundle) {
     return TRUE;
   }
   return FALSE;

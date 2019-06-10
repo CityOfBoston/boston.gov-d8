@@ -12,7 +12,7 @@ use Drupal\bos_migration\MigrationConfigAlter;
  */
 function bos_migration_migration_plugins_alter(array &$migrations) {
   // Class controls/executes alterations to migration array.
-  $mig = new MigrationConfigAlter($migrations, TRUE);
+  $mig = new MigrationConfigAlter($migrations, FALSE);
   $migrations = $mig->alterMigrations();
   // TODO: dumpMigration() can be removed in production.
   $mig->dumpMigration();

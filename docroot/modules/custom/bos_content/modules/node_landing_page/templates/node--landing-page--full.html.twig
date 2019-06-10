@@ -32,6 +32,6 @@
   {% endif %}
 
   {# We hide the comments and links now so that we can render them later. #}
-  {{ content }}
+  {{ content|without("created","uid","title") }}
 
 </article>
