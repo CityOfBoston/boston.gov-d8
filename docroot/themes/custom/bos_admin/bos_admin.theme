@@ -95,6 +95,7 @@ function bos_admin_preprocess_html(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_admin_preprocess_username(&$variables) {
+  //todo: set name and extra fields here ...
   if (empty($variables["account"]->__get("realname")) || stripos($variables["account"]->__get("realname"), "@")) {
     if (function_exists("_bos_core_name_from_email")) {
       $name = _bos_core_name_from_email($variables["account"]->get("mail")->value);
@@ -123,9 +124,15 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     foreach ($form["node_revisions_table"] as $key => &$revision) {
       if (is_numeric($key)) {
         $context = &$revision["revision"]["#context"];
-        $uid = str_replace("\n", "", strip_tags($context["username"]->__toString()));
-        $user = bos_admin_author_expand($uid);
+        $user = str_replace("\n", "", strip_tags($context["username"]->__toString()));
+        if (is_numeric($user)) {
+          $user = bos_admin_author_expand($user);
+        }
         $context["username"] = Markup::create($user);
+        preg_match("~([0-9]*)\.~", $context["message"]["#markup"], $rev_username);
+        $rev_user = Drupal::entityTypeManager()->getStorage("user")->loadByProperties(["name" => $rev_username[1]]);
+        $rev_user = reset($rev_user);
+        $context["message"]["#markup"] = preg_replace("~([0-9]*)\.~", $rev_user->realname, $context["message"]["#markup"]);
         $tooltip = "Select this revision for compare";
         $revision["select_column_one"]["#attributes"]["title"] = $tooltip;
         $revision["select_column_two"]["#attributes"]["title"] = $tooltip;
