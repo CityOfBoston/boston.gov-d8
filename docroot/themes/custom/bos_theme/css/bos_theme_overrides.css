@@ -378,3 +378,13 @@ What: Moves context_link button to page center from the right page margin.
 .sh.cl {
   position:relative;
 }
+.clo {  /* Used when there is no sh class already set (e.g. featured topics). */
+  position:relative;
+  max-width: 66.66rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+.contextual-region .clo .contextual .contextual-links a  {  /* Used when there is no sh class already set (e.g. featured topics). */
+  width: initial;
+  height: inherit;
+}
