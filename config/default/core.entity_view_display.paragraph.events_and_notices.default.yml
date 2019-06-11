@@ -5,8 +5,14 @@ dependencies:
   config:
     - field.field.paragraph.events_and_notices.field_component_title
     - field.field.paragraph.events_and_notices.field_featured_item
+    - field.field.paragraph.events_and_notices.field_link
+    - field.field.paragraph.events_and_notices.field_list
     - field.field.paragraph.events_and_notices.field_short_title
     - paragraphs.paragraphs_type.events_and_notices
+  module:
+    - entity_reference_revisions
+    - fences
+    - viewfield
 id: paragraph.events_and_notices.default
 targetEntityType: paragraph
 bundle: events_and_notices
@@ -14,23 +20,50 @@ mode: default
 content:
   field_component_title:
     weight: 0
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_featured_item:
-    weight: 2
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: featured_item
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: entity_reference_entity_view
+    region: content
+  field_link:
+    weight: 3
     label: above
     settings:
-      link: true
+      view_mode: default
+      link: ''
     third_party_settings: {  }
-    type: entity_reference_label
+    type: entity_reference_revisions_entity_view
+    region: content
+  field_list:
+    weight: 2
+    label: hidden
+    settings:
+      view_title: hidden
+      always_build_output: 0
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
     region: content
   field_short_title:
-    weight: 1
-    label: above
+    weight: 4
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
