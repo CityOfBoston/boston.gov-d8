@@ -1,0 +1,42 @@
+uuid: 0d650fef-2dd9-4a0f-8720-7e273c6fbcfb
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.events_and_notices.field_component_title
+    - field.field.paragraph.events_and_notices.field_featured_item
+    - field.field.paragraph.events_and_notices.field_short_title
+    - paragraphs.paragraphs_type.events_and_notices
+id: paragraph.events_and_notices.default
+targetEntityType: paragraph
+bundle: events_and_notices
+mode: default
+content:
+  field_component_title:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_featured_item:
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_short_title:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
