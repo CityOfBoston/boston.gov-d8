@@ -15,9 +15,16 @@ function bos_cabinet_preprocess_paragraph__cabinet(&$variables) {
  * Implements hook_theme().
  */
 function bos_cabinet_theme() {
-  $theme['paragraph__cabinet__default'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_cabinet/templates',
+  $theme = [
+    'paragraph__cabinet__full' => [
+      'base hook' => 'paragraph',
+    ],
+    'field__field_email__mode__embed' => [
+      'base hook' => 'field',
+    ],
+    'field__field_phone_number__mode__embed' => [
+      'base hook' => 'field',
+    ],
   ];
   return $theme;
 }
