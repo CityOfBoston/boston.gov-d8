@@ -216,10 +216,18 @@ function _bos_component_embed_level(array &$variables) {
     $object = $variables["element"]["#object"];
 
     if ($object->getEntityTypeId() == "node") {
-      if (isset($parent) &&  in_array($parent->getEntityTypeId(), ["paragraph", "taxonomy", "node"])) {
+      if (isset($parent) &&  in_array($parent->getEntityTypeId(), [
+        "paragraph",
+        "taxonomy",
+        "node",
+      ])) {
         $variables['is_component_field'] = TRUE;
         $parent = $object->getParentEntity();
-        if (isset($parent) &&  in_array($parent->getEntityTypeId(), ["paragraph", "taxonomy", "node"])) {
+        if (isset($parent) && in_array($parent->getEntityTypeId(), [
+          "paragraph",
+          "taxonomy",
+          "node",
+        ])) {
           $variables['is_component_field'] = FALSE;
           $variables['is_subcomponent_field'] = TRUE;
         }
@@ -237,10 +245,10 @@ function _bos_component_embed_level(array &$variables) {
         if (method_exists($parent, "getParentEntity")) {
           $parent = $parent->getParentEntity();
           if (isset($parent) && in_array($parent->getEntityTypeId(), [
-              "paragraph",
-              "taxonomy",
-              "node",
-            ])) {
+            "paragraph",
+            "taxonomy",
+            "node",
+          ])) {
             $variables['is_component_field'] = FALSE;
             $variables['is_subcomponent_field'] = TRUE;
           }
