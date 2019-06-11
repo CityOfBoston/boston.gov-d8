@@ -1,10 +1,11 @@
-uuid: 946afca6-d1d9-493d-bb4c-dbf630267a2c
+uuid: 226dd6f4-9106-452c-8c85-7e3d55390afd
 langcode: und
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_list
     - paragraphs.paragraphs_type.events_and_notices
+    - views.view.events_and_notices
   module:
     - viewfield
 id: paragraph.events_and_notices.field_list
@@ -15,11 +16,17 @@ label: List
 description: ''
 required: false
 translatable: true
-default_value: {  }
+default_value:
+  -
+    token_help: ''
+    display_id: block_1
+    arguments: ''
+    target_uuid: ede23a6a-803c-461d-a9e7-37cbbaa6dc3e
 default_value_callback: ''
 settings:
   force_default: 0
   allowed_views:
+    events_and_notices: events_and_notices
     bids_rfps: 0
     change: 0
     cityscore: 0
