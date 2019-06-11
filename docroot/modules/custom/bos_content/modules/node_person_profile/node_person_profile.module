@@ -16,12 +16,22 @@ function node_person_profile_theme() {
     'node__person_profile' => [
       'render element' => 'elements',
     ],
+    'node__person_profile__embed' => [
+      'base hook' => 'node',
+    ],
     'field__field_political_party__person_profile__mode__full' => [
       'base_hook' => 'field',
     ],
   ];
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_person_profile_preprocess_node__person_profile__embed(&$variables) {
+  _node_person_profile_prepare_card($variables);
+  $variables["attributes"]->removeClass("node-person-profile");
+}
 /**
  * Implements hook_preprocess_HOOK().
  */
@@ -38,16 +48,28 @@ function node_person_profile_preprocess_node__person_profile(&$variables) {
 
   // This is when used in a person-profile-listing () in bos_grid.
   if ($variables['elements']['#view_mode'] == 'listing') {
-    $node = $variables['elements']['#node'];
-    $variables['title_raw'] = $node->getTitle();
-    $preferred_contact = $node->get('field_preferred_contact')->getValue();
-    if (!empty($preferred_contact)) {
-      if ($preferred_contact['0']['value'] == 'email' && !$node->get('field_email')->isEmpty()) {
-        $variables['preferred_contact'] = 'email';
-      }
-      elseif ($preferred_contact['0']['value'] == 'phone' && !$node->get('field_phone_number')->isEmpty()) {
-        $variables['preferred_contact'] = 'phone';
-      }
+    _node_person_profile_prepare_card($variables);
+  }
+}
+
+/**
+ * Prepare the contact method for this person.
+ *
+ * @param $variables
+ *    The usual variables array.
+ */
+function _node_person_profile_prepare_card(&$variables) {
+  $node = $variables['elements']['#node'];
+  $variables['title_raw'] = $node->getTitle();
+  $preferred_contact = $node->get('field_preferred_contact')->getValue();
+  if (!empty($preferred_contact)) {
+    if ($preferred_contact['0']['value'] == 'email' && !$node->get('field_email')->isEmpty()) {
+      $variables['preferred_contact'] = 'email';
+      $variables['content']['bos_contact'] = $variables['content']['field_email'];
+    }
+    elseif ($preferred_contact['0']['value'] == 'phone' && !$node->get('field_phone_number')->isEmpty()) {
+      $variables['preferred_contact'] = 'phone';
+      $variables['content']['bos_contact'] = $variables['content']['field_phone_number'];
     }
   }
 }
