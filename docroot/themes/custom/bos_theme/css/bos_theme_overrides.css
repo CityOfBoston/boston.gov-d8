@@ -351,7 +351,7 @@ What: Moves address block down a bit in sidebar components.
 /*
 David
 Where: Para features (bos_features) spacing in sidebar.
-       Applied in place_profile but affects all diaplys with features in sidebar
+       Applied in place_profile but affects all displays with features in sidebar
 What: Adjusts feature spacing in right sidebar
 */
 .field-name-field-features .detail-item__content {
@@ -369,4 +369,12 @@ What: Fixes right sidebar label:content alignment - Fixes issue also present in 
 }
 .detail-item__body--secondary, .detail-item__body--tertiary a {
   vertical-align: middle;
+}
+/*
+David
+Where: Paragraphs which cover 100% width.
+What: Moves context_link button to page center from the right page margin.
+ */
+.sh--w.cl {
+  position:relative;
 }
