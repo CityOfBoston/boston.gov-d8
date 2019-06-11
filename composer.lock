@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b17be0afc6ee2f8340a0aea26d06efd4",
+    "content-hash": "d12ae5d6fd602d7b96569310e17890b9",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -4504,6 +4504,9 @@
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
                     }
+                },
+                "patches_applied": {
+                    "Fixes hasTranslation() on null": "https://www.drupal.org/files/issues/2018-11-26/hastranslation-on-null-3016233-2.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -4511,6 +4514,10 @@
                 "GPL-2.0-or-later"
             ],
             "authors": [
+                {
+                    "name": "Berdir",
+                    "homepage": "https://www.drupal.org/user/214652"
+                },
                 {
                     "name": "Frans",
                     "homepage": "https://www.drupal.org/user/514222"
@@ -5427,11 +5434,15 @@
                 },
                 "drupal": {
                     "version": "8.x-2.4",
-                    "datestamp": "1550680836",
+                    "datestamp": "1559221681",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
                     }
+                },
+                "patches_applied": {
+                    "Implements Move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
+                    "Handles data is not set error": "patches/imagemagikToolkit_001.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -16634,7 +16645,8 @@
             "homepage": "https://www.drupal.org/project/twig_xdebug",
             "support": {
                 "source": "https://git.drupalcode.org/project/twig_xdebug"
-            }
+            },
+            "time": "2019-04-10T14:46:37+00:00"
         },
         {
             "name": "drush/drush",

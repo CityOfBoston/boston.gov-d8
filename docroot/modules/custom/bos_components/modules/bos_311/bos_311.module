@@ -11,11 +11,12 @@
 function bos_311_theme() {
   $theme['paragraph__bos311__default'] = [
     'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_311/templates',
+  ];
+  $theme['paragraph__bos311__full'] = [
+    'base hook' => 'paragraph',
   ];
   $theme['field__field_311_request'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_311/templates',
   ];
   return $theme;
 }

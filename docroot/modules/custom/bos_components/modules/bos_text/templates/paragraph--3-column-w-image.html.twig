@@ -25,20 +25,33 @@
  * @see template_process()
  */
 #}
-<div{{ attributes.addClass(classes) }}>
+{#{{ breakpoint() }}#}
+<div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
+{#  {{ content.contextual_links }}#}
   <div{{ content_attributes.addClass("content") }}>
-    <div class="contextual-region">
+    {% if content.field_component_title and not hideTitle %}
+
+      <div class="sh sh--w cl">
+
+        {{ title_prefix }}
+
+        {{ content.field_component_title }}
+
         {{ title_suffix }}
-    </div>
-    <div class="sh sh--w">
-      {{ content.field_component_title }}
-      {% if content.field_short_title %}
-        {{ content.field_short_title }}
-      {% endif %}
-      {% if content.field_contact %}
-        {{ content.field_contact }}
-      {% endif %}
-    </div>
+
+
+        {% if content.field_short_title %}
+          {{ content.field_short_title }}
+        {% endif %}
+
+        {% if content.field_contact %}
+          <div class="sh-contact">
+            {{ content.field_contact }}
+          </div>
+        {% endif %}
+
+      </div>
+    {% endif %}
     {% if content.field_columns %}
       {{ content.field_columns }}
     {% endif %}
