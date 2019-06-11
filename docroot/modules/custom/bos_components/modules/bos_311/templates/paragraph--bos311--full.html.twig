@@ -32,7 +32,7 @@
       {% endif %}
     </div>
     <div class="g">
-      {{ content }}
+      {{ content|without('field_short_title')|without('field_component_title') }}
     </div>
   </div>
 </div>
