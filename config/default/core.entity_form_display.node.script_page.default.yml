@@ -27,14 +27,21 @@ content:
     third_party_settings: {  }
   field_components:
     weight: 11
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Component
-      title_plural: Components
-      edit_mode: open
+      title: 'Page Component'
+      title_plural: 'Page Components'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_contact:
@@ -45,26 +52,40 @@ content:
     region: content
   field_embed_list:
     weight: 13
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: 'Embed Script'
       title_plural: 'Embed Scripts'
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_link:
     weight: 14
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Reference
-      title_plural: References
-      edit_mode: open
-      add_mode: button
+      title: 'Reference'
+      title_plural: 'References'
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_sidebar_components:
