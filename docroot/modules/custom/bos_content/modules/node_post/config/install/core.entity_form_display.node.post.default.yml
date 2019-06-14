@@ -15,7 +15,6 @@ dependencies:
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
-    - image.style.thumbnail
     - node.type.post
   module:
     - content_moderation
@@ -25,7 +24,6 @@ dependencies:
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -238,10 +236,16 @@ content:
     region: content
   field_thumbnail:
     weight: 2
-    type: image_image
+    type: entity_browser_file
     settings:
+      entity_browser: media_entity_browser
+      field_widget_edit: true
+      field_widget_remove: true
+      field_widget_replace: true
+      selection_mode: selection_append
+      view_mode: full
+      open: false
       preview_image_style: thumbnail
-      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_updated_date:

@@ -40,7 +40,8 @@
 
 <div {{ attributes }}>
   <div class="content">
-    <div class="sh">
+    <div class="sh cl">
+      {{ content.contextual_links }}
       {{ content.field_component_title }}
       {{ content.field_short_title }}
       {{ content.field_contact }}
@@ -56,7 +57,7 @@
           {{ content.field_description }}
         </div>
       {% endif %}
-      {{ cta }}
+      {{ content.field_link }}
     </div>
     <div {{ create_attribute({'class': right_region_classes}) }}>
       {{ content.field_grid_links }}
