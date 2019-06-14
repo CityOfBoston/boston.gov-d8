@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_events_and_notices module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_events_and_notices_theme() {
+  $theme['paragraph__events_and_notices'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_events_and_notices') . '/templates',
+  ];
+  return $theme;
+}
