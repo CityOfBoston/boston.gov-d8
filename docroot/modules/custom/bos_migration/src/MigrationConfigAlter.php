@@ -1302,11 +1302,11 @@ class MigrationConfigAlter {
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "taxonomy":
-        return $con->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
+        return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "node":
-        return $con->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
+        return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "rich-text":
