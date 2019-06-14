@@ -40,7 +40,7 @@ class MigrationConfigAlter {
    *
    * @var bool
    */
-  protected $saveState = FALSE;
+  protected $saveState = TRUE;
 
   /**
    * Defines list of migration IDs to filter out.
@@ -751,10 +751,24 @@ class MigrationConfigAlter {
         "d7_node:public_notice",
       ],
       "field_featured_item" => [
-        "d7_node:post",
+        "d7_node:event",
+        "d7_node:public_notice",
       ],
       "field_featured_post" => [
         "d7_node:post",
+      ],
+      "field_list" => [
+        "d7_node:article",
+        "d7_node:department_profile",
+        "d7_node:event",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:program_initiative_profile",
+        "d7_node:public_notice",
+        "d7_node:script_page",
+        "d7_node:topic_page",
       ],
       "field_people" => [
         "d7_node:person_profile",
@@ -767,6 +781,17 @@ class MigrationConfigAlter {
       ],
       "field_program_initiative" => [
         "d7_node:program_initiative_profile",
+      ],
+      "field_related" => [    //
+        "d7_node:article",
+        "d7_node:department_profile",
+        "d7_node:topic_page",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:program_initiative_profile",
+        "d7_node:script_page",
       ],
       "field_related_content" => [
         "d7_node:article",
