@@ -12,6 +12,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -55,6 +56,7 @@ settings:
       commission_summary: commission_summary
       commission_members: commission_members
       drawers: drawers
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_cards: grid_of_cards
@@ -289,5 +291,8 @@ settings:
       transactions:
         enabled: false
         weight: -27
+      events_and_notices:
+        weight: 125
+        enabled: true
   handler: 'default:paragraph'
 field_type: entity_reference_revisions
