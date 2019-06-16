@@ -13,6 +13,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -57,6 +58,7 @@ settings:
       commission_members: commission_members
       commission_summary: commission_summary
       cabinet: cabinet
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       grid_of_cards: grid_of_cards
       grid_of_people: grid_of_people
@@ -272,4 +274,7 @@ settings:
       from_library:
         weight: 87
         enabled: false
+      events_and_notices:
+        weight: 88
+        enabled: true
 field_type: entity_reference_revisions
