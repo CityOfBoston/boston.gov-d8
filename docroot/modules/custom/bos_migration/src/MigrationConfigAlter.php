@@ -188,7 +188,7 @@ class MigrationConfigAlter {
     "paragraph__text_three_column" => ["bos:paragraph:1"],
     "paragraph__text_two_column" => ["bos:paragraph:1"],
     "paragraph__transaction_grid" => ["bos:paragraph:2"],
-    "paragraph__upcoming_events" => ["bos:paragraph:2"],
+    "paragraph__events_and_notices" => ["bos:paragraph:2"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
     "d7_node:article" => ["bos:node:3"],
@@ -453,6 +453,79 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    //
+    "paragraph__list" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "iterator",
+          "source" => "field_list",
+          "process" => [
+            "field_list_arguments" => "field_list_vargs",
+            "field_list_display_id" => "field_list_vname",
+            "field_list_target_id" => "entity_type",
+            "bundle" => "bundle",
+            "entity_id" => "entity_id",
+            "revision_id" => "revision_id",
+            "deleted" => "deleted",
+            "langcode" => [
+              "plugin" => "default_value",
+              "source" => "language",
+              "default_value" => "und",
+              "fallback_to_site_default" => "true",
+            ],
+            "delta" => "delta",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__news_and_announcements" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "iterator",
+          "source" => "field_list",
+          "process" => [
+            "field_list_arguments" => "field_list_vargs",
+            "field_list_display_id" => "field_list_vname",
+            "field_list_target_id" => "entity_type",
+            "bundle" => "bundle",
+            "entity_id" => "entity_id",
+            "revision_id" => "revision_id",
+            "deleted" => "deleted",
+            "langcode" => [
+              "plugin" => "default_value",
+              "source" => "language",
+              "default_value" => "und",
+              "fallback_to_site_default" => "true",
+            ],
+            "delta" => "delta",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__events_notices" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "iterator",
+          "source" => "field_list",
+          "process" => [
+            "field_list_arguments" => "field_list_vargs",
+            "field_list_display_id" => "field_list_vname",
+            "field_list_target_id" => "entity_type",
+            "bundle" => "bundle",
+            "entity_id" => "entity_id",
+            "revision_id" => "revision_id",
+            "deleted" => "deleted",
+            "langcode" => [
+              "plugin" => "default_value",
+              "source" => "language",
+              "default_value" => "und",
+              "fallback_to_site_default" => "true",
+            ],
+            "delta" => "delta",
+          ],
+        ],
+      ],
+    ],
   ];
 
   /**
@@ -522,7 +595,7 @@ class MigrationConfigAlter {
         'paragraph__text_two_column',
         'paragraph__transaction_grid',
         'd7_field_collection_transactions',
-        'paragraph__upcoming_events',
+        'paragraph__events_and_notices',
       ],
       "field_bid" => [
         'paragraph__bid',
@@ -558,7 +631,7 @@ class MigrationConfigAlter {
         'paragraph__photo',
         'paragraph__text',
         'paragraph__transaction_grid',
-        'paragraph__upcoming_events',
+        'paragraph__events_and_notices',
         'paragraph__video',
       ],
       "field_drawer" => [
