@@ -102,6 +102,7 @@ class MigrationConfigAlter {
     'd7_view_modes',
     'd7_vote',
     'd7_rdf_mapping',
+    'paragraph__upcoming_events',
   ];
 
   /**
@@ -118,6 +119,7 @@ class MigrationConfigAlter {
     'entity:d7_taxonomy_term:type_of_content',
     'entity:node:metrolist_affordable_housing',
     'entity_revision:node:metrolist_affordable_housing',
+    'paragraph__upcoming_events',
   ];
 
   /**
@@ -188,7 +190,7 @@ class MigrationConfigAlter {
     "paragraph__text_three_column" => ["bos:paragraph:1"],
     "paragraph__text_two_column" => ["bos:paragraph:1"],
     "paragraph__transaction_grid" => ["bos:paragraph:2"],
-    "paragraph__events_and_notices" => ["bos:paragraph:2"],
+    "paragraph__events_notices" => ["bos:paragraph:2"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
     "d7_node:article" => ["bos:node:3"],
