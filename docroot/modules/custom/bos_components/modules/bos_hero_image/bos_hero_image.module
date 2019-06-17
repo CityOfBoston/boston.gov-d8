@@ -32,7 +32,15 @@ function bos_hero_image_preprocess_paragraph(&$vars) {
           $base_url = \Drupal::entityTypeManager()
             ->getStorage("file")
             ->load($image['0']['target_id']);
-          $base_url = file_load($image['0']['target_id'])->getFileUri();
+
+          try {
+            $base_url = Drupal::entityTypeManager()->getStorage("file")->load($image['0']['target_id'])->getFileUri();
+          }
+          catch (Error $e) {
+            // Hmmm, problem, log it and then substitute uri.
+            Drupal::messenger()->addWarning("Hero: File id (" . $image['0']['target_id'] . ") is missing.");
+            $base_url = "#";
+          }
           $styles = [
             'xlarge_image' => 'rep_wide_2000x700custom_boston_desktop_2x',
             'large_image' => 'rep_wide_2000x700custom_boston_desktop_1x',
