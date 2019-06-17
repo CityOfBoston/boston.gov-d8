@@ -393,6 +393,11 @@ class MigrationConfigAlter {
             ],
             'source' => 'field_internal_link/0/target_id',
           ],
+          [
+            "plugin" => "default_value",
+            "default_value" => "1",
+            "strict" => "true",
+          ],
         ],
         'field_internal_link/title' => [
           [
@@ -861,10 +866,12 @@ class MigrationConfigAlter {
         "d7_node:topic_page",
         "d7_node:how_to",
         "d7_node:landing_page",
+        "d7_node:listing_page",
         "d7_node:person_profile",
         "d7_node:place_profile",
         "d7_node:program_initiative_profile",
         "d7_node:script_page",
+        "d7_node:tabbed_content",
       ],
       "field_related_content" => [
         "d7_node:article",
@@ -1144,9 +1151,9 @@ class MigrationConfigAlter {
           }
 
           // Add in paragraph dependencies for this entity migration.
-          if (!empty($dependencies["required"]) || !empty($dependencies["optional"])) {
+/*          if (!empty($dependencies["required"]) || !empty($dependencies["optional"])) {
             $migration["migration_dependencies"] = array_merge($migration["migration_dependencies"], $dependencies);
-          }
+          }*/
         }
 
         // Make sure the parent_id defaults to zero if nothing found.
