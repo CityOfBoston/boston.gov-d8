@@ -1,52 +1,10 @@
-diff --git a/js/media_entity_browser.entity_embed.js b/js/media_entity_browser.entity_embed.js
-index e160483..f70cbf5 100644
---- a/js/media_entity_browser.entity_embed.js
-+++ b/js/media_entity_browser.entity_embed.js
-@@ -10,14 +10,6 @@
-    */
-   Drupal.behaviors.MediaEntityBrowserEntityEmbed = {
-     attach: function (context) {
--      // Add an event handler that triggers a click inside the iFrame when our
--      // duped element is clicked.
--      $('.entity-browser-modal-submit').once('entity-browser-modal').click(function (e) {
--        $('.entity-embed-dialog iframe').contents().find('.is-entity-browser-submit').click();
--        e.preventDefault();
--        e.stopPropagation();
--      });
--
-       // On iFrame load, hide the real nested "Select Files" button.
-       $('body').once('entity-browser-modal').on('entityBrowserIFrameAppend', function () {
-         $(this).find('.entity-embed-dialog iframe').on('load', function () {
-diff --git a/js/media_entity_browser.view.js b/js/media_entity_browser.view.js
-index 70e1f17..15ea08e 100644
---- a/js/media_entity_browser.view.js
-+++ b/js/media_entity_browser.view.js
-@@ -17,6 +17,7 @@
+--- js/media_entity_browser.view.js
++++ js/media_entity_browser.view.js
+@@ -28,6 +28,7 @@
          var $input = $row.find('.views-field-entity-browser-select input');
          $input.prop('checked', !$input.prop('checked'));
-         $row[$input.prop('checked') ? 'addClass' : 'removeClass']('checked');
+         updateClasses($row, $input);
 +        $('.is-entity-browser-submit').click();
        });
      }
    };
-diff --git a/media_entity_browser.module b/media_entity_browser.module
-index dbbe6a5..0ee3ff9 100644
---- a/media_entity_browser.module
-+++ b/media_entity_browser.module
-@@ -46,16 +46,6 @@ function media_entity_browser_form_entity_embed_dialog_alter(&$form, \Drupal\Cor
-         // Visually hide the "Next" button.
-         $form['actions']['save_modal']['#attributes']['class'][] = 'visually-hidden';
-         $form['actions']['save_modal']['#weight'] = 1;
--
--        // Add a button that matches our normal UX, which clicks the hidden button
--        // within the modal's iFrame.
--        $form['actions']['save_modal_alt'] = [
--          '#type' => 'submit',
--          '#value' => t('Select Media'),
--          '#attributes' => ['class' => ['entity-browser-modal-submit']],
--          '#button_type' => 'primary',
--          '#weight' => 0,
--        ];
-       }
-     }
-   }
