@@ -12,6 +12,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -32,7 +33,6 @@ dependencies:
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
-    - paragraphs.paragraphs_type.upcoming_events
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -79,9 +79,9 @@ settings:
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       text: text
       transaction_grid: transaction_grid
-      upcoming_events: upcoming_events
       video: video
       news_and_announcements: news_and_announcements
+      events_and_notices: events_and_notices
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: true
@@ -125,9 +125,6 @@ settings:
       featured_topics:
         enabled: true
         weight: -84
-      feedback:
-        enabled: true
-        weight: -82
       header_text:
         weight: -81
         enabled: false
@@ -234,8 +231,8 @@ settings:
         enabled: true
         weight: -42
       upcoming_events:
-        enabled: true
         weight: -41
+        enabled: false
       video:
         enabled: true
         weight: -40
@@ -278,4 +275,7 @@ settings:
       tabbed_content_tab:
         weight: 124
         enabled: false
+      events_and_notices:
+        enabled: true
+        weight: 130
 field_type: entity_reference_revisions
