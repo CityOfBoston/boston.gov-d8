@@ -862,7 +862,7 @@ class MigrationConfigAlter {
       "field_program_initiative" => [
         "d7_node:program_initiative_profile",
       ],
-      "field_related" => [    //
+      "field_related" => [
         "d7_node:article",
         "d7_node:department_profile",
         "d7_node:topic_page",
@@ -1153,8 +1153,10 @@ class MigrationConfigAlter {
           }
 
           // Add in paragraph dependencies for this entity migration.
-/*          if (!empty($dependencies["required"]) || !empty($dependencies["optional"])) {
-            $migration["migration_dependencies"] = array_merge($migration["migration_dependencies"], $dependencies);
+          /* if (!empty($dependencies["required"]) ||
+          !empty($dependencies["optional"])) {
+          $migration["migration_dependencies"] =
+          array_merge($migration["migration_dependencies"], $dependencies);
           }*/
         }
 
