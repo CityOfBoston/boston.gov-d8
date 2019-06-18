@@ -13,19 +13,47 @@ lando drush cr
 # Perorm the lowest level safe-dependencies.
 lando drush sset "bos_migration.fileOps" "none"
 lando drush sset "bos_migration.active" "1"
-lando drush mim --tag="bos:initial:1" --force     #OK
+lando drush mim --tag="bos:initial:1" --force     # 20 Mins.
 
 # First pass.
-lando drush mim --tag="bos:taxonomy:1" --force
-lando drush mim --tag="bos:paragraph:1" --force
-lando drush mim --group=bos_field_collection --force
-lando drush mim --tag="bos:taxonomy:2" --force
-lando drush mim --tag="bos:paragraph:2" --force # deps:tax/fc/para1
-lando drush mim --tag="bos:paragraph:3" --force # deps:para2
-lando drush mim --tag="bos:paragraph:4" --force # Components/sidebar-components
+lando drush mim --tag="bos:taxonomy:1" --force          # 30 secs
+lando drush ms --tag="bos:taxonomy:1"
+lando drush mim --tag="bos:paragraph:1" --force         # 21 min
+lando drush ms --tag="bos:paragraph:1"
+lando drush mim --group=bos_field_collection --force    # 2.2 min
+lando drush ms --group=bos_field_collection
+lando drush mim --tag="bos:taxonomy:2" --force          # 15 sec
+lando drush ms --tag="bos:taxonomy:2"
+# deps:tax/fc/para1
+lando drush mim --tag="bos:paragraph:2" --force         # 11 1mins then 3 min then another 3 mins
+# newsletter 1 error
+# social_media_links 1 error.
+lando drush ms --tag="bos:paragraph:2"
+# deps:para2
+lando drush mim --tag="bos:paragraph:3" --force         # 13 mins
+lando drush ms --tag="bos:paragraph:3"
+# Components/sidebar-components
+lando drush mim --tag="bos:paragraph:4" --force         # 6 secs !
+lando drush ms --tag="bos:paragraph:4"
 lando drush mim --tag="bos:node:1" --force
-lando drush mim --tag="bos:paragraph:5" --force # deps:nodes
+lando drush ms --tag="bos:node:1"
+
+# deps:nodes
+lando drush mim --tag="bos:paragraph:5" --force         # 1.6 min
+lando drush ms --tag="bos:paragraph:5"
 lando drush mim --tag="bos:node:2" --force
+lando drush ms --tag="bos:node:2"
+
+lando drush mim --tag="bos:node_revision:1" --force
+lando drush ms --tag="bos:node_revision:1"
+lando drush mim --tag="bos:node_revision:2" --force
+lando drush ms --tag="bos:node_revision:2"
+
+
+# Redo the internal_link (done in para:1)
+lando drush mim paragraph__internal_link --update
+lando drush ms paragraph__internal_link
+
 
 # Second pass.
 lando drush mim --group=d7_node --update --execute-dependencies

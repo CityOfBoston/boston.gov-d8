@@ -100,7 +100,7 @@
     "drupal/pathauto": "^1.2",
     "drupal/phpexcel": "^3.0",
     "drupal/poll": "^1.2",
-    "drupal/profile": "^1.0",
+    "drupal/profile": "1.0-rc1",
     "drupal/publication_date": "^2.0",
     "drupal/purge": "^3.0",
     "drupal/rabbit_hole": "^1.0-beta5",
@@ -184,6 +184,9 @@
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
     "patches": {
+      "drupal/core": {
+        "Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch"
+      },
       "drupal/migrate_drupal": {
         "Fix 'Call to a member function getSetting() on null' in migrate_drupal.": "https://www.drupal.org/files/issues/2018-07-08/2984460-3.patch"
       },
@@ -192,13 +195,12 @@
         "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
       },
       "drupal/password_policy": {
-        "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2018-07-30/password_policy-config_import_field_error-2771129-57.patch"
+        "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch"
       },
       "drupal/viewfield":{
         "https://www.drupal.org/project/viewfield/issues/2860523": "https://www.drupal.org/files/issues/2018-06-08/d7_upgrade_path-2860523-6.patch"
       },
       "drupal/media_entity_browser": {
-        "https://www.drupal.org/project/media_entity_browser/issues/3011580": "./patches/media_entity_browser_3011580_1.patch",
         "Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
       },
       "drupal/date_recur": {
