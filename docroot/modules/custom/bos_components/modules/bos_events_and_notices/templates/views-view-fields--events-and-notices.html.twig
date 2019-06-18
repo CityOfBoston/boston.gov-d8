@@ -31,61 +31,40 @@
  * @ingroup themeable
  */
 #}
-{% for field in fields -%}
-  {{ field.separator }}
-  {%- if field.wrapper_element -%}
-    <{{ field.wrapper_element }}{{ field.wrapper_attributes }}>
-  {%- endif %}
-  {%- if field.label -%}
-    {%- if field.label_element -%}
-      <{{ field.label_element }}{{ field.label_attributes }}>{{ field.label }}{{ field.label_suffix }}</{{ field.label_element }}>
-    {%- else -%}
-      {{ field.label }}{{ field.label_suffix }}
-    {%- endif %}
-  {%- endif %}
-  {%- if field.element_type -%}
-    <{{ field.element_type }}{{ field.element_attributes }}>{{ field.content }}</{{ field.element_type }}>
-  {%- else -%}
-    {{ field.content }}
-  {%- endif %}
-  {%- if field.wrapper_element -%}
-    </{{ field.wrapper_element }}>
-  {%- endif %}
-{%- endfor %}
 
 {#
  $node_type = node_load($row->nid)->type;
  if (!empty($node_type)) { $type_class = 'news-item-' . $node_type; } else { $class_type = 'news-item-news'; };
-{% set type_class = 'news-items-news' %}
+#}
+{# set type_class = 'news-items-news' #}
 
-<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing {{ type_class }}">
-  <a href="<?php print $fields['path']->content; ?>" class="item-link"></a>
+<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing {# type_class #}">
+  <a href="{# fields.view_node.content #}" class="item-link"></a>
   <div class="news-item-wrapper">
     <div class="thumb-wrapper float-left">
-      <?php if ($fields['field_thumbnail']->content != ""): ?>
-        <?php print $fields['field_thumbnail']->content; ?>
-      <?php else: ?>
-          <?php if ($fields['field_intro_image']->content != "default"): ?>
-            <?php print $fields['field_intro_image']->content; ?>
-          <?php else: ?>
-            <div class="news-item-default-image">
-              <span>Image for <?php print $fields['title']->content; ?></span>
-            </div>
-          <?php endif; ?>
-      <?php endif; ?>
+      {# if not fields.field_thumbnail.content.isempty #}
+        {{ fields.field_thumbnail.content }}
+      {# else #}
+        {# if fields.field_intro_image.content == "default" #}
+          {{ fields.field_intro_image.content }}
+        {# else #}
+          <div class="news-item-default-image">
+            <span>Image for {{ fields.title.content }}</span>
+          </div>
+        {# endif #}
+      {# endif #}
       <div class="date-flag">
-        <?php if (isset($fields['field_event_dates']->content)): ?>
-          <?php print $fields['field_event_dates']->content; ?>
-        <?php elseif (isset($fields['field_public_notice_date']->content)): ?>
-          <?php print $fields['field_public_notice_date']->content; ?>
-        <?php endif; ?>
+        {# if fields.field_event_dates.content #}
+          {{ fields.field_event_dates.content }}
+        {# else if fields.field_public_notice_date.content #}
+          {{ fields.field_public_notice_date.content }}
+        {# endif #}
       </div>
     </div>
     <div class="text-wrapper">
       <h3 class="title">
-        <?php print $fields['title']->content; ?>
+        {{ fields.title.content }}
       </h3>
     </div>
   </div>
 </div>
-#}
