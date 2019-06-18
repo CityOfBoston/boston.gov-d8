@@ -40,7 +40,7 @@ class MigrationConfigAlter {
    *
    * @var bool
    */
-  protected $saveState = FALSE;
+  protected $saveState = TRUE;
 
   /**
    * Defines list of migration IDs to filter out.
@@ -102,6 +102,7 @@ class MigrationConfigAlter {
     'd7_view_modes',
     'd7_vote',
     'd7_rdf_mapping',
+    'paragraph__upcoming_events',
   ];
 
   /**
@@ -118,6 +119,7 @@ class MigrationConfigAlter {
     'entity:d7_taxonomy_term:type_of_content',
     'entity:node:metrolist_affordable_housing',
     'entity_revision:node:metrolist_affordable_housing',
+    'paragraph__upcoming_events',
   ];
 
   /**
@@ -188,7 +190,7 @@ class MigrationConfigAlter {
     "paragraph__text_three_column" => ["bos:paragraph:1"],
     "paragraph__text_two_column" => ["bos:paragraph:1"],
     "paragraph__transaction_grid" => ["bos:paragraph:2"],
-    "paragraph__upcoming_events" => ["bos:paragraph:2"],
+    "paragraph__events_notices" => ["bos:paragraph:2"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
     "d7_node:article" => ["bos:node:3"],
@@ -211,27 +213,27 @@ class MigrationConfigAlter {
     "d7_node:status_item" => ["bos:node:1"],
     "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
-    "d7_node_revision:advpoll" => ["bos:node:1"],
-    "d7_node_revision:article" => ["bos:node:3"],
-    "d7_node_revision:change" => ["bos:node:1"],
-    "d7_node_revision:department_profile" => ["bos:node:1"],
-    "d7_node_revision:emergency_alert" => ["bos:node:1"],
-    "d7_node_revision:event" => ["bos:node:2"],
-    "d7_node_revision:topic_page" => ["bos:node:2"],
-    "d7_node_revision:how_to" => ["bos:node:2"],
-    "d7_node_revision:landing_page" => ["bos:node:2"],
-    "d7_node_revision:listing_page" => ["bos:node:1"],
-    "d7_node_revision:person_profile" => ["bos:node:1"],
-    "d7_node_revision:place_profile" => ["bos:node:2"],
-    "d7_node_revision:post" => ["bos:node:2"],
-    "d7_node_revision:procurement_advertisement" => ["bos:node:1"],
-    "d7_node_revision:program_initiative_profile" => ["bos:node:2"],
-    "d7_node_revision:public_notice" => ["bos:node:2"],
-    "d7_node_revision:script_page" => ["bos:node:1"],
-    "d7_node_revision:site_alert" => ["bos:node:1"],
-    "d7_node_revision:status_item" => ["bos:node:1"],
-    "d7_node_revision:tabbed_content" => ["bos:node:2"],
-    "d7_node_revision:transaction" => ["bos:node:1"],
+    "d7_node_revision:advpoll" => ["bos:node_revision:1"],
+    "d7_node_revision:article" => ["bos:node_revision:3"],
+    "d7_node_revision:change" => ["bos:node_revision:1"],
+    "d7_node_revision:department_profile" => ["bos:node_revision:1"],
+    "d7_node_revision:emergency_alert" => ["bos:node_revision:1"],
+    "d7_node_revision:event" => ["bos:node_revision:2"],
+    "d7_node_revision:topic_page" => ["bos:node_revision:2"],
+    "d7_node_revision:how_to" => ["bos:node_revision:2"],
+    "d7_node_revision:landing_page" => ["bos:node_revision:2"],
+    "d7_node_revision:listing_page" => ["bos:node_revision:1"],
+    "d7_node_revision:person_profile" => ["bos:node_revision:1"],
+    "d7_node_revision:place_profile" => ["bos:v:2"],
+    "d7_node_revision:post" => ["bos:node_revision:2"],
+    "d7_node_revision:procurement_advertisement" => ["bos:node_revision:1"],
+    "d7_node_revision:program_initiative_profile" => ["bos:node_revision:2"],
+    "d7_node_revision:public_notice" => ["bos:node_revision:2"],
+    "d7_node_revision:script_page" => ["bos:node_revision:1"],
+    "d7_node_revision:site_alert" => ["bos:node_revision:1"],
+    "d7_node_revision:status_item" => ["bos:node_revision:1"],
+    "d7_node_revision:tabbed_content" => ["bos:node_revision:2"],
+    "d7_node_revision:transaction" => ["bos:node_revision:1"],
     "d7_taxonomy_term:contact" => ["bos:taxonomy:2"],
     "d7_taxonomy_term:news_tags" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:event_type" => ["bos:taxonomy:1"],
@@ -393,6 +395,11 @@ class MigrationConfigAlter {
             ],
             'source' => 'field_internal_link/0/target_id',
           ],
+          [
+            "plugin" => "default_value",
+            "default_value" => "1",
+            "strict" => "true",
+          ],
         ],
         'field_internal_link/title' => [
           [
@@ -449,6 +456,79 @@ class MigrationConfigAlter {
           [
             "plugin" => "default_value",
             "default_value" => "full_html",
+          ],
+        ],
+      ],
+    ],
+    // Adds migrations for field_list (viewfield).
+    "paragraph__list" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "iterator",
+          "source" => "field_list",
+          "process" => [
+            "field_list_arguments" => "field_list_vargs",
+            "field_list_display_id" => "field_list_vname",
+            "field_list_target_id" => "entity_type",
+            "bundle" => "bundle",
+            "entity_id" => "entity_id",
+            "revision_id" => "revision_id",
+            "deleted" => "deleted",
+            "langcode" => [
+              "plugin" => "default_value",
+              "source" => "language",
+              "default_value" => "und",
+              "fallback_to_site_default" => "true",
+            ],
+            "delta" => "delta",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__news_and_announcements" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "iterator",
+          "source" => "field_list",
+          "process" => [
+            "field_list_arguments" => "field_list_vargs",
+            "field_list_display_id" => "field_list_vname",
+            "field_list_target_id" => "entity_type",
+            "bundle" => "bundle",
+            "entity_id" => "entity_id",
+            "revision_id" => "revision_id",
+            "deleted" => "deleted",
+            "langcode" => [
+              "plugin" => "default_value",
+              "source" => "language",
+              "default_value" => "und",
+              "fallback_to_site_default" => "true",
+            ],
+            "delta" => "delta",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__events_notices" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "iterator",
+          "source" => "field_list",
+          "process" => [
+            "field_list_arguments" => "field_list_vargs",
+            "field_list_display_id" => "field_list_vname",
+            "field_list_target_id" => "entity_type",
+            "bundle" => "bundle",
+            "entity_id" => "entity_id",
+            "revision_id" => "revision_id",
+            "deleted" => "deleted",
+            "langcode" => [
+              "plugin" => "default_value",
+              "source" => "language",
+              "default_value" => "und",
+              "fallback_to_site_default" => "true",
+            ],
+            "delta" => "delta",
           ],
         ],
       ],
@@ -522,7 +602,7 @@ class MigrationConfigAlter {
         'paragraph__text_two_column',
         'paragraph__transaction_grid',
         'd7_field_collection_transactions',
-        'paragraph__upcoming_events',
+        'paragraph__events_and_notices',
       ],
       "field_bid" => [
         'paragraph__bid',
@@ -558,7 +638,7 @@ class MigrationConfigAlter {
         'paragraph__photo',
         'paragraph__text',
         'paragraph__transaction_grid',
-        'paragraph__upcoming_events',
+        'paragraph__events_and_notices',
         'paragraph__video',
       ],
       "field_drawer" => [
@@ -751,10 +831,24 @@ class MigrationConfigAlter {
         "d7_node:public_notice",
       ],
       "field_featured_item" => [
-        "d7_node:post",
+        "d7_node:event",
+        "d7_node:public_notice",
       ],
       "field_featured_post" => [
         "d7_node:post",
+      ],
+      "field_list" => [
+        "d7_node:article",
+        "d7_node:department_profile",
+        "d7_node:event",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:program_initiative_profile",
+        "d7_node:public_notice",
+        "d7_node:script_page",
+        "d7_node:topic_page",
       ],
       "field_people" => [
         "d7_node:person_profile",
@@ -767,6 +861,19 @@ class MigrationConfigAlter {
       ],
       "field_program_initiative" => [
         "d7_node:program_initiative_profile",
+      ],
+      "field_related" => [
+        "d7_node:article",
+        "d7_node:department_profile",
+        "d7_node:topic_page",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:listing_page",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:program_initiative_profile",
+        "d7_node:script_page",
+        "d7_node:tabbed_content",
       ],
       "field_related_content" => [
         "d7_node:article",
@@ -1046,9 +1153,11 @@ class MigrationConfigAlter {
           }
 
           // Add in paragraph dependencies for this entity migration.
-          if (!empty($dependencies["required"]) || !empty($dependencies["optional"])) {
-            $migration["migration_dependencies"] = array_merge($migration["migration_dependencies"], $dependencies);
-          }
+          /* if (!empty($dependencies["required"]) ||
+          !empty($dependencies["optional"])) {
+          $migration["migration_dependencies"] =
+          array_merge($migration["migration_dependencies"], $dependencies);
+          }*/
         }
 
         // Make sure the parent_id defaults to zero if nothing found.

@@ -13,6 +13,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -58,6 +59,7 @@ settings:
       cabinet: cabinet
       commission_summary: commission_summary
       drawers: drawers
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_people: grid_of_people
@@ -278,4 +280,7 @@ settings:
       status_overrides:
         weight: 123
         enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: true
 field_type: entity_reference_revisions
