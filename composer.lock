@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fe5237d7679c962c3b0e0fbdd15f5e1",
+    "content-hash": "70da0a611ca94f18303b35e76992ba32",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -3400,6 +3400,7 @@
                     "merge-extra": false
                 },
                 "patches_applied": {
+                    "Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
                     "2998335 - [regression] \\Drupal\\user\\ContextProvider\\CurrentUserContext broken for anonymous users": "https://www.drupal.org/files/issues/2018-10-04/2998335-currentusercontext-16.patch",
                     "3032548 - ContentModerationRouteSubscriber assumes all parameters in an entity form route contain a 'type' key": "https://www.drupal.org/files/issues/2019-02-13/3032548-2.patch",
                     "2869592 - Disabled update module shouldn't produce a status report warning": "https://www.drupal.org/files/issues/2869592-remove-update-warning-7.patch",
@@ -7375,7 +7376,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/password_policy.git",
-                "reference": "27a88df45bdc2f2c646ac403faaa4a36ae283bc8"
+                "reference": "c13db36ef3377095159931a6d99dac9f0215d30d"
             },
             "require": {
                 "drupal/core": "^8.5.0",
@@ -7387,16 +7388,14 @@
                     "dev-3.x": "3.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-3.0-alpha5+4-dev",
-                    "datestamp": "1560435489",
+                    "version": "8.x-3.0-alpha5+6-dev",
+                    "datestamp": "1560785288",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Dev releases are not covered by Drupal security advisories."
                     }
                 },
-                "patches_applied": {
-                    "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch"
-                }
+                "patches_applied": []
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
             "license": [
@@ -7429,7 +7428,7 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/password_policy"
             },
-            "time": "2019-06-14T20:56:14+00:00"
+            "time": "2019-06-17T15:29:06+00:00"
         },
         {
             "name": "drupal/pathauto",
@@ -7608,24 +7607,21 @@
         },
         {
             "name": "drupal/profile",
-            "version": "1.0.0-rc5",
+            "version": "1.0.0-rc1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/profile.git",
-                "reference": "8.x-1.0-rc5"
+                "reference": "8.x-1.0-rc1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/profile-8.x-1.0-rc5.zip",
-                "reference": "8.x-1.0-rc5",
-                "shasum": "e584308fd4e371a510ed3adf8481df21650932a1"
+                "url": "https://ftp.drupal.org/files/projects/profile-8.x-1.0-rc1.zip",
+                "reference": "8.x-1.0-rc1",
+                "shasum": "cc537ca25412adc4fa601ff42cf2fb5cbc6e7b6b"
             },
             "require": {
-                "drupal/core": "^8.6",
-                "drupal/entity": "^1.0-rc2"
-            },
-            "require-dev": {
-                "drupal/token": "1.0"
+                "drupal/core": "~8.1",
+                "drupal/entity": "*"
             },
             "type": "drupal-module",
             "extra": {
@@ -7633,8 +7629,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-rc5",
-                    "datestamp": "1559926985",
+                    "version": "8.x-1.0-rc1",
+                    "datestamp": "1551998880",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "RC releases are not covered by Drupal security advisories."
