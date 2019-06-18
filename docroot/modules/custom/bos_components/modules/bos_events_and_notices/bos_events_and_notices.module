@@ -13,5 +13,9 @@ function bos_events_and_notices_theme() {
     'base hook' => 'paragraph',
     'path' => drupal_get_path('module', 'bos_events_and_notices') . '/templates',
   ];
+  $theme['viewfield__paragraph__events_and_notices'] = [
+    'base hook' => 'viewfield',
+    'path' => drupal_get_path('module', 'bos_events_and_notices') . '/templates',
+  ];
   return $theme;
 }
