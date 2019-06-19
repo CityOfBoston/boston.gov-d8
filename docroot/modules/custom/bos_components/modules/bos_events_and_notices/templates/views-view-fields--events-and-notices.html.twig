@@ -36,10 +36,10 @@
  $node_type = node_load($row->nid)->type;
  if (!empty($node_type)) { $type_class = 'news-item-' . $node_type; } else { $class_type = 'news-item-news'; };
 #}
-{# set type_class = 'news-items-news' #}
+{% set type_class = 'news-items-news' %}
 
-<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing {# type_class #}">
-  <a href="{# fields.view_node.content #}" class="item-link"></a>
+<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing {{ type_class }}">
+  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
   <div class="news-item-wrapper">
     <div class="thumb-wrapper float-left">
       {# if not fields.field_thumbnail.content.isempty #}
