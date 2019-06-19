@@ -1,0 +1,6 @@
+services:
+  entity_revisions_save_subscriber:
+    class: '\Drupal\bos_migration\EventSubscriber\EntityRevisionsSaveSubscriber'
+    tags:
+      - { name: 'event_subscriber'}
+

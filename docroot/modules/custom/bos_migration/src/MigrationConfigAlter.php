@@ -350,6 +350,15 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    // Add custom
+    "d7_node_revision:event" => [
+      "process" => [
+        "_state" => [
+          "plugin" => "skip_draft_revision",
+          "source" => "vid"
+        ],
+      ],
+    ],
     // Manually adds dependency on department profile.
     "d7_taxonomy_term:contact" => [
       "migration_dependencies" => [
@@ -988,6 +997,7 @@ class MigrationConfigAlter {
     $this->customAlterations();
     $this->customAlteration("d7_taxonomy_term:contact");
     $this->customAlteration("d7_taxonomy_term:newsletters");
+    $this->customAlteration("node_revision");
     $this->richTextFieldAlter();
     $this->breakCyclicalDependencies();
 
@@ -1098,8 +1108,8 @@ class MigrationConfigAlter {
               $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
               break;
 
-            case "d7_node":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_node_revisions", $mkey);
+            case "d7_node_revision":
+              $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
               break;
           }
 
@@ -1211,6 +1221,7 @@ class MigrationConfigAlter {
     $defVals = [
       "d7_taxonomy_term:newsletters" => "newsletters",
       "d7_taxonomy_term:contact" => "contact",
+      "node_revision" => "node_revision",
     ];
 
     switch ($migration) {
@@ -1224,6 +1235,18 @@ class MigrationConfigAlter {
             "default_value" => $defVals[$migration],
           ],
         ];
+        break;
+
+      case "node_revision":
+        // Adds the skip_draft process plugin to node revision migrations.
+        foreach ($this->migrations as $mkey => &$migration) {
+          if ($migration["id"] == "d7_node_revision") {
+            $migration["process"]["_state"] = [
+              "plugin" => "skip_draft_revision",
+              "source" => "vid"
+            ];
+          }
+        }
         break;
     }
   }
@@ -1291,6 +1314,12 @@ class MigrationConfigAlter {
       $process_to_insert = ['plugin' => 'rich_text_to_media_embed'];
 
       foreach ($this->migrations as $key => $value) {
+
+        // We do not want to convert rich-text-embeds for older revisions.
+        if ($value['id'] == "d7_node_revision") {
+          continue;
+        }
+
         $matches = array_intersect_key($value['process'], $rich_text_fields);
 
         if (!empty($matches)) {
