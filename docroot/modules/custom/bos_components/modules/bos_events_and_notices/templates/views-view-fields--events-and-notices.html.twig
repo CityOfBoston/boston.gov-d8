@@ -42,23 +42,20 @@
   <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
   <div class="news-item-wrapper">
     <div class="thumb-wrapper float-left">
-      {# if not fields.field_thumbnail.content.isempty #}
+      {% if not fields.field_thumbnail.raw == NULL %}
         {{ fields.field_thumbnail.content }}
-      {# else #}
-        {# if fields.field_intro_image.content == "default" #}
+      {% else %}
+        {% if fields.field_intro_image.content == "default" %}
           {{ fields.field_intro_image.content }}
-        {# else #}
+        {% else %}
           <div class="news-item-default-image">
             <span>Image for {{ fields.title.content }}</span>
           </div>
-        {# endif #}
-      {# endif #}
+        {% endif %}
+      {% endif %}
       <div class="date-flag">
-        {# if fields.field_event_dates.content #}
-          {{ fields.field_event_dates.content }}
-        {# else if fields.field_public_notice_date.content #}
-          {{ fields.field_public_notice_date.content }}
-        {# endif #}
+        {{ fields.field_event_dates.content }}
+        {{ fields.field_public_notice_date.content }}
       </div>
     </div>
     <div class="text-wrapper">
