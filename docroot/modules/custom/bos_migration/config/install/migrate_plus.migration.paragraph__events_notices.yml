@@ -1,0 +1,27 @@
+id: paragraph__events_notices
+label: 'Events and Notices Paragraph'
+migration_group: bos_paragraphs
+migration_tags:
+  - Drupal 7
+  - Content
+dependencies:
+  enforced:
+    module:
+    - bos_migration
+source:
+  plugin: d7_paragraphs_item
+  bundle: events_and_notices
+process:
+  id: item_id
+  revision_id: revision_id
+  field_component_title: field_component_title
+  field_featured_item: field_featured_item
+  field_link: field_link
+  field_list: field_list
+  field_short_title: field_short_title
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: events_and_notices
+migration_dependencies:
+  required: {  }
+  optional: {  }

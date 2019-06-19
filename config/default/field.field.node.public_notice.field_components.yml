@@ -57,6 +57,7 @@ settings:
       bos311: bos311
       cabinet: cabinet
       drawers: drawers
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_cards: grid_of_cards
@@ -272,10 +273,9 @@ settings:
       from_library:
         weight: 87
         enabled: false
-      status_overrides:
-        weight: 120
-        enabled: false
+        weight: 71
       events_and_notices:
+        weight: 125
         enabled: true
-        weight: 130
+  handler: 'default:paragraph'
 field_type: entity_reference_revisions
