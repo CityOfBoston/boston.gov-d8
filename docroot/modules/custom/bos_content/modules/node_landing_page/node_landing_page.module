@@ -41,17 +41,22 @@ function template_preprocess_node__landing_page__full(array &$variables) {
  */
 function node_landing_page_preprocess_page(&$variables) {
 
-  if (isset($variables["node"]) && $variables["node"]->getType() == "landing_page") {
-    // Determine if this is an edit page or a display page.
-    $pathinfo = Drupal::request()->getPathInfo();
-    $pathinfo = explode("/", $pathinfo);
-    if (end($pathinfo) != "edit") {
-      _bos_theme_fix_attributes($variables);
-      if ($variables["attributes"]->hasClass("page--wa")) {
-        $variables["attributes"]->removeClass("page--wa");
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+    if (is_numeric($node)) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+    if ($node->bundle() == "landing_page") {
+      // Determine if this is an edit page or a display page.
+      $pathinfo = Drupal::request()->getPathInfo();
+      $pathinfo = explode("/", $pathinfo);
+      if (end($pathinfo) != "edit" && end($pathinfo) != "revisions") {
+        _bos_components_fix_attributes($variables);
+        if ($variables["attributes"]->hasClass("page--wa")) {
+          $variables["attributes"]->removeClass("page--wa");
+        }
+        $variables["attributes"]->addClass("page");
+        $variables["attributes"]->addClass("page--nm");
       }
-      $variables["attributes"]->addClass("page");
-      $variables["attributes"]->addClass("page--nm");
     }
   }
 }
@@ -63,8 +68,16 @@ function node_landing_page_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
+
   $node = \Drupal::routeMatch()->getParameter('node');
-  if (isset($node) && $node->getType() == "landing_page") {
-    $variables['display_breadcrumb'] = FALSE;
+  if (isset($node)) {
+    if (is_numeric($node)) {
+      // $variables['node'] is the nid when a view_display version of the
+      // page is rendered.
+      return;
+    }
+    if ($node->getType() == "landing_page") {
+      $variables['display_breadcrumb'] = FALSE;
+    }
   }
 }
