@@ -78,6 +78,7 @@
  * @ingroup themeable
  #}
 
+ {{ dd(content) }}
 {% if not is_expired %}
 <article id="node-{{ node.id }}" class="{{ classes }} event-featured-item-wrapper clearfix">
   <div class="desktop-2-col featured-item-details featured-item-details--relative">
@@ -86,15 +87,13 @@
         {{ content.field_event_dates }}
       {% endif %}
     </div>
-    <h3 class="featured-event-title">{{ node.label }}</h3>
-    {% if content.field_intro_text %}
-      <div class="featured-description">
-        {{ content.field_intro_text }}
-      </div>
-    {% endif %}
+    <h3 class="featured-event-title">{{ content.title.0['#context'].value }}</h3>
+    <div class="featured-description">
+      {{ content.field_description.0['#text']|raw }}
+    </div>
     {% if content.field_details_link %}
       <div class="external-link external-link--inline">
-        <a class="button" href="{{ content.field_details_link.0.url }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
+        <a class="button" href="{{ content.field_details_link.0['#url'] }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
       </div>
     {% else %}
       <a class="button" href="{{ node.url }}">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
