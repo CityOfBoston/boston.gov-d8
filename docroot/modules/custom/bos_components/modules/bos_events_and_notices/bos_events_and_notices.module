@@ -29,8 +29,21 @@ function bos_events_and_notices_theme() {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK__bundle().
  */
 function bos_events_and_notices_preprocess_paragraph__events_and_notices(&$variables) {
   $variables["classes"] = "entity entity-paragraphs-item paragraphs-item-events-and-notices component-section fullwidth";
+}
+
+/**
+ * Implements hook_preprocess_views_view_fields().
+ */
+function bos_events_and_notices_preprocess_views_view_fields(&$variables) {
+  if ($variables["view"]->storage->id() == 'events_and_notices') {
+    if ($node = \Drupal\node\Entity\Node::load($variables["row"]->nid)) {
+      $type = $node->getType();
+      $variables['type_class'] = 'news-item-' . $type;
+      $test = 'test';
+    }
+  }
 }
