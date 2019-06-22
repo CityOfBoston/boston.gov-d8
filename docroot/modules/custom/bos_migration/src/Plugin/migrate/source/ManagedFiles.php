@@ -19,9 +19,9 @@ class ManagedFiles extends File {
    * {@inheritdoc}
    */
   protected function initializeIterator() {
-    $this->publicPathMigration = $this->variableGet('file_public_path', 'sites/default/files') . '/migration';
-    $this->privatePathMigration = $this->variableGet('file_private_path', NULL) . '/migration';
-    $this->temporaryPathMigration = $this->variableGet('file_temporary_path', '/tmp') . '/migration';
+    $this->publicPathMigration = $this->variableGet('file_public_path', 'sites/default/files'); // . '/migration';
+    $this->privatePathMigration = $this->variableGet('file_private_path', NULL); // . '/migration';
+    $this->temporaryPathMigration = $this->variableGet('file_temporary_path', '/tmp'); // . '/migration';
     return parent::initializeIterator();
   }
 
@@ -40,8 +40,11 @@ class ManagedFiles extends File {
       ],
       $row->getSourceProperty('uri')
     );
+
     $row->setSourceProperty('source_base_path', $path);
-    $rewritten_uri = $this->rewriteUri($row->getSourceProperty('uri'));
+
+    $rewritten_uri = $this->rewriteUri($row->getSourceProperty('uri'), $row->getSource());
+
     if ($rewritten_uri !== $row->getSourceProperty('uri')) {
       $row->setSourceProperty('uri', $rewritten_uri);
     }
