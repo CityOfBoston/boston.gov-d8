@@ -42,28 +42,44 @@ class FileCopyExt extends FileCopy {
     }
 
     list($source, $destination) = $value;
+    $source = $source ?? $row->getSourceProperty('source_base_path');
+    $fid = $row->getSource()['fid'];
 
-    // Ovveride the config with state settings.
-    if (\Drupal::state()->get("bos_migration.active", 0) == 1) {
-      if (\Drupal::state()->get("bos_migration.fileOps", "none") != "none") {
-        $this->configuration['copy'] = (\Drupal::state()->get("bos_migration.fileOps") == "copy" ? "true" : "false");
-        $this->configuration['move'] = (\Drupal::state()->get("bos_migration.fileOps") == "move" ? "true" : "false");
-      }
-    }
-
-    // If we don't have an actual file action, then dont do anything.
-    if ((!isset($this->configuration['move']) || $this->configuration['move'] === "false") && (!isset($this->configuration['copy']) || $this->configuration['copy'] === "false")) {
+    // If the file already exists on the destination, then skip.
+    $target = $row->getSourceProperty('filename');
+    if (file_exists($target) && $this->configuration["file_exists_ext"] == "skip") {
+      $migrate_executable->saveMessage("Skipping file (fid:$fid) '$source' - it already exists.", MigrationInterface::MESSAGE_NOTICE);
       return $destination;
     }
 
-    // Map our reote_source path prefix onto the source so we can download it.
+    // If the migration is diabled, then skip.
+    if (\Drupal::state()->get("bos_migration.active", 0) == 0) {
+      return $destination;
+    }
+
+    // Overide the supplied config with state settings.
+    if (\Drupal::state()->get("bos_migration.fileOps", "none") == "none") {
+      $this->configuration['copy'] = $this->configuration['move'] = FALSE;
+    }
+    else {
+      $this->configuration['copy'] = (\Drupal::state()->get("bos_migration.fileOps") == "copy" ? "true" : "false");
+      $this->configuration['move'] = (\Drupal::state()->get("bos_migration.fileOps") == "move" ? "true" : "false");
+      $this->configuration['file_exists_ext'] = \Drupal::state()->get("bos_migration.file_exists_ext", "skip") ;
+    }
+
+    // If we don't have an actual file action, then don't do anything.
+    if (empty($this->configuration['move']) && empty($this->configuration['copy'])) {
+      return $destination;
+    }
+
+    // Map our remote_source path prefix onto the source so we can download it.
     if (isset($this->configuration["remote_source"])) {
       $source = $this->configuration["remote_source"] . $source;
       $source = preg_replace("~([A-Za-z0-9])//~", "$1/", $source);
     }
 
+    // If this is a local file and the source does not exist, then report issue and skip.
     if (parent::isLocalUri($source) && !file_exists($source)) {
-      $fid = $row->getSource()['fid'];
       $migrate_executable->saveMessage("File (fid:$fid) '$source' does not exist", MigrationInterface::MESSAGE_NOTICE);
       return $destination;
     }
@@ -71,6 +87,7 @@ class FileCopyExt extends FileCopy {
     // Save the newly created source.
     $value[0] = $source;
 
+    // Now move the file.
     return parent::transform($value, $migrate_executable, $row, $destination_property);
 
   }
