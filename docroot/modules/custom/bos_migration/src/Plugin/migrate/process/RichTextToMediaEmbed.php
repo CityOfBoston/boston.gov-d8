@@ -10,8 +10,13 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  * fields.
  */
 
+use Drupal\bos_migration\Plugin\migrate\process\FileCopyExt;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
+use Drupal\migrate\Plugin\MigrateProcessInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\Component\Utility\Html;
@@ -20,6 +25,7 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
 use Exception;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -57,7 +63,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       return $value;
     }
 
-    $value['value'] = $this->convertToEntityEmbed($value['value'], $migrate_executable);
+    $value['value'] = $this->convertToEntityEmbed($value['value'], $row, $migrate_executable);
     return $value;
   }
 
@@ -74,7 +80,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function convertToEntityEmbed($value, MigrateExecutableInterface $migrate_executable) {
+  public function convertToEntityEmbed($value, Row $row, MigrateExecutableInterface $migrate_executable) {
     // D7 media embeds get stored as funky tokens. Replace them with valid HTML
     // so that the preceeding processing works smoothly.
     $this->replaceD7MediaEmbeds($value);
@@ -105,7 +111,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         continue;
       }
 
-      if ($media_entity = $this->createMediaEntity($src, 'image')) {
+      if ($media_entity = $this->createMediaEntity($src, 'image', $row, $migrate_executable)) {
         $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
         // Build <drupal-entity> element.
         $drupal_entity_node = $document->createElement('drupal-entity');
@@ -140,13 +146,15 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Change references to pre-production or editor sites.
       $href = $this->correctSubDomain($href);
 
-      if ($media_entity = $this->createMediaEntity($href, 'document')) {
+      if ($media_entity = $this->createMediaEntity($href, 'document', $row, $migrate_executable)) {
         // Alter <a> element.
         $link_node->setAttribute('data-entity-substitution', 'media');
         $link_node->setAttribute('data-entity-type', 'media');
         $link_node->setAttribute('data-entity-uuid', $media_entity->uuid());
         $link_node->setAttribute('href', "/media/{$media_entity->id()}");
       }
+      // Migrate (copy/move) the file.
+
     }
 
     return Html::serialize($document);
@@ -275,7 +283,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createMediaEntity(string $src, string $targetBundle) {
+  public function createMediaEntity(string $src, string $targetBundle, Row $row, MigrateExecutableInterface $migrate_executable) {
     if (!in_array($targetBundle, ['image', 'document'])) {
       throw new MigrateException('Only image and document bundles are supported.');
     }
@@ -294,21 +302,33 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $uri = $this->convertToStreamWrapper($uri);
     // We are doing some reorganzing of the filesystem, so make sure that the
     // uri is converted to the new format if applicable.
-    $uri = $this->rewriteUri($uri);
+    $uri = $this->rewriteUri($uri, $row->getSource()); // TODO: Check the second parameter is relevant for function ... (need mime and date etc)
     $file = $this->getFile($uri);
     if (!$file) {
       // Nothing to do if we can't find the file.
       \Drupal::logger('Migrate')->notice('5:File lookup failed.');
       return NULL;
     }
+    else {
+      $config = [
+        "move" => (\Drupal::state()->get("bos_migration.fileOps") == "move"),
+        "copy" => (\Drupal::state()->get("bos_migration.fileOps") == "copy"),
+        "file_exists" => \Drupal::state()->get("bos_migration.dest_file_exists", "use existing"),
+        "file_exists_ext" => \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip"),
+        "remote_source" => \Drupal::state()->get("bos_migration.remoteSource", "https://www.boston.gov/"),
+      ];
+
+      $fileCopyExt = FileCopyExt::create(\Drupal::getContainer(), $config, "file_copy_ext", []);
+      $value = [$src, $uri];
+      $fileCopyExt->transform($value, $migrate_executable, $row, "");
+    }
     $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
 
     // Create the Media entity.
     $media = Media::create([
       'bundle' => $targetBundle,
-      // Should we be hardcoding a user ID?
-      'uid' => '1',
-      'status' => '1',
+      'uid' => $file->getOwnerId() ?? 0,
+      'status' => $file->get("status")->getValue()[0]['value'] ?? 1,
       $field_name => [
         'target_id' => $file->id(),
       ],
@@ -521,7 +541,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     // If there is no extension, or the extension is not matched, then return
     // a type of "link".
-    return "link";
+    return ["link"];
   }
 
 }
