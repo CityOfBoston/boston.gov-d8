@@ -30,7 +30,12 @@ class MigrationConfigAlter {
    *
    * @var array
    */
-  public $source = "https://www.boston.gov/";
+  public $source;
+
+  protected $file_move;
+  protected $file_copy;
+  protected $dest_file_exists;
+  protected $dest_file_exists_ext;
 
   /**
    * Flag for storing the migrations in a state variable.
@@ -171,7 +176,7 @@ class MigrationConfigAlter {
     "paragraph__how_to_tab" => ["bos:paragraph:3"],
     "paragraph__how_to_text_step" => ["bos:paragraph:2"],
     "paragraph__iframe" => ["bos:paragraph:1"],
-    "paragraph__internal_link" => ["bos:paragraph:1"],
+    "paragraph__internal_link" => ["bos:paragraph:1", "bos:paragraph:5"],
     "paragraph__lightbox_link" => ["bos:paragraph:2"],
     "paragraph__list" => ["bos:paragraph:3"],
     "paragraph__map" => ["bos:paragraph:1"],
@@ -224,7 +229,7 @@ class MigrationConfigAlter {
     "d7_node_revision:landing_page" => ["bos:node_revision:2"],
     "d7_node_revision:listing_page" => ["bos:node_revision:1"],
     "d7_node_revision:person_profile" => ["bos:node_revision:1"],
-    "d7_node_revision:place_profile" => ["bos:v:2"],
+    "d7_node_revision:place_profile" => ["bos:node_revision:2"],
     "d7_node_revision:post" => ["bos:node_revision:2"],
     "d7_node_revision:procurement_advertisement" => ["bos:node_revision:1"],
     "d7_node_revision:program_initiative_profile" => ["bos:node_revision:2"],
@@ -405,9 +410,9 @@ class MigrationConfigAlter {
             'source' => 'field_internal_link/0/target_id',
           ],
           [
-            "plugin" => "default_value",
-            "default_value" => "1",
-            "strict" => "true",
+            "plugin" => "skip_on_empty",
+            "method" => "row",
+            "message" => "node target_id not found in lookup"
           ],
         ],
         'field_internal_link/title' => [
@@ -1049,7 +1054,12 @@ class MigrationConfigAlter {
         $this->migrations[$type]['process']['uri']['move'] = $this->file_move;
         // Adds directive to point at remote URL from which to download content.
         $this->migrations[$type]['process']['uri']['remote_source'] = $this->source;
-        $this->migrations[$type]['process']['uri']['file_exists'] = "use existing";
+        $this->migrations[$type]['process']['uri']['file_exists'] = $this->dest_file_exists;
+        $this->migrations[$type]['process']['uri']['file_exists_ext'] = $this->dest_file_exists_ext;
+        $this->migrations[$type]['process']['uri']['source'] = [
+          "source_base_path",
+          "uri"
+        ];
         $this->migrations[$type]['process']['rh_actions'] = 'rh_actions';
         $this->migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
         $this->migrations[$type]['process']['rh_redirect_response'] = 'rh_redirect_response';
@@ -1388,6 +1398,9 @@ class MigrationConfigAlter {
     \Drupal::logger("migrate")->info($msg);
     $this->file_copy = $file_ops == "copy" ? "true" : "false";
     $this->file_move = $file_ops == "move" ? "true" : "false";
+    $this->source = \Drupal::state()->get("bos_migration.remoteSource",  "https://www.boston.gov/");
+    $this->dest_file_exists = \Drupal::state()->get("bos_migration.dest_file_exists", "use existing");
+    $this->dest_file_exists_ext = \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip");
   }
 
   /**
