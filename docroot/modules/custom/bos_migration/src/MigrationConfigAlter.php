@@ -137,7 +137,7 @@ class MigrationConfigAlter {
     "d7_user" => ["bos:initial:1"],
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
-    "d7_file" => ["bos:initial:1"],
+    "d7_file" => ["bos:initial:0"],
     /* "d7_block" => ["bos:initial:1"], */
     "paragraph__3_column_w_image" => ["bos:paragraph:3"],
     "paragraph__bid" => ["bos:paragraph:2"],
@@ -1063,12 +1063,7 @@ class MigrationConfigAlter {
         $this->migrations[$type]['process']['rh_actions'] = 'rh_actions';
         $this->migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
         $this->migrations[$type]['process']['rh_redirect_response'] = 'rh_redirect_response';
-        $this->migrations[$type]['migration_dependencies']['required'] = [
-          'd7_user',
-          'd7_user_role',
-          'd7_url_alias',
-          'd7_path_redirect',
-        ];
+        $this->migrations[$type]['migration_dependencies']['required'] = [];
       }
     }
     else {
