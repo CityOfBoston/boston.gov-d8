@@ -305,11 +305,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $uri = $this->rewriteUri($uri, $row->getSource()); // TODO: Check the second parameter is relevant for function ... (need mime and date etc)
     $file = $this->getFile($uri);
     if (!$file) {
-      // Nothing to do if we can't find the file.
-      \Drupal::logger('Migrate')->notice('5:File lookup failed.');
-      return NULL;
-    }
-    else {
+      // File is not in the ManagedFiles table -> Need to go fetch the file ...
+      // ... and save it.
       $config = [
         "move" => (\Drupal::state()->get("bos_migration.fileOps") == "move"),
         "copy" => (\Drupal::state()->get("bos_migration.fileOps") == "copy"),
@@ -318,10 +315,25 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         "remote_source" => \Drupal::state()->get("bos_migration.remoteSource", "https://www.boston.gov/"),
       ];
 
+      // Copy the file from $src to $uri.
       $fileCopyExt = FileCopyExt::create(\Drupal::getContainer(), $config, "file_copy_ext", []);
       $value = [$src, $uri];
-      $fileCopyExt->transform($value, $migrate_executable, $row, "");
+      $uri = $fileCopyExt->transform($value, $migrate_executable, $row, "");
+
+      // Create a new File Entity for this file.
+      try {
+        $file = $this->saveFile($uri);
+        if (empty($file)) {
+          throw new Exception("Could not copy " . $src ." and save as " . $uri. ".");
+        }
+      }
+      catch (Exception $e) {
+        \Drupal::logger('Migrate')->warning($e->getMessage());
+        return NULL;
+      }
+
     }
+
     $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
 
     // Create the Media entity.
@@ -451,6 +463,33 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   }
 
   /**
+   * Create a new File object and save (in table file_managed).
+   *
+   * @param $uri
+   *   The uri to create in the file_managed table.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The file object just created.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function saveFile($uri) {
+    $filename = end(explode("/", $uri));
+    $filename = explode(".", $filename)[0];
+    $entity = \Drupal::entityTypeManager()
+      ->getStorage('file')
+      ->create([
+        'uri' => $uri,
+        'uid' => '1',
+        'filename' => $filename,
+        'status' => '1',
+      ]);
+    $entity->save();
+    return $entity;
+  }
+
+  /**
    * Updates an image media entity with the passed node element.
    *
    * @param \Drupal\media\MediaInterface $media_entity
@@ -542,6 +581,13 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     // If there is no extension, or the extension is not matched, then return
     // a type of "link".
     return ["link"];
+  }
+
+  /**
+   * Attempts to find & set a physical path for this media entity.
+   */
+  protected function setPath() {
+    return "embed/";
   }
 
 }
