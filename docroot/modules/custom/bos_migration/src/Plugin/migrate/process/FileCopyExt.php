@@ -46,8 +46,7 @@ class FileCopyExt extends FileCopy {
     $fid = $row->getSource()['fid'];
 
     // If the file already exists on the destination, then skip.
-    $target = $row->getSourceProperty('filename');
-    if (file_exists($target) && $this->configuration["file_exists_ext"] == "skip") {
+    if (file_exists($destination) && $this->configuration["file_exists_ext"] == "skip") {
       $migrate_executable->saveMessage("Skipping file (fid:$fid) '$source' - it already exists.", MigrationInterface::MESSAGE_NOTICE);
       return $destination;
     }
