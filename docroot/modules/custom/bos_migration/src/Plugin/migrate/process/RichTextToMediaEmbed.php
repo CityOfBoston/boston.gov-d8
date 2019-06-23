@@ -288,7 +288,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       throw new MigrateException('Only image and document bundles are supported.');
     }
 
-    $uri = $src;
+    $uri = str_replace("?", "", utf8_decode($src));
+    // str_replace("?", "", utf8_decode($filename))
     if (!$this->isRelativeUri($src)) {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
@@ -586,8 +587,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   /**
    * Attempts to find & set a physical path for this media entity.
    */
-  protected function setPath() {
-    return "embed/";
+  protected function setPath($uri) {
+    $filename = end(explode("/", $uri));
+    $filename = explode(".", $filename)[0];
+    return "embed/" . $filename[0];
   }
 
 }
