@@ -63,7 +63,7 @@ class FileCopyExt extends FileCopy {
     else {
       $this->configuration['copy'] = (\Drupal::state()->get("bos_migration.fileOps") == "copy" ? "true" : "false");
       $this->configuration['move'] = (\Drupal::state()->get("bos_migration.fileOps") == "move" ? "true" : "false");
-      $this->configuration['file_exists_ext'] = \Drupal::state()->get("bos_migration.file_exists_ext", "skip") ;
+      $this->configuration['file_exists_ext'] = \Drupal::state()->get("bos_migration.file_exists_ext", "skip");
     }
 
     // If we don't have an actual file action, then don't do anything.
@@ -77,7 +77,8 @@ class FileCopyExt extends FileCopy {
       $source = preg_replace("~([A-Za-z0-9])//~", "$1/", $source);
     }
 
-    // If this is a local file and the source does not exist, then report issue and skip.
+    // If this is a local file and the source does not exist, then report issue
+    // and skip.
     if (parent::isLocalUri($source) && !file_exists($source)) {
       $migrate_executable->saveMessage("File (fid:$fid) '$source' does not exist", MigrationInterface::MESSAGE_NOTICE);
       return $destination;
