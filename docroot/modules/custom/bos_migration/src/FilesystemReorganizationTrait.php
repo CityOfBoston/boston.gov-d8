@@ -58,7 +58,6 @@ trait FilesystemReorganizationTrait {
   protected $folderMappings = [
     "~department\-icon\-([0-9]*)\-([0-9]*)~" => "img/icons/department",
     "~department_icons~" => "img/icons/department",
-    "~media\-icons~" => "img/icons/media",
     "~fyi\-icon~" => "img/icons/fyi",
     "~paragraphs_type_icon~" => "img/icons/paragraphs_type",
     "~status_icons~" => "img/icons/status",
