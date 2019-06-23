@@ -19,9 +19,9 @@ class ManagedFiles extends File {
    * {@inheritdoc}
    */
   protected function initializeIterator() {
-    $this->publicPathMigration = $this->variableGet('file_public_path', 'sites/default/files'); // . '/migration';
-    $this->privatePathMigration = $this->variableGet('file_private_path', NULL); // . '/migration';
-    $this->temporaryPathMigration = $this->variableGet('file_temporary_path', '/tmp'); // . '/migration';
+    $this->publicPathMigration = $this->variableGet('file_public_path', 'sites/default/files');
+    $this->privatePathMigration = $this->variableGet('file_private_path', NULL);
+    $this->temporaryPathMigration = $this->variableGet('file_temporary_path', '/tmp');
     return parent::initializeIterator();
   }
 

@@ -15,7 +15,7 @@ trait FilesystemReorganizationTrait {
    * @var array
    *   Array mapping folder name to file mime/extensions.
    */
-  protected $allowed_formats = [
+  protected $allowdFormats = [
     'image' => [
       'jpg',
       'png',
@@ -46,7 +46,7 @@ trait FilesystemReorganizationTrait {
       'jpeg', /* ... */
       'tif', /* ... */
       'svg', /* ... */
-      ],
+    ],
   ];
 
   /**
@@ -55,37 +55,37 @@ trait FilesystemReorganizationTrait {
    * @var array
    *   Array mapping regex old folder name to a new folder.
    */
-  protected $folder_mappings = [
-    "~department\-icon\-([0-9]*)\-([0-9]*)~" =>             "img/icons/department",
-    "~department_icons~" =>                                 "img/icons/department",
-    "~media\-icons~" =>                                     "img/icons/media",
-    "~fyi\-icon~" =>                                        "img/icons/fyi",
-    "~paragraphs_type_icon~" =>                             "img/icons/paragraphs_type",
-    "~status_icons~" =>                                     "img/icons/status",
-    "~status\-item\-icon\-([0-9]*)\-([0-9]*)~" =>           "img/icons/status_icon",
-    "~transactions\-icon\-([0-9]*)\-([0-9]*)~" =>           "img/icons/transactions/$2/$1",
-    "~document\-file\-([0-9]*)\-([0-9]*)~" =>               "file/document_files/$2/$1",
-    "~event_intro_images~" =>                               "img/event/intro_images",
-    "~event\-intro\-images\-([0-9]*)\-([0-9]*)~" =>         "img/event/intro_images",
-    "~event\-thumbnail\-([0-9]*)\-([0-9]*)~" =>             "img/event/thumbnails",
-    "~field\-columns\-image\-([0-9]*)\-([0-9]*)~" =>        "img/field_columns",
-    "~hero\-image\-([0-9]*)\-([0-9]*)~" =>                  "img/hero_image/$2/$1",
-    "~how\-to\-intro\-image\-([0-9]*)\-([0-9]*)~" =>        "img/how_to/intro_images",
-    "~how_to_intro_images~" =>                              "img/how_to/intro_images",
-    "~listing\-page\-intro\-image\-([0-9]*)\-([0-9]*)~" =>  "img/listing_page/intro_images",
-    "~listing_page_intro_images~" =>                        "img/listing_page/intro_images",
-    "~person\-profile\-photo\-([0-9]*)\-([0-9]*)~" =>       "img/person_profile/photos/$2/$1",
-    "~photo\-image\-([0-9]*)\-([0-9]*)~" =>                 "img/library/photos/$2/$1",
+  protected $folderMappings = [
+    "~department\-icon\-([0-9]*)\-([0-9]*)~" => "img/icons/department",
+    "~department_icons~" => "img/icons/department",
+    "~media\-icons~" => "img/icons/media",
+    "~fyi\-icon~" => "img/icons/fyi",
+    "~paragraphs_type_icon~" => "img/icons/paragraphs_type",
+    "~status_icons~" => "img/icons/status",
+    "~status\-item\-icon\-([0-9]*)\-([0-9]*)~" => "img/icons/status_icon",
+    "~transactions\-icon\-([0-9]*)\-([0-9]*)~" => "img/icons/transactions/$2/$1",
+    "~document\-file\-([0-9]*)\-([0-9]*)~" => "file/document_files/$2/$1",
+    "~event_intro_images~" => "img/event/intro_images",
+    "~event\-intro\-images\-([0-9]*)\-([0-9]*)~" => "img/event/intro_images",
+    "~event\-thumbnail\-([0-9]*)\-([0-9]*)~" => "img/event/thumbnails",
+    "~field\-columns\-image\-([0-9]*)\-([0-9]*)~" => "img/field_columns",
+    "~hero\-image\-([0-9]*)\-([0-9]*)~" => "img/hero_image/$2/$1",
+    "~how\-to\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/how_to/intro_images",
+    "~how_to_intro_images~" => "img/how_to/intro_images",
+    "~listing\-page\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/listing_page/intro_images",
+    "~listing_page_intro_images~" => "img/listing_page/intro_images",
+    "~person\-profile\-photo\-([0-9]*)\-([0-9]*)~" => "img/person_profile/photos/$2/$1",
+    "~photo\-image\-([0-9]*)\-([0-9]*)~" => "img/library/photos/$2/$1",
     "~place\-profile\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/place_profile/intro_images",
-    "~post\-intro\-image\-([0-9]*)\-([0-9]*)~" =>           "img/post/intro_images/$2/$1",
-    "~post\-thumbnail\-([0-9]*)\-([0-9]*)~" =>              "img/post/thumbnails/$2/$1",
-    "~program\-intro\-image\-([0-9]*)\-([0-9]*)~" =>        "img/program/intro_images",
-    "~program\-logo\-([0-9]*)\-([0-9]*)~" =>                "img/program/logo",
-    "~quote\-person\-photo\-([0-9]*)\-([0-9]*)~" =>         "img/quote_person/photos",
-    "~tabbed\-intro\-image\-([0-9]*)\-([0-9]*)~" =>         "img/tabbed/intro_images",
-    "~topic\-intro\-image\-([0-9]*)\-([0-9]*)~" =>          "img/topic/intro_images",
-    "~topic\-thumbnail\-([0-9]*)\-([0-9]*)~" =>             "img/topic/thumbnails",
-    "~video\-image\-([0-9]*)\-([0-9]*)~" =>                 "img/video",
+    "~post\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/post/intro_images/$2/$1",
+    "~post\-thumbnail\-([0-9]*)\-([0-9]*)~" => "img/post/thumbnails/$2/$1",
+    "~program\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/program/intro_images",
+    "~program\-logo\-([0-9]*)\-([0-9]*)~" => "img/program/logo",
+    "~quote\-person\-photo\-([0-9]*)\-([0-9]*)~" => "img/quote_person/photos",
+    "~tabbed\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/tabbed/intro_images",
+    "~topic\-intro\-image\-([0-9]*)\-([0-9]*)~" => "img/topic/intro_images",
+    "~topic\-thumbnail\-([0-9]*)\-([0-9]*)~" => "img/topic/thumbnails",
+    "~video\-image\-([0-9]*)\-([0-9]*)~" => "img/video",
   ];
 
   /**
@@ -93,6 +93,8 @@ trait FilesystemReorganizationTrait {
    *
    * @param string $uri
    *   URI to rewrite. Must be in stream wrapper format.
+   * @param array $properties
+   *   The file objects properties (if known).
    *
    * @return string
    *   The uri.
@@ -124,17 +126,31 @@ trait FilesystemReorganizationTrait {
             }
           }
           else {
-            $hash = "unk/migrate";
+            // The class calling this trait can set the path.
+            if (method_exists($this,"setPath")) {
+              $hash = trim($this->setPath(), "/");
+            }
+            else {
+              // Sets a last-chance default.
+              $hash = "unk/migrate";
+            }
           }
         }
         else {
-          $hash = "unk/migrate";
+          // The class calling this trait can set the path.
+          if (method_exists($this,"setPath")) {
+            $hash = trim($this->setPath(), "/");
+          }
+          else {
+            // Sets a last-chance default.
+            $hash = "unk/migrate";
+          }
         }
         $uri = "public://{$hash}/{$relative_uri}";
       }
       else {
         $count = 0;
-        foreach ($this->folder_mappings as $find => $replace) {
+        foreach ($this->folderMappings as $find => $replace) {
           $uri = preg_replace($find, $replace, $uri, -1, $count);
           if ($count > 0) {
             continue;
@@ -160,7 +176,7 @@ trait FilesystemReorganizationTrait {
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
     $type = [];
-    foreach ($this->allowed_formats as $file_type => $formats) {
+    foreach ($this->allowdFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if (strpos($parts[$index], $extension) !== FALSE) {
           $type[] = $file_type;
@@ -190,7 +206,7 @@ trait FilesystemReorganizationTrait {
     $parts = explode('/', $mime);
     $index = count($parts) - 1;
     $type = [];
-    foreach ($this->allowed_formats as $file_type => $formats) {
+    foreach ($this->allowdFormats as $file_type => $formats) {
       if (in_array($parts[$index], $formats)) {
         $type[] = $file_type;
       }

@@ -36,10 +36,9 @@ class SkipDraftRevision extends ProcessPluginBase {
     // In the transform() method we perform whatever operations our process
     // plugin is going to do in order to transform the $value provided into its
     // desired form, and then return that value.
-
+    //
     // If the moderation state in Drupal 7 is not Published, then don't migrate.
     // Be mindful that the latest revision coud be draft, so keep that.
-
     try {
       $connection = Database::getConnection("default", "migrate");
       $query = $connection->select("workbench_moderation_node_history", "history")
@@ -56,7 +55,6 @@ class SkipDraftRevision extends ProcessPluginBase {
       // Some other error.
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
-    return;
 
   }
 

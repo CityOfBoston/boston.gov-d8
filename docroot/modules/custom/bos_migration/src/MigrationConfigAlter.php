@@ -32,10 +32,10 @@ class MigrationConfigAlter {
    */
   public $source;
 
-  protected $file_move;
-  protected $file_copy;
-  protected $dest_file_exists;
-  protected $dest_file_exists_ext;
+  protected $fileMove;
+  protected $fileCopy;
+  protected $destFileExists;
+  protected $destFileExistsExt;
 
   /**
    * Flag for storing the migrations in a state variable.
@@ -355,12 +355,12 @@ class MigrationConfigAlter {
         ],
       ],
     ],
-    // Add custom
+    // Add custom.
     "d7_node_revision:event" => [
       "process" => [
         "_state" => [
           "plugin" => "skip_draft_revision",
-          "source" => "vid"
+          "source" => "vid",
         ],
       ],
     ],
@@ -412,7 +412,7 @@ class MigrationConfigAlter {
           [
             "plugin" => "skip_on_empty",
             "method" => "row",
-            "message" => "node target_id not found in lookup"
+            "message" => "node target_id not found in lookup",
           ],
         ],
         'field_internal_link/title' => [
@@ -1038,7 +1038,7 @@ class MigrationConfigAlter {
     $logging = ["warning" => [], "notice" => []];
 
     // For file migrations only, replace the core Drupal source plugin with our
-    // customized plugin and also the core Drupal process plugin (file_copy)
+    // customized plugin and also the core Drupal process plugin (fileCopy)
     // with our customized plugin.
     if ($entityType == 'file') {
 
@@ -1050,15 +1050,15 @@ class MigrationConfigAlter {
         ];
         $this->migrations[$type]['process']['uri']['plugin'] = "file_copy_ext";
         // Adds directives to copy or move. (Cannot move remote files)
-        $this->migrations[$type]['process']['uri']['copy'] = $this->file_copy;
-        $this->migrations[$type]['process']['uri']['move'] = $this->file_move;
+        $this->migrations[$type]['process']['uri']['copy'] = $this->fileCopy;
+        $this->migrations[$type]['process']['uri']['move'] = $this->fileMove;
         // Adds directive to point at remote URL from which to download content.
         $this->migrations[$type]['process']['uri']['remote_source'] = $this->source;
-        $this->migrations[$type]['process']['uri']['file_exists'] = $this->dest_file_exists;
-        $this->migrations[$type]['process']['uri']['file_exists_ext'] = $this->dest_file_exists_ext;
+        $this->migrations[$type]['process']['uri']['file_exists'] = $this->destFileExists;
+        $this->migrations[$type]['process']['uri']['file_exists_ext'] = $this->destFileExistsExt;
         $this->migrations[$type]['process']['uri']['source'] = [
           "source_base_path",
-          "uri"
+          "uri",
         ];
         $this->migrations[$type]['process']['rh_actions'] = 'rh_actions';
         $this->migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
@@ -1248,7 +1248,7 @@ class MigrationConfigAlter {
           if ($migration["id"] == "d7_node_revision") {
             $migration["process"]["_state"] = [
               "plugin" => "skip_draft_revision",
-              "source" => "vid"
+              "source" => "vid",
             ];
           }
         }
@@ -1391,11 +1391,11 @@ class MigrationConfigAlter {
       $msg = "Migration does not move or copy file entities and embedded files.";
     }
     \Drupal::logger("migrate")->info($msg);
-    $this->file_copy = $file_ops == "copy" ? "true" : "false";
-    $this->file_move = $file_ops == "move" ? "true" : "false";
-    $this->source = \Drupal::state()->get("bos_migration.remoteSource",  "https://www.boston.gov/");
-    $this->dest_file_exists = \Drupal::state()->get("bos_migration.dest_file_exists", "use existing");
-    $this->dest_file_exists_ext = \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip");
+    $this->fileCopy = $file_ops == "copy" ? "true" : "false";
+    $this->fileMove = $file_ops == "move" ? "true" : "false";
+    $this->source = \Drupal::state()->get("bos_migration.remoteSource", "https://www.boston.gov/");
+    $this->destFileExists = \Drupal::state()->get("bos_migration.dest_file_exists", "use existing");
+    $this->destFileExistsExt = \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip");
   }
 
   /**

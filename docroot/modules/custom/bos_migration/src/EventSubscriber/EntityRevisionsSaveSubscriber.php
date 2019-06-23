@@ -8,7 +8,11 @@ use Drupal\migrate\Event\MigratePreRowSaveEvent;
 use Drupal\migrate\Event\MigrateEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Revisions Migration save listener/subscriber.
+ */
 class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
+
   /**
    * {@inheritdoc}
    *
@@ -23,12 +27,12 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * React to a entity_revision pre-save event/
+   * React to a entity_revision pre-save event.
    *
    * @param \Drupal\migrate\Event\MigratePreRowSaveEvent $event
+   *   Event.
    */
   public function migrateRowPreSave(MigratePreRowSaveEvent $event) {
-    return;
   }
 
   /**
@@ -44,6 +48,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    * first when multiple moderated revsiions exist?
    *
    * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
+   *   Event.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -69,7 +74,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
             "from_state",
             "state",
             "published",
-            "is_current"
+            "is_current",
           ]);
         $query->condition("vid", $event->getRow()->getSource()['vid']);
         $workbench_d7 = $query->execute()->fetchAssoc();
