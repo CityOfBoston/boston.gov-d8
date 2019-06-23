@@ -59,12 +59,14 @@ trait FilesystemReorganizationTrait {
     "~department\-icon\-([0-9]*)\-([0-9]*)~" =>             "img/icons/department",
     "~department_icons~" =>                                 "img/icons/department",
     "~media\-icons~" =>                                     "img/icons/media",
+    "~fyi\-icon~" =>                                        "img/icons/fyi",
     "~paragraphs_type_icon~" =>                             "img/icons/paragraphs_type",
     "~status_icons~" =>                                     "img/icons/status",
     "~status\-item\-icon\-([0-9]*)\-([0-9]*)~" =>           "img/icons/status_icon",
     "~transactions\-icon\-([0-9]*)\-([0-9]*)~" =>           "img/icons/transactions/$2/$1",
     "~document\-file\-([0-9]*)\-([0-9]*)~" =>               "file/document_files/$2/$1",
     "~event_intro_images~" =>                               "img/event/intro_images",
+    "~event\-intro\-images\-([0-9]*)\-([0-9]*)~" =>         "img/event/intro_images",
     "~event\-thumbnail\-([0-9]*)\-([0-9]*)~" =>             "img/event/thumbnails",
     "~field\-columns\-image\-([0-9]*)\-([0-9]*)~" =>        "img/field_columns",
     "~hero\-image\-([0-9]*)\-([0-9]*)~" =>                  "img/hero_image/$2/$1",
@@ -131,8 +133,12 @@ trait FilesystemReorganizationTrait {
         $uri = "public://{$hash}/{$relative_uri}";
       }
       else {
+        $count = 0;
         foreach ($this->folder_mappings as $find => $replace) {
-          $uri = preg_replace($find, $replace, $uri);
+          $uri = preg_replace($find, $replace, $uri, -1, $count);
+          if ($count > 0) {
+            continue;
+          }
         }
       }
     }
