@@ -68,7 +68,6 @@ function node_landing_page_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-
   $node = \Drupal::routeMatch()->getParameter('node');
   if (isset($node)) {
     if (is_numeric($node)) {
