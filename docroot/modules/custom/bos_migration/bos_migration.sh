@@ -38,10 +38,15 @@ lando drush cim --partial --source=modules/custom/bos_migration/config/install/ 
 # rebuild the migration configs.
 lando drush updb -y  | tee -a bos_migration.log
 lando drush cr  | tee -a bos_migration.log
+lando drush ms
 
+# Migrate files first.
+doMigrate --tag="bos:initial:0" --force           # 31 mins
 # Perform the lowest level safe-dependencies.
-doMigrate --tag="bos:initial:1" --force     # 20 Mins.
-exit 0
+doMigrate --tag="bos:initial:1" --force           # 7 mins
+
+# NOTE Backup at this point is "migration_clean_with_prereq.sql"
+
 # First pass.
 doMigrate --tag="bos:taxonomy:1" --force          # 30 secs
 doMigrate --tag="bos:paragraph:1" --force         # 21 min
@@ -72,7 +77,6 @@ doMigrate --tag="bos:node_revision:2" --force
 
 # Redo the internal_link (done in para:1)
 doMigrate paragraph__internal_link --force
-lando drush ms paragraph__internal_link
 
  Second pass.
 doMigrate --group=d7_node --update --execute-dependencies
