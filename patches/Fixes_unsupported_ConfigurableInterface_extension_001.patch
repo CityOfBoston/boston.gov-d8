@@ -1,0 +1,19 @@
+--- a/modules/contrib/password_policy/src/PasswordConstraintInterface.php
++++ b/modules/contrib/password_policy/src/PasswordConstraintInterface.php
+@@ -2,14 +2,14 @@
+ 
+ namespace Drupal\password_policy;
+ 
+-use Drupal\Component\Plugin\ConfigurableInterface;
++use Drupal\Component\Plugin\ConfigurablePluginInterface;
+ use Drupal\Component\Plugin\PluginInspectionInterface;
+ use Drupal\Core\Plugin\PluginFormInterface;
+ 
+ /**
+  * An interface to define the expected operations of a password constraint.
+  */
+-interface PasswordConstraintInterface extends PluginInspectionInterface, ConfigurableInterface, PluginFormInterface {
++interface PasswordConstraintInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
+ 
+   /**
+    * Returns a true/false status if the password meets the constraint.
