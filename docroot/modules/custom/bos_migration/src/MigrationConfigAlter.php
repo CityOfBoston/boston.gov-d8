@@ -409,9 +409,8 @@ class MigrationConfigAlter {
             'source' => 'field_internal_link/0/target_id',
           ],
           [
-            "plugin" => "skip_on_empty",
-            "method" => "row",
-            "message" => "node target_id not found in lookup",
+            "plugin" => "default_value",
+            "default_value" => "21",
           ],
         ],
         'field_internal_link/title' => [
