@@ -11,6 +11,7 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  */
 
 use Drupal\bos_migration\Plugin\migrate\process\FileCopyExt;
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
@@ -288,8 +289,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       throw new MigrateException('Only image and document bundles are supported.');
     }
 
-    $uri = str_replace("?", "", utf8_decode($src));
-    // str_replace("?", "", utf8_decode($filename))
+    $uri = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $src);
+
     if (!$this->isRelativeUri($src)) {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
