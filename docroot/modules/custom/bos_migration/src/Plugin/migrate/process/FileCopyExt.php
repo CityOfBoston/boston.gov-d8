@@ -47,7 +47,7 @@ class FileCopyExt extends FileCopy {
 
     // If the file already exists on the destination, then skip.
     if (file_exists($destination) && $this->configuration["file_exists_ext"] == "skip") {
-      $migrate_executable->saveMessage("Skipping file (fid:$fid) '$source' - it already exists.", MigrationInterface::MESSAGE_NOTICE);
+      $migrate_executable->saveMessage("Skipping file (fid:" . $fid . ") '" . $source . "' - it already exists.", MigrationInterface::MESSAGE_INFORMATIONAL);
       return $destination;
     }
 
@@ -72,7 +72,7 @@ class FileCopyExt extends FileCopy {
     }
 
     // Map our remote_source path prefix onto the source so we can download it.
-    if (isset($this->configuration["remote_source"])) {
+    if (isset($this->configuration["remote_source"]) && strpos($source, $this->configuration["remote_source"]) === FALSE) {
       $source = $this->configuration["remote_source"] . $source;
       $source = preg_replace("~([A-Za-z0-9])//~", "$1/", $source);
     }

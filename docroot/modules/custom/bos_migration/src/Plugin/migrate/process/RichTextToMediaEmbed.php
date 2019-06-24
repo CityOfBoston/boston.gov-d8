@@ -425,6 +425,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   protected function correctSubDomain(string $uri) {
     $regex_swaps = [
       "~(edit|edit-stg).boston.gov~" => "www.boston.gov",
+      "~http(s|)://boston.gov~" => "https://www.boston.gov",
     ];
     foreach ($regex_swaps as $find => $replace) {
       $swap = $uri;
@@ -448,13 +449,15 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * Assumes the uri have not changed from d7 to d8 during migration, which is
    * just an heuristic.
    *
-   * @todo inject entityTypeManager?
-   *
    * @param string $uri
    *   File uri.
    *
    * @return \Drupal\file\Entity\File|null
    *   File entity object.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @todo inject entityTypeManager?
+   *
    */
   public function getFile($uri) {
     $file_entities = \Drupal::entityTypeManager()
@@ -499,6 +502,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   The element to use for the update.
    * @param \Drupal\migrate\MigrateExecutableInterface\MigrateExecutableInterface $migrate_executable
    *   Related migrate executable object, used to store any message if needed.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function updateImageMedia(MediaInterface $media_entity, \DOMElement $image_node, MigrateExecutableInterface $migrate_executable) {
     $alt_text = $image_node->getAttribute('alt');
