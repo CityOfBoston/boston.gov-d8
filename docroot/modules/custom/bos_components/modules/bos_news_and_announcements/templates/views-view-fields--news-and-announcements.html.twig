@@ -36,14 +36,15 @@
   <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
   <div class="news-item-wrapper">
       <div class="thumb-wrapper float-left">
-        {% if not fields.field_thumbnail.raw == NULL %}
+        {% set thumbnail = fields.field_thumbnail.content|striptags|trim %}
+        {% if thumbnail == "" %}
           <div
             class="news-item-default-image"
             style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
             <span>Default News image</span>
           </div>
         {% else %}
-          {{ fields.field_thumbnail.content }}
+          {{ thumbnail }}
         {% endif %}
         <div class="date-flag">{{ fields.field_published_date.content }}</div>
       </div>
