@@ -748,6 +748,9 @@ class MigrationConfigAlter {
       "field_contacts" => [
         "d7_taxonomy_term:contact",
       ],
+      "field_commission" => [
+        "d7_taxonomy_term:commissions",
+      ],
       "field_event_type" => [
         "d7_taxonomy_term:event_type",
       ],
@@ -1200,7 +1203,7 @@ class MigrationConfigAlter {
 
     switch ($migration) {
       case "d7_taxonomy_term:contact":
-        $tmp = $this->migrations[$migration]["process"]["vid"];
+        // Want to disble the linking to a node at this time.
         $this->migrations[$migration]["process"]["field_department_profile"] = "field_department_profile";
         break;
 
@@ -1437,8 +1440,10 @@ class MigrationConfigAlter {
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "taxonomy":
-        return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
+        $data = $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+        $data["field_commission"] = ["field_name" => "field_commission"];
+        return $data;
 
       case "node":
         return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
@@ -1569,7 +1574,7 @@ class MigrationConfigAlter {
               [
                 "plugin" => "skip_on_empty",
                 "method" => "process",
-                'source' => "target_id",
+                'source' => "tid",
               ],
               [
                 "plugin" => "migration_lookup",
