@@ -27,3 +27,14 @@ function bos_news_and_announcements_theme() {
   ];
   return $theme;
 }
+
+/**
+ * Implements hook_preprocess_views_view_fields().
+ */
+function bos_news_and_announcements_preprocess_views_view_fields(&$variables) {
+  if ($variables["view"]->storage->id() == 'news_and_announcements') {
+    $lib = \Drupal::service('library.discovery')
+      ->getLibraryByName('bos_theme', 'global-styling.patterns');
+    $variables['asset_url'] = $lib['remote'];
+  }
+}

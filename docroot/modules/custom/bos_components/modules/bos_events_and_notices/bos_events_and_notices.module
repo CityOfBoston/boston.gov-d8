@@ -47,7 +47,6 @@ function bos_events_and_notices_preprocess_views_view_fields(&$variables) {
     if ($node = \Drupal\node\Entity\Node::load($variables["row"]->nid)) {
       $type = $node->getType();
       $variables['type_class'] = 'news-item-' . $type;
-      $test = 'test';
     }
   }
 }
