@@ -941,6 +941,9 @@ class MigrationConfigAlter {
       'field_person_photo' => ['field_person_photo'],
       'field_program_logo' => ['field_program_logo'],
     ],
+    "file" => [
+      'field_document' => ['field_document'],
+    ]
   ];
 
   /**
@@ -1002,6 +1005,7 @@ class MigrationConfigAlter {
     // Execute targeted alternations to $this->migrations.
     $this->customAlterations();
     $this->customAlteration("d7_taxonomy_term:contact");
+    $this->customAlteration("d7_file");
     $this->customAlteration("node_revision");
     $this->richTextFieldAlter();
     $this->breakCyclicalDependencies();
@@ -1037,174 +1041,143 @@ class MigrationConfigAlter {
   private function globalAlterations(string $entityType) {
     $logging = ["warning" => [], "notice" => []];
 
-    // For file migrations only, replace the core Drupal source plugin with our
-    // customized plugin and also the core Drupal process plugin (fileCopy)
-    // with our customized plugin.
-    if ($entityType == 'file') {
+    $fields = $this::getFieldsOfEntityType($entityType);
 
-      foreach (["d7_file"] as $type) {
-        $this->migrations[$type]['migration_group'] = "bos_media";
-        $this->migrations[$type]['source'] = [
-          'plugin' => 'managed_files',
-          'key' => 'migrate',
-        ];
-        $this->migrations[$type]['process']['uri']['plugin'] = "file_copy_ext";
-        // Adds directives to copy or move. (Cannot move remote files)
-        $this->migrations[$type]['process']['uri']['copy'] = $this->fileCopy;
-        $this->migrations[$type]['process']['uri']['move'] = $this->fileMove;
-        // Adds directive to point at remote URL from which to download content.
-        $this->migrations[$type]['process']['uri']['remote_source'] = $this->source;
-        $this->migrations[$type]['process']['uri']['file_exists'] = $this->destFileExists;
-        $this->migrations[$type]['process']['uri']['file_exists_ext'] = $this->destFileExistsExt;
-        $this->migrations[$type]['process']['uri']['source'] = [
-          "source_base_path",
-          "uri",
-        ];
-        $this->migrations[$type]['process']['rh_actions'] = 'rh_actions';
-        $this->migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
-        $this->migrations[$type]['process']['rh_redirect_response'] = 'rh_redirect_response';
-        $this->migrations[$type]['migration_dependencies']['required'] = [];
-      }
+    // If nothing found, then exit here.
+    if (empty($fields)) {
+      return;
     }
-    else {
 
-      $fields = $this::getFieldsOfEntityType($entityType);
+    // Re-organize the fields we have found in D7 for this $entityType.
+    $fields = array_keys($fields);
+    $fields = array_flip($fields);
 
-      // If nothing found, then exit here.
-      if (empty($fields)) {
-        return;
+    // Cycle through all defined migrations.
+    foreach ($this->migrations as $mkey => &$migration) {
+      $dependencies = ["required" => [], "optional" => []];
+
+      // Update the grouping if its not yet set (i.e when built by a definer).
+      // Enables `drush mim --group` option to import groups in a single
+      // command.
+      if (empty($migration['migration_group'])) {
+        $migration['migration_group'] = $migration['id'];
       }
 
-      // Re-organize the fields we have found in D7 for this $entityType.
-      $fields = array_keys($fields);
-      $fields = array_flip($fields);
+      // Only need to process para's, nodes and taxonomies because they are
+      // the only entities which contain entity fields which need to be
+      // overridden.
+      if (in_array($migration["id"], [
+        "d7_node",
+        "d7_node_revision",
+        "d7_node_entity_translation",
+        "d7_taxonomy_term",
+        "d7_taxonomy_term_entity_translation",
+      ]) || $migration["source"]["plugin"] == "d7_paragraphs_item"
+      || $migration["source"]["plugin"] == "d7_field_collection_item"
+      ) {
 
-      // Cycle through all defined migrations.
-      foreach ($this->migrations as $mkey => &$migration) {
-        $dependencies = ["required" => [], "optional" => []];
+        // Create dependencies for translations and revisions.
+        switch ($migration["id"]) {
+          case "d7_taxonomy_term_entity_translation":
+            $dependencies["required"][] = str_replace($migration["id"], "d7_taxonomy_term", $mkey);
+            break;
 
-        // Update the grouping if its not yet set (i.e when built by a definer).
-        // Enables `drush mim --group` option to import groups in a single
-        // command.
-        if (empty($migration['migration_group'])) {
-          $migration['migration_group'] = $migration['id'];
+          case "d7_node_entity_translation":
+            $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
+            break;
+
+          case "d7_node_revision":
+            $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
+            break;
         }
 
-        // Only need to process para's, nodes and taxonomies because they are
-        // the only entities which contain entity fields which need to be
-        // overridden.
-        if (in_array($migration["id"], [
-          "d7_node",
-          "d7_node_revision",
-          "d7_node_entity_translation",
+        // Cycle through the fields we have made manual process overrides for.
+        // If this $migration contains any of the fields, then update the
+        // process and dependency array elements of the $migration.
+        foreach ($fields as $fieldname => $field) {
+          if (!empty($migration["process"][$fieldname])) {
+            // Use $entityType so that same-named fields on different entities
+            // are not mixed up.
+            // Fetch a global process definition for fields of this type.
+            if ($process = $this->getProcessDefinition($entityType, $fieldname)) {
+
+              // Substitute the altered process array in here now.
+              $migration["process"][$fieldname] = $process;
+
+              // Record the process's migration field values so we can add as
+              // a dependency for this $migration later.
+              switch ($entityType) {
+                case "node":
+                case "paragraph":
+                  $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
+                  break;
+
+                case "taxonomy":
+                  $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
+                  break;
+
+                case "field_collection":
+                  $dependencies["required"] += [$process["process"]["target_id"][1]["migration"]];
+                  break;
+              }
+            }
+            else {
+              // Useful if using drush ...
+              $logging["warning"][] = "Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey;
+            }
+          }
+        }
+
+        // Cull any unwanted field/field operations.
+        if (isset($migration['process']['field_type_of_content'])) {
+          $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
+          unset($migration['process']['field_type_of_content']);
+        }
+        foreach ($migration['process'] as $fieldname => $map) {
+          if ($map == "comment") {
+            $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
+            unset($migration['process'][$fieldname]);
+          }
+        }
+
+        // Add in paragraph dependencies for this entity migration.
+        /* if (!empty($dependencies["required"]) ||
+        !empty($dependencies["optional"])) {
+        $migration["migration_dependencies"] =
+        array_merge($migration["migration_dependencies"], $dependencies);
+        }*/
+      }
+
+      // Make sure the parent_id defaults to zero if nothing found.
+      if ($entityType == "taxonomy"
+        && in_array($migration["id"], [
           "d7_taxonomy_term",
           "d7_taxonomy_term_entity_translation",
-        ]) || $migration["source"]["plugin"] == "d7_paragraphs_item"
-        || $migration["source"]["plugin"] == "d7_field_collection_item"
-        ) {
+        ])
+        && isset($migration["process"]["parent_id"])) {
+        $migration["process"]["parent_id"][0] = [
+          "plugin" => "default_value",
+          "default_value" => "0",
+          "source" => "parent",
+        ];
+      }
 
-          // Create dependencies for translations and revisions.
-          switch ($migration["id"]) {
-            case "d7_taxonomy_term_entity_translation":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_taxonomy_term", $mkey);
-              break;
-
-            case "d7_node_entity_translation":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
-              break;
-
-            case "d7_node_revision":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
-              break;
-          }
-
-          // Cycle through the fields we have made manual process overrides for.
-          // If this $migration contains any of the fields, then update the
-          // process and dependency array elements of the $migration.
-          foreach ($fields as $fieldname => $field) {
-            if (!empty($migration["process"][$fieldname])) {
-              // Use $entityType so that same-named fields on different entities
-              // are not mixed up.
-              // Fetch a global process definition for fields of this type.
-              if ($process = $this->getProcessDefinition($entityType, $fieldname)) {
-
-                // Substitute the altered process array in here now.
-                $migration["process"][$fieldname] = $process;
-
-                // Record the process's migration field values so we can add as
-                // a dependency for this $migration later.
-                switch ($entityType) {
-                  case "node":
-                  case "paragraph":
-                    $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
-                    break;
-
-                  case "taxonomy":
-                    $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
-                    break;
-
-                  case "field_collection":
-                    $dependencies["required"] += [$process["process"]["target_id"][1]["migration"]];
-                    break;
-                }
-              }
-              else {
-                // Useful if using drush ...
-                $logging["warning"][] = "Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey;
-              }
-            }
-          }
-
-          // Cull any unwanted field/field operations.
-          if (isset($migration['process']['field_type_of_content'])) {
-            $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
-            unset($migration['process']['field_type_of_content']);
-          }
-          foreach ($migration['process'] as $fieldname => $map) {
-            if ($map == "comment") {
-              $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
-              unset($migration['process'][$fieldname]);
-            }
-          }
-
-          // Add in paragraph dependencies for this entity migration.
-          /* if (!empty($dependencies["required"]) ||
-          !empty($dependencies["optional"])) {
-          $migration["migration_dependencies"] =
-          array_merge($migration["migration_dependencies"], $dependencies);
-          }*/
+      // Regardless of entity type, Update langcode to set itself sensibly.
+      if (isset($migration["process"]["langcode"])) {
+        if (is_array($migration["process"]["langcode"]) && $migration["process"]["langcode"]["plugin"] == "default_value") {
+          $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
         }
-
-        // Make sure the parent_id defaults to zero if nothing found.
-        if ($entityType == "taxonomy"
-          && in_array($migration["id"], [
-            "d7_taxonomy_term",
-            "d7_taxonomy_term_entity_translation",
-          ])
-          && isset($migration["process"]["parent_id"])) {
-          $migration["process"]["parent_id"][0] = [
+        elseif (!isset($migration["process"]["langcode"]["plugin"]) || $migration["process"]["langcode"]["plugin"] != "default_value") {
+          $migration["process"]["langcode"] = [
             "plugin" => "default_value",
-            "default_value" => "0",
-            "source" => "parent",
+            "source" => "language",
+            "default_value" => "und",
+            "fallback_to_site_default" => TRUE,
           ];
-        }
-
-        // Regardless of entity type, Update langcode to set itself sensibly.
-        if (isset($migration["process"]["langcode"])) {
-          if (is_array($migration["process"]["langcode"]) && $migration["process"]["langcode"]["plugin"] == "default_value") {
-            $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
-          }
-          elseif (!isset($migration["process"]["langcode"]["plugin"]) || $migration["process"]["langcode"]["plugin"] != "default_value") {
-            $migration["process"]["langcode"] = [
-              "plugin" => "default_value",
-              "source" => "language",
-              "default_value" => "und",
-              "fallback_to_site_default" => TRUE,
-            ];
-          }
         }
       }
     }
+
 
     // Finally, make log-report entry.
     foreach (["notice", "warning"] as $logType) {
@@ -1232,6 +1205,33 @@ class MigrationConfigAlter {
       case "d7_taxonomy_term:contact":
         $tmp = $this->migrations[$migration]["process"]["vid"];
         $this->migrations[$migration]["process"]["field_department_profile"] = "field_department_profile";
+        break;
+
+      case "d7_file":
+        // For file migrations replace the core Drupal source plugin with our
+        // customized plugin and also the core Drupal process plugin (fileCopy)
+        // with our customized plugin.
+        $this->migrations[$migration]['migration_group'] = "bos_media";
+        $this->migrations[$migration]['source'] = [
+          'plugin' => 'managed_files',
+          'key' => 'migrate',
+        ];
+        $this->migrations[$migration]['process']['uri']['plugin'] = "file_copy_ext";
+        // Adds directives to copy or move. (Cannot move remote files)
+        $this->migrations[$migration]['process']['uri']['copy'] = $this->fileCopy;
+        $this->migrations[$migration]['process']['uri']['move'] = $this->fileMove;
+        // Adds directive to point at remote URL from which to download content.
+        $this->migrations[$migration]['process']['uri']['remote_source'] = $this->source;
+        $this->migrations[$migration]['process']['uri']['file_exists'] = $this->destFileExists;
+        $this->migrations[$migration]['process']['uri']['file_exists_ext'] = $this->destFileExistsExt;
+        $this->migrations[$migration]['process']['uri']['source'] = [
+          "source_base_path",
+          "uri",
+        ];
+        $this->migrations[$migration]['process']['rh_actions'] = 'rh_actions';
+        $this->migrations[$migration]['process']['rh_redirect'] = 'rh_redirect';
+        $this->migrations[$migration]['process']['rh_redirect_response'] = 'rh_redirect_response';
+        $this->migrations[$migration]['migration_dependencies']['required'] = [];
         break;
 
       case "node_revision":
@@ -1459,6 +1459,10 @@ class MigrationConfigAlter {
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('image')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
+      case "file":
+        return $con->query("SELECT field_name FROM field_config WHERE type IN ('file')")
+          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+
       default:
         return [];
     }
@@ -1645,6 +1649,23 @@ class MigrationConfigAlter {
             "title" => 'title',
             "width" => 'width',
             "height" => 'height',
+          ],
+        ];
+        break;
+
+      case "file":
+        $process = [
+          "plugin" => "sub_process",
+          "source" => $fieldName,
+          "process" => [
+            "target_id" => [
+              [
+                'plugin' => "migration_lookup",
+                'source' => "fid",
+                'migration' => "d7_file"
+              ],
+            ],
+            "description" => "@field_title",
           ],
         ];
         break;
