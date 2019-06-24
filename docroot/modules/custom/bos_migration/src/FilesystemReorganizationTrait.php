@@ -126,7 +126,7 @@ trait FilesystemReorganizationTrait {
           }
           else {
             // The class calling this trait can set the path.
-            if (method_exists($this,"setPath")) {
+            if (method_exists($this, "setPath")) {
               $hash = trim($this->setPath($uri), "/");
             }
             else {
@@ -137,7 +137,7 @@ trait FilesystemReorganizationTrait {
         }
         else {
           // The class calling this trait can set the path.
-          if (method_exists($this,"setPath")) {
+          if (method_exists($this, "setPath")) {
             $hash = trim($this->setPath($uri), "/");
           }
           else {
