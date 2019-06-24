@@ -17,6 +17,10 @@ function bos_news_and_announcements_theme() {
     'base hook' => 'view',
     'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
   ];
+  $theme['views_view_fields__news_and_announcements'] = [
+    'base hook' => 'view',
+    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+  ];
   $theme['node__post__listing_short'] = [
     'base hook' => 'node',
     'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
