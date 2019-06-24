@@ -100,7 +100,7 @@ class MigrationConfigAlter {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
-    'd7_taxonomy_vocabulary',
+//    'd7_taxonomy_vocabulary',
     'd7_theme_settings',
     'd7_user_flood',
     'd7_user_mail',
@@ -138,6 +138,7 @@ class MigrationConfigAlter {
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
     "d7_file" => ["bos:initial:0"],
+    "d7_taxonomy_vocabulary" => ["bos:initial:0"],
     /* "d7_block" => ["bos:initial:1"], */
     "paragraph__3_column_w_image" => ["bos:paragraph:3"],
     "paragraph__bid" => ["bos:paragraph:2"],
@@ -1001,7 +1002,6 @@ class MigrationConfigAlter {
     // Execute targeted alternations to $this->migrations.
     $this->customAlterations();
     $this->customAlteration("d7_taxonomy_term:contact");
-    $this->customAlteration("d7_taxonomy_term:newsletters");
     $this->customAlteration("node_revision");
     $this->richTextFieldAlter();
     $this->breakCyclicalDependencies();
@@ -1224,22 +1224,14 @@ class MigrationConfigAlter {
    */
   private function customAlteration(string $migration = NULL) {
     $defVals = [
-      "d7_taxonomy_term:newsletters" => "newsletters",
       "d7_taxonomy_term:contact" => "contact",
       "node_revision" => "node_revision",
     ];
 
     switch ($migration) {
       case "d7_taxonomy_term:contact":
-      case "d7_taxonomy_term:newsletters":
         $tmp = $this->migrations[$migration]["process"]["vid"];
-        $this->migrations[$migration]["process"]["vid"] = [
-          $tmp,
-          [
-            "plugin" => "default_value",
-            "default_value" => $defVals[$migration],
-          ],
-        ];
+        $this->migrations[$migration]["process"]["field_department_profile"] = "field_department_profile";
         break;
 
       case "node_revision":
