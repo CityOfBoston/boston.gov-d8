@@ -36,9 +36,8 @@
   <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
   <div class="news-item-wrapper">
     <div class="thumb-wrapper float-left">
-      {% if not fields.field_thumbnail.raw == NULL %}
-        {{ fields.field_thumbnail.content }}
-      {% else %}
+      {% set thumbnail = fields.field_thumbnail.content|striptags|trim %}
+      {% if thumbnail == "" %}
         {% if fields.field_intro_image.content == "default" %}
           {{ fields.field_intro_image.content }}
         {% else %}
@@ -46,6 +45,8 @@
             <span>Image for {{ fields.title.content }}</span>
           </div>
         {% endif %}
+      {% else %}
+        {{ fields.field_thumbnail.content }}
       {% endif %}
       <div class="date-flag">
         {{ fields.field_event_dates.content }}
