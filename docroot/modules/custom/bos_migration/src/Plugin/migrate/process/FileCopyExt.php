@@ -88,6 +88,7 @@ class FileCopyExt extends FileCopy {
     $value[0] = $source;
 
     // Now move the file.
+    $this->downloadPlugin->configuration['guzzle_options']["read_timeout"] = 120000;
     return parent::transform($value, $migrate_executable, $row, $destination_property);
 
   }
