@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\bos_migration;
-
 
 use Drupal\Core\Database\Database;
 
@@ -19,13 +17,14 @@ use Drupal\Core\Database\Database;
  *
  * @package Drupal\bos_migration
  */
-class migrationFixes {
+class MigrationFixes {
 
   /**
-   * This updates the taxonomy_vocab migration map so that taxonomy entries
-   * can later be run with --update flag set.
+   * This updates the taxonomy_vocab migration map.
+   *
+   * Required so that taxonomy entries can later be run with --update flag set.
    */
-  static function fixTaxonomyVocabulary() {
+  public static function fixTaxonomyVocabulary() {
     $d7_connection = Database::getConnection("default", "migrate");
     $query = $d7_connection->select("taxonomy_vocabulary", "v")
       ->fields("v", ["vid", "machine_name"]);
@@ -45,7 +44,6 @@ class migrationFixes {
       $d8_connection->truncate("migrate_message_d7_taxonomy_vocabulary")
         ->execute();
     }
-
 
   }
 

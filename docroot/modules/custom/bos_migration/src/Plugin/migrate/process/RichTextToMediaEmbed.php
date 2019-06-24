@@ -10,14 +10,8 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  * fields.
  */
 
-use Drupal\bos_migration\Plugin\migrate\process\FileCopyExt;
-use Drupal\Component\Utility\Unicode;
-use Drupal\Core\File\FileSystemInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
-use Drupal\migrate\Plugin\MigrateProcessInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\Component\Utility\Html;
@@ -26,7 +20,6 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
 use Exception;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -73,13 +66,18 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *
    * @param string $value
    *   The value.
+   * @param \Drupal\migrate\Row $row
+   *   The current row.
    * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
    *   The migrate executable.
    *
    * @return string
    *   Process rich text string (html string).
    *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\migrate\MigrateException
    */
   public function convertToEntityEmbed($value, Row $row, MigrateExecutableInterface $migrate_executable) {
     // D7 media embeds get stored as funky tokens. Replace them with valid HTML
@@ -154,8 +152,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         $link_node->setAttribute('data-entity-uuid', $media_entity->uuid());
         $link_node->setAttribute('href', "/media/{$media_entity->id()}");
       }
-      // Migrate (copy/move) the file.
-
     }
 
     return Html::serialize($document);
@@ -278,11 +274,18 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   The file src.
    * @param string $targetBundle
    *   The bundle of the media entity we want to create.
+   * @param \Drupal\migrate\Row $row
+   *   The current row.
+   * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
+   *   Interface.
    *
    * @return \Drupal\Core\Entity\EntityInterface|\Drupal\media\Entity\Media|null
    *   The media entity.
    *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\migrate\MigrateException
    */
   public function createMediaEntity(string $src, string $targetBundle, Row $row, MigrateExecutableInterface $migrate_executable) {
     if (!in_array($targetBundle, ['image', 'document'])) {
@@ -304,7 +307,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $uri = $this->convertToStreamWrapper($uri);
     // We are doing some reorganzing of the filesystem, so make sure that the
     // uri is converted to the new format if applicable.
-    $uri = $this->rewriteUri($uri, $row->getSource()); // TODO: Check the second parameter is relevant for function ... (need mime and date etc)
+    $uri = $this->rewriteUri($uri, $row->getSource());
     $file = $this->getFile($uri);
     if (!$file) {
       // File is not in the ManagedFiles table -> Need to go fetch the file ...
@@ -326,7 +329,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       try {
         $file = $this->saveFile($uri);
         if (empty($file)) {
-          throw new Exception("Could not copy " . $src ." and save as " . $uri. ".");
+          throw new Exception("Could not copy " . $src . " and save as " . $uri . ".");
         }
       }
       catch (Exception $e) {
@@ -456,10 +459,11 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *
    * @return \Drupal\file\Entity\File|null
    *   File entity object.
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @todo inject entityTypeManager?
    *
+   * @todo inject entityTypeManager?
    */
   public function getFile($uri) {
     $file_entities = \Drupal::entityTypeManager()
@@ -471,16 +475,17 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   /**
    * Create a new File object and save (in table file_managed).
    *
-   * @param $uri
+   * @param string $uri
    *   The uri to create in the file_managed table.
    *
    * @return \Drupal\Core\Entity\EntityInterface
    *   The file object just created.
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function saveFile($uri) {
+  public function saveFile(string $uri) {
     $filename = end(explode("/", $uri));
     $filename = explode(".", $filename)[0];
     $entity = \Drupal::entityTypeManager()

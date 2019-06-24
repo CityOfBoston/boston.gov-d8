@@ -84,7 +84,6 @@ class MigrationConfigAlter {
     'd7_language_content_settings',
     'd7_language_negotiation_settings',
     'd7_language_types',
-      /* 'd7_node_revision', */
     'd7_node_settings',
     'd7_node_title_label',
     'd7_node_translation',
@@ -100,7 +99,6 @@ class MigrationConfigAlter {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
-//    'd7_taxonomy_vocabulary',
     'd7_theme_settings',
     'd7_user_flood',
     'd7_user_mail',
@@ -943,7 +941,7 @@ class MigrationConfigAlter {
     ],
     "file" => [
       'field_document' => ['field_document'],
-    ]
+    ],
   ];
 
   /**
@@ -1177,7 +1175,6 @@ class MigrationConfigAlter {
         }
       }
     }
-
 
     // Finally, make log-report entry.
     foreach (["notice", "warning"] as $logType) {
@@ -1662,7 +1659,7 @@ class MigrationConfigAlter {
               [
                 'plugin' => "migration_lookup",
                 'source' => "fid",
-                'migration' => "d7_file"
+                'migration' => "d7_file",
               ],
             ],
             "description" => "@field_title",
