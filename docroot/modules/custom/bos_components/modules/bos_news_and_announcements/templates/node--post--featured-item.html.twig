@@ -106,3 +106,28 @@
   </div>
 </article>
 {% endif %}
+
+<article id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> post-featured-item-wrapper clearfix mobile-1-col">
+  <a href="<?php print $node_url; ?>" class="item-link"><?php print $title; ?></a>
+  <div class="mobile-1-col tablet-1-col desktop-2-col thumb-column featured-item-thumb featured-post-thumb">
+      <div class="featured-thumb-wrapper">
+        <?php if (isset($content['field_thumbnail'])): ?>
+        <?php print render($content['field_thumbnail']); ?>
+          <?php else: ?>
+          <div class="news-item-default-image" style="background-image: url('<?php print $asset_url ?>/images/<?php print $asset_name ?>/icons/news.svg');">
+            <span>Default News image</span>
+          </div>
+          <?php endif; ?>
+        <div class="date-flag"><?php print render($content['field_published_date']); ?></div>
+      </div>
+    </div>
+    <div class="mobile-1-col tablet-1-col desktop-2-col featured-item-details">
+      <div class="text-wrapper">
+        <div class="feature-header">
+          <h3 class="title"><?php print $title; ?></h3>
+          <div class="department-title"><?php print render($content['field_contact']); ?></div>
+        </div>
+      <div class="intro-text"><?php print render($content['field_intro_text']); ?></div>
+    </div>
+  </div>
+</article>
