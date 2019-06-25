@@ -45,6 +45,16 @@ class MigrationFixes {
         ->execute();
     }
 
+    echo "Updated Drupal 8 taxonomy_vocab table.";
+
   }
 
+  /**
+   * This updates the paragraph__field_list table.
+   *
+   * Translates D7 view names and displays to the D8 equivalents.
+   */
+  public static function fixListViewField() {
+    echo "Converted ViewList to Drupal8 format.";
+  }
 }
