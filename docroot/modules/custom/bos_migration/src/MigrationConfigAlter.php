@@ -411,6 +411,7 @@ class MigrationConfigAlter {
           [
             "plugin" => "default_value",
             "default_value" => "21",
+            "strict" => "FALSE",
           ],
         ],
         'field_internal_link/title' => [
@@ -541,6 +542,45 @@ class MigrationConfigAlter {
               "fallback_to_site_default" => "true",
             ],
             "delta" => "delta",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_contact_info" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_members" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_summary" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
           ],
         ],
       ],
@@ -1573,7 +1613,7 @@ class MigrationConfigAlter {
               [
                 "plugin" => "skip_on_empty",
                 "method" => "process",
-                'source' => "tid",
+                'source' => "target_id",
               ],
               [
                 "plugin" => "migration_lookup",
