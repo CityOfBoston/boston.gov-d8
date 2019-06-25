@@ -18,23 +18,7 @@ process:
   field_contact: field_contact
   field_short_title: field_short_title
   field_component_title: field_component_title
-  field_list:
-    plugin: iterator
-    source: field_list
-    process:
-      field_list_arguments: field_list_vargs
-      field_list_display_id: field_list_vname
-      field_list_target_id: entity_type
-      bundle: bundle
-      entity_id: entity_id
-      revision_id: revision_id
-      deleted: deleted
-      langcode:
-        plugin: default_value
-        source: language
-        default_value: und
-        fallback_to_site_default: true
-      delta: delta
+  field_list: field_list
 destination:
   plugin: 'entity_reference_revisions:paragraph'
   default_bundle: list
