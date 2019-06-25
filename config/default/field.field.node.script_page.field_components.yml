@@ -26,12 +26,13 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_mini_grid
     - paragraphs.paragraphs_type.hero_image
     - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.list
+    - paragraphs.paragraphs_type.map
     - paragraphs.paragraphs_type.news_and_announcements
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
-    - paragraphs.paragraphs_type.upcoming_events
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -46,15 +47,13 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
+  handler: 'default:paragraph'
   handler_settings:
     negate: 0
     target_bundles:
       3_column_w_image: 3_column_w_image
       bos311: bos311
-      bos_signup_emergency_alerts: bos_signup_emergency_alerts
       cabinet: cabinet
-      commission_summary: commission_summary
-      commission_members: commission_members
       drawers: drawers
       events_and_notices: events_and_notices
       featured_topics: featured_topics
@@ -63,20 +62,24 @@ settings:
       grid_of_people: grid_of_people
       grid_of_places: grid_of_places
       grid_of_programs_initiatives: grid_of_programs_initiatives
-      grid_of_quotes: grid_of_quotes
       grid_of_topics: grid_of_topics
       group_of_links_grid: group_of_links_grid
+      grid_of_quotes: grid_of_quotes
       group_of_links_list: group_of_links_list
       group_of_links_mini_grid: group_of_links_mini_grid
       hero_image: hero_image
       iframe: iframe
+      list: list
+      map: map
       news_and_announcements: news_and_announcements
       newsletter: newsletter
       photo: photo
       text: text
       transaction_grid: transaction_grid
-      upcoming_events: upcoming_events
       video: video
+      bos_signup_emergency_alerts: bos_signup_emergency_alerts
+      commission_members: commission_members
+      commission_summary: commission_summary
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: true
@@ -87,51 +90,15 @@ settings:
       cabinet:
         enabled: true
         weight: -94
-      card:
-        enabled: false
-        weight: -42
-      city_score_dashboard:
-        enabled: false
-        weight: -56
-      custom_hours_text:
-        enabled: false
-        weight: -79
-      daily_hours:
-        enabled: false
-        weight: -78
-      discussion_topic:
-        enabled: false
-        weight: -41
-      document:
-        enabled: false
-        weight: -77
-      drawer:
-        enabled: false
-        weight: -76
       drawers:
         enabled: true
         weight: -93
-      election_results:
-        enabled: false
-        weight: -54
-      external_link:
-        enabled: false
-        weight: -74
-      featured_item:
-        enabled: false
-        weight: -73
       featured_topics:
         enabled: true
         weight: -92
-      feedback:
-        enabled: true
-        weight: -91
       fyi:
         enabled: true
         weight: -90
-      gol_list_links:
-        enabled: false
-        weight: -72
       grid_of_cards:
         enabled: true
         weight: -89
@@ -144,50 +111,68 @@ settings:
       grid_of_programs_initiatives:
         enabled: true
         weight: -86
-      grid_of_quotes:
-        enabled: true
-        weight: -83
       grid_of_topics:
         enabled: true
         weight: -85
       group_of_links_grid:
         enabled: true
         weight: -84
+      grid_of_quotes:
+        enabled: true
+        weight: -83
       group_of_links_list:
         enabled: true
         weight: -82
       group_of_links_mini_grid:
         enabled: true
         weight: -81
-      header_text:
-        enabled: false
-        weight: -69
       hero_image:
         enabled: true
         weight: -80
-      how_to_contact_step:
+      custom_hours_text:
+        weight: -79
         enabled: false
-        weight: -68
-      how_to_tab:
+      daily_hours:
+        weight: -78
         enabled: false
-        weight: -67
-      how_to_text_step:
+      document:
+        weight: -77
         enabled: false
-        weight: -66
+      drawer:
+        weight: -76
+        enabled: false
       iframe:
         enabled: true
         weight: -75
-      internal_link:
+      external_link:
+        weight: -74
         enabled: false
+      gol_list_links:
+        weight: -72
+        enabled: false
+      internal_link:
         weight: -71
+        enabled: false
       list:
         enabled: true
         weight: -70
+      header_text:
+        weight: -69
+        enabled: false
+      how_to_contact_step:
+        weight: -68
+        enabled: false
+      how_to_tab:
+        weight: -67
+        enabled: false
+      how_to_text_step:
+        weight: -66
+        enabled: false
+      message_for_the_day:
+        weight: -65
+        enabled: false
       map:
         enabled: true
-        weight: -65
-      message_for_the_day:
-        enabled: false
         weight: -65
       news_and_announcements:
         enabled: true
@@ -198,75 +183,72 @@ settings:
       photo:
         enabled: true
         weight: -62
-      quote:
-        enabled: false
-        weight: -47
-      recollect_widget:
-        enabled: false
-        weight: -46
-      script_embed:
-        enabled: false
-        weight: -45
-      seamless_doc:
-        enabled: false
-        weight: -44
       sidebar_item:
-        enabled: false
         weight: -61
+        enabled: false
       sidebar_item_w_icon:
-        enabled: false
         weight: -60
+        enabled: false
       social_media_links:
-        enabled: false
         weight: -59
+        enabled: false
       social_networking:
-        enabled: false
         weight: -58
-      status_override:
         enabled: false
-        weight: -43
-      tabbed_content_tab:
+      city_score_dashboard:
+        weight: -56
         enabled: false
-        weight: -40
       text:
         enabled: true
         weight: -55
+      election_results:
+        weight: -54
+        enabled: false
       text_one_column:
-        enabled: false
         weight: -53
-      text_three_column:
         enabled: false
-        weight: -51
       text_two_column:
-        enabled: false
         weight: -52
+        enabled: false
+      text_three_column:
+        weight: -51
+        enabled: false
       transaction_grid:
         enabled: true
         weight: -50
       upcoming_events:
-        enabled: true
         weight: -49
-      user_action:
         enabled: false
-        weight: -57
       video:
         enabled: true
         weight: -48
-      bid:
+      quote:
+        weight: -47
         enabled: false
+      seamless_doc:
+        weight: -44
+        enabled: false
+      card:
+        weight: -42
+        enabled: false
+      discussion_topic:
+        weight: -41
+        enabled: false
+      tabbed_content_tab:
+        weight: -40
+        enabled: false
+      bid:
         weight: -39
+        enabled: false
       bos_signup_emergency_alerts:
         enabled: true
         weight: -38
       columns:
-        enabled: false
         weight: -37
+        enabled: false
       commission_contact_info:
-        enabled: false
         weight: -36
-      commission_info:
         enabled: false
-        weight: -35
       commission_members:
         enabled: true
         weight: -34
@@ -274,25 +256,21 @@ settings:
         enabled: true
         weight: -33
       grid_links:
-        enabled: false
         weight: -32
+        enabled: false
       lightbox_link:
-        enabled: false
         weight: -31
-      map_coordinates:
         enabled: false
-        weight: -30
-      map_esri_feed:
-        enabled: false
-        weight: -29
-      map_pin:
-        enabled: false
-        weight: -28
       transactions:
-        enabled: false
         weight: -27
+        enabled: false
+      commission_search:
+        weight: 76
+        enabled: false
+      from_library:
+        weight: 87
+        enabled: false
       events_and_notices:
         weight: 125
         enabled: true
-  handler: 'default:paragraph'
 field_type: entity_reference_revisions

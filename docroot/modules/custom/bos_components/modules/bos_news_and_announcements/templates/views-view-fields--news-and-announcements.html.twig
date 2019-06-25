@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * Default view template to display all the fields in a row.
+ *
+ * Available variables:
+ * - view: The view in use.
+ * - fields: A list of fields, each one contains:
+ *   - content: The output of the field.
+ *   - raw: The raw data for the field, if it exists. This is NOT output safe.
+ *   - class: The safe class ID to use.
+ *   - handler: The Views field handler controlling this field.
+ *   - inline: Whether or not the field should be inline.
+ *   - wrapper_element: An HTML element for a wrapper.
+ *   - wrapper_attributes: List of attributes for wrapper element.
+ *   - separator: An optional separator that may appear before a field.
+ *   - label: The field's label text.
+ *   - label_element: An HTML element for a label wrapper.
+ *   - label_attributes: List of attributes for label wrapper.
+ *   - label_suffix: Colon after the label.
+ *   - element_type: An HTML element for the field content.
+ *   - element_attributes: List of attributes for HTML element for field content.
+ *   - has_label_colon: A boolean indicating whether to display a colon after
+ *     the label.
+ *   - element_type: An HTML element for the field content.
+ *   - element_attributes: List of attributes for HTML element for field content.
+ * - row: The raw result from the query, with all data it fetched.
+ *
+ * @see template_preprocess_views_view_fields()
+ *
+ * @ingroup themeable
+ */
+#}
+
+<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing">
+  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
+  <div class="news-item-wrapper">
+      <div class="thumb-wrapper float-left">
+        {% set thumbnail = fields.field_thumbnail.content|striptags|trim %}
+        {% if thumbnail == "" %}
+          <div
+            class="news-item-default-image"
+            style="background-image: url('{{ asset_url }}/images/public/icons/news.svg')">
+            <span>Default News image</span>
+          </div>
+        {% else %}
+          {{ thumbnail }}
+        {% endif %}
+        <div class="date-flag">{{ fields.field_published_date.content }}</div>
+      </div>
+      <div class="text-wrapper">
+        <h3 class="title">{{ fields.title.content|striptags|truncate(97, TRUE, "...") }}</h3>
+        <div class="department-title">{{ fields.field_contact.content }}</div>
+      </div>
+  </div>
+</div>
