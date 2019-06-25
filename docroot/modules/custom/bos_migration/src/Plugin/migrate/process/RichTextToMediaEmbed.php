@@ -96,7 +96,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $src = preg_replace("~^((/)?modules/file)~", "/sites/modules/file", $src);
 
       // Change references to pre-production or editor sites.
-      $src = $this->correctSubDomain($src);
+      $src = $this->correctSubDomain(trim($src));
 
       if ($this->isExternalFile($src)) {
         continue;
@@ -143,7 +143,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       }
 
       // Change references to pre-production or editor sites.
-      $href = $this->correctSubDomain($href);
+      $href = $this->correctSubDomain(trim($href));
 
       if ($media_entity = $this->createMediaEntity($href, 'document', $row, $migrate_executable)) {
         // Alter <a> element.
