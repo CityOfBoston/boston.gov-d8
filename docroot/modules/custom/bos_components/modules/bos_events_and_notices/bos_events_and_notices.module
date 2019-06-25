@@ -5,6 +5,8 @@
  * The Base module file for bos_events_and_notices module.
  */
 
+use Drupal\node\Entity\Node;
+
 /**
  * Implements hook_theme().
  */
@@ -44,7 +46,7 @@ function bos_events_and_notices_preprocess_paragraph__events_and_notices(&$varia
  */
 function bos_events_and_notices_preprocess_views_view_fields(&$variables) {
   if ($variables["view"]->storage->id() == 'events_and_notices') {
-    if ($node = \Drupal\node\Entity\Node::load($variables["row"]->nid)) {
+    if ($node = Node::load($variables["row"]->nid)) {
       $type = $node->getType();
       $variables['type_class'] = 'news-item-' . $type;
     }
