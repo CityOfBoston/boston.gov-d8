@@ -78,26 +78,31 @@
  * @ingroup themeable
  #}
 
-<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing">
-  <a href="{{ node_url }}" class="item-link"></a>
-  <div class="news-item-wrapper">
-      <div class="thumb-wrapper float-left">
-        {% if node.field_thumbnail.isempty %}
-          <div
-            class="news-item-default-image"
-            style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
-            <span>Default News image</span>
-          </div>
-        {% else %}
-          {{ content.field_thumbnail }}
-        {% endif %}
-        <div class="date-flag">{{ content.field_published_date }}</div>
+{% if not is_expired %}
+<article id="node-{{ node.id }}" class="{{ classes }} event-featured-item-wrapper clearfix">
+  <div class="desktop-2-col featured-item-details featured-item-details--relative">
+    <div class="date-flag date-flag--blue date-flag--left">
+      {% if content.field_event_dates %}
+        {{ content.field_event_dates }}
+      {% endif %}
+    </div>
+    <h3 class="featured-event-title">{{ content.title.0['#context'].value }}</h3>
+    <div class="featured-description">
+      {{ content.field_description.0['#text']|raw }}
+    </div>
+    {% if content.field_details_link %}
+      <div class="external-link external-link--inline">
+        <a class="button" href="{{ content.field_details_link.0['#url'] }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
       </div>
-      <div class="text-wrapper">
-        <h3 class="title">
-          {{ node.label|truncate(97, TRUE, "...") }}
-        </h3>
-        <div class="department-title">{{ content.field_contact }}</div>
-      </div>
+    {% else %}
+      <a class="button" href="{{ node.url }}">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
+    {% endif %}
   </div>
-</div>
+  <div class="desktop-2-col featured-item-thumb">
+    <div class="featured-thumb-wrapper">
+      <div class="featured-banner">Featured</div>
+      {{ content.field_thumbnail }}
+    </div>
+  </div>
+</article>
+{% endif %}
