@@ -711,8 +711,6 @@ class MigrationConfigAlter {
         'paragraph__commission_contact_info',
       ],
       "field_links" => [
-//        'paragraph__grid_links',
-//        'd7_field_collection_grid_links',
         'paragraph__document',
         'paragraph__external_link',
         'paragraph__internal_link',
