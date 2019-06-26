@@ -6,11 +6,11 @@ function doMigrate() {
     SECONDS=0
     ERRORS=0
 
-    set +e
-
     while true; do
         printf "\nlando drush mim $*\n" | tee -a bos_migration.log
-        lando drush mim $* | tee -a bos_migration.log
+        if [ true ]; then
+            lando drush mim $* | tee -a bos_migration.log
+        fi
         retVal=$?
         echo "ExitCode: ${retVal}"
         if [ $retVal -eq 0 ]; then break; fi
@@ -29,15 +29,19 @@ function doMigrate() {
     printf " -> $minutes minute(s) and $seconds seconds.${NC}\n" | tee -a bos_migration.log
 }
 
-set +e
-
 # Remove old database and restore baseline
-#RESTORE="/app/dump/migration/migration_clean_reset.sql"
-#RESTORE="/app/dump/migration/migration_clean_with_prereq.sql"
-#RESTORE="/app/dump/migration/migration_clean_after_taxonomy.sql"
-#RESTORE="/app/dump/migration/migration_clean_after_all_paragraphs.sql"
+RESTORE="/app/dump/migration/migration_clean_reset.sql"
+RESTORE="/app/dump/migration/migration_clean_with_prereq.sql"
+RESTORE="/app/dump/migration/migration_clean_after_taxonomy.sql"
+RESTORE="/app/dump/migration/migration_clean_after_all_paragraphs.sql"
 RESTORE="/app/dump/migration/migration_clean_after_field_collection.sql"
-#RESTORE="/app/dump/migration/migration_clean_after_para_update_1.sql"
+RESTORE="/app/dump/migration/migration_clean_after_para_update_1.sql"
+RESTORE="/app/dump/migration/migration_clean_after_node1.sql"
+#RESTORE="/app/dump/migration/migration_clean_after_nodes.sql"
+#RESTORE="/app/dump/migration/migration_clean_after_para_update_2.sql"
+#RESTORE="/app/dump/migration/migration_clean_after_node_revision1.sql"
+#RESTORE="/app/dump/migration/migration_clean_after_node_revision.sql"
+#RESTORE="/app/dump/migration/migration_FINAL.sql"
 
 printf "RESTORING DB ${RESTORE}\n" | tee bos_migration.log
 lando mysql -e"DROP SCHEMA IF EXISTS drupal;"
@@ -52,16 +56,16 @@ lando ssh -s database -c "mysql -uroot --password= --database=drupal < ${RESTORE
 #lando drush sset "bos_migration.active" "1"
 #
 ## Sync current config with the database.
-##lando drush cim -y  | tee -a bos_migration.log
-##lando drush cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a bos_migration.log
-### rebuild the migration configs.
-##lando drush updb -y  | tee -a bos_migration.log
+#lando drush cim -y  | tee -a bos_migration.log
+#lando drush cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a bos_migration.log
+## rebuild the migration configs.
+#lando drush updb -y  | tee -a bos_migration.log
 lando drush cr  | tee -a bos_migration.log
 lando drush ms  | tee -a bos_migration.log
-
+#
 ## Migrate files first.
 #doMigrate --tag="bos:initial:0" --force           # 31 mins
-
+#
 ## Perform the lowest level safe-dependencies.
 #doMigrate --tag="bos:initial:1" --force           # 7 mins
 #lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_with_prereq.sql"
@@ -79,42 +83,39 @@ lando drush ms  | tee -a bos_migration.log
 #doMigrate --tag="bos:paragraph:4" --force               # 1 min 15 secs
 #lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_all_paragraphs.sql"
 #
-# Do these last b/c creates new paragraphs that might steal existing paragraph entity & revision id's.
+## Do these last b/c creates new paragraphs that might steal existing paragraph entity & revision id's.
 #doMigrate --group=bos_field_collection -q --force       # 4 mins
 #lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_field_collection.sql"
 #
-doMigrate --tag="bos:paragraph:10" --force --update      # 1 min 15 secs
-#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_para_update_1.sql"
-exit 0
-
+## Redo paragraphs which required field_collections to be migrated to para's first.
+#doMigrate --tag="bos:paragraph:10" --force --update      # 3 min 15 secs
+## Fix the listview component to match new view names and displays.
 #lando ssh -c"/app/vendor/bin/drush php-eval '\Drupal\bos_migration\MigrationFixes::fixListViewField();'"
-
-doMigrate --tag="bos:node:1" --force
+#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_para_update_1.sql"
+#
+## Migrate nodes in sequence.
+#doMigrate --tag="bos:node:1" --force
 #lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node1.sql"
-doMigrate --tag="bos:node:2" --force
-#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_nodes.sql"
+doMigrate --tag="bos:node:2" --force                # 14 mins
+lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node2.sql"
+doMigrate --tag="bos:node:3" --force                # 4 mins
+lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node3.sql"
+doMigrate --tag="bos:node:4" --force
+lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_nodes.sql"
 
+# Redo para's which have nodes in fields.
 doMigrate --tag="bos:paragraph:99" --force --update     # ( paras with node dependencies)
-#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_para_update_2.sql"
+lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_para_update_2.sql"
 
+## Now do the node revisions (nodes and all paras must be done first)
+#doMigrate --tag="bos:node_revision:1" --force
+#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node_revision1.sql"
+#doMigrate --tag="bos:node_revision:2" --force
+#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node_revision.sql"
 
-# deps:nodes
+## Finish off.
+#doMigrate d7_menu_links,d7_menu,d7_block --force
+#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_FINAL.sql"
 
-doMigrate --tag="bos:node_revision:1" --force
-
-doMigrate --tag="bos:node_revision:2" --force
-
-# Redo the internal_link (done in para:1)
-doMigrate paragraph__internal_link --force
-
- Second pass.
-doMigrate --group=d7_node --update --execute-dependencies
-
-# Finish off.
-doMigrate d7_menu_links,d7_menu,d7_block --force
-
-lando drush sdel "bos_migration.active"
-lando drush sset "bos_migration.fileOps" "copy"
-
-exit 0
-
+#lando drush sdel "bos_migration.active"
+#lando drush sset "bos_migration.fileOps" "copy"
