@@ -57,4 +57,5 @@ class MigrationFixes {
   public static function fixListViewField() {
     echo "Converted ViewList to Drupal8 format.";
   }
+
 }
