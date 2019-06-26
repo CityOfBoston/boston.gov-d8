@@ -138,11 +138,11 @@ class MigrationConfigAlter {
     "d7_file" => ["bos:initial:0"],
     "d7_taxonomy_vocabulary" => ["bos:initial:0"],
     /* "d7_block" => ["bos:initial:1"], */
-    "paragraph__3_column_w_image" => ["bos:paragraph:3"],
+    "paragraph__3_column_w_image" => ["bos:paragraph:3", "bos:paragraph:10"],
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
     "paragraph__bos_signup_emergency_alerts" => ["bos:paragraph:2"],
-    "paragraph__cabinet" => ["bos:paragraph:4"],
+    "paragraph__cabinet" => ["bos:paragraph:3", "bos:paragraph:99"],
     "paragraph__card" => ["bos:paragraph:2"],
     "paragraph__city_score_dashboard" => ["bos:paragraph:1"],
     "paragraph__commission_contact_info" => ["bos:paragraph:1"],
@@ -156,17 +156,18 @@ class MigrationConfigAlter {
     "paragraph__drawers" => ["bos:paragraph:3"],
     "paragraph__election_results" => ["bos:paragraph:1"],
     "paragraph__external_link" => ["bos:paragraph:1"],
-    "paragraph__featured_topics" => ["bos:paragraph:5"],
-    "paragraph__from_library" => ["bos:paragraph:5"],
+    "paragraph__events_notices" => ["bos:paragraph:2", "bos:paragraph:99"],
+    "paragraph__featured_topics" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__from_library" => ["bos:paragraph:4"],
     "paragraph__fyi" => ["bos:paragraph:2"],
     "paragraph__gol_list_links" => ["bos:paragraph:2"],
     "paragraph__grid_of_cards" => ["bos:paragraph:3"],
-    "paragraph__grid_of_people" => ["bos:paragraph:5"],
-    "paragraph__grid_of_places" => ["bos:paragraph:5"],
-    "paragraph__grid_of_programs_initiatives" => ["bos:paragraph:5"],
+    "paragraph__grid_of_people" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__grid_of_places" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__grid_of_programs_initiatives" => ["bos:paragraph:4", "bos:paragraph:99"],
     "paragraph__grid_of_quotes" => ["bos:paragraph:3"],
-    "paragraph__grid_of_topics" => ["bos:paragraph:5"],
-    "paragraph__group_of_links_grid" => ["bos:paragraph:3"],
+    "paragraph__grid_of_topics" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__group_of_links_grid" => ["bos:paragraph:3", "bos:paragraph:10"],
     "paragraph__group_of_links_list" => ["bos:paragraph:3"],
     "paragraph__group_of_links_mini_grid" => ["bos:paragraph:3"],
     "paragraph__header_text" => ["bos:paragraph:2"],
@@ -175,12 +176,12 @@ class MigrationConfigAlter {
     "paragraph__how_to_tab" => ["bos:paragraph:3"],
     "paragraph__how_to_text_step" => ["bos:paragraph:2"],
     "paragraph__iframe" => ["bos:paragraph:1"],
-    "paragraph__internal_link" => ["bos:paragraph:1", "bos:paragraph:5"],
+    "paragraph__internal_link" => ["bos:paragraph:1", "bos:paragraph:99"],
     "paragraph__lightbox_link" => ["bos:paragraph:2"],
     "paragraph__list" => ["bos:paragraph:3"],
     "paragraph__map" => ["bos:paragraph:1"],
     "paragraph__message_for_the_day" => ["bos:paragraph:2"],
-    "paragraph__news_and_announcements" => ["bos:paragraph:5"],
+    "paragraph__news_and_announcements" => ["bos:paragraph:4", "bos:paragraph:99"],
     "paragraph__newsletter" => ["bos:paragraph:2"],
     "paragraph__photo" => ["bos:paragraph:2"],
     "paragraph__quote" => ["bos:paragraph:2"],
@@ -193,27 +194,26 @@ class MigrationConfigAlter {
     "paragraph__text_one_column" => ["bos:paragraph:1"],
     "paragraph__text_three_column" => ["bos:paragraph:1"],
     "paragraph__text_two_column" => ["bos:paragraph:1"],
-    "paragraph__transaction_grid" => ["bos:paragraph:2"],
-    "paragraph__events_notices" => ["bos:paragraph:2"],
+    "paragraph__transaction_grid" => ["bos:paragraph:2", "bos:paragraph:10"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
-    "d7_node:article" => ["bos:node:3"],
+    "d7_node:article" => ["bos:node:2"],
     "d7_node:change" => ["bos:node:1"],
     "d7_node:department_profile" => ["bos:node:1"],
     "d7_node:emergency_alert" => ["bos:node:1"],
-    "d7_node:event" => ["bos:node:2"],
+    "d7_node:event" => ["bos:node:3"],
     "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:how_to" => ["bos:node:2"],
     "d7_node:landing_page" => ["bos:node:2"],
     "d7_node:listing_page" => ["bos:node:1"],
     "d7_node:person_profile" => ["bos:node:1"],
     "d7_node:place_profile" => ["bos:node:2"],
-    "d7_node:post" => ["bos:node:2"],
-    "d7_node:procurement_advertisement" => ["bos:node:1"],
+    "d7_node:post" => ["bos:node:3"],
+    "d7_node:procurement_advertisement" => ["bos:node:2"],
     "d7_node:program_initiative_profile" => ["bos:node:2"],
-    "d7_node:public_notice" => ["bos:node:2"],
+    "d7_node:public_notice" => ["bos:node:3"],
     "d7_node:script_page" => ["bos:node:1"],
-    "d7_node:site_alert" => ["bos:node:1"],
+    "d7_node:site_alert" => ["bos:node:4"],
     "d7_node:status_item" => ["bos:node:1"],
     "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
@@ -409,9 +409,9 @@ class MigrationConfigAlter {
             'source' => 'field_internal_link/0/target_id',
           ],
           [
-            "plugin" => "skip_on_empty",
-            "method" => "row",
-            "message" => "node target_id not found in lookup",
+            "plugin" => "default_value",
+            "default_value" => "21",
+            "strict" => "FALSE",
           ],
         ],
         'field_internal_link/title' => [
@@ -477,23 +477,17 @@ class MigrationConfigAlter {
     "paragraph__list" => [
       "process" => [
         "field_list" => [
-          "plugin" => "iterator",
+          "plugin" => "sub_process",
           "source" => "field_list",
           "process" => [
-            "field_list_arguments" => "field_list_vargs",
-            "field_list_display_id" => "field_list_vname",
-            "field_list_target_id" => "entity_type",
-            "bundle" => "bundle",
-            "entity_id" => "entity_id",
-            "revision_id" => "revision_id",
-            "deleted" => "deleted",
-            "langcode" => [
-              "plugin" => "default_value",
-              "source" => "language",
-              "default_value" => "und",
-              "fallback_to_site_default" => "true",
+            "_view" => [
+              "plugin" => "explode",
+              "source" => "vname",
+              "delimiter" => "|",
             ],
-            "delta" => "delta",
+            "target_id" => "@_view/0",
+            "display_id" => "@_view/1",
+            "arguments" => "vargs",
           ],
         ],
       ],
@@ -501,23 +495,17 @@ class MigrationConfigAlter {
     "paragraph__news_and_announcements" => [
       "process" => [
         "field_list" => [
-          "plugin" => "iterator",
+          "plugin" => "sub_process",
           "source" => "field_list",
           "process" => [
-            "field_list_arguments" => "field_list_vargs",
-            "field_list_display_id" => "field_list_vname",
-            "field_list_target_id" => "entity_type",
-            "bundle" => "bundle",
-            "entity_id" => "entity_id",
-            "revision_id" => "revision_id",
-            "deleted" => "deleted",
-            "langcode" => [
-              "plugin" => "default_value",
-              "source" => "language",
-              "default_value" => "und",
-              "fallback_to_site_default" => "true",
+            "_view" => [
+              "plugin" => "explode",
+              "source" => "vname",
+              "delimiter" => "|",
             ],
-            "delta" => "delta",
+            "target_id" => "@_view/0",
+            "display_id" => "@_view/1",
+            "arguments" => "vargs",
           ],
         ],
       ],
@@ -525,23 +513,56 @@ class MigrationConfigAlter {
     "paragraph__events_notices" => [
       "process" => [
         "field_list" => [
-          "plugin" => "iterator",
+          "plugin" => "sub_process",
           "source" => "field_list",
           "process" => [
-            "field_list_arguments" => "field_list_vargs",
-            "field_list_display_id" => "field_list_vname",
-            "field_list_target_id" => "entity_type",
-            "bundle" => "bundle",
-            "entity_id" => "entity_id",
-            "revision_id" => "revision_id",
-            "deleted" => "deleted",
-            "langcode" => [
-              "plugin" => "default_value",
-              "source" => "language",
-              "default_value" => "und",
-              "fallback_to_site_default" => "true",
+            "_view" => [
+              "plugin" => "explode",
+              "source" => "vname",
+              "delimiter" => "|",
             ],
-            "delta" => "delta",
+            "target_id" => "@_view/0",
+            "display_id" => "@_view/1",
+            "arguments" => "vargs",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_contact_info" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_members" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_summary" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
           ],
         ],
       ],
@@ -690,13 +711,10 @@ class MigrationConfigAlter {
         'paragraph__commission_contact_info',
       ],
       "field_links" => [
-        'paragraph__grid_links',
-        'd7_field_collection_grid_links',
         'paragraph__document',
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
-        'paragraph__commission_contact_info',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
@@ -716,6 +734,7 @@ class MigrationConfigAlter {
         'paragraph__sidebar_item_w_icon',
         'paragraph__newsletter',
         'paragraph__social_media_links',
+        'paragraph__commission_contact_info',
       ],
       "field_social_media_link" => [
         'paragraph__social_networking',
@@ -747,6 +766,9 @@ class MigrationConfigAlter {
       ],
       "field_contacts" => [
         "d7_taxonomy_term:contact",
+      ],
+      "field_commission" => [
+        "d7_taxonomy_term:commissions",
       ],
       "field_event_type" => [
         "d7_taxonomy_term:event_type",
@@ -1199,11 +1221,6 @@ class MigrationConfigAlter {
     ];
 
     switch ($migration) {
-      case "d7_taxonomy_term:contact":
-        $tmp = $this->migrations[$migration]["process"]["vid"];
-        $this->migrations[$migration]["process"]["field_department_profile"] = "field_department_profile";
-        break;
-
       case "d7_file":
         // For file migrations replace the core Drupal source plugin with our
         // customized plugin and also the core Drupal process plugin (fileCopy)
@@ -1437,8 +1454,10 @@ class MigrationConfigAlter {
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "taxonomy":
-        return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
+        $data = $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+        $data["field_commission"] = ["field_name" => "field_commission"];
+        return $data;
 
       case "node":
         return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
@@ -1500,6 +1519,35 @@ class MigrationConfigAlter {
               [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
+                "no_stub" => "TRUE",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
+              ],
+              [
+                'plugin' => 'extract_ext',
+                'index' => [0],
+              ],
+            ],
+            "target_revision_id" => [
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
+                'source' => "target_id",
+              ],
+              [
+                'plugin' => 'migration_lookup',
+                'migration' => $entity_field_deps,
+                "no_stub" => "TRUE",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
+              ],
+              [
+                'plugin' => 'extract_ext',
+                'index' => [1],
               ],
             ],
           ],
@@ -1595,6 +1643,11 @@ class MigrationConfigAlter {
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps[0],
+                "no_stub" => "TRUE",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
               ],
               [
                 'plugin' => 'extract',
@@ -1610,6 +1663,11 @@ class MigrationConfigAlter {
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps[0],
+                "no_stub" => "TRUE",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
               ],
               [
                 'plugin' => 'extract',
