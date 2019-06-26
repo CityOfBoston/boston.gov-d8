@@ -197,23 +197,23 @@ class MigrationConfigAlter {
     "paragraph__transaction_grid" => ["bos:paragraph:2", "bos:paragraph:10"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
-    "d7_node:article" => ["bos:node:3"],
+    "d7_node:article" => ["bos:node:2"],
     "d7_node:change" => ["bos:node:1"],
     "d7_node:department_profile" => ["bos:node:1"],
     "d7_node:emergency_alert" => ["bos:node:1"],
-    "d7_node:event" => ["bos:node:2"],
+    "d7_node:event" => ["bos:node:3"],
     "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:how_to" => ["bos:node:2"],
     "d7_node:landing_page" => ["bos:node:2"],
     "d7_node:listing_page" => ["bos:node:1"],
     "d7_node:person_profile" => ["bos:node:1"],
     "d7_node:place_profile" => ["bos:node:2"],
-    "d7_node:post" => ["bos:node:2"],
-    "d7_node:procurement_advertisement" => ["bos:node:1"],
+    "d7_node:post" => ["bos:node:3"],
+    "d7_node:procurement_advertisement" => ["bos:node:2"],
     "d7_node:program_initiative_profile" => ["bos:node:2"],
-    "d7_node:public_notice" => ["bos:node:2"],
+    "d7_node:public_notice" => ["bos:node:3"],
     "d7_node:script_page" => ["bos:node:1"],
-    "d7_node:site_alert" => ["bos:node:1"],
+    "d7_node:site_alert" => ["bos:node:4"],
     "d7_node:status_item" => ["bos:node:1"],
     "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
@@ -711,13 +711,12 @@ class MigrationConfigAlter {
         'paragraph__commission_contact_info',
       ],
       "field_links" => [
-        'paragraph__grid_links',
-        'd7_field_collection_grid_links',
+//        'paragraph__grid_links',
+//        'd7_field_collection_grid_links',
         'paragraph__document',
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
-        'paragraph__commission_contact_info',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
@@ -737,6 +736,7 @@ class MigrationConfigAlter {
         'paragraph__sidebar_item_w_icon',
         'paragraph__newsletter',
         'paragraph__social_media_links',
+        'paragraph__commission_contact_info',
       ],
       "field_social_media_link" => [
         'paragraph__social_networking',
@@ -1223,11 +1223,6 @@ class MigrationConfigAlter {
     ];
 
     switch ($migration) {
-      case "d7_taxonomy_term:contact":
-        // Want to disble the linking to a node at this time.
-        $this->migrations[$migration]["process"]["field_department_profile"] = "field_department_profile";
-        break;
-
       case "d7_file":
         // For file migrations replace the core Drupal source plugin with our
         // customized plugin and also the core Drupal process plugin (fileCopy)
