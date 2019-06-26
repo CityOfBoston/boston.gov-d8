@@ -470,7 +470,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'document':
         $link = $paragraph->get('field_document')->getValue();
-        if (isset($link['0']['target_id'])) {
+        if (isset($link['0']['target_id']) && isset($link['0']['uri'])) {
           $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
           $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
           $results['title'] = 'TMP';
