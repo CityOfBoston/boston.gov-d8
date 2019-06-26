@@ -1,0 +1,31 @@
+uuid: 152b8c46-7ace-4864-89bc-fc4c916f3532
+langcode: en
+status: true
+dependencies:
+  module:
+    - masquerade
+    - user
+  theme:
+    - bos_theme
+id: masquerade
+theme: bos_theme
+region: bottom
+weight: -2
+provider: null
+plugin: masquerade
+settings:
+  id: masquerade
+  label: Masquerade
+  provider: masquerade
+  label_display: visible
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      administrator: administrator
+      site_administrator: site_administrator
+      content_editor: content_editor
+      content_author: content_author
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
