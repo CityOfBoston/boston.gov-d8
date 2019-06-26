@@ -1521,34 +1521,6 @@ class MigrationConfigAlter {
                 'migration' => $entity_field_deps,
                 "no_stub" => "TRUE",
               ],
-              [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-              ],
-              [
-                'plugin' => 'extract_ext',
-                'index' => [0],
-              ],
-            ],
-            "target_revision_id" => [
-              [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-                'source' => "target_id",
-              ],
-              [
-                'plugin' => 'migration_lookup',
-                'migration' => $entity_field_deps,
-                "no_stub" => "TRUE",
-              ],
-              [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-              ],
-              [
-                'plugin' => 'extract_ext',
-                'index' => [1],
-              ],
             ],
           ],
         ];
@@ -1572,6 +1544,7 @@ class MigrationConfigAlter {
               [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
+                "no_stub" => "TRUE",
               ],
               [
                 "plugin" => "skip_on_empty",
