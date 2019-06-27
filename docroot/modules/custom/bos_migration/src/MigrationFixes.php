@@ -109,18 +109,21 @@ class MigrationFixes {
     $d8_connection = Database::getConnection("default", "default");
     $query = $d8_connection->select("paragraph__field_list", "list")
       ->fields("list", ["field_list_target_id", "field_list_display_id"]);
-    $row = $query->execute()->fetchAllAssoc("field_list_target_id");
+    $row = $query->execute()->fetchAllKeyed("field_list_target_id");
 
     // Process each row, making substitutions from map array $viewListMap.
     foreach ($row as $view => $display) {
-      $d8_connection->update("paragraph__field_list")
-        ->fields([
-          "field_list_target_id" => self::$viewListMap[$view][$display][0],
-          "field_list_display_id" => self::$viewListMap[$view][$display][1],
-        ])
-        ->condition("field_list_target_id", $view)
-        ->condition("field_list_display_id", $display)
-        ->execute();
+      $map = self::$viewListMap;
+      if (isset($map[$view][$display])) {
+        $d8_connection->update("paragraph__field_list")
+          ->fields([
+            "field_list_target_id" => $map[$view][$display][0],
+            "field_list_display_id" => $map[$view][$display][1],
+          ])
+          ->condition("field_list_target_id", $view)
+          ->condition("field_list_display_id", $display)
+          ->execute();
+      }
     }
 
   }
