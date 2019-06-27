@@ -507,7 +507,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *   The entity to update.
    * @param \DOMElement $image_node
    *   The element to use for the update.
-   * @param \Drupal\migrate\MigrateExecutableInterface\MigrateExecutableInterface $migrate_executable
+   * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
    *   Related migrate executable object, used to store any message if needed.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
