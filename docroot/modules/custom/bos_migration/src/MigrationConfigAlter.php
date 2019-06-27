@@ -136,7 +136,7 @@ class MigrationConfigAlter {
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
     "d7_file" => ["bos:initial:0"],
-    "d7_taxonomy_vocabulary" => ["bos:initial:0"],
+    /*"d7_taxonomy_vocabulary" => ["bos:initial:0"],*/
     /* "d7_block" => ["bos:initial:1"], */
     "paragraph__3_column_w_image" => ["bos:paragraph:3", "bos:paragraph:10"],
     "paragraph__bid" => ["bos:paragraph:2"],
@@ -381,6 +381,11 @@ class MigrationConfigAlter {
         ],
         '_target_id' => [
           [
+            "plugin" => "default_value",
+            "default_value" => "21",
+            "strict" => "FALSE",
+          ],
+          [
             'plugin' => 'migration',
             'migration' => [
               'd7_node:advpoll',
@@ -407,11 +412,7 @@ class MigrationConfigAlter {
               'd7_node:transaction',
             ],
             'source' => 'field_internal_link/0/target_id',
-          ],
-          [
-            "plugin" => "default_value",
-            "default_value" => "21",
-            "strict" => "FALSE",
+            "no_stub" => "TRUE",
           ],
         ],
         'field_internal_link/title' => [
@@ -425,6 +426,11 @@ class MigrationConfigAlter {
           ],
         ],
         'field_internal_link/uri' => [
+          [
+            "plugin" => "skip_on_empty",
+            "method" => "process",
+            "source" => "@_target_id",
+          ],
           [
             'plugin' => 'concat',
             'delimiter' => "/",
