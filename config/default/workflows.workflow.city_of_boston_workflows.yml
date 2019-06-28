@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - node.type.advpoll
     - node.type.article
     - node.type.department_profile
     - node.type.emergency_alert
@@ -13,8 +14,10 @@ dependencies:
     - node.type.person_profile
     - node.type.place_profile
     - node.type.post
+    - node.type.procurement_advertisement
     - node.type.program_initiative_profile
     - node.type.public_notice
+    - node.type.script_page
     - node.type.site_alert
     - node.type.status_item
     - node.type.tabbed_content
@@ -98,6 +101,7 @@ type_settings:
       weight: 5
   entity_types:
     node:
+      - advpoll
       - article
       - department_profile
       - emergency_alert
@@ -108,8 +112,10 @@ type_settings:
       - person_profile
       - place_profile
       - post
+      - procurement_advertisement
       - program_initiative_profile
       - public_notice
+      - script_page
       - site_alert
       - status_item
       - tabbed_content
