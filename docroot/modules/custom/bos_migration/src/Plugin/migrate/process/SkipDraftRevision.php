@@ -57,7 +57,7 @@ class SkipDraftRevision extends ProcessPluginBase {
       $query->orderBy("hid", "DESC");
       $workbench = $query->execute()->fetchAssoc();
 
-      $map =((empty($this->configuration["save_to_map"]) || $this->configuration["save_to_map"] == "false") ? false : TRUE);
+      $map = ((empty($this->configuration["save_to_map"]) || $this->configuration["save_to_map"] == "false") ? FALSE : TRUE);
 
       if ($workbench['state'] != "published" && !$workbench['is_current']) {
         $msg = $this->configuration["message"] ?: NULL;
@@ -79,4 +79,5 @@ class SkipDraftRevision extends ProcessPluginBase {
     return $value;
 
   }
+
 }
