@@ -54,11 +54,11 @@ class SkipDraftRevision extends ProcessPluginBase {
       $query = $connection->select("workbench_moderation_node_history", "history")
         ->fields('history', ["from_state", "state", "published", "is_current"]);
       $query->condition("vid", $vid);
+      $query->orderBy("hid", "DESC");
       $workbench = $query->execute()->fetchAssoc();
-      $map = $this->configuration["save_to_map"] ?: FALSE;
-      if ($workbench['state'] != "draft") {
-        $map = TRUE;
-      }
+
+      $map =((empty($this->configuration["save_to_map"]) || $this->configuration["save_to_map"] == "false") ? false : TRUE);
+
       if ($workbench['state'] != "published" && !$workbench['is_current']) {
         $msg = $this->configuration["message"] ?: NULL;
         if (!empty($msg)) {
@@ -79,5 +79,4 @@ class SkipDraftRevision extends ProcessPluginBase {
     return $value;
 
   }
-
 }
