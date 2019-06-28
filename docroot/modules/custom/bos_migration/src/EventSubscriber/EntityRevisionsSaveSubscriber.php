@@ -68,7 +68,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       $state_d8 = $revision_d8->get('moderation_state')->getString();
 
       // Establish the moderation states from D7.
-      if (NULL != $workbench_d7 = $event->getRow()->_workbench) {
+      if (NULL == ($workbench_d7 = $event->getRow()->_workbench)) {
         try {
           $connection = Database::getConnection("default", "migrate");
           $query = $connection->select("workbench_moderation_node_history", "history")
@@ -79,6 +79,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
               "is_current",
             ]);
           $query->condition("vid", $event->getRow()->getSource()['vid']);
+          $query->orderBy("hid", "DESC");
           $workbench_d7 = $query->execute()->fetchAssoc();
         }
         catch (Error $e) {
@@ -91,18 +92,21 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       if (isset($workbench_d7) && $state_d8 != $workbench_d7['state']) {
         $revision_d8->get('moderation_state')
           ->setvalue($workbench_d7['state']);
+        $revision_d8->setRevisionLogMessage("Created by Migration.");
         $save = TRUE;
         $params = [
           "@id" => $revision_d8->id(),
           "@rev_id" => $vid,
           "@orig_rev_id" => $event->getRow()->getSource()['vid'],
           "@state" => $workbench_d7['state'],
+          "@old_state" => $state_d8,
           "@node_type" => $event->getMigration()->getSourceConfiguration()['node_type'],
         ];
-        $msg = \Drupal::translation()->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation to @state.", $params);
-        $event->logMessage($msg->render());      }
+        $msg = \Drupal::translation()->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation from @old_state to @state.", $params);
+        $event->logMessage($msg->render());
+      }
 
-      if ($workbench_d7['published'] && $workbench_d7['is_current']) {
+      if ($workbench_d7['published'] == 1 && $workbench_d7['is_current'] == 1) {
         $save = TRUE;
         $revision_d8->setPublished(TRUE);
         $params = [
@@ -115,6 +119,8 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       }
 
       if ($save) {
+        $revision_d8->setNewRevision(FALSE);
+        $revision_d8->isNewRevision(FALSE);
         $revision_d8->save();
       }
     }
