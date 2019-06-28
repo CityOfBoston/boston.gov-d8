@@ -57,6 +57,7 @@ class MigrationConfigAlter {
   protected static $unusedMigrationsById = [
     'd7_authmap',
     'd7_blocked_ips',
+    'd7_block',
     'd7_color',
     'd7_comment',
     'd7_comment_type',
@@ -1251,7 +1252,7 @@ class MigrationConfigAlter {
               "plugin" => "skip_draft_revision",
               "message" => "Skipped draft",
               "source" => "vid",
-              "save_to_map" => "false",
+              "save_to_map" => "true",
             ];
           }
         }
