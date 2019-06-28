@@ -136,8 +136,6 @@ class MigrationConfigAlter {
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
     "d7_file" => ["bos:initial:0"],
-    /*"d7_taxonomy_vocabulary" => ["bos:initial:0"],*/
-    /* "d7_block" => ["bos:initial:1"], */
     "paragraph__3_column_w_image" => ["bos:paragraph:3", "bos:paragraph:10"],
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
@@ -202,7 +200,6 @@ class MigrationConfigAlter {
     "d7_node:department_profile" => ["bos:node:1"],
     "d7_node:emergency_alert" => ["bos:node:1"],
     "d7_node:event" => ["bos:node:3"],
-    "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:how_to" => ["bos:node:2"],
     "d7_node:landing_page" => ["bos:node:2"],
     "d7_node:listing_page" => ["bos:node:1"],
@@ -216,27 +213,28 @@ class MigrationConfigAlter {
     "d7_node:site_alert" => ["bos:node:4"],
     "d7_node:status_item" => ["bos:node:1"],
     "d7_node:tabbed_content" => ["bos:node:2"],
+    "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
     "d7_node_revision:advpoll" => ["bos:node_revision:1"],
-    "d7_node_revision:article" => ["bos:node_revision:3"],
+    "d7_node_revision:article" => ["bos:node_revision:2"],
     "d7_node_revision:change" => ["bos:node_revision:1"],
     "d7_node_revision:department_profile" => ["bos:node_revision:1"],
     "d7_node_revision:emergency_alert" => ["bos:node_revision:1"],
-    "d7_node_revision:event" => ["bos:node_revision:2"],
-    "d7_node_revision:topic_page" => ["bos:node_revision:2"],
+    "d7_node_revision:event" => ["bos:node_revision:3"],
     "d7_node_revision:how_to" => ["bos:node_revision:2"],
     "d7_node_revision:landing_page" => ["bos:node_revision:2"],
     "d7_node_revision:listing_page" => ["bos:node_revision:1"],
     "d7_node_revision:person_profile" => ["bos:node_revision:1"],
     "d7_node_revision:place_profile" => ["bos:node_revision:2"],
-    "d7_node_revision:post" => ["bos:node_revision:2"],
-    "d7_node_revision:procurement_advertisement" => ["bos:node_revision:1"],
+    "d7_node_revision:post" => ["bos:node_revision:3"],
+    "d7_node_revision:procurement_advertisement" => ["bos:node_revision:2"],
     "d7_node_revision:program_initiative_profile" => ["bos:node_revision:2"],
-    "d7_node_revision:public_notice" => ["bos:node_revision:2"],
+    "d7_node_revision:public_notice" => ["bos:node_revision:3"],
     "d7_node_revision:script_page" => ["bos:node_revision:1"],
-    "d7_node_revision:site_alert" => ["bos:node_revision:1"],
+    "d7_node_revision:site_alert" => ["bos:node_revision:4"],
     "d7_node_revision:status_item" => ["bos:node_revision:1"],
     "d7_node_revision:tabbed_content" => ["bos:node_revision:2"],
+    "d7_node_revision:topic_page" => ["bos:node_revision:2"],
     "d7_node_revision:transaction" => ["bos:node_revision:1"],
     "d7_taxonomy_term:contact" => ["bos:taxonomy:2"],
     "d7_taxonomy_term:news_tags" => ["bos:taxonomy:1"],
@@ -351,15 +349,6 @@ class MigrationConfigAlter {
               ],
             ],
           ],
-        ],
-      ],
-    ],
-    // Add custom.
-    "d7_node_revision:event" => [
-      "process" => [
-        "_state" => [
-          "plugin" => "skip_draft_revision",
-          "source" => "vid",
         ],
       ],
     ],
@@ -1258,9 +1247,11 @@ class MigrationConfigAlter {
         // Adds the skip_draft process plugin to node revision migrations.
         foreach ($this->migrations as $mkey => &$migration) {
           if ($migration["id"] == "d7_node_revision") {
-            $migration["process"]["_state"] = [
+            $migration["process"]["vid"] = [
               "plugin" => "skip_draft_revision",
+              "message" => "Skipped draft",
               "source" => "vid",
+              "save_to_map" => "false",
             ];
           }
         }
