@@ -20,7 +20,8 @@ use Drupal\Core\Database\Database;
 class MigrationFixes {
 
   /**
-   * An array to map d7 view + displays to d8 equivalents
+   * An array to map d7 view + displays to d8 equivalents.
+   *
    * @var array
    */
   protected static $viewListMap = [
@@ -31,8 +32,8 @@ class MigrationFixes {
       'page' => ["news_landing", 'page_1'],
     ],
     'calendar' => [
-		  'feed_1' => ["calendar", "page_1"],
-			'listing' => ["calendar", "page_1"],
+      'feed_1' => ["calendar", "page_1"],
+      'listing' => ["calendar", "page_1"],
     ],
     'metrolist_affordable_housing' => [
       'page' => ["metrolist_affordable_housing", "page_1"],
