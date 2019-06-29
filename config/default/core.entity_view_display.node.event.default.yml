@@ -31,6 +31,7 @@ dependencies:
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
     - node.type.event
+    - responsive_image.styles.wide_2000x460
   module:
     - address
     - datetime
@@ -38,6 +39,7 @@ dependencies:
     - fences
     - link
     - options
+    - responsive_image
     - svg_image
     - text
     - user
@@ -232,18 +234,21 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: image
+    type: responsive_image
     weight: 18
     region: content
     label: hidden
     settings:
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-      image_style: ''
+      responsive_image_style: wide_2000x460
       image_link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_links:
     type: entity_reference_revisions_entity_view
     weight: 12
