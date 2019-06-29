@@ -1,0 +1,12 @@
+--- a/modules/contrib/imagemagick/src/Plugin/ImageToolkit/ImagemagickToolkit.php
++++ b/modules/contrib/imagemagick/src/Plugin/ImageToolkit/ImagemagickToolkit.php
+@@ -1217,6 +1217,9 @@
+    * {@inheritdoc}
+    */
+   public function parseFile() {
++    if (end(explode(".", $this->getSource())) == "svg") {
++      return FALSE;
++    }
+     if ($this->configFactory->get('imagemagick.settings')->get('use_identify')) {
+       return $this->parseFileViaIdentify();
+     }
