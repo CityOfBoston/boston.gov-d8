@@ -334,8 +334,9 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
         if ($chain[0]->id() == $form_state->getBuildInfo()['args'][0]->id()) {
 
           // Make the lineage into an array of strings.
+          $bundle[0] = ucwords(str_replace(["_", "-"], " ", $chain[0]->bundle()));
           $title[0] = "<div class='ce-pretty'>";
-          $title[] = "<h2>" . ucwords(str_replace(['-', '_'], " ", $chain[0]->bundle())) . ": <span class='ce-title'>" . $chain[0]->getTitle() . "</span> (nid " . $chain[0]->id() . ")" . "</h2>";
+          $title[] = "<h2>" . $bundle[0] . ": <span class='ce-title'>" . $chain[0]->getTitle() . "</span> (nid " . $chain[0]->id() . ")" . "</h2>";
           switch ($chain[1]->getEntityTypeId()) {
             case "node":
               $title[] = "<h3 class='ce-pretty'> > <span class='ce-title'>" . $chain[1]->getTitle() . "</span> (nid " . $chain[1]->id() . ")</h3>";
@@ -345,7 +346,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
               foreach ($chain[1]->getFields() as $fieldName => $field) {
                 $crumb = ucwords(str_replace(['-', '_'], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
                 if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
-                  $title[] = "<h3 class='ce-pretty'>" . $crumb . " > <span class='ce-title'>" . $field->getValue()[0]['value'] . "</span> (nid " . $chain[1]->id() . ")</h3>";
+                  $title[] = "<h3 class='ce-pretty'>Editing: " . $crumb . " > <span class='ce-title'>" . $field->getValue()[0]['value'] . "</span> (pid " . $chain[1]->id() . ")</h3>";
                   break;
                 }
               }
@@ -374,10 +375,10 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
             ],
             "#button_type" => "danger",
             "#title" => new TranslatableMarkup("Return to @entity", [
-              "@entity" => ucwords($chain[0]->bundle()),
+              "@entity" => $bundle[0],
             ]),
             "#value" => new TranslatableMarkup("Return to @entity", [
-              "@entity" => ucwords($chain[0]->bundle()),
+              "@entity" => $bundle[0],
             ]),
             "#type" => "link",
             "#url" => Url::fromRoute("entity.node.canonical", [
