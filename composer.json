@@ -185,36 +185,37 @@
     },
     "patches": {
       "drupal/core": {
-        "Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch"
+        "CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch"
       },
       "drupal/migrate_drupal": {
         "Fix 'Call to a member function getSetting() on null' in migrate_drupal.": "https://www.drupal.org/files/issues/2018-07-08/2984460-3.patch"
       },
       "drupal/field_group": {
-        "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
-        "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
+        "CoB patch - Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
+        "CoB patch - Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
       },
       "drupal/password_policy": {
         "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch",
-        "Reverts extension change for drupal < 8.7": "patches/fixes_unsupported_ConfigurableInterface_extension_001.patch"
+        "CoB patch - Reverts extension change for drupal < 8.7": "patches/fixes_unsupported_ConfigurableInterface_extension_001.patch"
       },
       "drupal/viewfield":{
         "https://www.drupal.org/project/viewfield/issues/2860523": "https://www.drupal.org/files/issues/2018-06-08/d7_upgrade_path-2860523-6.patch"
       },
       "drupal/media_entity_browser": {
-        "Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
+        "CoB patch - Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
       },
       "drupal/date_recur": {
         "https://www.drupal.org/project/date_recur/issues/3015633": "https://www.drupal.org/files/issues/2019-02-14/rdate-exdate-3015633-3_0.patch",
-        "Add helper for exdate retreival": "patches/exdate_helper.patch",
-        "Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
+        "CoB patch - Add helper for exdate retreival": "patches/exdate_helper.patch",
+        "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
       },
       "drupal/entity_reference_revisions":{
         "Fixes hasTranslation() on null": "https://www.drupal.org/files/issues/2018-11-26/hastranslation-on-null-3016233-2.patch"
       },
       "drupal/imagemagick": {
-        "Implements Move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
-        "Handles data is not set error": "patches/imagemagikToolkit_001.patch"
+        "CoB patch to implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
+        "CoB patch - Handles data is not set error": "patches/imagemagikToolkit_001.patch",
+        "CoB patch to reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
       },
       "drupal/paragraphs_edit": {
         "Lineage issue when parent not a paragraph": "https://www.drupal.org/files/issues/2019-03-22/error_on_missing_parent-2944653-13034993.patch"
