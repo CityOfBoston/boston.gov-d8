@@ -353,6 +353,23 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    // Manually add the custom title field.
+    "d7_node:site_alert" => [
+      "process" => [
+        "title_field" => "title_field",
+      ],
+    ],
+    "d7_node_revision:site_alert" => [
+      "process" => [
+        "title_field" => "title_field",
+      ],
+    ],
+    "d7_node_entity_translation:site_alert" => [
+      "process" => [
+        "title_field" => "title_field",
+      ],
+    ],
+
     // Manually adds dependency on department profile.
     "d7_taxonomy_term:contact" => [
       "migration_dependencies" => [
