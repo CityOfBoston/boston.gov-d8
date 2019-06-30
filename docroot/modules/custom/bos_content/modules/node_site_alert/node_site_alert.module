@@ -57,7 +57,7 @@ function node_site_alert_theme() {
  *   - attributes: HTML attributes for the containing element.
  *   TODO: This is not working ... hook does not exist.
  */
-function template_preprocess_site_alert(array &$variables) {
+function template_preprocess_node__site_alert(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
@@ -123,9 +123,14 @@ function node_site_alert_preprocess(&$variables, $hook) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_site_alert_preprocess_node(&$variables) {
+function node_site_alert_preprocess_node__site_alert(&$variables) {
   if ($variables['node']->bundle() != "site_alert") {
     return;
+  }
+
+  // Only show alert if the date range is valid.
+  if (!isset($variables["node"]->field_date_range)) {
+    $variables["display"] = TRUE;
   }
 
   // Add-in a bit of css.
