@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_migration\Plugin\migrate\process;
 
+use Drupal\bos_migration\MigrationPrepareRow;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\MigrateSkipRowException;
@@ -9,7 +10,6 @@ use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
-use Drupal\Core\Database\Database;
 
 /**
  * Do not migrate (i.e. skip revisions with workbench status = draft).
@@ -48,35 +48,22 @@ class SkipDraftRevision extends ProcessPluginBase {
     //
     // If the moderation state in Drupal 7 is not Published, then don't migrate.
     // Be mindful that the latest revision coud be draft, so keep that.
+    $vid = $row->getSource()["vid"];
+
+    $workbench = MigrationPrepareRow::findWorkbench($vid);
     try {
-      $vid = $row->getSource()["vid"];
-      $connection = Database::getConnection("default", "migrate");
-      $query = $connection->select("workbench_moderation_node_history", "history")
-        ->fields('history', ["from_state", "state", "published", "is_current"]);
-      $query->condition("vid", $vid);
-      $query->orderBy("hid", "DESC");
-      $workbench = $query->execute()->fetchAssoc();
-
-      $map = ((empty($this->configuration["save_to_map"]) || $this->configuration["save_to_map"] == "false") ? FALSE : TRUE);
-
-      if ($workbench['state'] != "published" && !$workbench['is_current']) {
-        $msg = $this->configuration["message"] ?: NULL;
-        if (!empty($msg)) {
-          $msg = \Drupal::translation()->translate("@msg (nid:@nid / vid:@vid).", [
-            "@msg" => $msg,
-            "@nid" => $row->getSource()["nid"],
-            "@vid" => $vid,
-          ]);
-        }
-        throw new MigrateSkipRowException($msg, $map);
-      }
+      $result = MigrationPrepareRow::shouldProcessRow($row->getSource()["nid"], $vid, $workbench, $this->configuration);
+      // Add the d7 workbench moderation data to the source so other plugins
+      // can use it in later processing.
+      $row->workbench = $workbench;
+      return $value;
+    }
+    catch (MigrateSkipRowException $e) {
+      throw new MigrateSkipRowException($e->getMessage(), $e->getSaveToMap());
     }
     catch (Error $e) {
-      // Some other error.
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
-    $row->_workbench = $workbench;
-    return $value;
 
   }
 

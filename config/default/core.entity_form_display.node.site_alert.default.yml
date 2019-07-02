@@ -3,25 +3,28 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_entity_browser
+    - field.field.node.site_alert.field_date_range
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
     - field.field.node.site_alert.field_icon
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
-    - image.style.thumbnail
     - node.type.site_alert
   module:
     - content_moderation
+    - datetime_range
+    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
-    - svg_image
 third_party_settings:
   field_group:
     group_info:
       children:
+        - field_date_range
         - field_icon
         - title_field
         - field_extra_info
@@ -73,6 +76,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_date_range:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: daterange_default
+    region: content
   field_excluded_nodes:
     weight: 10
     type: entity_reference_autocomplete
@@ -83,7 +92,7 @@ content:
     third_party_settings: {  }
     region: content
   field_extra_info:
-    weight: 4
+    weight: 29
     type: string_textfield
     settings:
       size: 255
@@ -93,7 +102,7 @@ content:
         show_token_tree: 0
     region: content
   field_icon:
-    weight: 2
+    weight: 27
     type: entity_browser_file
     settings:
       entity_browser: media_entity_browser
@@ -107,7 +116,7 @@ content:
     third_party_settings: {  }
     region: content
   field_link:
-    weight: 5
+    weight: 30
     type: paragraphs
     settings:
       title: 'Call to Action'
@@ -126,7 +135,7 @@ content:
     third_party_settings: {  }
     region: content
   field_theme:
-    weight: 6
+    weight: 31
     type: options_select
     settings: {  }
     third_party_settings: {  }
@@ -179,7 +188,7 @@ content:
     third_party_settings: {  }
   title_field:
     type: string_textfield
-    weight: 3
+    weight: 28
     region: content
     settings:
       size: 60
