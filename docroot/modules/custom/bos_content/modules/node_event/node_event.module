@@ -54,8 +54,7 @@ function template_preprocess_node__event(array &$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_event_preprocess_page(&$variables) {
-  if (isset($variables["node"]) && is_object($variables['node']) && $variables["node"]->bundle() != "event") {
+function node_event_preprocess_page(&$variables) {if (isset($variables["node"]) && is_object($variables['node']) && $variables["node"]->bundle() != "event") {
     return;
   }
   $variables["header_image"] = !empty($variables["node"]->field_intro_image);
