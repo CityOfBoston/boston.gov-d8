@@ -5,8 +5,11 @@
  * Main file for the bos_migration module.
  */
 
+use Drupal\migrate\Row;
+use Drupal\migrate\Plugin\MigrateSourceInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\bos_migration\MigrationConfigAlter;
-
+use Drupal\bos_migration\MigrationPrepareRow;
 /**
  * Implements hook_migration_plugins_alter().
  */
@@ -16,4 +19,16 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
   $migrations = $mig->alterMigrations();
   // TODO: dumpMigration() can be removed in production.
   $mig->dumpMigration();
+}
+
+/**
+ * Implements hook_migrate_prepare_row().
+ */
+function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
+  $mig = new MigrationPrepareRow($row, $source, $migration);
+  switch ($migration->get("id")) {
+    case "d7_node_revision":
+      $mig->prepareNodeRevisionRow();
+      break;
+  }
 }
