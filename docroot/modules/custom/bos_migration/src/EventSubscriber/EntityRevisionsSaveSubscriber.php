@@ -57,7 +57,6 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
     if ($event->getMigration()->get("migration_group") != "d7_node_revision"
@@ -113,9 +112,9 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
             "@node_type" => $event->getMigration()
               ->getSourceConfiguration()['node_type'],
           ];
-          $msg = \Drupal::translation()
-            ->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation from @old_state to @state.", $params);
-          $event->logMessage($msg->render());
+//          $msg = \Drupal::translation()
+//            ->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation from @old_state to @state.", $params);
+//          $event->logMessage($msg->render());
         }
 
         // If revision is "published" i.e status = 1 and content_mod = published
@@ -127,15 +126,15 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
           // and set its status to 1.
           MigrationPrepareRow::setNodeStatus($vid, $workbench_d7['published']);
 
-          $params = [
-            "@id" => $revision_d8->id(),
-            "@rev_id" => $vid,
-            "@node_type" => $event->getMigration()
-              ->getSourceConfiguration()['node_type'],
-          ];
-          $msg = \Drupal::translation()
-            ->translate("@node_type:#@id set revision @rev_id status to TRUE.", $params);
-          $event->logMessage($msg->render());
+//          $params = [
+//            "@id" => $revision_d8->id(),
+//            "@rev_id" => $vid,
+//            "@node_type" => $event->getMigration()
+//              ->getSourceConfiguration()['node_type'],
+//          ];
+//          $msg = \Drupal::translation()
+//            ->translate("@node_type:#@id set revision @rev_id status to TRUE.", $params);
+//          $event->logMessage($msg->render());
         }
 
         // If the last workbench state for this revision is marked "current"
