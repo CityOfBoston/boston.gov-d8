@@ -58,10 +58,10 @@ class SkipDraftRevision extends ProcessPluginBase {
       $row->workbench = $workbench;
       return $value;
     }
-    catch(MigrateSkipRowException $e) {
+    catch (MigrateSkipRowException $e) {
       throw new MigrateSkipRowException($e->getMessage(), $e->getSaveToMap());
     }
-    catch(Error $e) {
+    catch (Error $e) {
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
 
