@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_migration\EventSubscriber;
 
-use Drupal\Core\Database\Database;
+use Drupal\bos_migration\MigrationPrepareRow;
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
 use Drupal\migrate\Event\MigratePreRowSaveEvent;
 use Drupal\migrate\Event\MigrateEvents;
@@ -47,6 +47,10 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    * duplicate vids with different states and the migration only takes the
    * first when multiple moderated revsiions exist?
    *
+   * We use SQL statements because this is post_save so the database is not
+   * locked, and changing the entity object creates new revisions which we
+   * do not want.
+   *
    * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
    *   Event.
    *
@@ -66,63 +70,70 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       ->loadRevision($vid)) {
 
       $state_d8 = $revision_d8->get('moderation_state')->getString();
+      $row = $event->getRow();
 
       // Establish the moderation states from D7.
-      if (NULL == ($workbench_d7 = $event->getRow()->_workbench)) {
+      if (NULL == ($workbench_d7 = $row->workbench)) {
         try {
-          $connection = Database::getConnection("default", "migrate");
-          $query = $connection->select("workbench_moderation_node_history", "history")
-            ->fields('history', [
-              "from_state",
-              "state",
-              "published",
-              "is_current",
-            ]);
-          $query->condition("vid", $event->getRow()->getSource()['vid']);
-          $query->orderBy("hid", "DESC");
-          $workbench_d7 = $query->execute()->fetchAssoc();
+          $vid = $row->getSource()['vid'];
+          $workbench_d7 = MigrationPrepareRow::findWorkbench($vid);
         }
         catch (Error $e) {
           $workbench_d7 = NULL;
         }
       }
 
-      // Compare D7 & D8 moderation states and change if necessary.
-      $save = FALSE;
-      if (isset($workbench_d7) && $state_d8 != $workbench_d7['state']) {
-        $revision_d8->get('moderation_state')
-          ->setvalue($workbench_d7['state']);
-        $revision_d8->setRevisionLogMessage("Created by Migration.");
-        $save = TRUE;
-        $params = [
-          "@id" => $revision_d8->id(),
-          "@rev_id" => $vid,
-          "@orig_rev_id" => $event->getRow()->getSource()['vid'],
-          "@state" => $workbench_d7['state'],
-          "@old_state" => $state_d8,
-          "@node_type" => $event->getMigration()->getSourceConfiguration()['node_type'],
-        ];
-        $msg = \Drupal::translation()->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation from @old_state to @state.", $params);
-        $event->logMessage($msg->render());
+      if (isset($workbench_d7)) {
+        $nid = $revision_d8->id();
+
+        if ($state_d8 != $workbench_d7['state']) {
+          MigrationPrepareRow::setModerationState($vid, $workbench_d7['state']);
+
+          $params = [
+            "@id" => $nid,
+            "@rev_id" => $vid,
+            "@orig_rev_id" => $row->getSource()['vid'],
+            "@state" => $workbench_d7['state'],
+            "@old_state" => $state_d8,
+            "@node_type" => $event->getMigration()
+              ->getSourceConfiguration()['node_type'],
+          ];
+          $msg = \Drupal::translation()
+            ->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation from @old_state to @state.", $params);
+          $event->logMessage($msg->render());
+        }
+
+        if ($workbench_d7['published'] == 1) {
+          // This revision is the published one, so place in the node table
+          // and set its status to 1.
+          MigrationPrepareRow::setNodeStatus($vid, $workbench_d7['published']);
+
+          $params = [
+            "@id" => $revision_d8->id(),
+            "@rev_id" => $vid,
+            "@node_type" => $event->getMigration()
+              ->getSourceConfiguration()['node_type'],
+          ];
+          $msg = \Drupal::translation()
+            ->translate("@node_type:#@id set revision @rev_id status to TRUE.", $params);
+          $event->logMessage($msg->render());
+        }
+
+        if ($workbench_d7['is_current'] == 1) {
+          MigrationPrepareRow::setCurrentRevision($workbench_d7["nid"], $vid, $workbench_d7['published']);
+          MigrationPrepareRow::setCurrentModerationRevision($workbench_d7["nid"], $vid, $workbench_d7['published']);
+        }
+        else {
+          $current = MigrationPrepareRow::findWorkbenchCurrent($workbench_d7["nid"]);
+          MigrationPrepareRow::setCurrentRevision($current["nid"], $current["vid"], $current['published']);
+          MigrationPrepareRow::setCurrentModerationRevision($current["nid"], $current["vid"], $current['published']);
+        }
+        // Find the pulished node and make sure its published.
+        if ($pubset = MigrationPrepareRow::findWorkbenchPublished($nid)) {
+          MigrationPrepareRow::setModerationState($pubset["vid"], "published");
+        }
       }
 
-      if ($workbench_d7['published'] == 1 && $workbench_d7['is_current'] == 1) {
-        $save = TRUE;
-        $revision_d8->setPublished(TRUE);
-        $params = [
-          "@id" => $revision_d8->id(),
-          "@rev_id" => $vid,
-          "@node_type" => $event->getMigration()->getSourceConfiguration()['node_type'],
-        ];
-        $msg = \Drupal::translation()->translate("@node_type:#@id set revision @rev_id status to TRUE.", $params);
-        $event->logMessage($msg->render());
-      }
-
-      if ($save) {
-        $revision_d8->setNewRevision(FALSE);
-        $revision_d8->isNewRevision(FALSE);
-        $revision_d8->save();
-      }
     }
   }
 
