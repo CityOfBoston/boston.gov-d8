@@ -54,6 +54,16 @@ function template_preprocess_node__event(array &$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
+function node_event_preprocess_page(&$variables) {
+  if (isset($variables["node"]) && is_object($variables['node']) && $variables["node"]->bundle() != "event") {
+    return;
+  }
+  $variables["header_image"] = !empty($variables["node"]->field_intro_image);
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function node_event_preprocess_node__event(&$variables) {
   _bos_theme_fix_attributes($variables);
   $variables['attributes']->addClass('desktop-100');
@@ -130,4 +140,19 @@ function node_event_preprocess_node__event(&$variables) {
     $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
   }
 
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_event_preprocess_field__field_address(&$variables) {
+  // Hide the country field in the address.
+  if ($variables["element"]["#bundle"] != "event") {
+    return;
+  }
+  if (isset($variables["items"])) {
+    foreach ($variables["items"] as $key => &$item) {
+      $item["content"]["country"]["#attributes"]["class"][] = "hidden";
+    }
+  }
 }

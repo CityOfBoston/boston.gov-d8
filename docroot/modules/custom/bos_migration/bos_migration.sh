@@ -52,30 +52,32 @@ function doMigrate() {
 #RESTORE="/app/dump/migration/migration_clean_after_field_collection.sql"
 #RESTORE="/app/dump/migration/migration_clean_after_para_update_1.sql"
 #RESTORE="/app/dump/migration/migration_clean_after_nodes.sql"
-#RESTORE="/app/dump/migration/migration_clean_after_para_update_2.sql"
+RESTORE="/app/dump/migration/migration_clean_after_para_update_2.sql"
 #RESTORE="/app/dump/migration/migration_clean_after_node_revision1.sql"
 #RESTORE="/app/dump/migration/migration_clean_after_node_revision.sql"
 #RESTORE="/app/dump/migration/migration_FINAL.sql"
 
-#printf "RESTORING DB ${RESTORE}\n" | tee bos_migration.log
-#lando mysql -e"DROP SCHEMA IF EXISTS drupal;"
-#lando mysql -e"CREATE SCHEMA drupal;"
-#lando ssh -s database -c "mysql -uroot --password= --database=drupal < ${RESTORE}"
+printf "RESTORING DB ${RESTORE}\n" | tee bos_migration.log
+lando mysql -e"DROP SCHEMA IF EXISTS drupal;"
+lando mysql -e"CREATE SCHEMA drupal;"
+lando ssh -s database -c "mysql -uroot --password= --database=drupal < ${RESTORE}"
 
 # Set migration variables.
-#lando drush sset "bos_migration.fileOps" "copy"
-#lando drush sset "bos_migration.dest_file_exists" "use\ existing"
-#lando drush sset "bos_migration.dest_file_exists_ext" "skip"
-#lando drush sset "bos_migration.remoteSource" "https://www.boston.gov/"
-#lando drush sset "bos_migration.active" "1"
+lando drush sset "bos_migration.fileOps" "copy"
+lando drush sset "bos_migration.dest_file_exists" "use\ existing"
+lando drush sset "bos_migration.dest_file_exists_ext" "skip"
+lando drush sset "bos_migration.remoteSource" "https://www.boston.gov/"
+lando drush sset "bos_migration.active" "1"
 
 ## Sync current config with the database.
-#lando drush cim -y  | tee -a bos_migration.log
-#lando drush cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a bos_migration.log
+lando drush cim -y  | tee -a bos_migration.log
+lando drush cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a bos_migration.log
 # rebuild the migration configs.
-##lando drush updb -y  | tee -a bos_migration.log
-#lando drush cr  | tee -a bos_migration.log
-#lando drush ms  | tee -a bos_migration.log
+lando drush updb -y  | tee -a bos_migration.log
+lando drush entup -y  | tee -a bos_migration.log
+lando ssh -c"/app/vendor/bin/drush php:eval 'node_access_rebuild();'"
+lando drush cr  | tee -a bos_migration.log
+lando drush ms  | tee -a bos_migration.log
 
 ## Migrate files first.
 #doMigrate --tag="bos:initial:0" --force                 # 31 mins
@@ -119,15 +121,19 @@ function doMigrate() {
 #lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_para_update_2.sql"
 
 ## Now do the node revisions (nodes and all paras must be done first)
-#doMigrate --tag="bos:node_revision:1" --force           # 2h 42 mins
-#doMigrate --tag="bos:node_revision:2" --force           # 8h 50 mins
-#doMigrate --tag="bos:node_revision:3" --force           # 1hr 43 mins
-#doMigrate --tag="bos:node_revision:4" --force           # 30 sec
-#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node_revision.sql"
+doMigrate --tag="bos:node_revision:1" --force           # 2h 42 mins
+doMigrate --tag="bos:node_revision:2" --force           # 8h 50 mins
+doMigrate --tag="bos:node_revision:3" --force           # 1hr 43 mins
+doMigrate --tag="bos:node_revision:4" --force           # 30 sec
+lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_clean_after_node_revision.sql"
 
 ## Finish off.
-#doMigrate d7_menu_links,d7_menu --force
-#lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_FINAL.sql"
+doMigrate d7_menu_links,d7_menu --force
+
+## Ensure everything is updated.
+lando drush entup -y  | tee -a bos_migration.log
+lando ssh -c"/app/vendor/bin/drush php:eval 'node_access_rebuild();'"
+lando ssh -s database -c "mysqldump --user=root --databases drupal > /app/dump/migration/migration_FINAL.sql"
 
 #lando drush sdel "bos_migration.active"
 #lando drush sset "bos_migration.fileOps" "copy"
