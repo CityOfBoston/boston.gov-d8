@@ -302,13 +302,16 @@ class MigrationPrepareRow {
     \Drupal::database()->query($qstring)->execute();
 
     // Only set the revision default to be true if this revision is pub.
+    // Note: $isPublished=NULL means no revision is currently published.
     // Table: node_revision.
-    \Drupal::database()->update("node_revision")
-      ->fields([
-        "revision_default" => $isPublished,
-      ])
-      ->condition('vid', $vid)
-      ->execute();
+    if (isset($isPublished)) {
+      \Drupal::database()->update("node_revision")
+        ->fields([
+          "revision_default" => $isPublished,
+        ])
+        ->condition('vid', $vid)
+        ->execute();
+    }
   }
 
   /**
