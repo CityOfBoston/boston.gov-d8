@@ -242,7 +242,7 @@ class MigrationPrepareRow {
    * @param string $state
    *   The content_moderation status (published/draft/need_review)
    */
-  public static function setModerationState($vid, $state) {
+  public static function setModerationState(int $vid, string $state) {
     \Drupal::database()->update("content_moderation_state_field_data")
       ->fields([
         "moderation_state" => $state,
@@ -265,10 +265,10 @@ class MigrationPrepareRow {
    *   Node to be set.
    * @param int $vid
    *   Node revision to be set.
-   * @param bool $isPublished
+   * @param int $isPublished
    *   Is this revision's status = 1 (drupal-published)
    */
-  public static function setCurrentRevision(int $nid, int $vid, bool $isPublished) {
+  public static function setCurrentRevision(int $nid, int $vid, int $isPublished = 0) {
     // Set the node vid to be the current revision.
     // Table: node.
     \Drupal::database()->update("node")
@@ -304,14 +304,12 @@ class MigrationPrepareRow {
     // Only set the revision default to be true if this revision is pub.
     // Note: $isPublished=NULL means no revision is currently published.
     // Table: node_revision.
-    if (isset($isPublished)) {
-      \Drupal::database()->update("node_revision")
-        ->fields([
-          "revision_default" => $isPublished,
-        ])
-        ->condition('vid', $vid)
-        ->execute();
-    }
+    \Drupal::database()->update("node_revision")
+      ->fields([
+        "revision_default" => $isPublished,
+      ])
+      ->condition('vid', $vid)
+      ->execute();
   }
 
   /**
@@ -321,10 +319,10 @@ class MigrationPrepareRow {
    *   Node to be set.
    * @param int $vid
    *   Node revision to be set.
-   * @param bool $isPublished
+   * @param int $isPublished
    *   Is this revision's status = 1 (drupal-published)
    */
-  public static function setCurrentModerationRevision(int $nid, int $vid, bool $isPublished) {
+  public static function setCurrentModerationRevision(int $nid, int $vid, int $isPublished = 0) {
     // Get the id and rev_id for the moderation state.
     $query = \Drupal::database()->select("content_moderation_state_field_revision", "rev")
       ->fields("rev", ["id", "revision_id"]);
