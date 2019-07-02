@@ -10,6 +10,13 @@ use Drupal\migrate\Plugin\MigrateSourceInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\Core\Database\Database;
 
+/**
+ * Class MigrationPrepareRow.
+ *
+ * General purpose class for managing node_revision processes.
+ *
+ * @package Drupal\bos_migration
+ */
 class MigrationPrepareRow {
 
   protected $row;
@@ -20,7 +27,7 @@ class MigrationPrepareRow {
    * MigrationProcessRow constructor.
    *
    * @param \Drupal\migrate\Row $row
-   *   The current row being processed
+   *   The current row being processed.
    * @param \Drupal\migrate\Plugin\MigrateSourceInterface $source
    *   The source object.
    * @param \Drupal\migrate\Plugin\MigrationInterface $migration
@@ -39,6 +46,7 @@ class MigrationPrepareRow {
    *
    * @return bool
    *   True to continue processing.
+   *
    * @throws \Drupal\migrate\MigrateException
    *   If error found.
    * @throws \Drupal\migrate\MigrateSkipRowException
@@ -48,28 +56,28 @@ class MigrationPrepareRow {
     // Doing this here, misses out a couple of later steps rather than using
     // the SkipDraftRevision plugin.
     if (empty($this->source->key())) {
-      throw new MigrateSkipRowException("vid is null.", false);
+      throw new MigrateSkipRowException("vid is null.", FALSE);
     }
     $key = unserialize($this->source->key());
 
     if (empty($key["vid"])) {
-      throw new MigrateSkipRowException("vid is null.", false);
+      throw new MigrateSkipRowException("vid is null.", FALSE);
     }
     $vid = $key["vid"];
 
     $workbench = self::findWorkbench($vid);
     if (empty($workbench)) {
-      throw new MigrateSkipRowException("Workbench moderation not found.", false);
+      throw new MigrateSkipRowException("Workbench moderation not found.", FALSE);
     }
     $nid = $workbench["nid"];
 
     try {
       return self::shouldProcessRow($nid, $vid, $workbench, []);
     }
-    catch(MigrateSkipRowException $e) {
+    catch (MigrateSkipRowException $e) {
       throw new MigrateSkipRowException($e->getMessage(), $e->getSaveToMap());
     }
-    catch(\Exception $e) {
+    catch (\Exception $e) {
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
 
@@ -94,7 +102,7 @@ class MigrationPrepareRow {
         "from_state",
         "state",
         "published",
-        "is_current"
+        "is_current",
       ]);
     $query->condition("vid", $vid);
     $query->orderBy("hid", "DESC");
@@ -121,7 +129,7 @@ class MigrationPrepareRow {
         "from_state",
         "state",
         "published",
-        "is_current"
+        "is_current",
       ]);
     $query->condition("nid", $nid);
     $query->condition("is_current", "1");
@@ -148,7 +156,7 @@ class MigrationPrepareRow {
         "from_state",
         "state",
         "published",
-        "is_current"
+        "is_current",
       ]);
     $query->condition("nid", $nid);
     $query->condition("published", "1");
@@ -163,7 +171,7 @@ class MigrationPrepareRow {
    * revision is not published and is not the current revision.
    *
    * @param int $nid
-   *   The nid for this node
+   *   The nid for this node.
    * @param int $vid
    *   The revision of the node to be "tested".
    * @param array $workbench
@@ -173,6 +181,7 @@ class MigrationPrepareRow {
    *
    * @return bool
    *   True to process row.
+   *
    * @throws \Drupal\migrate\MigrateSkipRowException
    *   Thrown if the revisions latest moderation state is "draft".
    */
@@ -199,8 +208,16 @@ class MigrationPrepareRow {
 
   }
 
-  public static function setNodeStatus($vid, $status) {
-    // node_field_revision
+  /**
+   * Sets the correct status for a node revision.
+   *
+   * @param int $vid
+   *   The node revsion id to be set.
+   * @param int $status
+   *   The drupal-status (1 or 0)
+   */
+  public static function setNodeStatus(int $vid, int $status) {
+    // node_field_revision.
     \Drupal::database()->update("node_field_data")
       ->fields([
         "status" => $status,
@@ -208,7 +225,7 @@ class MigrationPrepareRow {
       ->condition('vid', $vid)
       ->execute();
 
-    // node_field_revision
+    // node_field_revision.
     \Drupal::database()->update("node_field_revision")
       ->fields([
         "status" => $status,
@@ -217,6 +234,14 @@ class MigrationPrepareRow {
       ->execute();
   }
 
+  /**
+   * Sets the correct moderation_state for a node revision.
+   *
+   * @param int $vid
+   *   The node revsion id to be set.
+   * @param string $state
+   *   The content_moderation status (published/draft/need_review)
+   */
   public static function setModerationState($vid, $state) {
     \Drupal::database()->update("content_moderation_state_field_data")
       ->fields([
@@ -234,13 +259,18 @@ class MigrationPrepareRow {
   }
 
   /**
-   * @param $nid
-   * @param $vid
-   * @param $isPublished
+   * Sets the correct node revision.
+   *
+   * @param int $nid
+   *   Node to be set.
+   * @param int $vid
+   *   Node revision to be set.
+   * @param bool $isPublished
+   *   Is this revision's status = 1 (drupal-published)
    */
-  public static function setCurrentRevision($nid, $vid, $isPublished) {
+  public static function setCurrentRevision(int $nid, int $vid, bool $isPublished) {
     // Set the node vid to be the current revision.
-    // Table: node
+    // Table: node.
     \Drupal::database()->update("node")
       ->fields([
         "vid" => $vid,
@@ -249,7 +279,7 @@ class MigrationPrepareRow {
       ->execute();
 
     // Copy current rev of node_field_revision into node_field_data.
-    // Table: node_field_data
+    // Table: node_field_data.
     $qstring = "UPDATE node_field_data dat
                       INNER JOIN node_field_revision rev ON dat.nid = rev.nid  
                       SET
@@ -272,7 +302,7 @@ class MigrationPrepareRow {
     \Drupal::database()->query($qstring)->execute();
 
     // Only set the revision default to be true if this revision is pub.
-    // Table: node_revision
+    // Table: node_revision.
     \Drupal::database()->update("node_revision")
       ->fields([
         "revision_default" => $isPublished,
@@ -281,7 +311,17 @@ class MigrationPrepareRow {
       ->execute();
   }
 
-  public static function setCurrentModerationRevision($nid, $vid, $isPublished) {
+  /**
+   * Sets the correct moderation revision.
+   *
+   * @param int $nid
+   *   Node to be set.
+   * @param int $vid
+   *   Node revision to be set.
+   * @param bool $isPublished
+   *   Is this revision's status = 1 (drupal-published)
+   */
+  public static function setCurrentModerationRevision(int $nid, int $vid, bool $isPublished) {
     // Get the id and rev_id for the moderation state.
     $query = \Drupal::database()->select("content_moderation_state_field_revision", "rev")
       ->fields("rev", ["id", "revision_id"]);
@@ -321,7 +361,7 @@ class MigrationPrepareRow {
                             and rev.revision_id = " . $rev->revision_id . ";";
       \Drupal::database()->query($qstring)->execute();
 
-      // Table: node_revision
+      // Table: node_revision.
       \Drupal::database()->update("content_moderation_state_revision")
         ->fields([
           "revision_default" => $isPublished,
@@ -332,6 +372,5 @@ class MigrationPrepareRow {
     }
 
   }
-
 
 }
