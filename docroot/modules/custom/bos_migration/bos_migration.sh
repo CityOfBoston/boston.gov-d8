@@ -55,7 +55,7 @@ fi
 # Ensure the needed modules are enabled.
 lando drush cdel views.view.migrate_taxonomy
 lando drush cdel views.view.migrate_paragraphs
-lando drush en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration
+lando drush en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration -y
 
 # Remove old database and restore baseline
 RESTORE="${dbpath}/migration_clean_reset.sql"
