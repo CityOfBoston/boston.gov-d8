@@ -333,10 +333,10 @@ class MigrationPrepareRow {
         ])
         ->condition('id', $rev->id)
         ->execute();
-    }
 
-    // Table: content_moderation_state_field_data.
-    $qstring = "UPDATE drupal.content_moderation_state_field_data dat
+
+      // Table: content_moderation_state_field_data.
+      $qstring = "UPDATE drupal.content_moderation_state_field_data dat
                     INNER JOIN content_moderation_state_field_revision rev ON dat.id = rev.id  
                     SET
                       dat.id = rev.id,
@@ -352,7 +352,8 @@ class MigrationPrepareRow {
                       dat.revision_translation_affected = rev.revision_translation_affected
                     WHERE rev.langcode = 'und' 
                           and rev.revision_id = " . $rev->revision_id . ";";
-    \Drupal::database()->query($qstring)->execute();
+      \Drupal::database()->query($qstring)->execute();
+    }
   }
 
 }
