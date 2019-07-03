@@ -1261,19 +1261,6 @@ class MigrationConfigAlter {
         $this->migrations[$migration]['migration_dependencies']['required'] = [];
         break;
 
-      case "node_revision":
-        // Adds the skip_draft process plugin to node revision migrations.
-        foreach ($this->migrations as $mkey => &$migration) {
-          if ($migration["id"] == "d7_node_revision") {
-            $migration["process"]["vid"] = [
-              "plugin" => "skip_draft_revision",
-              "message" => "Skipped draft",
-              "source" => "vid",
-              "save_to_map" => "true",
-            ];
-          }
-        }
-        break;
     }
   }
 

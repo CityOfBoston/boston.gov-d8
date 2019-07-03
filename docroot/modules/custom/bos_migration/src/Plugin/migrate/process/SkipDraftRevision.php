@@ -49,13 +49,27 @@ class SkipDraftRevision extends ProcessPluginBase {
     // If the moderation state in Drupal 7 is not Published, then don't migrate.
     // Be mindful that the latest revision coud be draft, so keep that.
     $vid = $row->getSource()["vid"];
+    $nid = $row->getSource()["nid"];
 
-    $workbench = MigrationPrepareRow::findWorkbench($vid);
+    $workbench_all = MigrationPrepareRow::findWorkbench($nid);
+    if (empty($workbench_all)) {
+      throw new MigrateSkipRowException("Workbench moderation not found.", FALSE);
+    }
+    $workbench_current = MigrationPrepareRow::findWorkbenchCurrent($nid);
+    if (empty($workbench_current)) {
+      throw new MigrateSkipRowException("Workbench moderation current not found.", FALSE);
+    }
+    $workbench_published = MigrationPrepareRow::findWorkbenchPublished($nid);
+
     try {
-      $result = MigrationPrepareRow::shouldProcessRow($row->getSource()["nid"], $vid, $workbench, $this->configuration);
+      $result = MigrationPrepareRow::shouldProcessRow($nid, $vid, $workbench_all, $this->configuration);
       // Add the d7 workbench moderation data to the source so other plugins
       // can use it in later processing.
-      $row->workbench = $workbench;
+      $this->row->workbench = [
+        "all" => $workbench_all,
+        "current" => $workbench_current,
+        "published" => $workbench_published ?: NULL,
+      ];
       return $value;
     }
     catch (MigrateSkipRowException $e) {
