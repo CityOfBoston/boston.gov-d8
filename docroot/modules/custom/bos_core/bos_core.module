@@ -280,12 +280,12 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
  * Programmatically enforces realname regardless of realname module settings.
  */
 function bos_core_realname_update($realname, $account) {
-  // try to get a valid name.
+  // Try to get a valid name.
   if ($account->hasField("name")) {
     // Use the display name.
     $realname = $account->getDisplayName() ?: $account->getAccountName();
     if (is_numeric($realname) || preg_match("~(CON|INT)[0-9]*~", $realname)) {
-      // we don't want COB ID's to appear as names.
+      // We don't want COB ID's to appear as names.
       $realname = NULL;
     }
   }
