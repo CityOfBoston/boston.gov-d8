@@ -280,7 +280,20 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
  * Programmatically enforces realname regardless of realname module settings.
  */
 function bos_core_realname_update($realname, $account) {
-  $realname = _bos_core_name_from_email($account->get("mail")->value);
+  // try to get a valid name.
+  if ($account->hasField("name")) {
+    // Use the display name.
+    $realname = $account->getDisplayName() ?: $account->getAccountName();
+    if (is_numeric($realname) || preg_match("~(CON|INT)[0-9]*~", $realname)) {
+      // we don't want COB ID's to appear as names.
+      $realname = NULL;
+    }
+  }
+  if (empty($realname) && $account->hasField("mail")) {
+    $realname = _bos_core_name_from_email($account->getEmail());
+  }
+
+  // Save the realname here.
   \Drupal::database()->merge('realname')
     ->key(['uid' => $account->id()])
     ->fields([
@@ -288,6 +301,9 @@ function bos_core_realname_update($realname, $account) {
       'created' => \Drupal::time()->getRequestTime(),
     ])
     ->execute();
+
+  return $realname;
+
 }
 
 /**
@@ -611,10 +627,10 @@ function _bos_core_moderation_decode(array $node_info) {
  */
 function _bos_core_name_from_email(string $email = NULL) {
   if (!isset($email)) {
-    return "unknown";
+    return NULL;
   }
   elseif (preg_match("/.*\@/", $email, $output)) {
-    return ucwords(str_replace(".", " ", trim($output[0], "@")));
+    return ucwords(str_replace([".", "_"], " ", trim($output[0], "@")));
   }
   else {
     return $email;
