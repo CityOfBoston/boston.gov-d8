@@ -59,6 +59,77 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
+
+    if ($event->getMigration()->get("migration_group") != "d7_node_revision"
+      || NULL == $vid = $event->getDestinationIdValues()[0]) {
+      return;
+    }
+
+    $row = $event->getRow();
+
+    // Establish the moderation states from D7.
+    if (NULL == ($workbench = $row->workbench)) {
+      try {
+        $nid = $row->getSource()['nid'];
+        $workbench["all"] = MigrationPrepareRow::findWorkbench($nid);
+        $workbench["current"] = MigrationPrepareRow::findWorkbenchCurrent($nid);
+      }
+      catch (Error $e) {
+        $workbench_all = NULL;
+      }
+    }
+
+    // Get the d7 workbench moderation info for this revision.
+    $workbench_all = $workbench["all"] ?: NULL;
+    $workbench_revision = $workbench_all[$vid] ?: NULL;
+    $workbench_current = $workbench["current"] ?: NULL;
+
+    if (isset($workbench_revision)) {
+      $workbench_current = (object) $workbench_current;
+      if (empty($workbench_revision->published) || !is_numeric($workbench_revision->published)) {
+        $workbench_revision->published = 0;
+      }
+
+      // Set the status for this revision and the current revision.
+      MigrationPrepareRow::setNodeStatus($workbench_revision);
+      MigrationPrepareRow::setNodeStatus($workbench_current);
+
+      // Sets the node back to the correct current revision.
+      MigrationPrepareRow::setCurrentRevision($workbench_current);
+
+      // The `d7_node:xxx` migration will have imported the latest node.
+      //
+      // The d7 workbench_moderation maintains its own versioning
+      // allowing a node_revision to have multiple moderation_states over
+      // time - whereas d8 content moderation links its status with the
+      // node_revision, making a new revision when the moderation state
+      // changes.
+      // The effect of this is that for any node revision, only the first
+      // workbench_moderation state is migrated, and this state is usually
+      // "draft".
+      // So, the revision ond node need their moderation state to be updated.
+      // Set the status for this revision and the current revision.
+      // Sets the moderation state for this revision and the current revision.
+      MigrationPrepareRow::setModerationState($workbench_revision);
+      MigrationPrepareRow::setModerationState($workbench_current);
+
+      // Set the moderation_state revision back to current revision.
+      MigrationPrepareRow::setCurrentModerationRevision($workbench_current);
+
+    }
+  }
+
+  /**
+   * Delete.
+   *
+   * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
+   *   Std.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function migrateRowPostSaveXx(MigratePostRowSaveEvent $event) {
+
     if ($event->getMigration()->get("migration_group") != "d7_node_revision"
       || NULL == $vid = $event->getDestinationIdValues()[0]) {
       return;
@@ -69,7 +140,6 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       ->getStorage('node')
       ->loadRevision($vid)) {
 
-      $state_d8 = $revision_d8->get('moderation_state')->getString();
       $row = $event->getRow();
 
       // Establish the moderation states from D7.
@@ -91,31 +161,17 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
         $nid = $revision_d8->id();
 
         // The `d7_node:xxx` migration will have imported the latest node.
+        //
         // The d7 workbench_moderation maintains its own versioning
         // allowing a node_revision to have multiple moderation_states over
-        // time whereas d8 content moderation links its status with the
+        // time - whereas d8 content moderation links its status with the
         // node_revision, making a new revision when the moderation state
         // changes.
         // The effect of this is that for any node revision, only the first
         // workbench_moderation state is migrated, and this state is usually
         // "draft".
         // So, the revision ond node need their moderation state to be updated.
-        if ($state_d8 != $workbench_d7['state']) {
-          MigrationPrepareRow::setModerationState($vid, $workbench_d7['state']);
-
-          $params = [
-            "@id" => $nid,
-            "@rev_id" => $vid,
-            "@orig_rev_id" => $row->getSource()['vid'],
-            "@state" => $workbench_d7['state'],
-            "@old_state" => $state_d8,
-            "@node_type" => $event->getMigration()
-              ->getSourceConfiguration()['node_type'],
-          ];
-          /*$msg = \Drupal::translation()
-          ->translate("@node_type:#@id set revision @rev_id (orig:@orig_rev_id) moderation from @old_state to @state.", $params);
-          $event->logMessage($msg->render());*/
-        }
+        MigrationPrepareRow::setModerationState($vid, $workbench_d7['state']);
 
         // If revision is "published" i.e status = 1 and content_mod = published
         // then update revision and node accordingly.
@@ -125,16 +181,6 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
           // This revision is the published one, so place in the node table
           // and set its status to 1.
           MigrationPrepareRow::setNodeStatus($vid, $workbench_d7['published']);
-
-          /*$params = [
-          "@id" => $revision_d8->id(),
-          "@rev_id" => $vid,
-          "@node_type" => $event->getMigration()
-          ->getSourceConfiguration()['node_type'],
-          ];
-          $msg = \Drupal::translation()
-          ->translate("@node_type:#@id set revision @rev_id status to TRUE.", $params);
-          $event->logMessage($msg->render());*/
         }
 
         // If the last workbench state for this revision is marked "current"
@@ -142,8 +188,8 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
         if ($workbench_d7['is_current'] == 1) {
           // This is almost never true, because the current revision is usually
           // the revision migrated with `d7_node:xxx` migration.
-          MigrationPrepareRow::setCurrentRevision($workbench_d7["nid"], $vid, $workbench_d7['published']);
-          MigrationPrepareRow::setCurrentModerationRevision($workbench_d7["nid"], $vid, $workbench_d7['published']);
+          MigrationPrepareRow::setCurrentRevision($workbench_d7["nid"], $vid);
+          MigrationPrepareRow::setCurrentModerationRevision($workbench_d7["nid"], $vid);
         }
         else {
           // Find the D7 revision marked as published (status=1 and
@@ -153,8 +199,8 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
           if (empty($current['published']) || !is_numeric($current['published'])) {
             $current['published'] = 0;
           }
-          MigrationPrepareRow::setCurrentRevision($current["nid"], $current["vid"], $current['published']);
-          MigrationPrepareRow::setCurrentModerationRevision($current["nid"], $current["vid"], $current['published']);
+          MigrationPrepareRow::setCurrentRevision($current["nid"], $current["vid"]);
+          MigrationPrepareRow::setCurrentModerationRevision($current["nid"], $current["vid"]);
         }
 
         // Find the D7 revision for this node which is published and make sure
