@@ -97,9 +97,10 @@ function bos_admin_preprocess_html(&$variables) {
  */
 function bos_admin_preprocess_username(&$variables) {
   // Todo: set name and extra fields here ...
-  if (empty($variables["account"]->__get("realname")) || stripos($variables["account"]->__get("realname"), "@")) {
-    if (function_exists("_bos_core_name_from_email")) {
-      $name = _bos_core_name_from_email($variables["account"]->get("mail")->value);
+  $name = $variables["account"]->__get("realname");
+  if (empty($name) || stripos($name, "@")) {
+    if (function_exists("bos_core_realname_update")) {
+      bos_core_realname_update($name, $variables["account"]);
       $variables["account"]->__set("realname", $name);
       $variables["name"] = $name;
     }
@@ -118,54 +119,58 @@ function bos_admin_preprocess_admin_block(&$variables) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
+  $unhelpfulUsernamePattern = "~(CON|INT|)[0-9]{5,}~";
+  foreach ($form["node_revisions_table"] as $key => &$revision) {
+    if (is_numeric($key)) {
+      $context = &$revision["revision"]["#context"];
+      // If user is numeric, then find the realname.
+      $user = str_replace("\n", "", strip_tags($context["username"]->__toString()));
+      if (is_numeric($user)) {
+        $user = bos_admin_author_expand($user);
+      }
+      $context["username"] = Markup::create($user);
+      // If revision was migrated from D7, then insert relname into message.
+      if (preg_match($unhelpfulUsernamePattern, $context["message"]["#markup"], $rev_username)) {
+        $rev_user = Drupal::entityTypeManager()
+          ->getStorage("user")
+          ->loadByProperties(["name" => $rev_username[0]]);
+        $rev_user = reset($rev_user);
+        $context["message"]["#markup"] = preg_replace($unhelpfulUsernamePattern, $rev_user->realname, $context["message"]["#markup"]);
+      }
+      // Add the revision number.
+      $revision["revision"]["#template"] = preg_replace("~\{\{ date \}\}~", "{{ revisionid }} on {{ date }}", $revision["revision"]["#template"]);
+      $context["revisionid"] = new GeneratedLink();
+      $revfield = $revision["revision"]["#context"]["date"]->getGeneratedLink();
+      $revfield = preg_replace("~>[0-9\/ -\:apm]*<~", ">" . $revision['select_column_one']['#return_value'] . "<", $revfield);
+      $context["revisionid"]->setGeneratedLink($revfield);
+      $context["date"]->setGeneratedLink(strip_tags($revision["revision"]["#context"]["date"]->getGeneratedLink()));
+      // Add some tooltips to help editors with this form.
+      $tooltip = "Select this revision for compare";
+      $revision["select_column_one"]["#attributes"]["title"] = $tooltip;
+      $revision["select_column_two"]["#attributes"]["title"] = $tooltip;
+    }
+  }
+  // Revision form ...
+  $title = "compare";
+  $form["node_revisions_table"]["#header"]["select_column_one"] = $title;
+  $form["node_revisions_table"]["#header"]["select_column_two"] = $title;
+  $form["#attached"]["library"][] = "bos_admin/revisions";
+  $form["reset"] = [
+    "#attributes" => ["class" => ["compare-reset"]],
+    "#button_type" => "danger",
+    "#type" => "submit",
+    "#value" => Markup::create("Reset selections"),
+  ];
+  $form["#submit"][] = "bos_admin_revisions_defaults";
+}
+
+/**
  * Implements hook_form_alter().
  */
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id == "revision_overview_form") {
-    foreach ($form["node_revisions_table"] as $key => &$revision) {
-      if (is_numeric($key)) {
-        $context = &$revision["revision"]["#context"];
-        // If user is numeric, then find the realname.
-        $user = str_replace("\n", "", strip_tags($context["username"]->__toString()));
-        if (is_numeric($user)) {
-          $user = bos_admin_author_expand($user);
-        }
-        $context["username"] = Markup::create($user);
-        // If revision was migrated from D7, then insert relname into message.
-        preg_match("~([0-9]*)\.~", $context["message"]["#markup"], $rev_username);
-        if (!empty($rev_username)) {
-          $rev_user = Drupal::entityTypeManager()
-            ->getStorage("user")
-            ->loadByProperties(["name" => $rev_username[1]]);
-          $rev_user = reset($rev_user);
-          $context["message"]["#markup"] = preg_replace("~([0-9]*)\.~", $rev_user->realname, $context["message"]["#markup"]);
-        }
-        // Add the revision number.
-        $revision["revision"]["#template"] = preg_replace("~\{\{ date \}\}~", "{{ revisionid }} on {{ date }}", $revision["revision"]["#template"]);
-        $context["revisionid"] = new GeneratedLink();
-        $revfield = $revision["revision"]["#context"]["date"]->getGeneratedLink();
-        $revfield = preg_replace("~>[0-9\/ -\:apm]*<~", ">" . $revision['select_column_one']['#return_value'] . "<", $revfield);
-        $context["revisionid"]->setGeneratedLink($revfield);
-        $context["date"]->setGeneratedLink(strip_tags($revision["revision"]["#context"]["date"]->getGeneratedLink()));
-        // Add some tooltips to help editors with this form.
-        $tooltip = "Select this revision for compare";
-        $revision["select_column_one"]["#attributes"]["title"] = $tooltip;
-        $revision["select_column_two"]["#attributes"]["title"] = $tooltip;
-      }
-    }
-    // Revision form ...
-    $title = "compare";
-    $form["node_revisions_table"]["#header"]["select_column_one"] = $title;
-    $form["node_revisions_table"]["#header"]["select_column_two"] = $title;
-    $form["#attached"]["library"][] = "bos_admin/revisions";
-    $form["reset"] = [
-      "#attributes" => ["class" => ["compare-reset"]],
-      "#button_type" => "danger",
-      "#type" => "submit",
-      "#value" => Markup::create("Reset selections"),
-    ];
-    $form["#submit"][] = "bos_admin_revisions_defaults";
-  }
 
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
     // Node-edit forms: Make the Revision log message required.
