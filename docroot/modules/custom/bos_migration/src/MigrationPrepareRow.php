@@ -335,7 +335,7 @@ class MigrationPrepareRow {
         ->execute();
 
       // Table: content_moderation_state_field_data.
-      $qstring = "UPDATE drupal.content_moderation_state_field_data dat
+      $qstring = "UPDATE content_moderation_state_field_data dat
                     INNER JOIN content_moderation_state_field_revision rev ON dat.id = rev.id  
                     SET
                       dat.id = rev.id,

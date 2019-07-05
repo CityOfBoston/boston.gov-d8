@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
+    - field.field.node.event.field_date_range
     - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
@@ -33,7 +34,7 @@ dependencies:
     - image.style.featured_item_thumbnail
     - node.type.event
   module:
-    - datetime
+    - datetime_range
     - fences
     - link
     - svg_image
@@ -44,6 +45,23 @@ targetEntityType: node
 bundle: event
 mode: featured_item
 content:
+  field_date_range:
+    type: daterange_default
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: medium
+      separator: '-'
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_description:
     type: text_default
     weight: 1
@@ -63,22 +81,6 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
-  field_event_dates:
-    type: datetime_default
-    weight: 0
-    region: content
-    label: hidden
-    settings:
-      timezone_override: ''
-      format_type: date_format_boston_featured
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_thumbnail:
     type: image
     weight: 3
@@ -111,6 +113,7 @@ hidden:
   field_cost: true
   field_email: true
   field_event_contact: true
+  field_event_dates: true
   field_event_type: true
   field_extra_info_event: true
   field_featured: true

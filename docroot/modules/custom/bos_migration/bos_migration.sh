@@ -7,11 +7,13 @@ function doMigrate() {
     ERRORS=0
 
     while true; do
-        printf "\n${drush} mim $* --feedback=1000 --limit=10\n" | tee -a ${logfile}
-        ${drush} mim $* --feedback=1000 --limit=10 | tee -a ${logfile}
+        printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+        ${drush} mim $* --feedback=500
         retVal=$?
         if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
+        bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
+        ${drush} mrs $bad
     done
     echo "ExitCode: ${retVal}"
 
@@ -60,12 +62,13 @@ function restoreDB() {
 
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
-    ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
 
     # Ensure the needed modules are enabled.
     ${drush} cdel views.view.migrate_taxonomy
     ${drush} cdel views.view.migrate_paragraphs
     ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration -y  | tee -a ${logfile}
+
+    ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
 
     # rebuild the migration configs.
     ${drush} updb -y  | tee -a ${logfile}
@@ -73,8 +76,18 @@ function restoreDB() {
     doExecPHP "node_access_rebuild();"
     printf " -> RESTORED.\n" | tee -a ${logfile}
 
+    # Set migration variables.
+    ${drush} sset "bos_migration.fileOps" "copy"
+    ${drush} sset "bos_migration.dest_file_exists" "use\ existing"
+    ${drush} sset "bos_migration.dest_file_exists_ext" "skip"
+    ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/"
+    ${drush} sset "bos_migration.active" "1"
+
     ${drush} cr  | tee -a ${logfile}
     ${drush} ms  | tee -a ${logfile}
+
+    dumpDB ${1}
+
 }
 
 function dumpDB() {
@@ -103,19 +116,11 @@ fi
 
 running=0
 
-# Set migration variables.
-${drush} sset "bos_migration.fileOps" "copy"
-${drush} sset "bos_migration.dest_file_exists" "use\ existing"
-${drush} sset "bos_migration.dest_file_exists_ext" "skip"
-${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/"
-${drush} sset "bos_migration.active" "1"
-
 ## Migrate files first.
 if [ "$1" == "reset" ]; then
     running=1
     restoreDB "${dbpath}/migration_clean_reset.sql"
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
-    dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
 ## Perform the lowest level safe-dependencies.
@@ -198,7 +203,7 @@ fi
 ## Finish off.
 if [ "$1" == "node_revision" ] || [ $running -eq 1 ]; then
     running=1
-#    if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql"; fi
+    if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql"; fi
     doMigrate d7_menu_links,d7_menu --force
     dumpDB ${dbpath}/migration_clean_after_menus.sql
 fi
