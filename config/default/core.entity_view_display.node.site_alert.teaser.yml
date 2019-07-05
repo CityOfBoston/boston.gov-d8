@@ -17,8 +17,14 @@ id: node.site_alert.teaser
 targetEntityType: node
 bundle: site_alert
 mode: teaser
-content: {  }
+content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden:
+  field_date_range: true
   field_excluded_nodes: true
   field_extra_info: true
   field_icon: true
