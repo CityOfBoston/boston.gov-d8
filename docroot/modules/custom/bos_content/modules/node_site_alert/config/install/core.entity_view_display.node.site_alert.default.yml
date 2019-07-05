@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.site_alert.field_date_range
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
     - field.field.node.site_alert.field_icon
@@ -10,6 +11,7 @@ dependencies:
     - field.field.node.site_alert.title_field
     - node.type.site_alert
   module:
+    - datetime_range
     - entity_reference_revisions
     - fences
     - options
@@ -21,20 +23,29 @@ bundle: site_alert
 mode: default
 content:
   content_moderation_control:
-    weight: -20
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_date_range:
+    type: daterange_plain
+    weight: 7
+    region: content
+    label: hidden
+    settings:
+      separator: '-'
+      timezone_override: ''
+    third_party_settings: {  }
   field_excluded_nodes:
     label: hidden
-    weight: 5
+    weight: 6
     type: entity_reference_entity_id
     settings: {  }
     third_party_settings: {  }
     region: content
   field_extra_info:
     type: string
-    weight: 2
+    weight: 3
     region: content
     label: hidden
     settings:
@@ -42,7 +53,7 @@ content:
     third_party_settings: {  }
   field_icon:
     label: hidden
-    weight: 0
+    weight: 1
     type: image
     settings:
       image_style: ''
@@ -62,7 +73,7 @@ content:
     region: content
   field_link:
     label: hidden
-    weight: 3
+    weight: 4
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: default
@@ -78,14 +89,14 @@ content:
     region: content
   field_theme:
     label: hidden
-    weight: 4
+    weight: 5
     type: list_default
     settings: {  }
     third_party_settings: {  }
     region: content
   title_field:
     type: string
-    weight: 1
+    weight: 2
     region: content
     label: hidden
     settings:

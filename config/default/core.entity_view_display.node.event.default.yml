@@ -65,7 +65,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_address:
-    weight: 25
+    weight: 24
     label: hidden
     settings: {  }
     third_party_settings:
@@ -90,7 +90,7 @@ content:
     third_party_settings: {  }
   field_city_hall:
     type: boolean
-    weight: 23
+    weight: 22
     region: content
     label: hidden
     settings:
@@ -100,7 +100,7 @@ content:
     third_party_settings: {  }
   field_city_sponsored:
     type: boolean
-    weight: 22
+    weight: 21
     region: content
     label: hidden
     settings:
@@ -110,7 +110,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: entity_reference_revisions_entity_view
-    weight: 24
+    weight: 23
     region: content
     label: hidden
     settings:
@@ -118,7 +118,7 @@ content:
       link: ''
     third_party_settings: {  }
   field_contacts:
-    weight: 15
+    weight: 14
     label: hidden
     settings:
       link: true
@@ -127,7 +127,7 @@ content:
     region: content
   field_cost:
     type: string
-    weight: 10
+    weight: 9
     region: content
     label: inline
     settings:
@@ -141,8 +141,8 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_date_range:
-    weight: 6
-    label: inline
+    weight: 5
+    label: hidden
     settings:
       timezone_override: America/New_York
       format_type: date_format_normal_date
@@ -173,7 +173,7 @@ content:
     region: content
   field_details_link:
     type: link
-    weight: 20
+    weight: 19
     region: content
     label: hidden
     settings:
@@ -185,7 +185,7 @@ content:
     third_party_settings: {  }
   field_email:
     type: string
-    weight: 7
+    weight: 6
     region: content
     label: hidden
     settings:
@@ -200,7 +200,7 @@ content:
         fences_label_classes: ''
   field_event_contact:
     type: string
-    weight: 9
+    weight: 8
     region: content
     label: hidden
     settings:
@@ -213,25 +213,9 @@ content:
         fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
-  field_event_dates:
-    type: datetime_default
-    weight: 5
-    region: content
-    label: hidden
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_event_type:
     type: entity_reference_label
-    weight: 12
+    weight: 11
     region: content
     label: inline
     settings:
@@ -254,14 +238,14 @@ content:
     third_party_settings: {  }
   field_featured:
     type: list_default
-    weight: 19
+    weight: 18
     region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
     type: responsive_image
-    weight: 18
+    weight: 17
     region: content
     label: hidden
     settings:
@@ -277,7 +261,7 @@ content:
         fences_label_classes: ''
   field_links:
     type: entity_reference_revisions_entity_view
-    weight: 13
+    weight: 12
     region: content
     label: inline
     settings:
@@ -292,7 +276,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_manual_date:
-    weight: 16
+    weight: 15
     label: hidden
     settings:
       format: default
@@ -303,7 +287,7 @@ content:
     region: content
   field_multiple_neighborhoods:
     type: entity_reference_label
-    weight: 11
+    weight: 10
     region: content
     label: inline
     settings:
@@ -318,7 +302,7 @@ content:
         fences_label_classes: ''
   field_phone_number:
     type: string
-    weight: 8
+    weight: 7
     region: content
     label: hidden
     settings:
@@ -333,7 +317,7 @@ content:
         fences_label_classes: ''
   field_published_date:
     type: datetime_default
-    weight: 14
+    weight: 13
     region: content
     label: inline
     settings:
@@ -348,7 +332,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_related:
-    weight: 26
+    weight: 25
     label: above
     settings:
       link: true
@@ -357,7 +341,7 @@ content:
     region: content
   field_sidebar_components:
     type: entity_reference_revisions_entity_view
-    weight: 17
+    weight: 16
     region: content
     label: hidden
     settings:
@@ -366,7 +350,7 @@ content:
     third_party_settings: {  }
   field_thumbnail:
     type: image
-    weight: 21
+    weight: 20
     region: content
     label: hidden
     settings:
@@ -395,6 +379,7 @@ content:
         fences_label_classes: ''
 hidden:
   content_moderation_control: true
+  field_event_dates: true
   field_metatags: true
   langcode: true
   links: true
