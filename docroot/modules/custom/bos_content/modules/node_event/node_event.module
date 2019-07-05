@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\core\Template\Attribute;
 
 /**
  * Implements hook_theme().
@@ -77,13 +78,19 @@ function node_event_preprocess_node__event(&$variables) {
     ],
   ];
   // Render the time element of the event date into a detail_item.
-  if (isset($variables["content"]["field_event_dates"]["#object"])) {
+  if (isset($variables["content"]["field_date_range"]["#object"])) {
     // TODO: test when multiple dates. (in twig node-event.html.twig)
-    $event_date = $variables["content"]["field_event_dates"]["#object"]->field_event_dates->first()->value;
+    $event_date = $variables['elements']['#node']->field_date_range[0]->value;
     // All dates stored in UTC in DB.
     $event_date = strtotime($event_date . " +0000");
-    $event_date = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
-    $vars["label"] = $event_date;
+    $vars["label"] = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+
+    if (!empty($variables['elements']['#node']->field_date_range[0]->end_value)) {
+      $event_end_date = $variables['elements']['#node']->field_date_range[0]->end_value;
+      $event_end_date = strtotime($event_end_date . " +0000");
+      $vars["label"] .= " - " . \Drupal::service('date.formatter')
+        ->format($event_end_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+    }
     $variables["content"]["field_event_times"] = Drupal::theme()->render("detail_item", $vars);
   }
 
@@ -135,7 +142,7 @@ function node_event_preprocess_node__event(&$variables) {
   }
 
   // Check for cancelled state.
-  $node = $variables['elements']['#node'];;
+  $node = $variables['elements']['#node'];
   if ($node->hasField("field_cancelled")) {
     $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
   }

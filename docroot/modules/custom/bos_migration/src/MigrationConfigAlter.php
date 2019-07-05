@@ -290,6 +290,27 @@ class MigrationConfigAlter {
       ],
     ],
     // Need to update the process for a date_recur type.
+    "d7_node:public_notice" => [
+      "process" => [
+        "field_public_notice_date" => [
+          "process" => [
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
     "d7_node_revision:public_notice" => [
       "process" => [
         "field_public_notice_date" => [
@@ -332,10 +353,21 @@ class MigrationConfigAlter {
         ],
       ],
     ],
-    "d7_node:public_notice" => [
+    // Event may have an end date.
+    "d7_node:event" => [
       "process" => [
-        "field_public_notice_date" => [
+        "field_date_range" => [
+          "plugin" => "sub_process",
+          "source" => "field_event_dates",
           "process" => [
+            "value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value",
+              ],
+            ],
             "end_value" => [
               [
                 "plugin" => "format_date",
@@ -353,20 +385,150 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    "d7_node_revision:event" => [
+      "process" => [
+        "field_date_range" => [
+          "plugin" => "sub_process",
+          "source" => "field_event_dates",
+          "process" => [
+            "value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value",
+              ],
+            ],
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "d7_node_entity_translation:event" => [
+      "process" => [
+        "field_date_range" => [
+          "plugin" => "sub_process",
+          "source" => "field_event_dates",
+          "process" => [
+            "value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value",
+              ],
+            ],
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+
     // Manually add the custom title field.
+    // Set default values for site_alert date-range.
     "d7_node:site_alert" => [
       "process" => [
         "title_field" => "title_field",
+        "field_date_range/value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+        "field_date_range/end_value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
       ],
     ],
     "d7_node_revision:site_alert" => [
       "process" => [
         "title_field" => "title_field",
+        "field_date_range/value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+        "field_date_range/end_value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
       ],
     ],
     "d7_node_entity_translation:site_alert" => [
       "process" => [
         "title_field" => "title_field",
+        "field_date_range/value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+        "field_date_range/end_value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
       ],
     ],
 
