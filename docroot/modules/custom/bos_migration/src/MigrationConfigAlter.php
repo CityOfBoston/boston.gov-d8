@@ -1471,6 +1471,16 @@ class MigrationConfigAlter {
       if (isset($custom_tags[$id])) {
         $migration["migration_tags"] = array_merge($migration["migration_tags"], $custom_tags[$id]);
       }
+      if (strpos($id,"migration_config_deriver:para") !== FALSE) {
+        $id2 = str_replace("migration_config_deriver:para", "para", $id);
+        $this->migrations[$id2] = $migration;
+        unset($this->migrations[$id]);
+      }
+      if (strpos($id,"migration_config_deriver:d7_field") !== FALSE) {
+        $id2 = str_replace("migration_config_deriver:d7_field", "d7_field", $id);
+        $this->migrations[$id2] = $migration;
+        unset($this->migrations[$id]);
+      }
     }
   }
 
@@ -1600,6 +1610,8 @@ class MigrationConfigAlter {
    */
   protected static function getFieldsOfEntityType(string $entityType, string $dbTarget = "default", string $dbKey = "migrate") {
     try {
+      $dbTarget = $dbTarget ?: "default";
+      $dbKey = $dbKey ?: "migrate";
       if (NULL == ($con = Database::getConnection($dbTarget, $dbKey))) {
         return [];
       }

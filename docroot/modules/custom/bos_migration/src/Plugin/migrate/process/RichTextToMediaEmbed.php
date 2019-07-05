@@ -487,7 +487,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   public function saveFile(string $uri) {
     $filename = end(explode("/", $uri));
-    $filename = explode(".", $filename)[0];
     $entity = \Drupal::entityTypeManager()
       ->getStorage('file')
       ->create([
@@ -601,7 +600,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   protected function setPath($uri) {
     $filename = end(explode("/", $uri));
-    $filename = explode(".", $filename)[0];
+    /*$filename = explode(".", $filename)[0];*/
     return "embed/" . $filename[0];
   }
 
