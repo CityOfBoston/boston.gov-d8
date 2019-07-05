@@ -7,11 +7,13 @@ dependencies:
     - node.type.event
     - node.type.how_to
     - node.type.landing_page
+    - node.type.listing_page
     - node.type.person_profile
     - node.type.place_profile
     - node.type.program_initiative_profile
     - node.type.public_notice
     - node.type.script_page
+    - node.type.tabbed_content
     - node.type.topic_page
   module:
     - datetime
@@ -228,10 +230,12 @@ display:
             topic_page: topic_page
             how_to: how_to
             landing_page: landing_page
+            listing_page: listing_page
             person_profile: person_profile
             place_profile: place_profile
             program_initiative_profile: program_initiative_profile
             script_page: script_page
+            tabbed_content: tabbed_content
           group: 1
           exposed: false
           expose:
