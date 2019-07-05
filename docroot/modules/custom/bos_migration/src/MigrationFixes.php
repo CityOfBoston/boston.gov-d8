@@ -137,7 +137,7 @@ class MigrationFixes {
       ->query("
         UPDATE file_managed
         SET filename = SUBSTRING_INDEX(uri, '/', -1) 
-        WHERE locate(".", filename) = 0 and fid > 0;
+        WHERE locate('.', filename) = 0 and fid > 0;
       ")
       ->execute();
   }
