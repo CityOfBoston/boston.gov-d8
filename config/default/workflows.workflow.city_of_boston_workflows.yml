@@ -75,6 +75,12 @@ type_settings:
         - needs_review
       to: published
       weight: 2
+    publish_new_content:
+      label: 'Publish new content'
+      from:
+        - draft
+      to: published
+      weight: 6
     reject:
       label: 'Reject Draft'
       from:
