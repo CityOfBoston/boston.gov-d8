@@ -129,4 +129,26 @@ class MigrationFixes {
 
   }
 
+  /**
+   * This makes sure the filename is set properly from the uri.
+   */
+  public static function fixFilenames() {
+    Database::getConnection()
+      ->query("
+        UPDATE file_managed
+        SET filename = SUBSTRING_INDEX(uri, '/', -1) 
+        WHERE locate(".", filename) = 0 and fid > 0;
+      ")
+      ->execute();
+  }
+
+  /**
+   * Updates the install config files based on the current DB entries.
+   *
+   * Sort of super CEX for config_update.
+   */
+  public static function updateModules() {
+    _bos_core_global_update_configs();
+  }
+
 }
