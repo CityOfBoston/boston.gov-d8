@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
+    - field.field.node.event.field_date_range
     - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
@@ -31,13 +32,13 @@ dependencies:
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
-    - image.style.thumbnail
     - node.type.event
   module:
     - address
     - advanced_text_formatter
     - content_moderation
     - datetime
+    - datetime_range
     - entity_browser
     - field_group
     - link
@@ -45,7 +46,6 @@ dependencies:
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -90,6 +90,7 @@ third_party_settings:
     group_event_information:
       children:
         - field_event_dates
+        - field_date_range
         - field_city_sponsored
         - group_event_details
         - group_event_location
@@ -109,7 +110,7 @@ third_party_settings:
       children:
         - field_cost
       parent_name: group_event_information
-      weight: 26
+      weight: 27
       format_type: details
       format_settings:
         label: 'Event  Entry Fee'
@@ -124,7 +125,7 @@ third_party_settings:
         - field_address
         - field_multiple_neighborhoods
       parent_name: group_event_information
-      weight: 24
+      weight: 25
       format_type: details
       format_settings:
         id: ''
@@ -138,7 +139,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_event_information
-      weight: 25
+      weight: 26
       format_type: details
       format_settings:
         id: ''
@@ -189,7 +190,6 @@ third_party_settings:
       label: 'Sidebar Components'
     group_related_content:
       children:
-        - field_related_departments
         - field_related
       parent_name: group_article
       weight: 6
@@ -222,7 +222,7 @@ third_party_settings:
         - field_details_link
         - field_links
       parent_name: group_event_information
-      weight: 23
+      weight: 24
       format_type: tab
       format_settings:
         id: ''
@@ -273,7 +273,7 @@ content:
     third_party_settings: {  }
   field_city_sponsored:
     type: boolean_checkbox
-    weight: 22
+    weight: 23
     region: content
     settings:
       display_label: true
@@ -308,12 +308,18 @@ content:
     region: content
   field_cost:
     type: string_textfield
-    weight: 24
+    weight: 32
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_date_range:
+    weight: 22
+    settings: {  }
+    third_party_settings: {  }
+    type: daterange_default
+    region: content
   field_description:
     weight: 7
     settings:
@@ -436,7 +442,7 @@ content:
     third_party_settings: {  }
   field_published_date:
     type: datetime_default
-    weight: 31
+    weight: 32
     region: content
     settings: {  }
     third_party_settings: {  }
