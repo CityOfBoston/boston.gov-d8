@@ -121,6 +121,7 @@ if [ "$1" == "reset" ]; then
     running=1
     restoreDB "${dbpath}/migration_clean_reset.sql"
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
+    dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
 ## Perform the lowest level safe-dependencies.
