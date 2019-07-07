@@ -223,6 +223,7 @@ fi
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 dumpDB ${dbpath}/migration_FINAL.sql
+${drush} ms  | tee -a ${logfile}
 
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
