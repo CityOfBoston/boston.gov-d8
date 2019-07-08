@@ -387,3 +387,32 @@ What: Moves context_link button to page center from the right page margin.
   width: initial;
   height: inherit;
 }
+
+/*
+David:  D8 Isuue#291.
+Where: In docroot/themes/custom/bos_theme/templates/snippets/logo.html.twig
+What: Manages the "City of Boston" image on mobile devices.
+Why: Aligns D8 css with D7 override as per D7 PR#1277.
+ */
+@media screen and (max-width: 480px) {
+  .tr--visible {
+    display: block;
+  }
+  .lo-b-cont{
+    background:#091f2f url('https://patterns.boston.gov/images/b-light.svg') no-repeat center center;
+    background-size:20px auto;
+    width:65px;
+    height:65px;
+    margin:0 0 0 calc(-1rem - 2px)
+  }
+  .lo-b-cont a{
+    width:50px;
+    height:50px;
+    margin:0 auto;
+  }
+  .lo-b-cont img{
+    visibility:hidden;
+    width:0px;
+    height:0px;
+  }
+}
