@@ -32,7 +32,7 @@ type_settings:
   states:
     archive:
       published: false
-      default_revision: false
+      default_revision: true
       label: Archive
       weight: 3
     draft:
@@ -75,6 +75,12 @@ type_settings:
         - needs_review
       to: published
       weight: 2
+    publish_new_content:
+      label: 'Publish new content'
+      from:
+        - draft
+      to: published
+      weight: 6
     reject:
       label: 'Reject Draft'
       from:
