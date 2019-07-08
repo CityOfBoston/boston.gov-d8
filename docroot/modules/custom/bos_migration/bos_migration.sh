@@ -121,6 +121,7 @@ if [ "$1" == "reset" ]; then
     running=1
     restoreDB "${dbpath}/migration_clean_reset.sql"
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
+    dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
 ## Perform the lowest level safe-dependencies.
@@ -222,6 +223,7 @@ fi
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 dumpDB ${dbpath}/migration_FINAL.sql
+${drush} ms  | tee -a ${logfile}
 
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"

@@ -1608,7 +1608,7 @@ class MigrationConfigAlter {
    * @return array
    *   Array of fields in the (source) DB of this entity Type
    */
-  protected static function getFieldsOfEntityType(string $entityType, string $dbTarget = "default", string $dbKey = "migrate") {
+  protected static function getFieldsOfEntityType(string $entityType, string $dbTarget = NULL, string $dbKey = NULL) {
     try {
       $dbTarget = $dbTarget ?: "default";
       $dbKey = $dbKey ?: "migrate";
