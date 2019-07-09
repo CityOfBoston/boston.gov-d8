@@ -418,7 +418,7 @@ Why: Aligns D8 css with D7 override as per D7 PR#1277.
 }
 
 /*
-David:  D8 Isuue#408.
+David:  D8 Issue#408.
 Where: In node__site_alert.html.twig.
        Also in paragraphs-item--fyi.html.twig.
 What: Unifies/Standardizes icon sizing with other places on-site and set
@@ -444,3 +444,16 @@ What: Unifies/Standardizes icon sizing with other places on-site and set
 .fyi-i svg .svg-stroke-hover {
   fill: transparent;
 }
+
+/*
+David:  D8 Issue#408.
+Where: In paragraph--transaction-grid.html.twig.
+What:  Sizes and centers the icon/image in the transaction box.
+ */
+.paragraphs-item-transaction-grid .lwi-ic {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 3em auto;
+}
+
+
