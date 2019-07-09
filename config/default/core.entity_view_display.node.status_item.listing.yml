@@ -19,13 +19,24 @@ bundle: status_item
 mode: listing
 content:
   field_icon:
-    label: above
+    label: hidden
     weight: 2
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_65px
       image_link: ''
-    third_party_settings: {  }
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_title:
     label: above
