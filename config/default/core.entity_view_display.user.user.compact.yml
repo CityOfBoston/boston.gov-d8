@@ -4,12 +4,10 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
-    - field.field.user.user.field_last_password_reset
-    - field.field.user.user.field_password_expiration
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
-    - image
+    - svg_image
     - user
 _core:
   default_config_hash: '-cLsS3M3JycipXQt9rEb81_HxKneReoGuRh8ijcOPXs'
@@ -31,8 +29,6 @@ content:
     third_party_settings: {  }
     label: hidden
 hidden:
-  field_last_password_reset: true
-  field_password_expiration: true
   langcode: true
   member_for: true
   name: true
