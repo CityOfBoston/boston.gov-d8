@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.fyi.field_link
     - field.field.paragraph.fyi.field_short_title
     - field.field.paragraph.fyi.field_title
+    - image.style.square_icon_56px
     - paragraphs.paragraphs_type.fyi
   module:
     - entity_reference_revisions
@@ -40,12 +41,12 @@ content:
     weight: 0
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_56px
       image_link: ''
-      svg_render_as_image: '1'
+      svg_render_as_image: 0
       svg_attributes:
-        width: ''
-        height: ''
+        width: 56px
+        height: 56px
     third_party_settings:
       fences:
         fences_field_tag: none
