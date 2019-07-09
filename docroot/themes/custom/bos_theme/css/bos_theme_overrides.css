@@ -421,13 +421,26 @@ Why: Aligns D8 css with D7 override as per D7 PR#1277.
 David:  D8 Isuue#408.
 Where: In node__site_alert.html.twig.
        Also in paragraphs-item--fyi.html.twig.
-What: Unifies/Standardizes icon sizing with other places on-site.
+What: Unifies/Standardizes icon sizing with other places on-site and set
+      the icon to be red on transparent.
  */
 .fyi-i {
-   width: 56px;
-   height: 56px;
+  width: 56px;
+  height: 56px;
 }
 .fyi-i svg {
-   width: 56px;
-   height: 56px;
+  fill: transparent;
+}
+.fyi-i svg * {
+  stroke: #db2727;
+}
+.fyi-i svg polygon,
+.fyi-i svg points,
+.fyi-i svg circle .svg-fill-hover,
+.fyi-i svg elipse,
+.fyi-i svg path {
+  fill: #db2727;
+}
+.fyi-i svg .svg-stroke-hover {
+  fill: transparent;
 }
