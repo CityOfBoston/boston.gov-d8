@@ -5,11 +5,13 @@ dependencies:
   config:
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
+    - image.style.transaction_icon_180x100
     - paragraphs.paragraphs_type.transactions
   module:
     - bg_image_formatter
     - entity_reference_revisions
     - fences
+    - svg_image
 _core:
   default_config_hash: XUL-rB3LuHmqMwx9gdJke4a-0YdD8dEivhBDpz_jILo
 id: paragraph.transactions.default
@@ -38,7 +40,7 @@ content:
     weight: 0
     type: image
     settings:
-      image_style: square_icon_65px
+      image_style: transaction_icon_180x100
       image_link: ''
       svg_attributes:
         width: ''
