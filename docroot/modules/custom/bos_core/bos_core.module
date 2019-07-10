@@ -40,6 +40,13 @@ function bos_core_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function bos_core_form_alter(&$form, $form_state, $form_id) {
+  $form['#attributes']['novalidate'] = 'novalidate';
+}
+
+/**
  * Implements hook_inline_entity_form_entity_form_alter().
  */
 function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
