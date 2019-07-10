@@ -12,19 +12,19 @@ field_name: field_icon
 entity_type: taxonomy_term
 bundle: features
 label: Icon
-description: 'Specify an icon for the feature here.'
+description: 'Specify an appropriate SVG icon for the profile feature.'
 required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: 'features-icon/[current-date:date_format_file_directory_storage_date]'
-  file_extensions: 'png gif jpg jpeg svg'
-  max_filesize: ''
+  file_directory: 'img/icons/feature/[current-date:html_year]/[current-date:html_month_bare]'
+  file_extensions: svg
+  max_filesize: '200 KB'
   max_resolution: ''
   min_resolution: ''
   alt_field: false
-  alt_field_required: true
+  alt_field_required: false
   title_field: false
   title_field_required: false
   default_image:

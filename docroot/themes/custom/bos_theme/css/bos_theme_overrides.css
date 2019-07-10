@@ -461,6 +461,29 @@ What:  Sizes and centers the icon/image in the transaction box.
   margin: 0 auto 3em auto;
 }
 
-img.lwi-i {}
+/*
+David:  D8 Issue#408.
+Where: In paragraph--bos-signup-emergency-alerts.html.twig.
+What:  Recolors icon in the form.
+ */
+.di-a svg {
+  stroke: #091f2f;
+  fill: #091f2f;
+}
+.b--b .di-a svg {
+  stroke: white;
+  fill: white;
+}
 
-
+/*
+David:  D8 Issue#408.
+Where: In taxonomy-term--features--sidebar-right.html.twig.
+What:  Sizes and spaces the features icons in the place_profile sidebars.
+ */
+.field-name-field-features .detail-item__left svg {
+  width: 45px;
+  height: 45px;
+}
+.field-name-field-features .detail-item__body:nth-child(2) {
+  padding-top: 0;
+}
