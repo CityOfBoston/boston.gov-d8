@@ -24,6 +24,8 @@ sites/default/files
     |   ├── icons                      * Holds svg icon files 
     |   |   ├── department              
     |   |   |   └── [dated]             - migrated files
+    |   |   ├── emergency                  
+    |   |   |   └── [dated]             - migrated files
     |   |   ├── feature                  
     |   |   |   └── [dated]             - migrated files
     |   |   ├── fyi                      
@@ -75,7 +77,7 @@ Image styles used:
 | node:site_alert | field_icon | 56x56/++ - 200KB | square_icon_56px |
 | node:status_item | field_icon | 65x65/++ - 200KB | square_icon_65px |
 | para:fyi | field_icon | 56x56/++ 200KB | square_icon_56px |
-| para:signup_emergency_alerts | field_icon |   |  |
+| para:signup_emergency_alerts | field_icon | n/a svg  | n/a svg |
 | para:transactions | field_icon | 180x100/++ - 2MB  | transaction_icon_180x100 |
 | tax:features | field_icon |   |  |
 | node:event | field_intro_image |   |  |

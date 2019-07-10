@@ -36,9 +36,8 @@
 
 <div{{ attributes.addClass(classes) }}">
   <div class="b-c">
-    <div class="contextual-region">
-      {{ title_suffix }}
-    </div>
+    {{ title_prefix }}
+    {{ title_suffix }}
     <div class="sh {{ section_header_theme }}">
       {% if content.field_component_title %}
         {{ content.field_component_title }}
@@ -57,7 +56,7 @@
           <div id="alert_success" class="m-b500 p-t400">
             <div class="di di--c{% if component_theme == 'b' %} di--c--w{% endif %} di--c--l fl--l m-r400">
               <div class="di-a">
-                <img src="{{ content.field_icon.url }}" role="presentation" />
+                {{ content.field_icon }}
               </div>
             </div>
             <div class="t--intro m-t300" style="display: none">You have been subscribed to the City of Boston's emergency alerts</div>
