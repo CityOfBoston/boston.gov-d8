@@ -80,15 +80,15 @@ Image styles used:
 | para:signup_emergency_alerts | field_icon | n/a svg  | n/a svg |
 | para:transactions | field_icon | 180x100/++ - 2MB  | transaction_icon_180x100 |
 | tax:features | field_icon | svg  | square_icon_56px |
-| node:event | field_intro_image |   |  |
+| node:event | field_intro_image | 1920x528/++ 8 MB | Resp: intro_image_fields |
 | node:how_to | field_intro_image |   |  |
 | node:listing_page | field_intro_image |   |  |
 | node:place_profile | field_intro_image |   |  |
-| node:post | field_intro_image |   |  |
+| node:post | field_intro_image | 525x230/++ 8 MB | Resp: thumbnail_event |
 | node:program_i_p | field_intro_image |   |  |
 | node:tabbed_content | field_intro_image |   |  |
 | node:topic_page | field_intro_image |   |  |
-| node:event | field_thumbnail |   |  |
+| node:event | field_thumbnail |  |  |
 | node:post | field_thumbnail |   |  |
 | node:topic_page | field_thumbnail |   |  |
 | node:person_profile | field_person_photo |   |  |
@@ -108,3 +108,10 @@ Image styles used:
 
 min/max
 ++ = not specified (unlimited)
+
+Responsive sets use the following styles:
+intro_image_fields:
+- intro_image_xxx
+thumbnail_event:
+- thumbnail_event_square(190*190)
+- thumbnail_event_rectangle(575x230)
