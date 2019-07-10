@@ -475,4 +475,15 @@ What:  Recolors icon in the form.
   fill: white;
 }
 
-
+/*
+David:  D8 Issue#408.
+Where: In taxonomy-term--features--sidebar-right.html.twig.
+What:  Sizes and spaces the features icons in the place_profile sidebars.
+ */
+.field-name-field-features .detail-item__left svg {
+  width: 45px;
+  height: 45px;
+}
+.field-name-field-features .detail-item__body:nth-child(2) {
+  padding-top: 0;
+}

@@ -79,7 +79,7 @@ Image styles used:
 | para:fyi | field_icon | 56x56/++ 200KB | square_icon_56px |
 | para:signup_emergency_alerts | field_icon | n/a svg  | n/a svg |
 | para:transactions | field_icon | 180x100/++ - 2MB  | transaction_icon_180x100 |
-| tax:features | field_icon |   |  |
+| tax:features | field_icon | svg  | square_icon_56px |
 | node:event | field_intro_image |   |  |
 | node:how_to | field_intro_image |   |  |
 | node:listing_page | field_intro_image |   |  |
