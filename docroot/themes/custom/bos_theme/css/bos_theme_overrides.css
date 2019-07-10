@@ -416,3 +416,51 @@ Why: Aligns D8 css with D7 override as per D7 PR#1277.
     height:0px;
   }
 }
+
+/*
+David:  D8 Issue#408.
+Where: In node__site_alert.html.twig.
+       Also in paragraphs-item--fyi.html.twig.
+What: Unifies/Standardizes icon sizing with other places on-site and set
+      the icon to be red on transparent.
+ */
+.fyi-i {
+  width: 56px;
+  height: 56px;
+}
+.fyi-i svg {
+  fill: transparent;
+}
+.fyi-i svg * {
+  stroke: #db2727;
+}
+.fyi-i svg polygon,
+.fyi-i svg points,
+.fyi-i svg circle .svg-fill-hover,
+.fyi-i svg elipse,
+.fyi-i svg path {
+  fill: #db2727;
+}
+.fyi-i svg .svg-stroke-hover {
+  fill: transparent;
+}
+
+/*
+David:  D8 Issue#408.
+Where: In paragraph--transaction-grid.html.twig.
+What:  Sizes and centers the icon/image in the transaction box.
+ */
+.paragraphs-item-transaction-grid .lwi-ic svg {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 3em auto;
+}
+.paragraphs-item-transaction-grid img.lwi-i {
+  max-width: 180px;
+  max-height: 100px;
+  margin: 0 auto 3em auto;
+}
+
+img.lwi-i {}
+
+

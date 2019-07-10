@@ -28,6 +28,8 @@ sites/default/files
     |   |   |   └── [dated]             - migrated files
     |   |   ├── fyi                      
     |   |   |   └── [dated]             - migrated files
+    |   |   ├── site_alert                   
+    |   |   |   └── [dated]             - migrated files
     |   |   ├── status                   
     |   |   |   └── [dated]             - migrated files
     |   |   └── transactions             
@@ -63,3 +65,44 @@ sites/default/files
     └── unk                             UNKNOWN ORIGIN (to migration) FILES
     
 ```     
+Image styles used:
+
+   
+|Entity | Field | Target Def | Style |   
+|:-----|:-----|-----:|:-----|
+| **Images** |
+| node:department_profile | field_icon | 56x56/++ - 200KB | square_icon_56px |
+| node:site_alert | field_icon | 56x56/++ - 200KB | square_icon_56px |
+| node:status_item | field_icon | 65x65/++ - 200KB | square_icon_65px |
+| para:fyi | field_icon | 56x56/++ 200KB | square_icon_56px |
+| para:signup_emergency_alerts | field_icon |   |  |
+| para:transactions | field_icon | 180x100/++ - 2MB  | transaction_icon_180x100 |
+| tax:features | field_icon |   |  |
+| node:event | field_intro_image |   |  |
+| node:how_to | field_intro_image |   |  |
+| node:listing_page | field_intro_image |   |  |
+| node:place_profile | field_intro_image |   |  |
+| node:post | field_intro_image |   |  |
+| node:program_i_p | field_intro_image |   |  |
+| node:tabbed_content | field_intro_image |   |  |
+| node:topic_page | field_intro_image |   |  |
+| node:event | field_thumbnail |   |  |
+| node:post | field_thumbnail |   |  |
+| node:topic_page | field_thumbnail |   |  |
+| node:person_profile | field_person_photo |   |  |
+| node:quote | field_person_photo |   |  |
+| node:program_i_p | field_program_logo |   |  |
+| para:columns | field_image |   |  |
+| para:hero_image | field_image |   |  |
+| para:map | field_image |   |  |
+| para:photo | field_image |   |  |
+| para:video | field_image |   |  |
+| user | user_picture |   |  |
+| media.image | image |   |  |
+| **Files** |
+| media.document | field_document |   |  |
+| node:procurement | field_document |   |  |
+| para:document | field_document |   |  |
+
+min/max
+++ = not specified (unlimited)

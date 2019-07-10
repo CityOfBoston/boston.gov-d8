@@ -1,6 +1,6 @@
 {#
  * @file
- * Default theme implementation for a FYI paragraph item.
+ * Default theme implementation for a single paragraph item.
  *
  * Available variables:
  * - $content: An array of content items. Use render($content) to print them
@@ -23,38 +23,6 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div{{ attributes.addClass("b b--b b--fw") }}>
-  <div class="b-c b-c--smv">
-    <div class="fyi-c">
-
-      {% if content.field_icon %}
-        <div class="fyi-i">
-          {{ content.field_icon }}
-        </div>
-      {% endif %}
-
-      {{ title_prefix }}
-
-      {% if content.field_title %}
-        <div class="fyi-t">
-          {{ content.field_title }}
-        </div>
-      {% endif %}
-
-      {{ title_suffix }}
-
-      <div class="fyi-s">/</div>
-
-      {% if content.field_extra_info %}
-        <div class="fyi-d">
-          {{ content.field_extra_info }}
-        </div>
-      {% endif %}
-
-      {% if content.field_link %}
-        {{ content.field_link.0 }}
-      {% endif %}
-
-    </div>
-  </div>
-</div>
+{% if link %}
+  {{ link }}
+{% endif %}
