@@ -6,7 +6,7 @@ dependencies:
     - core.entity_view_mode.paragraph.group_of_links
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
-    - image.style.thumbnail
+    - image.style.transaction_icon_180x100
     - paragraphs.paragraphs_type.transactions
   module:
     - entity_reference_revisions
@@ -29,17 +29,16 @@ content:
       link: ''
     third_party_settings: {  }
   field_icon:
-    type: image
-    weight: 0
-    region: content
     label: hidden
+    weight: 2
+    type: image
     settings:
-      image_style: thumbnail
+      image_style: transaction_icon_180x100
       image_link: ''
-      svg_render_as_image: '1'
       svg_attributes:
         width: ''
         height: ''
+      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -48,4 +47,5 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    region: content
 hidden: {  }

@@ -6,7 +6,7 @@ dependencies:
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
-    - image.style.thumbnail
+    - image.style.square_icon_65px
     - node.type.status_item
   module:
     - content_moderation
@@ -72,16 +72,10 @@ content:
     third_party_settings: {  }
   field_icon:
     weight: 3
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: square_icon_65px
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_messages:
