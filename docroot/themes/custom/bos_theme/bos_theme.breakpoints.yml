@@ -1,33 +1,42 @@
 boston.hero.mobile:
   label: 'boston mobile'
   mediaQuery: '(min-width: 0px) and (max-width: 479px)'
-  weight: 3
+  weight: 4
   multipliers:
     - 1x
+    - 1.5x
     - 2x
   group: hero
 
 boston.hero.tablet:
   label: 'boston tablet'
   mediaQuery: '(min-width: 480px)  and (max-width: 767px)'
-  weight: 2
+  weight: 3
   multipliers:
     - 1x
+    - 1.5x
     - 2x
   group: hero
 
 boston.hero.desktop:
   label: 'boston desktop'
   mediaQuery: '(min-width: 768px) and (max-width: 1439px)'
+  weight: 2
+  multipliers:
+    - 1x
+  group: hero
+
+boston.hero.large:
+  label: 'boston large'
+  mediaQuery: '(min-width: 1440px) and (max-width: 1919px)'
   weight: 1
   multipliers:
     - 1x
-    - 2x
   group: hero
 
-boston.hero.wide:
-  label: 'boston wide'
-  mediaQuery: '(min-width: 1440px)'
+boston.hero.oversize:
+  label: 'boston oversize'
+  mediaQuery: '(min-width: 1920px)'
   weight: 0
   multipliers:
     - 1x
