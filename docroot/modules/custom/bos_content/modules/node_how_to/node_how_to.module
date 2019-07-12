@@ -107,7 +107,7 @@ function node_how_to_preprocess_node__how_to(&$variables) {
   $variables['tabs'] = $tabs;
 
   $variables['image_class'] = "hro--b";
-  if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')->count()) {
+  if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {
     $variables['image_class'] = "hro--t";
   }
 
