@@ -10,11 +10,12 @@ dependencies:
     - field.field.node.tabbed_content.field_tabbed_content
     - field.field.node.tabbed_content.field_updated_date
     - node.type.tabbed_content
+    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - svg_image
+    - responsive_image
     - text
     - user
 _core:
@@ -27,14 +28,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 1
-    type: image
+    type: responsive_image
     settings:
-      image_style: ''
+      responsive_image_style: intro_image_fields
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none

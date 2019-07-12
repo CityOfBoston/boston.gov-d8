@@ -10,30 +10,8 @@
 {% for index,tab in tabs %}
 <input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">
 {% endfor %}
-{% if background_image_exists %}
-  <style>
-    .hro {
-      background-image: url({{ small_image }});
-    }
-    @media screen and (min-width: 768px) {
-      .hro {
-        background-image: url({{ medium_image }});
-      }
-    }
-    @media screen and (min-width: 1024px) {
-      .hro {
-        background-image: url({{ large_image }});
-      }
-    }
-    @media screen and (min-width: 1200px) {
-      .hro {
-        background-image: url({{ xlarge_image }});
-      }
-    }
-  </style>
-{% endif %}
 
-<div class="hro {% if background_image_exists %}hro--t{% else %}hro--d{% endif %} hro--wh b--fw">
+<div class="hro {{ image_class }} hro--wh b--fw">
   <div class="hro-c b-c">
     <h1 class="hro-t">{{ node.label }}</h1>
     {% if content.body %}

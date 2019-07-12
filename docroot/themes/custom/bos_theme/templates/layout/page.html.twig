@@ -103,49 +103,61 @@
           <ul class="action-links">{{ action_links }}</ul>
         {%  endif %}
 
-        {% if node and header_image %}
-          {% if node.type.entity.label|lower != 'topic_page' %}
-            <style>
-              .hro {
-                background-image: url({{ small_image }});
-              }
+        {% if node %}
 
-              @media screen and (min-width: 768px) {
+          {% if content.intro_image %}
+
+            {{ content.intro_image }}
+
+          {% elseif header_image %}
+
+            {% if node.type.entity.label|lower != 'topic_page' %}
+
+              <style>
                 .hro {
-                  background-image: url({{ medium_image }});
+                  background-image: url({{ small_image }});
                 }
-              }
 
-              @media screen and (min-width: 1024px) {
-                .hro {
-                  background-image: url({{ large_image }});
+                @media screen and (min-width: 768px) {
+                  .hro {
+                    background-image: url({{ medium_image }});
+                  }
                 }
-              }
 
-              @media screen and (min-width: 1200px) {
-                .hro {
-                  background-image: url({{ xlarge_image }});
+                @media screen and (min-width: 1024px) {
+                  .hro {
+                    background-image: url({{ large_image }});
+                  }
                 }
-              }
-            </style>
 
-            <div class="b b--fw">
-              <div class="hro hro--pt hro--pb"></div>
-            </div>
+                @media screen and (min-width: 1200px) {
+                  .hro {
+                    background-image: url({{ xlarge_image }});
+                  }
+                }
+              </style>
 
-          {% else %}
-
-            <div class="hero-image fullwidth">
-              <div class="hero-image-wrapper {{ hero_classes }}">
-                {{ background_image }}
+              <div class="b b--fw">
+                <div class="hro hro--pt hro--pb"></div>
               </div>
+
+            {% else %}
+
+              <div class="hero-image fullwidth">
+                <div class="hero-image-wrapper {{ hero_classes }}">
+                  {{ background_image }}
+                </div>
+              </div>
+
+            {% endif %}
+
+          {%  endif %}
+
+          {% if header_image or content.intro_image %}
+            <div class="brc--wh" data-swiftype-index="false">
+              {{ drupal_block('system_breadcrumb_block') }}
             </div>
-
           {% endif %}
-
-          <div class="brc--wh" data-swiftype-index="false">
-            {{ drupal_block('system_breadcrumb_block') }}
-          </div>
 
         {% endif %}
 

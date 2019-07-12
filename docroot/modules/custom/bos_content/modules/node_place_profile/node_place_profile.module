@@ -5,6 +5,7 @@
  * Provides a place profile entity type.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
 
 /**
@@ -42,7 +43,19 @@ function node_place_profile_preprocess_page(&$variables) {
       return;
     }
     if ($node->bundle() == "place_profile") {
-      $variables['header_image'] = TRUE;
+      // Now make and render the Intro_image block.
+      $variables['header_image'] = FALSE;
+      if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')->count()) {
+        $variables['header_image'] = TRUE;
+        _bos_content_fix_attributes($variables);
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->setAttribute("id", "page");
+        $nestedElement = [
+          ["div" => "b b--fw"],
+          ["div" => "hro hro--pt hro--pb"],
+        ];
+        $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+      }
     }
   }
 }
@@ -61,5 +74,21 @@ function node_place_profile_preprocess_page(&$variables) {
 function template_preprocess_node__place_profile(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
+  }
+  // Handle intro_image if present.
+  // Has to happen in this template_preprocess_hook or does not #attach(ed).
+  if ($variables['elements']["#node"]->hasField('field_intro_image')) {
+    $background_image = $variables['elements']["#node"]->get('field_intro_image');
+    if ($background_image->count()) {
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'event-intro-image-css',
+      ];
+    }
   }
 }

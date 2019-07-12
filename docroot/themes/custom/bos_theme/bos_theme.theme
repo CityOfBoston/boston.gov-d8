@@ -328,7 +328,17 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // Setup hero style page banner images.
   $current_path = \Drupal::service('path.current')->getPath();
-  _bos_theme_manage_hero($variables, $current_path);
+  if (!in_array($variables["node"]->bundle(), [
+    "event",
+    "how_to",
+    "listing_page",
+    "place_profile",
+    "post",
+    "program_initiative_profile",
+    "tabbed_content",
+  ])) {
+    _bos_theme_manage_hero($variables, $current_path);
+  }
 
   // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
   // Custom 404/403 pages.
@@ -942,7 +952,7 @@ function _bos_theme_page_classes(array &$variables, string $current_path) {
 
     $variables["attributes"]->addClass("mn");
 
-    if ($variables['node']->getType() !== 'tabbed_content' && !$variables['header_image']) {
+    if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['header_image'])) {
       if (!$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
