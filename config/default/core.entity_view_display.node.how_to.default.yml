@@ -16,11 +16,12 @@ dependencies:
     - field.field.node.how_to.field_sidebar_components
     - field.field.node.how_to.field_updated_date
     - node.type.how_to
+    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - svg_image
+    - responsive_image
     - text
     - user
 _core:
@@ -37,6 +38,11 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  content_moderation_control:
+    weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_components:
     label: hidden
     weight: 3
@@ -74,15 +80,18 @@ content:
   field_intro_image:
     label: hidden
     weight: 1
-    type: image
+    type: responsive_image
     settings:
-      image_style: ''
+      responsive_image_style: intro_image_fields
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_links:
     label: hidden
