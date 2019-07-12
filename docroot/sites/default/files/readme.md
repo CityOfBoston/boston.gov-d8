@@ -82,8 +82,8 @@ Image styles used:
 | tax:features | field_icon | svg  | square_icon_56px |
 | node:event | field_intro_image | 1440x396/++ 8 MB | Resp: intro_image_fields |
 | node:how_to | field_intro_image | 1440x396/++ 8 MB  | Resp: intro_image_fields |
-| node:listing_page | field_intro_image | 1440x396/++ 8 MB  | Resp: intro_image_fields |
-| node:place_profile | field_intro_image |   |  |
+| node:listing_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields |
+| node:place_profile | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields |
 | node:post | field_intro_image | |  |
 | node:program_i_p | field_intro_image |   |  |
 | node:tabbed_content | field_intro_image |   |  |
