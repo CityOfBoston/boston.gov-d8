@@ -3,11 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.user.user.field_last_password_reset
-    - field.field.user.user.field_password_expiration
     - field.field.user.user.user_picture
   module:
-    - image
+    - svg_image
     - user
 _core:
   default_config_hash: V51QPCKkgNREKtSmB9Iu2wmAMEpktVpnzklWaZV8UYo
@@ -32,8 +30,6 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
-  field_last_password_reset: true
-  field_password_expiration: true
   langcode: true
   name: true
   realname: true
