@@ -5,6 +5,7 @@
  * Provides a guide entity type.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
 
 /**
@@ -26,7 +27,21 @@ function node_topic_page_theme() {
  */
 function node_topic_page_preprocess_node__topic_page(&$variables) {
   _bos_theme_fix_attributes($variables);
-  $variables['attributes']->addClass('node-' . $variables['elements']['#node']->id());
+  $node = $variables['elements']['#node'];
+
+  $variables['attributes']->addClass('node-' . $node->id());
+
+  // Now make and render the Intro_image block.
+  $variables['header_image'] = FALSE;
+  if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {
+    $variables['header_image'] = TRUE;
+    _bos_content_fix_attributes($variables);
+    $nestedElement = [
+      ["div" => "hero-image fullwidth b b--fw"],
+      ["div" => "hero-image-wrapper hro hro--pt hro--pb"],
+    ];
+    $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+  }
 }
 
 /**
@@ -40,8 +55,24 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_guide(array &$variables) {
+function template_preprocess_node__topic_page(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
+  }
+  // Handle intro_image if present.
+  // Has to happen in this template_preprocess_hook or does not #attach(ed).
+  if ($variables['elements']["#node"]->hasField('field_intro_image')) {
+    $background_image = $variables['elements']["#node"]->get('field_intro_image');
+    if ($background_image->count()) {
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'event-intro-image-css',
+      ];
+    }
   }
 }

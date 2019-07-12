@@ -15,7 +15,7 @@ dependencies:
     - field.field.node.how_to.field_published_date
     - field.field.node.how_to.field_sidebar_components
     - field.field.node.how_to.field_updated_date
-    - image.style.thumbnail
+    - image.style.intro_image_mobile_1x
     - node.type.how_to
   module:
     - content_moderation
@@ -200,16 +200,10 @@ content:
     region: content
   field_intro_image:
     weight: 1
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: intro_image_mobile_1x
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_links:
