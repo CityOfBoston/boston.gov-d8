@@ -5,7 +5,30 @@
  * The Base module file for node_how_to module.
  */
 
-use Drupal\image\Entity\ImageStyle;
+use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Core\Render\Element;
+
+function template_preprocess_node__how_to(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+  // Handle intro_image if present.
+  // Has to happen in this template_preprocess_hook or does not #attach(ed).
+  if ($variables['elements']["#node"]->hasField('field_intro_image')) {
+    $background_image = $variables['elements']["#node"]->get('field_intro_image');
+    if ($background_image->count()) {
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'how-to-intro-image-css',
+      ];
+    }
+  }
+}
 
 /**
  * Implements hook_theme().
@@ -72,25 +95,13 @@ function node_how_to_preprocess_node__how_to(&$variables) {
   }
   $variables['tabs'] = $tabs;
 
-  // Add intro_image as background to the title panel.
-  if (isset($variables["node"]->field_intro_image)) {
-    $background_image = $variables["node"]->field_intro_image;
-    if (isset($background_image->entity)) {
-      $uri = $background_image->entity->getFileUri();
-      $variables['background_image_exists'] = TRUE;
-      $variables['background_image'] = $background_image;
-      $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
-        ->buildUrl($uri);
-      $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
-        ->buildUrl($uri);
-      $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
-        ->buildUrl($uri);
-      $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
-        ->buildUrl($uri);
-    }
+  $variables['image_class'] = "hro--b";
+  if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')
+      ->count()) {
+    $variables['image_class'] = "hro--t";
   }
 
-  // Add markup to locate the contextual editor button.
+    // Add markup to locate the contextual editor button.
   if (function_exists("_bos_theme_fix_attributes")) {
     _bos_theme_fix_attributes($variables);
     $variables["attributes"]->addClass("desktop-100");
@@ -113,13 +124,21 @@ function node_how_to_preprocess_page(&$variables) {
       // page is rendered.
       return;
     }
+
     if ($node->bundle() == "how_to") {
+      // Add intro_image as background to the title panel.
+      // Now make and render the Intro_image block.
       $variables['header_image'] = FALSE;
-      if (function_exists("_bos_components_fix_attributes")) {
-        _bos_components_fix_attributes($variables);
+      $variables['image_class'] = "hro--b";
+      if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')
+          ->count()) {
+        _bos_content_fix_attributes($variables);
+        $variables['image_class'] = "hro--t";
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->setAttribute("id", "page");
       }
-      $variables['attributes']->addClass("mn");
     }
+
   }
 }
 
