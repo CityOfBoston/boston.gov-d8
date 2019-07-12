@@ -14,7 +14,7 @@ field_name: field_intro_image
 entity_type: node
 bundle: topic_page
 label: 'Intro Image'
-description: ''
+description: 'Add an intro image to the page. It will display at the very top of the page, slightly above the content.'
 required: true
 translatable: false
 default_value: {  }
@@ -22,11 +22,11 @@ default_value_callback: ''
 settings:
   file_directory: 'img/topic/intro_images/[current-date:html_year]/[current-date:html_month_bare]'
   file_extensions: 'png gif jpg jpeg svg'
-  max_filesize: ''
+  max_filesize: '8 MB'
   max_resolution: ''
-  min_resolution: ''
+  min_resolution: 1440x396
   alt_field: true
-  alt_field_required: true
+  alt_field_required: false
   title_field: false
   title_field_required: false
   default_image:
