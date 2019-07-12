@@ -19,7 +19,6 @@ use Drupal\Core\Render\Element;
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-
 function template_preprocess_node__how_to(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
@@ -108,12 +107,11 @@ function node_how_to_preprocess_node__how_to(&$variables) {
   $variables['tabs'] = $tabs;
 
   $variables['image_class'] = "hro--b";
-  if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')
-      ->count()) {
+  if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')->count()) {
     $variables['image_class'] = "hro--t";
   }
 
-    // Add markup to locate the contextual editor button.
+  // Add markup to locate the contextual editor button.
   if (function_exists("_bos_theme_fix_attributes")) {
     _bos_theme_fix_attributes($variables);
     $variables["attributes"]->addClass("desktop-100");
@@ -142,8 +140,7 @@ function node_how_to_preprocess_page(&$variables) {
       // Now make and render the Intro_image block.
       $variables['header_image'] = FALSE;
       $variables['image_class'] = "hro--b";
-      if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')
-          ->count()) {
+      if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')->count()) {
         _bos_content_fix_attributes($variables);
         $variables['image_class'] = "hro--t";
         $variables["attributes"]->addClass("mn");
