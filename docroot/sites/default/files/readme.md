@@ -80,14 +80,14 @@ Image styles used:
 | para:signup_emergency_alerts | field_icon | n/a svg  | n/a svg |
 | para:transactions | field_icon | 180x100/++ - 2MB  | transaction_icon_180x100 |
 | tax:features | field_icon | svg  | square_icon_56px |
-| node:event | field_intro_image | 1440x396/++ 8 MB | Resp: intro_image_fields |
-| node:how_to | field_intro_image | 1440x396/++ 8 MB  | Resp: intro_image_fields |
-| node:listing_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields |
-| node:place_profile | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields |
-| node:post | field_intro_image | 1440x396/++ 8MB | Resp: intro_image_fields |
-| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields |
-| node:tabbed_content | field_intro_image | 1440x396/*++ 8MB  | Resp: intro_image_fields |
-| node:topic_page | field_intro_image |   |  |
+| node:event | field_intro_image | 1440x396/++ 8 MB | Resp: intro_image_fields - background |
+| node:how_to | field_intro_image | 1440x396/++ 8 MB  | Resp: intro_image_fields - background |
+| node:listing_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
+| node:place_profile | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
+| node:post | field_intro_image | 1440x396/++ 8MB | Resp: intro_image_fields - background |
+| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
+| node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
+| node:topic_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - picture |
 | node:event | field_thumbnail | 525x230/++ 8 MB | Resp: thumbnail_event |
 | node:post | field_thumbnail |   |  |
 | node:topic_page | field_thumbnail |   |  |
