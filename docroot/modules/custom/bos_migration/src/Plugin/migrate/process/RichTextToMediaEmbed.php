@@ -50,6 +50,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Nothing to do here (not a rich text field).
       return $value;
     }
+    elseif (empty($value['format'])) {
+      $value['format'] = "filtered_html";
+    }
     elseif (!is_string($value['value'])) {
       // Will flag this, but in the end just return the value without trying
       // to do anything with it.
