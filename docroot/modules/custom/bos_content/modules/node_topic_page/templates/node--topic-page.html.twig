@@ -13,9 +13,9 @@
   {% if title_prefix or title_suffix or display_submitted or unpublished or preview or not page and title %}
     <header class="topic-header">
 
-      {% if not page and title  %}
+      {{ title_prefix }}
 
-        {{ title_prefix }}
+      {% if not page and title  %}
 
         <h2{{ title_attributes }}>
           <a href="{{ node_url }}">{{ title.0 }}</a>
@@ -23,9 +23,9 @@
 
       {% endif %}
 
-      <div class="topic-hero-text-wrapper">
+      {{ title_suffix }}
 
-        {{ title_suffix }}
+      <div class="topic-hero-text-wrapper">
 
         <div class="intro-container fullwidth">
 
