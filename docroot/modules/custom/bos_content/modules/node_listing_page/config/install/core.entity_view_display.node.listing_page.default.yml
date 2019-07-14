@@ -9,9 +9,12 @@ dependencies:
     - field.field.node.listing_page.field_published_date
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
+    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
+    - fences
+    - responsive_image
     - user
 id: node.listing_page.default
 targetEntityType: node
@@ -41,16 +44,22 @@ content:
       link: ''
     third_party_settings: {  }
     region: content
-  field_manual_date:
-    type: boolean
+  field_intro_image:
+    type: responsive_image
     weight: 5
     region: content
-    label: above
+    label: hidden
     settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
+      responsive_image_style: intro_image_fields
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_published_date:
     type: datetime_default
     weight: 4
@@ -75,6 +84,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_intro_image: true
+  field_manual_date: true
   langcode: true
   published_at: true
