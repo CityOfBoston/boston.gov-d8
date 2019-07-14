@@ -37,7 +37,7 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
     $variables['header_image'] = TRUE;
     _bos_content_fix_attributes($variables);
     $nestedElement = [
-      ["div" => "hero-image b b--fw"],
+      ["div" => "hero-image b b--fw b--fw--480"],
       ["div" => "hero-image-wrapper hro hro--pt hro--pb"],
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
