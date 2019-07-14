@@ -189,6 +189,7 @@ class MigrationConfigAlter {
     "paragraph__sidebar_item_w_icon" => ["bos:paragraph:1"],
     "paragraph__social_media_links" => ["bos:paragraph:2"],
     "paragraph__social_networking" => ["bos:paragraph:1"],
+    "paragraph__tabbed_content_tab" => ["bos:paragraph:3"],
     "paragraph__text" => ["bos:paragraph:3"],
     "paragraph__text_one_column" => ["bos:paragraph:1"],
     "paragraph__text_three_column" => ["bos:paragraph:1"],

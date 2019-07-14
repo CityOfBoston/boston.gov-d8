@@ -506,3 +506,13 @@ What:  Adds a background to the hero image now we have made it a background rath
 .hero-image {
   background-color: rgba(10,154,255,.5);
 }
+
+/*
+David:  D8 Issue#408.
+Where: From classes injected from hook pre_processors for field_intro_image.
+What:  Limits the maximum height of the intro_image (hero) image.
+ */
+.b--fw {
+  max-height: 480px;
+  overflow: hidden;
+}
