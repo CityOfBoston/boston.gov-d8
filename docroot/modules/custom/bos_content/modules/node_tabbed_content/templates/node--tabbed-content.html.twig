@@ -8,7 +8,6 @@
  #}
 
 <input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">
-{{ breakpoint() }}
 {% if tabs|length >= 1 %}
   {% for key, tab in tabs %}
     {% set title_id = tab.id|raw %}
