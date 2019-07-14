@@ -51,7 +51,7 @@ function node_place_profile_preprocess_page(&$variables) {
         $variables["attributes"]->addClass("mn");
         $variables["attributes"]->setAttribute("id", "page");
         $nestedElement = [
-          ["div" => "b b--fw"],
+          ["div" => "b b--fw b--fw--480"],
           ["div" => "hro hro--pt hro--pb"],
         ];
         $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
