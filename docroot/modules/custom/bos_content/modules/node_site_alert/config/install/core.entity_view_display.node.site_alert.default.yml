@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
+    - image.style.square_icon_56px
     - node.type.site_alert
   module:
     - datetime_range
@@ -51,7 +52,7 @@ content:
     weight: 1
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_56px
       image_link: ''
       svg_attributes:
         width: ''
@@ -98,7 +99,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
 hidden:
+  content_moderation_control: true
   langcode: true
   links: true
   published_at: true
-  content_moderation_control: true

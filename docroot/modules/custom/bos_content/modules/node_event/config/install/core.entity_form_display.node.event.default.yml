@@ -2,7 +2,6 @@ langcode: und
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.event.body
     - field.field.node.event.field_address
     - field.field.node.event.field_cancel_event
@@ -31,6 +30,7 @@ dependencies:
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
+    - image.style.thumbnail_event_square_190x190_
     - node.type.event
   module:
     - address
@@ -38,13 +38,13 @@ dependencies:
     - content_moderation
     - datetime
     - datetime_range
-    - entity_browser
     - field_group
     - link
     - metatag
     - paragraphs
     - path
     - publication_date
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -373,17 +373,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: entity_browser_file
+    type: image_image
     weight: 5
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      selection_mode: selection_append
-      view_mode: default
-      field_widget_replace: false
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: intro_image_mobile_1x
+      progress_indicator: throbber
     region: content
     third_party_settings: {  }
   field_links:
@@ -468,16 +462,10 @@ content:
     third_party_settings: {  }
   field_thumbnail:
     weight: 6
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: thumbnail_event_square_190x190_
+      progress_indicator: throbber
     region: content
     third_party_settings: {  }
   field_updated_date:
