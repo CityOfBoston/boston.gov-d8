@@ -15,10 +15,12 @@ dependencies:
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
     - node.type.post
+    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
+    - responsive_image
     - svg_image
     - text
     - user
@@ -74,17 +76,13 @@ content:
         fences_label_classes: ''
     region: content
   field_intro_image:
-    type: image
+    type: responsive_image
     weight: 2
     region: content
     label: hidden
     settings:
-      image_style: wide_2000x460
+      responsive_image_style: intro_image_fields
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none
