@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -78,18 +76,17 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
-?>
+ #}
 
-<a href="<?php print $node_url; ?>" class="cdd g--4--xxl g--6 m-b300 m-b500--xxl">
+ <a href="{{ node_url }}" class="cdd g--4--xxl g--6 m-b300 m-b500--xxl">
   <div class="cdd-c">
     <div class="cdd-ic">
-      <?php print render($content['field_icon']); ?>
+      {{ content.field_icon }}
     </div>
     <div class="cdd-d">
       <div class="cdd-d-i">
-        <div class="t--sans t--upper t--cb m-b100 t--s100"><?php print $title; ?></div>
-        <div class="t--subinfo"><?php print render($content['field_phone_number']); ?></div>
+        <div class="t--sans t--upper t--cb m-b100 t--s100">{{ title }}</div>
+        <div class="t--subinfo">{{ content.field_phone_number }}</div>
       </div>
     </div>
   </div>
