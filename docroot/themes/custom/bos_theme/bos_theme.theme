@@ -328,7 +328,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // Setup hero style page banner images.
   $current_path = \Drupal::service('path.current')->getPath();
-  if (!in_array($variables["node"]->bundle(), [
+  if (!empty($variables["node"]) && !in_array($variables["node"]->bundle(), [
     "event",
     "how_to",
     "listing_page",
