@@ -42,32 +42,43 @@
 {% endif %}
 
 <div {{ attributes.addClass('b b--fw') }}>
+
   {{ content.contextual_links }}
+
   <div {{ create_attribute({'class': photo_container_classes}) }}>
-    <div {{ create_attribute({'class': 'ph-p'}).addClass(photo_id) }}>
-      {{ content.field_image }}
-    </div>
+
+    {{ content.display_image }}
+
     {% if has_caption %}
+
       <div class="ph-c p-a600">
+
         {% if content.field_component_title['#items'].getValue() %}
           <div class="h2 tt-u m-b200">
             {{ content.field_component_title }}
           </div>
         {% endif %}
+
         {% if content.field_photo_caption['#items'].getValue() %}
           <div class="t--info m-b200">
             {{ content.field_photo_caption }}
           </div>
         {% endif %}
+
         {% if content.field_photo_credit['#items'].getValue() %}
           <div {{ create_attribute({'class': credit_classes}) }}>
             {{ content.field_photo_credit }}
           </div>
         {% endif %}
+
         {% if cta %}
           {{ cta }}
         {% endif %}
+
       </div>
+
     {% endif %}
+
   </div>
+
 </div>

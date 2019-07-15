@@ -77,7 +77,7 @@ function template_preprocess_node__post(array &$variables) {
   if ($variables['elements']["#node"]->hasField('field_intro_image')) {
     $background_image = $variables['elements']["#node"]->get('field_intro_image');
     if ($background_image->count()) {
-      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "hero_fixed_image_fields", ".hro");
       $variables['#attached']['html_head'][] = [
         [
           "#tag" => "style",

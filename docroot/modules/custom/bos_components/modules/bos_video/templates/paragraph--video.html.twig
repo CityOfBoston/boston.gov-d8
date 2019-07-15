@@ -26,10 +26,18 @@
  */
 #}
 <div class="b b--fw">
+
   <div {{ attributes }}>
+
+    {% if content.display_image %}
+      {{ content.display_image }}
+    {% endif %}
+
+
     <div class="vid-c">
       <div class="vid-ci">
         <div class="b-c">
+
           <div class="vid-t">
             {{ title_prefix }}
 
@@ -37,18 +45,23 @@
 
             {{ title_suffix }}
           </div>
+
           {% if contact %}
             <div class="vid-st m-t300">
               Credit: {{ contact }}
             </div>
           {% endif %}
+
           <div class="vid-ic m-t300">
             <button class="vid-cta">
               <img src="{{ play_image_url }}" alt="Play Video" height="97" width="97" class="vid-cta-i" />
             </button>
           </div>
+
         </div>
       </div>
     </div>
+
   </div>
+
 </div>

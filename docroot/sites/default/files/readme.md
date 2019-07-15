@@ -91,14 +91,18 @@ Image styles used:
 | node:event | field_thumbnail | 525x230/++ 8 MB | Resp: thumbnail_event |
 | node:post | field_thumbnail |   |  |
 | node:topic_page | field_thumbnail |   |  |
+
 | node:person_profile | field_person_photo |   |  |
 | node:quote | field_person_photo |   |  |
+
 | node:program_i_p | field_program_logo |   |  |
+
 | para:columns | field_image |   |  |
 | para:hero_image | field_image |   |  |
 | para:map | field_image |   |  |
-| para:photo | field_image |   |  |
+| para:photo | field_image | 1440x800/++ 8 MB  |  |
 | para:video | field_image |   |  |
+
 | user | user_picture |   |  |
 | media.image | image |   |  |
 | **Files** |
