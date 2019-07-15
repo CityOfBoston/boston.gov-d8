@@ -46,7 +46,7 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
       $fallback_style = ResponsiveImageStyle::load($responsiveStyle_group)
         ->getFallbackImageStyle();
       $url = ImageStyle::load($fallback_style)->buildUrl($uri);
-      $css = ["$anchorClass { background-image: url(" . $url . ");}"];
+      $css = ["$anchorClass { background-image: url(" . $url . ");\n    background-size: cover !important;}"];
 
       // Create an array with URL's for each responsive style.
       $styles = ResponsiveImageStyle::load($responsiveStyle_group)
