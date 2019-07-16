@@ -134,8 +134,8 @@ function bos_list_preprocess_node(&$variables) {
   if ($type == 'topic_page') {
     // Add some custom variables to the topic page template for listing_long.
     if ($variables['view_mode'] == 'listing_long') {
-      $lang = $variables['language'];
-      $components_field = $variables['field_components'][$lang];
+      $node = $variables["elements"]["#node"]; 
+      $components_field = $node->get('field_components')->getValue();
       $num_components = count($components_field);
       $variables['num_components'] = 0;
       // We show three nav links, then want to denote
