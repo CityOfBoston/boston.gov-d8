@@ -10,10 +10,11 @@ dependencies:
     - field.field.paragraph.video.field_is_channel
     - field.field.paragraph.video.field_short_title
     - paragraphs.paragraphs_type.video
+    - responsive_image.styles.photo_bleed_images
   module:
     - fences
-    - image_url_formatter
     - options
+    - responsive_image
 id: paragraph.video.default
 targetEntityType: paragraph
 bundle: video
@@ -68,10 +69,9 @@ content:
   field_image:
     label: hidden
     weight: 2
-    type: image_url
+    type: responsive_image
     settings:
-      url_type: '0'
-      image_style: rep_wide_2000x700custom_boston_desktop_1x
+      responsive_image_style: photo_bleed_images
       image_link: ''
     third_party_settings:
       fences:
