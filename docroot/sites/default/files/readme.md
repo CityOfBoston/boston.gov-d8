@@ -100,8 +100,8 @@ Image styles used:
 | para:columns | field_image |   |  |
 | para:hero_image | field_image |   |  |
 | para:map | field_image |   |  |
-| para:photo | field_image | 1440x800/++ 8 MB  |  |
-| para:video | field_image |   |  |
+| para:photo | field_image | 1440x800/++ 8 MB | Photo Bleed Images |
+| para:video | field_image | 1440x800/++ 8 MB | Photo Bleed Images |
 
 | user | user_picture |   |  |
 | media.image | image |   |  |
