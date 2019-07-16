@@ -5,56 +5,59 @@
  * The Base module file for bos_hero_image module.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Element;
+
 /**
  * Implements hook_theme().
  */
 function bos_hero_image_theme() {
   $theme['paragraph__hero_image'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_hero_image') . '/templates',
   ];
   return $theme;
 }
 
 /**
- * Implements hook_preprocess_paragraph().
+ * Prepares variables for post templates.
+ *
+ * Default template: post.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the post information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
  */
-function bos_hero_image_preprocess_paragraph(&$vars) {
-  if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
-    switch ($paragraph->bundle()) {
-      case 'hero_image':
-        $lib = \Drupal::service('library.discovery')
-          ->getLibraryByName('bos_theme', 'global-styling.patterns');
-        $vars['asset_url'] = $lib['remote'];
-        if ($paragraph->get('field_image')->count()) {
-          $image = $paragraph->get('field_image')->getValue();
-          $base_url = \Drupal::entityTypeManager()
-            ->getStorage("file")
-            ->load($image['0']['target_id']);
+function template_preprocess_paragraph__hero_image(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
 
-          try {
-            $base_url = Drupal::entityTypeManager()->getStorage("file")->load($image['0']['target_id'])->getFileUri();
-          }
-          catch (Error $e) {
-            // Hmmm, problem, log it and then substitute uri.
-            Drupal::messenger()->addWarning("Hero: File id (" . $image['0']['target_id'] . ") is missing.");
-            $base_url = "#";
-          }
-          $styles = [
-            'xlarge_image' => 'rep_wide_2000x700custom_boston_desktop_2x',
-            'large_image' => 'rep_wide_2000x700custom_boston_desktop_1x',
-            'medium_image' => 'rep_wide_2000x700custom_boston_tablet_2x',
-            'small_image' => 'rep_wide_2000x700custom_boston_mobile_2x',
-          ];
-          foreach ($styles as $name => $style) {
-            $style = \Drupal::entityTypeManager()
-              ->getStorage('image_style')
-              ->load($style);
-            $vars[$name] = $style->buildUrl($base_url);
-          }
-        }
-        break;
+  // Assign a unique id to this photo for the page.
+  if (!empty($variables['paragraph'])) {
+    $photo_id = Html::getUniqueId('hro-1');
+    $variables['paragraph']->_photo_id = $photo_id;
+    $variables['photo_id'] = $photo_id;
+  }
+
+  // Handle field_image if present.
+  // Has to happen in this template_preprocess_hook or does not #attach(ed).
+  if ($variables['paragraph']->hasField('field_image')) {
+    $background_image = $variables['paragraph']->get('field_image');
+    if ($background_image->count()) {
+      $anchor_class = "." . $variables["photo_id"];
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "photo_bleed_images", $anchor_class);
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'hero-image-css-' . $variables["photo_id"],
+      ];
     }
   }
+
 }
