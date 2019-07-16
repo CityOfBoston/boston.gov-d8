@@ -10,7 +10,7 @@
 <article class="{{ classes }} clearfix node-{{ node.id }} desktop-3-col tablet-2-col mobile-1-col"{{ attributes }}>
   <div class="topic-wrapper">
     <div class="topic-highlight-area">
-      <a href="{{ node_url }}" class="item-link" title="Go to {{ title }}">{{ title }}</a>
+      <a href="{{ node_url }}" class="item-link" title="Go to {{ title.0['#context'].value }}">{{ title.0['#context'].value }}</a>
       <div class="image-wrapper">
         {{ content.field_intro_image }}
       </div>
@@ -19,7 +19,7 @@
           Guide:
         </div>
         <div class="topic-listing-title">
-          {{ title }}
+          {{ title.0['#context'].value }}
         </div>
       </div>
     </div>
