@@ -43,11 +43,14 @@
 
 <div {{ attributes.addClass('b b--fw') }}>
 
-  {{ content.contextual_links }}
-
   <div {{ create_attribute({'class': photo_container_classes}) }}>
 
     {{ content.display_image }}
+
+    {% if title_prefix or title_suffix %}
+        {{ title_prefix }}
+        {{ title_suffix }}
+    {% endif %}
 
     {% if has_caption %}
 
