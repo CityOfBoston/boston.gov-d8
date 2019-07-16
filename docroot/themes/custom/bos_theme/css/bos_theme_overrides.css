@@ -520,9 +520,18 @@ What:  Limits the maximum height of the intro_image (hero) image.
 
 /*
 David:  D8 Issue#408.
-Where: Extends the maximum height for the video image.
+Where: paragraph__video.html.twig.
 What:  Extends the maximum height of the image (video) image.
  */
 .vid {
   max-height: 800px;
+}
+
+/*
+David:  D8 Issue#408.
+Where: paragraph__hero_image.html.twig.
+What:  Removes padding in wrapper for header.
+ */
+.paragraphs-items-field-components>.paragraphs-item-hero-image {
+  padding: 0;
 }
