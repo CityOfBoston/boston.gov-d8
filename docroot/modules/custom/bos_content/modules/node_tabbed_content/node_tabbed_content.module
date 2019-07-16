@@ -113,7 +113,7 @@ function template_preprocess_node__tabbed_content(array &$variables) {
   }
   // Handle intro_image if present.
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
-  if ($variables['elements']["#node"]->hasField('field_intro_image')) {
+  if (isset($variables['content']['field_intro_image'])) {
     $background_image = $variables['elements']["#node"]->get('field_intro_image');
     if ($background_image->count()) {
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
