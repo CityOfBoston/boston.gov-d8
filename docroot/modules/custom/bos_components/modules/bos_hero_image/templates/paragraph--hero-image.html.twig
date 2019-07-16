@@ -23,49 +23,36 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<style>
-  .hro {
-    background-image: url({{ small_image }});
-  }
+<div{{ attributes }}>
+  <div class="b b--fw">
 
-  @media screen and (min-width: 768px) {
-    .hro {
-      background-image: url({{ medium_image }});
-    }
-  }
+    {{ title_prefix }}
+    {{ title_suffix }}
 
-  @media screen and (min-width: 1024px) {
-    .hro {
-      background-image: url({{ large_image }});
-    }
-  }
+    <div class="{{ photo_id }} hro hro--t">
+      <div class="hro-c">
 
-  @media screen and (min-width: 1200px) {
-    .hro {
-      background-image: url({{ xlarge_image }});
-    }
-  }
-</style>
+        {% if content.field_intro_text['#items'].getValue() %}
+          {{ content.field_intro_text }}
+        {% endif %}
 
-<div class="b b--fw">
-  <div class="hro hro--t">
-    <div class="hro-c">
-      {% if content.field_intro_text['#items'].getValue() %}
-        {{ content.field_intro_text }}
-      {% endif %}
-      <h1 class="hro-t hro-t--l m-t000">
-        {{ content.field_header }}
-      </h1>
-      {% if content.field_subheader['#items'].getValue() %}
-        <div class="hro-st hro-st--l hro-st--w">
-          {{ content.field_subheader }}
-        </div>
-      {% endif %}
-      {% if content.field_grid_link['#items'].getValue() %}
-        <div class="hro-lnk">
-          {{ content.field_grid_link }}
-        </div>
-      {% endif %}
+        <h1 class="hro-t hro-t--l m-t000">
+          {{ content.field_header }}
+        </h1>
+
+        {% if content.field_subheader['#items'].getValue() %}
+          <div class="hro-st hro-st--l hro-st--w">
+            {{ content.field_subheader }}
+          </div>
+        {% endif %}
+
+        {% if content.field_grid_link['#items'].getValue() %}
+          <div class="hro-lnk">
+            {{ content.field_grid_link }}
+          </div>
+        {% endif %}
+
+      </div>
     </div>
   </div>
 </div>
