@@ -146,19 +146,20 @@ function bos_list_preprocess_node(&$variables) {
 
       $comp_entity_id_array = array();
       foreach ($components_field as $comp) {
-        $comp_entity_id_array[] = $comp['value'];
+        $comp_entity_id_array[] = $comp['target_id'];
       }
 			// Here we need to load all the components because
 			// the not all components have a short title
 			// required so we do not create nav link for it.
-			$components = entity_load('paragraphs_item', $comp_entity_id_array);
+      $paragraph_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+      $components = $paragraph_storage->loadMultiple($comp_entity_id_array);
 			if (!empty($components)) {
 				$nav_links = array();
 				$num_nav_links = 0;
 				foreach ($components as $comp) {
-					$short_title_array = field_get_items('paragraphs_item', $comp, 'field_short_title');
+          $short_title_array = $comp->get('field_short_title')->getValue();
 					if (!empty($short_title_array)) {
-						$short_title = $short_title_array[0]['safe_value'];
+						$short_title = $short_title_array[0]['value'];
 						$short_title = strtoupper($short_title);
 						$jump_link = strtolower(trim($short_title));
 						$jump_link = str_replace(" ", "-", $jump_link);
@@ -166,7 +167,7 @@ function bos_list_preprocess_node(&$variables) {
 						$short_title = str_replace("&AMP;", "&", $short_title);
 						$nav_links[] = l(
 							$short_title,
-							$variables['path']['alias'],
+							$variables['url'],
 							array(
 								'fragment' => $jump_link,
 								'attributes' => array(
