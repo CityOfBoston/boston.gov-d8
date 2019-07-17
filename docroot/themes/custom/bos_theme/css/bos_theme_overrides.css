@@ -505,6 +505,7 @@ What:  Adds a background to the hero image now we have made it a background rath
  */
 .hero-image {
   background-color: rgba(10,154,255,.5);
+  background-position: 50%;
 }
 
 /*
@@ -512,6 +513,25 @@ David:  D8 Issue#408.
 Where: From classes injected from hook pre_processors for field_intro_image.
 What:  Limits the maximum height of the intro_image (hero) image.
  */
-.b--fw {
+.b--fw-480 {
+  max-height: 480px;
   overflow: hidden;
+}
+
+/*
+David:  D8 Issue#408.
+Where: paragraph__video.html.twig.
+What:  Extends the maximum height of the image (video) image.
+ */
+.vid {
+  max-height: 800px;
+}
+
+/*
+David:  D8 Issue#408.
+Where: paragraph__hero_image.html.twig.
+What:  Removes padding in wrapper for header.
+ */
+.paragraphs-items-field-components>.paragraphs-item-hero-image {
+  padding: 0;
 }
