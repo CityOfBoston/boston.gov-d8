@@ -51,12 +51,19 @@
  #}
 
 <a href="{{ card_url }}" {{ attributes.addClass('cd g--4 g--4--sl m-t500') }}>
-  <div class="cd-ic" style="background-image: url({{ background_image }});"></div>
+
+  <div class="{{ new_image_class }}"></div>
+
   <div class="cd-c">
+
     <div class="cd-t">{{ content.field_title }}</div>
+
     {% if content.field_subheader %}
       <div class="cd-st t--upper t--subtitle">{{ content.field_subheader }}</div>
     {% endif %}
+
     <div class="cd-d">{{ content.field_short_description }}</div>
+
   </div>
+
 </a>

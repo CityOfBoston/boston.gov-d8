@@ -24,21 +24,31 @@
  * @see template_process()
  #}
 <div {{ attributes.addClass(['b', 'b--fw']) }}>
+
   <div class="b-c">
+
     <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
+
       {{ title_prefix }}
+
       {{ content.field_component_title }}
+
       {{ title_suffix }}
+
       {% if content.field_contact %}
         <div class="sh-contact">
           {{ content.field_contact }}
         </div>
       {% endif %}
+
     </div>
+
     <div class="g">
       {% if content.field_drawer %}
         {{ content.field_drawer }}
       {% endif %}
     </div>
+
   </div>
+
 </div>
