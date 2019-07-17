@@ -5,7 +5,6 @@ namespace Drupal\bos_core;
 use Drupal\Core\Render\Markup;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
-use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 
 /**
  * Class BackgroundResponsiveImage.
@@ -27,6 +26,7 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    *
    * @return string|bool
    *   False if failed, otherwise an inline css string that could be injected.
+   *
    * @throws \Exception
    */
   public static function createBackgroundCss(array $background_image, $anchorClass = "hro") {
