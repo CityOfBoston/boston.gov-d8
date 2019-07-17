@@ -35,10 +35,7 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
       throw new \Exception("Image is not a responsive style.");
     }
 
-    // Work out the responsive group id and the breakpoint set being used.
     $responsiveStyle_group = $background_image[0]["#responsive_image_style_id"];
-    $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group);
-    $breakpoint_group = $responsiveStyle->get("breakpoint_group");
 
     // Grab the fielditemlist object.
     $background_image = $background_image["#items"];
@@ -47,33 +44,7 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
 
       $uri = $background_image->entity->getFileUri();
 
-      // Get the breakpoints for specified group (defined in theme.info).
-      $breakpoints = \Drupal::service('breakpoint.manager')
-        ->getBreakpointsByGroup($breakpoint_group);
-
-      // Create the default style.
-      $fallback_style = $responsiveStyle->getFallbackImageStyle();
-      $url = ImageStyle::load($fallback_style)->buildUrl($uri);
-      $css = ["$anchorClass { background-image: url(" . $url . ");\n    background-size: cover !important;}"];
-
-      // Create an array with URL's for each responsive style.
-      $styles = $responsiveStyle->getKeyedImageStyleMappings();
-      foreach ($styles as $key => $style) {
-        foreach ($style as $multiplier => $breakpoint) {
-          if (empty($breakpoint['multiplier']) || $breakpoint['multiplier'] == "1x") {
-            $multiplier = "";
-          }
-          else {
-            $multiplier = str_replace('x', '', $breakpoint['multiplier']);
-            $multiplier = "and (-webkit-min-device-pixel-ratio: $multiplier) ";
-          }
-          $url = ImageStyle::load($breakpoint['image_mapping'])
-            ->buildUrl($uri);
-          $breakpoint = $breakpoints[$breakpoint['breakpoint_id']]->getMediaQuery();
-          $css[] = "@media screen and $breakpoint $multiplier{\n    $anchorClass { background-image: url($url); } }";
-        }
-      }
-      return implode("\n", $css);
+      return self::buildMediaQueries($uri, $responsiveStyle_group, $anchorClass);
     }
     return FALSE;
   }
@@ -102,6 +73,49 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
     }
     $html = implode("", $html) . implode("", $htmlClose);
     return Markup::create($html);
+  }
+
+  /**
+   * @param $uri
+   * @param $responsiveStyle_group
+   * @param $anchorClass
+   *
+   * @return string
+   */
+  public static function buildMediaQueries($uri, $responsiveStyle_group, $anchorClass) {
+    // Work out the responsive group id and the breakpoint set being used.
+    $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group);
+    $breakpoint_group = $responsiveStyle->get("breakpoint_group");
+
+    // Get the breakpoints for specified group (defined in theme.info).
+    $breakpoints = \Drupal::service('breakpoint.manager')
+      ->getBreakpointsByGroup($breakpoint_group);
+
+    // Create the default style.
+    $fallback_style = $responsiveStyle->getFallbackImageStyle();
+    $url = ImageStyle::load($fallback_style)->buildUrl($uri);
+    $css = ["$anchorClass { background-image: url(" . $url . ");\n    background-size: cover !important;}"];
+
+    // Create an array with URL's for each responsive style.
+    $styles = $responsiveStyle->getKeyedImageStyleMappings();
+    foreach ($styles as $key => $style) {
+      foreach ($style as $multiplier => $breakpoint) {
+        if (empty($breakpoint['multiplier']) || $breakpoint['multiplier'] == "1x") {
+          $multiplier = "";
+        }
+        else {
+          $multiplier = str_replace('x', '', $breakpoint['multiplier']);
+          $multiplier = "and (-webkit-min-device-pixel-ratio: $multiplier) ";
+        }
+        $url = ImageStyle::load($breakpoint['image_mapping'])
+          ->buildUrl($uri);
+        $breakpoint = $breakpoints[$breakpoint['breakpoint_id']]->getMediaQuery();
+        $css[] = "@media screen and $breakpoint $multiplier{\n    $anchorClass { background-image: url($url); } }";
+      }
+    }
+
+    return implode("\n", $css);
+
   }
 
 }
