@@ -32,17 +32,17 @@
 {% endif %}
 <div class="b b--fw{% if component_theme %} {{ component_theme }}{% endif %}">
   <div class="b-c{% if node.field_component_title.isempty and node.field_contact.isempty %} b-c--ntp b-c--nbp{% endif %}">
-    <div class="sh {{ section_header_theme }} m-b500">
-      {% if not node.field_component_title.isempty %}
+    {% if content.field_component_title|render %}
+      <div class="sh {{ section_header_theme }} m-b500">
         {{ content.field_component_title }}
-      {% endif %}
-      {% if not node.field_short_title.isempty %}
-        {{ content.field_short_title }}
-      {% endif %}
-      {% if not node.field_component_title.isempty %}
-        {{ content.field_contact }}
-      {% endif %}
-    </div>
+        {% if content.field_short_title|render %}
+          {{ content.field_short_title }}
+        {% endif %}
+        {% if content.field_component_title|render %}
+          {{ content.field_contact }}
+        {% endif %}
+      </div>
+    {% endif %}
     {{ content.field_list }}
   </div>
 </div>
