@@ -1,18 +1,16 @@
-uuid: 1ace2e73-41ab-4649-9e56-97491e5233c3
+uuid: 0df910ac-5cfb-4db7-b989-740ebefda0b0
 langcode: und
 status: true
 dependencies:
   config:
-    - image.style.card_grid_horizontal_c_desktop
-    - image.style.card_grid_horizontal_d_large
     - image.style.card_grid_horizontal_e_oversize
     - image.style.card_grid_vertical_a_mobile
     - image.style.card_grid_vertical_b_tablet
     - image.style.card_grid_vertical_c_desktop
   theme:
     - bos_theme
-id: card_images
-label: 'Card Images'
+id: card_images_3w
+label: 'Card Images 3w'
 image_style_mappings:
   -
     breakpoint_id: boston.card.mobile
@@ -53,16 +51,16 @@ image_style_mappings:
     breakpoint_id: boston.card.desktop-normal
     multiplier: 1x
     image_mapping_type: image_style
-    image_mapping: card_grid_horizontal_c_desktop
+    image_mapping: card_grid_horizontal_e_oversize
   -
     breakpoint_id: boston.card.large
     multiplier: 1x
     image_mapping_type: image_style
-    image_mapping: card_grid_horizontal_d_large
+    image_mapping: card_grid_horizontal_e_oversize
   -
     breakpoint_id: boston.card.oversize
     multiplier: 1x
     image_mapping_type: image_style
     image_mapping: card_grid_horizontal_e_oversize
 breakpoint_group: card
-fallback_image_style: card_grid_horizontal_c_desktop
+fallback_image_style: card_grid_horizontal_e_oversize
