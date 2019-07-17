@@ -41,6 +41,8 @@ sites/default/files
     |   |       └── [dated]             - migrated files
     |   ├── listing_page               * Paragraph listing_page 
     |   |   └── intro_images            - from field_intro_image
+    |   ├── maps                       * Paragraph listing_page 
+    |   |   └── [dated]                 - from field_intro_image
     |   ├── person_profile             * Paragraph person_profile
     |   |   └── photos                  - from field_photos
     |   ├── place_profile              * Paragraph place_profile
