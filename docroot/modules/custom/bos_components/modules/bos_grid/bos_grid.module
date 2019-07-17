@@ -16,10 +16,6 @@ function bos_grid_theme() {
       'base hook' => 'paragraph',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
     ],
-    'paragraph__grid_of_programs_initiatives' => [
-      'base hook' => 'paragraph',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
     'paragraph__grid_of_people' => [
       'base hook' => 'paragraph',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
@@ -28,11 +24,10 @@ function bos_grid_theme() {
       'base hook' => 'paragraph',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
     ],
-    'node__topic_page__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
+    'paragraph__grid_of_programs_initiatives' => [
+      'base hook' => 'paragraph',
     ],
-    'node__program_initiative_profile__listing' => [
+    'node__topic_page__listing' => [
       'base hook' => 'node',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
     ],
@@ -93,13 +88,6 @@ function bos_grid_preprocess_node(&$vars) {
     switch ($node->bundle()) {
       case 'topic_page':
         $vars['title_raw'] = $node->getTitle();
-        break;
-
-      case 'program_initiative_profile':
-        $vars['title_raw'] = $node->getTitle();
-        if (!$node->get('field_intro_image')->isEmpty()) {
-          $vars['image'] = _bos_core_get_file_link($node->get('field_intro_image')->getValue());
-        }
         break;
 
       case 'place_profile':

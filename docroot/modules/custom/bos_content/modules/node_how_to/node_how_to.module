@@ -25,18 +25,27 @@ function template_preprocess_node__how_to(array &$variables) {
   }
   // Handle intro_image if present.
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
-  if ($variables['elements']["#node"]->hasField('field_intro_image')) {
-    $background_image = $variables['elements']["#node"]->get('field_intro_image');
-    if ($background_image->count()) {
-      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
-      $variables['#attached']['html_head'][] = [
-        [
-          "#tag" => "style",
-          "#value" => $css,
-          "#weight" => 100,
-        ],
-        'how-to-intro-image-css',
-      ];
+  if (isset($variables['content']['field_intro_image'])) {
+    $background_image = $variables["elements"]["field_intro_image"];
+    switch ($variables["elements"]["#view_mode"]) {
+      case "listing":
+        break;
+
+      default:
+        if ($background_image["#items"]->count()) {
+          $photo_id = Html::getUniqueId('hro');
+          $variables['paragraph']->_photo_id = $photo_id;
+          $variables['photo_id'] = $photo_id;
+          $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+          $variables['#attached']['html_head'][] = [
+            [
+              "#tag" => "style",
+              "#value" => $css,
+              "#weight" => 100,
+            ],
+            'how-to-intro-image-css',
+          ];
+        }
     }
   }
 }
@@ -139,10 +148,10 @@ function node_how_to_preprocess_page(&$variables) {
       // Add intro_image as background to the title panel.
       // Now make and render the Intro_image block.
       $variables['header_image'] = FALSE;
-      $variables['image_class'] = "hro--b";
-      if ($variables["node"]->hasField('field_intro_image') && $variables["node"]->get('field_intro_image')->count()) {
+      $variables['image_class'] = $variables['photo_id'] . " hro--b";
+      if (isset($variables['content']['field_intro_image']) && $variables["node"]->get('field_intro_image')->count()) {
         _bos_content_fix_attributes($variables);
-        $variables['image_class'] = "hro--t";
+        $variables['image_class'] = $variables['photo_id'] . "hro--t";
         $variables["attributes"]->addClass("mn");
         $variables["attributes"]->setAttribute("id", "page");
       }
