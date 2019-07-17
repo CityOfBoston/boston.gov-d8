@@ -17,7 +17,7 @@ dependencies:
     - field.field.node.program_initiative_profile.field_sidebar_components
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
-    - responsive_image.styles.card_images
+    - responsive_image.styles.card_images_3w
   module:
     - advanced_text_formatter
     - fences
@@ -31,11 +31,12 @@ bundle: program_initiative_profile
 mode: listing
 content:
   field_intro_image:
-    label: hidden
-    weight: 1
     type: responsive_image
+    weight: 1
+    region: content
+    label: above
     settings:
-      responsive_image_style: card_images
+      responsive_image_style: card_images_3w
       image_link: ''
     third_party_settings:
       fences:
@@ -45,7 +46,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    region: content
   field_intro_text:
     type: advanced_text
     weight: 0
