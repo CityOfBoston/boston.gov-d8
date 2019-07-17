@@ -70,35 +70,38 @@ sites/default/files
 Image styles used:
 
    
-|Entity | Field | Target Def | Style |   
+|Entity | Field | Target Def | View: Style |   
 |:-----|:-----|-----:|:-----|
 | **Images** |
-| node:department_profile | field_icon | 56x56/++ - 200KB | square_icon_56px |
-| node:site_alert | field_icon | 56x56/++ - 200KB | square_icon_56px |
-| node:status_item | field_icon | 65x65/++ - 200KB | square_icon_65px |
-| para:fyi | field_icon | 56x56/++ 200KB | square_icon_56px |
-| para:signup_emergency_alerts | field_icon | n/a svg  | n/a svg |
-| para:transactions | field_icon | 180x100/++ - 2MB  | transaction_icon_180x100 |
-| tax:features | field_icon | svg  | square_icon_56px |
-| node:event | field_intro_image | 1440x396/++ 8 MB | Resp: intro_image_fields - background |
-| node:how_to | field_intro_image | 1440x396/++ 8 MB  | Resp: intro_image_fields - background |
-| node:listing_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
-| node:place_profile | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
-| node:post | field_intro_image | 1440x396/++ 8MB | Resp: intro_image_fields - background |
-| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
-| node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
-| node:topic_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - picture |
-| node:event | field_thumbnail | 525x230/++ 8 MB | Resp: thumbnail_event |
+| node:department_profile | field_icon | 56x56/++ - 200KB | default: (i) square_icon_56px |
+| node:site_alert | field_icon | 56x56/++ - 200KB | default: (s) n/a svg (square_icon_56px) |
+| node:status_item | field_icon | 65x65/++ - 200KB | default: (s) n/a svg (square_icon_65px) |
+| para:fyi | field_icon | 56x56/++ 200KB | default: (s) n/a svg (square_icon_56px) |
+| para:signup_emergency_alerts | field_icon | n/a svg  | default: (s) n/a svg (square_icon_65px) |
+| para:transactions | field_icon | 180x100/++ - 2MB  | default: (i) transaction_icon_180x100 |
+| tax:features | field_icon | svg  | default: (s) n/a svg (square_icon_56px) |
+| node:event | field_intro_image | 1440x396/++ 8 MB | default: (resp) intro_image_fields |
+| node:how_to | field_intro_image | 1440x396/++ 8 MB  | default: (resp) intro_image_fields |
+| node:listing_page | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields |
+| node:place_profile | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields  |
+| node:post | field_intro_image | 1440x396/++ 8MB | default: (resp) intro_image_fields  |
+| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields <br>listing: (Resp) card_images |
+| node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields  |
+| node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields  |
+
+| node:event | field_thumbnail | 525x230/++ 8 MB | default: (resp) thumbnail_event |
 | node:post | field_thumbnail |   |  |
 | node:topic_page | field_thumbnail |   |  |
+| para:card | field_thumbnail | 670x235/++ 2MB | default: (Resp) card_images |
+
 | node:person_profile | field_person_photo |   |  |
 | node:quote | field_person_photo |   |  |
 | node:program_i_p | field_program_logo |   |  |
 | para:columns | field_image |   |  |
-| para:hero_image | field_image |   |  |
+| para:hero_image | field_image | 1440x800/++ 8 MB | default: (resp) Hero fixed image fields |
 | para:map | field_image |   |  |
-| para:photo | field_image |   |  |
-| para:video | field_image |   |  |
+| para:photo | field_image | 1440x800/++ 8 MB | default: (resp) Photo Bleed Images |
+| para:video | field_image | 1440x800/++ 8 MB | default: (resp) Photo Bleed Images |
 | user | user_picture |   |  |
 | media.image | image |   |  |
 | **Files** |
@@ -108,10 +111,7 @@ Image styles used:
 
 min/max
 ++ = not specified (unlimited)
-
-Responsive sets use the following styles:
-intro_image_fields:
-- intro_image_xxx
-thumbnail_event:
-- thumbnail_event_square(190*190)
-- thumbnail_event_rectangle(575x230)
+(b) = background, responsive
+(p) = HTML5 Picture, responsive
+(i) = Image, svg or picture, non-reponsive.
+(s) = svg.

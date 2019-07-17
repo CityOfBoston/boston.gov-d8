@@ -41,3 +41,55 @@ boston.hero.oversize:
   multipliers:
     - 1x
   group: hero
+
+boston.card.mobile:
+  label: 'boston mobile'
+  mediaQuery: '(min-width: 0px) and (max-width: 419px)'
+  weight: 5
+  multipliers:
+    - 1x
+    - 1.5x
+    - 2x
+  group: card
+
+boston.card.tablet:
+  label: 'boston tablet'
+  mediaQuery: '(min-width: 420px)  and (max-width: 767px)'
+  weight: 4
+  multipliers:
+    - 1x
+    - 1.5x
+    - 2x
+  group: card
+
+boston.card.desktop-small:
+  label: 'boston desktop under 840'
+  mediaQuery: '(min-width: 768px) and (max-width: 839px)'
+  weight: 3
+  multipliers:
+    - 1x
+  group: card
+
+boston.card.desktop-normal:
+  label: 'boston desktop over 840'
+  mediaQuery: '(min-width: 840px) and (max-width: 1439px)'
+  weight: 2
+  multipliers:
+    - 1x
+  group: card
+
+boston.card.large:
+  label: 'boston large'
+  mediaQuery: '(min-width: 1440px) and (max-width: 1919px)'
+  weight: 1
+  multipliers:
+    - 1x
+  group: card
+
+boston.card.oversize:
+  label: 'boston oversize'
+  mediaQuery: '(min-width: 1920px)'
+  weight: 0
+  multipliers:
+    - 1x
+  group: card
