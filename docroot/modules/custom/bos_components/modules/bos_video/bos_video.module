@@ -96,10 +96,10 @@ function template_preprocess_paragraph__video(array &$variables) {
   // Handle field_image if present.
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if ($variables['paragraph']->hasField('field_image')) {
-    $background_image = $variables['paragraph']->get('field_image');
-    if ($background_image->count()) {
+    $background_image = $variables["elements"]["field_image"];
+    if ($background_image["#items"]->count()) {
       $anchor_class = "." . $variables["photo_id"];
-      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "photo_bleed_images", $anchor_class);
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, $anchor_class);
       $variables['#attached']['html_head'][] = [
         [
           "#tag" => "style",
