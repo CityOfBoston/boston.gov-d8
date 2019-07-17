@@ -165,7 +165,6 @@ function bos_list_preprocess_node(&$variables) {
 						$jump_link = str_replace(" ", "-", $jump_link);
 						$jump_link = str_replace("&amp;", "n", $jump_link);
 						$short_title = str_replace("&AMP;", "&", $short_title);
-            $uri = 'internal:/' . $node->toUrl('canonical')->getInternalPath();
 						$nav_links[] = \Drupal\Core\Link::createFromRoute(
               $short_title,
               'entity.node.canonical',
@@ -174,13 +173,7 @@ function bos_list_preprocess_node(&$variables) {
                 'fragment' => $jump_link,
                 'attributes' => ['class' => 'scroll-link-js']
               ]
-              /*
-							array(
-								'fragment' => $jump_link,
-								'attributes' => array(
-									'class' => array('scroll-link-js'),
-								),
-              )*/);
+            );
 						$num_nav_links++;
 						// Show only the first three links.
 						// After we've computed three links, break.
