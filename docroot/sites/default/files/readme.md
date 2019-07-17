@@ -82,6 +82,7 @@ Image styles used:
 | tax:features | field_icon | svg  | square_icon_56px |
 | node:event | field_intro_image | 1440x396/++ 8 MB | Resp: intro_image_fields - background |
 | node:how_to | field_intro_image | 1440x396/++ 8 MB  | Resp: intro_image_fields - background |
+
 | node:listing_page | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
 | node:place_profile | field_intro_image | 1440x396/++ 8MB  | Resp: intro_image_fields - background |
 | node:post | field_intro_image | 1440x396/++ 8MB | Resp: intro_image_fields - background |
@@ -91,14 +92,18 @@ Image styles used:
 | node:event | field_thumbnail | 525x230/++ 8 MB | Resp: thumbnail_event |
 | node:post | field_thumbnail |   |  |
 | node:topic_page | field_thumbnail |   |  |
+
 | node:person_profile | field_person_photo |   |  |
 | node:quote | field_person_photo |   |  |
+
 | node:program_i_p | field_program_logo |   |  |
+
 | para:columns | field_image |   |  |
 | para:hero_image | field_image |   |  |
 | para:map | field_image |   |  |
-| para:photo | field_image |   |  |
-| para:video | field_image |   |  |
+| para:photo | field_image | 1440x800/++ 8 MB | Photo Bleed Images |
+| para:video | field_image | 1440x800/++ 8 MB | Photo Bleed Images |
+
 | user | user_picture |   |  |
 | media.image | image |   |  |
 | **Files** |
