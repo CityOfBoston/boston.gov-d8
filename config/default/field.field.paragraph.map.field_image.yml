@@ -19,17 +19,17 @@ field_name: field_image
 entity_type: paragraph
 bundle: map
 label: 'Background Image'
-description: ''
+description: "[optional] Background to display in map space before the actual dynamic map is loaded.<br>\r\nIf no image is supplied, then a default sample map of the Boston City region is used."
 required: false
 translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_directory: 'img/maps/[current-date:html_year]/[current-date:html_month_bare]'
   file_extensions: 'png gif jpg jpeg'
-  max_filesize: ''
+  max_filesize: '8 MB'
   max_resolution: ''
-  min_resolution: ''
+  min_resolution: 1440x800
   alt_field: false
   alt_field_required: true
   title_field: false

@@ -5,6 +5,7 @@
  * The Base module file for bos_map module.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Utility\Html;
 
 /**
@@ -13,7 +14,6 @@ use Drupal\Component\Utility\Html;
 function bos_map_theme() {
   $theme['paragraph__map'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_map') . '/templates',
   ];
   return $theme;
 }
@@ -21,19 +21,42 @@ function bos_map_theme() {
 /**
  * Implements hook_preprocess_paragraph().
  */
-function bos_map_preprocess_paragraph(&$vars) {
-  if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
+function bos_map_preprocess_paragraph__map(&$variables) {
+  if (!empty($variables['paragraph'])) {
+    $paragraph = $variables['paragraph'];
     switch ($paragraph->bundle()) {
       case 'map':
-        $vars['inline'] = $paragraph->get('field_map_inline')->getValue()['0']['value'];
-        $vars['config'] = $paragraph->get('field_map_config_json')->getValue()['0']['value'];
-        $vars['#attached']['library'][] = 'bos_map/map';
-        $photo_id = Html::getUniqueId('ph-p--1');
-        $vars['paragraph']->_photo_id = $photo_id;
-        $vars['photo_id'] = $photo_id;
-        $vars['map_id'] = 'map--' . $paragraph->id();
+        $variables['inline'] = $paragraph->get('field_map_inline')->getValue()['0']['value'];
+        $variables['config'] = $paragraph->get('field_map_config_json')->getValue()['0']['value'];
+        $variables['#attached']['library'][] = 'bos_map/map';
+        $photo_id = Html::getUniqueId('ph-p-m');
+        $variables['paragraph']->_photo_id = $photo_id;
+        $variables['photo_id'] = $photo_id;
+        $variables['map_id'] = 'map--' . $paragraph->id();
         break;
     }
+
+    if (isset($variables['content']['field_thumbnail'])) {
+      $background_image = $variables["elements"]["field_thumbnail"];
+      if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+        $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+      }
+    }
+    else {
+      $background_image = \Drupal::entityTypeManager()->getStorage('file')
+        ->loadByProperties(["filename" => "map-background-image-map.jpg"]);
+      $background_image = end($background_image);
+      $uri = $background_image->getFileUri();
+      $css = BackgroundResponsiveImage::buildMediaQueries($uri, "photo_bleed_images", ".$photo_id");
+    }
+    $variables['#attached']['html_head'][] = [
+      [
+        "#tag" => "style",
+        "#value" => $css,
+        "#weight" => 100,
+      ],
+      "map-image-css-" . $photo_id,
+    ];
+
   }
 }
