@@ -15,6 +15,10 @@ function node_post_theme() {
   return [
     'node__post' => [
       'render element' => 'elements',
+      'base hook' => 'node',
+    ],
+    'node__post__listing' => [
+      'base' => 'node',
     ],
   ];
 }
