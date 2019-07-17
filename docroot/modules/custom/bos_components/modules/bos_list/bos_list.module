@@ -165,20 +165,22 @@ function bos_list_preprocess_node(&$variables) {
 						$jump_link = str_replace(" ", "-", $jump_link);
 						$jump_link = str_replace("&amp;", "n", $jump_link);
 						$short_title = str_replace("&AMP;", "&", $short_title);
-            //$route = 'internal:/' . $node->toUrl('canonical')->getInternalPath();
             $uri = 'internal:/' . $node->toUrl('canonical')->getInternalPath();
-						//$nav_links[] = \Drupal\Core\Link::createFromRoute(
-						$nav_links[] = \Drupal\Core\Url::fromUri(
-							//$short_title,
+						//$nav_links[] = \Drupal\Core\Link::fromTextAndUrl(
+						$nav_links[] = \Drupal\Core\Link::createFromRoute(
+              $short_title,
+              'entity.node.canonical',
+              ['node' => $node->id()]
 							//$variables['url'],
-              $uri,
+              //$uri,
               //$route, 
+              /*
 							array(
 								'fragment' => $jump_link,
 								'attributes' => array(
 									'class' => array('scroll-link-js'),
 								),
-							));
+              )*/);
 						$num_nav_links++;
 						// Show only the first three links.
 						// After we've computed three links, break.
