@@ -85,12 +85,15 @@ Image styles used:
 | node:listing_page | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields |
 | node:place_profile | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields  |
 | node:post | field_intro_image | 1440x396/++ 8MB | default: (resp) intro_image_fields  |
-| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields <br>listing: (Resp) card_images|
+| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields <br>listing: (Resp) card_images |
 | node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields  |
 | node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (resp) intro_image_fields  |
+
 | node:event | field_thumbnail | 525x230/++ 8 MB | default: (resp) thumbnail_event |
 | node:post | field_thumbnail |   |  |
 | node:topic_page | field_thumbnail |   |  |
+| para:card | field_thumbnail | 670x235/++ 2MB | default: (Resp) card_images |
+
 | node:person_profile | field_person_photo |   |  |
 | node:quote | field_person_photo |   |  |
 | node:program_i_p | field_program_logo |   |  |
