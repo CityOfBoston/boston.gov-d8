@@ -165,9 +165,14 @@ function bos_list_preprocess_node(&$variables) {
 						$jump_link = str_replace(" ", "-", $jump_link);
 						$jump_link = str_replace("&amp;", "n", $jump_link);
 						$short_title = str_replace("&AMP;", "&", $short_title);
-						$nav_links[] = l(
-							$short_title,
-							$variables['url'],
+            //$route = 'internal:/' . $node->toUrl('canonical')->getInternalPath();
+            $uri = 'internal:/' . $node->toUrl('canonical')->getInternalPath();
+						//$nav_links[] = \Drupal\Core\Link::createFromRoute(
+						$nav_links[] = \Drupal\Core\Url::fromUri(
+							//$short_title,
+							//$variables['url'],
+              $uri,
+              //$route, 
 							array(
 								'fragment' => $jump_link,
 								'attributes' => array(
