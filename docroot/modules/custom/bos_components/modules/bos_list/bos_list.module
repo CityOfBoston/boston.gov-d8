@@ -166,14 +166,14 @@ function bos_list_preprocess_node(&$variables) {
 						$jump_link = str_replace("&amp;", "n", $jump_link);
 						$short_title = str_replace("&AMP;", "&", $short_title);
             $uri = 'internal:/' . $node->toUrl('canonical')->getInternalPath();
-						//$nav_links[] = \Drupal\Core\Link::fromTextAndUrl(
 						$nav_links[] = \Drupal\Core\Link::createFromRoute(
               $short_title,
               'entity.node.canonical',
-              ['node' => $node->id()]
-							//$variables['url'],
-              //$uri,
-              //$route, 
+              ['node' => $node->id()],
+              [
+                'fragment' => $jump_link,
+                'attributes' => ['class' => 'scroll-link-js']
+              ]
               /*
 							array(
 								'fragment' => $jump_link,
