@@ -74,6 +74,10 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
     if (!$node->get('field_intro_image')->isEmpty()) {
       $variables['new_image_class'] = "cd-ic " . $variables['photo_id'];
     }
+    else {
+      // Sets a hatched blue background in place of image.
+      $variables['new_image_class'] = "cd-ic hro--d";
+    }
   }
 }
 
@@ -97,7 +101,7 @@ function template_preprocess_node__program_initiative_profile(array &$variables)
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if (isset($variables['content']['field_intro_image'])) {
     $background_image = $variables["elements"]["field_intro_image"];
-    $photo_id = Html::getUniqueId('cd-ic-1');
+    $photo_id = Html::getUniqueId('cd-ic-' . $variables["elements"]['#node']->id());
     $variables['photo_id'] = $photo_id;
 
     if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
