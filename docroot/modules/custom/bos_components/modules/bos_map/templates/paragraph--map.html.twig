@@ -24,46 +24,72 @@
  * @see template_process()
 #}
 {% if inline %}
+
   <div {{ attributes.addClass('b b--w b--fw') }}>
+
+    {{ title_prefix }}
+    {{ title_suffix }}
+
     <div class="b-c">
+
       <div class="sh">
         {{ content.field_component_title }}
       </div>
+
       <cob-map
         config="{{ config }}"
         style="height: 500px; max-height: calc(100vh - 120px);"
-        class="m-v500"
+        class="m-v500">
       </cob-map>
+
     </div>
   </div>
+
 {% else %}
+
   <div {{ attributes }}>
+
     <cob-map
       id="{{ map_id }}"
       config="{{ config }}"
       modal>
     </cob-map>
+
     <div class="b b--fw">
+
+      {{ title_prefix }}
+      {{ title_suffix }}
+
       <div class="ph ph--wc">
+
         <a href="#{{ map_id }}">
-          <div class="ph-p ph-p--{{ photo_id }}">
+          <div class="ph-p {{ photo_id }}">
             {{ content.field_image }}
           </div>
         </a>
+
         <div class="ph-c p-a600">
+
           <div class="m-b200">
             {{ content.field_component_title }}
           </div>
+
           {% if content.field_extra_info['#items'].getValue() %}
             <div class="t--info m-b200">
               {{ content.field_extra_info }}
             </div>
           {% endif %}
+
           <a class="btn" href="#{{ map_id }}">
             Show Map
           </a>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 {% endif %}
