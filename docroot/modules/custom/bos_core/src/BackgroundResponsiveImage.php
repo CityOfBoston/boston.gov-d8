@@ -20,19 +20,28 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    * Needs to be called from a theme_preprocess_hook or else the ['#attached']
    * array field does not set and the style is not applied to the page.
    *
-   * @param \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $background_image
-   *   Usual $variables variable from preprocess function.
-   * @param string $breakpoint_group
-   *   The breakpoint group to use (defined in the theme.ino.yml file).
-   * @param string $responsiveStyle_group
-   *   Style-set to be applied (/admin/config/media/responsive-image-style).
+   * @param array $background_image
+   *   Background image render array.
    * @param string $anchorClass
    *   The class name for css generated - the background image main class tag.
    *
    * @return string|bool
    *   False if failed, otherwise an inline css string that could be injected.
+   * @throws \Exception
    */
-  public static function createBackgroundCss(FileFieldItemList $background_image, string $breakpoint_group, string $responsiveStyle_group, $anchorClass = "hro") {
+  public static function createBackgroundCss(array $background_image, $anchorClass = "hro") {
+
+    if ($background_image['#formatter'] != 'responsive_image') {
+      throw new \Exception("Image is not a responsive style.");
+    }
+
+    // Work out the responsive group id and the breakpoint set being used.
+    $responsiveStyle_group = $background_image[0]["#responsive_image_style_id"];
+    $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group);
+    $breakpoint_group = $responsiveStyle->get("breakpoint_group");
+
+    // Grab the fielditemlist object.
+    $background_image = $background_image["#items"];
 
     if (!empty($background_image->entity)) {
 
@@ -43,14 +52,12 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
         ->getBreakpointsByGroup($breakpoint_group);
 
       // Create the default style.
-      $fallback_style = ResponsiveImageStyle::load($responsiveStyle_group)
-        ->getFallbackImageStyle();
+      $fallback_style = $responsiveStyle->getFallbackImageStyle();
       $url = ImageStyle::load($fallback_style)->buildUrl($uri);
       $css = ["$anchorClass { background-image: url(" . $url . ");\n    background-size: cover !important;}"];
 
       // Create an array with URL's for each responsive style.
-      $styles = ResponsiveImageStyle::load($responsiveStyle_group)
-        ->getKeyedImageStyleMappings();
+      $styles = $responsiveStyle->getKeyedImageStyleMappings();
       foreach ($styles as $key => $style) {
         foreach ($style as $multiplier => $breakpoint) {
           if (empty($breakpoint['multiplier']) || $breakpoint['multiplier'] == "1x") {

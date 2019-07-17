@@ -54,9 +54,9 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
   }
   $variables['tabs'] = $tabs;
 
-  $variables['image_class'] = "hro--b";
+  $variables['image_class'] = $variables['photo_id'] . " hro--b";
   if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {
-    $variables['image_class'] = "hro--t";
+    $variables['image_class'] = $variables['photo_id'] . " hro--t";
   }
 
   // Add markup to locate the contextual editor button.
@@ -114,9 +114,12 @@ function template_preprocess_node__tabbed_content(array &$variables) {
   // Handle intro_image if present.
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if (isset($variables['content']['field_intro_image'])) {
-    $background_image = $variables['elements']["#node"]->get('field_intro_image');
-    if ($background_image->count()) {
-      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".hro");
+    $background_image = $variables["elements"]["field_intro_image"];
+    if ($background_image["#items"]->count()) {
+      $photo_id = Html::getUniqueId('hro');
+      $variables['paragraph']->_photo_id = $photo_id;
+      $variables['photo_id'] = $photo_id;
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
       $variables['#attached']['html_head'][] = [
         [
           "#tag" => "style",

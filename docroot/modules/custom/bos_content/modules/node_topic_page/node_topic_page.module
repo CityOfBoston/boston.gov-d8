@@ -62,17 +62,17 @@ function template_preprocess_node__topic_page(array &$variables) {
   // Handle intro_image if present.
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if (isset($variables['content']['field_intro_image'])) {
-    $background_image = $variables['elements']["#node"]->get('field_intro_image');
+    $background_image = $variables["elements"]["field_intro_image"];
     switch ($variables["elements"]["#view_mode"]) {
       case "listing":
         break;
 
       default:
-        if ($background_image->count()) {
+        if ($background_image["#items"]->count()) {
           $photo_id = Html::getUniqueId('hro');
           $variables['paragraph']->_photo_id = $photo_id;
           $variables['photo_id'] = $photo_id;
-          $css = BackgroundResponsiveImage::createBackgroundCss($background_image, "hero", "intro_image_fields", ".$photo_id");
+          $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
           $variables['#attached']['html_head'][] = [
             [
               "#tag" => "style",
