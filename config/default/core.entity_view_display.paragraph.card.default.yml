@@ -9,10 +9,12 @@ dependencies:
     - field.field.paragraph.card.field_thumbnail
     - field.field.paragraph.card.field_title
     - paragraphs.paragraphs_type.card
+    - responsive_image.styles.card_images_3w
   module:
     - entity_reference_revisions
-    - image_url_formatter
-    - text
+    - fences
+    - responsive_image
+    - smart_trim
 _core:
   default_config_hash: ep2I-FTYihcvO-VL_TiRn_eoQF4xUrl6TuRvCR599h4
 id: paragraph.card.default
@@ -32,33 +34,68 @@ content:
   field_short_description:
     label: hidden
     weight: 3
-    type: text_trimmed
+    type: smart_trim
     settings:
       trim_length: 600
+      trim_type: chars
+      trim_suffix: ''
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options: {  }
     third_party_settings: {  }
     region: content
   field_subheader:
     label: hidden
     weight: 1
-    type: text_trimmed
+    type: smart_trim
     settings:
       trim_length: 600
+      trim_type: chars
+      trim_suffix: ''
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options: {  }
     third_party_settings: {  }
     region: content
   field_thumbnail:
     label: hidden
     weight: 2
-    type: image_url
+    type: responsive_image
     settings:
-      image_style: ''
-    third_party_settings: {  }
+      responsive_image_style: card_images_3w
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_title:
     label: hidden
     weight: 0
-    type: text_trimmed
+    type: smart_trim
     settings:
       trim_length: 600
+      trim_type: chars
+      trim_suffix: ''
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options: {  }
     third_party_settings: {  }
     region: content
 hidden: {  }
