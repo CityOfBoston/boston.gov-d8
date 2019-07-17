@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * This template handles the layout of the views exposed filter form.
  *
@@ -20,55 +18,42 @@
  * - $button: The submit button for the form.
  *
  * @ingroup views_templates
- */
-$counter = 0;
-?>
-<?php if (!empty($q)): ?>
-  <?php
-  // This ensures that, if clean URLs are off, the 'q' is added first so that
-  // it shows up first in the URL.
-  print $q;
-  ?>
-<?php endif; ?>
+ #}
+
+{% if q is not empty %}
+  {#
+    This ensures that, if clean URLs are off, the 'q' is added first,
+    as a hidden form element, so that it shows up first in the POST URL.
+  #}
+  {{ q }}
+{% endif %}
+
 <div class="drawer-trigger mobile-only ">
   <div class="drawer-trigger-chevron"></div>
   Filter
 </div>
 <div class="views-exposed-form drawer mobile-only">
   <bu class="views-exposed-widgets clearfix">
-    <?php foreach($widget_groups as $group_id => $widget_group): ?>
-    <button type="button" aria-expanded="true/false" aria-controls="drawer-<?php print $counter; ?>" class="drawer-trigger">
-          <div class="drawer-trigger-chevron"></div>
-          <span>Filter by <?php print $group_id; ?></span>
-    </button>
-      <div id="drawer-<?php print $counter++; ?>" class="clearfix drawer">
-        <?php foreach ($widget_group as $widget_id => $widget): ?>
-          <div id="<?php print $widget->id; ?>-wrapper" class="views-exposed-widget views-widget-<?php print $widget_id; ?>">
-            <?php if (!empty($widget->label)): ?>
-              <label for="<?php print $widget->id; ?>">
-                <?php print $widget->label; ?>
-              </label>
-            <?php endif; ?>
-            <?php if (!empty($widget->operator)): ?>
-              <div class="views-operator">
-                <?php print $widget->operator; ?>
-              </div>
-            <?php endif; ?>
-            <div class="views-widget">
-              <?php print $widget->widget; ?>
-            </div>
+    {% for i,filter in form['#info'] %}   
+      {% set filter_name = filter.value %}
+      <button type="button" aria-expanded="true/false" aria-controls="drawer-<?php print $counter; ?>" class="drawer-trigger">
+        <div class="drawer-trigger-chevron"></div>
+        <span>Filter by {{ filter.label }}</span>
+      </button>
+      <div id="drawer-{{ i }}" class="clearfix drawer">
+        <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+          <div class="views-widget">
+            {{ form[filter_name] }}
           </div>
-        <?php endforeach; ?>
+        </div>
       </div>
-    <?php endforeach; ?>
+    {% endfor %}
 
     <div class="views-exposed-widget views-submit-button">
-      <?php print $button; ?>
+      {{ form.actions.submit }}
     </div>
-    <?php if (!empty($reset_button)): ?>
-      <div class="views-exposed-widget views-reset-button">
-        <?php print $reset_button; ?>
-      </div>
-    <?php endif; ?>
+    <div class="views-exposed-widget views-reset-button">
+      {{ form.actions.reset }}
+    </div>
   </div>
 </div>
