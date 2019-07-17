@@ -89,12 +89,15 @@ function template_preprocess_node__place_profile(array &$variables) {
           $variables['paragraph']->_photo_id = $photo_id;
           $variables['photo_id'] = $photo_id;
           $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
-          $variables['#attached']['html_head'][] = [["#tag" => "style",
-          "#value" => $css,
-          "#weight" => 100,],
-          'place-profile-intro-image-css',];
+          $variables['#attached']['html_head'][] = [
+            [
+              "#tag" => "style",
+              "#value" => $css,
+              "#weight" => 100,
+            ],
+            'place-profile-intro-image-css',
+          ];
         }
-
     }
   }
 }
