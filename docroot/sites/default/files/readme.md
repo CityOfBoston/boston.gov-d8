@@ -94,7 +94,7 @@ Image styles used:
 | node:post | field_thumbnail | 700x700/++ 5MB  | featured_item: (p) featured_images |
 | node:topic_page | field_thumbnail |   |  |
 | para:card | field_thumbnail | 670x235/++ 2MB | default: (b) card_images |
-| node:person_profile | field_person_photo |   |  |
+| node:person_profile | field_person_photo | 350x350/++ 5MB | default: (p) person_photos<br>listing: (p) person_photos<br>embed: (p) person_photos |
 | node:quote | field_person_photo |   |  |
 | node:program_i_p | field_program_logo |   |  |
 | para:columns | field_image | 200x200/++ 2MB | default: (i) Medium Small Square (also Thumbnail 100x100)  |
