@@ -22,7 +22,7 @@ function bos_map_uninstall() {
 function bos_map_install() {
   // Copy icons into expected location.
   $modName = basename(__FILE__, ".install");
-  //_bos_core_install_icons($modName);
+  _bos_core_install_icons($modName);
 
   // Install the default background image.
   // Copy rather than move so we dont get git issues.
@@ -32,7 +32,7 @@ function bos_map_install() {
   if (!file_exists($path)) {
     mkdir($path, 0777);
   }
-  if (file_exists($path . $destName )) {
+  if (file_exists($path . $destName)) {
     unlink($path . $destName);
   }
   copy($modulePath . "/map-background-image.jpg", $path . $destName);
@@ -56,6 +56,5 @@ function bos_map_install() {
       $image->save();
     }
   }
-
 
 }

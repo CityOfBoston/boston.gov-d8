@@ -76,13 +76,19 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
   }
 
   /**
-   * @param $uri
-   * @param $responsiveStyle_group
-   * @param $anchorClass
+   * Builds the media queries (css) as specified by responsive style module.
+   *
+   * @param string $uri
+   *   The image Uri.
+   * @param string $responsiveStyle_group
+   *   The responsive group to use.
+   * @param string $anchorClass
+   *   The css anchor element to use.
    *
    * @return string
+   *   A string of valid css3.
    */
-  public static function buildMediaQueries($uri, $responsiveStyle_group, $anchorClass) {
+  public static function buildMediaQueries(string $uri, string $responsiveStyle_group, string $anchorClass) {
     // Work out the responsive group id and the breakpoint set being used.
     $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group);
     $breakpoint_group = $responsiveStyle->get("breakpoint_group");

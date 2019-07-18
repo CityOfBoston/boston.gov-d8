@@ -28,7 +28,7 @@ function bos_map_preprocess_paragraph__map(&$variables) {
       case 'map':
         $variables['inline'] = $paragraph->get('field_map_inline')->getValue()['0']['value'];
         $config = $paragraph->get('field_map_config_json')->getValue()['0']['value'];
-        $config =  preg_replace("~( {2,})|\r|\n~", " ", $config);
+        $config = preg_replace("~( {2,})|\r|\n~", " ", $config);
         $variables['config'] = $config;
         if (!json_decode($variables["config"])) {
           \Drupal::messenger()->addWarning("Map JSON invalid.", FALSE);

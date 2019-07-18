@@ -101,7 +101,7 @@ Image styles used:
 | node:program_i_p | field_program_logo |   |  |
 | para:columns | field_image | 200x200/++ 2MB | default: (i) Medium Small Square (also Thumbnail 100x100)  |
 | para:hero_image | field_image | 1440x800/++ 8 MB | default: (b) Hero fixed image fields |
-| para:map | field_image |   |  |
+| para:map | field_image | 1440x800/++ | 8 MB | default: (b) Photo Bleed Images |
 | para:photo | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:video | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | user | user_picture |   |  |
