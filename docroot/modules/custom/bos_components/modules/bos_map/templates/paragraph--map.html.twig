@@ -49,10 +49,10 @@
 
   <div {{ attributes }}>
 
-    <cob-map
-      id="{{ map_id }}"
-      config="{{ config }}"
-      modal>
+    <cob-map id="{{ map_id }}" modal>
+      <script slot="config" type="application/json">
+        {{ config|raw }}
+      </script>
     </cob-map>
 
     <div class="b b--fw">
