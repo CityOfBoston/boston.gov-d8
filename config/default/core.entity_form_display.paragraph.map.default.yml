@@ -9,7 +9,7 @@ dependencies:
     - field.field.paragraph.map.field_map_config_json
     - field.field.paragraph.map.field_map_inline
     - field.field.paragraph.map.field_short_title
-    - image.style.thumbnail
+    - image.style.photo_bleed_a_mobile_1x
     - paragraphs.paragraphs_type.map
   module:
     - svg_image
@@ -37,20 +37,15 @@ content:
     third_party_settings: {  }
     region: content
   field_image:
-    type: entity_browser_file
+    weight: 5
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: photo_bleed_a_mobile_1x
+      progress_indicator: throbber
     region: content
     third_party_settings: {  }
   field_map_config_json:
-    weight: 103
+    weight: 8
     settings:
       rows: 5
       placeholder: ''
