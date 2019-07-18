@@ -70,6 +70,8 @@ function node_post_preprocess_node__post(&$variables) {
  *   - elements: An associative array containing the post information and any
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
+ *
+ * @throws \Exception
  */
 function template_preprocess_node__post(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
@@ -82,9 +84,11 @@ function template_preprocess_node__post(array &$variables) {
     $background_image = $variables["elements"]["field_intro_image"];
     switch ($variables["elements"]["#view_mode"]) {
       case "featured_item":
+        return;
         break;
 
       case "listing":
+        return;
         break;
 
       default:

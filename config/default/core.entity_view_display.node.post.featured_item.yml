@@ -17,11 +17,12 @@ dependencies:
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
     - node.type.post
+    - responsive_image.styles.featured_images
   module:
     - advanced_text_formatter
     - datetime
     - fences
-    - svg_image
+    - responsive_image
     - user
 _core:
   default_config_hash: rQE6pFe7_bigqk-lYler4VF8FT4MXHiFkfvE7ugPLf4
@@ -93,14 +94,10 @@ content:
   field_thumbnail:
     label: hidden
     weight: 0
-    type: image
+    type: responsive_image
     settings:
-      image_style: ''
+      responsive_image_style: featured_images
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none
