@@ -58,6 +58,10 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'field--field-link',
     ],
+    'field__field_intro_text' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+    ],
   ];
 }
 
@@ -149,8 +153,6 @@ function bos_text_preprocess_field(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_text_preprocess_field__field_intro_text(&$variables) {
-  //$variables['classes_array'] = [];
-  //$variables['classes_array'][] = "intro-text";
   $variables['attributes']->addClass("intro-text");
   $view_mode = $variables['element']['#view_mode'];
   $bundle = $variables['element']['#bundle'];
@@ -172,11 +174,9 @@ function bos_text_preprocess_field__field_intro_text(&$variables) {
   // If view mode and paragraph item is not in the $intro_stripped array
   // add additional classes.
   if (!in_array($view_mode, $intro_stripped) && !in_array($bundle, $intro_stripped)) {
-    //$variables['classes_array'][] = "supporting-text";
     $variables['attributes']->addClass("supporting-text");
     // Don't add squiggle border to intro-field in hero image component.
     if (!in_array($bundle, $no_squiggle)) {
-      //$variables['classes_array'][] = "squiggle-border-bottom";
       $variables['attributes']->addClass("squiggle-border-bottom");
     }
   }
