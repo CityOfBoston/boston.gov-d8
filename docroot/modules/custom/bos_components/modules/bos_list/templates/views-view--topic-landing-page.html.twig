@@ -25,7 +25,7 @@
  * @ingroup views_templates
  #}
 
-<div>
+<div class="p-v700">
   {{ title_prefix }}
   {% if title %}
     {{ title }}
@@ -37,46 +37,41 @@
     </div>
   {% endif %}
 
-  <div class="g">
-    <div class="g--4 m-b500">
-      {% if exposed %}
-        {{ exposed }}
-      {% endif %}
-    </div>
-
-    <div class="g--8">
-      <div class="p-b700">
-        {% if attachment_before %}
-          {{ attachment_before }}
-        {% endif %}
-        {% if rows %}
-          {{ rows }}
-        {% elseif empty %}
-          {{ empty }}
-        {% endif %}
-        {% if pager %}
-          {{ pager }}
-        {% endif %}
-        {% if attachment_after %}
-          {{ attachment_after }}
-        {% endif %}
-        {% if more %}
-          {{ more }}
-        {% endif %}
-      </div>
-    </div>
+  <div class="view-filters mobile-100 desktop-25-left sidebar">
+    {% if exposed %}
+      {{ exposed }}
+    {% endif %}
   </div>
-
-  {% if footer %}
-    <div class="view-footer">
-      {{ footer }}
-    </div>
-  {% endif %}
-
-  {% if feed_icon %}
-    <div class="feed-icon">
-      {{ feed_icon }}
-    </div>
-  {% endif %}
-
 </div>
+
+<div class="view-content mobile-100 desktop-75-right">
+  {% if attachment_before %}
+    {{ attachment_before }}
+  {% endif %}
+  {% if rows %}
+    {{ rows }}
+  {% elseif empty %}
+    {{ empty }}
+  {% endif %}
+  {% if pager %}
+    {{ pager }}
+  {% endif %}
+  {% if attachment_after %}
+    {{ attachment_after }}
+  {% endif %}
+  {% if more %}
+    {{ more }}
+  {% endif %}
+</div>
+
+{% if footer %}
+  <div class="view-footer">
+    {{ footer }}
+  </div>
+{% endif %}
+
+{% if feed_icon %}
+  <div class="feed-icon">
+    {{ feed_icon }}
+  </div>
+{% endif %}
