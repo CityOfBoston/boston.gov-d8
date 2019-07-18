@@ -84,11 +84,9 @@ function template_preprocess_node__post(array &$variables) {
     $background_image = $variables["elements"]["field_intro_image"];
     switch ($variables["elements"]["#view_mode"]) {
       case "featured_item":
-        return;
         break;
 
       case "listing":
-        return;
         break;
 
       default:
