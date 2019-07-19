@@ -19,6 +19,10 @@ function node_topic_page_theme() {
     'node__topic_page' => [
       'base hook' => 'node',
     ],
+    'node__topic_page__listing_long' => [
+      'base hook' => 'node',
+      'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+    ],
   ];
 }
 
@@ -41,6 +45,23 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
       ["div" => "hero-image-wrapper " . $variables['photo_id'] . " hro hro--pt hro--pb"],
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_topic_page_node__topic_page__listing(&$variables) {
+  if (!empty($variables['elements']['#node'])) {
+    $node = $variables['elements']['#node'];
+    $variables['title_raw'] = $node->getTitle();
+    if (!$node->get('field_intro_image')->isEmpty()) {
+      $variables['new_image_class'] = "cd-ic " . $variables['photo_id'];
+    }
+    else {
+      // Sets a hatched blue background in place of image.
+      $variables['new_image_class'] = "cd-ic hro--d";
+    }
   }
 }
 
