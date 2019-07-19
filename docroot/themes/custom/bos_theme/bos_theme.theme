@@ -580,11 +580,8 @@ function _boston_listing_page_title(&$variables) {
     $node = $variables['elements']['#node'];
     // If there is a hero image.
     if ($node->hasField('field_intro_image') &&
-    //if (!empty($variables['node']->field_intro_image) &&
        (!$node->hasField('field_header_component') ||
-          //(empty($variables['node']->field_header_component) ||
           _boston_check_header_component($node, 'featured'))) {
-          //_boston_check_header_component($variables['node'], 'featured'))) {
       $variables['with_image_title'] = $variables['node']->title;
     }
   }
@@ -596,18 +593,12 @@ function _boston_listing_page_title(&$variables) {
 function _boston_check_header_component($node, $check_component = 'text', $check_image = TRUE) {
   $return_val = FALSE;
   if ($node->hasField('field_header_component')) {
-  //if (!empty($node->field_header_component)) {
     $header = $node->get('field_header_component')->getValue();
-    //$header = $node->field_header_component;
     $paragraph = \Drupal::entityTypeManager()->getStorage('paragraph')->load($header[0]["target_id"]);
-    //$entity_array = entity_load('paragraphs_item', array($header[$node->language][0]['value']));
     if (!empty($paragraph)) {
-    //if (!empty($entity_array)) {
-      //$entity = array_pop($entity_array);
       if ($paragraph->hasField('field_featured_item')) {
         $featured_item = $paragraph->get('field_featured_item')->getValue();
       }
-      //$featured_item = field_get_items('paragraphs_item', $entity, 'field_featured_item');
       if ($check_component == 'text' && empty($featured_item)) {
         $return_val = TRUE;
       }
@@ -618,13 +609,13 @@ function _boston_check_header_component($node, $check_component = 'text', $check
   }
   if ($check_image) {
     // If there is no image return false.
-    if (empty($node->field_intro_image)) {
+    if ($node->hasField('field_intro_image')) {
       $return_val = FALSE;
     }
   }
   else {
     // If there is an image, return false.
-    if (!empty($node->field_intro_image)) {
+    if (!$node->hasField('field_intro_image')) {
       $return_val = FALSE;
     }
   }
