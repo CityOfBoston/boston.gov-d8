@@ -43,7 +43,7 @@ sites/default/files
     |   |   └── intro_images            - from field_intro_image
     |   ├── maps                       * Paragraph listing_page 
     |   |   └── [dated]                 - from field_intro_image
-    |   ├── person_profile             * Paragraph person_profile
+    |   ├── person_profile             * Node person_profile
     |   |   └── photos                  - from field_photos
     |   ├── place_profile              * Paragraph place_profile
     |   |   └── intro_images            - from field_intro_image
@@ -63,6 +63,8 @@ sites/default/files
     |   ├── unk                        * Unknown origin (to migration)
     |   |   ├── intro_images            
     |   |   └── thumbnails              
+    |   ├── user                       * User object field.
+    |   |   └── photos                  - from user_picture
     |   └── video                      * Paragraph video
     |       └── [dated]                 - migrated files
     ├── private                         PRIVATE FILES
@@ -102,8 +104,8 @@ Image styles used:
 | para:map | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:photo | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:video | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
-| user | user_picture |   |  |
-| media.image | image |   |  |
+| user | user_picture | 100x100/1024/1024 1 MB  |  |
+| media.image | image | +++/2400/2400 8 MB  | all: (i) Media Fixed Height (100px) |
 | **Files** |
 | media.document | field_document |   |  |
 | node:procurement | field_document |   |  |
