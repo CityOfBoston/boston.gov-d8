@@ -78,6 +78,14 @@
  * @ingroup themeable
  #}
 
+{% if with_image_title not empty %}
+  <div class="title-wrapper">
+    <div class="title-inner-wrapper">
+      <h1 class="title-with-hero">{{ with_image_title }}</h1>
+    </div>
+  </div>
+{% endif %}
+
 <article{{ attributes }}>
 
   {{ title_prefix }}
