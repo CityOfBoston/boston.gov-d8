@@ -89,10 +89,10 @@ Image styles used:
 | node:post | field_intro_image | 1440x396/++ 8MB | default: (b) intro_image_fields  |
 | node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields <br>listing: (b) card_images |
 | node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
-| node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
+| node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields<br>listing_long: (b) intro_image_fields<br>listing: (b) card_images |
 | node:event | field_thumbnail | 525x230/++ 8 MB | default: (b) thumbnail_event |
 | node:post | field_thumbnail | 700x700/++ 5MB  | featured_item: (p) featured_images |
-| node:topic_page | field_thumbnail |   |  |
+| node:topic_page | field_thumbnail |   |  <br>featured_item: (p) featured_images |
 | para:card | field_thumbnail | 670x235/++ 2MB | default: (b) card_images |
 | node:person_profile | field_person_photo | 350x350/++ 5MB | default: (p) person_photos<br>listing: (p) person_photos<br>embed: (p) person_photos |
 | para:quote | field_person_photo | 350x350/++ 5 MB | default: (p) person_photos |
