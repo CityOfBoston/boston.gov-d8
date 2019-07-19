@@ -23,9 +23,10 @@ dependencies:
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
+    - responsive_image.styles.card_images_3w
   module:
     - fences
-    - image_url_formatter
+    - responsive_image
     - smart_trim
     - user
 id: node.place_profile.listing
@@ -33,13 +34,17 @@ targetEntityType: node
 bundle: place_profile
 mode: listing
 content:
+  content_moderation_control:
+    weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_intro_image:
     label: hidden
     weight: 0
-    type: image_url
+    type: responsive_image
     settings:
-      url_type: '0'
-      image_style: grid_card_image
+      responsive_image_style: card_images_3w
       image_link: ''
     third_party_settings:
       fences:

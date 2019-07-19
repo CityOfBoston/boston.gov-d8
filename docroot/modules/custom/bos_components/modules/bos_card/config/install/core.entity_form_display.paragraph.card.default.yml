@@ -7,10 +7,11 @@ dependencies:
     - field.field.paragraph.card.field_subheader
     - field.field.paragraph.card.field_thumbnail
     - field.field.paragraph.card.field_title
+    - image.style.card_grid_horizontal_e_oversize
     - paragraphs.paragraphs_type.card
   module:
-    - file
     - paragraphs
+    - svg_image
 id: paragraph.card.default
 targetEntityType: paragraph
 bundle: card
@@ -53,16 +54,10 @@ content:
     region: content
   field_thumbnail:
     weight: 6
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: card_grid_horizontal_e_oversize
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_title:
