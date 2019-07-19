@@ -604,7 +604,9 @@ function _boston_check_header_component($node, $check_component = 'text', $check
     if (!empty($paragraph)) {
     //if (!empty($entity_array)) {
       //$entity = array_pop($entity_array);
-      $featured_item = $paragraph->get('field_featured_item')->getValue();
+      if ($paragraph->hasField('field_featured_item')) {
+        $featured_item = $paragraph->get('field_featured_item')->getValue();
+      }
       //$featured_item = field_get_items('paragraphs_item', $entity, 'field_featured_item');
       if ($check_component == 'text' && empty($featured_item)) {
         $return_val = TRUE;
