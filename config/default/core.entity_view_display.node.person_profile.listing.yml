@@ -19,12 +19,12 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
-    - image.style.med_small_square__200x200_
     - node.type.person_profile
+    - responsive_image.styles.person_photos
   module:
     - fences
     - options
-    - svg_image
+    - responsive_image
     - user
 _core:
   default_config_hash: 34vVJ5Pywu0zh3D9wIRJn0w9sM0f7-oxTXd8htY2cwo
@@ -67,14 +67,10 @@ content:
   field_person_photo:
     label: hidden
     weight: 0
-    type: image
+    type: responsive_image
     settings:
-      image_style: med_small_square__200x200_
+      responsive_image_style: person_photos
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none

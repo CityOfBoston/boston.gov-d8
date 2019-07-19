@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.post.body
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
@@ -16,12 +15,11 @@ dependencies:
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
-    - image.style.hero_fixed_a_mobile_1x
+    - image.style.thumbnail
     - node.type.post
   module:
     - content_moderation
     - datetime
-    - entity_browser
     - field_group
     - paragraphs
     - path
@@ -235,16 +233,10 @@ content:
     region: content
   field_thumbnail:
     weight: 2
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
       preview_image_style: thumbnail
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_updated_date:
