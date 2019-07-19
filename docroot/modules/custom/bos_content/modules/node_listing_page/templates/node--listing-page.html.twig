@@ -78,23 +78,17 @@
  * @ingroup themeable
  #}
 
-{% if with_image_title not empty %}
+{% if with_image_title %}
   <div class="title-wrapper">
     <div class="title-inner-wrapper">
-      <h1 class="title-with-hero">{{ with_image_title }}</h1>
+      {{ title_prefix }}
+        <h1 class="title-with-hero">{{ with_image_title }}</h1>
+      {{ title_suffix }}
     </div>
   </div>
 {% endif %}
 
 <article{{ attributes }}>
-
-  {{ title_prefix }}
-
-  {% if title %}
-    <h1{{ title_attributes }}>{{ title.0 }}</h1>
-  {%  endif %}
-
-  {{ title_suffix }}
 
   {% if content.field_header_component %}
     {{ content.field_header_component }}
