@@ -104,7 +104,7 @@ Image styles used:
 | para:map | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:photo | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:video | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
-| user | user_picture | 100x100/1024/1024 1 MB  |  |
+| user | user_picture | 100x100/1024/1024 1 MB | default: (p) person_photos<br>compact: (i) person_photo(110) |
 | media.image | image | +++/2400/2400 8 MB  | all: (i) Media Fixed Height (100px) |
 | **Files** |
 | media.document | field_document |   |  |
