@@ -4,8 +4,10 @@ status: true
 dependencies:
   config:
     - field.field.user.user.user_picture
+    - responsive_image.styles.person_photos
   module:
-    - svg_image
+    - fences
+    - responsive_image
     - user
 _core:
   default_config_hash: V51QPCKkgNREKtSmB9Iu2wmAMEpktVpnzklWaZV8UYo
@@ -17,17 +19,28 @@ content:
   masquerade:
     weight: 50
     region: content
+    settings: {  }
+    third_party_settings: {  }
   member_for:
     weight: 5
     region: content
+    settings: {  }
+    third_party_settings: {  }
   user_picture:
     label: hidden
     settings:
-      image_style: ''
+      responsive_image_style: person_photos
       image_link: content
-    type: image
+    type: responsive_image
     weight: 6
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   langcode: true
