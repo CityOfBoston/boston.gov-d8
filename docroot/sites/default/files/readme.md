@@ -103,9 +103,9 @@ Image styles used:
 | para:signup_emergency_alerts | field_icon | n/a svg  | default: (s) n/a svg (square_icon_65px) |
 | para:transactions | field_icon | 180x100/++ - 2MB  | default: (i) transaction_icon_180x100<br>group_of_links: (i) transaction_icon_180x100 |
 | para:video | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
-|x tax:features | field_icon | svg  | default: (s) n/a svg (square_icon_56px) |
-|x entity:user | user_picture | 100x100/1024/1024 1 MB | default: (p) person_photos<br>compact: (i) person_photo(110) |
-|x entity:media.image | image | +++/2400/2400 8 MB  | all: (i) Media Fixed Height (100px) |
+| tax:features | field_icon | svg  | default: (s) n/a svg (square_icon_56px)<br>sidebar_right: (s) n/a svg (square_icon_56px) |
+| entity:user | user_picture | 100x100/1024/1024 1 MB | default: (p) person_photos<br>compact: (i) Person photo a-mobile 1x (110x110) |
+| entity:media.image | image | +++/2400/2400 8 MB  | default: (i) original image <br>[all others]: (i) Media Fixed Height (100px) |
 | **Files** |
 | media.document | field_document |   |  |
 | node:procurement | field_document |   |  |
