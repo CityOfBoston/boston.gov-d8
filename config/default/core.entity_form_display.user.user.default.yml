@@ -3,11 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.user.user.user_picture
+    - image.style.person_photo_a_mobile_1x
   module:
-    - entity_browser
     - path
+    - svg_image
     - user
 _core:
   default_config_hash: K-1rBM8mTIkFp9RqOC2tMRUukOQ1xbRCfSKK8dEddnA
@@ -40,16 +40,10 @@ content:
     region: content
   user_picture:
     weight: 7
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: person_photo_a_mobile_1x
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
 hidden:

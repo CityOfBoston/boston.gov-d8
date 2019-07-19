@@ -5,8 +5,9 @@ dependencies:
   config:
     - core.entity_view_mode.user.compact
     - field.field.user.user.user_picture
-    - image.style.thumbnail
+    - image.style.person_photo_a_mobile_1x
   module:
+    - fences
     - svg_image
     - user
 _core:
@@ -16,20 +17,37 @@ targetEntityType: user
 bundle: user
 mode: compact
 content:
-  masquerade:
-    weight: 50
+  member_for:
+    weight: 2
     region: content
+    settings: {  }
+    third_party_settings: {  }
+  realname:
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   user_picture:
     type: image
     weight: 0
     region: content
     settings:
-      image_style: thumbnail
+      image_style: person_photo_a_mobile_1x
       image_link: content
-    third_party_settings: {  }
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     label: hidden
 hidden:
   langcode: true
-  member_for: true
+  masquerade: true
   name: true
-  realname: true

@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
@@ -14,12 +13,11 @@ dependencies:
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_updated_date
-    - image.style.intro_image_mobile_1x
+    - image.style.thumbnail_event_square_190x190_
     - node.type.topic_page
   module:
     - content_moderation
     - datetime
-    - entity_browser
     - field_group
     - metatag
     - paragraphs
@@ -178,16 +176,10 @@ content:
     region: content
   field_thumbnail:
     weight: 2
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: thumbnail_event_square_190x190_
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_topic_category:

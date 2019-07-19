@@ -6,9 +6,10 @@ dependencies:
     - core.entity_view_mode.media.media_library
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
-    - image.style.thumbnail
+    - image.style.media_fixed_height_100px_
     - media.type.image
   module:
+    - fences
     - svg_image
 _core:
   default_config_hash: d6MgCTaBTH2Dv39QU95kaw5Qdt82P0MRcJbh00SSOmg
@@ -23,9 +24,20 @@ content:
     region: content
     label: hidden
     settings:
-      image_style: thumbnail
+      image_style: media_fixed_height_100px_
       image_link: ''
-    third_party_settings: {  }
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
 hidden:
   created: true
   field_media_in_library: true
