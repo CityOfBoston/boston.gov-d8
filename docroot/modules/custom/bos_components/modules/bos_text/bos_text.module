@@ -70,9 +70,18 @@ function bos_text_theme($existing, $type, $theme, $path) {
  */
 function bos_text_preprocess_paragraph__header_text(&$variables) {
   _bos_components_fix_attributes($variables);
-  //$variables['attributes']->addClass("intro-text");
-  //$variables['attributes']->addClass("supporting-text");
-  //$variables['attributes']->addClass("squiggle-border-bottom");
+  // In some cases we will need to bring the host content title into the
+  // header text component so we can display it within the header text component
+  // template.
+  // @var \ParagraphsItemEntity $paragraph.
+  $paragraph = $variables['elements']['#paragraph'];
+  $parent_id = $paragraph->getParentEntity();
+  if (isset($parent_id)) {
+    $parent = \Drupal::entityTypeManager()->getStorage('node')->load($parent_id->id());
+  }
+  $host_title = \Drupal\Component\Utility\Html::escape($parent->label());
+  //$host_title = check_plain($parent->title);
+  $variables['host_title'] = $host_title;
 }
 
 /**
