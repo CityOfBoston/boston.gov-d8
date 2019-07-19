@@ -576,7 +576,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
  * @param array $variables
  *   Node variables.
  */
-function _boston_listing_page_title(&$variables) {
+function _boston_listing_page_title(array &$variables) {
   if (isset($variables['elements']['#node'])) {
     $node = $variables['elements']['#node'];
     // If there is a hero image.
