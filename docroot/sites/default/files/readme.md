@@ -87,21 +87,19 @@ Image styles used:
 | node:listing_page | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields |
 | node:place_profile | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
 | node:post | field_intro_image | 1440x396/++ 8MB | default: (b) intro_image_fields  |
-| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields <br>listing: (Resp) card_images |
+| node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields <br>listing: (b) card_images |
 | node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
 | node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
-
 | node:event | field_thumbnail | 525x230/++ 8 MB | default: (b) thumbnail_event |
-| node:post | field_thumbnail |   |  |
+| node:post | field_thumbnail | 700x700/++ 5MB  | featured_item: (p) featured_images |
 | node:topic_page | field_thumbnail |   |  |
 | para:card | field_thumbnail | 670x235/++ 2MB | default: (b) card_images |
-
-| node:person_profile | field_person_photo |   |  |
-| node:quote | field_person_photo |   |  |
+| node:person_profile | field_person_photo | 350x350/++ 5MB | default: (p) person_photos<br>listing: (p) person_photos<br>embed: (p) person_photos |
+| para:quote | field_person_photo | 350x350/++ 5 MB | default: (p) person_photos |
 | node:program_i_p | field_program_logo |   |  |
 | para:columns | field_image | 200x200/++ 2MB | default: (i) Medium Small Square (also Thumbnail 100x100)  |
 | para:hero_image | field_image | 1440x800/++ 8 MB | default: (b) Hero fixed image fields |
-| para:map | field_image | 1440x800/++ | 8 MB | default: (b) Photo Bleed Images |
+| para:map | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:photo | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:video | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | user | user_picture |   |  |
