@@ -16,13 +16,35 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
+  langcode:
+    type: language
+    weight: 4
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+      native_language: false
+    third_party_settings: {  }
   masquerade:
-    weight: 50
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   member_for:
-    weight: 5
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  name:
+    type: string
+    weight: 2
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  realname:
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -32,7 +54,7 @@ content:
       responsive_image_style: person_photos
       image_link: content
     type: responsive_image
-    weight: 6
+    weight: 1
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -42,7 +64,4 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     region: content
-hidden:
-  langcode: true
-  name: true
-  realname: true
+hidden: {  }
