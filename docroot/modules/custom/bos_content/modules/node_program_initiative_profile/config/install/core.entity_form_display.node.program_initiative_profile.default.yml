@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.program_initiative_profile.body
     - field.field.node.program_initiative_profile.field_components
     - field.field.node.program_initiative_profile.field_contacts
@@ -15,12 +14,11 @@ dependencies:
     - field.field.node.program_initiative_profile.field_published_date
     - field.field.node.program_initiative_profile.field_sidebar_components
     - field.field.node.program_initiative_profile.field_updated_date
-    - image.style.intro_image_mobile_1x
+    - image.style.person_photo_a_mobile_1x
     - node.type.program_initiative_profile
   module:
     - content_moderation
     - datetime
-    - entity_browser
     - field_group
     - metatag
     - paragraphs
@@ -195,16 +193,10 @@ content:
     region: content
   field_program_logo:
     weight: 4
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: person_photo_a_mobile_1x
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_program_type:
