@@ -1,4 +1,4 @@
-The file structure is as follows:
+##Image folder structure
 ```
 sites/default/files
     ├── file                           DOCUMENT FILES ROOT
@@ -71,10 +71,9 @@ sites/default/files
     └── unk                             UNKNOWN ORIGIN (to migration) FILES
     
 ```     
-Image styles used:
-
+##Image styles used
    
-|Entity | Field | Target Def | View: Style |   
+|Entity | Field | min/max resolution & max filesize  | View: Style |   
 |:-----|:-----|-----:|:-----|
 | **Images** |
 | node:department_profile | field_icon | 56x56/++ - 200KB | default: (i) square_icon_56px<br>Article: (i) square_icon_56px<br>Card: (i) square_icon_56px<br>Article: not displayed<br>Published By: (i) square_icon_56px |
@@ -111,9 +110,88 @@ Image styles used:
 | node:procurement | field_document |   |  |
 | para:document | field_document |   |  |
 
-min/max
-++ = not specified (unlimited)
-(b) = background, responsive
-(p) = HTML5 Picture, responsive
-(i) = Image, svg or picture, non-reponsive.
-(s) = svg.
+
+**Key**  
+ ++ = not specified (unlimited)  
+(b) = background, responsive.  
+(p) = HTML5 Picture, responsive.  
+(i) = Image, svg or picture, non-reponsive.  
+(s) = svg.  
+---
+
+##Site Breakpoints
+The following breakpoint grups and breakpoints are defined in D8:   
+
+| Breakpoint | Start width | end width | note |   
+|:-----|-----|-----|-----|
+| **group: hero** |
+| mobile | 0 | 419 |  | 
+| tablet | 420 | 767 |  | 
+| desktop | 768 | 1439 |  | 
+| large | 1440 | 1919 | Introduced in D8 | 
+| oversize | 1920 | +++ | have a notional max-width of 2400px | 
+| **group: card** |
+| mobile | 0 | 419 |  | 
+| tablet | 420 | 767 |  | 
+| desktop | 768 | 839 |  | 
+| desktop | 840 | 1439 |  | 
+| large | 1440 | 1919 |  | 
+| oversize | 1920 | +++ | have a notional max-width of 2400px | 
+| **group: person** |
+| mobile | 0 | 839 |  | 
+| tablet | 840 | 979 |  | 
+| desktop | 980 | 1279 | There is also a breakpoint at 1300 in node:pip | 
+| desktop | 1280 | +++ | have a notional max-width of 2400px | 
+
+## Responsive Styles
+| Breakpoint | responsive Style | style | size |   
+|:-----|-----|-----|-----|
+| **All Nodes: field_intro_image**<br>(excluding node:post) | 
+| hero: mobile (<419px)| intro_image_fields | Intro image a-mobile 1x | 420x115 |
+| hero: tablet (420-767px)| intro_image_fields | Intro image b-tablet 1x | 768x215 |
+| hero: desktop (768-1439x)| intro_image_fields | Intro image c-desktop 1x | 1440x396 |
+| hero: large (1440-1919px)| intro_image_fields | Intro image d-large 1x | 1920x528 |
+| hero: oversize (>1920px)| intro_image_fields | Intro image e-oversize 1x | 2400x660 |
+| **node:post field_intro_image** | 
+| hero: mobile (<419px)| Hero fixed image fields | Hero fixed a-mobile 1x | 420x270 |
+| hero: tablet (420-767px)| Hero fixed image fields | Hero fixed b-tablet 1x | 768x400 |
+| hero: desktop (768-1439x)| Hero fixed image fields | Hero fixed c-desktop 1x | 1440x460 |
+| hero: large (1440-1919px)| Hero fixed image fields | Hero fixed d-large 1x | 1920x460 |
+| hero: oversize (>1920px)| Hero fixed image fields | Hero fixed e-oversize 1x | 2400x460 |
+| **para:photo field_image**<br>**para:video field_image**<br>**para:hero field_image**<br>**para:map field_image** | 
+| hero: mobile (<419px)| Photo Bleed Images | Photo bleed a-mobile 1x | 420x250 |
+| hero: tablet (420-767px)| Photo Bleed Images | Photo bleed b-tablet 1x | 768x420 |
+| hero: desktop (768-1439x)| Photo Bleed Images | Photo bleed c-desktop 1x | 1440x800 |
+| hero: large (1440-1919px)| Photo Bleed Images | Photo bleed d-large 1x | 1920x800 |
+| hero: oversize (>1920px)| Photo Bleed Images | Photo bleed e-oversize 1x | 2400x800 |
+| **find** | 
+| card: mobile (<419px)| Card Images 3w | Card grid vertical a-mobile 1x | 335x117 |
+| card: tablet (420-767px)| Card Images 3w | Card grid vertical b-tablet 1x | 615x215 |
+| card: desktop (768-839px)| Card Images 3w | Card grid vertical c-desktop 1x | 670x235 |
+| card: desktop (840-1439x)| Card Images 3w | Card grid horizontal c-desktop 1x | 382x134 |
+| card: large (1440-1919px)| Card Images 3w | Card grid horizontal d-large 1x | 382x134 |
+| card: oversize (>1920px)| Card Images 3w | Card grid horizontal e-oversize 1x | 382x134 |
+| **para:column** | this should be a 200x200 circle ?? |
+| card: mobile (<419px)| Card Images 3w | Photo bleed a-mobile 1x | 335x117 |
+| card: tablet (420-767px)| Card Images 3w | Photo bleed b-tablet 1x | 615x215 |
+| card: desktop (768-839px)| Card Images 3w | Photo bleed c-desktop 1x | 670x235 |
+| card: desktop (840-1439x)| Card Images 3w | Photo bleed c-desktop 1x | 382x134 |
+| card: large (1440-1919px)| Card Images 3w | Photo bleed d-large 1x | 382x134 |
+| card: oversize (>1920px)| Card Images 3w | Photo bleed e-oversize 1x | 382x134 |
+| **post:field_thumbnail(feature)** |  |
+| card: mobile (<419px)| Featured Images | Featured image a-mobile 1x | 335x350 |
+| card: tablet (420-767px)| Featured Images | Featured image b-tablet 1x | 614x350 |
+| card: desktop (768-839px)| Featured Images | Featured image c-desktop 1x | 671x388 |
+| card: desktop (840-1439x)| Featured Images | Featured image d-full 1x | 586x388 |
+| card: large (1440-1919px)| Featured Images | Featured image d-full 1x | 586x388 |
+| card: oversize (>1920px)| Featured Images | Featured image d-full 1x | 586x388 |
+| **node:person_profile:field_person_profile<br>user:user_picture** |  |
+| person: mobile (<839px)| Person Photos | Person Photos a-mobile 1x | 110x110 |
+| person: tablet (840-979px)| Person Photos | Person Photos b-tablet 1x | 120x120 |
+| person: desktop (980-1279px)| Person Photos | Person Photos c-desktop 1x | 148x148 |
+| person: desktop (>1280x)| Person Photos | Person Photos d-full 1x | 173x173 |
+| **node:pip:field_program_logo** |  |
+| person: mobile (<839px)| Logo Images | logo square a-mobile 1x | 672x672 |
+| person: tablet (840-979px)| Logo Images | logo square b-tablet 1x | 783x783 |
+| person: desktop (980-1279px)| Logo Images | logo square c-desktop 1x | 360x360 |
+| person: desktop (>1280x)| Logo Images | logo square d-full 1x | 360x360 |
