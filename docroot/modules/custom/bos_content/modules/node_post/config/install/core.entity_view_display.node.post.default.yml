@@ -15,13 +15,12 @@ dependencies:
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
     - node.type.post
-    - responsive_image.styles.intro_image_fields
+    - responsive_image.styles.hero_fixed_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
     - responsive_image
-    - svg_image
     - text
     - user
 id: node.post.default
@@ -45,7 +44,7 @@ content:
     region: content
   field_components:
     label: hidden
-    weight: 7
+    weight: 6
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -81,7 +80,7 @@ content:
     region: content
     label: hidden
     settings:
-      responsive_image_style: intro_image_fields
+      responsive_image_style: hero_fixed_image_fields
       image_link: ''
     third_party_settings:
       fences:
@@ -107,7 +106,7 @@ content:
         fences_label_classes: ''
   field_news_tags:
     label: above
-    weight: 8
+    weight: 7
     type: entity_reference_label
     settings:
       link: false
@@ -138,7 +137,7 @@ content:
     region: content
   field_related:
     type: entity_reference_label
-    weight: 18
+    weight: 9
     region: content
     label: above
     settings:
@@ -146,31 +145,11 @@ content:
     third_party_settings: {  }
   field_sidebar_components:
     label: hidden
-    weight: 9
+    weight: 8
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: sidebar
       link: ''
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    region: content
-  field_thumbnail:
-    label: hidden
-    weight: 6
-    type: image
-    settings:
-      image_style: ''
-      image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -199,6 +178,7 @@ content:
 hidden:
   content_moderation_control: true
   field_manual_date: true
+  field_thumbnail: true
   langcode: true
   links: true
   published_at: true

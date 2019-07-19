@@ -17,7 +17,7 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
-    - image.style.thumbnail
+    - image.style.person_photo_a_mobile_1x
     - node.type.person_profile
   module:
     - address
@@ -134,8 +134,7 @@ content:
     third_party_settings: {  }
   field_address:
     weight: 16
-    settings:
-      default_country: US
+    settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
@@ -201,16 +200,10 @@ content:
     region: content
   field_person_photo:
     weight: 2
-    type: entity_browser_file
+    type: image_image
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      field_widget_replace: true
-      selection_mode: selection_append
-      view_mode: full
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: person_photo_a_mobile_1x
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_phone_number:

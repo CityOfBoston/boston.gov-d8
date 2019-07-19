@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_updated_date
+    - image.style.square_icon_56px
     - node.type.department_profile
   module:
     - advanced_text_formatter
@@ -33,12 +34,12 @@ content:
     weight: 0
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_56px
       image_link: ''
-      svg_render_as_image: '1'
       svg_attributes:
         width: ''
         height: ''
+      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none
