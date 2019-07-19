@@ -16,10 +16,11 @@ dependencies:
     - field.field.node.program_initiative_profile.field_sidebar_components
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
+    - responsive_image.styles.card_images_3w
   module:
     - advanced_text_formatter
     - fences
-    - image_url_formatter
+    - responsive_image
     - user
 id: node.program_initiative_profile.listing
 targetEntityType: node
@@ -27,22 +28,21 @@ bundle: program_initiative_profile
 mode: listing
 content:
   field_intro_image:
-    label: hidden
+    type: responsive_image
     weight: 1
-    type: image_url
+    region: content
+    label: above
     settings:
-      url_type: '0'
-      image_style: grid_card_image
+      responsive_image_style: card_images_3w
       image_link: ''
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-    region: content
   field_intro_text:
     type: advanced_text
     weight: 0
@@ -56,19 +56,21 @@ content:
       format: plain_text
       allowed_html:
         - b
+        - br
         - em
         - i
         - strong
+        - u
       use_summary: 0
       token_replace: 0
       autop: 0
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
 hidden:
   body: true

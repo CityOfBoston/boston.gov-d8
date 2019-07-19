@@ -32,13 +32,13 @@ dependencies:
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
-    - image.style.featured_item_thumbnail
     - node.type.event
+    - responsive_image.styles.thumbnail_event
   module:
     - datetime_range
     - fences
     - link
-    - svg_image
+    - responsive_image
     - text
     - user
 id: node.event.featured_item
@@ -83,17 +83,13 @@ content:
       target: ''
     third_party_settings: {  }
   field_thumbnail:
-    type: image
+    type: responsive_image
     weight: 3
     region: content
     label: hidden
     settings:
-      image_style: featured_item_thumbnail
+      responsive_image_style: thumbnail_event
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none
