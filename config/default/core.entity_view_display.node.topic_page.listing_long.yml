@@ -14,11 +14,11 @@ dependencies:
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_updated_date
-    - image.style.grid_card_image
     - node.type.topic_page
+    - responsive_image.styles.intro_image_fields
   module:
     - fences
-    - svg_image
+    - responsive_image
     - user
 _core:
   default_config_hash: Dr6Wt62QohR4_AVMRC5l8XpbxvMx4m3g5V9sALjHgYs
@@ -30,14 +30,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 0
-    type: image
+    type: responsive_image
     settings:
-      image_style: grid_card_image
+      responsive_image_style: intro_image_fields
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none

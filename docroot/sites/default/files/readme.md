@@ -43,7 +43,7 @@ sites/default/files
     |   |   └── intro_images            - from field_intro_image
     |   ├── maps                       * Paragraph listing_page 
     |   |   └── [dated]                 - from field_intro_image
-    |   ├── person_profile             * Paragraph person_profile
+    |   ├── person_profile             * Node person_profile
     |   |   └── photos                  - from field_photos
     |   ├── place_profile              * Paragraph place_profile
     |   |   └── intro_images            - from field_intro_image
@@ -63,6 +63,8 @@ sites/default/files
     |   ├── unk                        * Unknown origin (to migration)
     |   |   ├── intro_images            
     |   |   └── thumbnails              
+    |   ├── user                       * User object field.
+    |   |   └── photos                  - from user_picture
     |   └── video                      * Paragraph video
     |       └── [dated]                 - migrated files
     ├── private                         PRIVATE FILES
@@ -89,21 +91,21 @@ Image styles used:
 | node:post | field_intro_image | 1440x396/++ 8MB | default: (b) intro_image_fields  |
 | node:program_i_p | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields <br>listing: (b) card_images |
 | node:tabbed_content | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
-| node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields  |
+| node:topic_page | field_intro_image | 1440x396/++ 8MB  | default: (b) intro_image_fields<br>listing_long: (b) intro_image_fields<br>listing: (b) card_images |
 | node:event | field_thumbnail | 525x230/++ 8 MB | default: (b) thumbnail_event |
 | node:post | field_thumbnail | 700x700/++ 5MB  | featured_item: (p) featured_images |
-| node:topic_page | field_thumbnail |   |  |
+| node:topic_page | field_thumbnail |   |  <br>featured_item: (p) featured_images |
 | para:card | field_thumbnail | 670x235/++ 2MB | default: (b) card_images |
 | node:person_profile | field_person_photo | 350x350/++ 5MB | default: (p) person_photos<br>listing: (p) person_photos<br>embed: (p) person_photos |
 | para:quote | field_person_photo | 350x350/++ 5 MB | default: (p) person_photos |
-| node:program_i_p | field_program_logo |   |  |
+| node:program_i_p | field_program_logo | 800x800/++ 2MB | default: (p) logo_images |
 | para:columns | field_image | 200x200/++ 2MB | default: (i) Medium Small Square (also Thumbnail 100x100)  |
 | para:hero_image | field_image | 1440x800/++ 8 MB | default: (b) Hero fixed image fields |
 | para:map | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:photo | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
 | para:video | field_image | 1440x800/++ 8 MB | default: (b) Photo Bleed Images |
-| user | user_picture |   |  |
-| media.image | image |   |  |
+| user | user_picture | 100x100/1024/1024 1 MB | default: (p) person_photos<br>compact: (i) person_photo(110) |
+| media.image | image | +++/2400/2400 8 MB  | all: (i) Media Fixed Height (100px) |
 | **Files** |
 | media.document | field_document |   |  |
 | node:procurement | field_document |   |  |
