@@ -51,6 +51,10 @@
 
 })(jQuery, Drupal, this, this.document);
 
+/**
+ * In-page menu functionality.
+ * Creates a scrolling, collapsible in-page menu system.
+ */
 (function ($, Drupal, window, document) {
 
   'use strict';
@@ -60,6 +64,7 @@
     if ($(".subnav-anchor").length) {
 
       var navMenu = $('.topic-nav');
+      var navMenuHeight = navMenu.outerHeight(true);
       var fixedMenu = $("#main-menu");
       var navTop = navMenu.first("ul").offset().top;
 
@@ -74,10 +79,10 @@
         var scrollTop = $("html, body").scrollTop();
         if ($(document).width() >= 980 && scrollTop > stickyNavTop) {
           if (!navMenu.hasClass('sticky')) {
-            var menu_height = navMenu.outerHeight(true);
             navMenu
               .addClass('sticky')
-              .next().css("margin-top", menu_height);
+              .next().css("margin-top", navMenuHeight);
+            navMenuHeight = navMenu.height();
             $('.intro-content').addClass('nav-fill-margin');
           }
           stickyNavTop = navTop - menusBottom();
@@ -87,14 +92,15 @@
           navMenu
             .removeClass('sticky').css("top", "initial")
             .next().css("margin-top", 0);
+          navMenuHeight = navMenu.height();
           $('.intro-content').removeClass('nav-fill-margin');
         }
       };
 
       // Scroll to clicked anchor, allowing for page furniture.
       var scrollToAnchor = function (obj) {
-        var navOffset = menusBottom() - navMenu.height();
-        var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset);
+        var navOffset = menusBottom() - navMenu.outerHeight(true);
+        var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset - 180);
         $("html, body").animate({scrollTop: loc}, 1000, "swing");
       };
 
@@ -150,15 +156,13 @@
       var activeScrollLink = function () {
         var fromTop = getScrollTop();
 
-        fromTop = fromTop + 100;
-
         var currentItems = scrollItems.filter(function (item) {
-          var name = item.replace('#', '');
-          if (name !== " ") {
+          var name = item.replace('#', '').trim();
+          if (name !== "") {
             var items = document.querySelectorAll('[name=' + name + ']')[0];
-            var itemTop = items ? items.getBoundingClientRect().top + fromTop - 100 : 0;
+            var itemTop = items ? items.getBoundingClientRect().top + fromTop : 0;
 
-            if (fromTop >= itemTop) {
+            if (fromTop >= (itemTop - 300)) {
               return item;
             }
           }
