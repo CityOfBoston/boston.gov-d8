@@ -24,13 +24,11 @@ function bos_map_theme() {
 function bos_map_preprocess_paragraph__map(&$variables) {
   if (!empty($variables['paragraph'])) {
     $paragraph = $variables['paragraph'];
-    if ($paragraph->hasField('field_map_inline')) {
-      $variables['inline'] = $paragraph->get('field_map_inline')
-        ->getValue()['0']['value'];
+    if ($paragraph->hasField('field_map_inline') && isset($paragraph->get('field_map_inline')->value)) {
+      $variables['inline'] = $paragraph->get('field_map_inline')->value;
     }
-    if ($paragraph->hasField('field_map_config_json')) {
-      $config = $paragraph->get('field_map_config_json')
-        ->getValue()['0']['value'];
+    if ($paragraph->hasField('field_map_config_json') && isset($paragraph->get('field_map_config_json')->value)) {
+      $config = $paragraph->get('field_map_config_json')->value;
       $config = preg_replace("~( {2,})|\r|\n~", " ", $config);
       $variables['config'] = $config;
       if (!json_decode($variables["config"])) {
