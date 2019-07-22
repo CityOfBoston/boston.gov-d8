@@ -22,10 +22,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  realname:
+  name:
+    type: user_name
     weight: 1
     region: content
-    settings: {  }
+    label: above
+    settings:
+      link_to_entity: false
     third_party_settings: {  }
   user_picture:
     type: image
@@ -50,4 +53,4 @@ content:
 hidden:
   langcode: true
   masquerade: true
-  name: true
+  realname: true
