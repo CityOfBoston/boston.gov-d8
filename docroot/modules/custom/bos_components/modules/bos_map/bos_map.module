@@ -24,23 +24,25 @@ function bos_map_theme() {
 function bos_map_preprocess_paragraph__map(&$variables) {
   if (!empty($variables['paragraph'])) {
     $paragraph = $variables['paragraph'];
-    switch ($paragraph->bundle()) {
-      case 'map':
-        $variables['inline'] = $paragraph->get('field_map_inline')->getValue()['0']['value'];
-        $config = $paragraph->get('field_map_config_json')->getValue()['0']['value'];
-        $config = preg_replace("~( {2,})|\r|\n~", " ", $config);
-        $variables['config'] = $config;
-        if (!json_decode($variables["config"])) {
-          \Drupal::messenger()->addWarning("Map JSON invalid.", FALSE);
-          \Drupal::logger("maps")->warning("Map JSON invalid.");
-        }
-        $variables['#attached']['library'][] = 'bos_map/map';
-        $photo_id = Html::getUniqueId('ph-p-m');
-        $variables['paragraph']->_photo_id = $photo_id;
-        $variables['photo_id'] = $photo_id;
-        $variables['map_id'] = 'map--' . $paragraph->id();
-        break;
+    if ($paragraph->hasField('field_map_inline')) {
+      $variables['inline'] = $paragraph->get('field_map_inline')
+        ->getValue()['0']['value'];
     }
+    if ($paragraph->hasField('field_map_config_json')) {
+      $config = $paragraph->get('field_map_config_json')
+        ->getValue()['0']['value'];
+      $config = preg_replace("~( {2,})|\r|\n~", " ", $config);
+      $variables['config'] = $config;
+      if (!json_decode($variables["config"])) {
+        \Drupal::messenger()->addWarning("Map JSON invalid.", FALSE);
+        \Drupal::logger("maps")->warning("Map JSON invalid.");
+      }
+    }
+    $variables['#attached']['library'][] = 'bos_map/map';
+    $photo_id = Html::getUniqueId('ph-p-m');
+    $variables['paragraph']->_photo_id = $photo_id;
+    $variables['photo_id'] = $photo_id;
+    $variables['map_id'] = 'map--' . $paragraph->id();
 
     if (isset($variables['content']['field_thumbnail'])) {
       $background_image = $variables["elements"]["field_thumbnail"];

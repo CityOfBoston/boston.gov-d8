@@ -121,6 +121,7 @@ if [ "$1" == "reset" ]; then
     running=1
     restoreDB "${dbpath}/migration_clean_reset.sql"
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
@@ -135,6 +136,7 @@ fi
 # Taxonomies first.
 if [ "$1" == "prereq" ] || [ $running -eq 1 ]; then
     running=1
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql"; fi
     doMigrate d7_taxonomy_vocabulary -q --force             # 6 secs
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixTaxonomyVocabulary();"
