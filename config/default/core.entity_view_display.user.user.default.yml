@@ -18,7 +18,7 @@ mode: default
 content:
   langcode:
     type: language
-    weight: 4
+    weight: 3
     region: content
     label: above
     settings:
@@ -43,11 +43,6 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-  realname:
-    weight: 3
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   user_picture:
     label: hidden
     settings:
@@ -64,4 +59,5 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     region: content
-hidden: {  }
+hidden:
+  realname: true
