@@ -6,7 +6,9 @@
  */
 
 use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_theme().
@@ -19,9 +21,11 @@ function node_topic_page_theme() {
     'node__topic_page' => [
       'base hook' => 'node',
     ],
+    'node__topic_page__listing' => [
+      'base hook' => 'node',
+    ],
     'node__topic_page__listing_long' => [
       'base hook' => 'node',
-      'path' => 'modules/custom/bos_components/modules/bos_list/templates',
     ],
   ];
 }
@@ -42,7 +46,7 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
     _bos_content_fix_attributes($variables);
     $nestedElement = [
       ["div" => "hero-image b b--fw b--fw--480"],
-      ["div" => "hero-image-wrapper " . $variables['photo_id'] . " hro hro--pt hro--pb"],
+      ["div" => "hero-image-wrapper " . $variables['photo_id'] ?? "" . " hro hro--pt hro--pb"],
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
   }
@@ -66,6 +70,62 @@ function node_topic_page_node__topic_page__listing(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_topic_page_node__topic_page__listing_long(&$variables) {
+  $node = $variables["elements"]["#node"];
+  $components_field = $node->get('field_components')->getValue();
+  $num_components = count($components_field);
+  $variables['num_components'] = 0;
+  // We show three nav links, then want to denote
+  // the remainder of the links for the See More link.
+  if ($num_components > 3) {
+    $variables['num_components'] = $num_components - 3;
+  }
+
+  $comp_entity_id_array = [];
+  foreach ($components_field as $comp) {
+    $comp_entity_id_array[] = $comp['target_id'];
+  }
+  // Here we need to load all the components because
+  // the not all components have a short title
+  // required so we do not create nav link for it.
+  $paragraph_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+  $components = $paragraph_storage->loadMultiple($comp_entity_id_array);
+  if (!empty($components)) {
+    $nav_links = [];
+    $num_nav_links = 0;
+    foreach ($components as $comp) {
+      $short_title_array = $comp->get('field_short_title')->getValue();
+      if (!empty($short_title_array)) {
+        $short_title = $short_title_array[0]['value'];
+        $short_title = strtoupper($short_title);
+        $jump_link = strtolower(trim($short_title));
+        $jump_link = str_replace(" ", "-", $jump_link);
+        $jump_link = str_replace("&amp;", "n", $jump_link);
+        $short_title = str_replace("&AMP;", "&", $short_title);
+        $nav_links[] = Link::createFromRoute(
+          $short_title,
+          'entity.node.canonical',
+          ['node' => $node->id()],
+          [
+            'fragment' => $jump_link,
+            'attributes' => ['class' => 'scroll-link-js'],
+          ]
+        );
+        $num_nav_links++;
+        // Show only the first three links.
+        // After we've computed three links, break.
+        if ($num_nav_links == 3) {
+          break;
+        }
+      }
+    }
+    $variables['nav_links'] = $nav_links;
+  }
+}
+
+/**
  * Prepares variables for guide templates.
  *
  * Default template: guide.html.twig.
@@ -85,7 +145,9 @@ function template_preprocess_node__topic_page(array &$variables) {
   if (isset($variables['content']['field_intro_image'])) {
     $background_image = $variables["elements"]["field_intro_image"];
     switch ($variables["elements"]["#view_mode"]) {
+      case "listing_long":
       case "listing":
+      $variables['photo_id'] = "";
         break;
 
       default:
