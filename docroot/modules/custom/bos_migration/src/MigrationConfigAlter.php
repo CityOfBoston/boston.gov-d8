@@ -1200,10 +1200,9 @@ class MigrationConfigAlter {
 
     // Execute targeted alternations to $this->migrations.
     $this->customAlterations();
-    $this->customAlteration("d7_taxonomy_term:contact");
     $this->customAlteration("d7_file");
-    $this->customAlteration("node_revision");
     $this->richTextFieldAlter();
+    $this->customAlteration("paragraph__map");
     $this->breakCyclicalDependencies();
 
     // Save the settings to a state object (for debug).
@@ -1391,11 +1390,6 @@ class MigrationConfigAlter {
    *   and $this->migrations.
    */
   private function customAlteration(string $migration = NULL) {
-    $defVals = [
-      "d7_taxonomy_term:contact" => "contact",
-      "node_revision" => "node_revision",
-    ];
-
     switch ($migration) {
       case "d7_file":
         // For file migrations replace the core Drupal source plugin with our
@@ -1424,6 +1418,10 @@ class MigrationConfigAlter {
         $this->migrations[$migration]['migration_dependencies']['required'] = [];
         break;
 
+      case "paragraph__map":
+        // Remove the rich-text converter and migrate formatted text to plain text.
+        $this->migrations[$migration]["process"]['field_map_config_json'] = "field_map_config_json/0/value";
+        break;
     }
   }
 
