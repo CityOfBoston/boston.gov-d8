@@ -80,7 +80,7 @@
 
 <div class="g g--m0 n-li">
   <div class="g--5 n-li-b n-li-b--br">
-    <div class="n-li-t"><a href="{{ node_url }}" title="{{ title }}">{{ title }}</a></div>
+    <div class="n-li-t"><a href="{{ node_url }}" title="{{ title.0['#context'].value }}">{{ title.0['#context'].value }}</a></div>
     {% if is_cancelled %}
       <div class="n-li-a">Canceled{% if content.field_extra_info %}: {{ content.field_extra_info }}{% endif %}</div>
     {% else %}
