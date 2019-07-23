@@ -109,7 +109,7 @@ class MigrationFixes {
     // Fetch all the list records into a single object.
     echo "View list conversion:\n";
 
-    foreach(["paragraph__field_list", "paragraph_revision__field_list"] as $table) {
+    foreach (["paragraph__field_list", "paragraph_revision__field_list"] as $table) {
 
       $d8_connection = Database::getConnection("default", "default");
       $query = $d8_connection->select($table, "list")
