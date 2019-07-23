@@ -97,7 +97,9 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
+#    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true remote_host=10.0.0.121" && /app/vendor/bin/drush
     - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && /app/vendor/bin/drush
+#    - /app/vendor/bin/drush
 
   drupal:
     service: appserver
