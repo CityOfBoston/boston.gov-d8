@@ -357,65 +357,62 @@
                      file="${docroot}/${build.config.sync}"/>
 
         <!-- Run the drush si command and check output. -->
-        <property name="si.command" value="${drush.cmd} si ${project.profile.name} --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database} --site-name=${lando.name} --site-mail=${drupal.account.mail} --account-name=${drupal.account.name} --account-pass=${drupal.account.password} --account-mail=${drupal.account.mail} --sites-subdir=${drupal.multisite.name} -vvv -y"/>
-        <echo file="${project.basedir}/setup/drush_site_install.log"
-              message="==== Installing Drupal ====${line.separator}"  append="true"/>
-        <echo file="${project.basedir}/setup/drush_site_install.log"
-              message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
-        <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
-              dir="${docroot}" level="warning"
-              command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
-              logoutput="true" returnProperty="install.output"/>
         <if>
-          <and>
-            <isset property="install.output"/>
-            <not><equals arg1="${install.output}" arg2="0" /></not>
-          </and>
+          <equals arg1="${build.database.source}" arg2="initialize"/>
           <then>
-            <echo message="Build Failed." level="error"/>
-            <exec command="cat ${project.basedir}/setup/drush_site_install.log"
-                  passthru="true" logoutput="true"/>
-            <fail message="Fail - Site install failure"/>
-          </then>
-          <else>
-            <echo message="Success: Site is now freshly installed with a default database."/>
-          </else>
-        </if>
-
-        <!-- If sync'ing DB then do so now -->
-        <echo message="phing-boston.yml setting build:database:source = '${build.database.source}'."/>
-        <if>
-          <equals arg1="${build.database.source}" arg2="sync"/>
-          <then>
-              <phingcall target="update:database:sync" description="Sync the database"/>
-          </then>
-          <else>
-          <echo message=" -> DB was not synchronized from Acquia - site is using a fresh database with no content."/>
-        </else>
-        </if>
-
-        <!-- If the site UUID is specified, and a system.site.yml exits then check they match here and fix. -->
-        <if>
-          <and>
-            <isset property="build.config.site-uuid"/>
-            <available file="${project.sync}/system.site.yml"/>
-          </and>
-          <then>
-            <exec command='${drush.cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*"' outputProperty="db.uuid"/>
-            <exec command='cat ${project.sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*"' outputProperty="yml.uuid"/>
-            <propertyregex property="db.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${db.uuid}" override="true"/>
-            <propertyregex property="yml.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${yml.uuid}" override="true"/>
+            <property name="si.command" value="${drush.cmd} si ${project.profile.name} --db-url=${lando.db.type}://${lando.db.username}:${lando.db.password}@${lando.db.host}:${lando.db.port}/${lando.db.database} --site-name=${lando.name} --site-mail=${drupal.account.mail} --account-name=${drupal.account.name} --account-pass=${drupal.account.password} --account-mail=${drupal.account.mail} --sites-subdir=${drupal.multisite.name} -vvv -y"/>
+            <echo file="${project.basedir}/setup/drush_site_install.log"
+                  message="==== Installing Drupal ====${line.separator}"  append="true"/>
+            <echo file="${project.basedir}/setup/drush_site_install.log"
+                  message="Executing: ${si.command}${line.separator}${line.separator}" append="true"/>
+            <exec description="Creates a working database using the profile specified and modules in the docroot Drupal installation."
+                  dir="${docroot}" level="warning"
+                  command="${si.command} >> ${project.basedir}/setup/drush_site_install.log"
+                  logoutput="true" returnProperty="install.output"/>
             <if>
-              <not><equals arg1="${db.uuid}" arg2="${yml.uuid}"/></not>
+              <and>
+                <isset property="install.output"/>
+                <not><equals arg1="${install.output}" arg2="0" /></not>
+              </and>
               <then>
-                <echo message="Setting uuid in database to match uuid in config files."/>
-                <exec command='${drush.cmd} cset "system.site" uuid "${yml.uuid}" -y'
-                      checkreturn="true"/>
+                <echo message="Build Failed." level="error"/>
+                <exec command="cat ${project.basedir}/setup/drush_site_install.log"
+                      passthru="true" logoutput="true"/>
+                <fail message="Fail - Site install failure"/>
               </then>
+              <else>
+                <echo message="Success: Site is now freshly installed with a default database."/>
+              </else>
+            </if>
+            <echo message=" -> DB was not synchronized from Acquia - site is using a fresh database with no content."/>
+            <!-- If the site UUID is specified, and a system.site.yml exits then check they match here and fix. -->
+            <if>
+              <and>
+                <isset property="build.config.site-uuid"/>
+                <available file="${project.sync}/system.site.yml"/>
+              </and>
+              <then>
+                <exec command='${drush.cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*"' outputProperty="db.uuid"/>
+                <exec command='cat ${project.sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*"' outputProperty="yml.uuid"/>
+                <propertyregex property="db.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${db.uuid}" override="true"/>
+                <propertyregex property="yml.uuid" match="$1" pattern="\s([0-9a-h\-]*)" subject="${yml.uuid}" override="true"/>
+                <if>
+                  <not><equals arg1="${db.uuid}" arg2="${yml.uuid}"/></not>
+                  <then>
+                    <echo message="Setting uuid in database to match uuid in config files."/>
+                    <exec command='${drush.cmd} cset "system.site" uuid "${yml.uuid}" -y'
+                          checkreturn="true"/>
+                  </then>
+                </if>
+              </then>
+              <else>
+                <echo message="No ${project.sync}/system.site.yml or ${build.config.site-uuid}"/>
+              </else>
             </if>
           </then>
           <else>
-            <echo message="No ${project.sync}/system.site.yml or ${build.config.site-uuid}"/>
+            <echo message="phing-boston.yml syncing database from '${build.database.drush-alias}'."/>
+            <phingcall target="update:database:sync" description="Sync the database"/>
           </else>
         </if>
 
