@@ -5,8 +5,6 @@
  * The Base module file for bos_list module.
  */
 
-use Drupal\Core\Link;
-
 /**
  * Implements hook_theme().
  */
@@ -125,67 +123,5 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
     $form['title']['#attributes']['placeholder'] = 'Search transactions...';
     $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
     unset($form["#info"]["filter-title"]["label"]);
-  }
-}
-
-/**
- * Implements hook_preprocess_node__BUNDLE().
- */
-function bos_list_preprocess_node(&$variables) {
-  $type = $variables['node']->getType();
-  if ($type == 'topic_page') {
-    // Add some custom variables to the topic page template for listing_long.
-    if ($variables['view_mode'] == 'listing_long') {
-      $node = $variables["elements"]["#node"];
-      $components_field = $node->get('field_components')->getValue();
-      $num_components = count($components_field);
-      $variables['num_components'] = 0;
-      // We show three nav links, then want to denote
-      // the remainder of the links for the See More link.
-      if ($num_components > 3) {
-        $variables['num_components'] = $num_components - 3;
-      }
-
-      $comp_entity_id_array = [];
-      foreach ($components_field as $comp) {
-        $comp_entity_id_array[] = $comp['target_id'];
-      }
-      // Here we need to load all the components because
-      // the not all components have a short title
-      // required so we do not create nav link for it.
-      $paragraph_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
-      $components = $paragraph_storage->loadMultiple($comp_entity_id_array);
-      if (!empty($components)) {
-        $nav_links = [];
-        $num_nav_links = 0;
-        foreach ($components as $comp) {
-          $short_title_array = $comp->get('field_short_title')->getValue();
-          if (!empty($short_title_array)) {
-            $short_title = $short_title_array[0]['value'];
-            $short_title = strtoupper($short_title);
-            $jump_link = strtolower(trim($short_title));
-            $jump_link = str_replace(" ", "-", $jump_link);
-            $jump_link = str_replace("&amp;", "n", $jump_link);
-            $short_title = str_replace("&AMP;", "&", $short_title);
-            $nav_links[] = Link::createFromRoute(
-              $short_title,
-              'entity.node.canonical',
-              ['node' => $node->id()],
-              [
-                'fragment' => $jump_link,
-                'attributes' => ['class' => 'scroll-link-js'],
-              ]
-            );
-            $num_nav_links++;
-            // Show only the first three links.
-            // After we've computed three links, break.
-            if ($num_nav_links == 3) {
-              break;
-            }
-          }
-        }
-        $variables['nav_links'] = $nav_links;
-      }
-    }
   }
 }

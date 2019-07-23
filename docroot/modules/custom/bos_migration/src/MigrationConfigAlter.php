@@ -1419,7 +1419,7 @@ class MigrationConfigAlter {
         break;
 
       case "paragraph__map":
-        // Remove the rich-text converter and migrate formatted text to plain text.
+        // Remove the rich-text process and migrate fmtt'd text to plain text.
         $this->migrations[$migration]["process"]['field_map_config_json'] = "field_map_config_json/0/value";
         break;
     }
