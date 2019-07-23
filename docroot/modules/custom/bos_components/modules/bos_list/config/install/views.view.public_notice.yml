@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing
     - field.storage.node.field_cancelled
     - field.storage.node.field_drawer
     - field.storage.node.field_is_there_public_testimony
@@ -111,7 +111,8 @@ display:
       row:
         type: 'entity:node'
         options:
-          view_mode: teaser
+          relationship: none
+          view_mode: listing
       fields:
         title:
           id: title
