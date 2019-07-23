@@ -53,6 +53,7 @@
 
 /**
  * In-page menu functionality.
+ *
  * Creates a scrolling, collapsible in-page menu system.
  */
 (function ($, Drupal, window, document) {

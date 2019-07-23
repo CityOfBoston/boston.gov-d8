@@ -147,7 +147,7 @@ function template_preprocess_node__topic_page(array &$variables) {
     switch ($variables["elements"]["#view_mode"]) {
       case "listing_long":
       case "listing":
-      $variables['photo_id'] = "";
+        $variables['photo_id'] = "";
         break;
 
       default:
