@@ -136,7 +136,6 @@ fi
 # Taxonomies first.
 if [ "$1" == "prereq" ] || [ $running -eq 1 ]; then
     running=1
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql"; fi
     doMigrate d7_taxonomy_vocabulary -q --force             # 6 secs
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixTaxonomyVocabulary();"
@@ -169,7 +168,6 @@ if [ "$1" == "field_collection" ] || [ $running -eq 1 ]; then
     if [ "$1" == "field_collection" ]; then restoreDB "${dbpath}/migration_clean_after_field_collection.sql"; fi
     doMigrate --tag="bos:paragraph:10" --force --update      # 3 min 15 secs
     # Fix the listview component to match new view names and displays.
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
     dumpDB ${dbpath}/migration_clean_after_para_update_1.sql
 fi
 
@@ -222,6 +220,10 @@ if [ $running -eq 0 ]; then
 fi
 
 ## Ensure everything is updated.
+if [ "{$1}" != "reset" ]; then
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
+fi
+doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "include '/var/www/html/bostond8dev/docroot/modules/custom/bos_components/modules/bos_map/bos_map.install'; bos_map_install();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
