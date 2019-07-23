@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -78,25 +76,22 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
-hide($content['comments']);
-hide($content['links']);
-?>
+ #}
 
 <div class="g g--m0 n-li">
   <div class="g--5 n-li-b n-li-b--br">
-    <div class="n-li-t"><a href="<?php print $node_url; ?>" title="<?php print $title; ?>"><?php print $title; ?></a></div>
-    <?php if (!empty($is_cancelled)): ?>
-      <div class="n-li-a">Canceled<?php if (isset($content['field_extra_info'])): ?>: <?php print render($content['field_extra_info']) ?><?php endif; ?></div>
-    <?php else: ?>
-      <?php if (isset($has_testimony)): ?>
-        <?php if (isset($content['field_time'])): ?>
-          <div class="n-li-a">Public testimony begins at <?php print render($content['field_time']) ?>.</div>
-        <?php else: ?>
+    <div class="n-li-t"><a href="{{ node_url }}" title="{{ title }}">{{ title }}</a></div>
+    {% if is_cancelled %}
+      <div class="n-li-a">Canceled{% if content.field_extra_info %}: {{ content.field_extra_info }}{% endif %}</div>
+    {% else %}
+      {% if has_testimony %}
+        {% if content.field_time %}
+          <div class="n-li-a">Public testimony begins at {{ content.field_time }}.</div>
+        {% else %}
           <div class="n-li-a">The public can offer testimony.</div>
-        <?php endif; ?>
-      <?php endif; ?>
-    <?php endif; ?>
+        {% endif %}
+      {% endif %}
+    {% endif %}
   </div>
   <div class="g--7 n-li-b">
     <div class="g g--m0">
@@ -105,31 +100,31 @@ hide($content['links']);
           <li class="dl-i">
             <span class="dl-t">When</span>
             <span class="dl-d">
-              <?php print render($content['field_public_notice_date']) ?> - <?php print $time_range ?>
+              {{ content.field_public_notice_date }} - {{ time_range }}
             </span>
           </li>
-          <?php if (isset($content['field_address'])): ?>
+          {% if content.field_address %}
             <li class="dl-i">
               <span class="dl-t">Where</span>
-              <span class="dl-d"><?php print render($content['field_address']); ?></span>
+              <span class="dl-d">{{ content.field_address }}</span>
             </li>
-          <?php endif; ?>
-          <?php if (isset($content['field_posted'])): ?>
+          {% endif %}
+          {% if content.field_posted %}
             <li class="dl-i">
               <span class="dl-t">Where</span>
-              <span class="dl-d"><?php print render($content['field_posted']); ?></span>
+              <span class="dl-d">{{ content.field_posted }}</span>
             </li>
-          <?php endif; ?>
-          <?php if (isset($notice_date_short)): ?>
+          {% endif %}
+          {% if notice_date_short %}
             <li class="dl-i">
               <span class="dl-t">Posted</span>
-              <span class="dl-d"><?php print $notice_date_short; ?></span>
+              <span class="dl-d">{{ notice_date_short }}</span>
             </li>
-          <?php endif; ?>
+          {% endif %}
         </ul>
       </div>
       <div class="g--2 n-li-ic">
-        <?php print render($content['field_contact']); ?>
+        {{ content.field_contact }}
       </div>
     </div>
   </div>
