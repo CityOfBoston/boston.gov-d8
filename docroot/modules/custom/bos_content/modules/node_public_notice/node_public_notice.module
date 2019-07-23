@@ -136,7 +136,9 @@ function _bos_public_notice_date_range(array &$variables) {
  *   The usual hook preprocess variables.
  */
 function _bos_public_notice_make_nav(array &$variables) {
-  _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 1);
+  if (isset($variables["elements"]["field_components"])) {
+    _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 1);
+  }
   // If we have any components, prepend the discussion topics as well
   // because we will want discussion topic to appear in the menu ...
   if (isset($variables["elements"]["field_components"]["#items"])) {
