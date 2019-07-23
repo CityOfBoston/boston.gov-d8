@@ -222,6 +222,7 @@ if [ $running -eq 0 ]; then
 fi
 
 ## Ensure everything is updated.
+doExecPHP "include '/var/www/html/bostond8dev/docroot/modules/custom/bos_components/modules/bos_map/bos_map.install'; bos_map_install();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 dumpDB ${dbpath}/migration_FINAL.sql

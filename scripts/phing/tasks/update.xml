@@ -38,7 +38,11 @@
             <then><property name="build.database.drush-alias" value="@bostond8.test"/></then>
         </if>
         <echo message="Synchronizing local database with content from ${build.database.drush-alias}" />
-        <exec description="Make the db sync."
+        <exec description="Empty the DB."
+              dir="${docroot}"
+              command="${drush.cmd} sql-drop -y"
+              logoutput="true" output="${project.basedir}/setup/db-sync.log"/>
+        <exec description="Make the DB sync."
               dir="${docroot}"
               command="${drush.cmd} sql-sync ${build.database.drush-alias} @self -y"
               logoutput="true" output="${project.basedir}/setup/db-sync.log"/>

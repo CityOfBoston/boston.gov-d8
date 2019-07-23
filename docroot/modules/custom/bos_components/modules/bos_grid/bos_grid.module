@@ -5,8 +5,6 @@
  * The Base module file for bos_grid module.
  */
 
-use Drupal\Component\Utility\Unicode;
-
 /**
  * Implements hook_theme().
  */
@@ -27,15 +25,7 @@ function bos_grid_theme() {
     'paragraph__grid_of_programs_initiatives' => [
       'base hook' => 'paragraph',
     ],
-    'node__topic_page__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
     'node__person_profile__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'node__place_profile__listing' => [
       'base hook' => 'node',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
     ],
@@ -91,15 +81,6 @@ function bos_grid_preprocess_node(&$vars) {
     switch ($node->bundle()) {
       case 'topic_page':
         $vars['title_raw'] = $node->getTitle();
-        break;
-
-      case 'place_profile':
-        $vars['short_title'] = Unicode::truncate($node->getTitle(), 50, TRUE, TRUE, 1);
-        if (!$node->get('field_intro_image')->isEmpty()) {
-          $base_url = file_load($node->get('field_intro_image')->getValue()['0']['target_id'])->getFileUri();
-          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('grid_card_image');
-          $vars['image'] = $style->buildUrl($base_url);
-        }
         break;
     }
   }

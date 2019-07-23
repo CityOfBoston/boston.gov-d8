@@ -24,23 +24,34 @@
  * @see template_process()
 #}
 <div {{ attributes.addClass(['b', 'b--fw']) }}>
-  {{ content.contextual_links }}
+
   <div class="b-c">
+
     <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
+
+      {{ content.contextual_links }}
+
       {{ content.field_component_title }}
+
       {% if content.field_short_title['#items'].getValue() %}
         {{ content.field_short_title }}
       {% endif %}
+
       {% if content.field_contact['#items'].getValue() %}
         <div class="sh-contact">
           {{ content.field_contact }}
         </div>
       {% endif %}
+
     </div>
+
     <div class="g">
+
       {% if content.field_place['#items'].getValue() %}
         {{ content.field_place }}
       {% endif %}
+
     </div>
+
   </div>
 </div>
