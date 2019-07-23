@@ -5,6 +5,9 @@
  * The Base module file for bos_news_announcements module.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Component\Utility\Html;
+
 /**
  * Implements hook_theme().
  */
@@ -25,20 +28,35 @@ function bos_news_and_announcements_theme() {
     'base hook' => 'viewfield',
     'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
   ];
-  $theme['node__post__featured_item'] = [
-    'base hook' => 'node',
-    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
-  ];
   return $theme;
 }
 
 /**
  * Implements hook_preprocess_views_view_fields().
  */
-function bos_news_and_announcements_preprocess_views_view_fields(&$variables) {
-  if ($variables["view"]->storage->id() == 'news_and_announcements') {
-    $lib = \Drupal::service('library.discovery')
-      ->getLibraryByName('bos_theme', 'global-styling.patterns');
-    $variables['asset_url'] = $lib['remote'];
-  }
+function bos_news_and_announcements_preprocess_views_view_fields__news_and_announcements(&$variables) {
+  $mode = _bos_theme_library();
+  $lib = \Drupal::service('library.discovery')
+    ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
+  $variables['asset_url'] = $lib['remote'];
+
+  $photo_id = Html::getUniqueId('cd-ic-' . $variables["row"]->nid);
+  $variables['photo_id'] = $photo_id;
+
+  $variables["content"]["thumbnail"] = BackgroundResponsiveImage::createBackgroundFramework([
+    ["div" => "b b--fw"],
+    ["div" => $variables['photo_id'] . " cd-ic"],
+  ]);
+
+  $background_image = str_replace("\n", "", strip_tags(trim($variables["fields"]["field_thumbnail"]->content)));
+  $background_image = preg_replace("~.*/sites/default/files~", "public:/", $background_image);
+  $css = BackgroundResponsiveImage::buildMediaQueries($background_image, "card_images_2w",".$photo_id");
+  $variables['#attached']['html_head'][] = [
+    [
+      "#tag" => "style",
+      "#value" => $css,
+      "#weight" => 100,
+    ],
+    'post-intro-image-css-' . $photo_id,
+  ];
 }
