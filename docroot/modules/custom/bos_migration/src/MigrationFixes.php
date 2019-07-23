@@ -39,7 +39,7 @@ class MigrationFixes {
       'page' => ["metrolist_affordable_housing", "page_1"],
       'page_1' => ["metrolist_affordable_housing", "page_1"],
     ],
-    'news_announcements' => [
+    'news_and_announcements' => [
       'departments' => ["news_and_announcements", "block_1"],
       'events' => ["news_and_announcements", "block_1"],
       'guides' => ["news_and_announcements", "block_1"],
@@ -107,24 +107,45 @@ class MigrationFixes {
    */
   public static function fixListViewField() {
     // Fetch all the list records into a single object.
-    $d8_connection = Database::getConnection("default", "default");
-    $query = $d8_connection->select("paragraph__field_list", "list")
-      ->fields("list", ["field_list_target_id", "field_list_display_id"]);
-    $row = $query->execute()->fetchAllKeyed("field_list_target_id");
+    echo "View list conversion:\n";
 
-    // Process each row, making substitutions from map array $viewListMap.
-    foreach ($row as $view => $display) {
-      $map = self::$viewListMap;
-      if (isset($map[$view][$display])) {
-        $d8_connection->update("paragraph__field_list")
-          ->fields([
-            "field_list_target_id" => $map[$view][$display][0],
-            "field_list_display_id" => $map[$view][$display][1],
-          ])
-          ->condition("field_list_target_id", $view)
-          ->condition("field_list_display_id", $display)
-          ->execute();
+    foreach (["paragraph__field_list", "paragraph_revision__field_list"] as $table) {
+
+      $d8_connection = Database::getConnection("default", "default");
+      $query = $d8_connection->select($table, "list")
+        ->fields("list", ["field_list_target_id", "field_list_display_id"]);
+      $query = $query->groupBy("field_list_target_id");
+      $query = $query->groupBy("field_list_display_id");
+      $row = $query->execute()->fetchAll();
+
+      $count = count($row);
+      echo "Will change $count references in $table.\n";
+
+      // Process each row, making substitutions from map array $viewListMap.
+      foreach ($row as $display) {
+        $map = self::$viewListMap;
+        if (isset($map[$display->field_list_target_id][$display->field_list_display_id])) {
+
+          $entry = $map[$display->field_list_target_id][$display->field_list_display_id];
+          echo sprintf("Change %s/%s to %s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--", $entry[0], $entry[1]);
+
+          $d8_connection->update($table)
+            ->fields([
+              "field_list_target_id" => $entry[0],
+              "field_list_display_id" => $entry[1],
+            ])
+            ->condition("field_list_target_id", $display->field_list_target_id)
+            ->condition("field_list_display_id", $display->field_list_display_id)
+            ->execute();
+
+          echo ": Done.\n";
+        }
+        else {
+          echo sprintf("%s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--");
+          echo ": Not found\n";
+        }
       }
+      echo "----------------\n\n";
     }
 
   }
