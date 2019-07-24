@@ -206,6 +206,7 @@ if [ "$1" == "node_revision" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql"; fi
     doMigrate d7_menu_links,d7_menu --force
+    doMigrate d7_taxonomy_term:contact --force --update
     dumpDB ${dbpath}/migration_clean_after_menus.sql
 fi
 
