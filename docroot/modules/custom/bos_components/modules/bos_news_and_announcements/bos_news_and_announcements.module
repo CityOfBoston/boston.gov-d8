@@ -43,7 +43,7 @@ function bos_news_and_announcements_preprocess_views_view_fields__news_and_annou
     $thumb_url = $variables["fields"]["field_thumbnail"]->content;
     $background_image = str_replace("\n", "", strip_tags(trim($thumb_url)));
     $background_image = preg_replace("~.*/sites/default/files~", "public:/", $background_image);
-    $css = BackgroundResponsiveImage::buildMediaQueries($background_image,"card_images_2w",".$photo_id");
+    $css = BackgroundResponsiveImage::buildMediaQueries($background_image, "card_images_2w", ".$photo_id");
   }
   else {
     $css = ".cd-ic {background-image: url('/sites/default/files/img/post/default_news.svg'); background-size: cover !important;}";
