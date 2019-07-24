@@ -196,19 +196,21 @@ function bos_list_preprocess_node(&$variables) {
       }
     }
   }
+  $variables['time_range'] = "TESTESTEST";
   if ($type == 'public_notice') {
-    $time_range_view_modes = array(
+    $time_range_view_modes = [
       'calendar_listing',
       'listing',
       'full',
-    );
+    ];
 
-    if (in_array($variables['view_mode'], $time_range_view_modes) && $variables['type'] === 'public_notice') {
+    if (in_array($variables['view_mode'], $time_range_view_modes)) {
       // We need to add a variable which contains the time range output to be
       // displayed. We'd have to override some theming otherwise and it's not
       // worth the trouble. The field_event_dates field is required so we don't
       // have to worry about checking for it.
-      $dates = field_get_items('node', $variables['node'], 'field_public_notice_date');
+      $dates = $node->get('field_public_notice_date')->getValue();
+      //$dates = field_get_items('node', $variables['node'], 'field_public_notice_date');
       if ($dates !== FALSE) {
         $timezone = $dates[0]['timezone'];
         // Add '+0000' so that strtotime doesn't try to convert a UTC time,
@@ -224,9 +226,11 @@ function bos_list_preprocess_node(&$variables) {
         // We also want to show the repeat rule, and it needs to be isolated from
         // the full render of the date since it will need to be displayed in a
         // different place than the date.
+        /*
         if (!empty($dates[0]['rrule'])) {
           $variables['repeat_rule'] = boston_date_repeat_rrule_description($dates[0]['rrule']);
         }
+         */
       }
       else {
         $variables['time_range'] = '';
