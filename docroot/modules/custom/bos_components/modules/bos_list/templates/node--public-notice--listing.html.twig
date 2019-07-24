@@ -103,7 +103,7 @@
               {{ elements.field_public_notice_date.0['#text'] }} - {{ time_range }}
             </span>
           </li>
-          {# if content.field_address #}
+          {% if elements.field_address %}
             <li class="dl-i">
               <span class="dl-t">Where</span>
               <span class="dl-d">
@@ -133,7 +133,7 @@
                 </div>
               </span>
             </li>
-          {# endif #}
+          {% endif %}
           {% if content.field_posted %}
             <li class="dl-i">
               <span class="dl-t">Where</span>
