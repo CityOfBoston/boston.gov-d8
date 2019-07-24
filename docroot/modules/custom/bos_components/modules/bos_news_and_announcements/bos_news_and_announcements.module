@@ -39,28 +39,24 @@ function bos_news_and_announcements_preprocess_views_view_fields__news_and_annou
   $photo_id = Html::getUniqueId('cd-ic-' . $variables["row"]->nid);
   $variables['photo_id'] = $photo_id;
 
-  if (NULL != $variables["row"]->_entity->field_thumbnail->value) {
+  if (isset($variables["row"]->_entity->field_thumbnail[0]) && NULL != $variables["row"]->_entity->field_thumbnail[0]->target_id) {
     $thumb_url = $variables["fields"]["field_thumbnail"]->content;
-    $nestedDivs = [
-      ["div" => "b"],
-      ["div" => "cd-ic " . $variables['photo_id']],
-    ];
     $background_image = str_replace("\n", "", strip_tags(trim($thumb_url)));
     $background_image = preg_replace("~.*/sites/default/files~", "public:/", $background_image);
+    $css = BackgroundResponsiveImage::buildMediaQueries($background_image,"card_images_2w",".$photo_id");
   }
   else {
-    $nestedDivs = [
-      ["div" => "b"],
-      ["div" => "cd-ic hro--d " . $variables['photo_id']],
-    ];
-    $background_image = "public://img/post/default_news.svg";
+    $css = ".cd-ic {background-image: url('/sites/default/files/img/post/default_news.svg'); background-size: cover !important;}";
   }
 
   // Create the anchor.
+  $nestedDivs = [
+    ["div" => "b"],
+    ["div" => "cd-ic " . $variables['photo_id']],
+  ];
   $variables["content"]["thumbnail"] = BackgroundResponsiveImage::createBackgroundFramework($nestedDivs);
 
   // Create and insert the media queries.
-  $css = BackgroundResponsiveImage::buildMediaQueries($background_image,"card_images_2w",".$photo_id");
   $variables['#attached']['html_head'][] = [
     [
       "#tag" => "style",
