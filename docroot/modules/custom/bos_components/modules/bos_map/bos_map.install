@@ -5,8 +5,6 @@
  * The install file for bos_map module.
  */
 
-use Drupal\file\Entity\File;
-
 /**
  * Implements hook_uninstall().
  */
@@ -24,37 +22,7 @@ function bos_map_install() {
   $modName = basename(__FILE__, ".install");
   _bos_core_install_icons($modName);
 
-  // Install the default background image.
-  // Copy rather than move so we dont get git issues.
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
-  $path = drupal::root() . "/sites/default/files/img/maps/";
-  $destName = "map-background-image-map.jpg";
-  if (!file_exists($path)) {
-    mkdir($path, 0777);
-  }
-  if (file_exists($path . $destName)) {
-    unlink($path . $destName);
-  }
-  copy($modulePath . "/map-background-image.jpg", $path . $destName);
-
-  // Check if the file exists that is listed in para.para_type.module.yml.
-  $filesystem = \Drupal::service('file_system');
-  $entity = str_replace("bos_", "", $modName);
-  $mod = \Drupal::entityTypeManager()
-    ->getStorage("paragraphs_type")->load($entity);
-  if (!empty($mod)) {
-    $destination = "public://img/maps/" . $destName;
-    $image = Drupal::entityTypeManager()->getStorage("file")
-      ->loadByProperties(["uri" => $destination]);
-    if (count($image) == 0) {
-      $image = File::create();
-      $image->setFileUri($destination);
-      $image->setOwnerId(\Drupal::currentUser()->id());
-      $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-      $image->setFileName($filesystem->basename($destination));
-      $image->setPermanent();
-      $image->save();
-    }
-  }
+  // Install the map default background image.
+  bos_map_rebuild();
 
 }
