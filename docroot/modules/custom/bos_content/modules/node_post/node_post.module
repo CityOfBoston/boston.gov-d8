@@ -64,7 +64,6 @@ function node_post_preprocess_node__post(&$variables) {
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
 }
 
-
 /**
  * Implements hook_rebuild().
  */
@@ -103,7 +102,6 @@ function node_post_rebuild() {
     }
   }
 }
-
 
 /**
  * Prepares variables for post templates.
