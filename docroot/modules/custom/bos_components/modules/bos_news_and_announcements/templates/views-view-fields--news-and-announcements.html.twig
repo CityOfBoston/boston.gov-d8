@@ -40,18 +40,7 @@
 
       <div class="thumb-wrapper float-left">
 
-        {{ breakpoint() }}
-
-        {% if content.thumbnail.isNull() %}
-          <div
-            class="news-item-default-image"
-            style="background-image: url('{{ asset_url }}/images/public/icons/news.svg')">
-            <span>Default News image</span>
-          </div>
-
-        {% else %}
-          {{ content.thumbnail }}
-        {% endif %}
+        {{ content.thumbnail }}
 
         <div class="date-flag">{{ fields.field_published_date.content }}</div>
 
