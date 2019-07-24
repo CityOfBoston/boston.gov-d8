@@ -100,15 +100,40 @@
           <li class="dl-i">
             <span class="dl-t">When</span>
             <span class="dl-d">
-              {{ content.field_public_notice_date }} - {{ time_range }}
+              {{ elements.field_public_notice_date.0['#text'] }} - {{ time_range }}
             </span>
           </li>
-          {% if content.field_address %}
+          {# if content.field_address #}
             <li class="dl-i">
               <span class="dl-t">Where</span>
-              <span class="dl-d">{{ content.field_address }}</span>
+              <span class="dl-d">
+                <div class="addressfield-container-inline name-block">
+                  <div class="name-block">
+                    {{ elements.field_address.0.given_name['#value'] }} {{ elements.field_address.0.family_name['#value'] }}
+                  </div>
+                </div>
+                <div class="street-block">
+                  <div class="thoroughfare">
+                    {{ elements.field_address.0.address_line1['#value'] }}
+                  </div>
+                  <div class="premise">
+                    {{ elements.field_address.0.address_line2['#value'] }}
+                  </div>
+                </div>
+                <div class="addressfield-container-inline locality-block country-US">
+                  <span class="locality">
+                    {{ elements.field_address.0.locality['#value'] }},
+                  </span>
+                  <span class="state">
+                    {{ elements.field_address.0.administrative_area['#value'] }}
+                  </span>
+                  <span class="postal-code">
+                    {{ elements.field_address.0.postal_code['#value'] }}
+                  </span>
+                </div>
+              </span>
             </li>
-          {% endif %}
+          {# endif #}
           {% if content.field_posted %}
             <li class="dl-i">
               <span class="dl-t">Where</span>
