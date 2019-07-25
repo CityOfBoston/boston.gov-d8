@@ -550,3 +550,21 @@ What:  Now using svg image we cannot add a class to the <img> tag.  So set css o
   display: block;
   max-width: 85%;
 }
+
+/*
+David:  D8 Issue#408.
+Where: views-view-fields-news-and-announcements.html.twig.
+What:  Forces thumbnail image size.
+ */
+@media screen and (max-width: 767px) {
+  .news-item-short-listing .cd-ic {
+    height: 230px;
+    width: 100%;
+  }
+}
+@media screen and (min-width: 768px) {
+  .news-item-short-listing .cd-ic {
+    height: 190px;
+    width: 190px;
+  }
+}
