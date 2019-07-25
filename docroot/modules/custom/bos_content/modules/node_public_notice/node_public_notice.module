@@ -54,6 +54,22 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
   // Create the in-page-menu.
   _bos_public_notice_make_nav($variables);
 
+  $view_mode = $variables['elements']['#view_mode'];
+  if ($view_mode == 'listing') {
+    $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
+    $variables['dept_name'] = $term->getName();
+    if (isset($term) && $term->hasField('field_department_profile')) {
+      $dept_profile = $term->get('field_department_profile')->getValue();
+      if (isset($dept_profile[0]['target_id'])) {
+        $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
+        $dept_url = '/node/' . $node->id();
+        $variables['dept_url'] = $dept_url;
+        $dept_icon_uri = $node->field_icon->entity->getFileUri();
+        $variables['dept_icon_uri'] = $dept_icon_uri;
+      }
+    }
+  }
+
 }
 
 /**
