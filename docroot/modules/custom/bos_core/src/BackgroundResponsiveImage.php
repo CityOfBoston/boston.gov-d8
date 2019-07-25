@@ -90,7 +90,9 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    */
   public static function buildMediaQueries(string $uri, string $responsiveStyle_group, string $anchorClass) {
     // Work out the responsive group id and the breakpoint set being used.
-    $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group);
+    if (NULL == $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group)) {
+      throw new \Exception("Unknown responsive style set.");
+    }
     $breakpoint_group = $responsiveStyle->get("breakpoint_group");
 
     // Get the breakpoints for specified group (defined in theme.info).
