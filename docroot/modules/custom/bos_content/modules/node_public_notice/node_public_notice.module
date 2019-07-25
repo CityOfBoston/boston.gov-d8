@@ -65,7 +65,10 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
         $dept_url = '/node/' . $node->id();
         $variables['dept_url'] = $dept_url;
         $dept_icon_uri = $node->field_icon->entity->getFileUri();
-        $variables['dept_icon_uri'] = $dept_icon_uri;
+        if ($wrapper = \Drupal::service('stream_wrapper_manager')->getViaUri($dept_icon_uri)) {
+          $variables['dept_icon_uri'] = $wrapper->getExternalUrl();
+        }
+        //$variables['dept_icon_uri'] = $dept_icon_uri;
       }
     }
   }
