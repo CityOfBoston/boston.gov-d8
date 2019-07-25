@@ -106,7 +106,6 @@ class MigrationConfigAlter {
     'd7_view_modes',
     'd7_vote',
     'd7_rdf_mapping',
-    'paragraph__upcoming_events',
   ];
 
   /**
@@ -123,7 +122,6 @@ class MigrationConfigAlter {
     'entity:d7_taxonomy_term:type_of_content',
     'entity:node:metrolist_affordable_housing',
     'entity_revision:node:metrolist_affordable_housing',
-    'paragraph__upcoming_events',
   ];
 
   /**
