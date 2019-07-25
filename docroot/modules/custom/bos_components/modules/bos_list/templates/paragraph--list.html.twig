@@ -30,8 +30,12 @@
 {% elseif content.field_component_theme.0['#markup'] == "Blue" %}
   {% set component_theme = "b--b" %}
 {% endif %}
+{% if not content.field_component_title|render and not content.field_contact|render %}
+  {% set component_theme = "b--w" %}
+{% endif %}
+
 <div class="b b--fw{% if component_theme %} {{ component_theme }}{% endif %}">
-  <div class="b-c{% if node.field_component_title.isempty and node.field_contact.isempty %} b-c--ntp b-c--nbp{% endif %}">
+  <div class="b-c{% if not content.field_component_title|render and not content.field_contact|render %} b-c--ntp b-c--nbp{% endif %}">
     {% if content.field_component_title|render %}
       <div class="sh {{ section_header_theme }} m-b500">
         {{ content.field_component_title }}
