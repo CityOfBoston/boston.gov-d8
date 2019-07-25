@@ -57,7 +57,7 @@ class MigrationFixes {
       'landing' => ["public_notice", "page_2"],
     ],
     'status_displays' => [
-      'homepage_status' => ["homepage_status", "block_1"],
+      'homepage_status' => ["status_displays", "block_1"],
     ],
     'topic_landing_page' => [
       'page_1' => ["topic_landing_page", "page_1"],
