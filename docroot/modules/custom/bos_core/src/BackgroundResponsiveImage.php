@@ -76,18 +76,20 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
   }
 
   /**
-   * @param $breakpoints
-   *  Array to contain the breakspoints for this responsive style group.
+   * Separates functionality to get the breakpoints and responsive style object.
+   *
+   * @param array $breakpoints
+   *   Array to contain the breakspoints for this responsive style group.
    * @param string $responsiveStyle_group
-   *  The responsive style group to build.
+   *   The responsive style group to build.
    *
    * @return \Drupal\responsive_image\Entity\ResponsiveImageStyle|null
-   *  The responsiveImageStyle object.
+   *   The responsiveImageStyle object.
    *
    * @throws \Exception
-   *  If the responsive group is not found.
+   *   If the responsive group is not found.
    */
-  private static function getStyleElements(&$breakpoints, string $responsiveStyle_group) {
+  private static function getStyleElements(array &$breakpoints, string $responsiveStyle_group) {
     // Work out the responsive group id and the breakpoint set being used.
     if (NULL == $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group)) {
       throw new \Exception("Unknown responsive style set.");
@@ -157,8 +159,6 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    *   The image Uri.
    * @param string $responsiveStyle_group
    *   The responsive group to use.
-   * @param string $anchorClass
-   *   The css anchor element to use.
    *
    * @return string
    *   A string of valid css3.
@@ -175,7 +175,11 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
     $fallback_style = $responsiveStyle->getFallbackImageStyle();
     $uri = explode("?", $uri);
     $url = ImageStyle::load($fallback_style)->buildUrl($uri[0]);
-    $sources[] = ['srcset' => $url, "media" => "", "type" => mime_content_type($url)];
+    $sources[] = [
+      'srcset' => $url,
+      "media" => "",
+      "type" => mime_content_type($url),
+    ];
 
     // Create an array with URL's for each responsive style.
     $styles = $responsiveStyle->getKeyedImageStyleMappings();
@@ -192,11 +196,15 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
         $url = ImageStyle::load($breakpoint['image_mapping'])
           ->buildUrl($uri);
         $breakpoint = $breakpoints[$breakpoint['breakpoint_id']]->getMediaQuery();
-        $sources[] = ['srcset' => $url, "media" => "@media screen and $breakpoint $multiplier", "type" => "image/jpeg"];
+        $sources[] = [
+          'srcset' => $url,
+          "media" => "@media screen and $breakpoint $multiplier",
+          "type" => "image/jpeg",
+        ];
       }
     }
 
     return $sources;
-
   }
+
 }
