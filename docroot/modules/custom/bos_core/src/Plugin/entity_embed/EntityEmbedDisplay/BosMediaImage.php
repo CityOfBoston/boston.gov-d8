@@ -25,9 +25,10 @@ class BosMediaImage extends MediaImage {
     $form = parent::buildConfigurationForm($form, $form_state);
     // Limit image style options to ones appropriate for use in WYSIWYG.
     $form['image_style']['#options'] = array_intersect_key($form['image_style']['#options'], [
-      'medium' => '',
-      'large' => '',
+      'bos_text_responsive' => '',
     ]);
+    $form['image_style']['#default_value'] = "one_column";
+    unset($form['image_style']['#empty_option']);
 
     // Remove svg specific form elements as they aren't allowed in the WYSIWYG.
     unset($form['svg_render_as_image']);
