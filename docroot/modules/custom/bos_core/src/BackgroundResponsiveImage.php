@@ -23,13 +23,15 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    *   Background image render array.
    * @param string $anchorClass
    *   The class name for css generated - the background image main class tag.
+   * @param array $options
+   *   Options to pass to the function.
    *
    * @return string|bool
    *   False if failed, otherwise an inline css string that could be injected.
    *
    * @throws \Exception
    */
-  public static function createBackgroundCss(array $background_image, $anchorClass = "hro") {
+  public static function createBackgroundCss(array $background_image, $anchorClass = "hro", array $options = []) {
 
     if ($background_image['#formatter'] != 'responsive_image') {
       throw new \Exception("Image is not a responsive style.");
@@ -44,7 +46,7 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
 
       $uri = $background_image->entity->getFileUri();
 
-      return self::buildMediaQueries($uri, $responsiveStyle_group, $anchorClass);
+      return self::buildMediaQueries($uri, $responsiveStyle_group, $anchorClass, $options);
     }
     return FALSE;
   }
@@ -112,6 +114,8 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    *   The responsive group to use.
    * @param string $anchorClass
    *   The css anchor element to use.
+   * @param array $options
+   *   Options to pass to the function.
    *
    * @return string
    *   A string of valid css3.
@@ -119,16 +123,21 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    * @throws \Exception
    *   Error.
    */
-  public static function buildMediaQueries(string $uri, string $responsiveStyle_group, string $anchorClass) {
+  public static function buildMediaQueries(string $uri, string $responsiveStyle_group, string $anchorClass, array $options = []) {
     // Work out the responsive group id and the breakpoint set being used.
     $breakpoints = [];
+    $css = [];
     $responsiveStyle = self::getStyleElements($breakpoints, $responsiveStyle_group);
 
     // Create the default style.
     $fallback_style = $responsiveStyle->getFallbackImageStyle();
     $url = ImageStyle::load($fallback_style)->buildUrl($uri);
-    $css = ["$anchorClass { background-image: url(" . $url . ");\n    background-size: cover !important;}"];
-
+    $base_css = "background-image: url(" . $url . ");\n    background-size: cover !important;";
+    if (isset($options['base-css'])) {
+      $base_css .= "\n    " . $options['base-css'];
+    }
+    $base_css = "$anchorClass {" . $base_css . "}";
+    $css[] = $base_css;
     // Create an array with URL's for each responsive style.
     $styles = $responsiveStyle->getKeyedImageStyleMappings();
 
