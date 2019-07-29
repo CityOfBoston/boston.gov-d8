@@ -56,6 +56,7 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
 
   $view_mode = $variables['elements']['#view_mode'];
   if ($view_mode == 'listing') {
+    /** @var Drupal\taxonomy\Entity\Term */
     $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
     $variables['dept_name'] = $term->getName();
     if (isset($term) && $term->hasField('field_department_profile')) {
