@@ -76,6 +76,32 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
   }
 
   /**
+   * @param $breakpoints
+   *  Array to contain the breakspoints for this responsive style group.
+   * @param string $responsiveStyle_group
+   *  The responsive style group to build.
+   *
+   * @return \Drupal\responsive_image\Entity\ResponsiveImageStyle|null
+   *  The responsiveImageStyle object.
+   *
+   * @throws \Exception
+   *  If the responsive group is not found.
+   */
+  private static function getStyleElements(&$breakpoints, string $responsiveStyle_group) {
+    // Work out the responsive group id and the breakpoint set being used.
+    if (NULL == $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group)) {
+      throw new \Exception("Unknown responsive style set.");
+    }
+    $breakpoint_group = $responsiveStyle->get("breakpoint_group");
+
+    // Get the breakpoints for specified group (defined in theme.info).
+    $breakpoints = \Drupal::service('breakpoint.manager')
+      ->getBreakpointsByGroup($breakpoint_group);
+
+    return $responsiveStyle;
+  }
+
+  /**
    * Builds the media queries (css) as specified by responsive style module.
    *
    * @param string $uri
@@ -87,17 +113,14 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    *
    * @return string
    *   A string of valid css3.
+   *
+   * @throws \Exception
+   *   Error.
    */
   public static function buildMediaQueries(string $uri, string $responsiveStyle_group, string $anchorClass) {
     // Work out the responsive group id and the breakpoint set being used.
-    if (NULL == $responsiveStyle = ResponsiveImageStyle::load($responsiveStyle_group)) {
-      throw new \Exception("Unknown responsive style set.");
-    }
-    $breakpoint_group = $responsiveStyle->get("breakpoint_group");
-
-    // Get the breakpoints for specified group (defined in theme.info).
-    $breakpoints = \Drupal::service('breakpoint.manager')
-      ->getBreakpointsByGroup($breakpoint_group);
+    $breakpoints = [];
+    $responsiveStyle = self::getStyleElements($breakpoints, $responsiveStyle_group);
 
     // Create the default style.
     $fallback_style = $responsiveStyle->getFallbackImageStyle();
@@ -106,6 +129,7 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
 
     // Create an array with URL's for each responsive style.
     $styles = $responsiveStyle->getKeyedImageStyleMappings();
+
     foreach ($styles as $key => $style) {
       foreach ($style as $multiplier => $breakpoint) {
         if (empty($breakpoint['multiplier']) || $breakpoint['multiplier'] == "1x") {
@@ -126,4 +150,53 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
 
   }
 
+  /**
+   * Builds the picture element sources as specified by responsive style module.
+   *
+   * @param string $uri
+   *   The image Uri.
+   * @param string $responsiveStyle_group
+   *   The responsive group to use.
+   * @param string $anchorClass
+   *   The css anchor element to use.
+   *
+   * @return string
+   *   A string of valid css3.
+   *
+   * @throws \Exception
+   *   Error.
+   */
+  public static function buildMediaSources(string $uri, string $responsiveStyle_group) {
+    // Work out the responsive group id and the breakpoint set being used.
+    $breakpoints = [];
+    $responsiveStyle = self::getStyleElements($breakpoints, $responsiveStyle_group);
+
+    // Create the default style.
+    $fallback_style = $responsiveStyle->getFallbackImageStyle();
+    $uri = explode("?", $uri);
+    $url = ImageStyle::load($fallback_style)->buildUrl($uri[0]);
+    $sources[] = ['srcset' => $url, "media" => "", "type" => mime_content_type($url)];
+
+    // Create an array with URL's for each responsive style.
+    $styles = $responsiveStyle->getKeyedImageStyleMappings();
+
+    foreach ($styles as $key => $style) {
+      foreach ($style as $multiplier => $breakpoint) {
+        if (empty($breakpoint['multiplier']) || $breakpoint['multiplier'] == "1x") {
+          $multiplier = "";
+        }
+        else {
+          $multiplier = str_replace('x', '', $breakpoint['multiplier']);
+          $multiplier = "and (-webkit-min-device-pixel-ratio: $multiplier) ";
+        }
+        $url = ImageStyle::load($breakpoint['image_mapping'])
+          ->buildUrl($uri);
+        $breakpoint = $breakpoints[$breakpoint['breakpoint_id']]->getMediaQuery();
+        $sources[] = ['srcset' => $url, "media" => "@media screen and $breakpoint $multiplier", "type" => "image/jpeg"];
+      }
+    }
+
+    return $sources;
+
+  }
 }
