@@ -568,3 +568,13 @@ What:  Forces thumbnail image size.
     width: 190px;
   }
 }
+
+/*
+David:  D8 Issue#408.
+Where: paragraph-text-two-column.html.twig.
+What:  Manages columns, particularly when the column holds an image.
+ */
+.paragraphs-item-text-two-column.col_half img {
+  height: auto;
+  width: 100%;
+}
