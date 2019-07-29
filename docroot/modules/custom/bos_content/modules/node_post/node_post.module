@@ -8,6 +8,7 @@
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_theme().
@@ -61,6 +62,17 @@ function node_post_preprocess_page(&$variables) {
 function node_post_preprocess_node__post(&$variables) {
   _bos_components_fix_attributes($variables);
   $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_post_preprocess_node__post__featured_item(&$variables) {
+  _bos_components_fix_attributes($variables);
+  $variables['attributes']->addClass("post-featured-item-wrapper");
+  $variables['attributes']->addClass("mobile-1-col");
+  $variables['attributes']->addClass("clearfix");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
 }
 

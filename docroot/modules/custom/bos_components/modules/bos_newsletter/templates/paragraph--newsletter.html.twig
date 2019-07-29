@@ -23,47 +23,72 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
+
 <div {{ attributes }}>
+
   <div class="b b--fw b--{{ component_theme }}">
+
     <div class="b-c">
-      <div class="sh m-b300 {{ section_header_theme }}">
-        {{ title_prefix }}
+
+      <div class="sh cl m-b300 {{ section_header_theme }}">
+
+        {{ content.contextual_links }}
+
         {% if content.field_component_title %}
           {{ content.field_component_title }}
         {% endif %}
-        {{ title_suffix }}
+
         {% if content.field_contact %}
           {{ content.field_contact }}
         {% endif %}
+
       </div>
+
       <div class="g">
+
         {% if content.field_description %}
           <div class="g--6">
             <div class="t--intro">{{ content.field_description }}</div>
           </div>
         {% endif %}
+
         <div class="g--{% if content.field_description %}6{% else %}12{% endif %}">
+
           {% if content.field_newsletter %}
             <form action="https://contactform.boston.gov/subscriptions?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
+
               <div class="fs">
+
                 <div class="fs-c fs-c--i">
+
                   <div class="txt">
                     <label for="subscriber[email]" class="txt-l">Your Email Address</label>
                     <input name="subscriber[email]" type="email" value="" placeholder="Email address" class="txt-f bos-newsletter-email">
                   </div>
+
                   <div class="txt">
                     <label for="subscriber[zipcode]" class="txt-l">Zip Code</label>
                     <input name="subscriber[zipcode]" type="text" value="" placeholder="Zip Code" class="txt-f bos-newsletter-zip" size="18">
                   </div>
+
                 </div>
+
                 <div class="bc bc--r">
                   <button type="submit" class="btn btn--700">Sign Up</button>
                 </div>
+
               </div>
+
             </form>
+
           {% endif %}
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
