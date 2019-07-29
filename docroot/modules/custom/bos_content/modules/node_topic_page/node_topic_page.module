@@ -154,7 +154,7 @@ function template_preprocess_node__topic_page(array &$variables) {
         if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
           $photo_id = Html::getUniqueId('hro');
           $variables['photo_id'] = $photo_id;
-          $options["base-css"] =  "height: 100% !important;";
+          $options["base-css"] = "height: 100% !important;";
           $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id", $options);
           $variables['#attached']['html_head'][] = [
             [
