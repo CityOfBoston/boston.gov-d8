@@ -1,7 +1,12 @@
 uuid: 0cdde87d-4cd4-4ee5-a261-7b858270ef85
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - lightning_core
+third_party_settings:
+  lightning_core:
+    description: 'All users when logged in will have this role.'
 _core:
   default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
 id: authenticated

@@ -1,7 +1,12 @@
 uuid: 850f94b4-44a4-4467-9f97-c1f3ed1c0d41
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - lightning_core
+third_party_settings:
+  lightning_core:
+    description: 'Site Viewers/users who have not logged in with a valid account (or single sign-in process).'
 _core:
   default_config_hash: j5zLMOdJBqC0bMvSdth5UebkprJB8g_2FXHqhfpJzow
 id: anonymous
