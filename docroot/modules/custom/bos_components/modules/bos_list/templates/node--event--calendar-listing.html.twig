@@ -90,10 +90,10 @@
 <article id="node-{{ node.id }}" class="{{ classes }} calendar-listing-wrapper"{% if live_stream %}data-livestream="1"{% endif %}>
   <div class="teaser drawer-trigger">
     <div class="drawer-trigger-chevron"></div>
-    {% if time_range %}
+    {% if content.field_date_range|render %}
       <span class="time-range">
         {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
-        {{ time_range }}
+        {{ content.field_date_range.0.start_date['#attributes'].datetime|date('g:ha') }}-{{ content.field_date_range.0.end_date['#attributes'].datetime|date('g:ha') }}
       </span>
     {% endif %}
     <div class="title">
