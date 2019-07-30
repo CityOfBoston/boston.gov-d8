@@ -94,6 +94,7 @@
   {% set start_date = content.field_date_range.0['#attributes'].datetime %}
 {% endif %}
 
+{% set node = elements['#node'] %}
 <article id="node-{{ node.id }}" class="{{ classes }} calendar-listing-wrapper"{% if live_stream %}data-livestream="1"{% endif %}>
   <div class="teaser drawer-trigger">
     <div class="drawer-trigger-chevron"></div>
