@@ -149,9 +149,9 @@
       {% endif %}
     {% endif %}
 
-    {% if content.field_details_link %}
+    {% if content.field_details_link|render %}
       <div class="external-link external-link--inline">
-        <a class="button" href="{{ content.field_details_link }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
+        <a class="button" href="{{ content.field_details_link.0['#url'] }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
       </div>
     {% else %}
       {% if live_stream %}
