@@ -87,13 +87,21 @@
   {# $live_stream = $live_stream_active == 1; #}
 {% endif %}
 
+{% set start_date = content.field_date_range.0.start_date['#attributes'].datetime %}
+{% set end_date = content.field_date_range.0.end_date['#attributes'].datetime %}
+
+{% set range = true %}
+{% if start_date == end_date %}
+  {% set range = false %}
+{% endif %}
+
 <article id="node-{{ node.id }}" class="{{ classes }} calendar-listing-wrapper"{% if live_stream %}data-livestream="1"{% endif %}>
   <div class="teaser drawer-trigger">
     <div class="drawer-trigger-chevron"></div>
-    {% if content.field_date_range|render %}
+    {% if start_date %}
       <span class="time-range">
         {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
-        {{ content.field_date_range.0.start_date['#attributes'].datetime|date('g:ha') }}-{{ content.field_date_range.0.end_date['#attributes'].datetime|date('g:ha') }}
+          {{ start_date|date('g:ia') }}{% if range %}-{{ end_date|date('g:ia') }}{% endif %}
       </span>
     {% endif %}
     <div class="title">
