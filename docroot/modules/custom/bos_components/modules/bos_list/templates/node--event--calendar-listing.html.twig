@@ -140,16 +140,11 @@
 
     {% if is_cancelled %}
       <div class="description supporting-text">Reason for cancellation:<br/>
-        {#<?php
-        if (isset($field_extra_info_event['und'][0]['safe_value'])) {
-          print $field_extra_info_event['und'][0]['safe_value'];
-        }
-        else {
-          print "Please contact organizer.";
-        }
-        ?>#}
+        {% if content.field_extra_info_event|render %}
+          {{ content.field_extra_info_event }}
+        {% else %}Please contact organizer.{% endif %}
       </div>
-      {#<?php else: ?>#}
+    {% else %}
       {% if content.field_intro_text %}
         <div class="description">
           {{ content.field_intro_text }}
@@ -163,9 +158,9 @@
       </div>
     {% else %}
       {% if live_stream %}
-        <a class="button live-stream" href="{{ node_url }}" title="Live stream for {{ title }}">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
+        <a class="button live-stream" href="/node/{{ node.id }}" title="Live stream for {{ title }}">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
       {% else %}
-        <a class="button" href="{{ node_url }}" title="get more details">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
+        <a class="button" href="/node/{{ node.id }}" title="get more details">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
       {% endif %}
     {% endif %}
   </div>
