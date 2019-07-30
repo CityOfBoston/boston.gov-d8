@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -78,88 +76,89 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
+ #}
 
- $has_email = isset($content['field_email']) && $content['field_email'][0]['#markup'] != "";
- $live_stream = $live_stream_active == 1;
-?>
+{% if content.field_email %}
+  {% set has_email = true %}
+  {# $has_email = isset($content['field_email']) && $content['field_email'][0]['#markup'] != ""; #}
+{% endif %}
+{% if live_stream_active %}
+  {% set live_stream = true %}
+  {# $live_stream = $live_stream_active == 1; #}
+{% endif %}
 
-<article id="node-<?php print $node->nid; ?>"
-     class="<?php print $classes; ?> calendar-listing-wrapper"
-     <?php if (!empty($live_stream)): ?>data-livestream="1"<?php endif; ?>>
+<article id="node-{{ node.id }}" class="{{ classes }} calendar-listing-wrapper"{% if live_stream %}data-livestream="1"{% endif %}>
   <div class="teaser drawer-trigger">
     <div class="drawer-trigger-chevron"></div>
-    <?php if (isset($time_range)): ?>
+    {% if time_range %}
       <span class="time-range">
-        <?php if (!empty($live_stream)) :?><span class="live-stream-flag">Live:</span><?php endif; ?>
-        <?php print $time_range; ?>
+        {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
+        {{ time_range }}
       </span>
-    <?php endif; ?>
+    {% endif %}
     <div class="title">
-      <?php if (!empty($live_stream)):?><span class="live-stream-flag">Live:</span><?php endif; ?>
-      <?php if (!empty($is_cancelled)):?><span class="t--err">Canceled: </span><span class="td-str"><?php endif; ?>
-      <?php print $title; ?>
-        <?php if (!empty($is_cancelled)):?></span><?php endif; ?>
+      {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
+      {% if is_cancelled %}<span class="t--err">Canceled: </span><span class="td-str">{% endif %}
+      {{ title }}
+      {% if is_cancelled %}</span>{% endif %}
     </div>
   </div>
   <div class="event-details drawer">
-    <?php if (isset($content['field_address'])): ?>
+    {% if content.field_address %}
       <div class="list-item">
-        <?php print render($content['field_address']); ?>
+        {{ content.field_address }}
       </div>
-    <?php endif; ?>
-    <?php if (!empty($has_email)): ?>
+    {% endif %}
+    {% if has_email %}
       <div class="list-item">
-        <?php print render($content['field_email']); ?>
+        {{ content.field_email }}
       </div>
-    <?php endif; ?>
-    <?php if (isset($content['field_phone_number'])): ?>
+    {% endif %}
+    {% if content.field_phone_number %}
       <div class="list-item">
-        <?php print render($content['field_phone_number']); ?>
+        {{ content.field_phone_number }}
       </div>
-    <?php endif; ?>
-    <?php if (isset($content['field_cost'])): ?>
+    {% endif %}
+    {% if content.field_cost %}
       <div class="list-item">
-        <?php print render($content['field_cost']); ?>
+        {{ content.field_cost }}
       </div>
-    <?php endif; ?>
-    <?php if (isset($content['field_links'])): ?>
+    {% endif %}
+    {% if content.field_links %}
       <div class="list-item">
-        <?php print render($content['field_links']); ?>
+        {{ content.field_links }}
       </div>
-    <?php endif; ?>
+    {% endif %}
 
-    <?php if (!empty($is_cancelled)): ?>
+    {% if is_cancelled %}
       <div class="description supporting-text">Reason for cancellation:<br/>
-        <?php
+        {#<?php
         if (isset($field_extra_info_event['und'][0]['safe_value'])) {
           print $field_extra_info_event['und'][0]['safe_value'];
         }
         else {
           print "Please contact organizer.";
         }
-        ?>
+        ?>#}
       </div>
-    <?php else: ?>
-      <?php if (isset($content['field_intro_text'])): ?>
+      {#<?php else: ?>#}
+      {% if content.field_intro_text %}
         <div class="description">
-          <?php print render($content['field_intro_text']); ?>
+          {{ content.field_intro_text }}
         </div>
-      <?php endif; ?>
-    <?php endif; ?>
+      {% endif %}
+    {% endif %}
 
-
-
-    <?php if (isset($content['field_details_link'])): ?>
+    {% if content.field_details_link %}
       <div class="external-link external-link--inline">
-        <a class="button" href="<?php print render($content['field_details_link']); ?>">Event website<span class="a11y--hidden"> for <?php print $title; ?></span></a>
+        <a class="button" href="{{ content.field_details_link }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
       </div>
-    <?php else: ?>
-      <?php if (!empty($live_stream)): ?>
-        <a class="button live-stream" href="<?php print $node_url; ?>" title="Live stream for <?php print $title; ?>">Event details<span class="a11y--hidden"> for <?php print $title; ?></span></a>
-      <?php else: ?>
-        <a class="button" href="<?php print $node_url; ?>" title="get more details">Event details<span class="a11y--hidden"> for <?php print $title; ?></span></a>
-      <?php endif; ?>
-    <?php endif; ?>
+    {% else %}
+      {% if live_stream %}
+        <a class="button live-stream" href="{{ node_url }}" title="Live stream for {{ title }}">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
+      {% else %}
+        <a class="button" href="{{ node_url }}" title="get more details">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
+      {% endif %}
+    {% endif %}
   </div>
 </article>
