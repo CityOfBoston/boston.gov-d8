@@ -99,7 +99,7 @@
     <div class="title">
       {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
       {% if is_cancelled %}<span class="t--err">Canceled: </span><span class="td-str">{% endif %}
-      {{ title }}
+      {{ title.0['#context'].value }}
       {% if is_cancelled %}</span>{% endif %}
     </div>
   </div>
