@@ -90,9 +90,8 @@
 {% set start_date = content.field_date_range.0.start_date['#attributes'].datetime %}
 {% set end_date = content.field_date_range.0.end_date['#attributes'].datetime %}
 
-{% set range = true %}
-{% if start_date == end_date %}
-  {% set range = false %}
+{% if start_date is empty %}
+  {% set start_date = content.field_date_range.0['#attributes'].datetime %}
 {% endif %}
 
 <article id="node-{{ node.id }}" class="{{ classes }} calendar-listing-wrapper"{% if live_stream %}data-livestream="1"{% endif %}>
@@ -101,7 +100,7 @@
     {% if start_date %}
       <span class="time-range">
         {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
-          {{ start_date|date('g:ia') }}{% if range %}-{{ end_date|date('g:ia') }}{% endif %}
+        {{ start_date|date('g:ia') }}{% if end_date %}-{{ end_date|date('g:ia') }}{% endif %}
       </span>
     {% endif %}
     <div class="title">
