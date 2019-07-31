@@ -78,10 +78,6 @@
  * @ingroup themeable
  #}
 
-{% if content.field_email %}
-  {% set has_email = true %}
-  {# $has_email = isset($content['field_email']) && $content['field_email'][0]['#markup'] != ""; #}
-{% endif %}
 {% if live_stream_active %}
   {% set live_stream = true %}
   {# $live_stream = $live_stream_active == 1; #}
@@ -117,12 +113,12 @@
         {{ content.field_address }}
       </div>
     {% endif %}
-    {% if has_email %}
+    {% if content.field_email|render %}
       <div class="list-item">
         {{ content.field_email }}
       </div>
     {% endif %}
-    {% if content.field_phone_number %}
+    {% if content.field_phone_number|render %}
       <div class="list-item">
         {{ content.field_phone_number }}
       </div>
@@ -139,7 +135,7 @@
         </div>
       </div>
     {% endif %}
-    {% if content.field_links %}
+    {% if content.field_links|render %}
       <div class="list-item">
         {{ content.field_links }}
       </div>
