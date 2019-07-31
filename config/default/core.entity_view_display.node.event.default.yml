@@ -21,6 +21,7 @@ dependencies:
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
     - field.field.node.event.field_intro_image
+    - field.field.node.event.field_intro_text
     - field.field.node.event.field_links
     - field.field.node.event.field_manual_date
     - field.field.node.event.field_metatags
@@ -64,7 +65,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_address:
-    weight: 24
+    weight: 25
     label: hidden
     settings: {  }
     third_party_settings:
@@ -89,7 +90,7 @@ content:
     third_party_settings: {  }
   field_city_hall:
     type: boolean
-    weight: 22
+    weight: 23
     region: content
     label: hidden
     settings:
@@ -99,7 +100,7 @@ content:
     third_party_settings: {  }
   field_city_sponsored:
     type: boolean
-    weight: 21
+    weight: 22
     region: content
     label: hidden
     settings:
@@ -109,7 +110,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: entity_reference_revisions_entity_view
-    weight: 23
+    weight: 24
     region: content
     label: hidden
     settings:
@@ -117,7 +118,7 @@ content:
       link: ''
     third_party_settings: {  }
   field_contacts:
-    weight: 14
+    weight: 15
     label: hidden
     settings:
       link: true
@@ -172,7 +173,7 @@ content:
     region: content
   field_details_link:
     type: link
-    weight: 19
+    weight: 20
     region: content
     label: hidden
     settings:
@@ -237,14 +238,14 @@ content:
     third_party_settings: {  }
   field_featured:
     type: list_default
-    weight: 18
+    weight: 19
     region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
     type: responsive_image
-    weight: 17
+    weight: 18
     region: content
     label: hidden
     settings:
@@ -258,6 +259,20 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_intro_text:
+    weight: 13
+    label: visually_hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: text_default
+    region: content
   field_links:
     type: entity_reference_revisions_entity_view
     weight: 12
@@ -275,7 +290,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_manual_date:
-    weight: 15
+    weight: 16
     label: hidden
     settings:
       format: default
@@ -316,7 +331,7 @@ content:
         fences_label_classes: ''
   field_published_date:
     type: datetime_default
-    weight: 13
+    weight: 14
     region: content
     label: inline
     settings:
@@ -331,7 +346,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_related:
-    weight: 25
+    weight: 26
     label: above
     settings:
       link: true
@@ -340,7 +355,7 @@ content:
     region: content
   field_sidebar_components:
     type: entity_reference_revisions_entity_view
-    weight: 16
+    weight: 17
     region: content
     label: hidden
     settings:
@@ -349,7 +364,7 @@ content:
     third_party_settings: {  }
   field_thumbnail:
     type: responsive_image
-    weight: 20
+    weight: 21
     region: content
     label: hidden
     settings:
