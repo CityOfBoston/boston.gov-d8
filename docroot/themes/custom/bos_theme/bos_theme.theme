@@ -16,7 +16,6 @@ use Drupal\core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -328,17 +327,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // Setup hero style page banner images.
   $current_path = \Drupal::service('path.current')->getPath();
-  if (!empty($variables["node"]) && !in_array($variables["node"]->bundle(), [
-    "event",
-    "how_to",
-    "listing_page",
-    "place_profile",
-    "post",
-    "program_initiative_profile",
-    "tabbed_content",
-  ])) {
-    _bos_theme_manage_hero($variables, $current_path);
-  }
 
   // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
   // Custom 404/403 pages.
@@ -372,7 +360,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
-  $variables['has_site_alert'] = !empty($variables['has_site_alert']) ?: FALSE;
+  $variables['has_site_alert'] = !empty($variables['has_site_alert']);
 
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
@@ -865,61 +853,6 @@ function _bos_theme_make_nav(array &$variables, array $components, int $threshol
     // Add in the chevron used in mobile UX.
     $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
 
-  }
-}
-
-/**
- * Helper: Manage intro_image and hero image headers on a node.
- *
- * This is done to bring the hero image rendered output to the page level
- * of rendering. Hero image styling fits more naturally at the page level
- * as opposed to the rendered node output in the system block.
- *
- * @param array $variables
- *   The standard variable array from a preprocess hook.
- */
-function _bos_theme_manage_hero(array &$variables, $current_path) {
-  $path_args = explode('/', $current_path);
-  if (!isset($variables['header_image'])) {
-    $variables['header_image'] = FALSE;
-  }
-
-  $nid = NULL;
-  if (!empty($variables["node"]) && is_object($variables["node"])) {
-    $nid = $variables["node"]->id();
-  }
-  elseif ($path_args[1] == "node" && !empty($path_args[2]) && is_numeric($path_args[2])) {
-    $nid = $path_args[2];
-  }
-
-  if (!empty($nid)) {
-    if (isset($variables["node"]->field_intro_image) && $variables["node"]->field_intro_image->count()) {
-      $background_image = $variables["node"]->field_intro_image;
-      if (isset($background_image->entity)) {
-        $uri = $background_image->entity->getFileUri();
-        // Set $variables["header_image"] to true here.
-        // Individual nodes can disable(false) in their own preprocess hooks.
-        if (!isset($variables['header_image'])) {
-          $variables['header_image'] = TRUE;
-        }
-        if ($variables['header_image']) {
-          $variables["attributes"]->addClass("mn");
-          $variables["attributes"]->setAttribute("id", "page");
-          $variables['background_image'] = $background_image;
-          $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
-            ->buildUrl($uri);
-          $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
-            ->buildUrl($uri);
-          $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
-            ->buildUrl($uri);
-          $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
-            ->buildUrl($uri);
-        }
-      }
-    }
-    else {
-      $variables["header_image"] = FALSE;
-    }
   }
 }
 
