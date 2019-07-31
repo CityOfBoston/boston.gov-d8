@@ -15,6 +15,11 @@
     var links;
     var entityType;
 
+    // Adds a class to the main node article element on the page.
+    $("article").first().find(".contextual").first().addClass("parent-node");
+    $('.parent-node button').addClass("large");
+    $("#main-menu").addClass("contextual-region").append($(".parent-node"));
+
     // Adds a tooltip to the button, changes the click funtion of the contextual button when
     // only one link and adds the node type to the links list.
     contextButtons.each(function (key, button) {
