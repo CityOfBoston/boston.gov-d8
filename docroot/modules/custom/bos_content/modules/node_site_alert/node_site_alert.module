@@ -74,6 +74,44 @@ function node_site_alert_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook_preprocess_page().
+ */
+function node_site_alert_preprocess_page(&$variables) {
+  // Check if we have any active site-alerts.
+  $variables['has_site_alert'] = FALSE;
+  $now = new \DateTime('now');
+  $now = $now->format(DATETIME_DATETIME_STORAGE_FORMAT);
+
+  if ($alert = \Drupal::entityQuery('node')
+    ->condition('type', "site_alert", "=")
+    ->condition('status', "1", "=")
+    ->condition('field_date_range.value', $now, "<=")
+    ->condition('field_date_range.end_value', $now, ">")
+    ->execute()) {
+    $excluded = \Drupal::entityTypeManager()->getStorage('node')
+      ->load(reset($alert))
+      ->field_excluded_nodes
+      ->getValue();
+    $here = \Drupal::request()->getRequestUri();
+    $path = ltrim(\Drupal::service('path.alias_manager')->getPathByAlias($here), "/");
+
+    $variables['has_site_alert'] = TRUE;
+    _bos_content_fix_attributes($variables);
+    if ($variables["attributes"]->hasClass("page-nm")) {
+      $variables["attributes"]->addClass("page-wa");
+      $variables["attributes"]->removeClass("page-nm");
+    }
+
+    foreach ($excluded as $key => $exclude) {
+      if (isset($exclude['target_id']) && "node/" . $exclude['target_id'] == $path) {
+        $variables['has_site_alert'] = FALSE;
+        break;
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess().
  */
 function node_site_alert_preprocess(&$variables, $hook) {
@@ -85,39 +123,15 @@ function node_site_alert_preprocess(&$variables, $hook) {
     }
   }
   // Remove context editing for the link paragraph embedded in this paragraph.
-  if ($hook == "field" && isset($variables["element"]["#object"]->_referringItem) && $variables["element"]["#object"]->_referringItem->getParent()->getName() == "field_link") {
-    if (isset($variables["attributes"]["data-quickedit-field-id"])) {
-      unset($variables["attributes"]["data-quickedit-field-id"]);
-    }
+  /*
+  if ($hook == "field"
+  && isset($variables["element"]["#object"]->_referringItem)
+  && $variables["element"]["#object"]->_referringItem->getParent()
+  ->getName() == "field_link") {
+  if (isset($variables["attributes"]["data-quickedit-field-id"])) {
+  unset($variables["attributes"]["data-quickedit-field-id"]);
   }
-  // Check if we have any active site-alerts.
-  if ($hook == "page") {
-    if ($alert = \Drupal::entityQuery('node')
-      ->condition('type', "site_alert", "=")
-      ->condition('status', "1", "=")
-      ->execute()) {
-      $excluded = \Drupal::entityTypeManager()->getStorage('node')
-        ->load(reset($alert))
-        ->field_excluded_nodes
-        ->getValue();
-      $here = \Drupal::request()->getRequestUri();
-      $path = ltrim(\Drupal::service('path.alias_manager')->getPathByAlias($here), "/");
-
-      $variables['has_site_alert'] = TRUE;
-      _bos_content_fix_attributes($variables);
-      if ($variables["attributes"]->hasClass("page-nm")) {
-        $variables["attributes"]->addClass("page-wa");
-        $variables["attributes"]->removeClass("page-nm");
-      }
-
-      foreach ($excluded as $key => $exclude) {
-        if (isset($exclude['target_id']) && "node/" . $exclude['target_id'] == $path) {
-          $variables['has_site_alert'] = FALSE;
-          break;
-        }
-      }
-    }
-  }
+  }*/
 }
 
 /**
