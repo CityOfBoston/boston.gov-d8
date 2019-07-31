@@ -127,9 +127,16 @@
         {{ content.field_phone_number }}
       </div>
     {% endif %}
-    {% if content.field_cost %}
-      <div class="list-item">
-        {{ content.field_cost }}
+    {% if content.field_cost|render %}
+      <div class="list-item detail-item detail-item--secondary">
+        <div class="detail-item__left">
+          <div>Price:</div>
+        </div>
+        <div class="detail-item__content">
+          <div class="detail-item__body detail-item__body--secondary">
+            {{ content.field_cost.0['#context'].value }}
+          </div>
+        </div>
       </div>
     {% endif %}
     {% if content.field_links %}
