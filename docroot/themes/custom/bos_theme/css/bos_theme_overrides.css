@@ -271,10 +271,7 @@ What: Changes style of contextual edit button on all node displays on boston_the
   background-position-y: center;
   border: none;
   border-radius: 0;
-  background-size: 30px 30px;
   padding: 0;
-  height: 31px !important;
-  width: 31px !important;
 }
 .contextual .trigger:hover {
   background-image: url(../images/context-edit-hover.svg);
@@ -282,8 +279,10 @@ What: Changes style of contextual edit button on all node displays on boston_the
   background-position-y: center;
   border: none;
   border-radius: 0;
-  background-size: 30px 30px;
   padding:0;
+}
+.contextual .trigger:not(.large) {
+  background-size: 30px 30px;
   height: 31px !important;
   width: 31px !important;
 }
@@ -574,4 +573,20 @@ What:  Manages columns, particularly when the column holds an image.
 .paragraphs-item-text-two-column.col_half img {
   height: auto;
   width: 100%;
+}
+
+/*
+David:
+Where: .parent-node class on all pages.
+What:  Moves the main contextual editor for the page to a prominent place.
+ */
+.contextual.parent-node {
+  top: 68px;
+  right: 0px;
+}
+/* see line 284 trigger:not(large)*/
+.contextual .trigger.large {
+  height: 41px !important;
+  width: 41px !important;
+  background-size: 40px 40px;
 }
