@@ -129,7 +129,7 @@ display:
             -
               field: field_date_range
               rendered: true
-              rendered_strip: true
+              rendered_strip: false
           row_class: ''
           default_row_class: true
       row:
@@ -196,8 +196,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '<h2 class="listing-group-title">{{ field_date_range__value|date(''F j, Y'') }}</h2>'
             make_link: false
             path: ''
             absolute: false
