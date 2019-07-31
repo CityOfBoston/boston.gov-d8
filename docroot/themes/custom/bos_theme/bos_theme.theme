@@ -16,7 +16,6 @@ use Drupal\core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -361,7 +360,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
-  $variables['has_site_alert'] = !empty($variables['has_site_alert']) ?: FALSE;
+  $variables['has_site_alert'] = !empty($variables['has_site_alert']);
 
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
