@@ -153,6 +153,8 @@
           <div class="event-date sidebar-header">
             {% if content.field_date_range.0.start_date %}
               {{ content.field_date_range.0.start_date }}
+            {% elseif content.field_date_range.0["#text"] %}
+              {{ content.field_date_range.0 }}
             {% endif %}
           </div>
         </div>
