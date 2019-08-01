@@ -147,6 +147,11 @@ function node_event_preprocess_node__event(&$variables) {
     $vars["body"] = $variables["content"]["field_cost"];
     $variables["content"]["cost"] = Drupal::theme()->render("detail_item", $vars);
   }
+  else {
+    $vars["label"] = "Price:";
+    $vars["body"] = \Drupal\Core\Render\Markup::create('<div class="detail-item__body detail-item__body--secondary field-item">FREE</div>');
+    $variables["content"]["cost"] = Drupal::theme()->render("detail_item", $vars);
+  }
 
   // Render the event_contact into a details_item.
   if (isset($variables["content"]["field_event_contact"]["#title"])) {
@@ -154,6 +159,13 @@ function node_event_preprocess_node__event(&$variables) {
     $vars["body"] = $variables["content"]["field_event_contact"];
     $variables["content"]["field_event_contact"] = Drupal::theme()
       ->render("detail_item", $vars);
+  }
+  else {
+    unset($variables["content"]["field_event_contact"]);
+  }
+
+  if (!isset($variables["content"]["field_event_type"]["#title"])) {
+    unset($variables["content"]["field_event_type"]);
   }
 
   // Render the published_date into a details_item.
@@ -163,13 +175,19 @@ function node_event_preprocess_node__event(&$variables) {
     $variables["content"]["field_published_date"] = Drupal::theme()
       ->render("detail_item", $vars);
   }
+  else {
+    unset($variables["content"]["field_published_date"]);
+  }
 
-  // Render the event_type into a details_item.
+  // Render the field_multiple_neighborhoods into a details_item.
   if (isset($variables["content"]["field_multiple_neighborhoods"]["#items"])) {
     $vars["label"] = $variables["content"]["field_multiple_neighborhoods"]["#title"] . ":";
     $vars["body"] = $variables["content"]["field_multiple_neighborhoods"];
     $variables["content"]["field_multiple_neighborhoods"] = Drupal::theme()
       ->render("detail_item", $vars);
+  }
+  else {
+    unset($variables["content"]["field_multiple_neighborhoods"]);
   }
 
   // Render the downloads (field_links) into a details_item.
@@ -178,6 +196,9 @@ function node_event_preprocess_node__event(&$variables) {
     $vars["body"] = $variables["content"]["field_links"];
     $variables["content"]["field_links"] = Drupal::theme()
       ->render("detail_item", $vars);
+  }
+  else {
+    unset($variables["content"]["field_links"]);
   }
 
   // Check for cancelled state.
