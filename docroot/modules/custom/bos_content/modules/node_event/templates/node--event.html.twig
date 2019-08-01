@@ -151,8 +151,8 @@
       {% if content.field_date_range %}
         <div class="event-date-wrapper">
           <div class="event-date sidebar-header">
-            {% if content.field_date_range.0 %}
-              {{ content.field_date_range.0 }}
+            {% if content.field_date_range.0.start_date %}
+              {{ content.field_date_range.0.start_date }}
             {% endif %}
           </div>
         </div>
