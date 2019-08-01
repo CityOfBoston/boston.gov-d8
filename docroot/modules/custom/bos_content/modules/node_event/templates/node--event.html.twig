@@ -165,19 +165,19 @@
 
       {% endif %}
 
-      {% if content.field_address %}
+      {% if content.field_address["#items"] %}
         <div class="list-item">
           {{ content.field_address }}
         </div>
       {% endif %}
 
-      {% if content.field_email %}
+      {% if content.field_email["#items"] %}
         <div class="list-item">
           {{ content.field_email }}
         </div>
       {% endif %}
 
-      {% if content.field_phone_number %}
+      {% if content.field_phone_number["#items"] %}
         <div class="list-item">
           {{ content.field_phone_number }}
         </div>
@@ -195,7 +195,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_multiple_neighborhoods %}
+      {% if content.field_multiple_neighborhoods%}
         <div class="list-item">
           {{ content.field_multiple_neighborhoods }}
         </div>
@@ -219,7 +219,7 @@
         </div>
       {% endif %}
 
-      {% if (content.field_sidebar_components) %}
+      {% if content.field_sidebar_components %}
         <div class="list-item-wrapper">
           {{ content.field_sidebar_components }}
         </div>
