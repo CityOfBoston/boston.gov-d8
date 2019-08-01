@@ -943,6 +943,7 @@ function _bos_theme_render_snippets(array &$variables) {
 function _bos_theme_page_classes(array &$variables, string $current_path) {
   if (isset($variables['node']) && is_object($variables['node'])) {
 
+    /* $variables["attributes"]->addClass("page"); */
     $variables["attributes"]->addClass("mn");
 
     if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['header_image'])) {
