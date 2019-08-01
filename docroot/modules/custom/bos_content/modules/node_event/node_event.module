@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_theme().
@@ -61,7 +62,6 @@ function template_preprocess_node__event(array &$variables) {
       default:
         if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
           $photo_id = Html::getUniqueId('hro');
-          $variables['paragraph']->_photo_id = $photo_id;
           $variables['photo_id'] = $photo_id;
           $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
           $variables['#attached']['html_head'][] = [
