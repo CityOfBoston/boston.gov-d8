@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation to display a node.
  *
@@ -78,33 +76,30 @@
  * @see template_process()
  *
  * @ingroup themeable
- */
-hide($content['comments']);
-hide($content['links']);
-?>
+ #}
 
 <div class="mobile-1-col desktop-100 clearfix news-item news-item-listing">
   <div class="news-item-wrapper">
     <div class="mobile-1-col desktop-60-left news-left">
       <div class="thumb-wrapper float-left">
-        <?php if (isset($content['field_thumbnail'])): ?>
-          <?php print render($content['field_thumbnail']); ?>
-        <?php else: ?>
-          <div class="news-item-default-image" style="background-image: url('<?php print $asset_url ?>/images/<?php print $asset_name ?>/icons/news.svg');">
+        {% if content.field_thumbnail|render %}
+          {{ content.field_thumbnail }}
+        {% else %}
+          <div class="news-item-default-image" style="background-image: url('{{ $asset_url }}/images/{{ asset_name }}/icons/news.svg');">
             <span>Default News image</span>
           </div>
-        <?php endif; ?>
-        <div class="date-flag"><?php print render($content['field_published_date']); ?></div>
+        {% endif %}
+        <div class="date-flag">{{ content.field_published_date }}</div>
       </div>
       <h3 class="title">
-        <a href="<?php print $node_url; ?>">
-          <?php print truncate_utf8($title, 97, TRUE, TRUE); ?>
+        <a href="{{ node_url }}">
+          {{ title|truncate(97) }}
         </a>
       </h3>
     </div>
     <div class="mobile-1-col desktop-40-left news-right">
-      <div class="contact-wrapper"><?php print render($content['field_contact']); ?></div>
-      <div class="intro-text"><?php print render($content['field_intro_text']); ?></div>
+      <div class="contact-wrapper">{{ content.field_contact }}</div>
+      <div class="intro-text">{{ content.field_intro_text }}</div>
     </div>
   </div>
 </div>
