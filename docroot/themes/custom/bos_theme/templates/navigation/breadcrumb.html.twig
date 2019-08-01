@@ -2,7 +2,7 @@
    @file
      Template for site breadcrumbs.
 #}
-{% if display_breadcrumb and not breadcrumb.isEmpty %}
+{% if cob.display_breadcrumb and not breadcrumb.isEmpty %}
    <div id="breadcrumb" data-swiftype-index="false">
       <nav class="brc" role="navigation" aria-labelledby="system-breadcrumb">
          <div class="a11y--h"><span class="brc-t">{{ title }}</span></div>
@@ -14,7 +14,7 @@
                   {% else %}
                      {{ item.text }}
                   {% endif %}
-                  <span class="brc-s"> {{ breadcrumb_separator }} </span>
+                  <span class="brc-s"> {{ cob.breadcrumb_separator }} </span>
                </li>
             {% endfor %}
             <li class="brc-l-i">
