@@ -1,13 +1,15 @@
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - core.entity_view_mode.node.calendar_listing
+    - field.storage.node.field_date_range
     - node.type.event
     - taxonomy.vocabulary.311_request
   module:
     - better_exposed_filters
     - datetime
+    - datetime_range
     - node
     - taxonomy
     - user
@@ -119,6 +121,14 @@ display:
           quantity: 9
       style:
         type: default
+        options:
+          grouping:
+            -
+              field: field_date_range
+              rendered: true
+              rendered_strip: false
+          row_class: ''
+          default_row_class: true
       row:
         type: fields
       fields:
@@ -173,6 +183,71 @@ display:
           view_mode: calendar_listing
           entity_type: node
           plugin_id: rendered_entity
+        field_date_range:
+          id: field_date_range
+          table: node__field_date_range
+          field: field_date_range
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: '<h2 class="listing-group-title">{{ field_date_range__value|date(''F j, Y'') }}</h2>'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: '0'
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: '0'
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: daterange_default
+          settings:
+            timezone_override: ''
+            format_type: date_format_normal_date
+            separator: '-'
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         status:
           value: '1'
@@ -592,6 +667,7 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
@@ -635,6 +711,7 @@ display:
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.event.default'
+        - 'config:core.entity_view_display.node.event.featured_item'
         - 'config:core.entity_view_display.node.how_to.article'
         - 'config:core.entity_view_display.node.how_to.calendar_listing'
         - 'config:core.entity_view_display.node.how_to.contact'
@@ -720,6 +797,7 @@ display:
         - 'config:core.entity_view_display.node.topic_page.listing_long'
         - 'config:core.entity_view_display.node.transaction.default'
         - 'config:core.entity_view_display.node.transaction.listing'
+        - 'config:field.storage.node.field_date_range'
   page_1:
     display_plugin: page
     id: page_1
@@ -732,6 +810,7 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
+        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
@@ -775,6 +854,7 @@ display:
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.event.default'
+        - 'config:core.entity_view_display.node.event.featured_item'
         - 'config:core.entity_view_display.node.how_to.article'
         - 'config:core.entity_view_display.node.how_to.calendar_listing'
         - 'config:core.entity_view_display.node.how_to.contact'
@@ -860,3 +940,4 @@ display:
         - 'config:core.entity_view_display.node.topic_page.listing_long'
         - 'config:core.entity_view_display.node.transaction.default'
         - 'config:core.entity_view_display.node.transaction.listing'
+        - 'config:field.storage.node.field_date_range'
