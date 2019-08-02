@@ -82,14 +82,7 @@
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
 
-        {% if not node and not cob.header_image %}
-          {% if node.type.entity.label|lower == 'tabbed_content' or node.type.entity.label|lower == 'how_to' %}
-            {{ drupal_block('system_breadcrumb_block') }}
-          {% endif %}
-        {%  endif %}
-
-        {{ title_prefix }}
-
+       {{ title_prefix }}
         {%  if title and not hide_page_title %}
           {{ title }}
         {%  endif %}
