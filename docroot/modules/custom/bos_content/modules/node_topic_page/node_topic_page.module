@@ -39,14 +39,26 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
 
   $variables['attributes']->addClass('node-' . $node->id());
 
-  // Now make and render the Intro_image block.
-  $variables['header_image'] = FALSE;
-  if (isset($variables['content']['field_intro_image']) && $node->get('field_intro_image')->count()) {
-    $variables['header_image'] = TRUE;
-    _bos_content_fix_attributes($variables);
+
+  // Handle intro_image if present.
+  $background_image = $variables["elements"]["field_intro_image"];
+  if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+    $photo_id = Html::getUniqueId('hro');
+    $options["base-css"] = "height: 100% !important; max-height: none !important;";
+    $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id", $options);
+    $variables['#attached']['html_head'][] = [
+      [
+        "#tag" => "style",
+        "#value" => $css,
+        "#weight" => 100,
+      ],
+      'topic-page-intro-image-css',
+    ];
+
+    // Now make and render the Intro_image block.
     $nestedElement = [
       ["div" => "hero-image b b--fw b--fw--480"],
-      ["div" => "hero-image-wrapper " . $variables['photo_id'] ?? "" . " hro hro--pt hro--pb"],
+      ["div" => "hero-image-wrapper $photo_id hro hro--pt hro--pb"],
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
   }
@@ -139,32 +151,5 @@ function node_topic_page_node__topic_page__listing_long(&$variables) {
 function template_preprocess_node__topic_page(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
-  }
-  // Handle intro_image if present.
-  // Has to happen in this template_preprocess_hook or does not #attach(ed).
-  if (isset($variables['content']['field_intro_image'])) {
-    $background_image = $variables["elements"]["field_intro_image"];
-    switch ($variables["elements"]["#view_mode"]) {
-      case "listing_long":
-      case "listing":
-        $variables['photo_id'] = "";
-        break;
-
-      default:
-        if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
-          $photo_id = Html::getUniqueId('hro');
-          $variables['photo_id'] = $photo_id;
-          $options["base-css"] = "height: 100% !important;";
-          $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id", $options);
-          $variables['#attached']['html_head'][] = [
-            [
-              "#tag" => "style",
-              "#value" => $css,
-              "#weight" => 100,
-            ],
-            'topic-page-intro-image-css',
-          ];
-        }
-    }
   }
 }

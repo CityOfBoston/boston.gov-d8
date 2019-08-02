@@ -51,7 +51,9 @@
 
             {% if content.field_intro_text %}
               <div class="topic-intro-text-container">
-                <div class="intro-text-top"></div>
+                <div class="intro-text-top">
+                  {{ drupal_block('system_breadcrumb_block') }}
+                </div>
                 <div class="topic-intro-text-content">
 
                   {{ content.field_intro_text }}
