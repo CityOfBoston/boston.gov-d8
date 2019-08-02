@@ -103,20 +103,6 @@
           <ul class="action-links">{{ action_links }}</ul>
         {%  endif %}
 
-        {% if node %}
-
-          {% if content.intro_image %}
-            {{ content.intro_image }}
-          {%  endif %}
-
-          {% if cob.header_image or content.intro_image %}
-            <div class="brc--wh" data-swiftype-index="false">
-              {{ drupal_block('system_breadcrumb_block') }}
-            </div>
-          {% endif %}
-
-        {% endif %}
-
         {{ page.content }}
 
         {{ feed_icons }}
