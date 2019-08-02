@@ -5,6 +5,7 @@
  * Provides an node_event entity type.
  */
 
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\Element;
 use Drupal\bos_core\BackgroundResponsiveImage;
 
@@ -149,7 +150,7 @@ function node_event_preprocess_node__event(&$variables) {
   }
   else {
     $vars["label"] = "Price:";
-    $vars["body"] = \Drupal\Core\Render\Markup::create('<div class="detail-item__body detail-item__body--secondary field-item">FREE</div>');
+    $vars["body"] = Markup::create('<div class="detail-item__body detail-item__body--secondary field-item">FREE</div>');
     $variables["content"]["cost"] = Drupal::theme()->render("detail_item", $vars);
   }
 
