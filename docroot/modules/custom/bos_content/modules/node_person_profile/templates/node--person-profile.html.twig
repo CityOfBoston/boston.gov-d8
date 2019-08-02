@@ -6,6 +6,11 @@
  *
  * @see https%0%
  #}
+
+<div class="brc--wh" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
+
 <article{{ attributes }}>
   <div class="person-profile-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-right">
@@ -41,7 +46,9 @@
 
       {{ content.field_political_party }}
 
-      {{ content.field_sidebar_components }}
+      {% if content.field_sidebar_components["#items"]  %}
+{#        {{ content.field_sidebar_components }}#}
+      {% endif %}
   </div>
 
   {% if content.field_components["#items"] %}

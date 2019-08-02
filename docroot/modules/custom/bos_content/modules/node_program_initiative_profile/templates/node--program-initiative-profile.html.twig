@@ -78,7 +78,15 @@
  * @ingroup themeable
  #}
 
-{# TODO: review variable assignment: has_sidebar = $elements.field_sidebar_components or $elements.field_program_logo #}
+{% if content.intro_image %}
+
+  {{ content.intro_image }}
+
+  <div class="brc--wh" data-swiftype-index="false">
+    {{ drupal_block('system_breadcrumb_block') }}
+  </div>
+
+{% endif %}
 
 <article{{ attributes }}>
 

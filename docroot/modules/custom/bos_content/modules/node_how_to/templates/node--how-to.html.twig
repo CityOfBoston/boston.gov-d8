@@ -34,6 +34,7 @@
 </div>
 
 <article{{ attributes }}>
+  {{ drupal_block('system_breadcrumb_block') }}
   {% if content.field_updated_date %}
     <div class="brc-lu">
       Last updated:{{ content.field_updated_date }}
