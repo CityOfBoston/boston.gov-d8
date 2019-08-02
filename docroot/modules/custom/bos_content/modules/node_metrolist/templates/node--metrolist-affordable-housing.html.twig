@@ -14,6 +14,11 @@
  * @see template_preprocess_metrolist_affordable_housing()
  */
 #}
+
+<div class="brc--wh" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
+
 <article{{ attributes }}>
 
   {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
