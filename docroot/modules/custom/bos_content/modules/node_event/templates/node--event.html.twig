@@ -151,7 +151,9 @@
       {% if content.field_date_range %}
         <div class="event-date-wrapper">
           <div class="event-date sidebar-header">
-            {% if content.field_date_range.0 %}
+            {% if content.field_date_range.0.start_date %}
+              {{ content.field_date_range.0.start_date }}
+            {% elseif content.field_date_range.0["#text"] %}
               {{ content.field_date_range.0 }}
             {% endif %}
           </div>
@@ -165,19 +167,19 @@
 
       {% endif %}
 
-      {% if content.field_address %}
+      {% if content.field_address["#items"] %}
         <div class="list-item">
           {{ content.field_address }}
         </div>
       {% endif %}
 
-      {% if content.field_email %}
+      {% if content.field_email["#items"] %}
         <div class="list-item">
           {{ content.field_email }}
         </div>
       {% endif %}
 
-      {% if content.field_phone_number %}
+      {% if content.field_phone_number["#items"] %}
         <div class="list-item">
           {{ content.field_phone_number }}
         </div>
@@ -195,7 +197,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_multiple_neighborhoods %}
+      {% if content.field_multiple_neighborhoods%}
         <div class="list-item">
           {{ content.field_multiple_neighborhoods }}
         </div>
@@ -219,7 +221,7 @@
         </div>
       {% endif %}
 
-      {% if (content.field_sidebar_components) %}
+      {% if content.field_sidebar_components %}
         <div class="list-item-wrapper">
           {{ content.field_sidebar_components }}
         </div>

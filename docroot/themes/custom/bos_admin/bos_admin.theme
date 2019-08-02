@@ -389,7 +389,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
             "#url" => Url::fromRoute("entity.node.canonical", [
               "node" => $this_entity->id(),
             ], [
-              "fragment" => Html::cleanCssIdentifier(strtolower($chain[1]->field_short_title->value)),
+              "fragment" => Html::cleanCssIdentifier(strtolower($chain[1]->field_short_title->value ?? "")),
             ]),
             "#weight" => 100,
           ];

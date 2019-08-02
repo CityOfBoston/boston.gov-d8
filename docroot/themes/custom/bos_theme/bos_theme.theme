@@ -352,6 +352,12 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
+  // Determine if a header_image is being used.
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
+      && $variables['node']->get('field_intro_image')->count());
+  }
+
   // Create $variable elements for metatag injections.
   _bos_theme_metatags($variables);
 
@@ -403,12 +409,12 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-  if (!isset($variables["display_breadcrumb"])) {
-    $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
-    $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  if (!isset($variables["cob"]["display_breadcrumb"])) {
+    $variables["cob"]["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $variables["cob"]["display_breadcrumb"] = ($variables["cob"]["display_breadcrumb"] == 'yes' || $variables["cob"]["display_breadcrumb"] == 'admin' && arg(0) == 'admin');
   }
-  $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
-  $variables['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+  $variables["cob"]["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
+  $variables["cob"]['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
 
   // Optionally get rid of the homepage link.
   if (!theme_get_setting('boston_breadcrumb_home')) {
@@ -436,7 +442,7 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
       }
     }
     // Turn off the trailing separator.
-    $variables['display_trailing_separator'] = FALSE;
+    $variables["cob"]['display_trailing_separator'] = FALSE;
   }
 
   // Provide a navigational heading to give context for breadcrumb links to
@@ -943,9 +949,10 @@ function _bos_theme_render_snippets(array &$variables) {
 function _bos_theme_page_classes(array &$variables, string $current_path) {
   if (isset($variables['node']) && is_object($variables['node'])) {
 
+    /* $variables["attributes"]->addClass("page"); */
     $variables["attributes"]->addClass("mn");
 
-    if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['header_image'])) {
+    if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['cob']['header_image'])) {
       if (!$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
