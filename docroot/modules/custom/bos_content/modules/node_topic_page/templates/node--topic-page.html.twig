@@ -6,7 +6,11 @@
  *
  * @see https%0%
  #}
-{{ content.intro_image }}
+{% if content.intro_image %}
+
+  {{ content.intro_image }}
+
+{% endif %}
 
 <article{{ attributes }}>
 
