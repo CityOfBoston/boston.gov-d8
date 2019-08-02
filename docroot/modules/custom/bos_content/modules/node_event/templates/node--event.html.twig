@@ -78,25 +78,41 @@
  * @ingroup themeable
  #}
 
-{#<script>var event_id = "node-{{ node.nid }}"</script>#}
+{% if content.intro_image %}
+
+  {{ content.intro_image }}
+
+  <div class="brc--wh" data-swiftype-index="false">
+    {{ drupal_block('system_breadcrumb_block') }}
+  </div>
+
+{%  endif %}
+
 <article {{ attributes }}>
+
   {% if (content.field_updated_date) %}
     <div class="brc-lu">
       Last updated: {{ content.field_updated_date }}
     </div>
   {% endif %}
+
   <div class="department-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-left">
 
       {{ title_prefix }}
 
       {% if title %}
+
         <h1{{ title_attributes }}>
+
           {% if is_cancelled %}
             <span class='t--err t--s60pct'>Canceled:</span><br>
           {% endif %}
+
           {{ title.0 }}
+
         </h1>
+
       {%  endif %}
 
       {{ title_suffix }}

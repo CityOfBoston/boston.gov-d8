@@ -76,7 +76,7 @@ function node_landing_page_preprocess_breadcrumb(array &$variables) {
       return;
     }
     if ($node->getType() == "landing_page") {
-      $variables['display_breadcrumb'] = FALSE;
+      $variables["cob"]["display_breadcrumb"] = FALSE;
     }
   }
 }
