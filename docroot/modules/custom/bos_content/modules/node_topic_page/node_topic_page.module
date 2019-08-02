@@ -39,7 +39,6 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
 
   $variables['attributes']->addClass('node-' . $node->id());
 
-
   // Handle intro_image if present.
   $background_image = $variables["elements"]["field_intro_image"];
   if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
