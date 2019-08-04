@@ -845,7 +845,7 @@ function _bos_theme_make_nav(array &$variables, array $components, int $threshol
       if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
         // Add js to enable component_navigation in-page menu (and scroll).
         if (!$attached) {
-          $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+          $variables['#attached']['library'][] = "bos_theme/page.inpage_menu";
           $attached = TRUE;
         }
         // Build the in-page navigation menu and links.
