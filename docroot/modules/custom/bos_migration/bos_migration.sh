@@ -228,8 +228,11 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "include '/var/www/html/bostond8dev/docroot/modules/custom/bos_components/modules/bos_map/bos_map.install'; bos_map_install();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
+${drush} sset system.maintenance_mode 0
+${drush} sdel "bos_migration.active"
+${drush} sset "bos_migration.fileOps" "copy"
+${drush} cr
 dumpDB ${dbpath}/migration_FINAL.sql
 ${drush} ms  | tee -a ${logfile}
 
-${drush} sdel "bos_migration.active"
-${drush} sset "bos_migration.fileOps" "copy"
+
