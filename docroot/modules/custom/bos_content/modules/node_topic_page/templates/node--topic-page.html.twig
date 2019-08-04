@@ -14,7 +14,6 @@
 
 <article{{ attributes }}>
 
-  {% if title_prefix or title_suffix or display_submitted or unpublished or preview or not page and title %}
     <header class="topic-header">
 
       {{ title_prefix }}
@@ -85,7 +84,6 @@
       {% endif %}
 
     </header>
-  {% endif %}
 
   {{ content.field_components }}
 
