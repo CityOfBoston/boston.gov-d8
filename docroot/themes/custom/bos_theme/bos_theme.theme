@@ -366,7 +366,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
-  $variables['has_site_alert'] = !empty($variables['has_site_alert']);
+  $variables['cob']['has_site_alert'] = !empty($variables['cob']['has_site_alert']);
 
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
@@ -932,7 +932,7 @@ function _bos_theme_render_snippets(array &$variables) {
   $vars = array_merge($arr_base, ['#theme' => 'search']);
   $variables['search'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'seal']);
-  if ($variables['has_site_alert']) {
+  if ($variables['cob']['has_site_alert']) {
     $vars["#hidden"] = " hidden";
   }
   $variables['seal'] = \Drupal::service('renderer')->render($vars);
