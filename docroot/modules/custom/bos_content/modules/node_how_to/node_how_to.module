@@ -91,6 +91,10 @@ function node_how_to_preprocess_node__how_to(&$variables) {
   }
 
   $variables['tabs'] = $tabs;
+
+  // Add the js to enable the tabs.
+  $variables['#attached']['library'][] = "bos_theme/page.tabbed_page";
+
   $variables['image_class'] = "hro--d";
 
   if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {

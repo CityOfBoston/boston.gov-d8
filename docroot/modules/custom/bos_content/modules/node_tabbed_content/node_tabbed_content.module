@@ -41,7 +41,7 @@ function node_tabbed_content_preprocess_page(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
-
+  // Create the tabs.
   $node = $variables['elements']['#node'];
   $tab_paragraphs = $node->get('field_tabbed_content');
   $tab_paragraphs = $tab_paragraphs->referencedEntities();
@@ -72,6 +72,9 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
       $variables["attributes"]->addClass("node-unpublished");
     }
   }
+
+  // Add the js to enable the tabs.
+  $variables['#attached']['library'][] = "bos_theme/page.tabbed_page";
 }
 
 /**
