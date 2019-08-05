@@ -303,9 +303,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Add in the js required by each page.
   $variables['#attached']['library'][] = "bos_theme/page.assets";
 
-  // Ensure the $variables{"attribute"] is an Attribute object.
-  _bos_theme_fix_attributes($variables);
-
   // TODO: review this theme suggestion.
   // This is probably related to (site_alert) api calls (built in views) which
   // are passed with an "embed" querystring parameter to extract only the
@@ -314,7 +311,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     $variables['theme_hook_suggestions'][] = 'page__embed';
   }
 
-  // TODO: Review if needed in D8.
   // Find the title of the menu used by the secondary links.
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
@@ -324,9 +320,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
       $variables['secondary_menu_heading'] = $menus[$secondary_links];
     }
   }
-
-  // Setup hero style page banner images.
-  $current_path = \Drupal::service('path.current')->getPath();
 
   // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
   // Custom 404/403 pages.
@@ -353,16 +346,13 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   }
 
   // Determine if a header_image is being used.
-  if (isset($variables['node']) && is_object($variables['node'])) {
-    $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
-      && $variables['node']->get('field_intro_image')->count());
-  }
+  _bos_theme_has_header($variables);
 
   // Create $variable elements for metatag injections.
   _bos_theme_metatags($variables);
 
   // Create necessary page classes.
-  _bos_theme_page_classes($variables, $current_path);
+  _bos_theme_page_classes($variables);
 
   // By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
@@ -946,10 +936,14 @@ function _bos_theme_render_snippets(array &$variables) {
  * @param string $current_path
  *   The current path.
  */
-function _bos_theme_page_classes(array &$variables, string $current_path) {
+function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   if (isset($variables['node']) && is_object($variables['node'])) {
 
-    /* $variables["attributes"]->addClass("page"); */
+    if ($current_path == "") {
+      $current_path = \Drupal::service('path.current')->getPath();
+    }
+
+    // Start adding class mn (main-node???) to all nodes.
     $variables["attributes"]->addClass("mn");
 
     if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['cob']['header_image'])) {
@@ -980,5 +974,18 @@ function _bos_theme_page_classes(array &$variables, string $current_path) {
     if (!$variables["attributes"]->hasClass("page--wa")) {
       $variables["attributes"]->addClass("page--wa");
     }
+  }
+}
+
+/**
+ * Determine if a header_image is being used.
+ *
+ * @param $variables
+ *   Usual array.
+ */
+function _bos_theme_has_header(&$variables) {
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
+      && $variables['node']->get('field_intro_image')->count());
   }
 }

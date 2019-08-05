@@ -84,6 +84,13 @@
   <div class="brc--wh" data-swiftype-index="false">
     {{ drupal_block('system_breadcrumb_block') }}
   </div>
+
+{% else %}
+
+  <div class="breadcrumb" data-swiftype-index="false">
+    {{ drupal_block('system_breadcrumb_block') }}
+  </div>
+
 {% endif %}
 
 <article{{ attributes }}>
