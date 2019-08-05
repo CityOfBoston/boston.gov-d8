@@ -980,10 +980,10 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
 /**
  * Determine if a header_image is being used.
  *
- * @param $variables
+ * @param array $variables
  *   Usual array.
  */
-function _bos_theme_has_header(&$variables) {
+function _bos_theme_has_header(array &$variables) {
   if (isset($variables['node']) && is_object($variables['node'])) {
     $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
       && $variables['node']->get('field_intro_image')->count());

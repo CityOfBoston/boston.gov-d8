@@ -191,7 +191,7 @@ function node_event_preprocess_node__event(&$variables) {
 function node_event_preprocess_page(&$variables) {
   _bos_components_fix_attributes($variables);
 
-  if (function_exists("_bos_theme_has_header")){
+  if (function_exists("_bos_theme_has_header")) {
     _bos_theme_has_header($variables);
   }
   elseif (isset($variables['node']) && is_object($variables['node'])) {
