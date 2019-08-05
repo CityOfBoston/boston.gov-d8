@@ -41,7 +41,7 @@ function node_tabbed_content_preprocess_page(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
-
+  // Create the tabs.
   $node = $variables['elements']['#node'];
   $tab_paragraphs = $node->get('field_tabbed_content');
   $tab_paragraphs = $tab_paragraphs->referencedEntities();
@@ -54,9 +54,24 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
   }
   $variables['tabs'] = $tabs;
 
-  $variables['image_class'] = $variables['photo_id'] . " hro--b";
-  if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {
-    $variables['image_class'] = $variables['photo_id'] . " hro--t";
+  // Handle intro_image if present.
+  $variables['image_class'] = "hro--b";
+  if (isset($variables['content']['field_intro_image'])) {
+    $background_image = $variables["elements"]["field_intro_image"];
+    if ($background_image["#items"]->count()) {
+      $photo_id = Html::getUniqueId('hro');
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'event-intro-image-css',
+      ];
+      // Add css for the field_intro_image (hero image).
+      $variables['image_class'] = "$photo_id hro--t";
+    }
   }
 
   // Add markup to locate the contextual editor button.
@@ -72,6 +87,9 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
       $variables["attributes"]->addClass("node-unpublished");
     }
   }
+
+  // Add the js to enable the tabs.
+  $variables['#attached']['library'][] = "bos_theme/page.tabbed_page";
 }
 
 /**
@@ -110,24 +128,5 @@ function node_tabbed_content_preprocess_field__field_tabbed_content(&$variables)
 function template_preprocess_node__tabbed_content(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
-  }
-  // Handle intro_image if present.
-  // Has to happen in this template_preprocess_hook or does not #attach(ed).
-  if (isset($variables['content']['field_intro_image'])) {
-    $background_image = $variables["elements"]["field_intro_image"];
-    if ($background_image["#items"]->count()) {
-      $photo_id = Html::getUniqueId('hro');
-      $variables['paragraph']->_photo_id = $photo_id;
-      $variables['photo_id'] = $photo_id;
-      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
-      $variables['#attached']['html_head'][] = [
-        [
-          "#tag" => "style",
-          "#value" => $css,
-          "#weight" => 100,
-        ],
-        'event-intro-image-css',
-      ];
-    }
   }
 }
