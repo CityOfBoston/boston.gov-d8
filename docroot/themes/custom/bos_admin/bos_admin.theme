@@ -330,9 +330,11 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
         // Get this entity to start from.
         $this_entity = $form_state->getFormObject()->getEntity();
         $chain = [$this_entity];
-        while ($this_entity->hasField("parent_id")) {
+        while (isset($this_entity) && $this_entity->hasField("parent_id")) {
           $this_entity = $this_entity->getParentEntity();
-          $chain[] = $this_entity;
+          if (isset($this_entity)) {
+            $chain[] = $this_entity;
+          }
         }
         $chain = array_reverse($chain);
         // Check the 'top' $chain entity is the entity reported by the form.
