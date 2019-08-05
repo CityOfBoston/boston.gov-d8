@@ -54,7 +54,6 @@ function node_landing_page_preprocess_page(&$variables) {
         if ($variables["attributes"]->hasClass("page--wa")) {
           $variables["attributes"]->removeClass("page--wa");
         }
-        $variables["attributes"]->addClass("page");
         $variables["attributes"]->addClass("page--nm");
       }
     }
