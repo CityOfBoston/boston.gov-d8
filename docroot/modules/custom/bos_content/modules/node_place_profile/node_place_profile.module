@@ -88,6 +88,16 @@ function node_place_profile_preprocess_node__place_profile__listing(&$variables)
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_place_profile_preprocess_page(&$variables) {
+  _bos_components_fix_attributes($variables);
+  if (isset($variables['node']) && $variables['node']->bundle() == "place_profile") {
+    $variables["attributes"]->addClass("page");
+  }
+}
+
+/**
  * Prepares variables for place profile templates.
  *
  * Default template: place-profile.html.twig.
