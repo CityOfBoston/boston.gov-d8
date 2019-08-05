@@ -179,8 +179,30 @@ function node_event_preprocess_node__event(&$variables) {
       ["div" => "hro $photo_id hro--pt hro--pb"],
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+
+    $variables["attributes"]->addClass("with-hero");
   }
 
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_event_preprocess_page(&$variables) {
+  _bos_components_fix_attributes($variables);
+
+  if (function_exists("_bos_theme_has_header")){
+    _bos_theme_has_header($variables);
+  }
+  elseif (isset($variables['node']) && is_object($variables['node'])) {
+    $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
+      && $variables['node']->get('field_intro_image')->count());
+  }
+
+  if (isset($variables['node']) && $variables['node']->bundle() == "event"
+    && !$variables['cob']['header_image']) {
+    $variables["attributes"]->addClass("page");
+  }
 }
 
 /**

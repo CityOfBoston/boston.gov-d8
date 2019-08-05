@@ -33,6 +33,16 @@ function node_topic_page_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
+function node_topic_page_preprocess_page(&$variables) {
+  _bos_components_fix_attributes($variables);
+  if (isset($variables['node']) && $variables['node']->bundle() == "topic_page") {
+    $variables["attributes"]->addClass("page");
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function node_topic_page_preprocess_node__topic_page(&$variables) {
   _bos_theme_fix_attributes($variables);
   $node = $variables['elements']['#node'];

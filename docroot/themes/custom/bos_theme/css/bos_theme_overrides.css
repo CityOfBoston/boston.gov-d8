@@ -2,24 +2,20 @@
 * These changes are destined for patterns library at some point ...
 */
 
-.dialog-off-canvas-main-canvas {
-   /* padding-top: 65px; */
+/*
+David:
+Where: page.html.twig.
+What:  Locates top of page considering the admin toolbar.
+ */
+.toolbar-fixed #main-menu {
+  top: 2.15em;
 }
-
-/* Fixes header location with the new toolbar */
-.toolbar-horizontal.toolbar-fixed div.dialog-off-canvas-main-canvas,
-.toolbar-horizontal.toolbar-fixed header#main-menu, .toolbar-vertical header#main-menu,
-.toolbar-horizontal.toolbar-fixed nav.nv-m, .toolbar-vertical nav.nv-m{
-  top: 39px;
+.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu {
+  top: 4.4em;
 }
-
-.toolbar-horizontal.toolbar-fixed.toolbar-tray-open div.dialog-off-canvas-main-canvas,
-.toolbar-horizontal.toolbar-fixed.toolbar-tray-open header#main-menu,
-.toolbar-horizontal.toolbar-fixed.toolbar-tray-open nav.nv-m{
-  top: 79px;
-}
-.toolbar-fixed div.dialog-off-canvas-main-canvas {
-  position: relative;
+.toolbar-toggle-orientation {
+  visibility: hidden;
+  display: none;
 }
 
 /* locates and themes the search block on the 404 page. */
@@ -602,4 +598,20 @@ What:  Nudges the breadcrumb a bit inside its bounding box..
   text-align: left;
   width: 100%;
   display: none; /* Hide for now (2019) - Can enable later if desired. */
+}
+
+/*
+David:
+Where: page.html.twig.
+What:  Fixes the message box on the page without disrupting layout.
+       Note: Completely overrides public.css.
+ */
+.messages,.messages--error,.messages--status,.messages--warning {
+  margin: 1rem 0;
+  position: absolute;
+  padding: 10px 10px 10px 47px;
+  border: 2px solid #1871bd;
+  z-index: 502;
+  background-color: rgba(255,255,255,.7);
+  width: calc(100% - 200px);
 }
