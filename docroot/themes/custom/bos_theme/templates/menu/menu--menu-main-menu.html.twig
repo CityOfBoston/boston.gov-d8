@@ -33,15 +33,14 @@
         {% if menu_level == 0 %}
             <ul class="nv-m-c-l"{{ attributes }}>
         {% else %}
-            <ul class="nv-m-c-l-l nv-m-c-l-l--h"{{ attributes }}>
+            <ul class="nv-m-c-l-l"{{ attributes }}>
             <li class="nv-m-c-bc"><button class="nv-m-c-b">Back</button></li>
         {% endif %}
         {% for item in items %}
             {% set uri = item.url.toString %}
             {% if uri == '' %}
 							<li class="nv-m-c-l-i is-e expanded {{ item.classes }}"{{ item.attributes }}>
-									<a href="#" title class="nv-m-c-a mv-m-c-a--p nolink nolink--a {{ item.linkclass }}">{{ item.title }}</a>
-                  
+									<a href="#" title class="nv-m-c-a mv-m-c-a--p nolink nolink--a {{ item.linkclass }}">{{ item.title }}</a>                  
 									{% if item.below %}
 											{{ menus.menu_links(item.below, attributes, menu_level + 1) }}
 									{% endif %}
