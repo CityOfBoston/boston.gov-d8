@@ -34,6 +34,7 @@
             <ul class="nv-m-c-l"{{ attributes }}>
         {% else %}
             <ul class="nv-m-c-l-l nv-m-c-l-l--h"{{ attributes }}>
+            <li class="nv-m-c-bc"><button class="nv-m-c-b">Back</button></li>
         {% endif %}
         {% for item in items %}
             {% set uri = item.url.toString %}
