@@ -33,4 +33,5 @@ class LinkUriExt extends LinkUri {
       return 'route:<nolink>';
     }
   }
+
 }
