@@ -36,12 +36,22 @@
             <ul class="nv-m-c-l"{{ attributes }}>
         {% endif %}
         {% for item in items %}
+            {% set uri = item.url.toString %}
+            {% if uri == '' %}
+							<li class="nv-m-c-l-i is-e expanded {{ item.classes }}"{{ item.attributes }}>
+									{{ link(item.title, item.url, { 'class':['nv-m-c-a', 'mv-m-c-a--p', 'nolink', 'nolink--a', item.linkclass]}) }}
+									{% if item.below %}
+											{{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+									{% endif %}
+							</li>
+            {% else %}
             <li class="nv-m-c-l-i is-l leaf {{ item.classes }}"{{ item.attributes }}>
                 {{ link(item.title, item.url, { 'class':['nv-m-c-a', 'mv-m-c-a--p', item.linkclass]}) }}
                 {% if item.below %}
                     {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
                 {% endif %}
             </li>
+            {% endif %}
         {% endfor %}
         </ul>
     {% endif %}
