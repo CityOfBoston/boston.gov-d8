@@ -35,7 +35,8 @@ function node_topic_page_theme() {
  */
 function node_topic_page_preprocess_page(&$variables) {
   _bos_components_fix_attributes($variables);
-  if (is_object($variables['node']) && isset($variables['node']) && $variables['node']->bundle() == "topic_page") {
+  if (isset($variables['node']) && is_object($variables['node'])
+    && $variables['node']->bundle() == "topic_page") {
     $variables["attributes"]->addClass("page");
   }
 }
