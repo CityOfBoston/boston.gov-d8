@@ -92,7 +92,7 @@ function node_place_profile_preprocess_node__place_profile__listing(&$variables)
  */
 function node_place_profile_preprocess_page(&$variables) {
   _bos_components_fix_attributes($variables);
-  if (isset($variables['node']) && $variables['node']->bundle() == "place_profile") {
+  if (is_object($variables['node']) && isset($variables['node']) && $variables['node']->bundle() == "place_profile") {
     $variables["attributes"]->addClass("page");
   }
 }

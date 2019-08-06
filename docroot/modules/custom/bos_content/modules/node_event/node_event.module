@@ -199,7 +199,8 @@ function node_event_preprocess_page(&$variables) {
       && $variables['node']->get('field_intro_image')->count());
   }
 
-  if (isset($variables['node']) && $variables['node']->bundle() == "event"
+  if (is_object($variables['node'])
+    && isset($variables['node']) && $variables['node']->bundle() == "event"
     && !$variables['cob']['header_image']) {
     $variables["attributes"]->addClass("page");
   }
