@@ -30,7 +30,7 @@ class LinkUriExt extends LinkUri {
       return parent::transform($value, $migrate_executable, $row, $destination_property);
     }
     catch (MigrateException $e) {
-      return 'internal:/';
+      return 'route:<nolink>';
     }
   }
 }
