@@ -266,6 +266,13 @@ class MigrationConfigAlter {
    * @var array
    */
   protected static $migrationOverride = [
+    "d7_menu_links" => [
+      "process" => [
+        "link/uri" => [
+          "plugin" => "link_uri_ext",
+        ],
+      ],
+    ],
     // Migrate the addressfield.
     "d7_node:department_profile" => [
       "process" => [
