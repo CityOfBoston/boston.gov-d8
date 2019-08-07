@@ -25,21 +25,25 @@
  * @ingroup views_templates
  #}
 
+<div class="b b--fw b--w">
+  <div class="b-c">
+	{% if exposed %}
+		<div class="view-filters">
+			{{ exposed }}
+		</div>
+	{% endif %}
+  </div>
+</div>
 <div class="p-v700">
   {{ title_prefix }}
   {% if title %}
     {{ title }}
   {% endif %}
   {{ title_suffix }}
+
   {% if header %}
     <div class="view-header">
       {{ header }}
-    </div>
-  {% endif %}
-
-  {% if exposed %}
-    <div class="view-filters">
-      {{ exposed }}
     </div>
   {% endif %}
 
