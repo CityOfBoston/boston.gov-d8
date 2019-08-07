@@ -19,6 +19,15 @@ function node_person_profile_theme() {
     'node__person_profile__embed' => [
       'base hook' => 'node',
     ],
+    'node__person_profile__listing' => [
+      'base hook' => 'node',
+    ],
+    'field__field_email__mode__listing' => [
+      'base hook' => 'field',
+    ],
+    'field__field_phone_number__mode__listing' => [
+      'base hook' => 'field',
+    ],
   ];
 }
 
@@ -28,6 +37,17 @@ function node_person_profile_theme() {
 function node_person_profile_preprocess_node__person_profile__embed(&$variables) {
   _node_person_profile_prepare_card($variables);
   $variables["attributes"]->removeClass("node-person-profile");
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_person_profile_preprocess_node__person_profile__listing(&$variables) {
+  $variables["person_link"] = "#";
+  if (!empty($variables["nid"])) {
+    $variables["person_link"] = \Drupal::service('path.alias_manager')
+      ->getAliasByPath('/node/' . $variables["nid"]);
+  }
 }
 
 /**
