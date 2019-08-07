@@ -27,6 +27,12 @@ function node_topic_page_theme() {
     'node__topic_page__listing_long' => [
       'base hook' => 'node',
     ],
+    'node__topic_page__featured_topics' => [
+      'base hook' => 'node',
+    ],
+    'field__node__field_intro_text__topic_page' => [
+      'base hook' => 'field',
+    ],
   ];
 }
 
@@ -51,26 +57,28 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
   $variables['attributes']->addClass('node-' . $node->id());
 
   // Handle intro_image if present.
-  $background_image = $variables["elements"]["field_intro_image"];
-  if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
-    $photo_id = Html::getUniqueId('hro');
-    $options["base-css"] = "height: 100% !important; max-height: none !important;";
-    $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id", $options);
-    $variables['#attached']['html_head'][] = [
-      [
-        "#tag" => "style",
-        "#value" => $css,
-        "#weight" => 100,
-      ],
-      'topic-page-intro-image-css',
-    ];
+  if (!empty($variables["elements"]["field_intro_image"])) {
+    $background_image = $variables["elements"]["field_intro_image"];
+    if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+      $photo_id = Html::getUniqueId('hro');
+      $options["base-css"] = "height: 100% !important; max-height: none !important;";
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id", $options);
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'topic-page-intro-image-css',
+      ];
 
-    // Now make and render the Intro_image block.
-    $nestedElement = [
-      ["div" => "hero-image b b--fw b--fw--480"],
-      ["div" => "hero-image-wrapper $photo_id hro hro--pt hro--pb"],
-    ];
-    $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+      // Now make and render the Intro_image block.
+      $nestedElement = [
+        ["div" => "hero-image b b--fw b--fw--480"],
+        ["div" => "hero-image-wrapper $photo_id hro hro--pt hro--pb"],
+      ];
+      $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+    }
   }
 }
 
@@ -144,6 +152,16 @@ function node_topic_page_node__topic_page__listing_long(&$variables) {
       }
     }
     $variables['nav_links'] = $nav_links;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_topic_page_preprocess_node__topic_page__featured_topics(&$variables) {
+  if ($node = $variables['node']) {
+    static $topics_counter;
+    $variables['topics_counter'] = ++$topics_counter;
   }
 }
 
