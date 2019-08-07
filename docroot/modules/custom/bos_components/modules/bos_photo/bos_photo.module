@@ -87,6 +87,8 @@ function bos_photo_preprocess_field(&$vars) {
  *   - elements: An associative array containing the post information and any
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
+ *
+ * @throws \Exception
  */
 function template_preprocess_paragraph__photo(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
