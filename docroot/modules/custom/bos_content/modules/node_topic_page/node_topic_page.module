@@ -27,6 +27,9 @@ function node_topic_page_theme() {
     'node__topic_page__listing_long' => [
       'base hook' => 'node',
     ],
+    'field__node__field_intro_text__topic_page' => [
+      'base hook' => 'field',
+    ],
   ];
 }
 
@@ -145,6 +148,13 @@ function node_topic_page_node__topic_page__listing_long(&$variables) {
     }
     $variables['nav_links'] = $nav_links;
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_topic_page_field__node__field_intro_text__topic_page(&$varibles) {
+//  $variables['attributes']['class'][] = "";
 }
 
 /**
