@@ -46,7 +46,7 @@ function node_article_preprocess_page(&$variables) {
   $variables['hide_page_title'] = TRUE;
 
   _bos_components_fix_attributes($variables);
-  if (isset($variables['node']) && $variables['node']->bundle() == "article") {
+  if (isset($variables['node']) && is_object($variables['node']) && $variables['node']->bundle() == "article") {
     $variables["attributes"]->addClass("page");
   }
 }

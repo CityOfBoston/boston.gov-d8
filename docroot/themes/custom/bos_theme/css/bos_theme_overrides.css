@@ -613,5 +613,60 @@ What:  Fixes the message box on the page without disrupting layout.
   border: 2px solid #1871bd;
   z-index: 502;
   background-color: rgba(255,255,255,.7);
+  width: 80%;
+}
+
+/*
+David:
+Where: page.html.twig.
+What:  Fixes the message box on the page without disrupting layout.
+       Note: Completely overrides public.css.
+ */
+.messages,.messages--error,.messages--status,.messages--warning {
+  margin: 1rem 0;
+  position: absolute;
+  padding: 10px 10px 10px 47px;
+  border: 2px solid #1871bd;
+  z-index: 502;
+  background-color: rgba(255,255,255,.7);
   width: calc(100% - 200px);
+}
+/*
+David:
+Where: node--department-profile--card.html.twig.
+What:  Ensures the svg shows up.
+ */
+a .cdd-ic {
+  min-width: 78px;
+}
+a .cdd-c svg {
+  height: 40px;
+  width:  40px;
+}
+
+/*
+David:
+Where: field--field-department-profile--contact--mode--popup-icon.html.twig
+What:  Sizes svg for popup-icon display of department_profile.
+*/
+.department-title .di-ic {
+  width: 80px;
+}
+
+/*
+David:
+Where: paragraph--newsletter.html.twig
+What: Locates placeholder text in middle of input box.
+*/
+.txt-f::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  line-height: 52px;
+}
+.txt-f::-moz-placeholder { /* Firefox 19+ */
+  line-height: 52px;
+}
+.txt-f:-webkit-input-placeholder { /* Internet Explorer 10-11 */
+  line-height: 52px;
+}
+.txt-f::-ms-input-placeholder { /* Microsoft Edge */
+  line-height: 52px;
 }
