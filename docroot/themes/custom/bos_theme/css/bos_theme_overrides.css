@@ -643,6 +643,7 @@ a .cdd-c svg {
   height: 40px;
   width:  40px;
 }
+
 /*
 David:
 Where: field--field-department-profile--contact--mode--popup-icon.html.twig
@@ -650,4 +651,25 @@ What:  Sizes svg for popup-icon display of department_profile.
 */
 .department-title .di-ic {
   width: 80px;
+}
+
+/*
+David:
+Where: paragraph--newsletter.html.twig
+What: Locates placeholder text in middle of input box.
+*/
+.txt-f::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  vertical-align: top;
+}
+.txt-f:-webkit-input-placeholder { /* Internet Explorer 10-11 */
+  vertical-align: middle;
+}
+.txt-f::-webkit-input-placeholder { /* Internet Explorer 10-11 */
+  vertical-align: middle;
+}
+.txt-f::-ms-input-placeholder { /* Microsoft Edge */
+  vertical-align: middle;
+}
+.txt-f {
+  vertical-align: middle;
 }
