@@ -659,17 +659,14 @@ Where: paragraph--newsletter.html.twig
 What: Locates placeholder text in middle of input box.
 */
 .txt-f::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-  vertical-align: top;
+  line-height: 52px;
+}
+.txt-f::-moz-placeholder { /* Firefox 19+ */
+  line-height: 52px;
 }
 .txt-f:-webkit-input-placeholder { /* Internet Explorer 10-11 */
-  vertical-align: middle;
-}
-.txt-f::-webkit-input-placeholder { /* Internet Explorer 10-11 */
-  vertical-align: middle;
+  line-height: 52px;
 }
 .txt-f::-ms-input-placeholder { /* Microsoft Edge */
-  vertical-align: middle;
-}
-.txt-f {
-  vertical-align: middle;
+  line-height: 52px;
 }
