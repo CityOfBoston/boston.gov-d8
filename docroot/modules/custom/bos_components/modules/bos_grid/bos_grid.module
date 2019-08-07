@@ -51,8 +51,9 @@ function bos_grid_preprocess_paragraph(&$vars) {
       case 'grid_of_people':
       case 'grid_of_places':
         $theme = $paragraph->get('field_component_theme')->getValue()['0']['value'];
-        $vars['attributes']['class'][] = 'b--' . !empty($theme) ? $theme : 'g';
-        $vars['section_header_theme'] = $theme === 'b' ? 'sh--w' : '';
+        $vars['attributes']['class'][] = 'b--' . (!empty($theme) ? $theme : 'g');
+        $vars['attributes']['class'][] = 'b--fw';
+        $vars['section_header_theme'] = ($theme === 'b' ? 'sh--w' : '');
         break;
     }
   }
