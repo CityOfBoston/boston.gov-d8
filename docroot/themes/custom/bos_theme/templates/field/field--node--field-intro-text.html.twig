@@ -5,5 +5,5 @@
  */
 #}
 {% for item in items %}
-   <div{{ attributes.addClass(classes) }}>{{ item.content }}</div>
+   <div class="intro-text">{{ item.content["#markup"]|raw|striptags }}</div>
 {% endfor %}
