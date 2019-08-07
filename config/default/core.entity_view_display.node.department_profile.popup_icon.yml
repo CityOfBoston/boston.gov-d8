@@ -1,6 +1,6 @@
 uuid: 75ada321-6d73-4cc4-9f72-a578183b83d8
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - core.entity_view_mode.node.popup_icon
@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.department_profile.field_updated_date
     - node.type.department_profile
   module:
+    - fences
     - svg_image
     - user
 _core:
@@ -29,11 +30,6 @@ targetEntityType: node
 bundle: department_profile
 mode: popup_icon
 content:
-  content_moderation_control:
-    weight: -20
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_icon:
     label: hidden
     weight: 0
@@ -41,13 +37,22 @@ content:
     settings:
       image_style: ''
       image_link: ''
-    third_party_settings: {  }
-    region: content
-  links:
-    weight: 100
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   body: true
+  content_moderation_control: true
   field_address: true
   field_components: true
   field_department_type: true
@@ -61,4 +66,5 @@ hidden:
   field_sidebar_components: true
   field_updated_date: true
   langcode: true
+  links: true
   published_at: true
