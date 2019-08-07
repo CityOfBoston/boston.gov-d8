@@ -642,20 +642,23 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
       }
     }
   }
+}
 
+/**
+ * Implements theme_preprocess_hook().
+ */
+function bos_theme_preprocess_field__field_components(array &$variables, $hook) {
   // Add a named anchor to each component (in-page navigation scrolling).
   /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
-  if ($variables["field_name"] == "field_components") {
-    if (!empty($variables['items'])) {
-      foreach ($variables["items"] as $key => &$component) {
-        // Only add if the component has a short_title set.
-        if (!empty($component['content']['#paragraph']->field_short_title->value)) {
-          $component['content']['nav_title']['#attributes'] = new Attribute([
-            "class" => ["subnav-anchor"],
-            "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
-            "data-text" => $component['content']['#paragraph']->field_short_title->value,
-          ]);
-        }
+  if (!empty($variables['items'])) {
+    foreach ($variables["items"] as $key => &$component) {
+      // Only add if the component has a short_title set.
+      if (!empty($component['content']['#paragraph']->field_short_title->value)) {
+        $component['content']['nav_title']['#attributes'] = new Attribute([
+          "class" => ["subnav-anchor"],
+          "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
+          "data-text" => $component['content']['#paragraph']->field_short_title->value,
+        ]);
       }
     }
   }
@@ -832,7 +835,7 @@ function _bos_theme_make_nav(array &$variables, array $components, int $threshol
     ];
     $attached = FALSE;
     foreach ($components as $key => $component) {
-      if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
+      if (is_numeric($key) && !empty($component['#paragraph']->field_short_title->value)) {
         // Add js to enable component_navigation in-page menu (and scroll).
         if (!$attached) {
           $variables['#attached']['library'][] = "bos_theme/page.inpage_menu";
