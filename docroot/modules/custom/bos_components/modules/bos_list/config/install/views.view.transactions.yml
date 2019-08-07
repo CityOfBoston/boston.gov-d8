@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing
     - node.type.transaction
   module:
     - node
@@ -73,7 +73,8 @@ display:
       row:
         type: 'entity:node'
         options:
-          view_mode: teaser
+          relationship: none
+          view_mode: listing
       fields:
         title:
           id: title
@@ -257,8 +258,8 @@ display:
           empty: false
           tokenize: false
           content:
-            value: '[boston:main-transactions-header]'
-            format: filtered_html
+            value: '<div class="t--intro"><p>Main Transactions</p></div>'
+            format: full_html
           plugin_id: text
       footer: {  }
       empty:
