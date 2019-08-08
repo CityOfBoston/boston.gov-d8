@@ -55,7 +55,7 @@
         var navOffset = menusBottom() - navMenu.outerHeight(true);
         var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset);
         scrolling = true;
-        $("html, body").animate({scrollTop: loc}, speed, "swing", function() {
+        $("html, body").animate({scrollTop: loc}, speed, "swing", function () {
           if (recalc) {
             recalc = false;
             scrollToAnchor(obj, 250);
