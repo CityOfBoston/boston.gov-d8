@@ -21,22 +21,20 @@
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
         <div class="detail-item__content">
-{#            <div class="detail-item__content">#}
-                <div class="detail-item__body detail-item__body--secondary">
-                    <div class="street-block">
-                        <div class="thoroughfare">{{ item.content.address_line1 }}</div>
-                    </div>
-                    {% if item.address_line2 %}
-                        <div class="street-block">
-                            <div class="premise">{{ item.content.address_line2 }}</div>
-                        </div>
-                    {% endif %}
-                    <div class="addressfield-container-inline locality-block country-US">
-                        <span class="locality">{{ item.content.locality }}</span>,&nbsp;<span class="state">{{ item.content.administrative_area }}</span>&nbsp;<span class="postal-code">{{ item.content.postal_code }}</span>
-                    </div>
-                    <span class="country">{{ item.content.country }}</span>
-                </div>
-{#            </div>#}
+          <div class="detail-item__body detail-item__body--secondary">
+              <div class="street-block">
+                  <div class="thoroughfare">{{ item.content.address_line1 }}</div>
+              </div>
+              {% if item.content.address_line2 %}
+                  <div class="street-block">
+                      <div class="premise">{{ item.content.address_line2 }}</div>
+                  </div>
+              {% endif %}
+              <div class="addressfield-container-inline locality-block country-US">
+                  <span class="locality">{{ item.content.locality }}</span>,&nbsp;<span class="state">{{ item.content.administrative_area }}</span>&nbsp;<span class="postal-code">{{ item.content.postal_code }}</span>
+              </div>
+              <span class="country">{{ item.content.country }}</span>
+          </div>
         </div>
         {% if display_item_tag %}
             </{{ field_item_tag|default('div') }}>
