@@ -129,6 +129,9 @@ fi
 if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql"; fi
+    printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
+    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
+    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -delete
     doMigrate --tag="bos:initial:1" --force                 # 7 mins
     dumpDB ${dbpath}/migration_clean_with_prereq.sql
 fi
