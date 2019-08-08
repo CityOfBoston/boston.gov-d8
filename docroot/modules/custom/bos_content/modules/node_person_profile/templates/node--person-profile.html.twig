@@ -45,7 +45,7 @@
 
       {{ content.field_political_party }}
 
-      {% if content.field_sidebar_components["#items"]  %}
+      {% if content.field_sidebar_components|render  %}
         {{ content.field_sidebar_components }}
       {% endif %}
     </div>
