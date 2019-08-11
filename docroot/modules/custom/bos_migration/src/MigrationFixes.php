@@ -72,7 +72,11 @@ class MigrationFixes {
     ],
   ];
 
-  /** @var array Array to map D7 loaded svg icons to new icon assets. */
+  /**
+   * Array to map D7 loaded svg icons to new icon assets.
+   *
+   * @var array
+   */
   protected static $svgMapping = [
     'public://img/program/logo/2016/07/experiential_icons_home_center.svg' => 'public://icons/experiential/tripple_decker.svg',
     'public://img/program/intro_images/2016/08/experiential_icons_home_sability.svg' => 'public://icons/experiential/neighborhood.svg',
@@ -169,7 +173,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2018/05/money_1.svg' => 'public://icons/experiential/money.svg',
     'public://img/icons/transactions/2018/05/money.svg' => 'public://icons/experiential/money.svg',
     'public://img/icons/transactions/2018/05/information_for_taxpayers_1.svg' => 'public://icons/experiential/id.svg',
-    'public://img/icons/transactions/2018/05/house.svg' =>  'public://icons/experiential/house_2.svg',
+    'public://img/icons/transactions/2018/05/house.svg' => 'public://icons/experiential/house_2.svg',
     'public://img/icons/transactions/2018/05/download_.svg' => 'public://icons/',
     'public://img/icons/transactions/2018/05/creative_objects_0.svg' => 'public://icons/',
     'public://img/icons/transactions/2018/05/construction_vehicle_-_excavator.svg' => 'public://icons/experiential/excavator.svg',
@@ -239,7 +243,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/07/experiential_icons_rent_rights.svg' => 'public://icons/',
     'public://img/icons/transactions/2017/07/experiential_icons_important.svg' => 'public://icons/',
     'public://img/icons/transactions/2017/07/experiential_icons_housing_questions.svg' => 'public://icons/experiential/housing_questions.svg',
-    'public://img/icons/transactions/2017/07/experiential_icons_house_1.svg' =>  'public://icons/experiential/house_2.svg',
+    'public://img/icons/transactions/2017/07/experiential_icons_house_1.svg' => 'public://icons/experiential/house_2.svg',
     'public://img/icons/transactions/2017/07/experiential_icons_community_centers.svg' => 'public://icons/',
     'public://img/icons/transactions/2017/07/experiential_icon_how_to_file_for_a_property_tax_abatement.svg' => 'public://icons/',
     'public://img/icons/transactions/2017/07/experiential-icons_candidate_list_0.svg' => 'public://icons/',
@@ -640,8 +644,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2019/05/tripple_decker_-_at_home_renters.png' => 'public://icons/experiential/tripple_decker.svg',
     'public://img/icons/transactions/2019/06/tripple_decker_.png' => 'public://icons/experiential/tripple_decker.svg',
     'public://img/icons/transactions/2019/06/tripple_decker__0.png' => 'public://icons/experiential/tripple_decker.svg',
-
-];
+  ];
 
   /**
    * This updates the taxonomy_vocab migration map.
@@ -748,7 +751,7 @@ class MigrationFixes {
   /**
    * Updates the D7 svg icons to the new D8 located icons.
    */
-  public static function updateSVGPaths() {
+  public static function updateSvgPaths() {
     $svgs = \Drupal::database()->query("
         SELECT distinct f.fid, f.uri 
           FROM file_managed f
@@ -771,7 +774,7 @@ class MigrationFixes {
           // Try to find this file_id in the media table.
           if (NULL == ($mid = \Drupal::entityQuery("media")->condition("image.target_id", $svg->fid, "=")->execute())) {
             // Not there, so create a new one.
-            $media = Media::create(["bundle" => "image",]);
+            $media = Media::create(["bundle" => "image"]);
           }
           else {
             $mid = reset($mid);
