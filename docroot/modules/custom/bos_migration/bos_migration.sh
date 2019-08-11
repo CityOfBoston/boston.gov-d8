@@ -231,6 +231,7 @@ if [ "{$1}" != "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
 fi
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
+doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "include '/var/www/html/bostond8dev/docroot/modules/custom/bos_components/modules/bos_map/bos_map.install'; bos_map_install();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
