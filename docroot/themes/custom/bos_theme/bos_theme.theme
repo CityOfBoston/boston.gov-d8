@@ -5,10 +5,6 @@
  * Contains functions to alter Drupal's markup for the STARTERKIT theme.
  */
 
-/**
- * Implements hook_preprocess_html.
- */
-
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -405,6 +401,9 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   }
   $variables["cob"]["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
   $variables["cob"]['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+
+  // Make the actual breadcrumb.
+  _bos_theme_build_breadcrumb($variables);
 
   // Optionally get rid of the homepage link.
   if (!theme_get_setting('boston_breadcrumb_home')) {
@@ -990,5 +989,43 @@ function _bos_theme_has_header(array &$variables) {
   if (isset($variables['node']) && is_object($variables['node'])) {
     $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
       && $variables['node']->get('field_intro_image')->count());
+  }
+}
+
+/**
+ * This attempts to build a breadcrumb array if there isn't already one present.
+ *
+ * @param array $variables
+ *   The usual array.
+ */
+function _bos_theme_build_breadcrumb(array &$variables) {
+  $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
+  if (!empty($variables['breadcrumb']) && count($variables['breadcrumb']) == 1) {
+    $route = $variables['breadcrumb'][0]['url'];
+    // Remove the current page (may be added back in by the theme dependent
+    // on theme config).
+    array_pop($crumbs);
+    foreach ($crumbs as $key => $crumb) {
+      if (\Drupal::pathValidator()->isValid($route . $crumb)) {
+        $variables['breadcrumb'][] = [
+          'text' => new TranslatableMarkup($crumb, []),
+          'url' => $route . $crumb,
+        ];
+      }
+      elseif ($route == "/") {
+        // Try to find a route to this title.
+        foreach (["departments", "news", "post", "calendar"] as $prefix) {
+          $alt_route = $route . $prefix . "/" . $crumb;
+          if (\Drupal::pathValidator()->isValid($alt_route)) {
+            $variables['breadcrumb'][] = [
+              'text' => new TranslatableMarkup($crumb, []),
+              'url' => $alt_route,
+            ];
+            break;
+          }
+        }
+      }
+      $route .= $crumb . "/";
+    }
   }
 }

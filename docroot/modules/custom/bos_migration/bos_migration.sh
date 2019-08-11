@@ -119,6 +119,12 @@ running=0
 ## Migrate files first.
 if [ "$1" == "reset" ]; then
     running=1
+    ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
+    printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
+    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
+    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -delete
+    # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
+    ##
     restoreDB "${dbpath}/migration_clean_reset.sql"
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
@@ -225,6 +231,7 @@ if [ "{$1}" != "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
 fi
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
+doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "include '/var/www/html/bostond8dev/docroot/modules/custom/bos_components/modules/bos_map/bos_map.install'; bos_map_install();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"

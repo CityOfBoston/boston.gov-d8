@@ -17,6 +17,8 @@
       var navMenuHeight = navMenu.outerHeight(true);
       var fixedMenu = $("#main-menu");
       var navTop = navMenu.first("ul").offset().top;
+      var scrolling = false;
+      var recalc = false;
 
       // Returns the current position of the lower edge of the #main-menu block.
       var menusBottom = function () {
@@ -27,6 +29,7 @@
       var stickyNav = function () {
         var stickyNavTop = navTop - menusBottom();
         var scrollTop = $("html, body").scrollTop();
+        recalc = scrolling;
         if ($(document).width() >= 980 && scrollTop > stickyNavTop) {
           if (!navMenu.hasClass('sticky')) {
             navMenu
@@ -48,16 +51,23 @@
       };
 
       // Scroll to clicked anchor, allowing for page furniture.
-      var scrollToAnchor = function (obj) {
+      var scrollToAnchor = function (obj, speed) {
         var navOffset = menusBottom() - navMenu.outerHeight(true);
-        var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset - 180);
-        $("html, body").animate({scrollTop: loc}, 1000, "swing");
+        var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset);
+        scrolling = true;
+        $("html, body").animate({scrollTop: loc}, speed, "swing", function () {
+          if (recalc) {
+            recalc = false;
+            scrollToAnchor(obj, 250);
+          }
+          scrolling = false;
+        });
       };
 
       $('.scroll-link-js').click(function (e) {
         e.preventDefault();
         $('.intro-content').addClass('nav-fill-margin');
-        scrollToAnchor(this);
+        scrollToAnchor(this, 1000);
       });
 
       // Fade in/out topic nav when .sub-nav-button link is clicked.
@@ -112,7 +122,7 @@
             var items = document.querySelectorAll('[name=' + name + ']')[0];
             var itemTop = items ? items.getBoundingClientRect().top + fromTop : 0;
 
-            if (fromTop >= (itemTop - 300)) {
+            if (fromTop >= (itemTop - 150)) {
               return item;
             }
           }
