@@ -1,1 +1,128 @@
-{  }
+langcode: und
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.featured_item
+    - field.field.node.event.body
+    - field.field.node.event.field_address
+    - field.field.node.event.field_cancel_event
+    - field.field.node.event.field_city_hall
+    - field.field.node.event.field_city_sponsored
+    - field.field.node.event.field_components
+    - field.field.node.event.field_contacts
+    - field.field.node.event.field_cost
+    - field.field.node.event.field_date_range
+    - field.field.node.event.field_description
+    - field.field.node.event.field_details_link
+    - field.field.node.event.field_email
+    - field.field.node.event.field_event_contact
+    - field.field.node.event.field_event_dates
+    - field.field.node.event.field_event_type
+    - field.field.node.event.field_extra_info_event
+    - field.field.node.event.field_featured
+    - field.field.node.event.field_intro_image
+    - field.field.node.event.field_links
+    - field.field.node.event.field_manual_date
+    - field.field.node.event.field_metatags
+    - field.field.node.event.field_multiple_neighborhoods
+    - field.field.node.event.field_phone_number
+    - field.field.node.event.field_published_date
+    - field.field.node.event.field_related
+    - field.field.node.event.field_sidebar_components
+    - field.field.node.event.field_thumbnail
+    - field.field.node.event.field_updated_date
+    - node.type.event
+    - responsive_image.styles.thumbnail_event
+  module:
+    - datetime_range
+    - fences
+    - link
+    - responsive_image
+    - text
+    - user
+id: node.event.featured_item
+targetEntityType: node
+bundle: event
+mode: featured_item
+content:
+  field_date_range:
+    type: daterange_default
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: medium
+      separator: '-'
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_description:
+    type: text_default
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_details_link:
+    type: link
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+  field_thumbnail:
+    type: responsive_image
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      responsive_image_style: thumbnail_event
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+hidden:
+  body: true
+  content_moderation_control: true
+  field_address: true
+  field_cancel_event: true
+  field_city_hall: true
+  field_city_sponsored: true
+  field_components: true
+  field_contacts: true
+  field_cost: true
+  field_email: true
+  field_event_contact: true
+  field_event_dates: true
+  field_event_type: true
+  field_extra_info_event: true
+  field_featured: true
+  field_intro_image: true
+  field_links: true
+  field_manual_date: true
+  field_metatags: true
+  field_multiple_neighborhoods: true
+  field_phone_number: true
+  field_published_date: true
+  field_related: true
+  field_sidebar_components: true
+  field_updated_date: true
+  langcode: true
+  links: true
+  published_at: true

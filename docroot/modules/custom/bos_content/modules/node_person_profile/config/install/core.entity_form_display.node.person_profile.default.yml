@@ -17,7 +17,7 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
-    - image.style.thumbnail
+    - image.style.person_photo_a_mobile_1x
     - node.type.person_profile
   module:
     - address
@@ -134,8 +134,7 @@ content:
     third_party_settings: {  }
   field_address:
     weight: 16
-    settings:
-      default_country: US
+    settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
@@ -203,7 +202,7 @@ content:
     weight: 2
     type: image_image
     settings:
-      preview_image_style: thumbnail
+      preview_image_style: person_photo_a_mobile_1x
       progress_indicator: throbber
     third_party_settings: {  }
     region: content

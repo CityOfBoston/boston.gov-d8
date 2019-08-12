@@ -12,23 +12,18 @@ function vocab_contact_theme($existing, $type, $theme, $path) {
   return [
     'taxonomy_term__contact' => [
       'base hook' => 'taxonomy_term',
-      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
-      'template' => 'taxonomy-term--contact',
     ],
     'field__field_address' => [
       'base hook' => 'field',
-      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
-      'template' => 'field--field-address',
     ],
     'field__field_email' => [
       'base hook' => 'field',
-      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
-      'template' => 'field--field-email',
     ],
     'field__field_phone_number' => [
       'base hook' => 'field',
-      'path' => 'modules/custom/bos_vocab/modules/vocab_contact/templates',
-      'template' => 'field--field-phone-number',
+    ],
+    'field__field_department_profile__contact__mode__popup_icon' => [
+      'base hook' => 'field',
     ],
   ];
 }
@@ -59,6 +54,17 @@ function vocab_contact_preprocess_field__field_phone_number(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function vocab_contact_preprocess_field__field_department_profile__contact__mode__popup_icon(array &$variables) {
+  $variables["department_link"] = "#";
+  if (!empty($variables["element"]['#items'][0])) {
+    $variables["department_link"] = \Drupal::service('path.alias_manager')
+      ->getAliasByPath('/node/' . $variables["element"]['#items'][0]->target_id);
+  }
+}
+
+/**
  * Implements hook_tokens().
  */
 function vocab_contact_tokens($type, $tokens, array $data = [], array $options = []) {
@@ -70,31 +76,39 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
       // Find our custom tokens by name.
       switch ($name) {
         case 'contact-path':
-          $dept_prefix = "";
-          $term_name = "";
+          $dept_prefix = $term_name = "";
           // Work out the value of our token.
           if (!empty($data['node'])) {
-            $this_node = $dept_node = $data['node'];
-            $langcode = ($this_node->language()->getId() ?: "und");
+            $node = $dept_node = $data['node'];
+            $langcode = ($node->language()->getId() ?: "und");
             // Find the contact and get the last part of it's alias.
-            $contact_field = $this_node->getTranslation($langcode)->field_contact;
-            if (!empty($contact_field) && $contact_field->count() > 0) {
-              $tid = $contact_field->first()->target_id;
-              $term_path = \Drupal::service('path.alias_manager')->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
-              $path_array = explode('/', $term_path);
-              $term_name = end($path_array);
-              $term = Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($tid);
-              // If the field_department_profile is set then this is not a
-              // department, so set $node to the department_profile node
-              // so we can get the department_type.
-              $term_dept_profile = $term->field_department_profile;
-              if ($term_dept_profile && $term_dept_profile->count() > 0) {
-                $dept_node = Drupal::entityTypeManager()->getStorage("node")->load($term_dept_profile->first()->target_id);
+            if ($node->hasField("field_contact")) {
+              $contact_field = $node->getTranslation($langcode)->field_contact;
+              if ($contact_field->count()) {
+                $tid = $contact_field->first()->target_id;
+                $term_path = \Drupal::service('path.alias_manager')
+                  ->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
+                $path_array = explode('/', $term_path);
+                $term_name = end($path_array);
+                $term = Drupal::entityTypeManager()
+                  ->getStorage("taxonomy_term")
+                  ->load($tid);
+                // If the field_department_profile is set then this is not a
+                // department, so set $node to the department_profile node
+                // so we can get the department_type.
+                if ($term->hasField('field_department_profile')) {
+                  $term_dept_profile = $term->field_department_profile;
+                  if ($term_dept_profile->count()) {
+                    $dept_node = Drupal::entityTypeManager()
+                      ->getStorage("node")
+                      ->load($term_dept_profile->first()->target_id);
+                  }
+                }
               }
             }
             // Figure out which type of department we have
             // and get it's replacement.
-            if (!empty($dept_node)) {
+            if ($dept_node->hasField('field_department_type')) {
               $dept_type = $dept_node->getTranslation("und")->field_department_type;
               if (!empty($dept_type)) {
                 switch ($dept_type->value) {

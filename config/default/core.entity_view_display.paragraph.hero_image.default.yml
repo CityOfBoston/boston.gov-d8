@@ -9,8 +9,11 @@ dependencies:
     - field.field.paragraph.hero_image.field_short_title
     - field.field.paragraph.hero_image.field_subheader
     - paragraphs.paragraphs_type.hero_image
+    - responsive_image.styles.hero_fixed_image_fields
   module:
     - entity_reference_revisions
+    - fences
+    - responsive_image
 _core:
   default_config_hash: WKW0qZhz8unrTU37t-GBGDPI9oJ-WfZ7lrh1Vilo1Rs
 id: paragraph.hero_image.default
@@ -20,7 +23,7 @@ mode: default
 content:
   field_grid_link:
     label: hidden
-    weight: 4
+    weight: 2
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -29,15 +32,31 @@ content:
     region: content
   field_header:
     label: hidden
-    weight: 1
+    weight: 0
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
+  field_image:
+    type: responsive_image
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      responsive_image_style: hero_fixed_image_fields
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_short_title:
     label: above
-    weight: 5
+    weight: 3
     type: string
     settings:
       link_to_entity: false
@@ -45,11 +64,10 @@ content:
     region: content
   field_subheader:
     label: hidden
-    weight: 2
+    weight: 1
     type: string
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-hidden:
-  field_image: true
+hidden: {  }

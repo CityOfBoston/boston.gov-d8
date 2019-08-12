@@ -17,17 +17,9 @@ dependencies:
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
     - field.field.node.public_notice.field_manual_date
-    - field.field.node.public_notice.field_multiple_neighborhoods
-    - field.field.node.public_notice.field_people
     - field.field.node.public_notice.field_phone_number
-    - field.field.node.public_notice.field_place
-    - field.field.node.public_notice.field_program_initiative
     - field.field.node.public_notice.field_public_notice_date
-    - field.field.node.public_notice.field_related_content
-    - field.field.node.public_notice.field_related_departments
-    - field.field.node.public_notice.field_related_events_notices
-    - field.field.node.public_notice.field_related_guides
-    - field.field.node.public_notice.field_related_posts
+    - field.field.node.public_notice.field_related
     - field.field.node.public_notice.field_time
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
@@ -230,29 +222,6 @@ content:
         fences_label_tag: div
         fences_label_classes: ''
     region: content
-  field_multiple_neighborhoods:
-    label: inline
-    weight: 10
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: 'detail-item detail-item--secondary detail-item--middle'
-        fences_field_item_tag: div
-        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
-        fences_label_tag: div
-        fences_label_classes: detail-item__left
-    region: content
-  field_people:
-    label: above
-    weight: 20
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
   field_phone_number:
     label: hidden
     weight: 6
@@ -267,22 +236,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    region: content
-  field_place:
-    label: above
-    weight: 21
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_program_initiative:
-    label: above
-    weight: 19
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
     region: content
   field_public_notice_date:
     weight: 7
@@ -301,45 +254,13 @@ content:
         fences_label_classes: ''
     type: daterange_default
     region: content
-  field_related_content:
-    label: hidden
-    weight: 9
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_departments:
+  field_related:
+    weight: 19
     label: above
-    weight: 25
-    type: entity_reference_label
     settings:
       link: true
     third_party_settings: {  }
-    region: content
-  field_related_events_notices:
-    label: above
-    weight: 23
     type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_guides:
-    label: above
-    weight: 24
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
-    region: content
-  field_related_posts:
-    label: above
-    weight: 22
-    type: entity_reference_label
-    settings:
-      link: true
-    third_party_settings: {  }
     region: content
   field_time:
     label: hidden

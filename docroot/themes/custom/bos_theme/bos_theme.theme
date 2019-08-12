@@ -5,10 +5,6 @@
  * Contains functions to alter Drupal's markup for the STARTERKIT theme.
  */
 
-/**
- * Implements hook_preprocess_html.
- */
-
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -16,7 +12,6 @@ use Drupal\core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -208,11 +203,12 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $variables['attributes']->addClass($newClass);
   $newClass = ($variables['logged_in'] ? "logged-in" : "not-logged-in");
   $variables['attributes']->addClass($newClass);
-  if ($node = drupal::request()->get('node')) {
-    $nid = $node->id();
+  if ($nid = drupal::request()->get('node')) {
+    if (!is_numeric($nid)) {
+      $nid = $nid->id();
+    }
     $newClass = "page-node-" . (isset($nid) ? $nid : "");
     $variables['attributes']->addClass($newClass);
-
   }
 
   // Detect 400-status pages.
@@ -303,9 +299,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Add in the js required by each page.
   $variables['#attached']['library'][] = "bos_theme/page.assets";
 
-  // Ensure the $variables{"attribute"] is an Attribute object.
-  _bos_theme_fix_attributes($variables);
-
   // TODO: review this theme suggestion.
   // This is probably related to (site_alert) api calls (built in views) which
   // are passed with an "embed" querystring parameter to extract only the
@@ -314,7 +307,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     $variables['theme_hook_suggestions'][] = 'page__embed';
   }
 
-  // TODO: Review if needed in D8.
   // Find the title of the menu used by the secondary links.
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
@@ -324,10 +316,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
       $variables['secondary_menu_heading'] = $menus[$secondary_links];
     }
   }
-
-  // Setup hero style page banner images.
-  $current_path = \Drupal::service('path.current')->getPath();
-  _bos_theme_manage_hero($variables, $current_path);
 
   // TODO: Seem to be a number of ways to generate 404 etc pages.  Review.
   // Custom 404/403 pages.
@@ -353,15 +341,18 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
+  // Determine if a header_image is being used.
+  _bos_theme_has_header($variables);
+
   // Create $variable elements for metatag injections.
   _bos_theme_metatags($variables);
 
   // Create necessary page classes.
-  _bos_theme_page_classes($variables, $current_path);
+  _bos_theme_page_classes($variables);
 
   // By default, there is no site alert.
   // This is overidden in site_alert_preprocess when there is an alert.
-  $variables['has_site_alert'] = !empty($variables['has_site_alert']) ?: FALSE;
+  $variables['cob']['has_site_alert'] = !empty($variables['cob']['has_site_alert']);
 
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
@@ -404,12 +395,15 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-  if (!isset($variables["display_breadcrumb"])) {
-    $variables['display_breadcrumb'] = Html::escape(theme_get_setting('boston_breadcrumb'));
-    $variables['display_breadcrumb'] = ($variables['display_breadcrumb'] == 'yes' || $variables['display_breadcrumb'] == 'admin' && arg(0) == 'admin') ? TRUE : FALSE;
+  if (!isset($variables["cob"]["display_breadcrumb"])) {
+    $variables["cob"]["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $variables["cob"]["display_breadcrumb"] = ($variables["cob"]["display_breadcrumb"] == 'yes' || $variables["cob"]["display_breadcrumb"] == 'admin' && arg(0) == 'admin');
   }
-  $variables['breadcrumb_separator'] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
-  $variables['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+  $variables["cob"]["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
+  $variables["cob"]['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+
+  // Make the actual breadcrumb.
+  _bos_theme_build_breadcrumb($variables);
 
   // Optionally get rid of the homepage link.
   if (!theme_get_setting('boston_breadcrumb_home')) {
@@ -437,7 +431,7 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
       }
     }
     // Turn off the trailing separator.
-    $variables['display_trailing_separator'] = FALSE;
+    $variables["cob"]['display_trailing_separator'] = FALSE;
   }
 
   // Provide a navigational heading to give context for breadcrumb links to
@@ -551,7 +545,67 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
 
     // Addin a theme override for the contextual_links.
     $variables["#attached"]["library"][] = 'bos_theme/context_link';
+
+    // Determines if titles should appear on listing pages.
+    if ($variables['node_type'] == 'listing_page') {
+      _boston_listing_page_title($variables);
+    }
   }
+}
+
+/**
+ * Set the with_image_title variable if there is an image for this listing page.
+ *
+ * @param array $variables
+ *   Node variables.
+ */
+function _boston_listing_page_title(array &$variables) {
+  if (isset($variables['elements']['#node'])) {
+    $node = $variables['elements']['#node'];
+    // If there is a hero image.
+    if ($node->hasField('field_intro_image') &&
+       (!$node->hasField('field_header_component') ||
+          _boston_check_header_component($node, 'featured'))) {
+      $variables['with_image_title'] = $variables['node']->title;
+    }
+  }
+}
+
+/**
+ * Checks what type of header component exists and returns a boolean.
+ */
+function _boston_check_header_component($node, $check_component = 'text', $check_image = TRUE) {
+  $return_val = FALSE;
+  if ($node->hasField('field_header_component')) {
+    $header = $node->get('field_header_component')->getValue();
+    if (isset($header[0]["target_id"])) {
+      $paragraph = \Drupal::entityTypeManager()->getStorage('paragraph')->load($header[0]["target_id"]);
+      if (!empty($paragraph)) {
+        if ($paragraph->hasField('field_featured_item')) {
+          $featured_item = $paragraph->get('field_featured_item')->getValue();
+        }
+        if ($check_component == 'text' && empty($featured_item)) {
+          $return_val = TRUE;
+        }
+        if ($check_component == 'featured' && !empty($featured_item)) {
+          $return_val = TRUE;
+        }
+      }
+    }
+  }
+  if ($check_image) {
+    // If there is no image return false.
+    if ($node->hasField('field_intro_image')) {
+      $return_val = FALSE;
+    }
+  }
+  else {
+    // If there is an image, return false.
+    if (!$node->hasField('field_intro_image')) {
+      $return_val = FALSE;
+    }
+  }
+  return $return_val;
 }
 
 /**
@@ -587,20 +641,23 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
       }
     }
   }
+}
 
+/**
+ * Implements theme_preprocess_hook().
+ */
+function bos_theme_preprocess_field__field_components(array &$variables, $hook) {
   // Add a named anchor to each component (in-page navigation scrolling).
   /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
-  if ($variables["field_name"] == "field_components") {
-    if (!empty($variables['items'])) {
-      foreach ($variables["items"] as $key => &$component) {
-        // Only add if the component has a short_title set.
-        if (!empty($component['content']['#paragraph']->field_short_title->value)) {
-          $component['content']['nav_title']['attributes'] = new Attribute([
-            "class" => ["subnav-anchor"],
-            "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
-            "data-text" => $component['content']['#paragraph']->field_short_title->value,
-          ]);
-        }
+  if (!empty($variables['items'])) {
+    foreach ($variables["items"] as $key => &$component) {
+      // Only add if the component has a short_title set.
+      if (!empty($component['content']['#paragraph']->field_short_title->value)) {
+        $component['content']['nav_title']['#attributes'] = new Attribute([
+          "class" => ["subnav-anchor"],
+          "name" => Html::cleanCssIdentifier(strtolower($component['content']['#paragraph']->field_short_title->value)),
+          "data-text" => $component['content']['#paragraph']->field_short_title->value,
+        ]);
       }
     }
   }
@@ -777,10 +834,10 @@ function _bos_theme_make_nav(array &$variables, array $components, int $threshol
     ];
     $attached = FALSE;
     foreach ($components as $key => $component) {
-      if (is_numeric($key) && isset($component['#paragraph']->field_short_title)) {
+      if (is_numeric($key) && !empty($component['#paragraph']->field_short_title->value)) {
         // Add js to enable component_navigation in-page menu (and scroll).
         if (!$attached) {
-          $variables['#attached']['library'][] = "bos_theme/page.component_navigation";
+          $variables['#attached']['library'][] = "bos_theme/page.inpage_menu";
           $attached = TRUE;
         }
         // Build the in-page navigation menu and links.
@@ -794,61 +851,6 @@ function _bos_theme_make_nav(array &$variables, array $components, int $threshol
     // Add in the chevron used in mobile UX.
     $variables["sub_nav"] = _bos_theme_findsvg('subnav-toggle.svg');
 
-  }
-}
-
-/**
- * Helper: Manage intro_image and hero image headers on a node.
- *
- * This is done to bring the hero image rendered output to the page level
- * of rendering. Hero image styling fits more naturally at the page level
- * as opposed to the rendered node output in the system block.
- *
- * @param array $variables
- *   The standard variable array from a preprocess hook.
- */
-function _bos_theme_manage_hero(array &$variables, $current_path) {
-  $path_args = explode('/', $current_path);
-  if (!isset($variables['header_image'])) {
-    $variables['header_image'] = FALSE;
-  }
-
-  $nid = NULL;
-  if (!empty($variables["node"])) {
-    $nid = $variables["node"]->id();
-  }
-  elseif ($path_args[1] == "node" && !empty($path_args[2]) && is_numeric($path_args[2])) {
-    $nid = $path_args[2];
-  }
-
-  if (!empty($nid)) {
-    if (isset($variables["node"]->field_intro_image) && $variables["node"]->field_intro_image->count()) {
-      $background_image = $variables["node"]->field_intro_image;
-      if (isset($background_image->entity)) {
-        $uri = $background_image->entity->getFileUri();
-        // Set $variables["header_image"] to true here.
-        // Individual nodes can disable(false) in their own preprocess hooks.
-        if (!isset($variables['header_image'])) {
-          $variables['header_image'] = TRUE;
-        }
-        if ($variables['header_image']) {
-          $variables["attributes"]->addClass("mn");
-          $variables["attributes"]->setAttribute("id", "page");
-          $variables['background_image'] = $background_image;
-          $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
-            ->buildUrl($uri);
-          $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
-            ->buildUrl($uri);
-          $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
-            ->buildUrl($uri);
-          $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
-            ->buildUrl($uri);
-        }
-      }
-    }
-    else {
-      $variables["header_image"] = FALSE;
-    }
   }
 }
 
@@ -913,19 +915,19 @@ function _bos_theme_render_snippets(array &$variables) {
     '#secondary_menu' => $variables['secondary_menu'],
     '#theme' => '',
   ];
-  $arr_base['#theme'] = 'burger';
-  $variables['burger'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'logo';
-  $variables['logo'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'secondary_nav';
-  $variables['secondary_nav'] = \Drupal::service('renderer')->render($arr_base);
-  $arr_base['#theme'] = 'search';
-  $variables['search'] = \Drupal::service('renderer')->render($arr_base);
-  if ($variables['has_site_alert']) {
-    $arr_base["#hidden"] = " hidden";
+  $vars = array_merge($arr_base, ['#theme' => 'burger']);
+  $variables['burger'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'logo']);
+  $variables['logo'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'secondary_nav']);
+  $variables['secondary_nav'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'search']);
+  $variables['search'] = \Drupal::service('renderer')->render($vars);
+  $vars = array_merge($arr_base, ['#theme' => 'seal']);
+  if ($variables['cob']['has_site_alert']) {
+    $vars["#hidden"] = " hidden";
   }
-  $arr_base['#theme'] = 'seal';
-  $variables['seal'] = \Drupal::service('renderer')->render($arr_base);
+  $variables['seal'] = \Drupal::service('renderer')->render($vars);
 }
 
 /**
@@ -936,10 +938,17 @@ function _bos_theme_render_snippets(array &$variables) {
  * @param string $current_path
  *   The current path.
  */
-function _bos_theme_page_classes(array &$variables, string $current_path) {
+function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   if (isset($variables['node']) && is_object($variables['node'])) {
 
-    if ($variables['node']->getType() !== 'tabbed_content' && !$variables['header_image']) {
+    if ($current_path == "") {
+      $current_path = \Drupal::service('path.current')->getPath();
+    }
+
+    // Start adding class mn (main-node???) to all nodes.
+    $variables["attributes"]->addClass("mn");
+
+    if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['cob']['header_image'])) {
       if (!$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
@@ -966,6 +975,57 @@ function _bos_theme_page_classes(array &$variables, string $current_path) {
     }
     if (!$variables["attributes"]->hasClass("page--wa")) {
       $variables["attributes"]->addClass("page--wa");
+    }
+  }
+}
+
+/**
+ * Determine if a header_image is being used.
+ *
+ * @param array $variables
+ *   Usual array.
+ */
+function _bos_theme_has_header(array &$variables) {
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    $variables['cob']['header_image'] = ($variables['node']->hasField('field_intro_image')
+      && $variables['node']->get('field_intro_image')->count());
+  }
+}
+
+/**
+ * This attempts to build a breadcrumb array if there isn't already one present.
+ *
+ * @param array $variables
+ *   The usual array.
+ */
+function _bos_theme_build_breadcrumb(array &$variables) {
+  $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
+  if (!empty($variables['breadcrumb']) && count($variables['breadcrumb']) == 1) {
+    $route = $variables['breadcrumb'][0]['url'];
+    // Remove the current page (may be added back in by the theme dependent
+    // on theme config).
+    array_pop($crumbs);
+    foreach ($crumbs as $key => $crumb) {
+      if (\Drupal::pathValidator()->isValid($route . $crumb)) {
+        $variables['breadcrumb'][] = [
+          'text' => new TranslatableMarkup($crumb, []),
+          'url' => $route . $crumb,
+        ];
+      }
+      elseif ($route == "/") {
+        // Try to find a route to this title.
+        foreach (["departments", "news", "post", "calendar"] as $prefix) {
+          $alt_route = $route . $prefix . "/" . $crumb;
+          if (\Drupal::pathValidator()->isValid($alt_route)) {
+            $variables['breadcrumb'][] = [
+              'text' => new TranslatableMarkup($crumb, []),
+              'url' => $alt_route,
+            ];
+            break;
+          }
+        }
+      }
+      $route .= $crumb . "/";
     }
   }
 }

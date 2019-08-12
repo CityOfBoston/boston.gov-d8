@@ -39,30 +39,45 @@
 {% endif %}
 
 <div {{attributes}}>
+
   <div class="content container">
-    <div class="sh">
+
+    <div class="sh cl">
+
+      {{ content.contextual_links }}
+
       {{ content.field_component_title }}
+
       {% if content.field_short_title['#items'].getValue() %}
         {{ content.field_short_title }}
       {% endif %}
+
       {% if content.field_contact['#items'].getValue() %}
         {{ content.field_contact }}
       {% endif %}
+
     </div>
 
     <div {{ create_attribute({'class': left_region_classes}) }}>
+
       <div class="links-grid-field-subheader">
         {{ content.field_subheader }}
       </div>
+
       <div class="links-grid-field-description">
         {{ content.field_description }}
       </div>
+
       {% if cta %}
         {{ cta }}
       {% endif %}
+
     </div>
+
     <div {{ create_attribute({'class': right_region_classes}) }}>
       {{ content.field_list_links }}
     </div>
+
   </div>
+
 </div>

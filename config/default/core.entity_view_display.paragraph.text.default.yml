@@ -39,10 +39,9 @@ content:
   field_contact:
     label: hidden
     weight: 2
-    type: entity_reference_entity_view
+    type: entity_reference_label
     settings:
-      view_mode: default
-      link: false
+      link: true
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -68,7 +67,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_text_blocks:
     label: hidden

@@ -3,7 +3,6 @@ langcode: und
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
     - field.field.node.event.body
     - field.field.node.event.field_address
     - field.field.node.event.field_cancel_event
@@ -12,6 +11,7 @@ dependencies:
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
+    - field.field.node.event.field_date_range
     - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
@@ -21,24 +21,25 @@ dependencies:
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
     - field.field.node.event.field_intro_image
+    - field.field.node.event.field_intro_text
     - field.field.node.event.field_links
     - field.field.node.event.field_manual_date
     - field.field.node.event.field_metatags
     - field.field.node.event.field_multiple_neighborhoods
     - field.field.node.event.field_phone_number
     - field.field.node.event.field_published_date
-    - field.field.node.event.field_related_departments
+    - field.field.node.event.field_related
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
-    - image.style.thumbnail
+    - image.style.thumbnail_event_square_190x190_
     - node.type.event
   module:
     - address
     - advanced_text_formatter
     - content_moderation
     - datetime
-    - entity_browser
+    - datetime_range
     - field_group
     - link
     - metatag
@@ -74,6 +75,7 @@ third_party_settings:
         - field_featured
         - field_intro_image
         - field_thumbnail
+        - field_intro_text
         - field_description
         - body
       parent_name: group_article
@@ -89,7 +91,7 @@ third_party_settings:
       label: 'Basic Information'
     group_event_information:
       children:
-        - field_event_dates
+        - field_date_range
         - field_city_sponsored
         - group_event_details
         - group_event_location
@@ -109,7 +111,7 @@ third_party_settings:
       children:
         - field_cost
       parent_name: group_event_information
-      weight: 26
+      weight: 28
       format_type: details
       format_settings:
         label: 'Event  Entry Fee'
@@ -124,7 +126,7 @@ third_party_settings:
         - field_address
         - field_multiple_neighborhoods
       parent_name: group_event_information
-      weight: 24
+      weight: 26
       format_type: details
       format_settings:
         id: ''
@@ -138,7 +140,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_event_information
-      weight: 25
+      weight: 27
       format_type: details
       format_settings:
         id: ''
@@ -151,7 +153,6 @@ third_party_settings:
         - field_manual_date
         - field_updated_date
         - field_published_date
-        - group_event_metatags
       parent_name: group_article
       weight: 7
       format_type: tab
@@ -190,7 +191,7 @@ third_party_settings:
       label: 'Sidebar Components'
     group_related_content:
       children:
-        - field_related_departments
+        - field_related
       parent_name: group_article
       weight: 6
       format_type: tab
@@ -222,7 +223,7 @@ third_party_settings:
         - field_details_link
         - field_links
       parent_name: group_event_information
-      weight: 23
+      weight: 25
       format_type: tab
       format_settings:
         id: ''
@@ -238,7 +239,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 8
+    weight: 9
     region: content
     settings:
       rows: 9
@@ -247,14 +248,13 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   field_address:
     weight: 7
-    settings:
-      default_country: US
+    settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
@@ -274,14 +274,14 @@ content:
     third_party_settings: {  }
   field_city_sponsored:
     type: boolean_checkbox
-    weight: 22
+    weight: 23
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_components:
     type: paragraphs
-    weight: 4
+    weight: 2
     region: content
     settings:
       title: 'Event Component'
@@ -309,14 +309,20 @@ content:
     region: content
   field_cost:
     type: string_textfield
-    weight: 24
+    weight: 32
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_date_range:
+    weight: 22
+    settings: {  }
+    third_party_settings: {  }
+    type: daterange_default
+    region: content
   field_description:
-    weight: 7
+    weight: 8
     settings:
       rows: 5
       placeholder: 'Brief descriptive summary of the Event.'
@@ -349,12 +355,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_event_dates:
-    type: datetime_default
-    weight: 21
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_event_type:
     type: options_select
     weight: 5
@@ -376,19 +376,21 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: entity_browser_file
+    type: image_image
     weight: 5
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
-      field_widget_remove: true
-      selection_mode: selection_append
-      view_mode: default
-      field_widget_replace: false
-      open: false
-      preview_image_style: thumbnail
+      preview_image_style: intro_image_mobile_1x
+      progress_indicator: throbber
     region: content
     third_party_settings: {  }
+  field_intro_text:
+    weight: 7
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
   field_links:
     type: paragraphs
     weight: 7
@@ -416,7 +418,7 @@ content:
     type: boolean_checkbox
     region: content
   field_metatags:
-    weight: 2
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -437,19 +439,19 @@ content:
     third_party_settings: {  }
   field_published_date:
     type: datetime_default
-    weight: 31
+    weight: 32
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_related_departments:
-    type: entity_reference_autocomplete
-    weight: 21
-    region: content
+  field_related:
+    weight: 22
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_sidebar_components:
     type: paragraphs
     weight: 1
@@ -470,10 +472,10 @@ content:
         add_above: '0'
     third_party_settings: {  }
   field_thumbnail:
-    type: image_image
     weight: 6
+    type: image_image
     settings:
-      preview_image_style: thumbnail
+      preview_image_style: thumbnail_event_square_190x190_
       progress_indicator: throbber
     region: content
     third_party_settings: {  }
@@ -485,20 +487,20 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 1
+    weight: 2
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 10
+    weight: 11
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -506,12 +508,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -519,14 +521,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 11
+    weight: 12
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 8
     region: content
     third_party_settings: {  }
   title:
@@ -541,7 +543,7 @@ content:
         show_token_tree: 0
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
@@ -549,8 +551,9 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_event_dates: true

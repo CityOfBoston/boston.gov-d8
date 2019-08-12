@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_updated_date
+    - image.style.square_icon_56px
     - node.type.department_profile
   module:
     - address
@@ -48,9 +49,9 @@ content:
     region: content
   content_moderation_control:
     weight: -20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_address:
     type: address_default
     weight: 5
@@ -104,8 +105,12 @@ content:
     weight: 2
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_56px
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none

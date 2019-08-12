@@ -20,16 +20,21 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  alt_field: false
-  default_image: 0
-  file_directory: 'program-intro-image-[current-date:file_directory_storage_date]'
+  file_directory: 'img/program/intro_images/[current-date:html_year]'
   file_extensions: 'png gif jpg jpeg svg'
-  max_filesize: ''
+  max_filesize: '8 MB'
   max_resolution: ''
-  min_resolution: ''
+  min_resolution: 1440x396
+  alt_field: false
+  alt_field_required: false
   title_field: false
-  alt_field_required: true
   title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
   handler: 'default:file'
   handler_settings: {  }
 field_type: image

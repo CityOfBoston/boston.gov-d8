@@ -10,11 +10,12 @@ dependencies:
     - field.field.paragraph.map.field_map_inline
     - field.field.paragraph.map.field_short_title
     - paragraphs.paragraphs_type.map
+    - responsive_image.styles.photo_bleed_images
   module:
     - fences
-    - svg_image
+    - responsive_image
 _core:
-  default_config_hash: DvTB0lUCF0682LYp5Y5hezalU3LX9cVdfSPo7MvPOIs
+  default_config_hash: 61Uika9je8EhZCHdog3xfIbLaqGqS_R4lYtyWIWCogU
 id: paragraph.map.default
 targetEntityType: paragraph
 bundle: map
@@ -54,12 +55,8 @@ content:
     weight: 4
     label: hidden
     settings:
-      image_style: ''
+      responsive_image_style: photo_bleed_images
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -68,7 +65,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: image
+    type: responsive_image
     region: content
   field_map_config_json:
     weight: 5

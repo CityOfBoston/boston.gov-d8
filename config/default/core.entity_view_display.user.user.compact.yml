@@ -4,12 +4,11 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
-    - field.field.user.user.field_last_password_reset
-    - field.field.user.user.field_password_expiration
     - field.field.user.user.user_picture
-    - image.style.thumbnail
+    - image.style.person_photo_a_mobile_1x
   module:
-    - image
+    - fences
+    - svg_image
     - user
 _core:
   default_config_hash: '-cLsS3M3JycipXQt9rEb81_HxKneReoGuRh8ijcOPXs'
@@ -18,22 +17,40 @@ targetEntityType: user
 bundle: user
 mode: compact
 content:
-  masquerade:
-    weight: 50
+  member_for:
+    weight: 2
     region: content
+    settings: {  }
+    third_party_settings: {  }
+  name:
+    type: user_name
+    weight: 1
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   user_picture:
     type: image
     weight: 0
     region: content
     settings:
-      image_style: thumbnail
+      image_style: person_photo_a_mobile_1x
       image_link: content
-    third_party_settings: {  }
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     label: hidden
 hidden:
-  field_last_password_reset: true
-  field_password_expiration: true
   langcode: true
-  member_for: true
-  name: true
+  masquerade: true
   realname: true

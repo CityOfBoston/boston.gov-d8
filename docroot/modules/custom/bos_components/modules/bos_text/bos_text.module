@@ -5,6 +5,7 @@
  * Main file for the bos_text module.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Utility\Html;
 
 /**
@@ -58,6 +59,10 @@ function bos_text_theme($existing, $type, $theme, $path) {
       'path' => 'modules/custom/bos_components/modules/bos_text/templates',
       'template' => 'field--field-link',
     ],
+    'field__field_intro_text' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_components/modules/bos_text/templates',
+    ],
   ];
 }
 
@@ -66,9 +71,15 @@ function bos_text_theme($existing, $type, $theme, $path) {
  */
 function bos_text_preprocess_paragraph__header_text(&$variables) {
   _bos_components_fix_attributes($variables);
-  $variables['attributes']->addClass("intro-text");
-  $variables['attributes']->addClass("supporting-text");
-  $variables['attributes']->addClass("squiggle-border-bottom");
+
+  // In some cases we will need to bring the host content title into the
+  // header text component so we can display it within the header text component
+  // template.
+  // @var \ParagraphsItemEntity $paragraph.
+  $paragraph = $variables['elements']['#paragraph'];
+  $parent = $paragraph->getParentEntity();
+  $host_title = Html::escape($parent->label());
+  $variables['host_title'] = $host_title;
 }
 
 /**
@@ -98,6 +109,8 @@ function bos_text_preprocess_paragraph(&$variables) {
   }
 
   // Assign tow/three_column classes.
+  // As defined in field.storage.paragraph.field_column_configuration.yml.
+  // ATM will be one of "col_half", "col_two_one_third" or "col_one_one_third".
   if ($variables["paragraph"]->bundle() == "text_two_column") {
     $variables['attributes']['class'][] = $variables["paragraph"]->field_column_configuration->value;
   }
@@ -142,5 +155,52 @@ function bos_text_preprocess_field(&$variables) {
     foreach ($variables['attributes']['class'] as $key => &$class) {
       $class = str_replace('field', 'entity', $class);
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_text_preprocess_field__field_intro_text(&$variables) {
+  $variables['attributes']->addClass("intro-text");
+  $view_mode = $variables['element']['#view_mode'];
+  $bundle = $variables['element']['#bundle'];
+  // Add view modes and paragraph items to this array that
+  // should not have additional classes.
+  $intro_stripped = [
+    'listing',
+    'short_listing',
+    'long_listing',
+    'featured_item',
+    'user_action',
+  ];
+
+  // The squiggle should not be present.
+  $no_squiggle = [
+    'hero_image',
+  ];
+
+  // If view mode and paragraph item is not in the $intro_stripped array
+  // add additional classes.
+  if (!in_array($view_mode, $intro_stripped) && !in_array($bundle, $intro_stripped)) {
+    $variables['attributes']->addClass("supporting-text");
+    // Don't add squiggle border to intro-field in hero image component.
+    if (!in_array($bundle, $no_squiggle)) {
+      $variables['attributes']->addClass("squiggle-border-bottom");
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_text_preprocess_image(&$variables) {
+  if ($variables["style_name"] == "media_entity_browser_thumbnail") {
+    return;
+  }
+  $variables['is_picture'] = (isset($variables['srcset']) && count($variables['srcset']));
+  if ($variables['is_picture'] && isset($variables['uri'])) {
+    $uri = preg_replace("~.*/sites/default/files~", "public:/", $variables['uri']);
+    $variables['sources'] = BackgroundResponsiveImage::buildMediaSources($uri, "card_images_2w");
   }
 }

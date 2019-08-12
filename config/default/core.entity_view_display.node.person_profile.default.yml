@@ -18,13 +18,13 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
-    - image.style.med_large_square_360x360_
     - node.type.person_profile
+    - responsive_image.styles.person_photos
   module:
     - address
     - entity_reference_revisions
     - fences
-    - svg_image
+    - responsive_image
     - text
     - user
 _core:
@@ -89,14 +89,10 @@ content:
   field_person_photo:
     label: hidden
     weight: 2
-    type: image
+    type: responsive_image
     settings:
-      image_style: med_large_square_360x360_
+      responsive_image_style: person_photos
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: div

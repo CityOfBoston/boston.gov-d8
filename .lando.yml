@@ -43,10 +43,6 @@ services:
       database: drupal
 
   appserver:
-    overrides:
-      ports:
-        - 80:80
-        - 443:443
     run_as_root:
       - echo -e "\033[1;32m[lando]\033[1;33m Building; Installing Linux packages in appserver container...\033[0m"
       - if [ ! -e  /app/setup ]; then mkdir /app/setup && chown www-data:www-data /app/setup && chmod 777 /app/setup; fi
@@ -101,7 +97,9 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
+#    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true remote_host=10.0.0.121" && /app/vendor/bin/drush
     - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && /app/vendor/bin/drush
+#    - /app/vendor/bin/drush
 
   drupal:
     service: appserver

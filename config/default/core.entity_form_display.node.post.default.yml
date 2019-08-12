@@ -10,16 +10,8 @@ dependencies:
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
-    - field.field.node.post.field_people
-    - field.field.node.post.field_place
-    - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
-    - field.field.node.post.field_related_content
-    - field.field.node.post.field_related_departments
-    - field.field.node.post.field_related_events_notices
-    - field.field.node.post.field_related_guides
-    - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
@@ -112,14 +104,7 @@ third_party_settings:
       label: Components
     group_related_content:
       children:
-        - field_related_departments
-        - field_related_events_notices
-        - field_related_guides
-        - field_people
-        - field_place
-        - field_related_posts
-        - field_program_initiative
-        - field_related_content
+        - field_related
       parent_name: group_post
       weight: 29
       format_type: tab
@@ -184,7 +169,7 @@ content:
     weight: 1
     type: image_image
     settings:
-      preview_image_style: thumbnail
+      preview_image_style: hero_fixed_a_mobile_1x
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
@@ -212,84 +197,21 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_people:
-    weight: 17
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_place:
-    weight: 18
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_program_initiative:
-    weight: 20
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_published_date:
     weight: 32
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_related_content:
-    weight: 21
+  field_related:
     type: entity_reference_autocomplete
+    weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
-  field_related_departments:
-    weight: 14
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_events_notices:
-    weight: 15
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_guides:
-    weight: 16
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  field_related_posts:
-    weight: 19
-    type: entity_reference_autocomplete
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_sidebar_components:
     weight: 10
     type: paragraphs
@@ -391,5 +313,4 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden:
-  field_related: true
+hidden: {  }

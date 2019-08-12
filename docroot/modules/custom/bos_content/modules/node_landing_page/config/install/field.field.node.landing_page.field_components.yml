@@ -12,6 +12,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -25,13 +26,13 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_mini_grid
     - paragraphs.paragraphs_type.hero_image
     - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.list
     - paragraphs.paragraphs_type.map
     - paragraphs.paragraphs_type.news_and_announcements
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
-    - paragraphs.paragraphs_type.upcoming_events
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -54,6 +55,7 @@ settings:
       bos311: bos311
       cabinet: cabinet
       drawers: drawers
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_cards: grid_of_cards
@@ -68,17 +70,17 @@ settings:
       hero_image: hero_image
       iframe: iframe
       map: map
+      list: list
+      news_and_announcements: news_and_announcements
       newsletter: newsletter
       photo: photo
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       text: text
       transaction_grid: transaction_grid
-      upcoming_events: upcoming_events
       video: video
       commission_members: commission_members
       commission_summary: commission_summary
       commission_search: commission_search
-      news_and_announcements: news_and_announcements
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: true
@@ -116,9 +118,6 @@ settings:
       daily_hours:
         weight: -84
         enabled: false
-      feedback:
-        enabled: true
-        weight: -83
       gol_list_links:
         weight: -82
         enabled: false
@@ -188,15 +187,15 @@ settings:
       internal_link:
         weight: -59
         enabled: false
-      list:
-        enabled: true
-        weight: -58
       map:
         enabled: true
         weight: -58
-      news_announcements:
+      list:
+        enabled: true
+        weight: -58
+      news_and_announcements:
+        enabled: true
         weight: -57
-        enabled: false
       newsletter:
         enabled: true
         weight: -56
@@ -227,9 +226,6 @@ settings:
       transaction_grid:
         enabled: true
         weight: -44
-      upcoming_events:
-        enabled: true
-        weight: -43
       video:
         enabled: true
         weight: -42
@@ -269,7 +265,7 @@ settings:
       from_library:
         weight: 87
         enabled: false
-      news_and_announcements:
+      events_and_notices:
+        weight: 125
         enabled: true
-        weight: 111
 field_type: entity_reference_revisions

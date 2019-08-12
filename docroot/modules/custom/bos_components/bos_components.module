@@ -115,7 +115,7 @@ function bos_components_form_node_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_theme_suggestions_HOOK().
  */
 function bos_components_theme_suggestions_field_alter(array &$suggestions, array $variables) {
-  $field_name = $variables['element']['#field_name'];;
+  $field_name = $variables['element']['#field_name'];
   $view_mode = $variables['element']['#view_mode'];
   $bundle = $variables['element']['#bundle'];
 
@@ -207,20 +207,52 @@ function bos_components_paragraphs_info() {
  */
 function _bos_component_embed_level(array &$variables) {
   $variables['is_component_field'] = $variables['is_subcomponent_field'] = FALSE;
-  if (isset($variables['element']['#entity_type'])) {
-    $componentParents = ['node', 'taxonomy_term', 'user'];
-    $variables['entity_type'] = $variables['element']['#entity_type'];
-    if (isset($variables["element"]["#object"]) && !in_array($variables["element"]["#object"]->getEntityType()->id(), $componentParents)) {
-      try {
-        $parentEntity = $variables["element"]["#object"]->getParentEntity();
-        if (!empty($parentEntity)) {
-          $variables['is_component_field'] = in_array($parentEntity->getEntityType()
-            ->id(), $componentParents);
-          $variables['is_subcomponent_field'] = !($variables['is_component_field']);
+
+  if (!empty($variables["field_name"])) {
+    return;
+  }
+
+  if (!empty($variables["element"]["#object"])) {
+    $object = $variables["element"]["#object"];
+
+    if ($object->getEntityTypeId() == "node") {
+      if (isset($parent) &&  in_array($parent->getEntityTypeId(), [
+        "paragraph",
+        "taxonomy",
+        "node",
+      ])) {
+        $variables['is_component_field'] = TRUE;
+        $parent = $object->getParentEntity();
+        if (isset($parent) && in_array($parent->getEntityTypeId(), [
+          "paragraph",
+          "taxonomy",
+          "node",
+        ])) {
+          $variables['is_component_field'] = FALSE;
+          $variables['is_subcomponent_field'] = TRUE;
         }
       }
-      catch (Error $e) {
+    }
 
+    elseif (in_array($object->getEntityTypeId(), ["paragraph", "taxonomy"])) {
+      $variables['is_component_field'] = TRUE;
+      $parent = $object->getParentEntity();
+      if (isset($parent) &&  in_array($parent->getEntityTypeId(), ["paragraph", "taxonomy"])) {
+        $variables['is_component_field'] = FALSE;
+        $variables['is_subcomponent_field'] = TRUE;
+      }
+      elseif (isset($parent) && $parent->getEntityTypeId() == "node") {
+        if (method_exists($parent, "getParentEntity")) {
+          $parent = $parent->getParentEntity();
+          if (isset($parent) && in_array($parent->getEntityTypeId(), [
+            "paragraph",
+            "taxonomy",
+            "node",
+          ])) {
+            $variables['is_component_field'] = FALSE;
+            $variables['is_subcomponent_field'] = TRUE;
+          }
+        }
       }
     }
   }
@@ -314,7 +346,7 @@ function walk_recursive_remove(array $array, callable $callback) {
  *   If this is a child of FYI.
  */
 function _paragraph_is_direct_child_of($entity, $bundle) {
-  if (!empty($entity) && is_a($entity, 'Drupal\paragraphs\Entity\Paragraph') && $entity->getParentEntity()->bundle() == $bundle) {
+  if (!empty($entity) && is_a($entity, 'Drupal\paragraphs\Entity\Paragraph') && $entity->getParentEntity() != NULL && $entity->getParentEntity()->bundle() == $bundle) {
     return TRUE;
   }
   return FALSE;
@@ -339,11 +371,25 @@ function _bos_components_fix_attributes(array &$variables, string $check_field =
  */
 function _bos_components_update_all_icons() {
   $modules = system_get_info('module');
+  $ignore = [
+    "bos_migration",
+    "bos_components",
+    "bos_content",
+    "bos_core",
+    "bos_vocab",
+  ];
   foreach ($modules as $moduleName => $module) {
     if (preg_match("/^(bos_)/", $moduleName)) {
-      _bos_core_install_icons($moduleName);
+      if (!in_array($moduleName, $ignore)) {
+        _bos_core_install_icons($moduleName);
+      }
     }
   }
+  // Content Type modules with paragraphs ...
+  _bos_core_install_icons("node_how_to");
+  _bos_core_install_icons("node_emergency_alert");
+  _bos_core_install_icons("node_tabbed_content");
+
 }
 
 /**

@@ -26,7 +26,7 @@
 {%  set cleanname = name.0["#context"].value %}
   <div class="detail-item detail-item--middle detail-item--listed">
     <div class="detail-item__left">
-      <img src="{{ content.field_icon|render|striptags|trim }}" alt="{{ cleanname }}" title="{{ cleanname }}" />
+      {{ content.field_icon }}
     </div>
     <div class="detail-item__content">
       <div class="detail-item__body detail-item__body--secondary">

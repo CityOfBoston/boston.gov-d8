@@ -162,16 +162,23 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_bid:
-    type: entity_reference_paragraphs
+    type: paragraphs
     weight: 6
     region: content
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
+      title: Bid
+      title_plural: Bids
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
   field_bid_type:
     type: entity_reference_autocomplete
@@ -213,11 +220,18 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_document:
-    type: file_generic
     weight: 56
     region: content
+    type: entity_browser_file
     settings:
-      progress_indicator: throbber
+      entity_browser: media_entity_browser
+      field_widget_edit: true
+      field_widget_remove: true
+      field_widget_replace: true
+      selection_mode: selection_append
+      view_mode: full
+      open: false
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_email:
     type: string_textfield

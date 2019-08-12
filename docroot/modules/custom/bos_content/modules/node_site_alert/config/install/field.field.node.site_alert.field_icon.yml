@@ -11,21 +11,21 @@ field_name: field_icon
 entity_type: node
 bundle: site_alert
 label: Icon
-description: 'This should be an icon with a circle (same ones used for status updates).'
+description: "This SVG icon will display as the left-most element on the site alert.<br>\r\n<i><b>Style Guide:</b> This should be an SVG icon with a circle (same style as used for status updates).</i>"
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: 'site-alert-icon-[current-date:date_format_file_directory_storage_date]'
+  file_directory: 'img/icons/site_alert/[current-date:html_year]/[current-date:html_month_bare]'
   file_extensions: svg
-  max_filesize: ''
+  max_filesize: '200 KB'
   max_resolution: ''
-  min_resolution: ''
-  alt_field: true
-  alt_field_required: true
-  title_field: true
-  title_field_required: true
+  min_resolution: 56x56
+  alt_field: false
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
   default_image:
     uuid: ''
     alt: ''

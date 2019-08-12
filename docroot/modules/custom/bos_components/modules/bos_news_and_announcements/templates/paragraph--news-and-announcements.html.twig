@@ -25,26 +25,39 @@
  #}
 
 <div {{ attributes }}>
+
   <div class="content container"{{ content_attributes }}>
-  	  <div class="sh">
+
+  	  <div class="sh cl">
+
+        {{ content.contextual_links }}
+
         {% if content.field_component_title %}
           {{ content.field_component_title }}
         {% endif %}
+
         {% if content.field_short_title %}
           {{ content.field_short_title }}
         {% endif %}
+
         {% if content.field_contact %}
           {{ content.field_contact }}
         {% endif %}
+
       </div>
+
      <div>
        {{ content.field_featured_post }}
      </div>
+
      <div class="grid-wrapper clearfix">
       {{ content.field_list }}
     </div>
-    {% if call_to_action %}
-      {{ call_to_action }}
+
+    {% if cta %}
+      {{ cta }}
     {% endif %}
+
   </div>
+
 </div>

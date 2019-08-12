@@ -3,8 +3,10 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.features.field_icon
+    - image.style.square_icon_56px
     - taxonomy.vocabulary.features
   module:
+    - fences
     - svg_image
     - text
 id: taxonomy_term.features.default
@@ -24,13 +26,20 @@ content:
     weight: 0
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_56px
       image_link: ''
       svg_attributes:
         width: ''
         height: ''
-      svg_render_as_image: true
-    third_party_settings: {  }
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   langcode: true

@@ -3,12 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.user.user.field_last_password_reset
-    - field.field.user.user.field_password_expiration
     - field.field.user.user.user_picture
-    - image.style.thumbnail
+    - image.style.person_photo_a_mobile_1x
   module:
-    - datetime
     - path
     - svg_image
     - user
@@ -27,19 +24,6 @@ content:
   contact:
     weight: 5
     region: content
-  field_last_password_reset:
-    type: datetime_default
-    weight: 4
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_password_expiration:
-    type: boolean_checkbox
-    weight: 3
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    region: content
   language:
     weight: 0
     region: content
@@ -55,11 +39,11 @@ content:
     weight: 6
     region: content
   user_picture:
-    settings:
-      preview_image_style: thumbnail
-      progress_indicator: throbber
-    type: image_image
     weight: 7
+    type: image_image
+    settings:
+      preview_image_style: person_photo_a_mobile_1x
+      progress_indicator: throbber
     third_party_settings: {  }
     region: content
 hidden:

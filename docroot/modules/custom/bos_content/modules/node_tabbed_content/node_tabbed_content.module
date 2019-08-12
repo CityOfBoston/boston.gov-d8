@@ -5,8 +5,8 @@
  * Provides a tabbed content entity type.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
-use Drupal\image\Entity\ImageStyle;
 use Drupal\Component\Utility\Html;
 
 /**
@@ -28,15 +28,12 @@ function node_tabbed_content_theme() {
  */
 function node_tabbed_content_preprocess_page(&$variables) {
   // We dont ever want a hero section from the page template.
-  if (isset($variables["node"]) && $variables["node"]->bundle() == "tabbed_content") {
-    $variables['header_image'] = FALSE;
-    if (function_exists("_bos_theme_fix_attributes")) {
-      _bos_theme_fix_attributes($variables);
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+    if (is_numeric($node)) {
+      // $variables['node'] is the nid when a view_display version of the
+      // page is rendered.
+      return;
     }
-    elseif (function_exists("_bos_admin_fix_attributes")) {
-      _bos_admin_fix_attributes($variables);
-    }
-    $variables['attributes']->addClass("mn");
   }
 }
 
@@ -44,7 +41,7 @@ function node_tabbed_content_preprocess_page(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
-
+  // Create the tabs.
   $node = $variables['elements']['#node'];
   $tab_paragraphs = $node->get('field_tabbed_content');
   $tab_paragraphs = $tab_paragraphs->referencedEntities();
@@ -57,21 +54,23 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
   }
   $variables['tabs'] = $tabs;
 
-  // Add intro_image as background to the title panel.
-  if (isset($node->field_intro_image)) {
-    $background_image = $node->field_intro_image;
-    if (isset($background_image->entity)) {
-      $uri = $background_image->entity->getFileUri();
-      $variables['background_image_exists'] = TRUE;
-      $variables['background_image'] = $background_image;
-      $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
-        ->buildUrl($uri);
-      $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
-        ->buildUrl($uri);
-      $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
-        ->buildUrl($uri);
-      $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
-        ->buildUrl($uri);
+  // Handle intro_image if present.
+  $variables['image_class'] = "hro--b";
+  if (isset($variables['content']['field_intro_image'])) {
+    $background_image = $variables["elements"]["field_intro_image"];
+    if ($background_image["#items"]->count()) {
+      $photo_id = Html::getUniqueId('hro');
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        'event-intro-image-css',
+      ];
+      // Add css for the field_intro_image (hero image).
+      $variables['image_class'] = "$photo_id hro--t";
     }
   }
 
@@ -88,6 +87,9 @@ function node_tabbed_content_preprocess_node__tabbed_content(&$variables) {
       $variables["attributes"]->addClass("node-unpublished");
     }
   }
+
+  // Add the js to enable the tabs.
+  $variables['#attached']['library'][] = "bos_theme/page.tabbed_page";
 }
 
 /**

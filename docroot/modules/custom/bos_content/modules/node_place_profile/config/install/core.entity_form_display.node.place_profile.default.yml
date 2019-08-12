@@ -21,7 +21,7 @@ dependencies:
     - field.field.node.place_profile.field_sidebar_components
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
-    - image.style.thumbnail
+    - image.style.intro_image_mobile_1x
     - node.type.place_profile
   module:
     - address
@@ -197,8 +197,7 @@ content:
     region: content
   field_address:
     weight: 17
-    settings:
-      default_country: null
+    settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
@@ -248,7 +247,7 @@ content:
     weight: 1
     type: image_image
     settings:
-      preview_image_style: thumbnail
+      preview_image_style: intro_image_mobile_1x
       progress_indicator: throbber
     third_party_settings: {  }
     region: content

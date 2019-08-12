@@ -41,6 +41,10 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['node__department_profile__department_listing'] = [
+    'base hook' => 'node',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   $theme['views_view__news_landing'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
@@ -61,6 +65,14 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['node__event__calendar_listing'] = [
+    'base hook' => 'node',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view_unformatted__calendar'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   $theme['views_view__places'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
@@ -77,6 +89,14 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['node__public_notice__listing'] = [
+    'base hook' => 'node',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['views_view_unformatted__public_notice'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   $theme['views_view__status_displays'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
@@ -89,12 +109,20 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['views_view_unformatted__topic_landing_page'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   $theme['views_view__transactions'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
   $theme['views_exposed_form__transactions'] = [
     'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['node__transaction__listing'] = [
+    'base hook' => 'node',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
   return $theme;

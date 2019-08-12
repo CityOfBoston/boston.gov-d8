@@ -33,15 +33,30 @@
         {% if menu_level == 0 %}
             <ul class="nv-m-c-l"{{ attributes }}>
         {% else %}
-            <ul class="nv-m-c-l"{{ attributes }}>
+            <ul class="nv-m-c-l-l"{{ attributes }}>
+            <li class="nv-m-c-bc"><button class="nv-m-c-b">Back</button></li>
         {% endif %}
         {% for item in items %}
-            <li class="nv-m-c-l-i is-l leaf {{ item.classes }}"{{ item.attributes }}>
+            {% set uri = item.url.toString %}
+            {% if uri == '' %}
+              <li class="nv-m-c-l-i is-e expanded {{ item.classes }}"{{ item.attributes }}>
+                <a href="#" title class="nv-m-c-a mv-m-c-a--p nolink nolink--a {{ item.linkclass }}">{{ item.title }}</a>                  
+                {% if item.below %}
+                  {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+                {% endif %}
+              </li>
+            {% else %}
+            {% if menu_level == 0 %}
+              <li class="nv-m-c-l-i is-l leaf {{ item.classes }}"{{ item.attributes }}>
+            {% else %}
+              <li class="nv-m-c-l-l-i is-l leaf {{ item.classes }}"{{ item.attributes }}>
+            {% endif %}
                 {{ link(item.title, item.url, { 'class':['nv-m-c-a', 'mv-m-c-a--p', item.linkclass]}) }}
                 {% if item.below %}
                     {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
                 {% endif %}
             </li>
+            {% endif %}
         {% endfor %}
         </ul>
     {% endif %}

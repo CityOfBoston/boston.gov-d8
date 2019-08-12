@@ -11,21 +11,21 @@ field_name: field_image
 entity_type: paragraph
 bundle: columns
 label: 'Column Image'
-description: ''
+description: 'Add an image which will appear in a 200px diameter circle centered on the top of the column.'
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: ''
+  file_directory: 'img/columns/[current-date:html_year]/[current-date:html_month_bare]'
   file_extensions: 'png gif jpg jpeg svg'
-  max_filesize: ''
+  max_filesize: '2 MB'
   max_resolution: ''
-  min_resolution: ''
+  min_resolution: 200x200
   alt_field: true
-  alt_field_required: true
-  title_field: true
-  title_field_required: true
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
   default_image:
     uuid: ''
     alt: ''

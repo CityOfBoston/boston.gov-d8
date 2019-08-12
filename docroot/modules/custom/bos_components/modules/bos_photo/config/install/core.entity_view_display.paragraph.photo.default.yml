@@ -10,10 +10,11 @@ dependencies:
     - field.field.paragraph.photo.field_photo_credit
     - field.field.paragraph.photo.field_short_title
     - paragraphs.paragraphs_type.photo
+    - responsive_image.styles.photo_bleed_images
   module:
     - entity_reference_revisions
     - fences
-    - svg_image
+    - responsive_image
     - text
 id: paragraph.photo.default
 targetEntityType: paragraph
@@ -36,18 +37,21 @@ content:
         fences_label_classes: ''
     region: content
   field_image:
-    type: image
+    type: responsive_image
     weight: 4
     region: content
     label: hidden
     settings:
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-      image_style: ''
+      responsive_image_style: photo_bleed_images
       image_link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_link:
     label: hidden
     weight: 3

@@ -1,12 +1,17 @@
 uuid: 834f9336-3596-4162-80f3-a1dbdf0e4dd7
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - lightning_core
+third_party_settings:
+  lightning_core:
+    description: 'Users with complete access to all site config and content functions.'
 _core:
   default_config_hash: Om6FEO7vZZMkPIbVvfxtdkWerQ2PvQM4sWUd6Q3ZnfI
 id: administrator
 label: administrator
-weight: 2
+weight: -8
 is_admin: true
 permissions:
   - 'access administration menu'
@@ -63,6 +68,7 @@ permissions:
   - 'administer panels layouts'
   - 'administer panels styles'
   - 'administer paragraphs bundles'
+  - 'administer password policies'
   - 'administer pathauto'
   - 'administer permissions'
   - 'administer phpexcel'
@@ -144,6 +150,7 @@ permissions:
   - 'create paragraph content drawer'
   - 'create paragraph content drawers'
   - 'create paragraph content election_results'
+  - 'create paragraph content events_and_notices'
   - 'create paragraph content external_link'
   - 'create paragraph content featured_item'
   - 'create paragraph content featured_topics'
@@ -173,6 +180,7 @@ permissions:
   - 'create paragraph content map_esri_feed'
   - 'create paragraph content map_pin'
   - 'create paragraph content message_for_the_day'
+  - 'create paragraph content news_and_announcements'
   - 'create paragraph content news_announcements'
   - 'create paragraph content newsletter'
   - 'create paragraph content photo'
@@ -191,7 +199,6 @@ permissions:
   - 'create paragraph content text_three_column'
   - 'create paragraph content text_two_column'
   - 'create paragraph content transaction_grid'
-  - 'create paragraph content upcoming_events'
   - 'create paragraph content user_action'
   - 'create paragraph content video'
   - 'create person_profile content'
@@ -280,6 +287,7 @@ permissions:
   - 'delete paragraph content drawer'
   - 'delete paragraph content drawers'
   - 'delete paragraph content election_results'
+  - 'delete paragraph content events_and_notices'
   - 'delete paragraph content external_link'
   - 'delete paragraph content featured_item'
   - 'delete paragraph content featured_topics'
@@ -309,6 +317,7 @@ permissions:
   - 'delete paragraph content map_esri_feed'
   - 'delete paragraph content map_pin'
   - 'delete paragraph content message_for_the_day'
+  - 'delete paragraph content news_and_announcements'
   - 'delete paragraph content news_announcements'
   - 'delete paragraph content newsletter'
   - 'delete paragraph content photo'
@@ -327,7 +336,6 @@ permissions:
   - 'delete paragraph content text_three_column'
   - 'delete paragraph content text_two_column'
   - 'delete paragraph content transaction_grid'
-  - 'delete paragraph content upcoming_events'
   - 'delete paragraph content user_action'
   - 'delete paragraph content video'
   - 'delete revisions'
@@ -339,6 +347,7 @@ permissions:
   - 'delete terms in 111'
   - 'delete terms in 116'
   - 'delete terms in 121'
+  - 'delete terms in 126'
   - 'delete terms in 16'
   - 'delete terms in 21'
   - 'delete terms in 26'
@@ -428,6 +437,7 @@ permissions:
   - 'edit terms in 111'
   - 'edit terms in 116'
   - 'edit terms in 121'
+  - 'edit terms in 126'
   - 'edit terms in 16'
   - 'edit terms in 21'
   - 'edit terms in 26'
@@ -447,6 +457,7 @@ permissions:
   - 'edit terms in 91'
   - 'edit terms in 96'
   - 'flush caches'
+  - 'force password change'
   - 'generate features'
   - 'generate s3fs CORS upload parameters'
   - 'get a system variable'
@@ -507,6 +518,7 @@ permissions:
   - 'show write-ins'
   - 'skip comment approval'
   - 'switch shortcut sets'
+  - 'unblock expired accounts'
   - 'update paragraph content 3_column_w_image'
   - 'update paragraph content bid'
   - 'update paragraph content bos311'
@@ -526,6 +538,7 @@ permissions:
   - 'update paragraph content drawer'
   - 'update paragraph content drawers'
   - 'update paragraph content election_results'
+  - 'update paragraph content events_and_notices'
   - 'update paragraph content external_link'
   - 'update paragraph content featured_item'
   - 'update paragraph content featured_topics'
@@ -555,6 +568,7 @@ permissions:
   - 'update paragraph content map_esri_feed'
   - 'update paragraph content map_pin'
   - 'update paragraph content message_for_the_day'
+  - 'update paragraph content news_and_announcements'
   - 'update paragraph content news_announcements'
   - 'update paragraph content newsletter'
   - 'update paragraph content photo'
@@ -573,11 +587,11 @@ permissions:
   - 'update paragraph content text_three_column'
   - 'update paragraph content text_two_column'
   - 'update paragraph content transaction_grid'
-  - 'update paragraph content upcoming_events'
   - 'update paragraph content user_action'
   - 'update paragraph content video'
   - 'use PHP for tracking visibility'
   - 'use advanced search'
+  - 'use ctools import'
   - 'use ipe with page manager'
   - 'use manual purge blocks'
   - 'use media wysiwyg'
@@ -622,6 +636,7 @@ permissions:
   - 'view paragraph content drawer'
   - 'view paragraph content drawers'
   - 'view paragraph content election_results'
+  - 'view paragraph content events_and_notices'
   - 'view paragraph content external_link'
   - 'view paragraph content featured_item'
   - 'view paragraph content featured_topics'
@@ -651,6 +666,7 @@ permissions:
   - 'view paragraph content map_esri_feed'
   - 'view paragraph content map_pin'
   - 'view paragraph content message_for_the_day'
+  - 'view paragraph content news_and_announcements'
   - 'view paragraph content news_announcements'
   - 'view paragraph content newsletter'
   - 'view paragraph content photo'
@@ -669,7 +685,6 @@ permissions:
   - 'view paragraph content text_three_column'
   - 'view paragraph content text_two_column'
   - 'view paragraph content transaction_grid'
-  - 'view paragraph content upcoming_events'
   - 'view paragraph content user_action'
   - 'view paragraph content video'
   - 'view private files'

@@ -10,9 +10,12 @@ dependencies:
     - field.field.node.listing_page.field_published_date
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
+    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
+    - fences
+    - responsive_image
     - user
 _core:
   default_config_hash: DzYzcZKDxrohAOW_7PiIqqsvZIZcDiN2QetB6cuCHnU
@@ -21,6 +24,11 @@ targetEntityType: node
 bundle: listing_page
 mode: default
 content:
+  content_moderation_control:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_components:
     label: hidden
     weight: 2
@@ -39,17 +47,32 @@ content:
       link: ''
     third_party_settings: {  }
     region: content
-  field_manual_date:
-    weight: 101
-    label: above
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
-    type: boolean
+  field_intro_image:
+    type: responsive_image
+    weight: 5
     region: content
+    label: hidden
+    settings:
+      responsive_image_style: intro_image_fields
+      image_link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_published_date:
+    type: datetime_default
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_updated_date:
     label: hidden
     weight: 3
     type: datetime_default
@@ -58,19 +81,12 @@ content:
       timezone_override: ''
     third_party_settings: {  }
     region: content
-  field_updated_date:
-    label: hidden
-    weight: 4
-    type: datetime_default
-    settings:
-      format_type: medium
-      timezone_override: ''
-    third_party_settings: {  }
-    region: content
   links:
-    weight: 100
+    weight: 6
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  field_intro_image: true
+  field_manual_date: true
   langcode: true
   published_at: true

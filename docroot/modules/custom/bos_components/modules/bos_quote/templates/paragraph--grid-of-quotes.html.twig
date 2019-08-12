@@ -24,12 +24,18 @@
  * @see template_process()
  #}
 <div {{ attributes.addClass('paragraphs-item-grid-of-quotes') }}>
-  <div class="content">
+  <div class="b-c">
+
+    {{ title_prefix }}
+
     <div class="sh" >
       {{ content.field_component_title }}
+      {{ title_suffix }}
     </div>
+
     <div class="section-grid-of-quotes" >
       {{ content.field_grid_of_quotes }}
     </div>
+
   </div>
 </div>

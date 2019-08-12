@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
+    - field.field.node.event.field_date_range
     - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
@@ -19,25 +20,28 @@ dependencies:
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
     - field.field.node.event.field_intro_image
+    - field.field.node.event.field_intro_text
     - field.field.node.event.field_links
     - field.field.node.event.field_manual_date
     - field.field.node.event.field_metatags
     - field.field.node.event.field_multiple_neighborhoods
     - field.field.node.event.field_phone_number
     - field.field.node.event.field_published_date
-    - field.field.node.event.field_related_departments
+    - field.field.node.event.field_related
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
     - node.type.event
+    - responsive_image.styles.thumbnail_event
   module:
     - address
     - datetime
+    - datetime_range
     - entity_reference_revisions
     - fences
     - link
     - options
-    - svg_image
+    - responsive_image
     - text
     - user
 id: node.event.default
@@ -61,9 +65,16 @@ content:
         fences_label_classes: ''
   field_address:
     weight: 25
-    label: above
+    label: hidden
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     type: address_default
     region: content
   field_cancel_event:
@@ -106,7 +117,7 @@ content:
       link: ''
     third_party_settings: {  }
   field_contacts:
-    weight: 14
+    weight: 15
     label: hidden
     settings:
       link: true
@@ -128,6 +139,23 @@ content:
         fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
+  field_date_range:
+    weight: 5
+    label: hidden
+    settings:
+      timezone_override: America/New_York
+      format_type: date_format_normal_date
+      separator: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: daterange_default
+    region: content
   field_description:
     weight: 3
     label: hidden
@@ -184,22 +212,6 @@ content:
         fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
-  field_event_dates:
-    type: datetime_default
-    weight: 5
-    region: content
-    label: hidden
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_event_type:
     type: entity_reference_label
     weight: 11
@@ -231,18 +243,35 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: image
+    type: responsive_image
     weight: 18
     region: content
     label: hidden
     settings:
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-      image_style: ''
+      responsive_image_style: intro_image_fields
       image_link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_intro_text:
+    weight: 13
+    label: visually_hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: text_default
+    region: content
   field_links:
     type: entity_reference_revisions_entity_view
     weight: 12
@@ -260,7 +289,7 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_manual_date:
-    weight: 15
+    weight: 16
     label: hidden
     settings:
       format: default
@@ -301,7 +330,7 @@ content:
         fences_label_classes: ''
   field_published_date:
     type: datetime_default
-    weight: 13
+    weight: 14
     region: content
     label: inline
     settings:
@@ -315,17 +344,17 @@ content:
         fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
-  field_related_departments:
-    type: entity_reference_label
-    weight: 17
-    region: content
-    label: hidden
+  field_related:
+    weight: 26
+    label: above
     settings:
       link: true
     third_party_settings: {  }
+    type: entity_reference_label
+    region: content
   field_sidebar_components:
     type: entity_reference_revisions_entity_view
-    weight: 16
+    weight: 17
     region: content
     label: hidden
     settings:
@@ -333,18 +362,21 @@ content:
       link: ''
     third_party_settings: {  }
   field_thumbnail:
-    type: image
+    type: responsive_image
     weight: 21
     region: content
     label: hidden
     settings:
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-      image_style: ''
+      responsive_image_style: thumbnail_event
       image_link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_updated_date:
     type: datetime_default
     weight: 0
@@ -363,6 +395,7 @@ content:
         fences_label_classes: ''
 hidden:
   content_moderation_control: true
+  field_event_dates: true
   field_metatags: true
   langcode: true
   links: true

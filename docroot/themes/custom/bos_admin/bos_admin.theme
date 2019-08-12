@@ -11,6 +11,8 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\GeneratedLink;
+use Drupal\Core\Url;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -94,9 +96,11 @@ function bos_admin_preprocess_html(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_admin_preprocess_username(&$variables) {
-  if (empty($variables["account"]->__get("realname")) || stripos($variables["account"]->__get("realname"), "@")) {
-    if (function_exists("_bos_core_name_from_email")) {
-      $name = _bos_core_name_from_email($variables["account"]->get("mail")->value);
+  // Todo: set name and extra fields here ...
+  $name = $variables["account"]->__get("realname");
+  if (empty($name) || stripos($name, "@")) {
+    if (function_exists("bos_core_realname_update")) {
+      bos_core_realname_update($name, $variables["account"]);
       $variables["account"]->__set("realname", $name);
       $variables["name"] = $name;
     }
@@ -115,34 +119,58 @@ function bos_admin_preprocess_admin_block(&$variables) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
+  $unhelpfulUsernamePattern = "~(CON|INT|)[0-9]{5,}~";
+  foreach ($form["node_revisions_table"] as $key => &$revision) {
+    if (is_numeric($key)) {
+      $context = &$revision["revision"]["#context"];
+      // If user is numeric, then find the realname.
+      $user = str_replace("\n", "", strip_tags($context["username"]->__toString()));
+      if (is_numeric($user)) {
+        $user = bos_admin_author_expand($user);
+      }
+      $context["username"] = Markup::create($user);
+      // If revision was migrated from D7, then insert relname into message.
+      if (preg_match($unhelpfulUsernamePattern, $context["message"]["#markup"], $rev_username)) {
+        $rev_user = Drupal::entityTypeManager()
+          ->getStorage("user")
+          ->loadByProperties(["name" => $rev_username[0]]);
+        $rev_user = reset($rev_user);
+        $context["message"]["#markup"] = preg_replace($unhelpfulUsernamePattern, $rev_user->realname, $context["message"]["#markup"]);
+      }
+      // Add the revision number.
+      $revision["revision"]["#template"] = preg_replace("~\{\{ date \}\}~", "{{ revisionid }} on {{ date }}", $revision["revision"]["#template"]);
+      $context["revisionid"] = new GeneratedLink();
+      $revfield = $revision["revision"]["#context"]["date"]->getGeneratedLink();
+      $revfield = preg_replace("~>[0-9\/ -\:apm]*<~", ">" . $revision['select_column_one']['#return_value'] . "<", $revfield);
+      $context["revisionid"]->setGeneratedLink($revfield);
+      $context["date"]->setGeneratedLink(strip_tags($revision["revision"]["#context"]["date"]->getGeneratedLink()));
+      // Add some tooltips to help editors with this form.
+      $tooltip = "Select this revision for compare";
+      $revision["select_column_one"]["#attributes"]["title"] = $tooltip;
+      $revision["select_column_two"]["#attributes"]["title"] = $tooltip;
+    }
+  }
+  // Revision form ...
+  $title = "compare";
+  $form["node_revisions_table"]["#header"]["select_column_one"] = $title;
+  $form["node_revisions_table"]["#header"]["select_column_two"] = $title;
+  $form["#attached"]["library"][] = "bos_admin/revisions";
+  $form["reset"] = [
+    "#attributes" => ["class" => ["compare-reset"]],
+    "#button_type" => "danger",
+    "#type" => "submit",
+    "#value" => Markup::create("Reset selections"),
+  ];
+  $form["#submit"][] = "bos_admin_revisions_defaults";
+}
+
+/**
  * Implements hook_form_alter().
  */
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id == "revision_overview_form") {
-    foreach ($form["node_revisions_table"] as $key => &$revision) {
-      if (is_numeric($key)) {
-        $context = &$revision["revision"]["#context"];
-        $uid = str_replace("\n", "", strip_tags($context["username"]->__toString()));
-        $user = bos_admin_author_expand($uid);
-        $context["username"] = Markup::create($user);
-        $tooltip = "Select this revision for compare";
-        $revision["select_column_one"]["#attributes"]["title"] = $tooltip;
-        $revision["select_column_two"]["#attributes"]["title"] = $tooltip;
-      }
-    }
-    // Revision form ...
-    $title = "compare";
-    $form["node_revisions_table"]["#header"]["select_column_one"] = $title;
-    $form["node_revisions_table"]["#header"]["select_column_two"] = $title;
-    $form["#attached"]["library"][] = "bos_admin/revisions";
-    $form["reset"] = [
-      "#attributes" => ["class" => ["compare-reset"]],
-      "#button_type" => "danger",
-      "#type" => "submit",
-      "#value" => Markup::create("Reset selections"),
-    ];
-    $form["#submit"][] = "bos_admin_revisions_defaults";
-  }
 
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
     // Node-edit forms: Make the Revision log message required.
@@ -302,26 +330,30 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
         // Get this entity to start from.
         $this_entity = $form_state->getFormObject()->getEntity();
         $chain = [$this_entity];
-        while ($this_entity->hasField("parent_id")) {
+        while (isset($this_entity) && $this_entity->hasField("parent_id")) {
           $this_entity = $this_entity->getParentEntity();
-          $chain[] = $this_entity;
+          if (isset($this_entity)) {
+            $chain[] = $this_entity;
+          }
         }
         $chain = array_reverse($chain);
         // Check the 'top' $chain entity is the entity reported by the form.
         if ($chain[0]->id() == $form_state->getBuildInfo()['args'][0]->id()) {
 
           // Make the lineage into an array of strings.
-          $title[0] = "<h2>" . ucwords(str_replace(['-', '_'], " ", $chain[0]->bundle())) . ": <u>" . $chain[0]->getTitle() . "</u> (nid " . $chain[0]->id() . ")" . "</h2>";
+          $bundle[0] = ucwords(str_replace(["_", "-"], " ", $chain[0]->bundle()));
+          $title[0] = "<div class='ce-pretty'>";
+          $title[] = "<h2>" . $bundle[0] . ": <span class='ce-title'>" . $chain[0]->getTitle() . "</span> (nid " . $chain[0]->id() . ")" . "</h2>";
           switch ($chain[1]->getEntityTypeId()) {
             case "node":
-              $title[] = "<h3> > <u>" . $chain[1]->getTitle() . "</u> (nid " . $chain[1]->id() . ")</h3>";
+              $title[] = "<h3 class='ce-pretty'> > <span class='ce-title'>" . $chain[1]->getTitle() . "</span> (nid " . $chain[1]->id() . ")</h3>";
               break;
 
             case "paragraph":
               foreach ($chain[1]->getFields() as $fieldName => $field) {
                 $crumb = ucwords(str_replace(['-', '_'], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
                 if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
-                  $title[] = "<h3>" . $crumb . " > <u>" . $field->getValue()[0]['value'] . "</u> (nid " . $chain[1]->id() . ")</h3>";
+                  $title[] = "<h3 class='ce-pretty'>Editing: " . $crumb . " > <span class='ce-title'>" . $field->getValue()[0]['value'] . "</span> (pid " . $chain[1]->id() . ")</h3>";
                   break;
                 }
               }
@@ -330,12 +362,38 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
             case "taxonomy":
               break;
           }
+          $title[] = "</div>";
 
           // Add this title to the form.
           $form['lineage'] = [
             '#type' => 'markup',
             "#weight" => -100,
             '#markup' => implode("", $title) . "<hr>",
+          ];
+
+          // Add a cancel button.
+          $form["actions"]["delete"] = [
+            "#access" => TRUE,
+            "#attributes" => [
+              "class" => [
+                "button",
+                "button--danger",
+              ],
+            ],
+            "#button_type" => "danger",
+            "#title" => new TranslatableMarkup("Return to @entity", [
+              "@entity" => $bundle[0],
+            ]),
+            "#value" => new TranslatableMarkup("Return to @entity", [
+              "@entity" => $bundle[0],
+            ]),
+            "#type" => "link",
+            "#url" => Url::fromRoute("entity.node.canonical", [
+              "node" => $this_entity->id(),
+            ], [
+              "fragment" => Html::cleanCssIdentifier(strtolower($chain[1]->field_short_title->value ?? "")),
+            ]),
+            "#weight" => 100,
           ];
         }
       }

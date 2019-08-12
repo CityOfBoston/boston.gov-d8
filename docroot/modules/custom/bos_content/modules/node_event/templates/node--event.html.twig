@@ -78,25 +78,48 @@
  * @ingroup themeable
  #}
 
-{#<script>var event_id = "node-{{ node.nid }}"</script>#}
+{% if content.intro_image %}
+
+  {{ content.intro_image }}
+
+  <div class="brc--wh" data-swiftype-index="false">
+    {{ drupal_block('system_breadcrumb_block') }}
+  </div>
+
+{% else %}
+
+  <div class="breadcrumb" data-swiftype-index="false">
+    {{ drupal_block('system_breadcrumb_block') }}
+  </div>
+
+{%  endif %}
+
+
 <article {{ attributes }}>
+
   {% if (content.field_updated_date) %}
     <div class="brc-lu">
       Last updated: {{ content.field_updated_date }}
     </div>
   {% endif %}
-  <div class="department-info-wrapper desktop-100">
+
+  <div class="department-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-left">
 
       {{ title_prefix }}
 
       {% if title %}
+
         <h1{{ title_attributes }}>
+
           {% if is_cancelled %}
             <span class='t--err t--s60pct'>Canceled:</span><br>
           {% endif %}
+
           {{ title.0 }}
+
         </h1>
+
       {%  endif %}
 
       {{ title_suffix }}
@@ -147,13 +170,14 @@
 
     </div>
     {#  This is the RHS sidebar. #}
-    <div class="column mobile-100 desktop-33-right clearfix">
-
-      {% if content.field_event_dates %}
+    <div class="column mobile-100 desktop-33-right">
+      {% if content.field_date_range %}
         <div class="event-date-wrapper">
           <div class="event-date sidebar-header">
-            {% if not content.field_event_dates.isEmpty %}
-              {{ content.field_event_dates[0] }}
+            {% if content.field_date_range.0.start_date %}
+              {{ content.field_date_range.0.start_date }}
+            {% elseif content.field_date_range.0["#text"] %}
+              {{ content.field_date_range.0 }}
             {% endif %}
           </div>
         </div>
@@ -166,19 +190,19 @@
 
       {% endif %}
 
-      {% if content.field_address["#entity_type"] %}
+      {% if content.field_address["#items"] %}
         <div class="list-item">
           {{ content.field_address }}
         </div>
       {% endif %}
 
-      {% if content.field_email["#entity_type"] %}
+      {% if content.field_email["#items"] %}
         <div class="list-item">
           {{ content.field_email }}
         </div>
       {% endif %}
 
-      {% if content.field_phone_number["#entity_type"] %}
+      {% if content.field_phone_number["#items"] %}
         <div class="list-item">
           {{ content.field_phone_number }}
         </div>
@@ -196,7 +220,7 @@
         </div>
       {% endif %}
 
-      {% if content.field_multiple_neighborhoods["#items"] %}
+      {% if content.field_multiple_neighborhoods%}
         <div class="list-item">
           {{ content.field_multiple_neighborhoods }}
         </div>
@@ -214,13 +238,13 @@
         </div>
       {% endif %}
 
-      {% if content.field_links["#entity_type"] %}
+      {% if content.field_links %}
         <div class="list-item">
           {{ content.field_links }}
         </div>
       {% endif %}
 
-      {% if (content.field_sidebar_components) %}
+      {% if content.field_sidebar_components %}
         <div class="list-item-wrapper">
           {{ content.field_sidebar_components }}
         </div>
@@ -230,7 +254,7 @@
   </div>
 
   {% if content.field_components %}
-    <div class="department-components desktop-100" {{ content_attributes }}>
+    <div class="department-components desktop-100 clearfix" {{ content_attributes }}>
       {{ content.field_components }}
     </div>
   {% endif %}

@@ -5,18 +5,12 @@
  * The Base module file for bos_grid module.
  */
 
-use Drupal\Component\Utility\Unicode;
-
 /**
  * Implements hook_theme().
  */
 function bos_grid_theme() {
   return [
     'paragraph__grid_of_topics' => [
-      'base hook' => 'paragraph',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'paragraph__grid_of_programs_initiatives' => [
       'base hook' => 'paragraph',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
     ],
@@ -28,31 +22,22 @@ function bos_grid_theme() {
       'base hook' => 'paragraph',
       'path' => drupal_get_path('module', 'bos_grid') . '/templates',
     ],
-    'node__topic_page__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'node__program_initiative_profile__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'node__person_profile__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'node__place_profile__listing' => [
-      'base hook' => 'node',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'field__field_email__mode__listing' => [
-      'base hook' => 'field',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
-    ],
-    'field__field_phone_number__mode__listing' => [
-      'base hook' => 'field',
-      'path' => drupal_get_path('module', 'bos_grid') . '/templates',
+    'paragraph__grid_of_programs_initiatives' => [
+      'base hook' => 'paragraph',
     ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_grid_preprocess_field(&$variables, $hook) {
+  if ($variables["field_name"] == "field_person_photo") {
+    if (isset($variables["element"]["#object"]) && $variables["element"]["#object"]->bundle() == "quote") {
+      return;
+    }
+    $variables['items'][0]['content']['#item_attributes']['class'] = "cdp-i";
+  }
 }
 
 /**
@@ -66,8 +51,9 @@ function bos_grid_preprocess_paragraph(&$vars) {
       case 'grid_of_people':
       case 'grid_of_places':
         $theme = $paragraph->get('field_component_theme')->getValue()['0']['value'];
-        $vars['attributes']['class'][] = 'b--' . !empty($theme) ? $theme : 'g';
-        $vars['section_header_theme'] = $theme === 'b' ? 'sh--w' : '';
+        $vars['attributes']['class'][] = 'b--' . (!empty($theme) ? $theme : 'g');
+        $vars['attributes']['class'][] = 'b--fw';
+        $vars['section_header_theme'] = ($theme === 'b' ? 'sh--w' : '');
         break;
     }
   }
@@ -77,40 +63,13 @@ function bos_grid_preprocess_paragraph(&$vars) {
  * Implements hook_preprocess_node().
  */
 function bos_grid_preprocess_node(&$vars) {
-  if (!empty($vars['node'] && $vars['view_mode'] == 'listing')) {
-    $node = $vars['node'];
+  // TODO: This wont be called for anything except nodes defined in the
+  // hook_theme of this module ...
+  if (!empty($vars['elements']['node']) && $vars['elements']['#view_mode'] == 'listing') {
+    $node = $vars['elements']['#node'];
     switch ($node->bundle()) {
       case 'topic_page':
         $vars['title_raw'] = $node->getTitle();
-        break;
-
-      case 'program_initiative_profile':
-        $vars['title_raw'] = $node->getTitle();
-        if (!$node->get('field_intro_image')->isEmpty()) {
-          $vars['image'] = _bos_core_get_file_link($node->get('field_intro_image')->getValue());
-        }
-        break;
-
-      case 'person_profile':
-        $vars['title_raw'] = $node->getTitle();
-        $preferred_contact = $node->get('field_preferred_contact')->getValue();
-        if (!empty($preferred_contact)) {
-          if ($preferred_contact['0']['value'] == 'email' && !$node->get('field_email')->isEmpty()) {
-            $vars['preferred_contact'] = 'email';
-          }
-          elseif ($preferred_contact['0']['value'] == 'phone' && !$node->get('field_phone_number')->isEmpty()) {
-            $vars['preferred_contact'] = 'phone';
-          }
-        }
-        break;
-
-      case 'place_profile':
-        $vars['short_title'] = Unicode::truncate($node->getTitle(), 50, TRUE, TRUE, 1);
-        if (!$node->get('field_intro_image')->isEmpty()) {
-          $base_url = file_load($node->get('field_intro_image')->getValue()['0']['target_id'])->getFileUri();
-          $style = \Drupal::entityTypeManager()->getStorage('image_style')->load('grid_card_image');
-          $vars['image'] = $style->buildUrl($base_url);
-        }
         break;
     }
   }

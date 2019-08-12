@@ -9,7 +9,7 @@ dependencies:
     - field.field.paragraph.video.field_image
     - field.field.paragraph.video.field_is_channel
     - field.field.paragraph.video.field_short_title
-    - image.style.thumbnail
+    - image.style.photo_bleed_a_mobile_1x
     - paragraphs.paragraphs_type.video
   module:
     - svg_image
@@ -47,8 +47,8 @@ content:
     weight: 6
     type: image_image
     settings:
+      preview_image_style: photo_bleed_a_mobile_1x
       progress_indicator: throbber
-      preview_image_style: thumbnail
     third_party_settings: {  }
     region: content
   field_is_channel:

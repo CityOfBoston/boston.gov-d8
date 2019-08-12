@@ -13,6 +13,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -26,13 +27,13 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_mini_grid
     - paragraphs.paragraphs_type.hero_image
     - paragraphs.paragraphs_type.iframe
+    - paragraphs.paragraphs_type.list
     - paragraphs.paragraphs_type.map
     - paragraphs.paragraphs_type.news_and_announcements
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
-    - paragraphs.paragraphs_type.upcoming_events
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -57,6 +58,7 @@ settings:
       commission_members: commission_members
       commission_summary: commission_summary
       cabinet: cabinet
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       grid_of_cards: grid_of_cards
       grid_of_people: grid_of_people
@@ -69,8 +71,10 @@ settings:
       group_of_links_mini_grid: group_of_links_mini_grid
       hero_image: hero_image
       drawers: drawers
+      list: list
       map: map
       iframe: iframe
+      news_and_announcements: news_and_announcements
       newsletter: newsletter
       photo: photo
       fyi: fyi
@@ -78,10 +82,8 @@ settings:
       text: text
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       transaction_grid: transaction_grid
-      upcoming_events: upcoming_events
       video: video
       commission_search: commission_search
-      news_and_announcements: news_and_announcements
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: true
@@ -113,9 +115,6 @@ settings:
       internal_link:
         weight: -88
         enabled: false
-      feedback:
-        enabled: true
-        weight: -87
       header_text:
         weight: -85
         enabled: false
@@ -188,9 +187,9 @@ settings:
       iframe:
         enabled: true
         weight: -62
-      news_announcements:
+      news_and_announcements:
+        enabled: true
         weight: -61
-        enabled: false
       newsletter:
         enabled: true
         weight: -60
@@ -221,9 +220,6 @@ settings:
       transaction_grid:
         enabled: true
         weight: -51
-      upcoming_events:
-        enabled: true
-        weight: -50
       video:
         enabled: true
         weight: -49
@@ -272,7 +268,7 @@ settings:
       from_library:
         weight: 87
         enabled: false
-      news_and_announcements:
+      events_and_notices:
+        weight: 88
         enabled: true
-        weight: 111
 field_type: entity_reference_revisions

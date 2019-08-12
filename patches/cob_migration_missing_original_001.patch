@@ -1,0 +1,23 @@
+--- a/core/lib/Drupal/Core/Field/Plugin/Field/FieldType/ChangedItem.php
++++ b/core/lib/Drupal/Core/Field/Plugin/Field/FieldType/ChangedItem.php
+@@ -42,12 +42,14 @@
+       /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+       $entity = $this->getEntity();
+       /** @var \Drupal\Core\Entity\ContentEntityInterface $original */
+-      $original = $entity->original;
+-      $langcode = $entity->language()->getId();
+-      if (!$entity->isNew() && $original->hasTranslation($langcode)) {
+-        $original_value = $original->getTranslation($langcode)->get($this->getFieldDefinition()->getName())->value;
+-        if ($this->value == $original_value && $entity->hasTranslationChanges()) {
+-          $this->value = REQUEST_TIME;
++      if (NULL !== $original = $entity->original) {
++        $langcode = $entity->language()->getId();
++        if (!$entity->isNew() && $original->hasTranslation($langcode)) {
++          $original_value = $original->getTranslation($langcode)
++            ->get($this->getFieldDefinition()->getName())->value;
++          if ($this->value == $original_value && $entity->hasTranslationChanges()) {
++            $this->value = REQUEST_TIME;
++          }
+         }
+       }
+     }

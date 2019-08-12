@@ -131,7 +131,7 @@ settings:
       message_for_the_day:
         enabled: false
         weight: 37
-      news_announcements:
+      news_and_announcements:
         enabled: false
         weight: 38
       photo:
@@ -182,9 +182,6 @@ settings:
       transaction_grid:
         enabled: false
         weight: 54
-      upcoming_events:
-        enabled: false
-        weight: 55
       user_action:
         enabled: false
         weight: 56
@@ -236,5 +233,8 @@ settings:
       transactions:
         enabled: false
         weight: 72
+      events_and_notices:
+        weight: 73
+        enabled: false
   handler: 'default:paragraph'
 field_type: entity_reference_revisions

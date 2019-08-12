@@ -5,7 +5,26 @@
  * The Base module file for node_how_to module.
  */
 
-use Drupal\image\Entity\ImageStyle;
+use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\Html;
+
+/**
+ * Prepares variables for event templates.
+ *
+ * Default template: event.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the event information and any
+ *     fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_node__how_to(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
 
 /**
  * Implements hook_theme().
@@ -70,24 +89,26 @@ function node_how_to_preprocess_node__how_to(&$variables) {
   foreach ($tab_paragraphs as $tab_paragraph) {
     $tabs[] = $tab_paragraph->field_how_to_title->value;
   }
+
   $variables['tabs'] = $tabs;
 
-  // Add intro_image as background to the title panel.
-  if (isset($variables["node"]->field_intro_image)) {
-    $background_image = $variables["node"]->field_intro_image;
-    if (isset($background_image->entity)) {
-      $uri = $background_image->entity->getFileUri();
-      $variables['background_image_exists'] = TRUE;
-      $variables['background_image'] = $background_image;
-      $variables['xlarge_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_2x')
-        ->buildUrl($uri);
-      $variables['large_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_desktop_1x')
-        ->buildUrl($uri);
-      $variables['medium_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_tablet_2x')
-        ->buildUrl($uri);
-      $variables['small_image'] = ImageStyle::load('rep_wide_2000x700custom_boston_mobile_2x')
-        ->buildUrl($uri);
-    }
+  // Add the js to enable the tabs.
+  $variables['#attached']['library'][] = "bos_theme/page.tabbed_page";
+
+  $variables['image_class'] = "hro--d";
+  if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {
+    $background_image = $variables["elements"]["field_intro_image"];
+    $photo_id = Html::getUniqueId('hro');
+    $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+    $variables['#attached']['html_head'][] = [
+      [
+        "#tag" => "style",
+        "#value" => $css,
+        "#weight" => 100,
+      ],
+      'how-to-intro-image-css',
+    ];
+    $variables['image_class'] = "$photo_id hro--t";
   }
 
   // Add markup to locate the contextual editor button.
@@ -107,15 +128,23 @@ function node_how_to_preprocess_node__how_to(&$variables) {
  */
 function node_how_to_preprocess_page(&$variables) {
   // We dont ever want a hero section from the page template.
-  if (isset($variables["node"]) && $variables["node"]->bundle() == "how_to") {
-    $variables['header_image'] = FALSE;
-    if (function_exists("_bos_theme_fix_attributes")) {
-      _bos_theme_fix_attributes($variables);
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+    if (is_numeric($node)) {
+      // $variables['node'] is the nid when a view_display version of the
+      // page is rendered.
+      return;
     }
-    elseif (function_exists("_bos_admin_fix_attributes")) {
-      _bos_admin_fix_attributes($variables);
+
+    if ($node->bundle() == "how_to") {
+      // Add intro_image as background to the title panel.
+      // Now make and render the Intro_image block.
+      if (isset($variables['content']['field_intro_image'])
+        && $variables["node"]->get('field_intro_image')->count()) {
+        _bos_content_fix_attributes($variables);
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->setAttribute("id", "page");
+      }
     }
-    $variables['attributes']->addClass("mn");
   }
 }
 
