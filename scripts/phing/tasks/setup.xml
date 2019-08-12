@@ -563,6 +563,7 @@
             <exec description="Move the private repo files to the docroot folder."
                   command="rsync -aE ${git.private_repo.local_dir}/ ${repo.root}/ >> ${project.basedir}/setup/drush_site_install.log"
                   passthru="true" logoutput="false" checkreturn="false"/>
+            <exec command="ls -la ${docroot}/sites/default/settings" passthru="true" logoutput="true"/>
             <exec description="Delete the private repo files."
                   command="rm -rf ${git.private_repo.local_dir} >> ${project.basedir}/setup/drush_site_install.log"
                   passthru="true" logoutput="false" checkreturn="false"/>
