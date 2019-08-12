@@ -797,4 +797,13 @@ class MigrationFixes {
     }
   }
 
+  /**
+   * Manually create the media entity for the map background image.
+   */
+  public static function fixMap() {
+    // Copy map module icons into expected location.
+    _bos_core_install_icons("bos_map");
+    // Install the map default background image.
+    bos_map_rebuild();
+  }
 }
