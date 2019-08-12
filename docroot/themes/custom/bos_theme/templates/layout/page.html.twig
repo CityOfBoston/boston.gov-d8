@@ -71,7 +71,7 @@
     {{ search }}
   </header>
 
-  {% if has_site_alert %}
+  {% if cob.has_site_alert %}
     {{ page.site_alert }}
   {% endif %}
 
@@ -82,14 +82,7 @@
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
 
-        {% if not node and not header_image %}
-          {% if node.type.entity.label|lower == 'tabbed_content' or node.type.entity.label|lower == 'how_to' %}
-            {{ drupal_block('system_breadcrumb_block') }}
-          {% endif %}
-        {%  endif %}
-
-        {{ title_prefix }}
-
+       {{ title_prefix }}
         {%  if title and not hide_page_title %}
           {{ title }}
         {%  endif %}
@@ -102,52 +95,6 @@
         {% if action_links %}
           <ul class="action-links">{{ action_links }}</ul>
         {%  endif %}
-
-        {% if node and header_image %}
-          {% if node.type.entity.label|lower != 'topic_page' %}
-            <style>
-              .hro {
-                background-image: url({{ small_image }});
-              }
-
-              @media screen and (min-width: 768px) {
-                .hro {
-                  background-image: url({{ medium_image }});
-                }
-              }
-
-              @media screen and (min-width: 1024px) {
-                .hro {
-                  background-image: url({{ large_image }});
-                }
-              }
-
-              @media screen and (min-width: 1200px) {
-                .hro {
-                  background-image: url({{ xlarge_image }});
-                }
-              }
-            </style>
-
-            <div class="b b--fw">
-              <div class="hro hro--pt hro--pb"></div>
-            </div>
-
-          {% else %}
-
-            <div class="hero-image fullwidth">
-              <div class="hero-image-wrapper {{ hero_classes }}">
-                {{ background_image }}
-              </div>
-            </div>
-
-          {% endif %}
-
-          <div class="brc--wh" data-swiftype-index="false">
-            {{ drupal_block('system_breadcrumb_block') }}
-          </div>
-
-        {% endif %}
 
         {{ page.content }}
 

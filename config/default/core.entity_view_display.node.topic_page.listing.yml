@@ -14,11 +14,11 @@ dependencies:
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_updated_date
-    - image.style.news_item_thumb
     - node.type.topic_page
+    - responsive_image.styles.card_images_3w
   module:
     - fences
-    - svg_image
+    - responsive_image
     - user
 _core:
   default_config_hash: PEcIMfDJ32M86BIu2yKAbCl1bf-rlzI7XewsoucU5Kc
@@ -30,14 +30,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 0
-    type: image
+    type: responsive_image
     settings:
-      image_style: news_item_thumb
+      responsive_image_style: card_images_3w
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
     third_party_settings:
       fences:
         fences_field_tag: none

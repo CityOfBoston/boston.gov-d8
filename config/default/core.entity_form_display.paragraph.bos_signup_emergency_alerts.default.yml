@@ -10,10 +10,12 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_icon
     - field.field.paragraph.bos_signup_emergency_alerts.field_intro_text
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
+    - image.style.square_icon_56px
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
   module:
     - field_group
     - file_entity
+    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -73,8 +75,9 @@ content:
     region: content
   field_icon:
     weight: 4
-    type: file_editable
+    type: image_image
     settings:
+      preview_image_style: square_icon_65px
       progress_indicator: throbber
     third_party_settings: {  }
     region: content

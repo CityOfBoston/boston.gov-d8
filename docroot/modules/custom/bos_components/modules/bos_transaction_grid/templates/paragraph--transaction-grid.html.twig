@@ -25,12 +25,12 @@
  * @see template_process()
  */
 #}
-<div class="b b--g b--fw">
+<div{{ attributes.addClass("b b--g b--fw") }}>
   <div class="b-c">
-    <div class="contextual-region">
-      {{ title_suffix }}
-    </div>
-  	<div class="sh">
+
+    <div class="sh cl">
+
+      {{ content.contextual_links }}
 
       {{ content.field_component_title }}
 

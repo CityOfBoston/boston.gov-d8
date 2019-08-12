@@ -3,7 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing_long
     - node.type.topic_page
   module:
     - better_exposed_filters
@@ -92,7 +92,8 @@ display:
       row:
         type: 'entity:node'
         options:
-          view_mode: teaser
+          relationship: none
+          view_mode: listing_long
       fields:
         title:
           id: title

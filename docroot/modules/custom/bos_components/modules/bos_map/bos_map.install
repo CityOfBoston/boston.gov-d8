@@ -19,5 +19,10 @@ function bos_map_uninstall() {
  */
 function bos_map_install() {
   // Copy icons into expected location.
-  _bos_core_install_icons(basename(__FILE__, ".install"));
+  $modName = basename(__FILE__, ".install");
+  _bos_core_install_icons($modName);
+
+  // Install the map default background image.
+  bos_map_rebuild();
+
 }

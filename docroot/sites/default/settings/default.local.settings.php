@@ -31,6 +31,14 @@ else {
     'port' => '3306',
   ];
 }
+$databases['migrate']['default'] = [
+  'driver' => 'mysql',
+  'database' => 'drupal',
+  'username' => 'drupal',
+  'password' => 'drupal',
+  'host' => 'bosd7_database_1',
+  'port' => '3306',
+];
 
 $settings['file_private_path'] = 'sites/default/files/private';
 

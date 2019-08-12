@@ -7,11 +7,11 @@ dependencies:
     - field.field.paragraph.fyi.field_link
     - field.field.paragraph.fyi.field_short_title
     - field.field.paragraph.fyi.field_title
+    - image.style.square_icon_56px
     - paragraphs.paragraphs_type.fyi
   module:
-    - content_moderation
-    - file
     - paragraphs
+    - svg_image
 id: paragraph.fyi.default
 targetEntityType: paragraph
 bundle: fyi
@@ -27,21 +27,29 @@ content:
     region: content
   field_icon:
     weight: 1
-    type: file_generic
+    type: image_image
     settings:
+      preview_image_style: square_icon_65px
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_link:
     weight: 5
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: link
       title_plural: Links
-      edit_mode: open
-      add_mode: select
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_short_title:

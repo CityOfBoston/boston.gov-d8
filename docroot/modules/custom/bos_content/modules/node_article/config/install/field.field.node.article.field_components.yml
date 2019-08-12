@@ -11,6 +11,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -27,12 +28,10 @@ dependencies:
     - paragraphs.paragraphs_type.list
     - paragraphs.paragraphs_type.map
     - paragraphs.paragraphs_type.news_and_announcements
-    - paragraphs.paragraphs_type.news_announcements
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.photo
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
-    - paragraphs.paragraphs_type.upcoming_events
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -57,6 +56,7 @@ settings:
       commission_members: commission_members
       commission_summary: commission_summary
       drawers: drawers
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_people: grid_of_people
@@ -72,13 +72,11 @@ settings:
       iframe: iframe
       list: list
       map: map
-      news_announcements: news_announcements
       newsletter: newsletter
       photo: photo
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       text: text
       transaction_grid: transaction_grid
-      upcoming_events: upcoming_events
       video: video
       news_and_announcements: news_and_announcements
     target_bundles_drag_drop:
@@ -124,9 +122,6 @@ settings:
       featured_topics:
         enabled: true
         weight: -84
-      feedback:
-        enabled: true
-        weight: -82
       header_text:
         weight: -81
         enabled: false
@@ -208,9 +203,6 @@ settings:
       map:
         enabled: true
         weight: -51
-      news_announcements:
-        enabled: true
-        weight: -50
       newsletter:
         enabled: true
         weight: -49
@@ -235,9 +227,6 @@ settings:
       transaction_grid:
         enabled: true
         weight: -42
-      upcoming_events:
-        enabled: true
-        weight: -41
       video:
         enabled: true
         weight: -40
@@ -280,4 +269,7 @@ settings:
       tabbed_content_tab:
         weight: 124
         enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: true
 field_type: entity_reference_revisions

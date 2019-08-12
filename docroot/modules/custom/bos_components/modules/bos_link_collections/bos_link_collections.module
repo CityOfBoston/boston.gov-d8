@@ -127,10 +127,12 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
       case 'internal_link':
         if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link') {
           $link = $paragraph->get('field_internal_link')->getValue();
-          $options = ['title' => "Go to {$link['0']['title']}"];
-          $link_items = _bos_core_paragraph_extract_link($paragraph, $options);
-          $vars['link'] = $link_items['link'];
-          $vars['title'] = $link_items['title'];
+          if (isset($link['0'])) {
+            $options = ['title' => "Go to {$link['0']['title']}"];
+            $link_items = _bos_core_paragraph_extract_link($paragraph, $options);
+            $vars['link'] = $link_items['link'];
+            $vars['title'] = $link_items['title'];
+          }
         }
         break;
     }

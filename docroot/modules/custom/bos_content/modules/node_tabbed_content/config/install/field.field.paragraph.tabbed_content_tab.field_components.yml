@@ -11,6 +11,7 @@ dependencies:
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
+    - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
@@ -31,7 +32,6 @@ dependencies:
     - paragraphs.paragraphs_type.tabbed_content_tab
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
-    - paragraphs.paragraphs_type.upcoming_events
     - paragraphs.paragraphs_type.video
   module:
     - entity_reference_revisions
@@ -53,6 +53,7 @@ settings:
       3_column_w_image: 3_column_w_image
       cabinet: cabinet
       drawers: drawers
+      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_places: grid_of_places
@@ -70,7 +71,6 @@ settings:
       grid_of_people: grid_of_people
       grid_of_programs_initiatives: grid_of_programs_initiatives
       grid_of_quotes: grid_of_quotes
-      upcoming_events: upcoming_events
       video: video
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       commission_members: commission_members
@@ -137,7 +137,7 @@ settings:
       list:
         enabled: true
         weight: -47
-      news_announcements:
+      news_and_announcements:
         weight: -46
         enabled: false
       photo:
@@ -227,9 +227,6 @@ settings:
       seamless_doc:
         weight: 43
         enabled: false
-      upcoming_events:
-        enabled: true
-        weight: 55
       video:
         enabled: true
         weight: 57
@@ -272,10 +269,10 @@ settings:
       from_library:
         weight: 89
         enabled: false
-      news_and_announcements:
-        enabled: true
-        weight: 113
       status_overrides:
         weight: 123
         enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: true
 field_type: entity_reference_revisions

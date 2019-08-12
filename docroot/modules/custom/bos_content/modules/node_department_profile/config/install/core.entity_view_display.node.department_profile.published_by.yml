@@ -17,8 +17,10 @@ dependencies:
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_updated_date
+    - image.style.square_icon_56px
     - node.type.department_profile
   module:
+    - fences
     - svg_image
     - user
 id: node.department_profile.published_by
@@ -31,13 +33,20 @@ content:
     weight: 0
     type: image
     settings:
-      image_style: ''
+      image_style: square_icon_56px
       image_link: ''
       svg_attributes:
         width: ''
         height: ''
-      svg_render_as_image: true
-    third_party_settings: {  }
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   body: true

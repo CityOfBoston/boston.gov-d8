@@ -5,7 +5,7 @@ dependencies:
   config:
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
-    - image.style.thumbnail
+    - image.style.media_fixed_height_100px_
     - media.type.image
   module:
     - svg_image
@@ -24,11 +24,11 @@ content:
     third_party_settings: {  }
     region: content
   image:
-    type: image_image
     weight: 1
+    type: image_image
     settings:
+      preview_image_style: media_fixed_height_100px_
       progress_indicator: throbber
-      preview_image_style: thumbnail
     third_party_settings: {  }
     region: content
   name:

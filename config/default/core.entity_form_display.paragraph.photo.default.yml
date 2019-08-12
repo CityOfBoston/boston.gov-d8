@@ -10,10 +10,11 @@ dependencies:
     - field.field.paragraph.photo.field_photo_caption
     - field.field.paragraph.photo.field_photo_credit
     - field.field.paragraph.photo.field_short_title
+    - image.style.photo_bleed_a_mobile_1x
     - paragraphs.paragraphs_type.photo
   module:
-    - file
     - paragraphs
+    - svg_image
     - text
 _core:
   default_config_hash: G_BQa2HxWJSI_WmuvSuRo53bd4BHaItaeKjtfDjCkpU
@@ -41,21 +42,29 @@ content:
     region: content
   field_image:
     weight: 1
-    type: file_generic
+    type: image_image
     settings:
+      preview_image_style: photo_bleed_a_mobile_1x
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
   field_link:
     weight: 7
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: button
+      title: Link
+      title_plural: Links
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_photo_caption:

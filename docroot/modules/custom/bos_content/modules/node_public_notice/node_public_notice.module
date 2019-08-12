@@ -54,6 +54,25 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
   // Create the in-page-menu.
   _bos_public_notice_make_nav($variables);
 
+  $view_mode = $variables['elements']['#view_mode'];
+  if ($view_mode == 'listing') {
+    // @var Drupal\taxonomy\Entity\Term $term.
+    $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
+    $variables['dept_name'] = $term->getName();
+    if (isset($term) && $term->hasField('field_department_profile')) {
+      $dept_profile = $term->get('field_department_profile')->getValue();
+      if (isset($dept_profile[0]['target_id'])) {
+        $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
+        $dept_url = '/node/' . $node->id();
+        $variables['dept_url'] = $dept_url;
+        $dept_icon_uri = $node->field_icon->entity->getFileUri();
+        if ($wrapper = \Drupal::service('stream_wrapper_manager')->getViaUri($dept_icon_uri)) {
+          $variables['dept_icon_uri'] = $wrapper->getExternalUrl();
+        }
+      }
+    }
+  }
+
 }
 
 /**
@@ -136,7 +155,9 @@ function _bos_public_notice_date_range(array &$variables) {
  *   The usual hook preprocess variables.
  */
 function _bos_public_notice_make_nav(array &$variables) {
-  _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 1);
+  if (isset($variables["elements"]["field_components"])) {
+    _bos_theme_make_nav($variables, $variables["elements"]["field_components"], 1);
+  }
   // If we have any components, prepend the discussion topics as well
   // because we will want discussion topic to appear in the menu ...
   if (isset($variables["elements"]["field_components"]["#items"])) {

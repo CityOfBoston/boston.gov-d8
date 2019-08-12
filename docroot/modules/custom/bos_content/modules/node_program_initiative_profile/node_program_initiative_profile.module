@@ -5,7 +5,9 @@
  * Provides a program initiative profile entity type.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_theme().
@@ -14,6 +16,10 @@ function node_program_initiative_profile_theme() {
   return [
     'node__program_initiative_profile' => [
       'render element' => 'elements',
+      'base hook' => 'node',
+    ],
+    'node__program_initiative_profile__listing' => [
+      'base hook' => 'node',
     ],
   ];
 }
@@ -21,11 +27,66 @@ function node_program_initiative_profile_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_event_preprocess_node__program_initiative_profile(&$variables) {
+function node_program_initiative_profile_preprocess_node__program_initiative_profile(&$variables) {
   _bos_theme_fix_attributes($variables);
   $variables['attributes']->addClass('relative-free-article');
   $variables['attributes']->addClass('clearfix');
   $variables['attributes']->setAttribute('id', 'node-' . $variables['elements']['#node']->id());
+
+  // Handle intro_image if present.
+  // Has to happen in this template_preprocess_hook or does not #attach(ed).
+  if (isset($variables['content']['field_intro_image'])) {
+    $background_image = $variables["elements"]["field_intro_image"];
+
+    if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+      $photo_id = Html::getUniqueId('cd-ic-' . $variables["elements"]['#node']->id());
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        "pip-intro-image-css-" . $photo_id,
+      ];
+
+      $nestedElement = [
+        ["div" => "b b--fw b--fw--480"],
+        ["div" => "hro $photo_id hro--pt hro--pb"],
+      ];
+      $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
+
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_program_initiative_profile_preprocess_node__program_initiative_profile__listing(&$variables) {
+  if (!empty($variables['elements']['#node'])) {
+    $node = $variables['elements']['#node'];
+    $variables['title_raw'] = $node->getTitle();
+
+    $background_image = $variables["elements"]["field_intro_image"];
+    if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+      $photo_id = Html::getUniqueId('cd-ic-' . $variables["elements"]['#node']->id());
+      $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
+      $variables['#attached']['html_head'][] = [
+        [
+          "#tag" => "style",
+          "#value" => $css,
+          "#weight" => 100,
+        ],
+        "pip-intro-image-css-" . $photo_id,
+      ];
+      $variables['new_image_class'] = "cd-ic $photo_id";
+    }
+    else {
+      // Sets a hatched blue background in place of image.
+      $variables['new_image_class'] = "cd-ic hro--d";
+    }
+  }
 }
 
 /**
@@ -40,7 +101,7 @@ function node_event_preprocess_node__program_initiative_profile(&$variables) {
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_node_program_initiative_profile(array &$variables) {
+function template_preprocess_node__program_initiative_profile(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }

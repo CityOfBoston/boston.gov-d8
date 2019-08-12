@@ -8,14 +8,16 @@
 {% for item in items %}
   {# Hack to keep from wrapping the commission info in an extra
      "list-item", since it’s made up of several list items.
-  {% set paragraphs_item = item.entity.paragraphs_item %}
-  {% if (paragraphs_item and (paragraphs_item[key(paragraphs_item)]["#bundle"] == "commission_contact_info")) %}
-  {% if item.entity.paragraphs_item %}
+  #}
+  {% set paragraph = item.content['#paragraph'] %}
+  {% if paragraph %}
+    <div class="list-item">
       {{ item.content }}
-  {% else %}#}
-    <div class="list-item"{{ attributes }}>
-      {{item }}
     </div>
-  {#{% endif %}#}
+  {% else %}
+    <div class="list-item"{{ attributes }}>
+      {{ item }}
+    </div>
+  {% endif %}
 
 {% endfor %}

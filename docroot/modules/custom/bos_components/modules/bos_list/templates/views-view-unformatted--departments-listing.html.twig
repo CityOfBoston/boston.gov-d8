@@ -1,5 +1,5 @@
 <div class="g">
-  <?php foreach ($rows as $id => $row): ?>
-    <?php print $row; ?>
-  <?php endforeach; ?>
+  {% for id,row in rows %}
+    {{ row.content }}
+  {% endfor %}
 </div>

@@ -77,6 +77,11 @@
  *
  * @ingroup themeable
  #}
+
+<div class="breadcrumb" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
+
 <article{{ attributes }}>
 
   {% if elements.field_updated_date %}
@@ -162,7 +167,11 @@
 
       <div class="event-date-wrapper">
         <div class="event-date sidebar-header">
-          {{ elements.field_public_notice_date.0.start_date }}
+          {% if elements.field_public_notice_date.0.start_date %}
+            {{ elements.field_public_notice_date.0.start_date }}
+          {% elseif elements.field_public_notice_date.0["#text"] %}
+            {{ elements.field_public_notice_date.0 }}
+          {% endif %}
         </div>
       </div>
 

@@ -11,21 +11,21 @@ field_name: field_icon
 entity_type: node
 bundle: department_profile
 label: 'Department Icon'
-description: ''
+description: 'The City of Boston approved badge/icon for this department.'
 required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: department-icon
+  file_directory: 'img/icons/department/[current-date:html_year]/[current-date:html_month_bare]'
   file_extensions: 'png gif jpg jpeg svg'
-  max_filesize: ''
+  max_filesize: '200 KB'
   max_resolution: ''
-  min_resolution: ''
-  alt_field: true
-  alt_field_required: true
-  title_field: true
-  title_field_required: true
+  min_resolution: 56x56
+  alt_field: false
+  alt_field_required: false
+  title_field: false
+  title_field_required: false
   default_image:
     uuid: ''
     alt: ''

@@ -26,6 +26,18 @@ class MigrationConfigAlter {
   protected $logMsg = [];
 
   /**
+   * Defines where the source files will be taken from (for d7_file).
+   *
+   * @var array
+   */
+  public $source;
+
+  protected $fileMove;
+  protected $fileCopy;
+  protected $destFileExists;
+  protected $destFileExistsExt;
+
+  /**
    * Flag for storing the migrations in a state variable.
    *
    * Set default file operations for rich-text and media migrations.
@@ -33,7 +45,7 @@ class MigrationConfigAlter {
    *
    * @var bool
    */
-  protected $saveState = FALSE;
+  protected $saveState = TRUE;
 
   /**
    * Defines list of migration IDs to filter out.
@@ -45,6 +57,7 @@ class MigrationConfigAlter {
   protected static $unusedMigrationsById = [
     'd7_authmap',
     'd7_blocked_ips',
+    'd7_block',
     'd7_color',
     'd7_comment',
     'd7_comment_type',
@@ -72,7 +85,6 @@ class MigrationConfigAlter {
     'd7_language_content_settings',
     'd7_language_negotiation_settings',
     'd7_language_types',
-      /* 'd7_node_revision', */
     'd7_node_settings',
     'd7_node_title_label',
     'd7_node_translation',
@@ -88,7 +100,6 @@ class MigrationConfigAlter {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
-    'd7_taxonomy_vocabulary',
     'd7_theme_settings',
     'd7_user_flood',
     'd7_user_mail',
@@ -123,13 +134,12 @@ class MigrationConfigAlter {
     "d7_user" => ["bos:initial:1"],
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
-    "d7_file" => ["bos:initial:1"],
-    /* "d7_block" => ["bos:initial:1"], */
-    "paragraph__3_column_w_image" => ["bos:paragraph:3"],
+    "d7_file" => ["bos:initial:0"],
+    "paragraph__3_column_w_image" => ["bos:paragraph:3", "bos:paragraph:10"],
     "paragraph__bid" => ["bos:paragraph:2"],
     "paragraph__bos311" => ["bos:paragraph:1"],
     "paragraph__bos_signup_emergency_alerts" => ["bos:paragraph:2"],
-    "paragraph__cabinet" => ["bos:paragraph:4"],
+    "paragraph__cabinet" => ["bos:paragraph:3", "bos:paragraph:99"],
     "paragraph__card" => ["bos:paragraph:2"],
     "paragraph__city_score_dashboard" => ["bos:paragraph:1"],
     "paragraph__commission_contact_info" => ["bos:paragraph:1"],
@@ -143,17 +153,18 @@ class MigrationConfigAlter {
     "paragraph__drawers" => ["bos:paragraph:3"],
     "paragraph__election_results" => ["bos:paragraph:1"],
     "paragraph__external_link" => ["bos:paragraph:1"],
-    "paragraph__featured_topics" => ["bos:paragraph:5"],
-    "paragraph__from_library" => ["bos:paragraph:5"],
+    "paragraph__events_notices" => ["bos:paragraph:2", "bos:paragraph:99"],
+    "paragraph__featured_topics" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__from_library" => ["bos:paragraph:4"],
     "paragraph__fyi" => ["bos:paragraph:2"],
     "paragraph__gol_list_links" => ["bos:paragraph:2"],
     "paragraph__grid_of_cards" => ["bos:paragraph:3"],
-    "paragraph__grid_of_people" => ["bos:paragraph:5"],
-    "paragraph__grid_of_places" => ["bos:paragraph:5"],
-    "paragraph__grid_of_programs_initiatives" => ["bos:paragraph:5"],
+    "paragraph__grid_of_people" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__grid_of_places" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__grid_of_programs_initiatives" => ["bos:paragraph:4", "bos:paragraph:99"],
     "paragraph__grid_of_quotes" => ["bos:paragraph:3"],
-    "paragraph__grid_of_topics" => ["bos:paragraph:5"],
-    "paragraph__group_of_links_grid" => ["bos:paragraph:3"],
+    "paragraph__grid_of_topics" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__group_of_links_grid" => ["bos:paragraph:3", "bos:paragraph:10"],
     "paragraph__group_of_links_list" => ["bos:paragraph:3"],
     "paragraph__group_of_links_mini_grid" => ["bos:paragraph:3"],
     "paragraph__header_text" => ["bos:paragraph:2"],
@@ -162,12 +173,12 @@ class MigrationConfigAlter {
     "paragraph__how_to_tab" => ["bos:paragraph:3"],
     "paragraph__how_to_text_step" => ["bos:paragraph:2"],
     "paragraph__iframe" => ["bos:paragraph:1"],
-    "paragraph__internal_link" => ["bos:paragraph:1"],
+    "paragraph__internal_link" => ["bos:paragraph:1", "bos:paragraph:99"],
     "paragraph__lightbox_link" => ["bos:paragraph:2"],
     "paragraph__list" => ["bos:paragraph:3"],
     "paragraph__map" => ["bos:paragraph:1"],
     "paragraph__message_for_the_day" => ["bos:paragraph:2"],
-    "paragraph__news_and_announcements" => ["bos:paragraph:5"],
+    "paragraph__news_and_announcements" => ["bos:paragraph:4", "bos:paragraph:99"],
     "paragraph__newsletter" => ["bos:paragraph:2"],
     "paragraph__photo" => ["bos:paragraph:2"],
     "paragraph__quote" => ["bos:paragraph:2"],
@@ -176,55 +187,55 @@ class MigrationConfigAlter {
     "paragraph__sidebar_item_w_icon" => ["bos:paragraph:1"],
     "paragraph__social_media_links" => ["bos:paragraph:2"],
     "paragraph__social_networking" => ["bos:paragraph:1"],
+    "paragraph__tabbed_content_tab" => ["bos:paragraph:3"],
     "paragraph__text" => ["bos:paragraph:3"],
     "paragraph__text_one_column" => ["bos:paragraph:1"],
     "paragraph__text_three_column" => ["bos:paragraph:1"],
     "paragraph__text_two_column" => ["bos:paragraph:1"],
-    "paragraph__transaction_grid" => ["bos:paragraph:2"],
-    "paragraph__upcoming_events" => ["bos:paragraph:2"],
+    "paragraph__transaction_grid" => ["bos:paragraph:2", "bos:paragraph:10"],
     "paragraph__video" => ["bos:paragraph:2"],
     "d7_node:advpoll" => ["bos:node:1"],
-    "d7_node:article" => ["bos:node:3"],
+    "d7_node:article" => ["bos:node:2"],
     "d7_node:change" => ["bos:node:1"],
     "d7_node:department_profile" => ["bos:node:1"],
     "d7_node:emergency_alert" => ["bos:node:1"],
-    "d7_node:event" => ["bos:node:2"],
-    "d7_node:topic_page" => ["bos:node:2"],
+    "d7_node:event" => ["bos:node:3"],
     "d7_node:how_to" => ["bos:node:2"],
     "d7_node:landing_page" => ["bos:node:2"],
     "d7_node:listing_page" => ["bos:node:1"],
     "d7_node:person_profile" => ["bos:node:1"],
     "d7_node:place_profile" => ["bos:node:2"],
-    "d7_node:post" => ["bos:node:2"],
-    "d7_node:procurement_advertisement" => ["bos:node:1"],
+    "d7_node:post" => ["bos:node:3"],
+    "d7_node:procurement_advertisement" => ["bos:node:2"],
     "d7_node:program_initiative_profile" => ["bos:node:2"],
-    "d7_node:public_notice" => ["bos:node:2"],
+    "d7_node:public_notice" => ["bos:node:3"],
     "d7_node:script_page" => ["bos:node:1"],
-    "d7_node:site_alert" => ["bos:node:1"],
+    "d7_node:site_alert" => ["bos:node:4"],
     "d7_node:status_item" => ["bos:node:1"],
     "d7_node:tabbed_content" => ["bos:node:2"],
+    "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
-    "d7_node_revision:advpoll" => ["bos:node:1"],
-    "d7_node_revision:article" => ["bos:node:3"],
-    "d7_node_revision:change" => ["bos:node:1"],
-    "d7_node_revision:department_profile" => ["bos:node:1"],
-    "d7_node_revision:emergency_alert" => ["bos:node:1"],
-    "d7_node_revision:event" => ["bos:node:2"],
-    "d7_node_revision:topic_page" => ["bos:node:2"],
-    "d7_node_revision:how_to" => ["bos:node:2"],
-    "d7_node_revision:landing_page" => ["bos:node:2"],
-    "d7_node_revision:listing_page" => ["bos:node:1"],
-    "d7_node_revision:person_profile" => ["bos:node:1"],
-    "d7_node_revision:place_profile" => ["bos:node:2"],
-    "d7_node_revision:post" => ["bos:node:2"],
-    "d7_node_revision:procurement_advertisement" => ["bos:node:1"],
-    "d7_node_revision:program_initiative_profile" => ["bos:node:2"],
-    "d7_node_revision:public_notice" => ["bos:node:2"],
-    "d7_node_revision:script_page" => ["bos:node:1"],
-    "d7_node_revision:site_alert" => ["bos:node:1"],
-    "d7_node_revision:status_item" => ["bos:node:1"],
-    "d7_node_revision:tabbed_content" => ["bos:node:2"],
-    "d7_node_revision:transaction" => ["bos:node:1"],
+    "d7_node_revision:advpoll" => ["bos:node_revision:1"],
+    "d7_node_revision:article" => ["bos:node_revision:2"],
+    "d7_node_revision:change" => ["bos:node_revision:1"],
+    "d7_node_revision:department_profile" => ["bos:node_revision:1"],
+    "d7_node_revision:emergency_alert" => ["bos:node_revision:1"],
+    "d7_node_revision:event" => ["bos:node_revision:3"],
+    "d7_node_revision:how_to" => ["bos:node_revision:2"],
+    "d7_node_revision:landing_page" => ["bos:node_revision:2"],
+    "d7_node_revision:listing_page" => ["bos:node_revision:1"],
+    "d7_node_revision:person_profile" => ["bos:node_revision:1"],
+    "d7_node_revision:place_profile" => ["bos:node_revision:2"],
+    "d7_node_revision:post" => ["bos:node_revision:3"],
+    "d7_node_revision:procurement_advertisement" => ["bos:node_revision:2"],
+    "d7_node_revision:program_initiative_profile" => ["bos:node_revision:2"],
+    "d7_node_revision:public_notice" => ["bos:node_revision:3"],
+    "d7_node_revision:script_page" => ["bos:node_revision:1"],
+    "d7_node_revision:site_alert" => ["bos:node_revision:4"],
+    "d7_node_revision:status_item" => ["bos:node_revision:1"],
+    "d7_node_revision:tabbed_content" => ["bos:node_revision:2"],
+    "d7_node_revision:topic_page" => ["bos:node_revision:2"],
+    "d7_node_revision:transaction" => ["bos:node_revision:1"],
     "d7_taxonomy_term:contact" => ["bos:taxonomy:2"],
     "d7_taxonomy_term:news_tags" => ["bos:taxonomy:1"],
     "d7_taxonomy_term:event_type" => ["bos:taxonomy:1"],
@@ -255,6 +266,13 @@ class MigrationConfigAlter {
    * @var array
    */
   protected static $migrationOverride = [
+    "d7_menu_links" => [
+      "process" => [
+        "link/uri" => [
+          "plugin" => "link_uri_ext",
+        ],
+      ],
+    ],
     // Migrate the addressfield.
     "d7_node:department_profile" => [
       "process" => [
@@ -278,6 +296,27 @@ class MigrationConfigAlter {
       ],
     ],
     // Need to update the process for a date_recur type.
+    "d7_node:public_notice" => [
+      "process" => [
+        "field_public_notice_date" => [
+          "process" => [
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
     "d7_node_revision:public_notice" => [
       "process" => [
         "field_public_notice_date" => [
@@ -320,10 +359,21 @@ class MigrationConfigAlter {
         ],
       ],
     ],
-    "d7_node:public_notice" => [
+    // Event may have an end date.
+    "d7_node:event" => [
       "process" => [
-        "field_public_notice_date" => [
+        "field_date_range" => [
+          "plugin" => "sub_process",
+          "source" => "field_event_dates",
           "process" => [
+            "value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value",
+              ],
+            ],
             "end_value" => [
               [
                 "plugin" => "format_date",
@@ -341,6 +391,153 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    "d7_node_revision:event" => [
+      "process" => [
+        "field_date_range" => [
+          "plugin" => "sub_process",
+          "source" => "field_event_dates",
+          "process" => [
+            "value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value",
+              ],
+            ],
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "d7_node_entity_translation:event" => [
+      "process" => [
+        "field_date_range" => [
+          "plugin" => "sub_process",
+          "source" => "field_event_dates",
+          "process" => [
+            "value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value",
+              ],
+            ],
+            "end_value" => [
+              [
+                "plugin" => "format_date",
+                "from_format" => "Y-m-d H:i:s",
+                "to_format" => "Y-m-d\TH:i:s",
+                "source" => "value2",
+              ],
+              [
+                "plugin" => "default_value",
+                "default_value" => "",
+                "strict" => "true",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+
+    // Manually add the custom title field.
+    // Set default values for site_alert date-range.
+    "d7_node:site_alert" => [
+      "process" => [
+        "title_field" => "title_field",
+        "field_date_range/value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+        "field_date_range/end_value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+      ],
+    ],
+    "d7_node_revision:site_alert" => [
+      "process" => [
+        "title_field" => "title_field",
+        "field_date_range/value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+        "field_date_range/end_value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+      ],
+    ],
+    "d7_node_entity_translation:site_alert" => [
+      "process" => [
+        "title_field" => "title_field",
+        "field_date_range/value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+        "field_date_range/end_value" => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "2019-01-01 00:00:00",
+          ],
+          [
+            "plugin" => "format_date",
+            "from_format" => "Y-m-d H:i:s",
+            "to_format" => "Y-m-d\TH:i:s",
+          ],
+        ],
+      ],
+    ],
+
     // Manually adds dependency on department profile.
     "d7_taxonomy_term:contact" => [
       "migration_dependencies" => [
@@ -349,6 +546,7 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+
     // Map "entity_reference" field to "link" field in internal_links para.
     "paragraph__internal_link" => [
       'process' => [
@@ -357,6 +555,11 @@ class MigrationConfigAlter {
           'default_value' => 'entity:node',
         ],
         '_target_id' => [
+          [
+            "plugin" => "default_value",
+            "default_value" => "21",
+            "strict" => "FALSE",
+          ],
           [
             'plugin' => 'migration',
             'migration' => [
@@ -384,6 +587,7 @@ class MigrationConfigAlter {
               'd7_node:transaction',
             ],
             'source' => 'field_internal_link/0/target_id',
+            "no_stub" => "TRUE",
           ],
         ],
         'field_internal_link/title' => [
@@ -397,6 +601,11 @@ class MigrationConfigAlter {
           ],
         ],
         'field_internal_link/uri' => [
+          [
+            "plugin" => "skip_on_empty",
+            "method" => "process",
+            "source" => "@_target_id",
+          ],
           [
             'plugin' => 'concat',
             'delimiter' => "/",
@@ -441,6 +650,100 @@ class MigrationConfigAlter {
           [
             "plugin" => "default_value",
             "default_value" => "full_html",
+          ],
+        ],
+      ],
+    ],
+    // Adds migrations for field_list (viewfield).
+    "paragraph__list" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "sub_process",
+          "source" => "field_list",
+          "process" => [
+            "_view" => [
+              "plugin" => "explode",
+              "source" => "vname",
+              "delimiter" => "|",
+            ],
+            "target_id" => "@_view/0",
+            "display_id" => "@_view/1",
+            "arguments" => "vargs",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__news_and_announcements" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "sub_process",
+          "source" => "field_list",
+          "process" => [
+            "_view" => [
+              "plugin" => "explode",
+              "source" => "vname",
+              "delimiter" => "|",
+            ],
+            "target_id" => "@_view/0",
+            "display_id" => "@_view/1",
+            "arguments" => "vargs",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__events_notices" => [
+      "process" => [
+        "field_list" => [
+          "plugin" => "sub_process",
+          "source" => "field_list",
+          "process" => [
+            "_view" => [
+              "plugin" => "explode",
+              "source" => "vname",
+              "delimiter" => "|",
+            ],
+            "target_id" => "@_view/0",
+            "display_id" => "@_view/1",
+            "arguments" => "vargs",
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_contact_info" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_members" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+    "paragraph__commission_summary" => [
+      'process' => [
+        'field_commission' => [
+          "process" => [
+            "target_id" => [
+              0 => [
+                "source" => "tid",
+              ],
+            ],
           ],
         ],
       ],
@@ -499,7 +802,7 @@ class MigrationConfigAlter {
         'paragraph__list',
         'paragraph__map',
         'paragraph__message_for_the_day',
-        'paragraph__news_announcements',
+        'paragraph__news_and_announcements',
         'paragraph__newsletter',
         'paragraph__photo',
         'paragraph__quote',
@@ -514,7 +817,7 @@ class MigrationConfigAlter {
         'paragraph__text_two_column',
         'paragraph__transaction_grid',
         'd7_field_collection_transactions',
-        'paragraph__upcoming_events',
+        'paragraph__events_and_notices',
       ],
       "field_bid" => [
         'paragraph__bid',
@@ -550,7 +853,7 @@ class MigrationConfigAlter {
         'paragraph__photo',
         'paragraph__text',
         'paragraph__transaction_grid',
-        'paragraph__upcoming_events',
+        'paragraph__events_and_notices',
         'paragraph__video',
       ],
       "field_drawer" => [
@@ -589,13 +892,10 @@ class MigrationConfigAlter {
         'paragraph__commission_contact_info',
       ],
       "field_links" => [
-        'paragraph__grid_links',
-        'd7_field_collection_grid_links',
         'paragraph__document',
         'paragraph__external_link',
         'paragraph__internal_link',
         'paragraph__lightbox_link',
-        'paragraph__commission_contact_info',
       ],
       "field_list_links" => [
         'paragraph__gol_list_links',
@@ -615,6 +915,7 @@ class MigrationConfigAlter {
         'paragraph__sidebar_item_w_icon',
         'paragraph__newsletter',
         'paragraph__social_media_links',
+        'paragraph__commission_contact_info',
       ],
       "field_social_media_link" => [
         'paragraph__social_networking',
@@ -646,6 +947,9 @@ class MigrationConfigAlter {
       ],
       "field_contacts" => [
         "d7_taxonomy_term:contact",
+      ],
+      "field_commission" => [
+        "d7_taxonomy_term:commissions",
       ],
       "field_event_type" => [
         "d7_taxonomy_term:event_type",
@@ -743,10 +1047,24 @@ class MigrationConfigAlter {
         "d7_node:public_notice",
       ],
       "field_featured_item" => [
-        "d7_node:post",
+        "d7_node:event",
+        "d7_node:public_notice",
       ],
       "field_featured_post" => [
         "d7_node:post",
+      ],
+      "field_list" => [
+        "d7_node:article",
+        "d7_node:department_profile",
+        "d7_node:event",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:program_initiative_profile",
+        "d7_node:public_notice",
+        "d7_node:script_page",
+        "d7_node:topic_page",
       ],
       "field_people" => [
         "d7_node:person_profile",
@@ -759,6 +1077,19 @@ class MigrationConfigAlter {
       ],
       "field_program_initiative" => [
         "d7_node:program_initiative_profile",
+      ],
+      "field_related" => [
+        "d7_node:article",
+        "d7_node:department_profile",
+        "d7_node:topic_page",
+        "d7_node:how_to",
+        "d7_node:landing_page",
+        "d7_node:listing_page",
+        "d7_node:person_profile",
+        "d7_node:place_profile",
+        "d7_node:program_initiative_profile",
+        "d7_node:script_page",
+        "d7_node:tabbed_content",
       ],
       "field_related_content" => [
         "d7_node:article",
@@ -810,6 +1141,9 @@ class MigrationConfigAlter {
       'field_thumbnail' => ['field_thumbnail'],
       'field_person_photo' => ['field_person_photo'],
       'field_program_logo' => ['field_program_logo'],
+    ],
+    "file" => [
+      'field_document' => ['field_document'],
     ],
   ];
 
@@ -871,9 +1205,9 @@ class MigrationConfigAlter {
 
     // Execute targeted alternations to $this->migrations.
     $this->customAlterations();
-    $this->customAlteration("d7_taxonomy_term:contact");
-    $this->customAlteration("d7_taxonomy_term:newsletters");
+    $this->customAlteration("d7_file");
     $this->richTextFieldAlter();
+    $this->customAlteration("paragraph__map");
     $this->breakCyclicalDependencies();
 
     // Save the settings to a state object (for debug).
@@ -907,165 +1241,139 @@ class MigrationConfigAlter {
   private function globalAlterations(string $entityType) {
     $logging = ["warning" => [], "notice" => []];
 
-    // For file migrations only, replace the core Drupal source plugin with our
-    // customized plugin and also the core Drupal process plugin (file_copy)
-    // with our customized plugin.
-    if ($entityType == 'file') {
+    $fields = $this::getFieldsOfEntityType($entityType);
 
-      foreach (["d7_file"] as $type) {
-        $this->migrations[$type]['migration_group'] = "bos_media";
-        $this->migrations[$type]['source'] = [
-          'plugin' => 'managed_files',
-          'key' => 'migrate',
-        ];
-        $this->migrations[$type]['process']['uri']['plugin'] = "file_copy_ext";
-        $this->migrations[$type]['process']['uri']['copy'] = $this->file_copy;
-        $this->migrations[$type]['process']['uri']['move'] = $this->file_move;
-        $this->migrations[$type]['process']['rh_actions'] = 'rh_actions';
-        $this->migrations[$type]['process']['rh_redirect'] = 'rh_redirect';
-        $this->migrations[$type]['process']['rh_redirect_response'] = 'rh_redirect_response';
-        $this->migrations[$type]['migration_dependencies']['required'] = [
-          'd7_user',
-          'd7_user_role',
-          'd7_url_alias',
-          'd7_path_redirect',
-        ];
-      }
+    // If nothing found, then exit here.
+    if (empty($fields)) {
+      return;
     }
-    else {
 
-      $fields = $this::getFieldsOfEntityType($entityType);
+    // Re-organize the fields we have found in D7 for this $entityType.
+    $fields = array_keys($fields);
+    $fields = array_flip($fields);
 
-      // If nothing found, then exit here.
-      if (empty($fields)) {
-        return;
+    // Cycle through all defined migrations.
+    foreach ($this->migrations as $mkey => &$migration) {
+      $dependencies = ["required" => [], "optional" => []];
+
+      // Update the grouping if its not yet set (i.e when built by a definer).
+      // Enables `drush mim --group` option to import groups in a single
+      // command.
+      if (empty($migration['migration_group'])) {
+        $migration['migration_group'] = $migration['id'];
       }
 
-      // Re-organize the fields we have found in D7 for this $entityType.
-      $fields = array_keys($fields);
-      $fields = array_flip($fields);
+      // Only need to process para's, nodes and taxonomies because they are
+      // the only entities which contain entity fields which need to be
+      // overridden.
+      if (in_array($migration["id"], [
+        "d7_node",
+        "d7_node_revision",
+        "d7_node_entity_translation",
+        "d7_taxonomy_term",
+        "d7_taxonomy_term_entity_translation",
+      ]) || $migration["source"]["plugin"] == "d7_paragraphs_item"
+      || $migration["source"]["plugin"] == "d7_field_collection_item"
+      ) {
 
-      // Cycle through all defined migrations.
-      foreach ($this->migrations as $mkey => &$migration) {
-        $dependencies = ["required" => [], "optional" => []];
+        // Create dependencies for translations and revisions.
+        switch ($migration["id"]) {
+          case "d7_taxonomy_term_entity_translation":
+            $dependencies["required"][] = str_replace($migration["id"], "d7_taxonomy_term", $mkey);
+            break;
 
-        // Update the grouping if its not yet set (i.e when built by a definer).
-        // Enables `drush mim --group` option to import groups in a single
-        // command.
-        if (empty($migration['migration_group'])) {
-          $migration['migration_group'] = $migration['id'];
+          case "d7_node_entity_translation":
+            $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
+            break;
+
+          case "d7_node_revision":
+            $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
+            break;
         }
 
-        // Only need to process para's, nodes and taxonomies because they are
-        // the only entities which contain entity fields which need to be
-        // overridden.
-        if (in_array($migration["id"], [
-          "d7_node",
-          "d7_node_revision",
-          "d7_node_entity_translation",
+        // Cycle through the fields we have made manual process overrides for.
+        // If this $migration contains any of the fields, then update the
+        // process and dependency array elements of the $migration.
+        foreach ($fields as $fieldname => $field) {
+          if (!empty($migration["process"][$fieldname])) {
+            // Use $entityType so that same-named fields on different entities
+            // are not mixed up.
+            // Fetch a global process definition for fields of this type.
+            if ($process = $this->getProcessDefinition($entityType, $fieldname)) {
+
+              // Substitute the altered process array in here now.
+              $migration["process"][$fieldname] = $process;
+
+              // Record the process's migration field values so we can add as
+              // a dependency for this $migration later.
+              switch ($entityType) {
+                case "node":
+                case "paragraph":
+                  $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
+                  break;
+
+                case "taxonomy":
+                  $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
+                  break;
+
+                case "field_collection":
+                  $dependencies["required"] += [$process["process"]["target_id"][1]["migration"]];
+                  break;
+              }
+            }
+            else {
+              // Useful if using drush ...
+              $logging["warning"][] = "Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey;
+            }
+          }
+        }
+
+        // Cull any unwanted field/field operations.
+        if (isset($migration['process']['field_type_of_content'])) {
+          $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
+          unset($migration['process']['field_type_of_content']);
+        }
+        foreach ($migration['process'] as $fieldname => $map) {
+          if ($map == "comment") {
+            $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
+            unset($migration['process'][$fieldname]);
+          }
+        }
+
+        // Add in paragraph dependencies for this entity migration.
+        /* if (!empty($dependencies["required"]) ||
+        !empty($dependencies["optional"])) {
+        $migration["migration_dependencies"] =
+        array_merge($migration["migration_dependencies"], $dependencies);
+        }*/
+      }
+
+      // Make sure the parent_id defaults to zero if nothing found.
+      if ($entityType == "taxonomy"
+        && in_array($migration["id"], [
           "d7_taxonomy_term",
           "d7_taxonomy_term_entity_translation",
-        ]) || $migration["source"]["plugin"] == "d7_paragraphs_item"
-        || $migration["source"]["plugin"] == "d7_field_collection_item"
-        ) {
+        ])
+        && isset($migration["process"]["parent_id"])) {
+        $migration["process"]["parent_id"][0] = [
+          "plugin" => "default_value",
+          "default_value" => "0",
+          "source" => "parent",
+        ];
+      }
 
-          // Create dependencies for translations and revisions.
-          switch ($migration["id"]) {
-            case "d7_taxonomy_term_entity_translation":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_taxonomy_term", $mkey);
-              break;
-
-            case "d7_node_entity_translation":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
-              break;
-
-            case "d7_node":
-              $dependencies["required"][] = str_replace($migration["id"], "d7_node_revisions", $mkey);
-              break;
-          }
-
-          // Cycle through the fields we have made manual process overrides for.
-          // If this $migration contains any of the fields, then update the
-          // process and dependency array elements of the $migration.
-          foreach ($fields as $fieldname => $field) {
-            if (!empty($migration["process"][$fieldname])) {
-              // Use $entityType so that same-named fields on different entities
-              // are not mixed up.
-              // Fetch a global process definition for fields of this type.
-              if ($process = $this->getProcessDefinition($entityType, $fieldname)) {
-
-                // Substitute the altered process array in here now.
-                $migration["process"][$fieldname] = $process;
-
-                // Record the process's migration field values so we can add as
-                // a dependency for this $migration later.
-                switch ($entityType) {
-                  case "node":
-                  case "paragraph":
-                    $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
-                    break;
-
-                  case "taxonomy":
-                    $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
-                    break;
-
-                  case "field_collection":
-                    $dependencies["required"] += [$process["process"]["target_id"][1]["migration"]];
-                    break;
-                }
-              }
-              else {
-                // Useful if using drush ...
-                $logging["warning"][] = "Missing field definition: " . $fieldname . " (" . $entityType . ") in " . $mkey;
-              }
-            }
-          }
-
-          // Cull any unwanted field/field operations.
-          if (isset($migration['process']['field_type_of_content'])) {
-            $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
-            unset($migration['process']['field_type_of_content']);
-          }
-          foreach ($migration['process'] as $fieldname => $map) {
-            if ($map == "comment") {
-              $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
-              unset($migration['process'][$fieldname]);
-            }
-          }
-
-          // Add in paragraph dependencies for this entity migration.
-          if (!empty($dependencies["required"]) || !empty($dependencies["optional"])) {
-            $migration["migration_dependencies"] = array_merge($migration["migration_dependencies"], $dependencies);
-          }
+      // Regardless of entity type, Update langcode to set itself sensibly.
+      if (isset($migration["process"]["langcode"])) {
+        if (is_array($migration["process"]["langcode"]) && $migration["process"]["langcode"]["plugin"] == "default_value") {
+          $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
         }
-
-        // Make sure the parent_id defaults to zero if nothing found.
-        if ($entityType == "taxonomy"
-          && in_array($migration["id"], [
-            "d7_taxonomy_term",
-            "d7_taxonomy_term_entity_translation",
-          ])
-          && isset($migration["process"]["parent_id"])) {
-          $migration["process"]["parent_id"][0] = [
+        elseif (!isset($migration["process"]["langcode"]["plugin"]) || $migration["process"]["langcode"]["plugin"] != "default_value") {
+          $migration["process"]["langcode"] = [
             "plugin" => "default_value",
-            "default_value" => "0",
-            "source" => "parent",
+            "source" => "language",
+            "default_value" => "und",
+            "fallback_to_site_default" => TRUE,
           ];
-        }
-
-        // Regardless of entity type, Update langcode to set itself sensibly.
-        if (isset($migration["process"]["langcode"])) {
-          if (is_array($migration["process"]["langcode"]) && $migration["process"]["langcode"]["plugin"] == "default_value") {
-            $migration["process"]["langcode"]["fallback_to_site_default"] = TRUE;
-          }
-          elseif (!isset($migration["process"]["langcode"]["plugin"]) || $migration["process"]["langcode"]["plugin"] != "default_value") {
-            $migration["process"]["langcode"] = [
-              "plugin" => "default_value",
-              "source" => "language",
-              "default_value" => "und",
-              "fallback_to_site_default" => TRUE,
-            ];
-          }
         }
       }
     }
@@ -1087,22 +1395,37 @@ class MigrationConfigAlter {
    *   and $this->migrations.
    */
   private function customAlteration(string $migration = NULL) {
-    $defVals = [
-      "d7_taxonomy_term:newsletters" => "newsletters",
-      "d7_taxonomy_term:contact" => "contact",
-    ];
-
     switch ($migration) {
-      case "d7_taxonomy_term:contact":
-      case "d7_taxonomy_term:newsletters":
-        $tmp = $this->migrations[$migration]["process"]["vid"];
-        $this->migrations[$migration]["process"]["vid"] = [
-          $tmp,
-          [
-            "plugin" => "default_value",
-            "default_value" => $defVals[$migration],
-          ],
+      case "d7_file":
+        // For file migrations replace the core Drupal source plugin with our
+        // customized plugin and also the core Drupal process plugin (fileCopy)
+        // with our customized plugin.
+        $this->migrations[$migration]['migration_group'] = "bos_media";
+        $this->migrations[$migration]['source'] = [
+          'plugin' => 'managed_files',
+          'key' => 'migrate',
         ];
+        $this->migrations[$migration]['process']['uri']['plugin'] = "file_copy_ext";
+        // Adds directives to copy or move. (Cannot move remote files)
+        $this->migrations[$migration]['process']['uri']['copy'] = $this->fileCopy;
+        $this->migrations[$migration]['process']['uri']['move'] = $this->fileMove;
+        // Adds directive to point at remote URL from which to download content.
+        $this->migrations[$migration]['process']['uri']['remote_source'] = $this->source;
+        $this->migrations[$migration]['process']['uri']['file_exists'] = $this->destFileExists;
+        $this->migrations[$migration]['process']['uri']['file_exists_ext'] = $this->destFileExistsExt;
+        $this->migrations[$migration]['process']['uri']['source'] = [
+          "source_base_path",
+          "uri",
+        ];
+        $this->migrations[$migration]['process']['rh_actions'] = 'rh_actions';
+        $this->migrations[$migration]['process']['rh_redirect'] = 'rh_redirect';
+        $this->migrations[$migration]['process']['rh_redirect_response'] = 'rh_redirect_response';
+        $this->migrations[$migration]['migration_dependencies']['required'] = [];
+        break;
+
+      case "paragraph__map":
+        // Remove the rich-text process and migrate fmtt'd text to plain text.
+        $this->migrations[$migration]["process"]['field_map_config_json'] = "field_map_config_json/0/value";
         break;
     }
   }
@@ -1152,6 +1475,16 @@ class MigrationConfigAlter {
       if (isset($custom_tags[$id])) {
         $migration["migration_tags"] = array_merge($migration["migration_tags"], $custom_tags[$id]);
       }
+      if (strpos($id, "migration_config_deriver:para") !== FALSE) {
+        $id2 = str_replace("migration_config_deriver:para", "para", $id);
+        $this->migrations[$id2] = $migration;
+        unset($this->migrations[$id]);
+      }
+      if (strpos($id, "migration_config_deriver:d7_field") !== FALSE) {
+        $id2 = str_replace("migration_config_deriver:d7_field", "d7_field", $id);
+        $this->migrations[$id2] = $migration;
+        unset($this->migrations[$id]);
+      }
     }
   }
 
@@ -1170,6 +1503,12 @@ class MigrationConfigAlter {
       $process_to_insert = ['plugin' => 'rich_text_to_media_embed'];
 
       foreach ($this->migrations as $key => $value) {
+
+        // We do not want to convert rich-text-embeds for older revisions.
+        if ($value['id'] == "d7_node_revision") {
+          continue;
+        }
+
         $matches = array_intersect_key($value['process'], $rich_text_fields);
 
         if (!empty($matches)) {
@@ -1236,8 +1575,11 @@ class MigrationConfigAlter {
       $msg = "Migration does not move or copy file entities and embedded files.";
     }
     \Drupal::logger("migrate")->info($msg);
-    $this->file_copy = $file_ops == "copy" ? "true" : "false";
-    $this->file_move = $file_ops == "move" ? "true" : "false";
+    $this->fileCopy = $file_ops == "copy" ? "true" : "false";
+    $this->fileMove = $file_ops == "move" ? "true" : "false";
+    $this->source = \Drupal::state()->get("bos_migration.remoteSource", "https://www.boston.gov/");
+    $this->destFileExists = \Drupal::state()->get("bos_migration.dest_file_exists", "use existing");
+    $this->destFileExistsExt = \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip");
   }
 
   /**
@@ -1270,8 +1612,10 @@ class MigrationConfigAlter {
    * @return array
    *   Array of fields in the (source) DB of this entity Type
    */
-  protected static function getFieldsOfEntityType(string $entityType, string $dbTarget = "default", string $dbKey = "migrate") {
+  protected static function getFieldsOfEntityType(string $entityType, string $dbTarget = NULL, string $dbKey = NULL) {
     try {
+      $dbTarget = $dbTarget ?: "default";
+      $dbKey = $dbKey ?: "migrate";
       if (NULL == ($con = Database::getConnection($dbTarget, $dbKey))) {
         return [];
       }
@@ -1290,11 +1634,13 @@ class MigrationConfigAlter {
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "taxonomy":
-        return $con->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
+        $data = $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+        $data["field_commission"] = ["field_name" => "field_commission"];
+        return $data;
 
       case "node":
-        return $con->query("SELECT field_name FROM drupal.field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
+        return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       case "rich-text":
@@ -1307,6 +1653,10 @@ class MigrationConfigAlter {
 
       case "image":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('image')")
+          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+
+      case "file":
+        return $con->query("SELECT field_name FROM field_config WHERE type IN ('file')")
           ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
 
       default:
@@ -1349,6 +1699,7 @@ class MigrationConfigAlter {
               [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
+                "no_stub" => "TRUE",
               ],
             ],
           ],
@@ -1373,6 +1724,7 @@ class MigrationConfigAlter {
               [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
+                "no_stub" => "TRUE",
               ],
               [
                 "plugin" => "skip_on_empty",
@@ -1444,6 +1796,11 @@ class MigrationConfigAlter {
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps[0],
+                "no_stub" => "TRUE",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
               ],
               [
                 'plugin' => 'extract',
@@ -1459,6 +1816,11 @@ class MigrationConfigAlter {
               [
                 "plugin" => "migration_lookup",
                 "migration" => $entity_field_deps[0],
+                "no_stub" => "TRUE",
+              ],
+              [
+                "plugin" => "skip_on_empty",
+                "method" => "process",
               ],
               [
                 'plugin' => 'extract',
@@ -1495,6 +1857,23 @@ class MigrationConfigAlter {
             "title" => 'title',
             "width" => 'width',
             "height" => 'height',
+          ],
+        ];
+        break;
+
+      case "file":
+        $process = [
+          "plugin" => "sub_process",
+          "source" => $fieldName,
+          "process" => [
+            "target_id" => [
+              [
+                'plugin' => "migration_lookup",
+                'source' => "fid",
+                'migration' => "d7_file",
+              ],
+            ],
+            "description" => "@field_title",
           ],
         ];
         break;

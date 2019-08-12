@@ -11,6 +11,7 @@ dependencies:
     - paragraphs.paragraphs_type.news_and_announcements
   module:
     - entity_reference_revisions
+    - fences
     - viewfield
 _core:
   default_config_hash: s54Y6-Z0z92WupSD8mEBTepbbiPZZzPDRVro4iIHMXY
@@ -32,9 +33,16 @@ content:
     weight: 1
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: featured_item
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_link:
     label: hidden
@@ -50,9 +58,16 @@ content:
     label: hidden
     settings:
       view_title: hidden
-      always_build_output: 0
+      always_build_output: '1'
       empty_view_title: hidden
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     type: viewfield_default
     region: content
   field_short_title:

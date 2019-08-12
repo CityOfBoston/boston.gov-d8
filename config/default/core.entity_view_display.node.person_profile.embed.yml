@@ -20,9 +20,11 @@ dependencies:
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
     - node.type.person_profile
+    - responsive_image.styles.person_photos
   module:
+    - fences
     - options
-    - svg_image
+    - responsive_image
     - user
 _core:
   default_config_hash: oymEOnc6UnNOmXnbhZ75PE-9rEEcYH6d438_LoX_DGo
@@ -37,20 +39,30 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_person_photo:
     label: hidden
     weight: 0
-    type: image
+    type: responsive_image
     settings:
-      image_style: ''
+      responsive_image_style: person_photos
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_phone_number:
     label: hidden
@@ -58,7 +70,14 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_position_title:
     label: hidden
@@ -66,14 +85,28 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_preferred_contact:
     label: hidden
     weight: 2
     type: list_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   content_moderation_control: true

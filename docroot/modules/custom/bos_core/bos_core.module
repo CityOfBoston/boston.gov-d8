@@ -40,6 +40,13 @@ function bos_core_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function bos_core_form_alter(&$form, $form_state, $form_id) {
+  $form['#attributes']['novalidate'] = 'novalidate';
+}
+
+/**
  * Implements hook_inline_entity_form_entity_form_alter().
  */
 function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
@@ -280,7 +287,20 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
  * Programmatically enforces realname regardless of realname module settings.
  */
 function bos_core_realname_update($realname, $account) {
-  $realname = _bos_core_name_from_email($account->get("mail")->value);
+  // Try to get a valid name.
+  if ($account->hasField("name")) {
+    // Use the display name.
+    $realname = $account->getDisplayName() ?: $account->getAccountName();
+    if (is_numeric($realname) || preg_match("~(CON|INT)[0-9]*~", $realname)) {
+      // We don't want COB ID's to appear as names.
+      $realname = NULL;
+    }
+  }
+  if (empty($realname) && $account->hasField("mail")) {
+    $realname = _bos_core_name_from_email($account->getEmail());
+  }
+
+  // Save the realname here.
   \Drupal::database()->merge('realname')
     ->key(['uid' => $account->id()])
     ->fields([
@@ -288,6 +308,9 @@ function bos_core_realname_update($realname, $account) {
       'created' => \Drupal::time()->getRequestTime(),
     ])
     ->execute();
+
+  return $realname;
+
 }
 
 /**
@@ -470,9 +493,12 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'document':
         $link = $paragraph->get('field_document')->getValue();
-        $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
-        $results['title'] = 'TMP';
-        $results['link'] = Link::fromTextAndUrl($results['title'], $url)->toString();
+        if (isset($link['0']['target_id']) && isset($link['0']['uri'])) {
+          $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
+          $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
+          $results['title'] = 'TMP';
+          $results['link'] = Link::fromTextAndUrl($results['title'], $url)->toString();
+        }
         break;
 
       case 'external_link':
@@ -514,7 +540,14 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
     $fid = $fid['0']['target_id'];
   }
 
-  $uri = file_load($fid)->getFileUri();
+  try {
+    $uri = Drupal::entityTypeManager()->getStorage("file")->load($fid)->getFileUri();
+  }
+  catch (Error $e) {
+    // Hmmm, problem, log it and then substitute uri.
+    Drupal::messenger()->addWarning("File id (" . $fid . ") is missing. (" . $link_text . ")");
+    $uri = "#";
+  }
   if (!$link_text) {
     return Url::fromUri(file_create_url($uri, $attributes))->toString();
   }
@@ -601,10 +634,10 @@ function _bos_core_moderation_decode(array $node_info) {
  */
 function _bos_core_name_from_email(string $email = NULL) {
   if (!isset($email)) {
-    return "unknown";
+    return NULL;
   }
   elseif (preg_match("/.*\@/", $email, $output)) {
-    return ucwords(str_replace(".", " ", trim($output[0], "@")));
+    return ucwords(str_replace([".", "_"], " ", trim($output[0], "@")));
   }
   else {
     return $email;

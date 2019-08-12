@@ -7,10 +7,11 @@ dependencies:
     - field.field.paragraph.card.field_subheader
     - field.field.paragraph.card.field_thumbnail
     - field.field.paragraph.card.field_title
+    - image.style.card_grid_horizontal_e_oversize
     - paragraphs.paragraphs_type.card
   module:
-    - file
     - paragraphs
+    - svg_image
 id: paragraph.card.default
 targetEntityType: paragraph
 bundle: card
@@ -18,14 +19,21 @@ mode: default
 content:
   field_link:
     weight: 10
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Link
       title_plural: Links
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: select
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_short_description:
@@ -46,8 +54,9 @@ content:
     region: content
   field_thumbnail:
     weight: 6
-    type: file_generic
+    type: image_image
     settings:
+      preview_image_style: card_grid_horizontal_e_oversize
       progress_indicator: throbber
     third_party_settings: {  }
     region: content

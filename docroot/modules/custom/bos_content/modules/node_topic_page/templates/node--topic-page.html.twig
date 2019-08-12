@@ -6,20 +6,19 @@
  *
  * @see https%0%
  #}
-<div class="hero-image fullwidth">
-  <div class="hero-image-wrapper ">
-      {{ content.field_intro_image }}
-  </div>
-</div>
+{% if content.intro_image %}
+
+  {{ content.intro_image }}
+
+{% endif %}
 
 <article{{ attributes }}>
 
-  {% if title_prefix or title_suffix or display_submitted or unpublished or preview or not page and title %}
     <header class="topic-header">
 
-      {% if not page and title  %}
+      {{ title_prefix }}
 
-        {{ title_prefix }}
+      {% if not page and title  %}
 
         <h2{{ title_attributes }}>
           <a href="{{ node_url }}">{{ title.0 }}</a>
@@ -27,9 +26,9 @@
 
       {% endif %}
 
-      <div class="topic-hero-text-wrapper">
+      {{ title_suffix }}
 
-        {{ title_suffix }}
+      <div class="topic-hero-text-wrapper">
 
         <div class="intro-container fullwidth">
 
@@ -55,7 +54,9 @@
 
             {% if content.field_intro_text %}
               <div class="topic-intro-text-container">
-                <div class="intro-text-top"></div>
+                <div class="intro-text-top">
+                  {{ drupal_block('system_breadcrumb_block') }}
+                </div>
                 <div class="topic-intro-text-content">
 
                   {{ content.field_intro_text }}
@@ -83,7 +84,6 @@
       {% endif %}
 
     </header>
-  {% endif %}
 
   {{ content.field_components }}
 

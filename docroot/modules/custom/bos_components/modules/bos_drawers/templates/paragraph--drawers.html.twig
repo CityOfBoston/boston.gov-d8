@@ -27,9 +27,9 @@
 #}
 
 <div {{ attributes }}>
-  {{ content.contextual_links }}
   <div class="content">
-    <div class="sh">
+    <div class="sh cl">
+      {{ content.contextual_links }}
       {{ content.field_component_title }}
       {% if content.field_short_title['#items'].getValue() %}
         {{ content.field_short_title }}

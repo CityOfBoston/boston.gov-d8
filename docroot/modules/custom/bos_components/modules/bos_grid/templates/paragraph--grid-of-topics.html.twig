@@ -23,22 +23,32 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<div {{ attributes }}>
-  {{ content.contextual_links }}
-  <div class="content">
+<div {{ attributes.addClass("b b--fw") }}>
+
+  <div class="b-c">
+
     <div class="sh sh--w">
+
+      {{ content.contextual_links }}
+
       {% if content.field_component_title['#items'].getValue() %}
         {{ content.field_component_title }}
       {% endif %}
+
       {% if content.field_short_title['#items'].getValue() %}
         {{ content.field_short_title }}
       {% endif %}
+
       {% if content.field_contact['#items'].getValue() %}
         {{ content.field_contact }}
       {% endif %}
+
     </div>
-    <div class="grid-of-topics">
+
+    <div class="grid-of-topics clearfix">
       {{ content.field_topics }}
     </div>
+
   </div>
+
 </div>

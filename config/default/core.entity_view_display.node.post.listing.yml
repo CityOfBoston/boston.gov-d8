@@ -11,16 +11,8 @@ dependencies:
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
     - field.field.node.post.field_news_tags
-    - field.field.node.post.field_people
-    - field.field.node.post.field_place
-    - field.field.node.post.field_program_initiative
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
-    - field.field.node.post.field_related_content
-    - field.field.node.post.field_related_departments
-    - field.field.node.post.field_related_events_notices
-    - field.field.node.post.field_related_guides
-    - field.field.node.post.field_related_posts
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
@@ -107,10 +99,10 @@ content:
     settings:
       image_style: news_item_thumb
       image_link: ''
-      svg_render_as_image: '1'
       svg_attributes:
         width: ''
         height: ''
+      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -127,15 +119,7 @@ hidden:
   field_intro_image: true
   field_manual_date: true
   field_news_tags: true
-  field_people: true
-  field_place: true
-  field_program_initiative: true
   field_related: true
-  field_related_content: true
-  field_related_departments: true
-  field_related_events_notices: true
-  field_related_guides: true
-  field_related_posts: true
   field_sidebar_components: true
   field_updated_date: true
   langcode: true
