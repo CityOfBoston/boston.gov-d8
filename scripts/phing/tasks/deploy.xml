@@ -51,6 +51,7 @@
     <!-- @todo Replace with -include-from=<file> with file defining patterns rather than specific files. -->
     <echo message="Copy (filtered set) files from ${repo.root} into ${deploy.dir}." level="info"/>
     <delete file="${repo.root}/hooks/.gitignore" description="Remove this so the hook files are managed by git."></delete>
+    <exec command="ls -la ${docroot}/sites/default/settings" passthru="true" logoutput="true"/>
     <exec command='find . -type f -name ".gitignore" -delete -print' dir="${docroot}/modules/custom/" passthru="true"
           description="Removes gitignore from custom modules to they are copied and merged."/>
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
