@@ -13,6 +13,9 @@ function doMigrate() {
         if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
         bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
+        if [ $bad -eq "Importing" ]; then
+            bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
+        fi
         ${drush} mrs $bad
     done
     echo "ExitCode: ${retVal}"
