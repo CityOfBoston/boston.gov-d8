@@ -13,7 +13,7 @@ function doMigrate() {
         if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
         bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
-        if [ $bad -eq "Importing" ]; then
+        if [ "${bad}" == "Importing" ]; then
             bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
         fi
         ${drush} mrs $bad
@@ -229,10 +229,26 @@ if [ $running -eq 0 ]; then
     exit 1
 fi
 
+## Check all migrations completed.
+ERRORS=0
+while true; do
+    bad="$(drush ms | grep Importing | awk '{print $3}')"
+    if [ "${bad}" == "Importing" ]; then
+        bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
+    fi
+    if [ -z $bad ]; then break; fi
+    ERRORS=$((ERRORS+1))
+    if [ $ERRORS -gt 4 ]; then break; fi
+    ${drush} mrs $bad
+    printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+    ${drush} mim $bad --feedback=500
+done
+
 ## Ensure everything is updated.
 if [ "{$1}" != "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
 fi
+
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
