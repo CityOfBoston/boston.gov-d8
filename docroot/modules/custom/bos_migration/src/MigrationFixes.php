@@ -806,4 +806,5 @@ class MigrationFixes {
     // Install the map default background image.
     bos_map_rebuild();
   }
+
 }
