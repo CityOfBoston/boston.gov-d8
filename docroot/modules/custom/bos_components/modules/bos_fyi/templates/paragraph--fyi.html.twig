@@ -27,7 +27,7 @@
   <div class="b-c b-c--smv">
     <div class="fyi-c">
 
-      {% if content.field_icon %}
+      {% if not content.field_icon|render is empty %}
         <div class="fyi-i">
           {{ content.field_icon }}
         </div>
