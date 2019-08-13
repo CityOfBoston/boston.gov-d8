@@ -675,6 +675,9 @@ function bos_theme_preprocess_paragraph(&$variables) {
     // Add this attribute so that js can change the tooltip and menu text.
     $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['paragraph']->bundle())));
   }
+
+  $variables["cob"]["is_front_page"] = \Drupal::service('path.matcher')->isFrontPage();
+
 }
 
 /**

@@ -36,15 +36,19 @@
           {{ content.field_intro_text }}
         {% endif %}
 
-        <h1 class="hro-t hro-t--l m-t000">
-          {{ content.field_header }}
-        </h1>
-
-        {% if content.field_subheader['#items'].getValue() %}
-          <div class="hro-st hro-st--l hro-st--w">
+        {% if content.field_subheader['#items'] %}
+          {% if cob.is_front_page %}
+            <div class="hro-i">
+          {% else %}
+            <div class="hro-st hro-st--l hro-st--w">
+          {% endif %}
             {{ content.field_subheader }}
           </div>
         {% endif %}
+
+        <h1 class="hro-t hro-t--l m-t000">
+          {{ content.field_header }}
+        </h1>
 
         {% if content.field_grid_link['#items'].getValue() %}
           <div class="hro-lnk">

@@ -13,7 +13,11 @@ function doMigrate() {
         if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
         bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
+        if [ "${bad}" == "Importing" ]; then
+            bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
+        fi
         ${drush} mrs $bad
+        if [ $ERRORS -gt 4 ]; then break; fi
     done
     echo "ExitCode: ${retVal}"
 
@@ -53,12 +57,18 @@ function doExecPHP() {
 function restoreDB() {
     # Remove old database and restore baseline
     printf "RESTORING DB ${1}\n" | tee -a ${logfile}
+    backup=${1}
     ${drush} sql:drop --database=default -y  | tee -a ${logfile}
-    if [ -d "/mnt/gfs" ]; then
-        ${drush} sql:cli -y --database=default < ${1}  | tee -a ${logfile}
-    else
-        lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${1}" | tee -a ${logfile}
+    if [ ${backup: -3} == ".gz" ]; then
+        gunzip ${backup}
+        backup=$(basename backup .gz)
     fi
+    if [ -d "/mnt/gfs" ]; then
+        ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
+    else
+        lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
+    fi
+    gzip ${backup}
 
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
@@ -92,18 +102,25 @@ function restoreDB() {
 
 function dumpDB() {
     # Dump current DB.
-    printf "DUMPING DB ${1}\n" | tee -a ${logfile}
+    backup=${1}
+    printf "DUMPING DB ${backup}\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
-        ${drush} sql:dump -y --database=default > ${1}
+        ${drush} sql:dump -y --database=default > ${backup}
     else
-        lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${1}"
+        lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
     fi
-    printf " -> DUMPED.\n" | tee -a ${logfile}
+    gzip ${backup}
+    printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
 }
 
+$acquia_env="bostond8dev"
+if [ ! -z $2 ]; then
+    $acquia_env="${2}"
+fi
+
 if [ -d "/mnt/gfs" ]; then
-    dbpath="/mnt/gfs/bostond8dev/backups/on-demand"
-    logfile="/mnt/gfs/bostond8dev/sites/default/files/bos_migration.log"
+    dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
+    logfile="/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.log"
     drush="drush"
     printf "Running in REMOTE mode:\n"| tee ${logfile}
 else
@@ -121,8 +138,8 @@ if [ "$1" == "reset" ]; then
     running=1
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
     printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
-    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
-    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -delete
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete
     # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
     ##
     restoreDB "${dbpath}/migration_clean_reset.sql"
@@ -226,13 +243,29 @@ if [ $running -eq 0 ]; then
     exit 1
 fi
 
+## Check all migrations completed.
+ERRORS=0
+while true; do
+    bad="$(drush ms | grep Importing | awk '{print $3}')"
+    if [ "${bad}" == "Importing" ]; then
+        bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
+    fi
+    if [ -z $bad ]; then break; fi
+    ERRORS=$((ERRORS+1))
+    if [ $ERRORS -gt 4 ]; then break; fi
+    ${drush} mrs $bad
+    printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+    ${drush} mim $bad --feedback=500
+done
+
 ## Ensure everything is updated.
 if [ "{$1}" != "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
 fi
+
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
-doExecPHP "include '/var/www/html/bostond8dev/docroot/modules/custom/bos_components/modules/bos_map/bos_map.install'; bos_map_install();"
+doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 ${drush} sset system.maintenance_mode 0
@@ -241,5 +274,3 @@ ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cr
 dumpDB ${dbpath}/migration_FINAL.sql
 ${drush} ms  | tee -a ${logfile}
-
-
