@@ -59,7 +59,7 @@ script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
-  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test; fi
 
 after_success:
   # Manage SSH keys for deployment to Acquia.
