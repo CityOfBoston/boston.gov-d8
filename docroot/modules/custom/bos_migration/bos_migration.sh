@@ -93,10 +93,17 @@ function restoreDB() {
     ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/"
     ${drush} sset "bos_migration.active" "1"
 
+
     ${drush} cr  | tee -a ${logfile}
     ${drush} ms  | tee -a ${logfile}
 
+    ## Takes site out of maintenance mode before dumping.
+    ${drush} sset "system.maintenance_mode" "0"
+
     dumpDB ${1}
+
+    ## Puts site into maintenance mode while migration occurs.
+    ${drush} sset "system.maintenance_mode" "0"
 
 }
 
@@ -268,7 +275,10 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
-${drush} sset system.maintenance_mode 0
+
+# Takes site out of maintenance mode when migration is done.
+${drush} sset "system.maintenance_mode" "0"
+
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cr
