@@ -50,7 +50,7 @@ install:
   - if [ $TRAVIS_BRANCH == "master" ]; then export AH_SITE_ENVIRONMENT="prod"; else export AH_SITE_ENVIRONMENT="dev"; fi
   # Make an account for drupal in MySQL (better than using root a/c).
   - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
-  - $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml validate:all
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml validate:all; fi
   - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/" -Dtravis.branch=${TRAVIS_BRANCH} setup:docker:drupal-travis
   # Build the drupal site using Phing.
   - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
@@ -59,7 +59,7 @@ script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test; fi
 
 after_success:
   # Manage SSH keys for deployment to Acquia.
