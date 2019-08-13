@@ -57,12 +57,18 @@ function doExecPHP() {
 function restoreDB() {
     # Remove old database and restore baseline
     printf "RESTORING DB ${1}\n" | tee -a ${logfile}
+    backup=${1}
     ${drush} sql:drop --database=default -y  | tee -a ${logfile}
-    if [ -d "/mnt/gfs" ]; then
-        ${drush} sql:cli -y --database=default < ${1}  | tee -a ${logfile}
-    else
-        lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${1}" | tee -a ${logfile}
+    if [ ${backup: -3} == ".gz" ]; then
+        gunzip ${backup}
+        backup=$(basename backup .gz)
     fi
+    if [ -d "/mnt/gfs" ]; then
+        ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
+    else
+        lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
+    fi
+    gzip ${backup}
 
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
@@ -96,18 +102,25 @@ function restoreDB() {
 
 function dumpDB() {
     # Dump current DB.
-    printf "DUMPING DB ${1}\n" | tee -a ${logfile}
+    backup=${1}
+    printf "DUMPING DB ${backup}\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
-        ${drush} sql:dump -y --database=default > ${1}
+        ${drush} sql:dump -y --database=default > ${backup}
     else
-        lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${1}"
+        lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
     fi
-    printf " -> DUMPED.\n" | tee -a ${logfile}
+    gzip ${backup}
+    printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
 }
 
+$acquia_env="bostond8dev"
+if [ ! -z $2 ]; then
+    $acquia_env="${2}"
+fi
+
 if [ -d "/mnt/gfs" ]; then
-    dbpath="/mnt/gfs/bostond8dev/backups/on-demand"
-    logfile="/mnt/gfs/bostond8dev/sites/default/files/bos_migration.log"
+    dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
+    logfile="/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.log"
     drush="drush"
     printf "Running in REMOTE mode:\n"| tee ${logfile}
 else
@@ -125,8 +138,8 @@ if [ "$1" == "reset" ]; then
     running=1
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
     printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
-    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
-    find /mnt/gfs/bostond8dev/sites/default/files -type f -size 0b -delete
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete
     # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
     ##
     restoreDB "${dbpath}/migration_clean_reset.sql"
@@ -261,5 +274,3 @@ ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cr
 dumpDB ${dbpath}/migration_FINAL.sql
 ${drush} ms  | tee -a ${logfile}
-
-
