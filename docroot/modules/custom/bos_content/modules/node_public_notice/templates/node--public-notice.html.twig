@@ -145,7 +145,7 @@
         </nav>
       {% endif %}
 
-      {% if elements.field_drawer %}
+      {% if elements.field_drawer["#items"] %}
         <a name="topics" data-text="topics" class="subnav-anchor"></a>
         <h2 class="header-border-bottom">Discussion Topics</h2>
         <div class="body">
@@ -184,7 +184,7 @@
           {{ elements.field_address }}
         </div>
       {% endif %}
-      {% if elements.field_email %}
+      {% if elements.field_email["#items"] %}
         <div class="list-item">
           {{ elements.field_email }}
         </div>
