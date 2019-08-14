@@ -159,3 +159,12 @@
   }
 
 })(jQuery, Drupal, this, this.document);
+
+// Adds a click event to close messages window.
+(function ($, document) {
+  $(document).ready(function () {
+    $(".message--button").on("click", function () {
+      $(".bos-messages").hide();
+    });
+  });
+})(jQuery, this.document);

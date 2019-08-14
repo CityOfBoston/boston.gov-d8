@@ -288,7 +288,13 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
  */
 function bos_core_realname_update($realname, $account) {
   // Try to get a valid name.
-  if ($account->hasField("name")) {
+  if ($account->id() == 0) {
+    $realname = "anonymous";
+  }
+  elseif ($account->id() == 1) {
+    $realname = "cob-admin";
+  }
+  elseif ($account->hasField("name")) {
     // Use the display name.
     $realname = $account->getDisplayName() ?: $account->getAccountName();
     if (is_numeric($realname) || preg_match("~(CON|INT)[0-9]*~", $realname)) {
@@ -297,7 +303,13 @@ function bos_core_realname_update($realname, $account) {
     }
   }
   if (empty($realname) && $account->hasField("mail")) {
-    $realname = _bos_core_name_from_email($account->getEmail());
+    if (NULL == $realname = _bos_core_name_from_email($account->getEmail())) {
+      // OK we have to use something ...
+      $realname = $account->getDisplayName() ?: $account->getAccountName();
+      if (empty($realname)) {
+        $realname = "new-user";
+      }
+    }
   }
 
   // Save the realname here.
