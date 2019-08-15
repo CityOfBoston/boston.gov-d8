@@ -16,7 +16,9 @@ function node_status_item_theme() {
       'render element' => 'elements',
     ],
     'node__status_item' => [
-      'render element' => 'elements',
+      'base hook' => "node",
+    ],
+    'node__status_item__listing_long' => [
       'base hook' => "node",
     ],
   ];
@@ -37,4 +39,34 @@ function template_preprocess_node__status_item(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_status_item_preprocess_node__status_item__listing_long(&$variables) {
+  return;
+  foreach ($variables["content"]["field_messages"]["#items"] as $key => &$message_for_the_day) {
+    $nid = $message_for_the_day->target_id;
+    $motd = \Drupal::entityTypeManager()->getStorage("paragraph")->load($nid);
+    foreach ($motd->field_recurrence as $occurence) {
+//      $today = new \DateTime('17 August 2019');
+      $today = new \DateTime();
+      $dates = $occurence->getHelper()->getOccurrences($today, NULL, 1);
+      // If $today is in the occurence range then break;
+      if (!empty($dates[0])
+        && $today >= $dates[0]->getStart() && $today <= $dates[0]->getEnd()) {
+        // If the message is not recur date is not valid for today, then remove.
+        $valid = TRUE;
+        break;
+      }
+    }
+    if (!$valid) {
+      // There were no messages in this message_for_the_day which are scheduled
+      // to (re)occur today.  So, remove this element from the status_item
+      // listing_long display.
+      unset($variables["content"]["field_messages"]["#items"][$key]);
+    }
+  }
+
 }

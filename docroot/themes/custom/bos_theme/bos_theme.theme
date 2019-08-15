@@ -5,6 +5,7 @@
  * Contains functions to alter Drupal's markup for the STARTERKIT theme.
  */
 
+use Drupal\Core\Render\Element;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -175,6 +176,24 @@ function bos_theme_preprocess(array &$variables, $hook) {
     }
     $variables['active_theme'] = \Drupal::service('theme.manager')->getActiveTheme();
   }
+
+  // ensure the "content" array element exists.
+  if (in_array($hook, ['node', 'paragraph', 'field'])) {
+    if (!isset($variables['content'])) {
+      if (!empty($variables['elements'])) {
+        $element = $variables['elements'];
+      }
+      elseif (!empty($variables['element'])) {
+        $element = $variables['element'];
+      }
+      if (!empty($element)) {
+        foreach (Element::children($element) as $key) {
+          $variables['content'][$key] = $element[$key];
+        }
+      }
+    }
+  }
+
 }
 
 /**
