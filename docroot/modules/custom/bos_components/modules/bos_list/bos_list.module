@@ -167,7 +167,7 @@ function bos_list_preprocess_viewfield_item__field_list__status_displays(&$varia
   ];
   $variables['header']['date_attrib']->addClass("str-t");
 
-  if (FALSE !== $timestamp) {
+  if (!empty($timestamp)) {
     // See if this date falls on a special named date (i.e. a holiday or city
     // event, etc.).
     $variables['header'] = [
