@@ -260,6 +260,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/05/icons_heart.svg' => 'public://icons/experiential/heart.svg',
     'public://img/icons/transactions/2017/05/icons_health.svg' => 'public://icons/department/health_and_human_services_logo_black.svg',
     'public://img/icons/transactions/2017/05/experiential_icons_food_truck.svg' => 'public://icons/experiential/food_truck.svg',
+    'public://img/icons/transactions/2017/05/experiential_icons_search.svg' => 'public://icons/experiential/search.svg',
     'public://img/icons/transactions/2017/04/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/experiential/playground.svg',
     'public://img/icons/transactions/2017/04/experiential_icons-29.svg' => 'public://icons/experiential/calendar.svg',
     'public://img/icons/transactions/2017/03/vulnerability_assessment.svg' => 'public://icons/experiential/police_interrogation.svg',
