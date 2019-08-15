@@ -629,7 +629,21 @@ What:  Fixes the message box on the page without disrupting layout.
   border: 2px solid #1871bd;
   z-index: 502;
   background-color: rgba(255,255,255,.7);
-  width: calc(100% - 200px);
+  width: 80%;
+  max-width: 1200px;
+}
+.message--button {
+  position: absolute;
+  right: 20px;
+  border: 2px solid red;
+  padding: 0px 4px;
+  line-height: 16px;
+  font-family: monospace;
+  font-weight: bold;
+  color: red;
+  opacity: .5;
+  font-size: 14px;
+  cursor: pointer;
 }
 /*
 David:

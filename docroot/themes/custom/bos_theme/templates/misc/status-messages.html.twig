@@ -20,7 +20,8 @@
  */
 #}
 {% for type, messages in message_list %}
-    <div class="messages--{{ type }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
+    <div class="bos-messages messages--{{ type }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
+      <span class="message--button">X</span>
     {% if type == 'error' %}
         <div role="alert">
     {% endif %}
