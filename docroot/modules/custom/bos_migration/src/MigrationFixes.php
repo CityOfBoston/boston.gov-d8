@@ -299,7 +299,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/01/experiential_icons_important.svg' => 'public://icons/experiential/alert.svg',
     'public://img/icons/transactions/2017/01/experiential_icons_city_of_boston_owned_property.svg' => 'public://icons/experiential/city_of_boston_owned_property.svg',
     'public://img/icons/transactions/2017/01/experiential_icons_board_of_trustees.svg' => 'public://icons/experiential/meeting.svg',
-    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png  public://icons/experiential/',
+    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png' => 'public://icons/experiential/',
     'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_trash_when_it_snows.svg' => 'public://icons/experiential/snow_trash.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_car_when_it_snows.svg' => 'public://icons/experiential/snow_parking.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_view_your_collection_schedule.svg' => 'public://icons/experiential/calender.svg',
