@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -22,6 +23,13 @@ function bos_messages_theme($existing, $type, $theme, $path) {
       'base hook' => 'paragraph',
     ],
   ];
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form["#attached"]["library"][] = "bos_messages/mod.assets";
 }
 
 /**

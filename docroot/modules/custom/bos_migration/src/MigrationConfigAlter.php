@@ -453,6 +453,31 @@ class MigrationConfigAlter {
         ],
       ],
     ],
+    // Status_item enabled by default.
+    "d7_node:status_item" => [
+      "process" => [
+        "field_enabled" => [
+          "plugin" => "default_value",
+          "default_value" => 1,
+        ],
+      ],
+    ],
+    "d7_node_revision:status_item" => [
+      "process" => [
+        "field_enabled" => [
+          "plugin" => "default_value",
+          "default_value" => 1,
+        ],
+      ],
+    ],
+    "d7_node_entity_translation:status_item" => [
+      "process" => [
+        "field_enabled" => [
+          "plugin" => "default_value",
+          "default_value" => 1,
+        ],
+      ],
+    ],
 
     // Manually add the custom title field.
     // Set default values for site_alert date-range.
