@@ -1,49 +1,88 @@
-uuid: 9256680e-00e3-46b3-9b6f-91fd2542bed6
 langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.status_item.field_enabled
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
+    - image.style.square_icon_65px
     - node.type.status_item
   module:
-    - entity_reference_revisions
-    - image_url_formatter
+    - fences
+    - paragraphs
+    - svg_image
     - user
 id: node.status_item.default
 targetEntityType: node
 bundle: status_item
 mode: default
 content:
+  field_enabled:
+    weight: 4
+    label: hidden
+    settings:
+      format: unicode-yes-no
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: boolean
+    region: content
   field_icon:
     label: hidden
-    weight: 2
-    type: image_url
+    weight: 1
+    type: image
     settings:
-      image_style: ''
-    third_party_settings: {  }
+      image_style: square_icon_65px
+      image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_messages:
     label: hidden
-    weight: 4
-    type: entity_reference_revisions_entity_view
-    settings:
-      view_mode: full
-      link: ''
+    weight: 2
+    type: paragraph_summary
+    settings: {  }
     third_party_settings: {  }
     region: content
   field_title:
     label: hidden
-    weight: 1
+    weight: 0
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   links:
-    weight: 100
+    weight: 3
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
+  content_moderation_control: true
   langcode: true
   published_at: true
