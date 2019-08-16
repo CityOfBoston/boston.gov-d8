@@ -10,10 +10,10 @@ dependencies:
     - node
     - paragraphs
     - user
-id: status_displays
-label: 'Status Displays'
+id: status_items
+label: 'Status Items'
 module: views
-description: 'Message for the Day view.'
+description: 'Status Items filtered by Message for the Day view.'
 tag: ''
 base_table: node_field_data
 base_field: nid
@@ -249,7 +249,7 @@ display:
             group_items: {  }
           plugin_id: boolean
       sorts: {  }
-      title: 'Status Display'
+      title: 'Messages for the day'
       header: {  }
       footer: {  }
       empty: {  }
@@ -279,13 +279,14 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  block_1:
+  motd:
     display_plugin: block
-    id: block_1
-    display_title: Block
+    id: motd
+    display_title: 'Status Item Block'
     position: 1
     display_options:
       display_extenders: {  }
+      display_description: 'Status Items with eligible recurring-dates in message_for_the_day subcomponents.'
     cache_metadata:
       max-age: -1
       contexts:
