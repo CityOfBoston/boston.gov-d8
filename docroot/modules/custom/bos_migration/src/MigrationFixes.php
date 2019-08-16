@@ -59,7 +59,7 @@ class MigrationFixes {
       'landing' => ["public_notice", "page_2"],
     ],
     'status_displays' => [
-      'homepage_status' => ["status_displays", "block_1"],
+      'homepage_status' => ["status_items", "motd"],
     ],
     'topic_landing_page' => [
       'page_1' => ["topic_landing_page", "page_1"],
@@ -333,8 +333,8 @@ class MigrationFixes {
     'public://img/icons/transactions/2016/07/experiential_icons_home_repairs.svg' => 'public://icons/experiential/repair_your_home.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => 'public://icons/department/bos_311_black',
     'public://img/icons/status/trash-recycling.svg' => 'public://icons/circle/trash_and_recycling.svg',
-    'public://img/icons/status/tow-lot.svg' => 'public://icons/circle/trash_and_recycling.svg',
-    'public://img/icons/status/street_sweeping.svg' => 'public://icons/circle/tow_lot.svg',
+    'public://img/icons/status/tow-lot.svg' => 'public://icons/circle/tow_lot.svg',
+    'public://img/icons/status/street_sweeping.svg' => 'public://icons/circle/street_sweeping.svg',
     'public://img/icons/status/small-circle-icons_base_ball_0.svg' => 'public://icons/circle/base_ball.svg',
     'public://img/icons/status/parking-meters.svg' => 'public://icons/circle/parking_meters.svg',
     'public://img/icons/status/experiential_icons_fact_sheet.svg' => 'public://icons/experiential/report.svg',
@@ -648,15 +648,6 @@ class MigrationFixes {
   ];
 
   /**
-   * Array to update messages with current content.
-   *
-   * @var array
-   */
-  protected static $messageRecords = [
-
-  ];
-
-  /**
    * This updates the taxonomy_vocab migration map.
    *
    * Required so that taxonomy entries can later be run with --update flag set.
@@ -817,20 +808,24 @@ class MigrationFixes {
     bos_map_rebuild();
   }
 
-  public static function importMessages() {
+  /**
+   * Manually migrate the message_for_the_day content.
+   */
+  public static function migrateMessages() {
+    // Fetch rows from D7.
     $d7_connection = Database::getConnection("default", "migrate");
     $query_string = "SELECT d.* 
-       FROM field_data_field_date d
-            INNER JOIN (
-	              SELECT i.entity_id, max(i.delta) delta 
-	              FROM field_data_field_date i
-                GROUP BY i.entity_id
-            ) o     on o.delta = d.delta
-                    and o.entity_id = d.entity_id
-        WHERE d.bundle = 'message_for_the_day';";
-      $source_rows = $d7_connection->query($query_string)
-        ->fetchAll();
+     FROM field_data_field_date d
+          INNER JOIN (
+              SELECT i.entity_id, max(i.delta) delta 
+              FROM field_data_field_date i
+              GROUP BY i.entity_id
+          ) o     on o.delta = d.delta
+                  and o.entity_id = d.entity_id
+      WHERE d.bundle = 'message_for_the_day';";
+    $source_rows = $d7_connection->query($query_string)->fetchAll();
 
+    // Migrate them into D8.
     if (count($source_rows)) {
       printf("%d message_for_the_day records will be migrated.\n", count($source_rows));
       foreach ($source_rows as $source_row) {
@@ -874,8 +869,11 @@ class MigrationFixes {
 
         $rules = implode(";", $rules);
         if (!empty($exceptions[1])) {
-          $exdates = explode(",", str_replace(["EXDATE:", "RDATE:"], "", $exceptions[1]));
-          foreach($exdates as &$exdate) {
+          $exdates = explode(",", str_replace([
+            "EXDATE:",
+            "RDATE:"
+          ], "", $exceptions[1]));
+          foreach ($exdates as &$exdate) {
             $dt = new \DateTime($exdate);
             $exdate = date_format($dt, "Ymd");
           }
@@ -906,7 +904,37 @@ class MigrationFixes {
     else {
       printf("No message_for_the_day records to migrate.\n");
     }
+
+    // Update the new status fields.
+    $nodes = \Drupal::entityTypeManager()->getStorage("node")
+      ->loadByProperties(["type" => "status_item"]);
+    if(!empty($nodes)) {
+      foreach ($nodes as $node) {
+        $entity = \Drupal::entityTypeManager()->getStorage("node")
+          ->load($node->id());
+        if (!empty($entity) && !isset($entity->field_enabled->value)) {
+          $entity->field_enabled = TRUE;
+          $entity->save();
+        }
+      }
+      printf("Set active flag on un-assigned status_item nodes.\n");
+    }
+    $paragraphs = \Drupal::entityTypeManager()->getStorage("paragraph")
+      ->loadByProperties(["type" => "message_for_the_day"]);
+    if(!empty($paragraphs)) {
+      foreach ($paragraphs as $paragraph) {
+        $entity = \Drupal::entityTypeManager()->getStorage("paragraph")
+          ->load($paragraph->id());
+        if (!empty($entity) && !isset($entity->field_enabled->value)) {
+          $entity->field_enabled = TRUE;
+          $entity->save();
+        }
+      }
+      printf("Set active flag on un-assigned message_for_the_day components.\n");
+    }
+
     \Drupal::service('page_cache_kill_switch')->trigger();
     drupal_flush_all_caches();
   }
+
 }
