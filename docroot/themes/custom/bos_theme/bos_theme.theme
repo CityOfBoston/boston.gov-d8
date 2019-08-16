@@ -177,7 +177,7 @@ function bos_theme_preprocess(array &$variables, $hook) {
     $variables['active_theme'] = \Drupal::service('theme.manager')->getActiveTheme();
   }
 
-  // ensure the "content" array element exists.
+  // Ensure the "content" array element exists.
   if (in_array($hook, ['node', 'paragraph', 'field'])) {
     if (!isset($variables['content'])) {
       if (!empty($variables['elements'])) {

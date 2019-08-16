@@ -157,12 +157,12 @@ function bos_list_preprocess_viewfield_item__field_list__status_displays(&$varia
   // Normally this would go in the theme to make the preprocess function more
   // discoverable but it needs to be run against the admin theme as well.
   $view = $variables['content']["#view"];
+  $timestamp = strtotime("now");
   if (isset($view->args[0])) {
     $timestamp = strtotime($view->args[0]);
   }
   $variables['header'] = [
-    "text" => "No View Data",
-    "date" => format_date(strtotime("now"), 'date_format_status'),
+    "date" => format_date($timestamp, 'date_format_status'),
     "date_attrib" => new Attribute(),
   ];
   $variables['header']['date_attrib']->addClass("str-t");
@@ -170,20 +170,24 @@ function bos_list_preprocess_viewfield_item__field_list__status_displays(&$varia
   if (!empty($timestamp)) {
     // See if this date falls on a special named date (i.e. a holiday or city
     // event, etc.).
-    $variables['header'] = [
-      "text" => "",
-      "date" => format_date($timestamp, 'date_format_status'),
-    ];
-    $query = new EntityFieldQuery();
-    $query->entityCondition('entity_type', 'taxonomy_term')
-      ->entityCondition('bundle', 'holidays')
-      ->fieldCondition('field_date', 'value', $view->args[0] . 'T00:00:00')
-      ->range(0, 1);
-    $result = $query->execute();
+    $result = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'holidays')
+      ->condition('field_date', $timestamp . 'T00:00:00')
+      ->range(0, 1)
+      ->execute();
     if (!empty($result)) {
-      $variables["header"]["text"] = taxonomy_term_load(key($result['taxonomy_term']));
+      $variables["header"]["text"] = taxonomy_term_load(key($result['name']));
       $variables['header']['date_attrib']->removeClass("str-t");
       $variables['header']['date_attrib']->addClass("str-st");
     }
   }
+
+  // Render and map the rows to reduce templating.
+  $variables['empty'] = TRUE;
+  $view = $view->render();
+  if (!empty($view["#rows"]) && count($view["#rows"])) {
+    $variables["rows"] = $view["#rows"][0]["#rows"];
+    $variables['empty'] = FALSE;
+  }
+
 }
