@@ -1217,3 +1217,37 @@ What: Helper for status_display preview - restricts icon sizing.
   font-style: italic;
   line-height: 1.5;
 }
+
+/*
+David:
+Where: Status_item admin editor form
+What: Creates a horizontally arranged group.
+*/
+.cob-group-grid {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  border: 1px solid #b5b5b5;
+  padding: 0 6px;
+  margin-top: 10px;
+}
+.cob-group-grid.center {
+  justify-content: center;
+}
+@media screen and (min-width: 1280px) {
+  .cob-group-grid.center {
+    justify-content: flex-start;
+  }
+}
+@media screen and (max-width: 975px) {
+  .cob-group-grid {
+    flex-flow: column wrap;
+    max-width: available;
+  }
+}
+.cob-group-grid .form-wrapper {
+  max-width: 50%;
+}
+.cob-group-grid img {
+  height: 10px
+}

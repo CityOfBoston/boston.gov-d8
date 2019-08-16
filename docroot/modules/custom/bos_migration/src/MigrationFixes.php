@@ -648,6 +648,15 @@ class MigrationFixes {
   ];
 
   /**
+   * Array to update messages with current content.
+   *
+   * @var array
+   */
+  protected static $messageRecords = [
+
+  ];
+
+  /**
    * This updates the taxonomy_vocab migration map.
    *
    * Required so that taxonomy entries can later be run with --update flag set.
@@ -808,4 +817,96 @@ class MigrationFixes {
     bos_map_rebuild();
   }
 
+  public static function importMessages() {
+    $d7_connection = Database::getConnection("default", "migrate");
+    $query_string = "SELECT d.* 
+       FROM field_data_field_date d
+            INNER JOIN (
+	              SELECT i.entity_id, max(i.delta) delta 
+	              FROM field_data_field_date i
+                GROUP BY i.entity_id
+            ) o     on o.delta = d.delta
+                    and o.entity_id = d.entity_id
+        WHERE d.bundle = 'message_for_the_day';";
+      $source_rows = $d7_connection->query($query_string)
+        ->fetchAll();
+
+    if (count($source_rows)) {
+      printf("%d message_for_the_day records will be migrated.\n", count($source_rows));
+      foreach ($source_rows as $source_row) {
+        $infinite = NULL;
+        $start_date = strtotime($source_row->field_date_value);
+        $end_date = strtotime($start_date . "+ 1 day");
+        $start_date = format_date($start_date, "html_date");
+
+        $rrule = $source_row->field_date_rrule;
+        $exceptions = explode("\r\n", $rrule);
+        if (isset($exceptions[1])) {
+          $rrule = $exceptions[0];
+        }
+        $rules = explode(";", str_replace("RRULE:", "", $rrule));
+
+        foreach ($rules as $key => &$rule) {
+          $keypair = explode("=", $rule);
+          if (!isset($keypair[0]) || empty($keypair[1])) {
+            unset($rules[$key]);
+          }
+          if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
+            if (!isset($infinite)) {
+              $infinite = 0;
+            }
+          }
+          elseif ($keypair[0] == "WKST") {
+            unset($rules[$key]);
+          }
+          elseif ($keypair[0] == "UNTIL") {
+            $end_date = strtotime($keypair[1]);
+            if ($end_date > strtotime("+1 year")) {
+              if (!isset($infinite)) {
+                $infinite = 1;
+              }
+              unset($rules[$key]);
+            }
+            $end_date = format_date($end_date, "html_date");
+          }
+          $rule = implode("=", $keypair);
+        }
+
+        $rules = implode(";", $rules);
+        if (!empty($exceptions[1])) {
+          $exdates = explode(",", str_replace(["EXDATE:", "RDATE:"], "", $exceptions[1]));
+          foreach($exdates as &$exdate) {
+            $dt = new \DateTime($exdate);
+            $exdate = date_format($dt, "Ymd");
+          }
+          $exceptions[1] = implode(",", $exdates);
+          $rules = "RRULE:" . $rules . "\r\nEXDATE:" . $exceptions[1];
+        }
+
+        if (empty($rules)) {
+          $rules = NULL;
+        }
+        if (!isset($infinite)) {
+          $infinite = 0;
+        }
+
+        $d8_connection = Database::getConnection("default", "default");
+        $d8_connection->update("paragraph__field_recurrence")
+          ->fields([
+            "field_recurrence_value" => $start_date,
+            "field_recurrence_end_value" => $end_date,
+            "field_recurrence_rrule" => $rules,
+            "field_recurrence_infinite" => $infinite,
+          ])
+          ->condition("entity_id", $source_row->entity_id, "=")
+          ->execute();
+      }
+      printf("%d message_for_the_day records were migrated.\n", count($source_rows));
+    }
+    else {
+      printf("No message_for_the_day records to migrate.\n");
+    }
+    \Drupal::service('page_cache_kill_switch')->trigger();
+    drupal_flush_all_caches();
+  }
 }

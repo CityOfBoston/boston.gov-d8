@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.date_format.date_format_normal_date
     - core.entity_view_mode.paragraph.listing
+    - field.field.paragraph.message_for_the_day.field_enabled
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
     - field.field.paragraph.message_for_the_day.field_recurrence
@@ -73,8 +74,16 @@ content:
     region: content
     label: hidden
     settings:
-      format: default
-      format_custom_false: ''
+      format: true-false
       format_custom_true: ''
-    third_party_settings: {  }
-hidden: {  }
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+hidden:
+  field_enabled: true

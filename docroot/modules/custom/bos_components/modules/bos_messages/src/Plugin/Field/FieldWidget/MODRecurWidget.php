@@ -130,7 +130,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     $fieldModes = $this->getFieldModes($grid);
 
     $element['mode'] = $this->getFieldMode($item);
-    $element['mode']['#title'] = 'Frequency';
+    $element['mode']['#title'] = 'Display';
 
     // We are intentionally locking down recurrance periods to a single day.
     // A day is 24 hours, starting at 00:00:01 and ending at 23:59:59.
@@ -140,12 +140,12 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     // to end and timezone fields becuase we don't want users manipulating them.
     $element['start'] = [
       '#type' => 'date',
-      '#title' => $this->t('Starts'),
+      '#title' => $this->t('Start visibility date'),
       '#default_value' => $item->start_date->format('Y-m-d'),
       '#description' => $this->t('A message lasts for one day. To make it last longer than one day, or to make it repeat on a schedule, change the "Frequency" select list to an appropriate interval.'),
     ];
     $element['end'] = [
-      '#title' => $this->t('Ends on'),
+      '#title' => $this->t('End visibility'),
       '#type' => 'date',
       '#default_value' => $item->end_date->format('Y-m-d'),
       '#access' => FALSE,
@@ -177,16 +177,17 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     $element['weekdays'] = $this->getFieldByDay($rule);
     $element['weekdays']['#states'] = $this->getVisibilityStates($element, $fieldModes['weekdays'] ?? []);
     $element['weekdays']['#title'] = $this->t('Repeats on:');
+    $element['weekdays']['#title_display'] = 'visible';
 
     $element['ordinals'] = $this->getFieldMonthlyByDayOrdinals($element, $rule);
     $element['ordinals']['#states'] = $this->getVisibilityStates($element, $fieldModes['ordinals'] ?? []);
-    $element['ordinals']['#title_display'] = 'invisible';
+    $element['ordinals']['#title_display'] = 'visible';
     $element['ordinals']['#label_display'] = 'before';
 
     $element['month_of_year'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Months'),
-      '#title_display' => 'invisible',
+      '#title_display' => 'visible',
       '#options' => [
         '1' => 'January',
         '2' => 'February',
@@ -258,8 +259,8 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
 
     $element['exceptions'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Exceptions'),
-      '#description' => $this->t('List of exception days, one per line. Ex 2012-06-09'),
+      '#title' => $this->t('Excluded Days'),
+      '#description' => $this->t('List of days to exclude, one per line. Ex 2012-06-09'),
       '#states' => [
         'invisible' => [
           [':input[name="' . $nameMode . '"]' => ['value' => static::MODE_ONCE]],
@@ -579,7 +580,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
 
     return [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Ordinals'),
+      '#title' => $this->t('Weekday Ordinals'),
       '#options' => [
         1 => $this->t('First'),
         2 => $this->t('Second'),
