@@ -36,13 +36,12 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
       $today = new \DateTime();
       $variables["show_message"] = FALSE;
-      // If $today is in the occurence range then show;
+      // If $today is in the occurence range then show.
       if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
         $start_date = new \DateTime($date["start_date"]["#text"]);
         $end_date = new \DateTime($date["end_date"]["#text"]);
-        if ($today >= $start_date
-          && $today <= $end_date) {
-          // If the message is not recur date is not valid for today, then remove.
+        if ($today >= $start_date && $today <= $end_date) {
+          // If the message is not recur date is not valid for today, remove.
           $variables["show_message"] = TRUE;
         }
       }

@@ -1,5 +1,5 @@
 uuid: 268b7787-f645-4b53-ab5c-74ce2b9709d0
-langcode: und
+langcode: en
 status: true
 dependencies:
   config:
@@ -13,7 +13,7 @@ dependencies:
 id: status_displays
 label: 'Status Displays'
 module: views
-description: ''
+description: 'Message for the Day view.'
 tag: ''
 base_table: node_field_data
 base_field: nid
@@ -53,10 +53,14 @@ display:
       pager:
         type: some
         options:
-          items_per_page: 10
+          items_per_page: 5
           offset: 0
       style:
         type: default
+        options:
+          row_class: ''
+          default_row_class: false
+          uses_fields: false
       row:
         type: 'entity:node'
         options:
@@ -173,7 +177,7 @@ display:
           entity_type: paragraph
           plugin_id: date_recur_occurrences_filter
       sorts: {  }
-      title: david
+      title: 'Status Display'
       header: {  }
       footer: {  }
       empty: {  }
