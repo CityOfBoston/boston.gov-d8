@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.message_for_the_day.field_enabled
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
     - field.field.paragraph.message_for_the_day.field_recurrence
@@ -9,16 +10,45 @@ dependencies:
     - paragraphs.paragraphs_type.message_for_the_day
   module:
     - bos_messages
+    - field_group
     - paragraphs
     - text
+third_party_settings:
+  field_group:
+    group_horizontal:
+      children:
+        - field_enabled
+        - field_use_alert
+      parent_name: ''
+      weight: 0
+      format_type: html_element
+      format_settings:
+        label: Horizontal
+        element: div
+        show_label: false
+        label_element: h3
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'cob-group-grid center'
+        required_fields: false
+      label: Horizontal
 id: paragraph.message_for_the_day.default
 targetEntityType: paragraph
 bundle: message_for_the_day
 mode: default
 content:
+  field_enabled:
+    weight: 1
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_link:
     type: paragraphs
-    weight: 2
+    weight: 4
     region: content
     settings:
       title: Paragraph
@@ -37,7 +67,7 @@ content:
     third_party_settings: {  }
   field_message:
     type: text_textarea
-    weight: 1
+    weight: 3
     region: content
     settings:
       rows: 5
@@ -45,13 +75,13 @@ content:
     third_party_settings: {  }
   field_recurrence:
     type: bos_messages_mod_recur
-    weight: 3
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   field_use_alert:
     type: boolean_checkbox
-    weight: 0
+    weight: 2
     region: content
     settings:
       display_label: true

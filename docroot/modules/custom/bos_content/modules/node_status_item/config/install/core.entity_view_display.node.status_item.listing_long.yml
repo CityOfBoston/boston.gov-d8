@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.listing
+    - core.entity_view_mode.node.listing_long
     - field.field.node.status_item.field_enabled
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
@@ -10,17 +10,18 @@ dependencies:
     - image.style.square_icon_65px
     - node.type.status_item
   module:
+    - entity_reference_revisions
     - fences
     - svg_image
     - user
-id: node.status_item.listing
+id: node.status_item.listing_long
 targetEntityType: node
 bundle: status_item
-mode: listing
+mode: listing_long
 content:
   field_enabled:
     type: boolean
-    weight: 2
+    weight: 3
     region: content
     label: hidden
     settings:
@@ -55,21 +56,39 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     region: content
+  field_messages:
+    label: hidden
+    weight: 2
+    type: entity_reference_revisions_entity_view
+    settings:
+      view_mode: listing
+      link: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    region: content
   field_title:
-    label: above
+    label: hidden
     weight: 0
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
-  links:
-    weight: 3
-    region: content
-    settings: {  }
-    third_party_settings: {  }
 hidden:
   content_moderation_control: true
-  field_messages: true
   langcode: true
+  links: true
   published_at: true
