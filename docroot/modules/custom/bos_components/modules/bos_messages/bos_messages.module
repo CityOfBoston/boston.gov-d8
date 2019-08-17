@@ -36,44 +36,62 @@ function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInt
  * Implements hook_preprocess_paragraph().
  */
 function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$variables) {
-  if (!empty($variables['paragraph'])) {
-    $paragraph = $variables['paragraph'];
+  static $processed = [];
 
-    if (isset($variables["content"]["field_recurrence"][0]['#occurrences'])
-      && count($variables["content"]["field_recurrence"][0]['#occurrences'])) {
-      $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
-      $today = new \DateTime();
-      $variables["show_message"] = FALSE;
-      // If $today is in the occurence range then show.
-      if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
-        $start_date = new \DateTime($date["start_date"]["#text"]);
-        $end_date = new \DateTime($date["end_date"]["#text"]);
-        if ($today >= $start_date && $today <= $end_date) {
-          // If the message is not recur date is not valid for today, remove.
-          $variables["show_message"] = TRUE;
+  if (!empty($variables['paragraph'])) {
+
+    $motd = $variables['paragraph'];
+    $status_item = $motd->getParentEntity();
+
+    // Only do this if the parent status_item hasn't already had a message
+    // processed.
+    if (isset($status_item) && !isset($processed[$status_item->id()])) {
+
+      if (isset($variables["content"]["field_recurrence"][0]['#occurrences'])
+        && count($variables["content"]["field_recurrence"][0]['#occurrences'])) {
+
+        $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
+        $today = new \DateTime();
+        $variables["show_message"] = FALSE;
+
+        // If $today is in the occurence range then show.
+        if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
+          $start_date = new \DateTime($date["start_date"]["#text"]);
+          $end_date = new \DateTime($date["end_date"]["#text"]);
+          if ($today >= $start_date && $today <= $end_date) {
+            $variables["show_message"] = TRUE;
+            $processed[$status_item->id()] = $motd->id();
+          }
         }
       }
-    }
 
-    if (!$paragraph->get('field_link')->isEmpty()) {
-      $link = _bos_core_paragraph_extract_link($paragraph->get('field_link')->getValue());
-      $variables['card_url'] = $link['url'];
-    }
+      if (!empty($variables["show_message"])) {
+        if (!$motd->get('field_link')->isEmpty()) {
+          $link = _bos_core_paragraph_extract_link($motd->get('field_link')
+            ->getValue());
+          $variables['card_url'] = $link['url'];
+        }
 
-    if ($paragraph->get('field_use_alert')->Getvalue()['0']['value']) {
-      $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
-      $variables['alert'] = trim($alert);
-    }
+        if ($motd->get('field_use_alert')->Getvalue()['0']['value']) {
+          $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
+          $variables['alert'] = trim($alert);
+        }
 
-    if ($host = $paragraph->getParentEntity()) {
-      if ($host->hasField('field_icon') && !$host->get('field_icon')->isEmpty()) {
-        $fid = $host->get('field_icon')->getValue()['0']['target_id'];
-        $uri = Drupal::entityTypeManager()->getStorage('file')->load($fid)->getFileUri();
-        $uri = \Drupal::service('file_system')->realpath($uri);
-        $icon = file_get_contents($uri);
-        $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+        if ($status_item->hasField('field_icon') && !$status_item->get('field_icon')
+            ->isEmpty()) {
+          $fid = $status_item->get('field_icon')->getValue()['0']['target_id'];
+          $uri = Drupal::entityTypeManager()
+            ->getStorage('file')
+            ->load($fid)
+            ->getFileUri();
+          $uri = \Drupal::service('file_system')->realpath($uri);
+          $icon = file_get_contents($uri);
+          $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+        }
+
+        $variables['title'] = $status_item->label();
       }
-      $variables['title'] = $host->label();
+
     }
   }
 }
