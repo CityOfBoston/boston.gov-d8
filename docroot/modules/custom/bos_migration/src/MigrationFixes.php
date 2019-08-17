@@ -813,96 +813,115 @@ class MigrationFixes {
    */
   public static function migrateMessages() {
     // Fetch rows from D7.
-    $d7_connection = Database::getConnection("default", "migrate");
-    $query_string = "SELECT d.* 
-     FROM field_data_field_date d
+    $migrate_tables = [
+      "field_revision_field_date" => "paragraph_revision__field_recurrence",
+      "field_data_field_date" => "paragraph__field_recurrence",
+    ];
+    foreach($migrate_tables as $source_table => $dest_table) {
+      $d7_connection = Database::getConnection("default", "migrate");
+      $query_string = "SELECT d.* 
+     FROM $source_table d
           INNER JOIN (
               SELECT i.entity_id, max(i.delta) delta 
-              FROM field_data_field_date i
+              FROM $source_table i
               GROUP BY i.entity_id
           ) o     on o.delta = d.delta
                   and o.entity_id = d.entity_id
       WHERE d.bundle = 'message_for_the_day';";
-    $source_rows = $d7_connection->query($query_string)->fetchAll();
+      $source_rows = $d7_connection->query($query_string)->fetchAll();
 
-    // Migrate them into D8.
-    if (count($source_rows)) {
-      printf("%d message_for_the_day records will be migrated.\n", count($source_rows));
-      foreach ($source_rows as $source_row) {
-        $infinite = NULL;
-        $start_date = strtotime($source_row->field_date_value);
-        $end_date = strtotime($start_date . "+ 1 day");
-        $start_date = format_date($start_date, "html_date");
+      // Migrate them into D8.
+      if (count($source_rows)) {
+        printf("%d message_for_the_day records will be migrated from %s.\n", count($source_rows), $source_table);
+        foreach ($source_rows as $source_row) {
+          $infinite = NULL;
+          $start_date = strtotime($source_row->field_date_value);
+          $end_date = strtotime("+ 1 day", $start_date);
+          $start_date = format_date($start_date, "html_date");
 
-        $rrule = $source_row->field_date_rrule;
-        $exceptions = explode("\r\n", $rrule);
-        if (isset($exceptions[1])) {
-          $rrule = $exceptions[0];
-        }
-        $rules = explode(";", str_replace("RRULE:", "", $rrule));
+          $rrule = $source_row->field_date_rrule;
+          $exceptions = explode("\r\n", $rrule);
+          if (isset($exceptions[1])) {
+            $rrule = $exceptions[0];
+          }
+          $rules = explode(";", str_replace("RRULE:", "", $rrule));
 
-        foreach ($rules as $key => &$rule) {
-          $keypair = explode("=", $rule);
-          if (!isset($keypair[0]) || empty($keypair[1])) {
-            unset($rules[$key]);
-          }
-          if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
-            if (!isset($infinite)) {
-              $infinite = 0;
-            }
-          }
-          elseif ($keypair[0] == "WKST") {
-            unset($rules[$key]);
-          }
-          elseif ($keypair[0] == "UNTIL") {
-            $end_date = strtotime($keypair[1]);
-            if ($end_date > strtotime("+1 year")) {
-              if (!isset($infinite)) {
-                $infinite = 1;
-              }
+          foreach ($rules as $key => &$rule) {
+            $keypair = explode("=", $rule);
+            if (!isset($keypair[0]) || empty($keypair[1])) {
               unset($rules[$key]);
             }
-            $end_date = format_date($end_date, "html_date");
+            if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
+              if (!isset($infinite)) {
+                $infinite = 0;
+              }
+            }
+            elseif ($keypair[0] == "WKST") {
+              unset($rules[$key]);
+            }
+            elseif ($keypair[0] == "BYDAY" && substr($keypair[1], 0, 1) == '+') {
+              $rules[] = "BYSETPOS=" . substr($keypair[1], 1, 1);
+              $keypair[1] = substr($keypair[1], 2);
+            }
+            elseif ($keypair[0] == "BYMONTH") {
+              foreach ($rules as $_key => $_rule) {
+                if (explode("=", $_rule)[0] == "FREQ"
+                  && explode("=", $_rule)[1] == "MONTHLY") {
+                  $rules[$_key] = "FREQ=YEARLY";
+                }
+              }
+            }
+            elseif ($keypair[0] == "UNTIL") {
+              $end_date = strtotime($keypair[1]);
+              if ($end_date > strtotime("+1 year")) {
+                if (!isset($infinite)) {
+                  $infinite = 1;
+                }
+                unset($rules[$key]);
+              }
+            }
+            $rule = implode("=", $keypair);
           }
-          $rule = implode("=", $keypair);
-        }
 
-        $rules = implode(";", $rules);
-        if (!empty($exceptions[1])) {
-          $exdates = explode(",", str_replace([
-            "EXDATE:",
-            "RDATE:"
-          ], "", $exceptions[1]));
-          foreach ($exdates as &$exdate) {
-            $dt = new \DateTime($exdate);
-            $exdate = date_format($dt, "Ymd");
+          $end_date = format_date($end_date, "html_date");
+
+          $rules = implode(";", $rules);
+          if (!empty($exceptions[1])) {
+            $exdates = explode(",", str_replace([
+              "EXDATE:",
+              "RDATE:"
+            ], "", $exceptions[1]));
+            foreach ($exdates as &$exdate) {
+              $dt = new \DateTime($exdate);
+              $exdate = date_format($dt, "Ymd");
+            }
+            $exceptions[1] = implode(",", $exdates);
+            $rules = "RRULE:" . $rules . "\r\nEXDATE:" . $exceptions[1];
           }
-          $exceptions[1] = implode(",", $exdates);
-          $rules = "RRULE:" . $rules . "\r\nEXDATE:" . $exceptions[1];
-        }
 
-        if (empty($rules)) {
-          $rules = NULL;
-        }
-        if (!isset($infinite)) {
-          $infinite = 0;
-        }
+          if (empty($rules)) {
+            $rules = NULL;
+          }
+          if (!isset($infinite)) {
+            $infinite = 0;
+          }
 
-        $d8_connection = Database::getConnection("default", "default");
-        $d8_connection->update("paragraph__field_recurrence")
-          ->fields([
-            "field_recurrence_value" => $start_date,
-            "field_recurrence_end_value" => $end_date,
-            "field_recurrence_rrule" => $rules,
-            "field_recurrence_infinite" => $infinite,
-          ])
-          ->condition("entity_id", $source_row->entity_id, "=")
-          ->execute();
+          $d8_connection = Database::getConnection("default", "default");
+          $d8_connection->update($dest_table)
+            ->fields([
+              "field_recurrence_value" => $start_date,
+              "field_recurrence_end_value" => $end_date,
+              "field_recurrence_rrule" => $rules,
+              "field_recurrence_infinite" => $infinite,
+            ])
+            ->condition("entity_id", $source_row->entity_id, "=")
+            ->execute();
+        }
+        printf("-> %d message_for_the_day records were migrated to %s.\n", count($source_rows), $dest_table);
       }
-      printf("%d message_for_the_day records were migrated.\n", count($source_rows));
-    }
-    else {
-      printf("No message_for_the_day records to migrate.\n");
+      else {
+        printf("No message_for_the_day records to migrate.\n");
+      }
     }
 
     // Update the new status fields.
