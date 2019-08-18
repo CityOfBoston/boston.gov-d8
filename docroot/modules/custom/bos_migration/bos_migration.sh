@@ -120,9 +120,9 @@ function dumpDB() {
     printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
 }
 
-$acquia_env="bostond8dev"
+acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
-    $acquia_env="${2}"
+    acquia_env="${2}"
 fi
 
 if [ -d "/mnt/gfs" ]; then
