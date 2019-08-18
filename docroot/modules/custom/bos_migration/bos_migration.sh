@@ -60,7 +60,7 @@ function restoreDB() {
     backup=${1}
     ${drush} sql:drop --database=default -y  | tee -a ${logfile}
     if [ ${backup: -3} == ".gz" ]; then
-        gunzip ${backup}
+        gunzip -fq ${backup}
         backup=$(basename backup .gz)
     fi
     if [ -d "/mnt/gfs" ]; then
@@ -68,7 +68,7 @@ function restoreDB() {
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
-    gzip ${backup}
+    gzip -fq ${backup}
 
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
@@ -116,7 +116,7 @@ function dumpDB() {
     else
         lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
     fi
-    gzip ${backup}
+    gzip -fq ${backup}
     printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
 }
 
