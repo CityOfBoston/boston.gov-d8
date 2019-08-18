@@ -822,7 +822,7 @@ class MigrationFixes {
       ->truncate("date_recur__paragraph__field_recurrence")
       ->execute();
 
-    foreach($migrate_tables as $source_table => $dest_table) {
+    foreach ($migrate_tables as $source_table => $dest_table) {
       $d7_connection = Database::getConnection("default", "migrate");
       $query_string = "SELECT  i.start start_date, i.end end_date, d.*
         FROM $source_table d
@@ -901,7 +901,7 @@ class MigrationFixes {
           if (!empty($exceptions[1])) {
             $exdates = explode(",", str_replace([
               "EXDATE:",
-              "RDATE:"
+              "RDATE:",
             ], "", $exceptions[1]));
             foreach ($exdates as &$exdate) {
               $dt = new \DateTime($exdate);
@@ -923,7 +923,6 @@ class MigrationFixes {
           else {
             $entity = $entity->load($source_row->entity_id);
           }
-//          if (!empty($entity) && !isset($entity->field_enabled->value)) {
           if (!empty($entity)) {
             $entity->field_enabled = $enabled;
             $entity->field_recurrence->value = $start_date;
@@ -944,7 +943,7 @@ class MigrationFixes {
     // Update the new status fields.
     $nodes = \Drupal::entityTypeManager()->getStorage("node")
       ->loadByProperties(["type" => "status_item"]);
-    if(!empty($nodes)) {
+    if (!empty($nodes)) {
       foreach ($nodes as $node) {
         $entity = \Drupal::entityTypeManager()->getStorage("node")
           ->load($node->id());
