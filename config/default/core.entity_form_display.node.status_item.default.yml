@@ -53,11 +53,12 @@ third_party_settings:
       weight: 21
       format_type: tab
       format_settings:
+        label: Messages
+        formatter: closed
+        description: "<b>The order of messages in this list is important.<br/>\r\n<i>Only the first message which has a rule for the current day will be displayed.</i></b><br />\r\nYou may preview messages at this link <a href=\"/admin/motd\">/admin/motd</a>."
+        required_fields: true
         id: ''
         classes: 'group-messages field-group-tab'
-        formatter: closed
-        description: ''
-        required_fields: true
       label: Messages
     group_hoizontal:
       children:
