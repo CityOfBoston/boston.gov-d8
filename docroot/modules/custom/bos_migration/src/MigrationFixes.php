@@ -817,25 +817,32 @@ class MigrationFixes {
       "field_revision_field_date" => "paragraph_revision__field_recurrence",
       "field_data_field_date" => "paragraph__field_recurrence",
     ];
+
+    Database::getConnection("default", "default")
+      ->truncate("date_recur__paragraph__field_recurrence")
+      ->execute();
+
     foreach($migrate_tables as $source_table => $dest_table) {
       $d7_connection = Database::getConnection("default", "migrate");
-      $query_string = "SELECT d.* 
-     FROM $source_table d
+      $query_string = "SELECT  i.start start_date, i.end end_date, d.*
+        FROM $source_table d
           INNER JOIN (
-              SELECT i.entity_id, max(i.delta) delta 
-              FROM $source_table i
-              GROUP BY i.entity_id
-          ) o     on o.delta = d.delta
-                  and o.entity_id = d.entity_id
-      WHERE d.bundle = 'message_for_the_day';";
+            SELECT entity_id, min(field_date_value) start, max(field_date_value) end 
+            FROM $source_table
+            GROUP BY entity_id
+          ) i ON i.entity_id = d.entity_id
+        WHERE d.bundle = 'message_for_the_day'
+            AND d.delta = 0";
       $source_rows = $d7_connection->query($query_string)->fetchAll();
 
       // Migrate them into D8.
       if (count($source_rows)) {
-        printf("%d message_for_the_day records will be migrated from %s.\n", count($source_rows), $source_table);
+        $cnt = 0;
+        printf("%d message_for_the_day records found to be migrated from %s.\n", count($source_rows), $source_table);
         foreach ($source_rows as $source_row) {
           $infinite = NULL;
-          $start_date = strtotime($source_row->field_date_value);
+          $enabled = TRUE;
+          $start_date = strtotime($source_row->start_date);
           $end_date = strtotime("+ 1 day", $start_date);
           $start_date = format_date($start_date, "html_date");
 
@@ -851,40 +858,45 @@ class MigrationFixes {
             if (!isset($keypair[0]) || empty($keypair[1])) {
               unset($rules[$key]);
             }
-            if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
-              if (!isset($infinite)) {
+            else {
+              if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
                 $infinite = 0;
               }
-            }
-            elseif ($keypair[0] == "WKST") {
-              unset($rules[$key]);
-            }
-            elseif ($keypair[0] == "BYDAY" && substr($keypair[1], 0, 1) == '+') {
-              $rules[] = "BYSETPOS=" . substr($keypair[1], 1, 1);
-              $keypair[1] = substr($keypair[1], 2);
-            }
-            elseif ($keypair[0] == "BYMONTH") {
-              foreach ($rules as $_key => $_rule) {
-                if (explode("=", $_rule)[0] == "FREQ"
-                  && explode("=", $_rule)[1] == "MONTHLY") {
-                  $rules[$_key] = "FREQ=YEARLY";
+              elseif ($keypair[0] == "UNTIL") {
+                $edate = strtotime($keypair[1]);
+                if ($edate > strtotime("+1 year")) {
+                  $infinite = ($infinite ?? 1);
+                  unset($rules[$key]);
+                  $keypair = NULL;
+                }
+                if ($edate < strtotime("-1 month")) {
+                  $infinite = ($infinite ?? 0);
+                  $enabled = FALSE;
+                  unset($rules[$key]);
+                  $keypair = NULL;
                 }
               }
-            }
-            elseif ($keypair[0] == "UNTIL") {
-              $end_date = strtotime($keypair[1]);
-              if ($end_date > strtotime("+1 year")) {
-                if (!isset($infinite)) {
-                  $infinite = 1;
-                }
+              elseif ($keypair[0] == "COUNT" && intval($keypair[1]) >= 500) {
+                $infinite = ($infinite ?? 1);
                 unset($rules[$key]);
+                $keypair = NULL;
+              }
+              elseif ($keypair[0] == "WKST") {
+                unset($rules[$key]);
+                $keypair = NULL;
+              }
+              elseif ($keypair[0] == "BYDAY" && substr($keypair[1], 0, 1) == '+') {
+                $rules[] = "BYSETPOS=" . substr($keypair[1], 1, 1);
+                $keypair[1] = substr($keypair[1], 2);
+              }
+
+              if (isset($keypair)) {
+                $rule = implode("=", $keypair);
               }
             }
-            $rule = implode("=", $keypair);
           }
 
           $end_date = format_date($end_date, "html_date");
-
           $rules = implode(";", $rules);
           if (!empty($exceptions[1])) {
             $exdates = explode(",", str_replace([
@@ -902,22 +914,27 @@ class MigrationFixes {
           if (empty($rules)) {
             $rules = NULL;
           }
-          if (!isset($infinite)) {
-            $infinite = 0;
-          }
+          $infinite = ($infinite ?? 0);
 
-          $d8_connection = Database::getConnection("default", "default");
-          $d8_connection->update($dest_table)
-            ->fields([
-              "field_recurrence_value" => $start_date,
-              "field_recurrence_end_value" => $end_date,
-              "field_recurrence_rrule" => $rules,
-              "field_recurrence_infinite" => $infinite,
-            ])
-            ->condition("entity_id", $source_row->entity_id, "=")
-            ->execute();
+          $entity = \Drupal::entityTypeManager()->getStorage("paragraph");
+          if ($source_table == "field_revision_field_date") {
+            $entity = $entity->loadRevision($source_row->revision_id);
+          }
+          else {
+            $entity = $entity->load($source_row->entity_id);
+          }
+//          if (!empty($entity) && !isset($entity->field_enabled->value)) {
+          if (!empty($entity)) {
+            $entity->field_enabled = $enabled;
+            $entity->field_recurrence->value = $start_date;
+            $entity->field_recurrence->end_value = $end_date;
+            $entity->field_recurrence->rrule = $rules;
+            $entity->field_recurrence->infinite = $infinite;
+            $entity->save();
+            $cnt++;
+          }
         }
-        printf("-> %d message_for_the_day records were migrated to %s.\n", count($source_rows), $dest_table);
+        printf("-> %d message_for_the_day records were migrated to %s.\n", $cnt, $dest_table);
       }
       else {
         printf("No message_for_the_day records to migrate.\n");
@@ -937,19 +954,6 @@ class MigrationFixes {
         }
       }
       printf("Set active flag on un-assigned status_item nodes.\n");
-    }
-    $paragraphs = \Drupal::entityTypeManager()->getStorage("paragraph")
-      ->loadByProperties(["type" => "message_for_the_day"]);
-    if(!empty($paragraphs)) {
-      foreach ($paragraphs as $paragraph) {
-        $entity = \Drupal::entityTypeManager()->getStorage("paragraph")
-          ->load($paragraph->id());
-        if (!empty($entity) && !isset($entity->field_enabled->value)) {
-          $entity->field_enabled = TRUE;
-          $entity->save();
-        }
-      }
-      printf("Set active flag on un-assigned message_for_the_day components.\n");
     }
 
     \Drupal::service('page_cache_kill_switch')->trigger();
