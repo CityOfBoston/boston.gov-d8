@@ -5,8 +5,6 @@
  * The Base module file for bos_list module.
  */
 
-use Drupal\Core\Template\Attribute;
-
 /**
  * Implements hook_theme().
  */
@@ -102,9 +100,6 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
-  $theme['viewfield_item__field_list__status_items'] = [
-    'base hook' => 'viewfield_item',
-  ];
   $theme['views_view__topic_landing_page'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
@@ -133,6 +128,27 @@ function bos_list_theme() {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_list_preprocess_paragraph__list(&$variables) {
+  _bos_components_fix_attributes($variables);
+  if ($variables['paragraph']->field_component_theme->value == "grey" ||
+    $variables['paragraph']->field_component_theme->value == "g") {
+    $variables["attributes"]->addClass("b--g");
+  }
+  elseif ($variables['paragraph']->field_component_theme->value == "blue" ||
+    $variables['paragraph']->field_component_theme->value == "b") {
+    $variables["attributes"]->addClass("b--b");
+  }
+  elseif ($variables['paragraph']->field_component_theme->value == "w") {
+    $variables["attributes"]->addClass("b--w");
+  }
+  else {
+    $variables["attributes"]->addClass("b--w");
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
@@ -148,46 +164,4 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
     $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
     unset($form["#info"]["filter-title"]["label"]);
   }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_list_preprocess_viewfield_item__field_list__status_items(&$variables) {
-  // Normally this would go in the theme to make the preprocess function more
-  // discoverable but it needs to be run against the admin theme as well.
-  $view = $variables['content']["#view"];
-  $timestamp = strtotime("now");
-  if (isset($view->args[0])) {
-    $timestamp = strtotime($view->args[0]);
-  }
-  $variables['header'] = [
-    "date" => format_date($timestamp, 'date_format_status'),
-    "date_attrib" => new Attribute(),
-  ];
-  $variables['header']['date_attrib']->addClass("str-t");
-
-  if (!empty($timestamp)) {
-    // See if this date falls on a special named date (i.e. a holiday or city
-    // event, etc.).
-    $result = \Drupal::entityQuery('taxonomy_term')
-      ->condition('vid', 'holidays')
-      ->condition('field_date', $timestamp . 'T00:00:00')
-      ->range(0, 1)
-      ->execute();
-    if (!empty($result)) {
-      $variables["header"]["text"] = taxonomy_term_load(key($result['name']));
-      $variables['header']['date_attrib']->removeClass("str-t");
-      $variables['header']['date_attrib']->addClass("str-st");
-    }
-  }
-
-  // Render and map the rows to reduce templating.
-  $variables['empty'] = TRUE;
-  $view = $view->render();
-  if (!empty($view["#rows"]) && count($view["#rows"])) {
-    $variables["rows"] = $view["#rows"][0]["#rows"];
-    $variables['empty'] = FALSE;
-  }
-
 }
