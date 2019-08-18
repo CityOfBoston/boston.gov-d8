@@ -93,11 +93,10 @@ function bos_list_theme() {
     'base hook' => 'node',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
-  $theme['views_view_unformatted__public_notice'] = [
-    'base hook' => 'views_view',
-    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  $theme['viewfield__paragraph__field_list'] = [
+    'base hook' => 'viewfield',
   ];
-  $theme['views_view__status_displays'] = [
+  $theme['views_view_unformatted__public_notice'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
@@ -126,6 +125,27 @@ function bos_list_theme() {
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
   return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_list_preprocess_paragraph__list(&$variables) {
+  _bos_components_fix_attributes($variables);
+  if ($variables['paragraph']->field_component_theme->value == "grey" ||
+    $variables['paragraph']->field_component_theme->value == "g") {
+    $variables["attributes"]->addClass("b--g");
+  }
+  elseif ($variables['paragraph']->field_component_theme->value == "blue" ||
+    $variables['paragraph']->field_component_theme->value == "b") {
+    $variables["attributes"]->addClass("b--b");
+  }
+  elseif ($variables['paragraph']->field_component_theme->value == "w") {
+    $variables["attributes"]->addClass("b--w");
+  }
+  else {
+    $variables["attributes"]->addClass("b--w");
+  }
 }
 
 /**

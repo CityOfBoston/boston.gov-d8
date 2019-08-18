@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -17,38 +18,77 @@ function bos_messages_theme($existing, $type, $theme, $path) {
     ],
     'paragraph__message_for_the_day' => [
       'base hook' => 'paragraph',
-      'path' => drupal_get_path('module', 'bos_messages') . '/templates',
+    ],
+    'paragraph__message_for_the_day__listing' => [
+      'base hook' => 'paragraph',
     ],
   ];
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form["#attached"]["library"][] = "bos_messages/mod.assets";
+}
+
+/**
  * Implements hook_preprocess_paragraph().
  */
-function bos_messages_preprocess_paragraph(&$vars) {
-  if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
-    switch ($paragraph->bundle()) {
-      case 'message_for_the_day':
-        if (!$paragraph->get('field_link')->isEmpty()) {
-          $link = _bos_core_paragraph_extract_link($paragraph->get('field_link')->getValue());
-          $vars['card_url'] = $link['url'];
+function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$variables) {
+  static $motd_processed = [];
+
+  $motd = $variables['paragraph'];
+  $status_item = $motd->getParentEntity();
+
+  $variables["show_message"] = FALSE;
+
+  // Only do this if the parent status_item hasn't already had a message
+  // processed.
+  if (isset($status_item) && !isset($motd_processed[$status_item->id()])) {
+
+    // Make sure the recurrences field has a value.
+    if (isset($variables["content"]["field_recurrence"][0]['#occurrences'])
+      && count($variables["content"]["field_recurrence"][0]['#occurrences'])) {
+
+      $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
+      $today = new \DateTime();
+      $today->modify("-5 hours");
+
+      // If $today is in the occurence range then show.
+      if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
+        $start_date = new \DateTime($date["start_date"]["#text"]);
+        $end_date = new \DateTime($date["end_date"]["#text"]);
+        if ($today >= $start_date && $today <= $end_date) {
+          $variables["show_message"] = TRUE;
+          $motd_processed[$status_item->id()] = $motd->id();
         }
-        if ($paragraph->get('field_use_alert')->Getvalue()['0']['value']) {
-          $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
-          $vars['alert'] = trim($alert);
-        }
-        if ($host = $paragraph->getParentEntity()) {
-          if ($host->hasField('field_icon') && !$host->get('field_icon')->isEmpty()) {
-            $fid = $host->get('field_icon')->getValue()['0']['target_id'];
-            $uri = Drupal::entityTypeManager()->getStorage('file')->load($fid)->getFileUri();
-            $uri = \Drupal::service('file_system')->realpath($uri);
-            $icon = file_get_contents($uri);
-            $vars['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
-          }
-          $vars['title'] = $host->label();
-        }
-        break;
+      }
+    }
+
+    if (!empty($variables["show_message"])) {
+      if (isset($motd->field_link->value)) {
+        $link = _bos_core_paragraph_extract_link($motd->field_link->value);
+        $variables['card_url'] = $link['url'];
+      }
+
+      if (!empty($motd->field_use_alert->value)) {
+        $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
+        $variables['alert'] = trim($alert);
+      }
+
+      if (isset($status_item->field_icon->target_id)) {
+        $fid = $status_item->field_icon->target_id;
+        $uri = Drupal::entityTypeManager()
+          ->getStorage('file')
+          ->load($fid)
+          ->getFileUri();
+        $uri = \Drupal::service('file_system')->realpath($uri);
+        $icon = file_get_contents($uri);
+        $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+      }
+
+      $variables['title'] = $status_item->label();
     }
   }
 }

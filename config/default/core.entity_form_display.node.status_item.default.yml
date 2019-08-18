@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.status_item.field_enabled
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
@@ -31,6 +32,7 @@ third_party_settings:
       label: 'Status Item'
     group_basic_information:
       children:
+        - group_hoizontal
         - title
         - field_title
         - field_icon
@@ -51,12 +53,30 @@ third_party_settings:
       weight: 21
       format_type: tab
       format_settings:
+        label: Messages
+        formatter: closed
+        description: "<b>The order of messages in this list is important.<br/>\r\n<i>Only the first message which has a rule for the current day will be displayed.</i></b><br />\r\nYou may preview messages at this link <a href=\"/admin/motd\">/admin/motd</a>."
+        required_fields: true
         id: ''
         classes: 'group-messages field-group-tab'
-        formatter: closed
-        description: ''
-        required_fields: true
       label: Messages
+    group_hoizontal:
+      children:
+        - field_enabled
+      parent_name: group_basic_information
+      weight: 20
+      format_type: html_element
+      format_settings:
+        id: ''
+        classes: cob-group-grid
+        element: div
+        show_label: false
+        label_element: h3
+        required_fields: true
+        attributes: ''
+        effect: none
+        speed: fast
+      label: hoizontal
 _core:
   default_config_hash: bjotN0ZOH2QCl6-XNJmD02C68QghlD1Z6Ahh9zOMyvM
 id: node.status_item.default
@@ -70,8 +90,15 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_enabled:
+    weight: 21
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_icon:
-    weight: 3
+    weight: 24
     type: image_image
     settings:
       preview_image_style: square_icon_65px
@@ -98,7 +125,7 @@ content:
     third_party_settings: {  }
     region: content
   field_title:
-    weight: 2
+    weight: 23
     type: string_textfield
     settings:
       size: 60
@@ -153,7 +180,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 22
     region: content
     settings:
       size: 60

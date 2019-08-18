@@ -1113,3 +1113,141 @@ body.bos_admin {
   color: #0074BD;
   font-style: italic;
 }
+
+/*
+David:
+Where: node--status-item--listing-long.html.twig
+       paragraph--message-for-the-day--listing.html.twig
+What: Helper for status_display preview - restricts icon sizing.
+*/
+.g--top {
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+.g {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -js-display: flex;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+}
+.g--24:nth-child(1n) {
+  margin-right: 0;
+  margin-left: auto;
+}
+.g--24:nth-child(1n) {
+  margin-right: 24px;
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+.g--24 {
+  -webkit-box-flex: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -ms-flex-preferred-size: 170px;
+  flex-basis: 170px;
+  max-width: 170px;
+  width: 170px;
+}
+.cds-l {
+  background-color: #fff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  -js-display: flex;
+  display: flex;
+  text-align: left;
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  text-align: center;
+}
+.d-b {
+  display: block;
+}
+.cds-ic {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 31px;
+  position: relative;
+  display: inline-block;
+  height: 65px;
+  width: 65px;
+}
+.cds-ic svg {
+  width: 65px;
+  height: 65px;
+}
+.cds-ia {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  max-width: 28px;
+  max-height: 28px
+}
+.cds-c {
+  -webkit-box-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+}
+.cds-t {
+  font-size: calc(14px + 2 * ((100vw - 420px) / 860));
+  line-height: 1.1;
+}
+
+.t--upper {
+  text-transform: uppercase;
+}
+.t--number, .t--sans {
+  font-family: Montserrat,Arial,sans-serif;
+}
+.m-b300 {
+  margin-bottom: 16px;
+  margin-bottom: 1rem;
+}
+.t--subinfo {
+  color: #091f2f;
+  font-family: Lora,Georgia,serif;
+  font-size: calc(14px + 2 * ((100vw - 480px) / 960));
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/*
+David:
+Where: Status_item admin editor form
+What: Creates a horizontally arranged group.
+*/
+.cob-group-grid {
+  display: flex;
+  flex-flow: row;
+  justify-content: flex-start;
+  border: 1px solid #b5b5b5;
+  padding: 0 6px;
+  margin-top: 10px;
+}
+.cob-group-grid.center {
+  justify-content: center;
+}
+@media screen and (min-width: 1280px) {
+  .cob-group-grid.center {
+    justify-content: flex-start;
+  }
+}
+@media screen and (max-width: 975px) {
+  .cob-group-grid {
+    flex-flow: column wrap;
+    max-width: available;
+  }
+}
+.cob-group-grid .form-wrapper {
+  /* max-width: 50%; */
+}
+.cob-group-grid img {
+  height: 10px
+}

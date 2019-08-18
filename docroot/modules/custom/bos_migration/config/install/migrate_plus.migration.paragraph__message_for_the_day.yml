@@ -18,6 +18,10 @@ process:
   field_link: field_link
   field_message: field_message
   field_use_alert: field_use_alert
+  field_enabled:
+    plugin: "default_value"
+    default_value: 1
+
 destination:
   plugin: 'entity_reference_revisions:paragraph'
   default_bundle: message_for_the_day
