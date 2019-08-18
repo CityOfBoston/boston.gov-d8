@@ -8,11 +8,13 @@ dependencies:
     - content_translation
 third_party_settings:
   content_translation:
-    enabled: true
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
 _core:
   default_config_hash: oM7YgxajwcVtxQ09qn-5zy8sZ1Qy_pPb8pWPZJpbpTk
 id: taxonomy_term.contact
 target_entity_type_id: taxonomy_term
 target_bundle: contact
 default_langcode: site_default
-language_alterable: true
+language_alterable: false

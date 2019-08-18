@@ -42,14 +42,14 @@ class MigrationFixes {
       'page_1' => ["metrolist_affordable_housing", "page_1"],
     ],
     'news_and_announcements' => [
-      'departments' => ["news_and_announcements", "block_1"],
-      'events' => ["news_and_announcements", "block_1"],
-      'guides' => ["news_and_announcements", "block_1"],
-      'most_recent' => ["news_and_announcements", "block_2"],
-      'news_events' => ["news_and_announcements", "block_1"],
-      'places' => ["news_and_announcements", "block_1"],
-      'posts' => ["news_and_announcements", "block_1"],
-      'programs' => ["news_and_announcements", "block_1"],
+      'departments' => ["news_and_announcements", "related"],
+      'events' => ["news_and_announcements", "related"],
+      'guides' => ["news_and_announcements", "related"],
+      'most_recent' => ["news_and_announcements", "upcoming"],
+      'news_events' => ["news_and_announcements", "related"],
+      'places' => ["news_and_announcements", "related"],
+      'posts' => ["news_and_announcements", "related"],
+      'programs' => ["news_and_announcements", "related"],
     ],
     'places' => [
       'listing' => ["places", "page_1"],
@@ -59,7 +59,7 @@ class MigrationFixes {
       'landing' => ["public_notice", "page_2"],
     ],
     'status_displays' => [
-      'homepage_status' => ["status_displays", "block_1"],
+      'homepage_status' => ["status_items", "motd"],
     ],
     'topic_landing_page' => [
       'page_1' => ["topic_landing_page", "page_1"],
@@ -260,6 +260,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/05/icons_heart.svg' => 'public://icons/experiential/heart.svg',
     'public://img/icons/transactions/2017/05/icons_health.svg' => 'public://icons/department/health_and_human_services_logo_black.svg',
     'public://img/icons/transactions/2017/05/experiential_icons_food_truck.svg' => 'public://icons/experiential/food_truck.svg',
+    'public://img/icons/transactions/2017/05/experiential_icons_search.svg' => 'public://icons/experiential/search.svg',
     'public://img/icons/transactions/2017/04/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/experiential/playground.svg',
     'public://img/icons/transactions/2017/04/experiential_icons-29.svg' => 'public://icons/experiential/calendar.svg',
     'public://img/icons/transactions/2017/03/vulnerability_assessment.svg' => 'public://icons/experiential/police_interrogation.svg',
@@ -284,59 +285,59 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/03/career-center.svg' => 'public://icons/experiential/web_persona.svg',
     'public://img/icons/transactions/2017/03/build_bps_0.svg' => 'public://icons/experiential/historic_building_permit.svg',
     'public://img/icons/transactions/2017/03/build_bps.svg' => 'public://icons/experiential/historic_building_permit.svg',
-    'public://img/icons/transactions/2017/03/boston_basics.svg' => 'public://icons/experiential/birth_certificate.svg',
+    'public://img/icons/transactions/2017/03/boston_basics.svg' => 'public://icons/experiential/birth_certifcate.svg',
     'public://img/icons/transactions/2017/03/benefits-available.svg' => 'public://icons/experiential/id.svg',
     'public://img/icons/transactions/2017/03/become_a_firefighter.svg' => 'public://icons/experiential/fire_truck.svg',
     'public://img/icons/transactions/2017/03/5000_questions.svg' => 'public://icons/experiential/search_forms.svg',
     'public://img/icons/transactions/2017/03/3700_ideas.svg' => 'public://icons/experiential/lightbulb.svg',
     'public://img/icons/transactions/2017/02/icons_bra.svg' => 'public://icons/department/planning_and_development_agency_logo.svg',
-    'public://img/icons/transactions/2017/02/experiential_icons_find_your_boston_school_transcript.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/02/experiential_icons_clean.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_search_license.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_schools_1.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_important.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_city_of_boston_owned_property.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_board_of_trustees.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_trash_when_it_snows.svg' => 'public://icons/',
+    'public://img/icons/transactions/2017/02/experiential_icons_find_your_boston_school_transcript.svg' => 'public://icons/experiential/certificate.svg',
+    'public://img/icons/transactions/2017/02/experiential_icons_clean.svg' => 'public://icons/experiential/house_cleaning.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_search_license.svg' => 'public://icons/experiential/certificate_search.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_schools_1.svg' => 'public://icons/experiential/school.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/experiential/playground.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_important.svg' => 'public://icons/experiential/alert.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_city_of_boston_owned_property.svg' => 'public://icons/experiential/city_of_boston_owned_property.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_board_of_trustees.svg' => 'public://icons/experiential/meeting.svg',
+    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png' => 'public://icons/experiential/',
+    'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_trash_when_it_snows.svg' => 'public://icons/experiential/snow_trash.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_car_when_it_snows.svg' => 'public://icons/experiential/snow_parking.svg',
-    'public://img/icons/transactions/2016/11/experiential_icons_view_your_collection_schedule.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_view_leaf_and_yard_waste_schedule.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_snow_removal_rules_in_boston.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_learn_about_recycling.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_important_winter_phone_numbers.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_help_during_the_winter_heating_season.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/11/experiential_icons_view_your_collection_schedule.svg' => 'public://icons/experiential/calender.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_view_leaf_and_yard_waste_schedule.svg' => 'public://icons/experiential/leaf.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_snow_removal_rules_in_boston.svg' => 'public://icons/experiential/shovel.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_learn_about_recycling.svg' => 'public://icons/experiential/recycle_cart.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_important_winter_phone_numbers.svg' => 'public://icons/experiential/snow_numbers.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_help_during_the_winter_heating_season.svg' => 'public://icons/experiential/cold_temp.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_get_rid_of_hazardous_waste.svg' => 'public://icons/experiential/hazardous_waste.svg',
-    'public://img/icons/transactions/2016/11/experiential_icons_cold_weather_safety_tips.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_vote.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_search.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_certificate.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_2_hurricane.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/09/experiential_icons_important.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/09/experiential_icons_base_ball.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/11/experiential_icons_cold_weather_safety_tips.svg' => 'public://icons/experiential/snow_alert.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_vote.svg' => 'public://icons/experiential/voting_ballot.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_search.svg' => 'public://icons/experiential/search.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_certificate.svg' => 'public://icons/experiential/certificates.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_2_hurricane.svg' => 'public://icons/experiential/hurricane.avg',
+    'public://img/icons/transactions/2016/09/experiential_icons_important.svg' => 'public://icons/experiential/alert.svg',
+    'public://img/icons/transactions/2016/09/experiential_icons_base_ball.svg' => 'public://icons/experiential/baseball',
     'public://img/icons/transactions/2016/08/experiential_icons_tripple_decker.svg' => 'public://icons/experiential/tripple_decker.svg',
-    'public://img/icons/transactions/2016/08/experiential_icons_boat.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/experiential_icons_bike.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/experiential_icons_2_rent_rights.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/08/experiential_icons_boat.svg' => 'public://icons/experiential/boat.svg',
+    'public://img/icons/transactions/2016/08/experiential_icons_bike.svg' => 'public://icons/experiential/bike.svg',
+    'public://img/icons/transactions/2016/08/experiential_icons_2_rent_rights.svg' => 'public://icons/experiential/tennant_rights.svg',
     'public://img/icons/transactions/2016/08/experiential_icons_2_housing_questions.svg' => 'public://icons/experiential/housing_questions.svg',
-    'public://img/icons/transactions/2016/08/experiential_icons-cal.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_3.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_2.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_1.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/3experiential_icons_mass_value_pass.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/08/experiential_icons-cal.svg' => 'public://icons/experiential/calender.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_3.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_2.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_1.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/3experiential_icons_mass_value_pass.svg' => 'public://icons/experiential/mass_value_pass.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_tripple_decker.svg' => 'public://icons/experiential/tripple_decker.svg',
-    'public://img/icons/transactions/2016/07/experiential_icons_repair.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/07/experiential_icons_repair.svg' => 'public://icons/experiential/construction_tool.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_pay_your_real_estate_taxes-.svg' => 'public://icons/experiential/real_estate_taxes.svg',
-    'public://img/icons/transactions/2016/07/experiential_icons_home_repairs.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/07/experiential_icons_home_repairs.svg' => 'public://icons/experiential/repair_your_home.svg',
+    'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => 'public://icons/department/bos_311_black',
     'public://img/icons/status/trash-recycling.svg' => 'public://icons/circle/trash_and_recycling.svg',
-    'public://img/icons/status/tow-lot.svg' => 'public://icons/circle/trash_and_recycling.svg',
-    'public://img/icons/status/street_sweeping.svg' => 'public://icons/circle/tow_lot.svg',
+    'public://img/icons/status/tow-lot.svg' => 'public://icons/circle/tow_lot.svg',
+    'public://img/icons/status/street_sweeping.svg' => 'public://icons/circle/street_sweeping.svg',
     'public://img/icons/status/small-circle-icons_base_ball_0.svg' => 'public://icons/circle/base_ball.svg',
     'public://img/icons/status/parking-meters.svg' => 'public://icons/circle/parking_meters.svg',
-    'public://img/icons/status/experiential_icons_fact_sheet.svg' => 'public://icons/',
+    'public://img/icons/status/experiential_icons_fact_sheet.svg' => 'public://icons/experiential/report.svg',
     'public://img/icons/status/2018/03/small-circle-icons_t_one_circle_1.svg' => 'public://icons/circle/du_t_one_circle.svg',
     'public://img/icons/status/2017/10/small-circle-icons_building.svg' => 'public://icons/circle/building.svg',
     'public://img/icons/status/2017/10/slice_1.svg' => 'public://icons/circle/building.svg',
@@ -611,7 +612,7 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_car_1.svg' => 'public://icons/experiential/car.svg',
     'public://img/2016/e/experiential_icons_car_0.svg' => 'public://icons/experiential/car.svg',
     'public://img/2016/e/experiential_icons_car.svg' => 'public://icons/experiential/car.svg',
-    'public://img/2016/e/experiential_icons_birth_cert.svg' => 'public://icons/experiential/birth_certificate.svg',
+    'public://img/2016/e/experiential_icons_birth_cert.svg' => 'public://icons/experiential/birth_certifcate.svg',
     'public://img/2016/e/experiential_icons_bike_0.svg' => 'public://icons/experiential/bike.svg',
     'public://img/2016/e/experiential_icons_bike.svg' => 'public://icons/experiential/bike.svg',
     'public://img/2016/e/experiential_icons_archaeological_dig_2.svg' => 'public://icons/experiential/archaeological_dig_questions.svg',
@@ -801,6 +802,157 @@ class MigrationFixes {
     _bos_core_install_icons("bos_map");
     // Install the map default background image.
     bos_map_rebuild();
+  }
+
+  /**
+   * Manually migrate the message_for_the_day content.
+   */
+  public static function migrateMessages() {
+    // Fetch rows from D7.
+    $migrate_tables = [
+      "field_revision_field_date" => "paragraph_revision__field_recurrence",
+      "field_data_field_date" => "paragraph__field_recurrence",
+    ];
+
+    Database::getConnection("default", "default")
+      ->truncate("date_recur__paragraph__field_recurrence")
+      ->execute();
+
+    foreach ($migrate_tables as $source_table => $dest_table) {
+      $d7_connection = Database::getConnection("default", "migrate");
+      $query_string = "SELECT  i.start start_date, i.end end_date, d.*
+        FROM $source_table d
+          INNER JOIN (
+            SELECT entity_id, min(field_date_value) start, max(field_date_value) end 
+            FROM $source_table
+            GROUP BY entity_id
+          ) i ON i.entity_id = d.entity_id
+        WHERE d.bundle = 'message_for_the_day'
+            AND d.delta = 0";
+      $source_rows = $d7_connection->query($query_string)->fetchAll();
+
+      // Migrate them into D8.
+      if (count($source_rows)) {
+        $cnt = 0;
+        printf("%d message_for_the_day records found to be migrated from %s.\n", count($source_rows), $source_table);
+        foreach ($source_rows as $source_row) {
+          $infinite = NULL;
+          $enabled = TRUE;
+          $start_date = strtotime($source_row->start_date);
+          $end_date = strtotime("+ 1 day", $start_date);
+          $start_date = format_date($start_date, "html_date");
+
+          $rrule = $source_row->field_date_rrule;
+          $exceptions = explode("\r\n", $rrule);
+          if (isset($exceptions[1])) {
+            $rrule = $exceptions[0];
+          }
+          $rules = explode(";", str_replace("RRULE:", "", $rrule));
+
+          foreach ($rules as $key => &$rule) {
+            $keypair = explode("=", $rule);
+            if (!isset($keypair[0]) || empty($keypair[1])) {
+              unset($rules[$key]);
+            }
+            else {
+              if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
+                $infinite = 0;
+              }
+              elseif ($keypair[0] == "UNTIL") {
+                $edate = strtotime($keypair[1]);
+                if ($edate > strtotime("+1 year")) {
+                  $infinite = ($infinite ?? 1);
+                  unset($rules[$key]);
+                  $keypair = NULL;
+                }
+                if ($edate < strtotime("-1 month")) {
+                  $infinite = ($infinite ?? 0);
+                  $enabled = FALSE;
+                  unset($rules[$key]);
+                  $keypair = NULL;
+                }
+              }
+              elseif ($keypair[0] == "COUNT" && intval($keypair[1]) >= 500) {
+                $infinite = ($infinite ?? 1);
+                unset($rules[$key]);
+                $keypair = NULL;
+              }
+              elseif ($keypair[0] == "WKST") {
+                unset($rules[$key]);
+                $keypair = NULL;
+              }
+              elseif ($keypair[0] == "BYDAY" && substr($keypair[1], 0, 1) == '+') {
+                $rules[] = "BYSETPOS=" . substr($keypair[1], 1, 1);
+                $keypair[1] = substr($keypair[1], 2);
+              }
+
+              if (isset($keypair)) {
+                $rule = implode("=", $keypair);
+              }
+            }
+          }
+
+          $end_date = format_date($end_date, "html_date");
+          $rules = implode(";", $rules);
+          if (!empty($exceptions[1])) {
+            $exdates = explode(",", str_replace([
+              "EXDATE:",
+              "RDATE:",
+            ], "", $exceptions[1]));
+            foreach ($exdates as &$exdate) {
+              $dt = new \DateTime($exdate);
+              $exdate = date_format($dt, "Ymd");
+            }
+            $exceptions[1] = implode(",", $exdates);
+            $rules = "RRULE:" . $rules . "\r\nEXDATE:" . $exceptions[1];
+          }
+
+          if (empty($rules)) {
+            $rules = NULL;
+          }
+          $infinite = ($infinite ?? 0);
+
+          $entity = \Drupal::entityTypeManager()->getStorage("paragraph");
+          if ($source_table == "field_revision_field_date") {
+            $entity = $entity->loadRevision($source_row->revision_id);
+          }
+          else {
+            $entity = $entity->load($source_row->entity_id);
+          }
+          if (!empty($entity)) {
+            $entity->field_enabled = $enabled;
+            $entity->field_recurrence->value = $start_date;
+            $entity->field_recurrence->end_value = $end_date;
+            $entity->field_recurrence->rrule = $rules;
+            $entity->field_recurrence->infinite = $infinite;
+            $entity->save();
+            $cnt++;
+          }
+        }
+        printf("-> %d message_for_the_day records were migrated to %s.\n", $cnt, $dest_table);
+      }
+      else {
+        printf("No message_for_the_day records to migrate.\n");
+      }
+    }
+
+    // Update the new status fields.
+    $nodes = \Drupal::entityTypeManager()->getStorage("node")
+      ->loadByProperties(["type" => "status_item"]);
+    if (!empty($nodes)) {
+      foreach ($nodes as $node) {
+        $entity = \Drupal::entityTypeManager()->getStorage("node")
+          ->load($node->id());
+        if (!empty($entity) && !isset($entity->field_enabled->value)) {
+          $entity->field_enabled = TRUE;
+          $entity->save();
+        }
+      }
+      printf("Set active flag on un-assigned status_item nodes.\n");
+    }
+
+    \Drupal::service('page_cache_kill_switch')->trigger();
+    drupal_flush_all_caches();
   }
 
 }

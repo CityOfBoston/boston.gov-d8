@@ -302,7 +302,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
         // Nothing to do if we can't extract the URI.
-        \Drupal::logger('Migrate')->notice('4:URI extraction failed.');
+        \Drupal::logger('Migrate')->notice('4:URI extraction failed ($src).');
         return NULL;
       }
     }
