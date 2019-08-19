@@ -57,17 +57,36 @@ function doExecPHP() {
 function restoreDB() {
     # Remove old database and restore baseline
     printf "RESTORING DB ${1}\n" | tee -a ${logfile}
+
     backup=${1}
+
     ${drush} sql:drop --database=default -y  | tee -a ${logfile}
-    if [ ${backup: -3} == ".gz" ]; then
-        gunzip -fq ${backup}
-        backup=$(basename backup .gz)
+
+    if [ ! -f "${backup}" ];then
+        if [ ${backup: -3} == ".gz" ]; then
+            backup=$(basename ${backup} .gz)
+            backup="${dbpath}/${backup}"
+        else
+            backup="${backup}.gz"
+        fi
     fi
+
+    if [ -f "${backup}" ];then
+        if [ ${backup: -3} == ".gz" ]; then
+            gunzip -fq ${backup}
+            backup=$(basename ${backup} .gz)
+            backup="${dbpath}/${backup}"
+        fi
+    else
+        exit 1
+    fi
+
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
+
     gzip -fq ${backup}
 
     ## Sync current config with the database.
@@ -92,7 +111,6 @@ function restoreDB() {
     ${drush} sset "bos_migration.dest_file_exists_ext" "skip"
     ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/"
     ${drush} sset "bos_migration.active" "1"
-
 
     ${drush} cr  | tee -a ${logfile}
     ${drush} ms  | tee -a ${logfile}
