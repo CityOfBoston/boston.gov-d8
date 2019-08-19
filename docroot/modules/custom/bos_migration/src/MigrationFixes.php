@@ -5,6 +5,7 @@ namespace Drupal\bos_migration;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use spec\Behat\MinkExtension\Listener\SessionsListenerSpec;
 
 /**
  * Class migrationFixes.
@@ -653,6 +654,7 @@ class MigrationFixes {
    * Required so that taxonomy entries can later be run with --update flag set.
    */
   public static function fixTaxonomyVocabulary() {
+    printf("[action] Will update the taxonomy vocabularly.\n");
     $d7_connection = Database::getConnection("default", "migrate");
     $query = $d7_connection->select("taxonomy_vocabulary", "v")
       ->fields("v", ["vid", "machine_name"]);
@@ -673,7 +675,7 @@ class MigrationFixes {
         ->execute();
     }
 
-    echo "Updated Drupal 8 taxonomy_vocab table.";
+    printf("Updated Drupal 8 taxonomy_vocab table.\n\n");
 
   }
 
@@ -684,7 +686,7 @@ class MigrationFixes {
    */
   public static function fixListViewField() {
     // Fetch all the list records into a single object.
-    echo "View list conversion:\n";
+    printf("[action] Maps newly named view displays into list components.\n");
 
     foreach (["paragraph__field_list", "paragraph_revision__field_list"] as $table) {
 
@@ -696,7 +698,7 @@ class MigrationFixes {
       $row = $query->execute()->fetchAll();
 
       $count = count($row);
-      echo "Will change $count references in $table.\n";
+      printf("[info] Will change %d references in %s.\n", $count, $table);
 
       // Process each row, making substitutions from map array $viewListMap.
       foreach ($row as $display) {
@@ -704,7 +706,7 @@ class MigrationFixes {
         if (isset($map[$display->field_list_target_id][$display->field_list_display_id])) {
 
           $entry = $map[$display->field_list_target_id][$display->field_list_display_id];
-          echo sprintf("Change %s/%s to %s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--", $entry[0], $entry[1]);
+          printf("[info] Change %s/%s to %s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--", $entry[0], $entry[1]);
 
           $d8_connection->update($table)
             ->fields([
@@ -715,22 +717,21 @@ class MigrationFixes {
             ->condition("field_list_display_id", $display->field_list_display_id)
             ->execute();
 
-          echo ": Done.\n";
+          printf("[success] component updated.\n");
         }
         else {
-          echo sprintf("%s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--");
-          echo ": Not found\n";
+          sprintf("[warning] %s/%s: Not found.", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--");
         }
       }
-      echo "----------------\n\n";
     }
-
+    printf("\n");
   }
 
   /**
    * This makes sure the filename is set properly from the uri.
    */
   public static function fixFilenames() {
+    printf("[action] Fixes filenames in table file_managed.\n");
     Database::getConnection()
       ->query("
         UPDATE file_managed
@@ -738,6 +739,8 @@ class MigrationFixes {
         WHERE locate('.', filename) = 0 and fid > 0;
       ")
       ->execute();
+    printf("[success] Done.\n");
+    printf("\n");
   }
 
   /**
@@ -746,13 +749,18 @@ class MigrationFixes {
    * Sort of super CEX for config_update.
    */
   public static function updateModules() {
+    printf("[action] Will export configs for all custom modules (super-cde).\n");
     _bos_core_global_update_configs();
+    printf("[success] Done.\n");
+    printf("\n");
   }
 
   /**
    * Updates the D7 svg icons to the new D8 located icons.
    */
   public static function updateSvgPaths() {
+    printf("[action] Will map old svg path/filename to new path/filenames.\n");
+    $cnt = 0;
     $svgs = \Drupal::database()->query("
         SELECT distinct f.fid, f.uri 
           FROM file_managed f
@@ -769,9 +777,8 @@ class MigrationFixes {
           $new_filename = array_pop($new_filename);
           $file->setFileUri($new_uri);
           $file->setFilename($new_filename);
-          echo "Renamed: " . $svg->uri . " to " . $new_uri . "\n";
           $file->save();
-
+          $cnt++;
           // Try to find this file_id in the media table.
           if (NULL == ($mid = \Drupal::entityQuery("media")->condition("image.target_id", $svg->fid, "=")->execute())) {
             // Not there, so create a new one.
@@ -795,17 +802,26 @@ class MigrationFixes {
           $new_uri = NULL;
         }
       }
+      printf("[success] Updated %d media entries.\n", $cnt);
+
     }
+    else {
+      printf("[warning] no svgs found !!.\n");
+    }
+    printf("\n");
   }
 
   /**
    * Manually create the media entity for the map background image.
    */
   public static function fixMap() {
+    printf("[action] Will ensure map default image is loaded propoerly.\n");
     // Copy map module icons into expected location.
     _bos_core_install_icons("bos_map");
     // Install the map default background image.
     bos_map_rebuild();
+    printf("[info] Finished.\n");
+    printf("\n");
   }
 
   /**
@@ -813,6 +829,8 @@ class MigrationFixes {
    */
   public static function migrateMessages() {
     // Fetch rows from D7.
+    printf("[action] Will manually copy status_item messages because migration can't handle them.\n");
+
     $migrate_tables = [
       "field_revision_field_date" => "paragraph_revision__field_recurrence",
       "field_data_field_date" => "paragraph__field_recurrence",
@@ -838,7 +856,7 @@ class MigrationFixes {
       // Migrate them into D8.
       if (count($source_rows)) {
         $cnt = 0;
-        printf("%d message_for_the_day records found to be migrated from %s.\n", count($source_rows), $source_table);
+        printf("[info] %d message_for_the_day records found to be migrated from %s.\n", count($source_rows), $source_table);
         foreach ($source_rows as $source_row) {
           $infinite = NULL;
           $enabled = TRUE;
@@ -933,10 +951,10 @@ class MigrationFixes {
             $cnt++;
           }
         }
-        printf("-> %d message_for_the_day records were migrated to %s.\n", $cnt, $dest_table);
+        printf("[success] %d message_for_the_day records were migrated to %s.\n", $cnt, $dest_table);
       }
       else {
-        printf("No message_for_the_day records to migrate.\n");
+        printf("[warning] No message_for_the_day records to migrate.\n");
       }
     }
 
@@ -944,19 +962,62 @@ class MigrationFixes {
     $nodes = \Drupal::entityTypeManager()->getStorage("node")
       ->loadByProperties(["type" => "status_item"]);
     if (!empty($nodes)) {
+      $cnt = 0;
       foreach ($nodes as $node) {
         $entity = \Drupal::entityTypeManager()->getStorage("node")
           ->load($node->id());
         if (!empty($entity) && !isset($entity->field_enabled->value)) {
           $entity->field_enabled = TRUE;
           $entity->save();
+          $cnt++;
         }
       }
-      printf("Set active flag on un-assigned status_item nodes.\n");
+      printf("[success] Set active flag on %d un-assigned status_item nodes.\n\n", $cnt);
     }
+    printf("\n");
+  }
 
-    \Drupal::service('page_cache_kill_switch')->trigger();
-    drupal_flush_all_caches();
+  /**
+   * Ensure node items which dont have correct revision are updated.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function fixRevisions() {
+    printf("[action] Will update node records with known revision issues from migration.\n");
+    $revisionSync = [
+      "person_profile" => [
+        "type" => "node",
+        "table" => "node__field_position_title",
+      ]
+    ];
+
+    foreach ($revisionSync as $type => $data) {
+      $cnt = 0;
+      if ($data["type"] == "node") {
+        $table = $data["table"];
+        $sql = "SELECT n.vid FROM node_field_data n 
+                LEFT JOIN $table t 
+                    ON (n.nid = t.entity_id AND n.vid = t.revision_id) 
+                WHERE type = '$type' 
+                    AND n.status =  1
+                    AND t.revision_id is null;";
+      }
+      $nids = Database::getConnection()->query($sql)->fetchAll();
+      if (count($nids)) {
+        foreach ($nids as $nid) {
+          \Drupal::entityTypeManager()->getStorage("node")
+            ->loadRevision($nid->vid)
+            ->save();
+          $cnt++;
+        }
+        printf("[success] Processed %d %s records in %s\n\n", $cnt, $type, $table);
+      }
+      else {
+        printf("[warning] No revisions to process for %s in %s\n\n", $type, $table);
+      }
+    }
   }
 
 }
