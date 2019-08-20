@@ -99,8 +99,6 @@ function node_status_item_form_node_status_item_edit_form_alter(&$form, FormStat
       $content = &$form["field_messages"]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"];
       $content[0] = html_entity_decode(strip_tags($content[0]));
       $content[0] = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $content[0]);
-//      $st = new Drupal\smart_trim\Truncate\TruncateHTML();
-//      $content[0] = $st->truncateChars($content[0], 40, "...");
       $form["field_messages"]["widget"][$child]["top"]["summary"]["#attributes"]["class"][] = $class;
       unset($form["field_messages"]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"][1]);
     }

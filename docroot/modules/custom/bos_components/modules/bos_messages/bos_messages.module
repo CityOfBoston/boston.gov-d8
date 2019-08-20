@@ -115,7 +115,7 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
           $now = new DateTime();
           $weekday = date_format($now, "l");
           $month = date_format($now, "F");
-          foreach (["1st","2nd","3rd","4th","5th"] as $ordinal) {
+          foreach (["1st", "2nd", "3rd", "4th", "5th"] as $ordinal) {
             if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
               break;
             }
@@ -128,7 +128,7 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
           $now = new DateTime();
           $weekday = date_format($now, "l");
           $month = date_format($now, "F");
-          foreach (["first","second","third","fourth","fifth"] as $ordinal) {
+          foreach (["first", "second", "third", "fourth", "fifth"] as $ordinal) {
             if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
               break;
             }

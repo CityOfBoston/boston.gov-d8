@@ -5,7 +5,6 @@ namespace Drupal\bos_migration;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
-use spec\Behat\MinkExtension\Listener\SessionsListenerSpec;
 
 /**
  * Class migrationFixes.
@@ -991,7 +990,7 @@ class MigrationFixes {
       "person_profile" => [
         "type" => "node",
         "table" => "node__field_position_title",
-      ]
+      ],
     ];
 
     foreach ($revisionSync as $type => $data) {
