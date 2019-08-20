@@ -248,7 +248,24 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
-      sorts: {  }
+      sorts:
+        field_weight_value:
+          id: field_weight_value
+          table: node__field_weight
+          field: field_weight_value
+          plugin_id: standard
+        weight:
+          id: weight
+          table: draggableviews_structure
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
       title: 'Messages for the day'
       header: {  }
       footer: {  }
@@ -309,6 +326,8 @@ display:
         filters: false
         filter_groups: false
         cache: false
+        sorts: false
+        pager: false
       row:
         type: 'entity:node'
         options:
@@ -562,6 +581,36 @@ display:
         type: tag
         options: {  }
       block_hide_empty: true
+      sorts:
+        field_weight_value:
+          id: field_weight_value
+          table: node__field_weight
+          field: field_weight_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
+        weight:
+          id: weight
+          table: draggableviews_structure
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
+      pager:
+        type: some
+        options:
+          items_per_page: 5
+          offset: 0
     cache_metadata:
       max-age: -1
       contexts:
@@ -777,6 +826,7 @@ display:
         show_admin_links: false
         use_ajax: false
         title: false
+        sorts: false
       filter_groups:
         operator: AND
         groups:
@@ -1271,6 +1321,31 @@ display:
       show_admin_links: true
       use_ajax: true
       title: 'Messages for the day: Analysis (COB Users only)'
+      sorts:
+        field_weight_value:
+          id: field_weight_value
+          table: node__field_weight
+          field: field_weight_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
+        weight:
+          id: weight
+          table: draggableviews_structure
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
     cache_metadata:
       max-age: -1
       contexts:
