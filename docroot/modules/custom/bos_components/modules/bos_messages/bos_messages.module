@@ -86,8 +86,10 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
           ->load($fid)
           ->getFileUri();
         $uri = \Drupal::service('file_system')->realpath($uri);
-        $icon = file_get_contents($uri);
-        $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+        if (!empty($uri)) {
+          $icon = file_get_contents($uri);
+          $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+        }
       }
 
       // Set the title to be the display_title.
