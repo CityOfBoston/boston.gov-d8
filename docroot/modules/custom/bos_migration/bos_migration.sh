@@ -57,18 +57,37 @@ function doExecPHP() {
 function restoreDB() {
     # Remove old database and restore baseline
     printf "RESTORING DB ${1}\n" | tee -a ${logfile}
+
     backup=${1}
+
     ${drush} sql:drop --database=default -y  | tee -a ${logfile}
-    if [ ${backup: -3} == ".gz" ]; then
-        gunzip ${backup}
-        backup=$(basename backup .gz)
+
+    if [ ! -f "${backup}" ];then
+        if [ ${backup: -3} == ".gz" ]; then
+            backup=$(basename ${backup} .gz)
+            backup="${dbpath}/${backup}"
+        else
+            backup="${backup}.gz"
+        fi
     fi
+
+    if [ -f "${backup}" ];then
+        if [ ${backup: -3} == ".gz" ]; then
+            gunzip -fq ${backup}
+            backup=$(basename ${backup} .gz)
+            backup="${dbpath}/${backup}"
+        fi
+    else
+        exit 1
+    fi
+
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
-    gzip ${backup}
+
+    gzip -fq ${backup}
 
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
@@ -93,7 +112,6 @@ function restoreDB() {
     ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/"
     ${drush} sset "bos_migration.active" "1"
 
-
     ${drush} cr  | tee -a ${logfile}
     ${drush} ms  | tee -a ${logfile}
 
@@ -116,13 +134,13 @@ function dumpDB() {
     else
         lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
     fi
-    gzip ${backup}
+    gzip -fq ${backup}
     printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
 }
 
-$acquia_env="bostond8dev"
+acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
-    $acquia_env="${2}"
+    acquia_env="${2}"
 fi
 
 if [ -d "/mnt/gfs" ]; then
@@ -270,6 +288,7 @@ if [ "{$1}" != "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
 fi
 
+doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"

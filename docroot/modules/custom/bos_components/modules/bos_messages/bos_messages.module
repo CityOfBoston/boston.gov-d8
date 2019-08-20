@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -67,8 +68,9 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
     }
 
     if (!empty($variables["show_message"])) {
-      if (isset($motd->field_link->value)) {
-        $link = _bos_core_paragraph_extract_link($motd->field_link->value);
+      if (isset($motd->field_link[0])) {
+        $paragraph = Paragraph::load($motd->field_link[0]->target_id);
+        $link = _bos_core_paragraph_extract_link($paragraph);
         $variables['card_url'] = $link['url'];
       }
 
@@ -84,11 +86,64 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
           ->load($fid)
           ->getFileUri();
         $uri = \Drupal::service('file_system')->realpath($uri);
-        $icon = file_get_contents($uri);
-        $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+        if (!empty($uri)) {
+          $icon = file_get_contents($uri);
+          $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+        }
       }
 
-      $variables['title'] = $status_item->label();
+      // Set the title to be the display_title.
+      $variables['title'] = $status_item->field_title->value;
     }
   }
+
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function bos_messages_tokens($type, $tokens, array $data = [], array $options = []) {
+  $replacements = [];
+
+  if ($type == 'boston') {
+    // Loop through the available tokens.
+    foreach ($tokens as $name => $original) {
+      // Find our custom tokens by name.
+      switch ($name) {
+        case 'week-ordinal:value':
+          // Give our token it's final value!
+          $now = new DateTime();
+          $weekday = date_format($now, "l");
+          $month = date_format($now, "F");
+          foreach (["1st", "2nd", "3rd", "4th", "5th"] as $ordinal) {
+            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+              break;
+            }
+          }
+          $replacements[$original] = $ordinal;
+          break;
+
+        case 'week-ordinal:text':
+          // Give our token it's final value!
+          $now = new DateTime();
+          $weekday = date_format($now, "l");
+          $month = date_format($now, "F");
+          foreach (["first", "second", "third", "fourth", "fifth"] as $ordinal) {
+            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+              break;
+            }
+          }
+          $replacements[$original] = $ordinal;
+          break;
+
+        case 'week-day':
+          // Give our token it's final value!
+          $replacements[$original] = date_format(new DateTime(), "l");
+          break;
+
+      }
+    }
+  }
+
+  return $replacements;
 }
