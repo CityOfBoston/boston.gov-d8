@@ -89,7 +89,7 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
                 $term_path = \Drupal::service('path.alias_manager')
                   ->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
                 $path_array = explode('/', $term_path);
-                $term_name = end($path_array);
+                $term_name = array_pop($path_array);
                 $term = Drupal::entityTypeManager()
                   ->getStorage("taxonomy_term")
                   ->load($tid);
