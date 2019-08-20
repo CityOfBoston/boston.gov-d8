@@ -5,6 +5,7 @@
  * Provides a status item entity type.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
 
@@ -83,5 +84,25 @@ function node_status_item_preprocess_viewfield_item__field_list__status_items(&$
 function template_preprocess_node__status_item(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_status_item_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $children = Element::getVisibleChildren($form["field_messages"]["widget"]);
+  foreach ($children as $child) {
+    if (is_numeric($child)) {
+      $para = $form_state->getStorage()["field_storage"]["#parents"]["#fields"]["field_messages"]["paragraphs"][$child]["entity"];
+      $class = $para->field_enabled->value ? "cob-para-enabled" : "cob-para-disabled";
+      $content = &$form["field_messages"]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"];
+      $content[0] = html_entity_decode(strip_tags($content[0]));
+      $content[0] = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $content[0]);
+//      $st = new Drupal\smart_trim\Truncate\TruncateHTML();
+//      $content[0] = $st->truncateChars($content[0], 40, "...");
+      $form["field_messages"]["widget"][$child]["top"]["summary"]["#attributes"]["class"][] = $class;
+      unset($form["field_messages"]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"][1]);
+    }
   }
 }

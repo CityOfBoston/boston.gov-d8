@@ -194,7 +194,7 @@ body.bos_admin {
 }
 
 .bos_admin.toolbar-tray-open.toolbar-fixed.toolbar-horizontal {
-  padding-top: 4rem !important;
+  padding-top: 5rem !important;
 }
 
 .bos_admin thead th {
@@ -1234,6 +1234,10 @@ What: Creates a horizontally arranged group.
 .cob-group-grid.center {
   justify-content: center;
 }
+.cob-group-grid .form-wrapper:nth-child(n+2) {
+  padding-left: 20px;
+}
+
 @media screen and (min-width: 1280px) {
   .cob-group-grid.center {
     justify-content: flex-start;
@@ -1250,4 +1254,38 @@ What: Creates a horizontally arranged group.
 }
 .cob-group-grid img {
   height: 10px
+}
+
+/*
+  David:
+  Where: Admin pages using Paragraphs EXPERIEMENTAL
+  What: Enhances or fades summary field.
+ */
+.cob-para-enabled .paragraphs-description .summary-content {
+  font-weight: bold;
+  color: Black
+}
+.cob-para-enabled .paragraphs-description .summary-content::before {
+  content: "\2713 ";
+  color: green;
+  font-size: 150%;
+}
+.cob-para-disabled .paragraphs-description .summary-content{
+  font-weight: normal;
+  color: grey;
+}
+.cob-para-disabled .paragraphs-description .summary-content::before {
+  content: "\2715  ";
+  color: red;
+  font-size: 140%;
+  font-weight: bold;
+}
+
+/*
+  David:
+  Where: Status Item admin page.
+  What: Hides the title on the weight field..
+ */
+.cob-group-grid .form-item-field-weight label {
+  display: none;
 }

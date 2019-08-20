@@ -859,7 +859,7 @@ class MigrationFixes {
         printf("[info] %d message_for_the_day records found to be migrated from %s.\n", count($source_rows), $source_table);
         foreach ($source_rows as $source_row) {
           $infinite = NULL;
-          $enabled = TRUE;
+          $enabled = 1;
           $start_date = strtotime($source_row->start_date);
           $end_date = strtotime("+ 1 day", $start_date);
           $start_date = format_date($start_date, "html_date");
@@ -889,7 +889,7 @@ class MigrationFixes {
                 }
                 if ($edate < strtotime("-1 month")) {
                   $infinite = ($infinite ?? 0);
-                  $enabled = FALSE;
+                  $enabled = 0;
                   unset($rules[$key]);
                   $keypair = NULL;
                 }
@@ -967,7 +967,8 @@ class MigrationFixes {
         $entity = \Drupal::entityTypeManager()->getStorage("node")
           ->load($node->id());
         if (!empty($entity) && !isset($entity->field_enabled->value)) {
-          $entity->field_enabled = TRUE;
+          $entity->field_weight = 0;
+          $entity->field_enabled = 1;
           $entity->save();
           $cnt++;
         }
