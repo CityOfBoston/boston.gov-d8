@@ -23,32 +23,51 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
+
 {% if show_message %}
+
   <div {{ attributes.addClass('cds g--24') }}>
+
     {{ content.contextual_links }}
+
     {% if card_url %}
+
       <a href="{{ card_url }}" class="cds-l d-b m-b500">
+
     {% else %}
+
       <div class="cds-l d-b m-b500">
+
     {% endif %}
+
       <div class="cds-ic m-b500--l">
+
         {{ icon | raw }}
+
         {% if alert %}
           {{ alert | raw }}
         {% endif %}
+
       </div>
+
       <div class="cds-c">
+
         <div class="cds-t t--upper t--sans m-b300">
           {{ title }}
         </div>
+
         <div class="cds-d t--subinfo">
           {{ content.field_message }}
         </div>
+
       </div>
+
     {% if card_url %}
       </a>
     {% else %}
       </div>
     {% endif %}
+
   </div>
+
 {% endif %}

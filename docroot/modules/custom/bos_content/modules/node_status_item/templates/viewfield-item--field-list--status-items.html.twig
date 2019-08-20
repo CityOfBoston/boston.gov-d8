@@ -26,7 +26,9 @@
  #}
 
 <div id="statusHeader" class="b b--fw emergency-override-processed">
+
   {% if header %}
+
     <div class="m-b600">
       <div class='b b--fw'>
         <div class='b-c b-c--nbp'>
@@ -43,9 +45,11 @@
         </div>
       </div>
     </div>
+
   {% endif %}
 
-  {% if rows %}
+  {% if not empty %}
+
     <div class="b-c b-c--ntp b-c--nbp">
       <div class="p-b300">
         <div class="g g--top">
@@ -53,9 +57,13 @@
         </div>
       </div>
     </div>
+
   {% elseif empty %}
+
     <div class="view-empty">
       {{ empty }}
     </div>
+
   {% endif %}
+
 </div>
