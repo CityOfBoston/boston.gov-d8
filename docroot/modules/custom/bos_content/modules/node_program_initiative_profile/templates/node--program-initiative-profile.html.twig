@@ -97,7 +97,7 @@
   {% endif %}
 
   <div class="program-info-wrapper desktop-100">
-    <div class="column mobile-100 desktop-66-left">
+    <div {{ primeColumnAttributes }}>
 
       {{ title_prefix }}
 
@@ -132,20 +132,24 @@
 
     </div>
 
-    <div class="column mobile-100 desktop-33-right">
+    {% if hasSidebar %}
 
-      {% if elements.field_program_logo %}
-        <div class="program-logo">
-          {{ elements.field_program_logo }}
-        </div>
-      {% endif %}
+      <div class="column mobile-100 desktop-33-right">
 
-      {% if elements.field_sidebar_components["#items"] %}
-        {{ elements.field_sidebar_components }}
-      {% endif %}
+        {% if elements.field_program_logo %}
+          <div class="program-logo">
+            {{ elements.field_program_logo }}
+          </div>
+        {% endif %}
 
-    </div>
-    <div class="clearfix"></div>
+        {% if elements.field_sidebar_components["#items"] %}
+          {{ elements.field_sidebar_components }}
+        {% endif %}
+
+      </div>
+      <div class="clearfix"></div>
+
+    {% endif %}
 
   </div>
 
