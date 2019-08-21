@@ -26,17 +26,15 @@
   <div class="views-exposed-widgets clearfix">
     {% for i,filter in form['#info'] %}
       {% set filter_name = filter.value %}
-      <div class="drawer-trigger mobile-only">
-        <div class="drawer-trigger-chevron"></div>
-        Filter {{ filter.label }}
-      </div>
       <div class="drawer-wrapper">
-        <div class="drawer-trigger">
+        <button type="button" aria-expanded="true/false" aria-controls="drawer-{{ i }}" class="drawer-trigger">
             <div class="drawer-trigger-chevron"></div>
-            {{ form[filter_name]['#title'] }}
-        </div>
-        <div class="drawer drawer-{{ form[filter_name]['#name'] }}">
-          <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+            {{ filter.label }}
+        </button>
+        <div id="drawer-{{ i }}" class="clearfix drawer drawer-{{ form[filter_name]['#id'] }}">
+          <div id="{{ filter.label }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+            <label for="{{ form[filter_name]['#id'] }}">{{ filter.label }}</label>
+            <div class="views-operator"></div>
             <div class="views-widget">
               {{ form[filter_name] }}
             </div>
