@@ -33,7 +33,7 @@
         </button>
         <div id="drawer-{{ loop.index -1 }}" class="clearfix drawer drawer-{{ form[filter_name]['#id'] }}">
           <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
-            <div class="views-widget">{{ form[filter_name].removeClass('form-item') }}</div>
+            <div class="views-widget">{{ form[filter_name] }}</div>
           </div>
         </div>
       </div>
