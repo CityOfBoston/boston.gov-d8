@@ -31,13 +31,9 @@
             <div class="drawer-trigger-chevron"></div>
             {{ filter.label }}
         </button>
-        <div id="drawer-{{ i }}" class="clearfix drawer drawer-{{ form[filter_name]['#id'] }}">
-          <div id="{{ filter.label }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
-            <label for="{{ form[filter_name]['#id'] }}">{{ filter.label }}</label>
-            <div class="views-operator"></div>
-            <div class="views-widget">
-              {{ form[filter_name] }}
-            </div>
+        <div id="drawer-{{ loop.index -1 }}" class="clearfix drawer drawer-{{ form[filter_name]['#id'] }}">
+          <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+            <div class="views-widget">{{ form[filter_name].removeClass('form-item') }}</div>
           </div>
         </div>
       </div>
