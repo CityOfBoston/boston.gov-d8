@@ -882,6 +882,7 @@ class MigrationConfigAlter {
         'paragraph__text',
         'paragraph__transaction_grid',
         'paragraph__events_and_notices',
+        'paragraph__events_notices',
         'paragraph__video',
       ],
       "field_drawer" => [
@@ -1336,8 +1337,11 @@ class MigrationConfigAlter {
               // a dependency for this $migration later.
               switch ($entityType) {
                 case "node":
-                case "paragraph":
                   $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
+                  break;
+
+                case "paragraph":
+                  $dependencies["required"] += $process["process"]["target_id"][0]["migration"];
                   break;
 
                 case "taxonomy":
@@ -1745,14 +1749,9 @@ class MigrationConfigAlter {
           "process" => [
             "target_id" => [
               [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-                'source' => "value",
-              ],
-              [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
-                "no_stub" => "TRUE",
+                'source' => 'value',
               ],
               [
                 "plugin" => "skip_on_empty",
@@ -1765,13 +1764,9 @@ class MigrationConfigAlter {
             ],
             "target_revision_id" => [
               [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-                'source' => "value",
-              ],
-              [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
+                'source' => 'value',
               ],
               [
                 "plugin" => "skip_on_empty",
@@ -1781,7 +1776,6 @@ class MigrationConfigAlter {
                 'plugin' => 'extract_ext',
                 'index' => [1],
               ],
-
             ],
           ],
         ];
