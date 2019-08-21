@@ -716,3 +716,19 @@ What: Compresses the top/bottom padding set by .component-section in public.css.
 .component-section .sh {
    margin: 0;
  }
+
+/*
+David:
+Where: node--department-profile.html.twig
+What: Fixes the department icon to be 100px square. (Iterators issue #39)
+*/
+@media (min-width: 980px) {
+  .node-type-department-profile .department-icon {
+    padding: 13px 0 0 13px;
+  }
+}
+.node-department-profile .department-icon svg {
+  height: 76px;
+  width: 76px;
+}
+
