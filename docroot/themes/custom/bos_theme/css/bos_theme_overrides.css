@@ -320,7 +320,7 @@ Where: Event node.
 What: Places updated date over the breadcrumb
 */
 article.node-event .brc-lu {
-  z-index: 100;
+  z-index: 49;
 }
 
 /*
@@ -770,9 +770,20 @@ body.no-s .mn .main {
   overflow: hidden;
   width: calc(100vw - 300px);
 }
-/* locates the mainmenu when the sidemenu is shown. */
+/* locates the main-menu when the sidemenu is shown. */
 @media screen and (min-width: 480px) {
   .brg-tr:checked ~ .mn--full-ie .h, .brg-tr:checked ~ .mn--full-ie .nv-s, .brg-tr:checked ~ .mn .h, .brg-tr:checked ~ .mn .mn-fixed-child .h, .brg-tr:checked ~ .mn .mn-fixed-child .nv-s, .brg-tr:checked ~ .mn .nv-s {
     width: calc(100% - 300px);
+  }
+}
+
+/*
+David:
+Where: lgogo.twig.twig
+What: Moves the logo display trigger width from 1054px to 1110px Iterators issue #24.
+*/
+@media screen and (min-width: 1054px) and (max-width: 1110px) {
+  .lo-t {
+    display: none;
   }
 }
