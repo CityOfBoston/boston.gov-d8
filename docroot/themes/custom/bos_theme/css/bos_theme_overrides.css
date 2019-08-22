@@ -7,10 +7,12 @@ David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
  */
-.toolbar-fixed #main-menu {
+.toolbar-fixed #main-menu,
+.toolbar-fixed .nv-m {
   top: 2.15em;
 }
-.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu {
+.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
+.toolbar-fixed.toolbar-tray-open .nv-m {
   top: 4.4em;
 }
 .toolbar-toggle-orientation {
@@ -756,3 +758,21 @@ What: Keeps title content inside bouding box.
   }
 }
 
+/*
+David:
+Where: page.html.twig.twig
+What: Allows the main page to scroll when the menu is displayed.
+*/
+body.no-s {
+  overflow: visible;
+}
+body.no-s .mn .main {
+  overflow: hidden;
+  width: calc(100vw - 300px);
+}
+/* locates the mainmenu when the sidemenu is shown. */
+@media screen and (min-width: 480px) {
+  .brg-tr:checked ~ .mn--full-ie .h, .brg-tr:checked ~ .mn--full-ie .nv-s, .brg-tr:checked ~ .mn .h, .brg-tr:checked ~ .mn .mn-fixed-child .h, .brg-tr:checked ~ .mn .mn-fixed-child .nv-s, .brg-tr:checked ~ .mn .nv-s {
+    width: calc(100% - 300px);
+  }
+}
