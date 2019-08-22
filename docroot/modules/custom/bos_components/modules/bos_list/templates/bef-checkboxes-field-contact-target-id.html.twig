@@ -28,11 +28,9 @@
         {% include '@better_exposed_filters/bef-nested-elements.html.twig' %}
         {% set current_nesting_level = new_nesting_level %}
       {% else %}
-        {{ dd(item) }}
-        {{ item }}
-        <div class="form-item form-type-bef-checkbox form-item-edit-field-contact-target-id-16">
-          <input type="checkbox" name="field_contact_target_id[]" id="edit-field-contact-target-id-16" value="16">
-          <label class="option" for="edit-field-contact-target-id-16">311</label>
+        <div class="form-item form-type-bef-checkbox form-item-{{ item['#id'] }}">
+          <input type="{{ item['#type'] }}" name="{{ item['#name'] }}" id="{{ item['#id'] }}" value="{{ item['#return_value'] }}">
+          <label class="option" for="{{ item['#id'] }}">{{ item['#title'] }}</label>
         </div>
       {% endif %}
     {% endfor %}
