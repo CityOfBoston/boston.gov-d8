@@ -165,3 +165,21 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
     unset($form["#info"]["filter-title"]["label"]);
   }
 }
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function bos_list_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+  if ($hook == 'fieldset') {
+    if (isset($variables["element"]["#theme"])) {
+      $suggestions[] = $hook . '_' . $variables["element"]["#theme"];
+    }
+    $parent = $variables["element"]["#parents"];
+    if (isset($parent) && is_array($parent)) {
+      foreach ($parent as $key => $field) {
+        $suggestions[] = $hook . '_' . $field; 
+      }
+    }
+    $test = 'test';
+  }
+}
