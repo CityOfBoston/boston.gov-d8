@@ -17,16 +17,25 @@
     hasSelectAllNoneNested ? 'bef-select-all-none-nested',
   ]
 %}
-<div{{ attributes.addClass(classes) }}>
-  {% set current_nesting_level = 0 %}
-  {% for child in children %}
-    {% set item = attribute(element, child) %}
-    {% if isNested %}
-      {% set new_nesting_level = attribute(depth, child) %}
-      {% include '@better_exposed_filters/bef-nested-elements.html.twig' %}
-      {% set current_nesting_level = new_nesting_level %}
-    {% else %}
-      {{ item }}
-    {% endif %}
-  {% endfor %}
+<div class="form-item form-type-select form-item-field-contact-target-id">
+  <div class="form-checkboxes bef-select-as-checkboxes bef-required-filter-processed">
+    <div class="bef-checkboxes">
+    {% set current_nesting_level = 0 %}
+    {% for child in children %}
+      {% set item = attribute(element, child) %}
+      {% if isNested %}
+        {% set new_nesting_level = attribute(depth, child) %}
+        {% include '@better_exposed_filters/bef-nested-elements.html.twig' %}
+        {% set current_nesting_level = new_nesting_level %}
+      {% else %}
+        {{ dd(item) }}
+        {{ item }}
+        <div class="form-item form-type-bef-checkbox form-item-edit-field-contact-target-id-16">
+          <input type="checkbox" name="field_contact_target_id[]" id="edit-field-contact-target-id-16" value="16">
+          <label class="option" for="edit-field-contact-target-id-16">311</label>
+        </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+  </div>
 </div>
