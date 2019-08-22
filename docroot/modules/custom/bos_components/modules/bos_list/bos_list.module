@@ -188,7 +188,7 @@ function bos_list_theme_suggestions_alter(array &$suggestions, array $variables,
     }
     $field = $variables["element"]["#name"];
     if (isset($field)) {
-      $suggestions[] = $hook . '_' . $field; 
+      $suggestions[] = $hook . '_' . $field;
     }
   }
 }
