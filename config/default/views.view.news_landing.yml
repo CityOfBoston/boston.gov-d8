@@ -5,7 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.listing
     - node.type.post
-    - taxonomy.vocabulary.311_request
+    - taxonomy.vocabulary.contact
   module:
     - better_exposed_filters
     - datetime
@@ -278,7 +278,7 @@ display:
           reduce_duplicates: false
           type: textfield
           limit: true
-          vid: 311_request
+          vid: contact
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
