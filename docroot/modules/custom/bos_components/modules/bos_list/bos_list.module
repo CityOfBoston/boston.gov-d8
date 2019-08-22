@@ -174,17 +174,10 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
  * Implements hook_theme_suggestions_alter().
  */
 function bos_list_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
-  if ($hook == 'fieldset') {
+  if ($hook == 'fieldset' || $hook == 'checkboxes') {
     if (isset($variables["element"]["#theme"])) {
       $suggestions[] = $hook . '_' . $variables["element"]["#theme"];
     }
-    $parent = $variables["element"]["#parents"];
-    if (isset($parent) && is_array($parent)) {
-      foreach ($parent as $key => $field) {
-        $suggestions[] = $hook . '_' . $field; 
-      }
-    }
-  } elseif ($hook == 'checkboxes') {
     $field = $variables["element"]["#name"];
     if (isset($field)) {
       $suggestions[] = $hook . '_' . $field; 
