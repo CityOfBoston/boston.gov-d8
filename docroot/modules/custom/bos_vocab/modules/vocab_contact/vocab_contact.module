@@ -62,6 +62,20 @@ function vocab_contact_preprocess_field__field_department_profile__contact__mode
     $variables["department_link"] = \Drupal::service('path.alias_manager')
       ->getAliasByPath('/node/' . $variables["element"]['#items'][0]->target_id);
   }
+  if (!empty($variables["content"][0]["#node"])) {
+    if (!empty($variables["content"][0]["#node"]->field_icon->title)) {
+      $variables["tooltip"] = $variables["content"][0]["#node"]->field_icon->title;
+    }
+    elseif (!empty($variables["content"][0]["#node"]->title->value)) {
+      $variables["tooltip"] = $variables["content"][0]["#node"]->title->value;
+    }
+    elseif (!empty($variables["content"][0]["#node"]->field_icon->alt)) {
+      $variables["tooltip"] = $variables["content"][0]["#node"]->field_icon->alt;
+    }
+    else {
+      $variables["tooltip"] = "City of Boston";
+    }
+  }
 }
 
 /**

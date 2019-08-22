@@ -400,7 +400,7 @@ class MigrationFixes {
     'public://img/icons/department/icons_parking.svg' => 'public://icons/department/parking_clerk_logo.svg',
     'public://img/icons/department/icons_new_urban_mechanics.svg' => 'public://icons/department/new_urban_mechanics_logo.svg',
     'public://img/icons/department/icons_new_bostonians.svg' => 'public://icons/department/new_bostonians_logo.svg',
-    'public://img/icons/department/icons_mayor.svg' => 'public://icons/department/mayor_s_office.svg',
+    'public://img/icons/department/icons_mayor.svg' => 'public://icons/department/mayor_s_office_logo.svg',
     'public://img/icons/department/icons_library.svg' => 'public://icons/department/library_logo.svg',
     'public://img/icons/department/icons_hr.svg' => 'public://icons/department/human_resources_logo.svg',
     'public://img/icons/department/icons_housing.svg' => 'public://icons/department/housing_authority_logo.svg',
