@@ -184,6 +184,10 @@ function bos_list_theme_suggestions_alter(array &$suggestions, array $variables,
         $suggestions[] = $hook . '_' . $field; 
       }
     }
-    $test = 'test';
+  } elseif ($hook == 'checkboxes') {
+    $field = $variables["element"]["#name"];
+    if (isset($field)) {
+      $suggestions = $hook . '_' . $field; 
+    }
   }
 }
