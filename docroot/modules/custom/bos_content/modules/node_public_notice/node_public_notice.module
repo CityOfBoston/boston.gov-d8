@@ -19,6 +19,10 @@ function node_public_notice_theme() {
     'node__public_notice' => [
       'render element' => 'elements',
     ],
+    'field__field_address__public_notice__mode__full' => [
+      'base hook' => 'field',
+      'path' => 'modules/custom/bos_content/modules/node_public_notice/templates',
+    ],
   ];
 }
 
