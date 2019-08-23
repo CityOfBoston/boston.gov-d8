@@ -3,9 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.status_item.field_enabled
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
+    - field.field.node.status_item.field_weight
     - image.style.square_icon_65px
     - node.type.status_item
   module:
@@ -20,6 +22,23 @@ targetEntityType: node
 bundle: status_item
 mode: default
 content:
+  field_enabled:
+    weight: 4
+    label: hidden
+    settings:
+      format: unicode-yes-no
+      format_custom_true: ''
+      format_custom_false: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: boolean
+    region: content
   field_icon:
     label: hidden
     weight: 1
@@ -69,5 +88,6 @@ content:
     third_party_settings: {  }
 hidden:
   content_moderation_control: true
+  field_weight: true
   langcode: true
   published_at: true

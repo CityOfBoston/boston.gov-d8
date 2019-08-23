@@ -3,14 +3,28 @@
 */
 
 /*
+Jim:
+Where: modules/custom/bos_components/modules/bos_list/templates/bef-checkboxes-field-contact-target-id.html.twig
+What: Style provided by contrib in D7: /sites/all/modules/contrib/views/css/views.css
+ */
+.views-exposed-form .form-item, .views-exposed-form .form-submit {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.views-exposed-form label {
+  font-weight: bold;
+}
+/*
 David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
  */
-.toolbar-fixed #main-menu {
+.toolbar-fixed #main-menu,
+.toolbar-fixed .nv-m {
   top: 2.15em;
 }
-.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu {
+.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
+.toolbar-fixed.toolbar-tray-open .nv-m {
   top: 4.4em;
 }
 .toolbar-toggle-orientation {
@@ -318,7 +332,7 @@ Where: Event node.
 What: Places updated date over the breadcrumb
 */
 article.node-event .brc-lu {
-  z-index: 100;
+  z-index: 49;
 }
 
 /*
@@ -607,9 +621,9 @@ What:  Fixes the message box on the page without disrupting layout.
        Note: Completely overrides public.css.
  */
 .messages,.messages--error,.messages--status,.messages--warning {
-  margin: 1rem 0;
-  position: absolute;
-  padding: 10px 10px 10px 47px;
+  /* margin: 1rem 0; */
+  /* position: static; */
+  /* padding: 10px 10px 10px 47px; */
   border: 2px solid #1871bd;
   z-index: 502;
   background-color: rgba(255,255,255,.7);
@@ -623,9 +637,9 @@ What:  Fixes the message box on the page without disrupting layout.
        Note: Completely overrides public.css.
  */
 .messages,.messages--error,.messages--status,.messages--warning {
-  margin: 1rem 0;
-  position: absolute;
-  padding: 10px 10px 10px 47px;
+   margin: 1rem 0;
+   position: absolute;
+   padding: 10px 10px 10px 47px;
   border: 2px solid #1871bd;
   z-index: 502;
   background-color: rgba(255,255,255,.7);
@@ -692,4 +706,119 @@ What: Removes padding top and bottom of FYI added by js (component-section).
 */
 .paragraphs-item-fyi {
   padding: 0 !important;
+}
+
+/*
+David:
+Where: node--status-item--listing-long.html.twig
+What: Restricts icon sizing.
+*/
+.cds-ic svg {
+  width: 65px;
+  height: 65px;
+}
+
+/*
+David:
+Where: paragraph--list.html.twig
+What: Compresses the top/bottom padding set by .component-section in public.css.
+*/
+.paragraphs-item-list.component-section,
+.paragraphs-item-city-score-dashboard.component-section {
+  padding: 0;
+}
+.component-section .sh {
+   margin: 0;
+ }
+
+/*
+David:
+Where: node--department-profile.html.twig
+What: Fixes the department icon to be 100px square. (Iterators issue #39)
+*/
+@media (min-width: 980px) {
+  .node-type-department-profile .department-icon {
+    padding: 13px 0 0 13px;
+  }
+}
+.node-department-profile .department-icon svg {
+  height: 76px;
+  width: 76px;
+}
+
+/*
+David:
+Where: field--field-department-profile--contact--mode--popup-icon.html.twig
+What: Stops the svg icons title from displaying in a tooltip (could consider making this global ?
+*/
+.di-tt svg {
+  pointer-events: none;
+}
+.news-item-listing .di-tt:before {
+  content: attr(cob-title);
+}
+
+/*
+David:
+Where: node--post--listing.html.twig
+What: Keeps title content inside bouding box.
+*/
+@media (min-width: 768px) {
+  .news-item-listing .view-transactions-main-transactions .view-header p.title, .news-item-listing h3.title, .view-transactions-main-transactions .view-header .news-item-listing p.title {
+    height: 180px;
+    overflow: hidden;
+  }
+}
+
+/*
+David:
+Where: page.html.twig.twig
+What: Allows the main page to scroll when the menu is displayed.
+*/
+body.no-s {
+  overflow: visible;
+}
+body.no-s .mn .main {
+  overflow: hidden;
+  width: calc(100vw - 300px);
+}
+/* locates the main-menu when the sidemenu is shown. */
+@media screen and (min-width: 480px) {
+  .brg-tr:checked ~ .mn--full-ie .h, .brg-tr:checked ~ .mn--full-ie .nv-s, .brg-tr:checked ~ .mn .h, .brg-tr:checked ~ .mn .mn-fixed-child .h, .brg-tr:checked ~ .mn .mn-fixed-child .nv-s, .brg-tr:checked ~ .mn .nv-s {
+    width: calc(100% - 300px);
+  }
+}
+
+/*
+David:
+Where: lgogo.twig.twig
+What: Moves the logo display trigger width from 1054px to 1110px Iterators issue #24.
+*/
+@media screen and (min-width: 1054px) and (max-width: 1110px) {
+  .lo-t {
+    display: none;
+  }
+}
+
+/*
+David:
+Where: menu--menu-footer-menu.twig.twig
+What: Improves footer responsive actions. Iterators issue #32.
+*/
+@media screen and (min-width: 768px) and (max-width: 1239px) {
+  .ft-ll {
+    display: flex;
+    flex-flow: column;
+  }
+  .ft .ft-ll {
+    margin-top: -30px;
+    line-height: 1.5em;
+  }
+  .ft .ft-ll--r {
+    margin-top: 0px;
+  }
+  .ft-ll-i {}
+  .ft-ll-i:first-child {
+    margin-left: 18px;
+  }
 }

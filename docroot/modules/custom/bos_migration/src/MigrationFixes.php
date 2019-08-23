@@ -42,14 +42,14 @@ class MigrationFixes {
       'page_1' => ["metrolist_affordable_housing", "page_1"],
     ],
     'news_and_announcements' => [
-      'departments' => ["news_and_announcements", "block_1"],
-      'events' => ["news_and_announcements", "block_1"],
-      'guides' => ["news_and_announcements", "block_1"],
-      'most_recent' => ["news_and_announcements", "block_2"],
-      'news_events' => ["news_and_announcements", "block_1"],
-      'places' => ["news_and_announcements", "block_1"],
-      'posts' => ["news_and_announcements", "block_1"],
-      'programs' => ["news_and_announcements", "block_1"],
+      'departments' => ["news_and_announcements", "related"],
+      'events' => ["news_and_announcements", "related"],
+      'guides' => ["news_and_announcements", "related"],
+      'most_recent' => ["news_and_announcements", "upcoming"],
+      'news_events' => ["news_and_announcements", "related"],
+      'places' => ["news_and_announcements", "related"],
+      'posts' => ["news_and_announcements", "related"],
+      'programs' => ["news_and_announcements", "related"],
     ],
     'places' => [
       'listing' => ["places", "page_1"],
@@ -59,7 +59,7 @@ class MigrationFixes {
       'landing' => ["public_notice", "page_2"],
     ],
     'status_displays' => [
-      'homepage_status' => ["status_displays", "block_1"],
+      'homepage_status' => ["status_items", "motd"],
     ],
     'topic_landing_page' => [
       'page_1' => ["topic_landing_page", "page_1"],
@@ -260,6 +260,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/05/icons_heart.svg' => 'public://icons/experiential/heart.svg',
     'public://img/icons/transactions/2017/05/icons_health.svg' => 'public://icons/department/health_and_human_services_logo_black.svg',
     'public://img/icons/transactions/2017/05/experiential_icons_food_truck.svg' => 'public://icons/experiential/food_truck.svg',
+    'public://img/icons/transactions/2017/05/experiential_icons_search.svg' => 'public://icons/experiential/search.svg',
     'public://img/icons/transactions/2017/04/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/experiential/playground.svg',
     'public://img/icons/transactions/2017/04/experiential_icons-29.svg' => 'public://icons/experiential/calendar.svg',
     'public://img/icons/transactions/2017/03/vulnerability_assessment.svg' => 'public://icons/experiential/police_interrogation.svg',
@@ -284,59 +285,59 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/03/career-center.svg' => 'public://icons/experiential/web_persona.svg',
     'public://img/icons/transactions/2017/03/build_bps_0.svg' => 'public://icons/experiential/historic_building_permit.svg',
     'public://img/icons/transactions/2017/03/build_bps.svg' => 'public://icons/experiential/historic_building_permit.svg',
-    'public://img/icons/transactions/2017/03/boston_basics.svg' => 'public://icons/experiential/birth_certificate.svg',
+    'public://img/icons/transactions/2017/03/boston_basics.svg' => 'public://icons/experiential/birth_certifcate.svg',
     'public://img/icons/transactions/2017/03/benefits-available.svg' => 'public://icons/experiential/id.svg',
     'public://img/icons/transactions/2017/03/become_a_firefighter.svg' => 'public://icons/experiential/fire_truck.svg',
     'public://img/icons/transactions/2017/03/5000_questions.svg' => 'public://icons/experiential/search_forms.svg',
     'public://img/icons/transactions/2017/03/3700_ideas.svg' => 'public://icons/experiential/lightbulb.svg',
     'public://img/icons/transactions/2017/02/icons_bra.svg' => 'public://icons/department/planning_and_development_agency_logo.svg',
-    'public://img/icons/transactions/2017/02/experiential_icons_find_your_boston_school_transcript.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/02/experiential_icons_clean.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_search_license.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_schools_1.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_important.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_city_of_boston_owned_property.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/experiential_icons_board_of_trustees.svg' => 'public://icons/',
-    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_trash_when_it_snows.svg' => 'public://icons/',
+    'public://img/icons/transactions/2017/02/experiential_icons_find_your_boston_school_transcript.svg' => 'public://icons/experiential/certificate.svg',
+    'public://img/icons/transactions/2017/02/experiential_icons_clean.svg' => 'public://icons/experiential/house_cleaning.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_search_license.svg' => 'public://icons/experiential/certificate_search.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_schools_1.svg' => 'public://icons/experiential/school.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_parks_and_playgrounds.svg' => 'public://icons/experiential/playground.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_important.svg' => 'public://icons/experiential/alert.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_city_of_boston_owned_property.svg' => 'public://icons/experiential/city_of_boston_owned_property.svg',
+    'public://img/icons/transactions/2017/01/experiential_icons_board_of_trustees.svg' => 'public://icons/experiential/meeting.svg',
+    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png' => 'public://icons/experiential/',
+    'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_trash_when_it_snows.svg' => 'public://icons/experiential/snow_trash.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_car_when_it_snows.svg' => 'public://icons/experiential/snow_parking.svg',
-    'public://img/icons/transactions/2016/11/experiential_icons_view_your_collection_schedule.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_view_leaf_and_yard_waste_schedule.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_snow_removal_rules_in_boston.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_learn_about_recycling.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_important_winter_phone_numbers.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/11/experiential_icons_help_during_the_winter_heating_season.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/11/experiential_icons_view_your_collection_schedule.svg' => 'public://icons/experiential/calender.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_view_leaf_and_yard_waste_schedule.svg' => 'public://icons/experiential/leaf.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_snow_removal_rules_in_boston.svg' => 'public://icons/experiential/shovel.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_learn_about_recycling.svg' => 'public://icons/experiential/recycle_cart.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_important_winter_phone_numbers.svg' => 'public://icons/experiential/snow_numbers.svg',
+    'public://img/icons/transactions/2016/11/experiential_icons_help_during_the_winter_heating_season.svg' => 'public://icons/experiential/cold_temp.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_get_rid_of_hazardous_waste.svg' => 'public://icons/experiential/hazardous_waste.svg',
-    'public://img/icons/transactions/2016/11/experiential_icons_cold_weather_safety_tips.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_vote.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_search.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_certificate.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/10/experiential_icons_2_hurricane.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/09/experiential_icons_important.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/09/experiential_icons_base_ball.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/11/experiential_icons_cold_weather_safety_tips.svg' => 'public://icons/experiential/snow_alert.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_vote.svg' => 'public://icons/experiential/voting_ballot.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_search.svg' => 'public://icons/experiential/search.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_certificate.svg' => 'public://icons/experiential/certificates.svg',
+    'public://img/icons/transactions/2016/10/experiential_icons_2_hurricane.svg' => 'public://icons/experiential/hurricane.avg',
+    'public://img/icons/transactions/2016/09/experiential_icons_important.svg' => 'public://icons/experiential/alert.svg',
+    'public://img/icons/transactions/2016/09/experiential_icons_base_ball.svg' => 'public://icons/experiential/baseball',
     'public://img/icons/transactions/2016/08/experiential_icons_tripple_decker.svg' => 'public://icons/experiential/tripple_decker.svg',
-    'public://img/icons/transactions/2016/08/experiential_icons_boat.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/experiential_icons_bike.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/experiential_icons_2_rent_rights.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/08/experiential_icons_boat.svg' => 'public://icons/experiential/boat.svg',
+    'public://img/icons/transactions/2016/08/experiential_icons_bike.svg' => 'public://icons/experiential/bike.svg',
+    'public://img/icons/transactions/2016/08/experiential_icons_2_rent_rights.svg' => 'public://icons/experiential/tennant_rights.svg',
     'public://img/icons/transactions/2016/08/experiential_icons_2_housing_questions.svg' => 'public://icons/experiential/housing_questions.svg',
-    'public://img/icons/transactions/2016/08/experiential_icons-cal.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_3.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_2.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_1.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/08/3experiential_icons_mass_value_pass.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/08/experiential_icons-cal.svg' => 'public://icons/experiential/calender.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_3.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_2.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park_1.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/5experiential_icons_find_a_park.svg' => 'public://icons/experiential/park_location.svg',
+    'public://img/icons/transactions/2016/08/3experiential_icons_mass_value_pass.svg' => 'public://icons/experiential/mass_value_pass.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_tripple_decker.svg' => 'public://icons/experiential/tripple_decker.svg',
-    'public://img/icons/transactions/2016/07/experiential_icons_repair.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/07/experiential_icons_repair.svg' => 'public://icons/experiential/construction_tool.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_pay_your_real_estate_taxes-.svg' => 'public://icons/experiential/real_estate_taxes.svg',
-    'public://img/icons/transactions/2016/07/experiential_icons_home_repairs.svg' => 'public://icons/',
-    'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => 'public://icons/',
+    'public://img/icons/transactions/2016/07/experiential_icons_home_repairs.svg' => 'public://icons/experiential/repair_your_home.svg',
+    'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => 'public://icons/department/bos_311_black',
     'public://img/icons/status/trash-recycling.svg' => 'public://icons/circle/trash_and_recycling.svg',
-    'public://img/icons/status/tow-lot.svg' => 'public://icons/circle/trash_and_recycling.svg',
-    'public://img/icons/status/street_sweeping.svg' => 'public://icons/circle/tow_lot.svg',
+    'public://img/icons/status/tow-lot.svg' => 'public://icons/circle/tow_lot.svg',
+    'public://img/icons/status/street_sweeping.svg' => 'public://icons/circle/street_sweeping.svg',
     'public://img/icons/status/small-circle-icons_base_ball_0.svg' => 'public://icons/circle/base_ball.svg',
     'public://img/icons/status/parking-meters.svg' => 'public://icons/circle/parking_meters.svg',
-    'public://img/icons/status/experiential_icons_fact_sheet.svg' => 'public://icons/',
+    'public://img/icons/status/experiential_icons_fact_sheet.svg' => 'public://icons/experiential/report.svg',
     'public://img/icons/status/2018/03/small-circle-icons_t_one_circle_1.svg' => 'public://icons/circle/du_t_one_circle.svg',
     'public://img/icons/status/2017/10/small-circle-icons_building.svg' => 'public://icons/circle/building.svg',
     'public://img/icons/status/2017/10/slice_1.svg' => 'public://icons/circle/building.svg',
@@ -346,8 +347,8 @@ class MigrationFixes {
     'public://img/icons/status/2016/10/state-offices.svg' => 'public://icons/circle/state_offices.svg',
     'public://img/icons/status/2016/10/libraries.svg' => 'public://icons/circel/libraries.svg',
     'public://img/icons/status/2016/10/community-centers.svg' => 'public://icons/circle/community_centers.svg',
-    'public://img/icons/fyi/2017/01/small-circle-icons_snow_red.svg' => 'public://icons/',
-    'public://img/icons/fyi/2016/08/small-circle-icons_alert.svg' => 'public://icons/',
+    'public://img/icons/fyi/2017/01/small-circle-icons_snow_red.svg' => 'public://icons/circle/snow_red.svg',
+    'public://img/icons/fyi/2016/08/small-circle-icons_alert.svg' => 'public://icons/circle/alert.svg',
     'public://img/icons/feature/small-circle-icons_yarn.svg' => 'public://icons/circle/yarn.svg',
     'public://img/icons/feature/small-circle-icons_track.svg' => 'public://icons/circle/track.svg',
     'public://img/icons/feature/small-circle-icons_tennis_court-.svg' => 'public://icons/circle/tennis_court.svg',
@@ -399,7 +400,7 @@ class MigrationFixes {
     'public://img/icons/department/icons_parking.svg' => 'public://icons/department/parking_clerk_logo.svg',
     'public://img/icons/department/icons_new_urban_mechanics.svg' => 'public://icons/department/new_urban_mechanics_logo.svg',
     'public://img/icons/department/icons_new_bostonians.svg' => 'public://icons/department/new_bostonians_logo.svg',
-    'public://img/icons/department/icons_mayor.svg' => 'public://icons/department/mayor_s_office.svg',
+    'public://img/icons/department/icons_mayor.svg' => 'public://icons/department/mayor_s_office_logo.svg',
     'public://img/icons/department/icons_library.svg' => 'public://icons/department/library_logo.svg',
     'public://img/icons/department/icons_hr.svg' => 'public://icons/department/human_resources_logo.svg',
     'public://img/icons/department/icons_housing.svg' => 'public://icons/department/housing_authority_logo.svg',
@@ -412,8 +413,8 @@ class MigrationFixes {
     'public://img/icons/department/icons_doit.svg' => 'public://icons/department/innovation_and_technology_logo.svg',
     'public://img/icons/department/icons_disabilities_disabilities.svg' => 'public://icons/department/disabilities__commission__icon.svg',
     'public://img/icons/department/icons_disabilities.svg' => 'public://icons/department/disabilities__commission__icon.svg',
-    'public://img/icons/department/icons_consumer_affairs_0.svg' => 'public://icons/',
-    'public://img/icons/department/icons_consumer_affairs.svg' => 'public://icons/',
+    'public://img/icons/department/icons_consumer_affairs_0.svg' => 'public://icons/department/licensing_board_logo.svg',
+    'public://img/icons/department/icons_consumer_affairs.svg' => 'public://icons/department/licensing_board_logo.svg',
     'public://img/icons/department/icons_city_council.svg' => 'public://icons/department/city_council_icon.svg',
     'public://img/icons/department/icons_city_clerk.svg' => 'public://icons/department/city_clerk_icon.svg',
     'public://img/icons/department/icons_cable.svg' => 'public://icons/department/broadband_and_cable_icon.svg',
@@ -424,15 +425,15 @@ class MigrationFixes {
     'public://img/icons/department/icons_bikes_bikes_0.svg' => 'public://icons/department/boston_bikes_icon.svg',
     'public://img/icons/department/icons_bikes_bikes.svg' => 'public://icons/department/boston_bikes_icon.svg',
     'public://img/icons/department/icons_auditing.svg' => 'public://icons/department/auditing_icon.svg',
-    'public://img/icons/department/icons_assessing.svg' => 'public://icons/',
+    'public://img/icons/department/icons_assessing.svg' => 'public://icons/department/assessing_icon.svg',
     'public://img/icons/department/icons_arts.svg' => 'public://icons/department/arts_and_culture_icon.svg',
     'public://img/icons/department/icons_animal_care.svg' => 'public://icons/department/animal_care_and_control_icon.svg',
     'public://img/icons/department/experiential_icons_isd.svg' => 'public://icons/department/inspectional_services_logo.svg',
     'public://img/icons/department/deapartment_icons_food.svg' => 'public://icons/department/food_access_logo.svg',
-    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo_3_1.svg' => 'public://icons/',
-    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo_2_0.svg' => 'public://icons/',
-    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo_1.svg' => 'public://icons/',
-    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo.svg' => 'public://icons/',
+    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo_3_1.svg' => 'public://icons/department/new_urban_mechanics_logo.svg',
+    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo_2_0.svg' => 'public://icons/department/new_urban_mechanics_logo.svg',
+    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo_1.svg' => 'public://icons/department/new_urban_mechanics_logo.svg',
+    'public://img/icons/department/2019/04/new_urban_mechanics_-_logo.svg' => 'public://icons/department/new_urban_mechanics_logo.svg',
     'public://img/icons/department/2019/01/age-strong-final.svg' => 'public://icons/',
     'public://img/icons/department/2018/10/yee-icon.svg' => 'public://icons/department/mayor_s_youth_council.svg',
     'public://img/icons/department/2018/08/asset_332.svg' => 'public://icons/',
@@ -466,32 +467,32 @@ class MigrationFixes {
     'public://img/icons/department/2016/08/icons_digital.svg' => 'public://icons/department/digital_team_icon.svg',
     'public://img/icons/department/2016/08/department_icons_emergency_management.svg' => 'public://icons/department/emergency_management__logo.svg',
     'public://img/icons/department/2016/07/assessing_logo.svg' => 'public://icons/department/assessing_icon.svg',
-    'public://img/how_to/intro_images/default-hero-image_9.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_8.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_7.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_6.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_5.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_4.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_30.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_3.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_29.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_28.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_27.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_26.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_25.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_24.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_23.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_22.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_21.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_19.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_17.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_16.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_15.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_14.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_13.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_12.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_11.svg' => 'public://icons/',
-    'public://img/how_to/intro_images/default-hero-image_1.svg' => 'public://icons/',
+    'public://img/how_to/intro_images/default-hero-image_9.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_8.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_7.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_6.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_5.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_4.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_30.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_3.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_29.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_28.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_27.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_26.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_25.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_24.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_23.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_22.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_21.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_19.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_17.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_16.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_15.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_14.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_13.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_12.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_11.svg' => 'public://icons/default-hero-image.svg',
+    'public://img/how_to/intro_images/default-hero-image_1.svg' => 'public://icons/default-hero-image.svg',
     'public://img/2019/w/warren_webpage_3.svg' => 'public://icons/',
     'public://img/2019/s/sr_3.svg' => 'public://icons/',
     'public://img/2019/o/our_partners_-_warren_street_4.svg' => 'public://icons/',
@@ -503,17 +504,17 @@ class MigrationFixes {
     'public://img/2019/1/14.svg' => 'public://icons/',
     'public://img/2019/1/1.svg' => 'public://icons/',
     'public://img/2018/e/experiential_icons_real_estate_taxes.svg' => 'public://icons/experiential/real_estate_taxes.svg',
-    'public://img/2018/e/experiential_icons_census_1.svg' => 'public://icons/',
+    'public://img/2018/e/experiential_icons_census_1.svg' => 'public://icons/experiential/fmily.svg',
     'public://img/2018/d/department_icons_emergency_management_1_1.svg' => 'public://icons/department/emergency_management__logo.svg',
     'public://img/2018/d/department_icons_emergency_management_1_0.svg' => 'public://icons/department/emergency_management__logo.svg',
     'public://img/2018/a/asset_332_1_1.svg' => 'public://icons/',
     'public://img/2018/a/asset_332_1_0.svg' => 'public://icons/',
     'public://img/2018/a/asset_332_1.svg' => 'public://icons/',
-    'public://img/2017/s/svg_hosuing_authority_.svg' => 'public://icons/',
-    'public://img/2017/e/experiential_icons_important_6.svg' => 'public://icons/',
-    'public://img/2017/e/experiential_icons_fire_operations.svg' => 'public://icons/',
-    'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement_0.svg' => 'public://icons/',
-    'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement.svg' => 'public://icons/',
+    'public://img/2017/s/svg_hosuing_authority_.svg' => 'public://icons/department/housing_authority_logo',
+    'public://img/2017/e/experiential_icons_important_6.svg' => 'public://icons/experiential/alert.svg',
+    'public://img/2017/e/experiential_icons_fire_operations.svg' => 'public://icons/experiential/axe.svg',
+    'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement_0.svg' => 'public://icons/experiential/building_permit.svg',
+    'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement.svg' => 'public://icons/experiential/building_permit.svg',
     'public://img/2017/d/department_icons_emergency_management_0.svg' => 'public://icons/department/emergency_management__logo.svg',
     'public://img/2016/e/experientialicon_pay_or_view_your_bills_online.svg' => 'public://icons/experiential/online_purchase.svg',
     'public://img/2016/e/experiential_video_library.svg' => 'public://icons/experiential/video_search.svg',
@@ -611,7 +612,7 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_car_1.svg' => 'public://icons/experiential/car.svg',
     'public://img/2016/e/experiential_icons_car_0.svg' => 'public://icons/experiential/car.svg',
     'public://img/2016/e/experiential_icons_car.svg' => 'public://icons/experiential/car.svg',
-    'public://img/2016/e/experiential_icons_birth_cert.svg' => 'public://icons/experiential/birth_certificate.svg',
+    'public://img/2016/e/experiential_icons_birth_cert.svg' => 'public://icons/experiential/birth_certifcate.svg',
     'public://img/2016/e/experiential_icons_bike_0.svg' => 'public://icons/experiential/bike.svg',
     'public://img/2016/e/experiential_icons_bike.svg' => 'public://icons/experiential/bike.svg',
     'public://img/2016/e/experiential_icons_archaeological_dig_2.svg' => 'public://icons/experiential/archaeological_dig_questions.svg',
@@ -625,15 +626,11 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons-31.svg' => 'public://icons/experiential/weddingrings.svg',
     'public://img/2016/e/experiential_icons-22.svg' => 'public://icons/',
     'public://img/2016/d/deapartment_icons_emergency_management.svg' => 'public://icons/department/emergency_management__logo.svg',
-    'public://img/2016/b/budget_infographic-01.svg' => 'public://icons/',
-    'public://img/2016/5/5icons_home_repairs.svg' => 'public://icons/',
-    'public://img/2016/3/3icons_get_a_home_energy_assessment.svg' => 'public://icons/',
-    'public://img/2016/2/2000px-seal_of_massachusetts_variant.svg.png' => 'public://icons/',
-    'public://icons/experiential/search.svg' => 'public://icons/',
-    'public://icons/experiential/building_permit.svg' => 'public://icons/',
+    'public://img/2016/5/5icons_home_repairs.svg' => 'public://icons/experiential/repair_your_home.svg',
+    'public://img/2016/3/3icons_get_a_home_energy_assessment.svg' => 'public://icons/experiential/energy_report.svg',
     'public://embed/w/warren_webpage_3.svg' => 'public://icons/',
     'public://embed/o/our_partners_-_warren_street_1.svg' => 'public://icons/',
-    'public://embed/e/experiential_icons_who_is_my_city_councilor-.svg' => 'public://icons/',
+    'public://embed/e/experiential_icons_who_is_my_city_councilor-.svg' => 'public://icons/experiential/city_council_question.svg',
     'public://embed/6/6_1.svg' => 'public://icons/',
     'public://embed/3/34.svg' => 'public://icons/',
     'public://embed/3/3.svg' => 'public://icons/',
@@ -652,6 +649,7 @@ class MigrationFixes {
    * Required so that taxonomy entries can later be run with --update flag set.
    */
   public static function fixTaxonomyVocabulary() {
+    printf("[action] Will update the taxonomy vocabularly.\n");
     $d7_connection = Database::getConnection("default", "migrate");
     $query = $d7_connection->select("taxonomy_vocabulary", "v")
       ->fields("v", ["vid", "machine_name"]);
@@ -672,7 +670,7 @@ class MigrationFixes {
         ->execute();
     }
 
-    echo "Updated Drupal 8 taxonomy_vocab table.";
+    printf("Updated Drupal 8 taxonomy_vocab table.\n\n");
 
   }
 
@@ -683,7 +681,7 @@ class MigrationFixes {
    */
   public static function fixListViewField() {
     // Fetch all the list records into a single object.
-    echo "View list conversion:\n";
+    printf("[action] Maps newly named view displays into list components.\n");
 
     foreach (["paragraph__field_list", "paragraph_revision__field_list"] as $table) {
 
@@ -695,7 +693,7 @@ class MigrationFixes {
       $row = $query->execute()->fetchAll();
 
       $count = count($row);
-      echo "Will change $count references in $table.\n";
+      printf("[info] Will change %d references in %s.\n", $count, $table);
 
       // Process each row, making substitutions from map array $viewListMap.
       foreach ($row as $display) {
@@ -703,7 +701,7 @@ class MigrationFixes {
         if (isset($map[$display->field_list_target_id][$display->field_list_display_id])) {
 
           $entry = $map[$display->field_list_target_id][$display->field_list_display_id];
-          echo sprintf("Change %s/%s to %s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--", $entry[0], $entry[1]);
+          printf("[info] Change %s/%s to %s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--", $entry[0], $entry[1]);
 
           $d8_connection->update($table)
             ->fields([
@@ -714,22 +712,21 @@ class MigrationFixes {
             ->condition("field_list_display_id", $display->field_list_display_id)
             ->execute();
 
-          echo ": Done.\n";
+          printf("[success] component updated.\n");
         }
         else {
-          echo sprintf("%s/%s", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--");
-          echo ": Not found\n";
+          sprintf("[warning] %s/%s: Not found.", $display->field_list_target_id ?: "--", $display->field_list_display_id ?: "--");
         }
       }
-      echo "----------------\n\n";
     }
-
+    printf("\n");
   }
 
   /**
    * This makes sure the filename is set properly from the uri.
    */
   public static function fixFilenames() {
+    printf("[action] Fixes filenames in table file_managed.\n");
     Database::getConnection()
       ->query("
         UPDATE file_managed
@@ -737,6 +734,8 @@ class MigrationFixes {
         WHERE locate('.', filename) = 0 and fid > 0;
       ")
       ->execute();
+    printf("[success] Done.\n");
+    printf("\n");
   }
 
   /**
@@ -745,13 +744,18 @@ class MigrationFixes {
    * Sort of super CEX for config_update.
    */
   public static function updateModules() {
+    printf("[action] Will export configs for all custom modules (super-cde).\n");
     _bos_core_global_update_configs();
+    printf("[success] Done.\n");
+    printf("\n");
   }
 
   /**
    * Updates the D7 svg icons to the new D8 located icons.
    */
   public static function updateSvgPaths() {
+    printf("[action] Will map old svg path/filename to new path/filenames.\n");
+    $cnt = 0;
     $svgs = \Drupal::database()->query("
         SELECT distinct f.fid, f.uri 
           FROM file_managed f
@@ -768,9 +772,8 @@ class MigrationFixes {
           $new_filename = array_pop($new_filename);
           $file->setFileUri($new_uri);
           $file->setFilename($new_filename);
-          echo "Renamed: " . $svg->uri . " to " . $new_uri . "\n";
           $file->save();
-
+          $cnt++;
           // Try to find this file_id in the media table.
           if (NULL == ($mid = \Drupal::entityQuery("media")->condition("image.target_id", $svg->fid, "=")->execute())) {
             // Not there, so create a new one.
@@ -794,17 +797,223 @@ class MigrationFixes {
           $new_uri = NULL;
         }
       }
+      printf("[success] Updated %d media entries.\n", $cnt);
+
     }
+    else {
+      printf("[warning] no svgs found !!.\n");
+    }
+    printf("\n");
   }
 
   /**
    * Manually create the media entity for the map background image.
    */
   public static function fixMap() {
+    printf("[action] Will ensure map default image is loaded propoerly.\n");
     // Copy map module icons into expected location.
     _bos_core_install_icons("bos_map");
     // Install the map default background image.
     bos_map_rebuild();
+    printf("[info] Finished.\n");
+    printf("\n");
+  }
+
+  /**
+   * Manually migrate the message_for_the_day content.
+   */
+  public static function migrateMessages() {
+    // Fetch rows from D7.
+    printf("[action] Will manually copy status_item messages because migration can't handle them.\n");
+
+    $migrate_tables = [
+      "field_revision_field_date" => "paragraph_revision__field_recurrence",
+      "field_data_field_date" => "paragraph__field_recurrence",
+    ];
+
+    Database::getConnection("default", "default")
+      ->truncate("date_recur__paragraph__field_recurrence")
+      ->execute();
+
+    foreach ($migrate_tables as $source_table => $dest_table) {
+      $d7_connection = Database::getConnection("default", "migrate");
+      $query_string = "SELECT  i.start start_date, i.end end_date, d.*
+        FROM $source_table d
+          INNER JOIN (
+            SELECT entity_id, min(field_date_value) start, max(field_date_value) end 
+            FROM $source_table
+            GROUP BY entity_id
+          ) i ON i.entity_id = d.entity_id
+        WHERE d.bundle = 'message_for_the_day'
+            AND d.delta = 0";
+      $source_rows = $d7_connection->query($query_string)->fetchAll();
+
+      // Migrate them into D8.
+      if (count($source_rows)) {
+        $cnt = 0;
+        printf("[info] %d message_for_the_day records found to be migrated from %s.\n", count($source_rows), $source_table);
+        foreach ($source_rows as $source_row) {
+          $infinite = NULL;
+          $enabled = 1;
+          $start_date = strtotime($source_row->start_date);
+          $end_date = strtotime("+ 1 day", $start_date);
+          $start_date = format_date($start_date, "html_date");
+
+          $rrule = $source_row->field_date_rrule;
+          $exceptions = explode("\r\n", $rrule);
+          if (isset($exceptions[1])) {
+            $rrule = $exceptions[0];
+          }
+          $rules = explode(";", str_replace("RRULE:", "", $rrule));
+
+          foreach ($rules as $key => &$rule) {
+            $keypair = explode("=", $rule);
+            if (!isset($keypair[0]) || empty($keypair[1])) {
+              unset($rules[$key]);
+            }
+            else {
+              if ($keypair[0] == "FREQ" && $keypair[1] == "ONCE") {
+                $infinite = 0;
+              }
+              elseif ($keypair[0] == "UNTIL") {
+                $edate = strtotime($keypair[1]);
+                if ($edate > strtotime("+1 year")) {
+                  $infinite = ($infinite ?? 1);
+                  unset($rules[$key]);
+                  $keypair = NULL;
+                }
+                if ($edate < strtotime("-1 month")) {
+                  $infinite = ($infinite ?? 0);
+                  $enabled = 0;
+                  unset($rules[$key]);
+                  $keypair = NULL;
+                }
+              }
+              elseif ($keypair[0] == "COUNT" && intval($keypair[1]) >= 500) {
+                $infinite = ($infinite ?? 1);
+                unset($rules[$key]);
+                $keypair = NULL;
+              }
+              elseif ($keypair[0] == "WKST") {
+                unset($rules[$key]);
+                $keypair = NULL;
+              }
+              elseif ($keypair[0] == "BYDAY" && substr($keypair[1], 0, 1) == '+') {
+                $rules[] = "BYSETPOS=" . substr($keypair[1], 1, 1);
+                $keypair[1] = substr($keypair[1], 2);
+              }
+
+              if (isset($keypair)) {
+                $rule = implode("=", $keypair);
+              }
+            }
+          }
+
+          $end_date = format_date($end_date, "html_date");
+          $rules = implode(";", $rules);
+          if (!empty($exceptions[1])) {
+            $exdates = explode(",", str_replace([
+              "EXDATE:",
+              "RDATE:",
+            ], "", $exceptions[1]));
+            foreach ($exdates as &$exdate) {
+              $dt = new \DateTime($exdate);
+              $exdate = date_format($dt, "Ymd");
+            }
+            $exceptions[1] = implode(",", $exdates);
+            $rules = "RRULE:" . $rules . "\r\nEXDATE:" . $exceptions[1];
+          }
+
+          if (empty($rules)) {
+            $rules = NULL;
+          }
+          $infinite = ($infinite ?? 0);
+
+          $entity = \Drupal::entityTypeManager()->getStorage("paragraph");
+          if ($source_table == "field_revision_field_date") {
+            $entity = $entity->loadRevision($source_row->revision_id);
+          }
+          else {
+            $entity = $entity->load($source_row->entity_id);
+          }
+          if (!empty($entity)) {
+            $entity->field_enabled = $enabled;
+            $entity->field_recurrence->value = $start_date;
+            $entity->field_recurrence->end_value = $end_date;
+            $entity->field_recurrence->rrule = $rules;
+            $entity->field_recurrence->infinite = $infinite;
+            $entity->save();
+            $cnt++;
+          }
+        }
+        printf("[success] %d message_for_the_day records were migrated to %s.\n", $cnt, $dest_table);
+      }
+      else {
+        printf("[warning] No message_for_the_day records to migrate.\n");
+      }
+    }
+
+    // Update the new status fields.
+    $nodes = \Drupal::entityTypeManager()->getStorage("node")
+      ->loadByProperties(["type" => "status_item"]);
+    if (!empty($nodes)) {
+      $cnt = 0;
+      foreach ($nodes as $node) {
+        $entity = \Drupal::entityTypeManager()->getStorage("node")
+          ->load($node->id());
+        if (!empty($entity) && !isset($entity->field_enabled->value)) {
+          $entity->field_weight = 0;
+          $entity->field_enabled = 1;
+          $entity->save();
+          $cnt++;
+        }
+      }
+      printf("[success] Set active flag on %d un-assigned status_item nodes.\n\n", $cnt);
+    }
+    printf("\n");
+  }
+
+  /**
+   * Ensure node items which dont have correct revision are updated.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function fixRevisions() {
+    printf("[action] Will update node records with known revision issues from migration.\n");
+    $revisionSync = [
+      "person_profile" => [
+        "type" => "node",
+        "table" => "node__field_position_title",
+      ],
+    ];
+
+    foreach ($revisionSync as $type => $data) {
+      $cnt = 0;
+      if ($data["type"] == "node") {
+        $table = $data["table"];
+        $sql = "SELECT n.vid FROM node_field_data n 
+                LEFT JOIN $table t 
+                    ON (n.nid = t.entity_id AND n.vid = t.revision_id) 
+                WHERE type = '$type' 
+                    AND n.status =  1
+                    AND t.revision_id is null;";
+      }
+      $nids = Database::getConnection()->query($sql)->fetchAll();
+      if (count($nids)) {
+        foreach ($nids as $nid) {
+          \Drupal::entityTypeManager()->getStorage("node")
+            ->loadRevision($nid->vid)
+            ->save();
+          $cnt++;
+        }
+        printf("[success] Processed %d %s records in %s\n\n", $cnt, $type, $table);
+      }
+      else {
+        printf("[warning] No revisions to process for %s in %s\n\n", $type, $table);
+      }
+    }
   }
 
 }

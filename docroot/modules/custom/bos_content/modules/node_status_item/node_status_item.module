@@ -5,7 +5,9 @@
  * Provides a status item entity type.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Implements hook_theme().
@@ -16,10 +18,56 @@ function node_status_item_theme() {
       'render element' => 'elements',
     ],
     'node__status_item' => [
-      'render element' => 'elements',
       'base hook' => "node",
     ],
+    'node__status_item__listing_long' => [
+      'base hook' => "node",
+    ],
+    'viewfield_item__field_list__status_items' => [
+      'base hook' => 'viewfield_item',
+    ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_status_item_preprocess_viewfield_item__field_list__status_items(&$variables) {
+  // Normally this would go in the theme to make the preprocess function more
+  // discoverable but it needs to be run against the admin theme as well.
+  $view = $variables['content']["#view"];
+  $timestamp = strtotime("now");
+  if (isset($view->args[0])) {
+    $timestamp = strtotime($view->args[0]);
+  }
+  $variables['header'] = [
+    "date" => format_date($timestamp, 'date_format_status'),
+    "date_attrib" => new Attribute(),
+  ];
+  $variables['header']['date_attrib']->addClass("str-t");
+
+  if (!empty($timestamp)) {
+    // See if this date falls on a special named date (i.e. a holiday or city
+    // event, etc.).
+    $result = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'holidays')
+      ->condition('field_date', $timestamp . 'T00:00:00')
+      ->range(0, 1)
+      ->execute();
+    if (!empty($result)) {
+      $variables["header"]["text"] = taxonomy_term_load(key($result['name']));
+      $variables['header']['date_attrib']->removeClass("str-t");
+      $variables['header']['date_attrib']->addClass("str-st");
+    }
+  }
+
+  // Render and map the rows to reduce templating.
+  $variables['empty'] = TRUE;
+  $view = $view->render();
+  if (!empty($view["#rows"]) && count($view["#rows"])) {
+    $variables["rows"] = $view["#rows"][0]["#rows"];
+    $variables['empty'] = FALSE;
+  }
 }
 
 /**
@@ -36,5 +84,23 @@ function node_status_item_theme() {
 function template_preprocess_node__status_item(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_status_item_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $children = Element::getVisibleChildren($form["field_messages"]["widget"]);
+  foreach ($children as $child) {
+    if (is_numeric($child)) {
+      $para = $form_state->getStorage()["field_storage"]["#parents"]["#fields"]["field_messages"]["paragraphs"][$child]["entity"];
+      $class = $para->field_enabled->value ? "cob-para-enabled" : "cob-para-disabled";
+      $content = &$form["field_messages"]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"];
+      $content[0] = html_entity_decode(strip_tags($content[0]));
+      $content[0] = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $content[0]);
+      $form["field_messages"]["widget"][$child]["top"]["summary"]["#attributes"]["class"][] = $class;
+      unset($form["field_messages"]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"][1]);
+    }
   }
 }
