@@ -22,6 +22,9 @@
         {% endif %}
         <div class="detail-item__content">
           <div class="detail-item__body detail-item__body--secondary">
+              <div class="addressfield-container-inline name-block">
+                <div class="name-block">{{ item.content.given_name }}{{ item.content.family_name }}</div>
+              </div>
               <div class="street-block">
                   <div class="thoroughfare">{{ item.content.address_line1 }}</div>
               </div>
@@ -31,7 +34,7 @@
                   </div>
               {% endif %}
               <div class="addressfield-container-inline locality-block country-US">
-                  <span class="locality">{{ item.content.locality['#value'] }},</span>&nbsp;<span class="state">{{ item.content.administrative_area }}</span>&nbsp;<span class="postal-code">{{ item.content.postal_code }}</span>
+                  <span class="locality">{{ item.content.locality['#value'] }},</span>&nbsp;<span class="state">{{ item.content.administrative_area }}</span><span class="postal-code">{{ item.content.postal_code }}</span>
               </div>
           </div>
         </div>
