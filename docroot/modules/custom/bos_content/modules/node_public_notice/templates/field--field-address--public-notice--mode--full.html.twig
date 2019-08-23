@@ -31,9 +31,8 @@
                   </div>
               {% endif %}
               <div class="addressfield-container-inline locality-block country-US">
-                  <span class="locality">{{ item.content.locality }}</span>,&nbsp;<span class="state">{{ item.content.administrative_area }}</span>&nbsp;<span class="postal-code">{{ item.content.postal_code }}</span>
+                  <span class="locality">{{ item.content.locality['#value'] }},</span>&nbsp;<span class="state">{{ item.content.administrative_area }}</span>&nbsp;<span class="postal-code">{{ item.content.postal_code }}</span>
               </div>
-              <span class="country">{{ item.content.country }}</span>
           </div>
         </div>
         {% if display_item_tag %}
