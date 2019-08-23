@@ -970,11 +970,11 @@ function _bos_theme_render_snippets(array &$variables) {
  *   The current path.
  */
 function _bos_theme_page_classes(array &$variables, string $current_path = "") {
-  if (isset($variables['node']) && is_object($variables['node'])) {
+  if ($current_path == "") {
+    $current_path = \Drupal::service('path.current')->getPath();
+  }
 
-    if ($current_path == "") {
-      $current_path = \Drupal::service('path.current')->getPath();
-    }
+  if (isset($variables['node']) && is_object($variables['node'])) {
 
     // Start adding class mn (main-node???) to all nodes.
     $variables["attributes"]->addClass("mn");
@@ -1000,12 +1000,15 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   }
 
   // D8 OK: If we are on the employee directory page, change the title.
-  if (strpos($current_path, 'user') === 0) {
+  if (explode("/", $current_path)[1] == 'user') {
     if (!$variables["attributes"]->hasClass("page")) {
       $variables["attributes"]->addClass("page");
     }
     if (!$variables["attributes"]->hasClass("page--wa")) {
       $variables["attributes"]->addClass("page--wa");
+    }
+    if (!$variables["attributes"]->hasClass("page-user")) {
+      $variables["attributes"]->addClass("page-user");
     }
   }
 }
