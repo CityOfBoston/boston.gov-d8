@@ -6,6 +6,8 @@
  */
 
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -17,38 +19,152 @@ function bos_messages_theme($existing, $type, $theme, $path) {
     ],
     'paragraph__message_for_the_day' => [
       'base hook' => 'paragraph',
-      'path' => drupal_get_path('module', 'bos_messages') . '/templates',
+    ],
+    'paragraph__message_for_the_day__listing' => [
+      'base hook' => 'paragraph',
     ],
   ];
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form["#attached"]["library"][] = "bos_messages/mod.assets";
+}
+
+/**
  * Implements hook_preprocess_paragraph().
  */
-function bos_messages_preprocess_paragraph(&$vars) {
-  if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
-    switch ($paragraph->bundle()) {
-      case 'message_for_the_day':
-        if (!$paragraph->get('field_link')->isEmpty()) {
-          $link = _bos_core_paragraph_extract_link($paragraph->get('field_link')->getValue());
-          $vars['card_url'] = $link['url'];
+function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$variables) {
+  static $motd_processed = [];
+
+  $motd = $variables['paragraph'];
+  $status_item = $motd->getParentEntity();
+
+  $variables["show_message"] = FALSE;
+
+  // Only do this if the parent status_item hasn't already had a message
+  // processed.
+  if (isset($status_item) && !isset($motd_processed[$status_item->id()])) {
+
+    // Make sure the recurrences field has a value.
+    if (isset($variables["content"]["field_recurrence"][0]['#occurrences'])
+      && count($variables["content"]["field_recurrence"][0]['#occurrences'])) {
+
+      $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
+      $today = new \DateTime();
+      $today->modify("-5 hours");
+
+      // If $today is in the occurence range then show.
+      if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
+        $start_date = new \DateTime($date["start_date"]["#text"]);
+        $end_date = new \DateTime($date["end_date"]["#text"]);
+        if ($today >= $start_date && $today <= $end_date) {
+          $variables["show_message"] = TRUE;
+          $motd_processed[$status_item->id()] = $motd->id();
         }
-        if ($paragraph->get('field_use_alert')->Getvalue()['0']['value']) {
-          $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
-          $vars['alert'] = trim($alert);
+      }
+    }
+
+    if (!empty($variables["show_message"])) {
+      if (isset($motd->field_link[0])) {
+        $paragraph = Paragraph::load($motd->field_link[0]->target_id);
+        $link = _bos_core_paragraph_extract_link($paragraph);
+        $variables['card_url'] = $link['url'];
+      }
+
+      if (!empty($motd->field_use_alert->value)) {
+        $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
+        $variables['alert'] = trim($alert);
+      }
+
+      if (isset($status_item->field_icon->target_id)) {
+        $fid = $status_item->field_icon->target_id;
+        $uri = Drupal::entityTypeManager()
+          ->getStorage('file')
+          ->load($fid)
+          ->getFileUri();
+        $uri = \Drupal::service('file_system')->realpath($uri);
+        if (!empty($uri)) {
+          $icon = file_get_contents($uri);
+          $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
         }
-        if ($host = $paragraph->getParentEntity()) {
-          if ($host->hasField('field_icon') && !$host->get('field_icon')->isEmpty()) {
-            $fid = $host->get('field_icon')->getValue()['0']['target_id'];
-            $uri = Drupal::entityTypeManager()->getStorage('file')->load($fid)->getFileUri();
-            $uri = \Drupal::service('file_system')->realpath($uri);
-            $icon = file_get_contents($uri);
-            $vars['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
-          }
-          $vars['title'] = $host->label();
-        }
-        break;
+      }
+
+      // Set the title to be the display_title.
+      $variables['title'] = $status_item->field_title->value;
     }
   }
+
+}
+
+/**
+ * Implements hook_contact_token_info().
+ */
+function bos_messages_token_info() {
+  $info = [];
+  // Define our new token.
+  $info['tokens']['boston']['week-ordinal:value'] = [
+    'name' => t('Current Week-ord (num)'),
+    'description' => t("The current date's week number in this month <i>(e.g. 2nd)</i>."),
+  ];
+  $info['tokens']['boston']['week-ordinal:text'] = [
+    'name' => t('Current Week-ord (txt)'),
+    'description' => t("The current date's week number in this month <i>(e.g. second)</i>."),
+  ];
+  $info['tokens']['boston']['week-day'] = [
+    'name' => t('Current Date - weekday'),
+    'description' => t('Today in the "l" format <i>(e.g Monday)</i>.'),
+  ];
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function bos_messages_tokens($type, $tokens, array $data = [], array $options = []) {
+  $replacements = [];
+
+  if ($type == 'boston') {
+    // Loop through the available tokens.
+    foreach ($tokens as $name => $original) {
+      // Find our custom tokens by name.
+      switch ($name) {
+        case 'week-ordinal:value':
+          // Give our token it's final value!
+          $now = new DateTime();
+          $weekday = date_format($now, "l");
+          $month = date_format($now, "F");
+          foreach (["1st", "2nd", "3rd", "4th", "5th"] as $ordinal) {
+            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+              break;
+            }
+          }
+          $replacements[$original] = $ordinal;
+          break;
+
+        case 'week-ordinal:text':
+          // Give our token it's final value!
+          $now = new DateTime();
+          $weekday = date_format($now, "l");
+          $month = date_format($now, "F");
+          foreach (["first", "second", "third", "fourth", "fifth"] as $ordinal) {
+            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+              break;
+            }
+          }
+          $replacements[$original] = $ordinal;
+          break;
+
+        case 'week-day':
+          // Give our token it's final value!
+          $replacements[$original] = date_format(new DateTime(), "l");
+          break;
+
+      }
+    }
+  }
+
+  return $replacements;
 }

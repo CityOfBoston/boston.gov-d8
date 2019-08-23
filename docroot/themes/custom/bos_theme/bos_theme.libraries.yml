@@ -101,17 +101,19 @@ fleet-components.heroku-patterns:
     https://cob-patterns-staging.herokuapp.com/web-components/fleetcomponents.js: {type: external, minified: true }
 
 page.assets:
+  js:
+    js/messages.boston.js: {attributes: {id: "messages_script"}}
   css:
     theme:
       css/bos_theme_overrides.css: {weight: 500}
 
 page.tabbed_page:
   js:
-    js/tabbed-page.boston.js: {attributes: {id: "tabbed_page_script"}}
+    js/tabbed_page.boston.js: {attributes: {id: "tabbed_page_script"}}
 
 page.inpage_menu:
   js:
-    js/inpage-menu.boston.js: {attributes: {id: "inpage_menu_script"}}
+    js/inpage_menu.boston.js: {attributes: {id: "inpage_menu_script"}}
 
 context_link:
   js:

@@ -1,17 +1,17 @@
-uuid: ec83b0ea-f973-48e2-8927-6c17e49ebb25
 langcode: und
 status: true
 dependencies:
   module:
-    - datetime
+    - datetime_range
     - node
 id: node.field_public_notice_date
 field_name: field_public_notice_date
 entity_type: node
-type: datetime
+type: daterange
 settings:
   datetime_type: datetime
-module: datetime
+  optional_end_date: true
+module: datetime_range
 locked: false
 cardinality: 1
 translatable: true

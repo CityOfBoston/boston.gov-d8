@@ -8,6 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
     - paragraphs.paragraphs_type.cabinet
+    - paragraphs.paragraphs_type.city_score_dashboard
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
@@ -53,8 +54,8 @@ settings:
       3_column_w_image: 3_column_w_image
       bos311: bos311
       cabinet: cabinet
+      city_score_dashboard: city_score_dashboard
       drawers: drawers
-      events_and_notices: events_and_notices
       featured_topics: featured_topics
       fyi: fyi
       grid_of_cards: grid_of_cards
@@ -79,6 +80,7 @@ settings:
       video: video
       commission_members: commission_members
       commission_summary: commission_summary
+      events_and_notices: events_and_notices
     target_bundles_drag_drop:
       3_column_w_image:
         enabled: true
@@ -90,8 +92,8 @@ settings:
         enabled: true
         weight: -94
       city_score_dashboard:
+        enabled: true
         weight: -93
-        enabled: false
       custom_hours_text:
         weight: -92
         enabled: false
@@ -270,6 +272,6 @@ settings:
         weight: 120
         enabled: false
       events_and_notices:
-        weight: 125
         enabled: true
+        weight: 125
 field_type: entity_reference_revisions

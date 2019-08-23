@@ -8,6 +8,7 @@
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Template\Attribute;
 
 /**
  * Implements hook_theme().
@@ -57,6 +58,14 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
       $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
 
     }
+  }
+  $variables["hasSidebar"] = TRUE;
+  $variables["primeColumnAttributes"] = new Attribute();
+  $variables["primeColumnAttributes"]->addClass(["column", "mobile-100"]);
+  $variables["primeColumnAttributes"]->addClass(["desktop-66-left"]);
+  if (!isset($variables['node']->field_sidebar_components->value)) {
+    $variables["hasSidebar"] = FALSE;
+    $variables["primeColumnAttributes"]->removeClass("desktop-66-left");
   }
 }
 

@@ -145,6 +145,7 @@ class MigrationConfigAlter {
     "paragraph__commission_contact_info" => ["bos:paragraph:1"],
     "paragraph__commission_members" => ["bos:paragraph:1"],
     "paragraph__commission_summary" => ["bos:paragraph:1"],
+    "paragraph__commission_search" => ["bos:paragraph:1"],
     "paragraph__custom_hours_text" => ["bos:paragraph:1"],
     "paragraph__daily_hours" => ["bos:paragraph:1"],
     "paragraph__discussion_topic" => ["bos:paragraph:2"],
@@ -450,6 +451,31 @@ class MigrationConfigAlter {
               ],
             ],
           ],
+        ],
+      ],
+    ],
+    // Status_item enabled by default.
+    "d7_node:status_item" => [
+      "process" => [
+        "field_enabled" => [
+          "plugin" => "default_value",
+          "default_value" => 1,
+        ],
+      ],
+    ],
+    "d7_node_revision:status_item" => [
+      "process" => [
+        "field_enabled" => [
+          "plugin" => "default_value",
+          "default_value" => 1,
+        ],
+      ],
+    ],
+    "d7_node_entity_translation:status_item" => [
+      "process" => [
+        "field_enabled" => [
+          "plugin" => "default_value",
+          "default_value" => 1,
         ],
       ],
     ],
@@ -828,9 +854,11 @@ class MigrationConfigAlter {
         'paragraph__bos_signup_emergency_alerts',
         'paragraph__cabinet',
         'paragraph__card',
+        'paragraph__city_score_dashboard',
         'paragraph__commission_contact_info',
         'paragraph__commission_members',
         'paragraph__commission_summary',
+        'paragraph__commission_search',
         'paragraph__drawers',
         'paragraph__featured_topics',
         'paragraph__fyi',
@@ -854,6 +882,7 @@ class MigrationConfigAlter {
         'paragraph__text',
         'paragraph__transaction_grid',
         'paragraph__events_and_notices',
+        'paragraph__events_notices',
         'paragraph__video',
       ],
       "field_drawer" => [
@@ -1308,8 +1337,11 @@ class MigrationConfigAlter {
               // a dependency for this $migration later.
               switch ($entityType) {
                 case "node":
-                case "paragraph":
                   $dependencies["required"] += $process["process"]["target_id"][1]["migration"];
+                  break;
+
+                case "paragraph":
+                  $dependencies["required"] += $process["process"]["target_id"][0]["migration"];
                   break;
 
                 case "taxonomy":
@@ -1717,14 +1749,9 @@ class MigrationConfigAlter {
           "process" => [
             "target_id" => [
               [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-                'source' => "value",
-              ],
-              [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
-                "no_stub" => "TRUE",
+                'source' => 'value',
               ],
               [
                 "plugin" => "skip_on_empty",
@@ -1737,13 +1764,9 @@ class MigrationConfigAlter {
             ],
             "target_revision_id" => [
               [
-                "plugin" => "skip_on_empty",
-                "method" => "process",
-                'source' => "value",
-              ],
-              [
                 'plugin' => 'migration_lookup',
                 'migration' => $entity_field_deps,
+                'source' => 'value',
               ],
               [
                 "plugin" => "skip_on_empty",
@@ -1753,7 +1776,6 @@ class MigrationConfigAlter {
                 'plugin' => 'extract_ext',
                 'index' => [1],
               ],
-
             ],
           ],
         ];
