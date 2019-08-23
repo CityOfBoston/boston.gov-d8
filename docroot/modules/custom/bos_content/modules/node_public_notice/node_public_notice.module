@@ -50,7 +50,7 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
 
   // Theme the notice time-range.
   _bos_public_notice_date_range($variables);
-  $posted_date = $node->getCreatedTime(); 
+  $posted_date = $node->getCreatedTime();
   $variables['notice_date_short'] = \Drupal::service('date.formatter')->format($posted_date, 'custom', 'm/d/Y - g:iA');
 
   // Create the in-page-menu.
