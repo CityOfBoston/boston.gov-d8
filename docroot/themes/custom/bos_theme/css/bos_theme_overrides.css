@@ -736,7 +736,7 @@ David:
 Where: node--department-profile.html.twig
 What: Fixes the department icon to be 100px square. (Iterators issue #39)
 */
-@media (min-width: 980px) {
+@media screen and  (min-width: 980px) {
   .node-type-department-profile .department-icon {
     padding: 13px 0 0 13px;
   }
@@ -744,6 +744,11 @@ What: Fixes the department icon to be 100px square. (Iterators issue #39)
 .node-department-profile .department-icon svg {
   height: 76px;
   width: 76px;
+}
+@media screen and (min-width: 980px) and (max-width: 1300px) {
+  .node-type-department-profile .department-icon {
+    margin-left: auto;
+  }
 }
 
 /*
@@ -772,6 +777,15 @@ What: Keeps title content inside bouding box.
 
 /*
 David:
+Where: page--user--login.html.twig
+What: Locates content nicely on the page.
+*/
+.page-user .main {
+  padding: 2em 0;
+}
+
+/*
+David
 Where: page.html.twig.twig
 What: Allows the main page to scroll when the menu is displayed.
 */
