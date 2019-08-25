@@ -36,6 +36,7 @@ function bos_link_preprocess_paragraph(&$vars) {
       $arr = [];
       switch ($paragraph->getParentEntity()->bundle()) {
         case "public_notice":
+          $arr['attributes'] = ['target' => "_blank"];
           break;
 
         default:
