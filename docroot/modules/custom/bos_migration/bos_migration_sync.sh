@@ -6,7 +6,7 @@ KEY_FILE="/mnt/files/bostond8dev/files-private/private/acquia_migrate"
 REMOTE_SERVER="boston.prod@web-15135.prod.hosting.acquia.com"
 # Paths end with '/'.
 BACKUP_PATH="/mnt/files/boston/backups/"
-LOCAL_PATH="/mnt/files/bostond8dev/backups/on-demand/."
+LOCAL_PATH="/mnt/files/bostond8dev/backups/on-demand/"
 
 # work out the latest backup.
 FNOW=$(date +"%Y-%m-%d")
