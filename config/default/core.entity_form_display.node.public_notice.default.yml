@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
     - field.field.node.public_notice.field_manual_date
+    - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_public_notice_date
     - field.field.node.public_notice.field_related
@@ -91,6 +92,7 @@ third_party_settings:
         - group_public_testimony
         - group_cancel_public_notice
         - group_downloads
+        - field_multiple_neighborhoods
       parent_name: group_public_notice
       weight: 27
       format_type: tab
@@ -181,7 +183,6 @@ third_party_settings:
     group_related_content:
       children:
         - field_related
-        - field_multiple_neighborhoods
       parent_name: group_public_notice
       weight: 30
       format_type: tab
@@ -365,6 +366,12 @@ content:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
+    region: content
+  field_multiple_neighborhoods:
+    weight: 47
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
     region: content
   field_phone_number:
     weight: 12
