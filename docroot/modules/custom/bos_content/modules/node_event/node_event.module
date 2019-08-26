@@ -59,7 +59,9 @@ function template_preprocess_node__event(array &$variables) {
  */
 function node_event_preprocess_node__event(&$variables) {
   _bos_theme_fix_attributes($variables);
-  $variables['attributes']->addClass('desktop-100');
+  if (!empty($variables['attributes'])) {
+    $variables['attributes']->addClass('desktop-100');
+  }
 
   $vars = [
     'classes' => [
@@ -180,7 +182,9 @@ function node_event_preprocess_node__event(&$variables) {
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
 
-    $variables["attributes"]->addClass("with-hero");
+    if (!empty($variables['attributes'])) {
+      $variables["attributes"]->addClass("with-hero");
+    }
   }
 
 }
