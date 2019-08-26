@@ -28,7 +28,8 @@
       // Collapses and expands the components menu.
       var stickyNav = function () {
         var stickyNavTop = navTop - menusBottom();
-        var scrollTop = $("html, body").scrollTop();
+        var scrollTop = 0;
+        scrollTop = $("html").scrollTop() || $("body").scrollTop();
         recalc = scrolling;
         if ($(document).width() >= 980 && scrollTop > stickyNavTop) {
           if (!navMenu.hasClass('sticky')) {
