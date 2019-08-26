@@ -1,5 +1,3 @@
-{% set tid = element["#items"][0].target_id %}
-{% set events_path = "/events/?field_event_type_target_id[]=" ~ tid %}
 
 <div class="detail-item detail-item--secondary">
   <div class="detail-item__left">
@@ -8,7 +6,7 @@
   <div class="detail-item__content">
     <div class="detail-item__body detail-item__body--secondary">
        <div class="">
-         {{ element[0] }}
+         {{ content }}
        </div>
     </div>
   </div>
