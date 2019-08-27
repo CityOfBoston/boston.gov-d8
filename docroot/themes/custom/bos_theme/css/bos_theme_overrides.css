@@ -784,18 +784,6 @@ What: Locates content nicely on the page.
   padding: 2em 0;
 }
 
-/*
-David
-Where: page.html.twig.twig
-What: Allows the main page to scroll when the menu is displayed.
-*/
-body.no-s {
-  overflow: visible;
-}
-body.no-s .mn .main {
-  overflow: hidden;
-  width: calc(100vw - 300px);
-}
 /* locates the main-menu when the sidemenu is shown. */
 @media screen and (min-width: 480px) {
   .brg-tr:checked ~ .mn--full-ie .h, .brg-tr:checked ~ .mn--full-ie .nv-s, .brg-tr:checked ~ .mn .h, .brg-tr:checked ~ .mn .mn-fixed-child .h, .brg-tr:checked ~ .mn .mn-fixed-child .nv-s, .brg-tr:checked ~ .mn .nv-s {
