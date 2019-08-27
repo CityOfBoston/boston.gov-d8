@@ -98,6 +98,10 @@
   </div>
 {% endif %}
 
+<div class="breadcrumb" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
+
 <article{{ attributes }}>
 
   {% if content.field_header_component %}
