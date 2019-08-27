@@ -18,7 +18,7 @@ scp -i $KEY_FILE $REMOTE_SERVER:$BACKUP $LOCAL_PATH
 
 # Load up the backup onto the local MySQL server.
 if [ $? -eq 0 ] && [ -f "$LOCAL_PATH$BACKUP_FILE" ]; then
-  drush sql:drop --database=migrate
+  drush sql:drop --database=migrate -y
   drush sql:cli --database=migrate < $LOCAL_PATH$BACKUP_FILE
   # Run the migration.
   ./bos_migration reset bostond8dev
