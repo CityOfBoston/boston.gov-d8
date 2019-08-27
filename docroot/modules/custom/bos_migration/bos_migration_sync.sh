@@ -24,12 +24,12 @@ if [ $? -eq 0 ] && [ -f "$LOCAL_PATH$BACKUP_FILE" ]; then
   # Remove existing DB.
   drush sql:drop --database=migrate -y
   # Unzip backup.
-  gunzip $LOCAL_BACKUP_ZIP
+  gunzip -fq $LOCAL_BACKUP_ZIP
   # Restore the prod backup.
   drush sql:cli --database=migrate < $LOCAL_BACKUP
   # Cleanup backup file.
   rm -f $LOCAL_BACKUP
 
   # Run the migration.
-  ./bos_migration reset bostond8dev
+  ./bos_migration.sh reset bostond8dev
 fi
