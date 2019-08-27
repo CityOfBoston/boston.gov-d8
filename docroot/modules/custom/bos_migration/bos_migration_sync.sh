@@ -15,7 +15,7 @@ BACKUP_FILE="prod-boston-boston-$FNOW.sql"
 REMOTE_BACKUP="$BACKUP_PATH$BACKUP_FILE_ZIP"
 
 # Copy over the latest d7 prod backup.
-scp -i $KEY_FILE $REMOTE_SERVER:REMOTE_BACKUP $LOCAL_PATH
+scp -i $KEY_FILE $REMOTE_SERVER:$REMOTE_BACKUP $LOCAL_PATH
 
 # Load up the backup onto the local MySQL server.
 if [ $? -eq 0 ] && [ -f "$LOCAL_PATH$BACKUP_FILE" ]; then
