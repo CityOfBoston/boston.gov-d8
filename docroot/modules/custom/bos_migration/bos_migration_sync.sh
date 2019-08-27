@@ -18,8 +18,8 @@ REMOTE_BACKUP="$BACKUP_PATH$BACKUP_FILE_ZIP"
 scp -i $KEY_FILE $REMOTE_SERVER:$REMOTE_BACKUP $LOCAL_PATH
 
 # Load up the backup onto the local MySQL server.
-if [ $? -eq 0 ] && [ -f "$LOCAL_PATH$BACKUP_FILE" ]; then
-  LOCAL_BACKUP_ZIP="$LOCAL_PATH$BACKUP_FILE_ZIP"
+LOCAL_BACKUP_ZIP="$LOCAL_PATH$BACKUP_FILE_ZIP"
+if [ $? -eq 0 ] && [ -f "$LOCAL_BACKUP_ZIP" ]; then
   LOCAL_BACKUP="$LOCAL_PATH$BACKUP_FILE"
   # Remove existing DB.
   drush sql:drop --database=migrate -y
