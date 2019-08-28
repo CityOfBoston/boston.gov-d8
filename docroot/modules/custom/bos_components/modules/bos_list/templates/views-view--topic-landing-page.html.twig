@@ -24,6 +24,11 @@
  *
  * @ingroup views_templates
  #}
+{% if show_breadcrumbs %}
+  <div class="breadcrumb" data-swiftype-index="false">
+    {{ drupal_block('system_breadcrumb_block') }}
+  </div>
+{% endif %}
 
 <div class="p-v700">
   {{ title_prefix }}
