@@ -56,7 +56,7 @@ function doExecPHP() {
 
 function restoreDB() {
     # Remove old database and restore baseline
-    printf "RESTORING DB ${1}\n" | tee -a ${logfile}
+    printf "\nRESTORING DB ${1}\n" | tee -a ${logfile}
 
     backup=${1}
 
@@ -64,31 +64,39 @@ function restoreDB() {
 
     if [ ! -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
+            printf "-> ${backup} not found, looking for unzipped backup.\n" | tee -a ${logfile}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
         else
+            printf "-> ${backup} not found, looking for zipped backup.\n" | tee -a ${logfile}
             backup="${backup}.gz"
         fi
     fi
 
     if [ -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
+            printf "-> unzip ${backup}.\n" | tee -a ${logfile}
             gunzip -fq ${backup}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
         fi
     else
+        printf "ERROR: a suitable backup file could not be found.\n" | tee -a ${logfile}
+        printf "Script aborting.\n\n" | tee -a ${logfile}
         exit 1
     fi
 
+    printf "-> Import ${backup} file into MySQL\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
 
+    printf "-> Re-zip backup.\n" | tee -a ${logfile}
     gzip -fq ${backup}
 
+    printf "-> Sync database wih current code.\n" | tee -a ${logfile}
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
 
@@ -96,7 +104,6 @@ function restoreDB() {
     ${drush} cdel views.view.migrate_taxonomy
     ${drush} cdel views.view.migrate_paragraphs
     ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration -y  | tee -a ${logfile}
-
     ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
 
     # rebuild the migration configs.
@@ -121,7 +128,7 @@ function restoreDB() {
     dumpDB ${1}
 
     ## Puts site into maintenance mode while migration occurs.
-    ${drush} sset "system.maintenance_mode" "0"
+    ${drush} sset "system.maintenance_mode" "1"
 
 }
 
@@ -138,18 +145,27 @@ function dumpDB() {
     printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
 }
 
+function removeEmptyFiles() {
+    printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete && printf "SUCCESS\n" | tee -a ${logfile}
+    # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
+}
+
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
 
 if [ -d "/mnt/gfs" ]; then
+    cd "/var/www/html/${acquia_env}/docroot"
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
     logfile="/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.log"
     drush="drush"
     printf "Running in REMOTE mode:\n"| tee ${logfile}
 else
 #    dbpath=" ~/sources/boston.gov-d8/dump/migration"
+    cd /app/docroot
     dbpath=" /app/dump/migration"
     logfile="./bos_migration.log"
     drush="lando drush"
@@ -162,12 +178,9 @@ running=0
 if [ "$1" == "reset" ]; then
     running=1
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
-    printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
-    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
-    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete
-    # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
+    removeEmptyFiles
     ##
-    restoreDB "${dbpath}/migration_clean_reset.sql"
+    restoreDB "${dbpath}/migration_clean_reset.sql" || exit 1
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     dumpDB ${dbpath}/migration_clean_with_files.sql
@@ -176,7 +189,7 @@ fi
 ## Perform the lowest level safe-dependencies.
 if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql"; fi
+    if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" || exit 1; fi
     doMigrate --tag="bos:initial:1" --force                 # 7 mins
     dumpDB ${dbpath}/migration_clean_with_prereq.sql
 fi
@@ -184,7 +197,7 @@ fi
 # Taxonomies first.
 if [ "$1" == "prereq" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql"; fi
+    if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql" || exit 1; fi
     doMigrate d7_taxonomy_vocabulary -q --force             # 6 secs
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixTaxonomyVocabulary();"
     doMigrate --tag="bos:taxonomy:1" --force                # 30 secs
@@ -194,7 +207,7 @@ fi
 
 if [ "$1" == "taxonomy" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "taxonomy" ]; then restoreDB "${dbpath}/migration_clean_after_taxonomy.sql"; fi
+    if [ "$1" == "taxonomy" ]; then restoreDB "${dbpath}/migration_clean_after_taxonomy.sql" || exit 1; fi
     doMigrate --tag="bos:paragraph:1" --force               # 27 mins
     doMigrate --tag="bos:paragraph:2" --force               # 17 mins
     doMigrate --tag="bos:paragraph:3" --force               # 14 mins
@@ -205,7 +218,7 @@ fi
 ## Do these last b/c creates new paragraphs that might steal existing paragraph entity & revision id's.
 if [ "$1" == "paragraphs" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "paragraphs" ]; then restoreDB "${dbpath}/migration_clean_after_all_paragraphs.sql"; fi
+    if [ "$1" == "paragraphs" ]; then restoreDB "${dbpath}/migration_clean_after_all_paragraphs.sql" || exit 1; fi
     doMigrate --group=bos_field_collection --force          # 4 mins
     dumpDB ${dbpath}/migration_clean_after_field_collection.sql
 fi
@@ -213,7 +226,7 @@ fi
 # Redo paragraphs which required field_collections to be migrated to para's first.
 if [ "$1" == "field_collection" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "field_collection" ]; then restoreDB "${dbpath}/migration_clean_after_field_collection.sql"; fi
+    if [ "$1" == "field_collection" ]; then restoreDB "${dbpath}/migration_clean_after_field_collection.sql" || exit 1; fi
     doMigrate --tag="bos:paragraph:10" --force --update      # 3 min 15 secs
     # Fix the listview component to match new view names and displays.
     dumpDB ${dbpath}/migration_clean_after_para_update_1.sql
@@ -222,7 +235,7 @@ fi
 # Migrate nodes in sequence.
 if [ "$1" == "update1" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "update1" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_1.sql"; fi
+    if [ "$1" == "update1" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_1.sql" || exit 1; fi
     doMigrate --tag="bos:node:1" --force
     doMigrate --tag="bos:node:2" --force                    # 14 mins
     doMigrate --tag="bos:node:3" --force                    # 52 mins
@@ -233,7 +246,7 @@ fi
 # Redo para's which have nodes in fields.
 if [ "$1" == "nodes" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "nodes" ]; then restoreDB "${dbpath}/migration_clean_after_nodes.sql"; fi
+    if [ "$1" == "nodes" ]; then restoreDB "${dbpath}/migration_clean_after_nodes.sql" || exit 1; fi
     doMigrate --tag="bos:paragraph:99" --force --update     # 5 mins
     dumpDB ${dbpath}/migration_clean_after_para_update_2.sql
 fi
@@ -241,7 +254,7 @@ fi
 # Now do the node revisions (nodes and all paras must be done first)
 if [ "$1" == "update2" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql"; fi
+    if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql" || exit 1; fi
     doMigrate --tag="bos:node_revision:1" --force           # 2h 42 mins
     doMigrate --tag="bos:node_revision:2" --force           # 8h 50 mins
     doMigrate --tag="bos:node_revision:3" --force           # 1hr 43 mins
@@ -252,7 +265,7 @@ fi
 ## Finish off.
 if [ "$1" == "node_revision" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql"; fi
+    if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql" || exit 1; fi
     doMigrate d7_menu_links,d7_menu --force
     doMigrate d7_taxonomy_term:contact --force --update
     dumpDB ${dbpath}/migration_clean_after_menus.sql
