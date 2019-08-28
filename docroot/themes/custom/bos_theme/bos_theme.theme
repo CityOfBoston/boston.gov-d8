@@ -974,10 +974,11 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
     $current_path = \Drupal::service('path.current')->getPath();
   }
 
-  if (isset($variables['node']) && is_object($variables['node'])) {
+  // Start adding class mn (main-node???) to all nodes.
+  $variables["attributes"]->addClass("mn");
+  $variables["attributes"]->addClass("page");
 
-    // Start adding class mn (main-node???) to all nodes.
-    $variables["attributes"]->addClass("mn");
+  if (isset($variables['node']) && is_object($variables['node'])) {
 
     if ($variables['node']->getType() !== 'tabbed_content' && empty($variables['cob']['header_image'])) {
       if (!$variables["attributes"]->hasClass("page--nm")) {
@@ -1001,9 +1002,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
 
   // D8 OK: If we are on the employee directory page, change the title.
   if (explode("/", $current_path)[1] == 'user') {
-    if (!$variables["attributes"]->hasClass("page")) {
-      $variables["attributes"]->addClass("page");
-    }
     if (!$variables["attributes"]->hasClass("page--wa")) {
       $variables["attributes"]->addClass("page--wa");
     }
@@ -1033,6 +1031,15 @@ function _bos_theme_has_header(array &$variables) {
  *   The usual array.
  */
 function _bos_theme_build_breadcrumb(array &$variables) {
+  // Exceptions.
+  switch (\Drupal::request()->getPathInfo()) {
+    case "/view-page/topics":
+      $variables['breadcrumb'][] = [
+        'text' => new TranslatableMarkup("Guides", []),
+      ];
+      return;
+  }
+
   $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
   if (!empty($variables['breadcrumb']) && count($variables['breadcrumb']) == 1) {
     $route = $variables['breadcrumb'][0]['url'];
