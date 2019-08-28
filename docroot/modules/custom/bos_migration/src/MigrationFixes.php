@@ -987,6 +987,10 @@ class MigrationFixes {
         "type" => "node",
         "table" => "node__field_position_title",
       ],
+      "program_initiative_profile" => [
+        "type" => "node",
+        "table" => "node__body",
+      ],
     ];
 
     foreach ($revisionSync as $type => $data) {
