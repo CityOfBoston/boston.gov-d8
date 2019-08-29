@@ -1031,9 +1031,9 @@ class MigrationFixes {
 
     $sql = "
       SELECT d8.nid, d8.vid, d7.status d7_status, d8.status d8_status, d8.title, d8.type, w.published, w.is_current
-        FROM drupal.node_field_data d8
-        INNER JOIN drupal_d7.node d7 ON d8.nid = d7.nid and d8.vid = d8.vid and d8.status <> d7.status
-        INNER JOIN drupal_d7.workbench_moderation_node_history w on d8.vid = w.vid and w.published = 1
+        FROM bostond8dev.node_field_data d8
+        INNER JOIN bostond8ddb289903.node d7 ON d8.nid = d7.nid and d8.vid = d8.vid and d8.status <> d7.status
+        INNER JOIN bostond8ddb289903.workbench_moderation_node_history w on d8.vid = w.vid and w.published = 1
     ";
 
     $cnt = 0;
