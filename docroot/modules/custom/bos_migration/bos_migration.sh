@@ -64,18 +64,18 @@ function restoreDB() {
 
     if [ ! -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
-            printf "-> ${backup} not found, looking for unzipped backup.\n" | tee -a ${logfile}
+            printf " -> ${backup} not found looking for unzipped backup.\n" | tee -a ${logfile}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
         else
-            printf "-> ${backup} not found, looking for zipped backup.\n" | tee -a ${logfile}
+            printf " -> ${backup} not found looking for zipped backup.\n" | tee -a ${logfile}
             backup="${backup}.gz"
         fi
     fi
 
     if [ -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
-            printf "-> unzip ${backup}.\n" | tee -a ${logfile}
+            printf " -> unzip ${backup}.\n" | tee -a ${logfile}
             gunzip -fq ${backup}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
@@ -86,17 +86,17 @@ function restoreDB() {
         exit 1
     fi
 
-    printf "-> Import ${backup} file into MySQL\n" | tee -a ${logfile}
+    printf " -> Import ${backup} file into MySQL\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
 
-    printf "-> Re-zip backup.\n" | tee -a ${logfile}
+    printf " -> Re-zip backup.\n" | tee -a ${logfile}
     gzip -fq ${backup}
 
-    printf "-> Sync database wih current code.\n" | tee -a ${logfile}
+    printf " -> Sync database wih current code.\n" | tee -a ${logfile}
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
 
