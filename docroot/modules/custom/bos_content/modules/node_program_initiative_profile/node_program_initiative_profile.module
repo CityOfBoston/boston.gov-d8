@@ -63,7 +63,7 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
   $variables["primeColumnAttributes"] = new Attribute();
   $variables["primeColumnAttributes"]->addClass(["column", "mobile-100"]);
   $variables["primeColumnAttributes"]->addClass(["desktop-66-left"]);
-  if (!isset($variables['node']->field_sidebar_components->value)) {
+  if (!count($variables['node']->field_sidebar_components)) {
     $variables["hasSidebar"] = FALSE;
     $variables["primeColumnAttributes"]->removeClass("desktop-66-left");
   }

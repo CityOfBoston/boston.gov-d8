@@ -62,7 +62,7 @@ class MigrationFixes {
       'homepage_status' => ["status_items", "motd"],
     ],
     'topic_landing_page' => [
-      'page_1' => ["topic_landing_page", "page_1"],
+      'page_1' => ["topic_landing_page", "guide_page"],
     ],
     'transactions' => [
       'main_transactions' => ["transactions", "page_1"],
@@ -986,6 +986,10 @@ class MigrationFixes {
       "person_profile" => [
         "type" => "node",
         "table" => "node__field_position_title",
+      ],
+      "program_initiative_profile" => [
+        "type" => "node",
+        "table" => "node__body",
       ],
     ];
 

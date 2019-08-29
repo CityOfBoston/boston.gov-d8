@@ -144,6 +144,11 @@ function bos_list_theme() {
  */
 function bos_list_preprocess_paragraph__list(&$variables) {
   _bos_components_fix_attributes($variables);
+
+  $variables["attributes"]->addClass("b");
+  $variables["attributes"]->addClass("b--fw");
+  $variables["attributes"]->addClass("clearfix");
+
   if ($variables['paragraph']->field_component_theme->value == "grey" ||
     $variables['paragraph']->field_component_theme->value == "g") {
     $variables["attributes"]->addClass("b--g");
@@ -161,6 +166,16 @@ function bos_list_preprocess_paragraph__list(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_list_preprocess_views_view__topic_landing_page(&$variables) {
+  // Breadcrumbs only show if the view is not exposed within the guides node.
+  if (NULL != \Drupal::request()->getQueryString() || \Drupal::request()->getPathInfo() != "/guides") {
+    $variables["show_breadcrumbs"] = TRUE;
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
@@ -170,12 +185,13 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
     $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
     unset($form["#info"]["filter-title"]["label"]);
   }
-  if ($form["#id"] == 'views-exposed-form-transactions-page-1') {
+  elseif ($form["#id"] == 'views-exposed-form-transactions-page-1') {
     $form['title']['#attributes']['class'] = ['sf-i-f', 'form-text'];
     $form['title']['#attributes']['placeholder'] = 'Search transactions...';
     $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
     unset($form["#info"]["filter-title"]["label"]);
   }
+
 }
 
 /**
@@ -186,9 +202,8 @@ function bos_list_theme_suggestions_alter(array &$suggestions, array $variables,
     if (isset($variables["element"]["#theme"])) {
       $suggestions[] = $hook . '_' . $variables["element"]["#theme"];
     }
-    $field = $variables["element"]["#name"];
-    if (isset($field)) {
-      $suggestions[] = $hook . '_' . $field;
+    if (isset($variables["element"]["#name"])) {
+      $suggestions[] = $hook . '_' . $variables["element"]["#name"];
     }
   }
 }
