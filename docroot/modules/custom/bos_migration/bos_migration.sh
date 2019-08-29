@@ -302,6 +302,7 @@ if [ "{$1}" != "reset" ]; then
 fi
 
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
+doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
