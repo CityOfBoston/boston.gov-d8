@@ -1020,4 +1020,38 @@ class MigrationFixes {
     }
   }
 
+  /**
+   * Updates published status for major node.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function fixPublished() {
+
+    $sql = "
+      SELECT d8.nid, d8.vid, d7.status d7_status, d8.status d8_status, d8.title, d8.type, w.published, w.is_current
+        FROM drupal.node_field_data d8
+        INNER JOIN drupal_d7.node d7 ON d8.nid = d7.nid and d8.vid = d8.vid and d8.status <> d7.status
+        INNER JOIN drupal_d7.workbench_moderation_node_history w on d8.vid = w.vid and w.published = 1
+    ";
+
+    $cnt = 0;
+    $nids = Database::getConnection()->query($sql)->fetchAll();
+    if (count($nids)) {
+      foreach ($nids as $nid) {
+        $node = \Drupal::entityTypeManager()->getStorage("node")
+          ->loadRevision($nid->vid);
+        $node->setPublished(1);
+        $node->set("moderation_state", "published");
+        $node->save();
+        $cnt++;
+      }
+      printf("[success] Published %d nodes in %s.\n\n", $cnt);
+    }
+    else {
+      printf("[warning] No unpublished nodes to process.\n\n");
+    }
+  }
+
 }
