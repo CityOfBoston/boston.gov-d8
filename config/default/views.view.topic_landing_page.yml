@@ -89,6 +89,10 @@ display:
           quantity: 9
       style:
         type: default
+        options:
+          row_class: ''
+          default_row_class: false
+          uses_fields: false
       row:
         type: 'entity:node'
         options:
@@ -249,6 +253,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      use_ajax: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -259,14 +264,16 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  page_1:
+  guide_page:
     display_plugin: page
-    id: page_1
-    display_title: Page
+    id: guide_page
+    display_title: 'Guide Page'
     position: 1
     display_options:
       display_extenders: {  }
       path: view-page/topics
+      display_description: ''
+      enabled: true
     cache_metadata:
       max-age: -1
       contexts:

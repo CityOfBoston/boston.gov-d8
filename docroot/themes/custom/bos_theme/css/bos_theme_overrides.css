@@ -16,6 +16,14 @@ What: Style provided by contrib in D7: /sites/all/modules/contrib/views/css/view
 }
 /*
 David:
+Where: views-exposed-form-XXXXX.html.twig.
+What:  Keeps the apply and reset buttons in the same row.
+ */
+.views-exposed-widget {
+  display: table-cell;
+}
+/*
+David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
  */
@@ -736,7 +744,7 @@ David:
 Where: node--department-profile.html.twig
 What: Fixes the department icon to be 100px square. (Iterators issue #39)
 */
-@media (min-width: 980px) {
+@media screen and  (min-width: 980px) {
   .node-type-department-profile .department-icon {
     padding: 13px 0 0 13px;
   }
@@ -744,6 +752,11 @@ What: Fixes the department icon to be 100px square. (Iterators issue #39)
 .node-department-profile .department-icon svg {
   height: 76px;
   width: 76px;
+}
+@media screen and (min-width: 980px) and (max-width: 1300px) {
+  .node-type-department-profile .department-icon {
+    margin-left: auto;
+  }
 }
 
 /*
@@ -772,21 +785,11 @@ What: Keeps title content inside bouding box.
 
 /*
 David:
-Where: page.html.twig.twig
-What: Allows the main page to scroll when the menu is displayed.
+Where: page--user--login.html.twig
+What: Locates content nicely on the page.
 */
-body.no-s {
-  overflow: visible;
-}
-body.no-s .mn .main {
-  overflow: hidden;
-  width: calc(100vw - 300px);
-}
-/* locates the main-menu when the sidemenu is shown. */
-@media screen and (min-width: 480px) {
-  .brg-tr:checked ~ .mn--full-ie .h, .brg-tr:checked ~ .mn--full-ie .nv-s, .brg-tr:checked ~ .mn .h, .brg-tr:checked ~ .mn .mn-fixed-child .h, .brg-tr:checked ~ .mn .mn-fixed-child .nv-s, .brg-tr:checked ~ .mn .nv-s {
-    width: calc(100% - 300px);
-  }
+.page-user .main {
+  padding: 2em 0;
 }
 
 /*
@@ -821,4 +824,13 @@ What: Improves footer responsive actions. Iterators issue #32.
   .ft-ll-i:first-child {
     margin-left: 18px;
   }
+}
+/*
+David:
+Where: node-listing-page.twig.twig
+What: Brings title over the top of the hero blank layer. Iterators issue #37.
+*/
+.desktop-100,
+.desktop-100.node-listing-page {
+  position:relative;
 }
