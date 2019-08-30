@@ -469,50 +469,6 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        nid:
-          id: nid
-          table: node_field_data
-          field: nid
-          relationship: field_featured_post
-          group_type: group
-          admin_label: ''
-          operator: empty
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: nid
-          plugin_id: numeric
       sorts:
         created:
           id: created
@@ -589,25 +545,6 @@ display:
       display_extenders: {  }
       display_description: 'Related post nodes.'
       relationships:
-        reverse__paragraph__field_featured_post:
-          id: reverse__paragraph__field_featured_post
-          table: node_field_data
-          field: reverse__paragraph__field_featured_post
-          relationship: none
-          group_type: group
-          admin_label: field_featured_post
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_post:
-          id: field_featured_post
-          table: paragraph__field_featured_post
-          field: field_featured_post
-          relationship: reverse__paragraph__field_featured_post
-          group_type: group
-          admin_label: 'field_featured_post: Content'
-          required: false
-          plugin_id: standard
         field_related:
           id: field_related
           table: node__field_related
