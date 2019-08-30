@@ -621,6 +621,7 @@ display:
         relationships: false
         arguments: false
         title: false
+        empty: false
       arguments:
         nid:
           id: nid
@@ -660,6 +661,20 @@ display:
           plugin_id: node_nid
       block_description: 'Related News and Announcements (post)'
       title: 'Related News & Announcements'
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'No related posts are available at this time.'
+            format: filtered_html
+          plugin_id: text
     cache_metadata:
       max-age: -1
       contexts:
