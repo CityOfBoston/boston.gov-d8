@@ -13,7 +13,6 @@ dependencies:
     - datetime
     - image_url_formatter
     - node
-    - paragraphs
     - smart_trim
     - svg_image
     - text
@@ -502,26 +501,7 @@ display:
             value: 'No upcoming posts are available at this time.'
             format: filtered_html
           plugin_id: text
-      relationships:
-        reverse__paragraph__field_featured_post:
-          id: reverse__paragraph__field_featured_post
-          table: node_field_data
-          field: reverse__paragraph__field_featured_post
-          relationship: none
-          group_type: group
-          admin_label: field_featured_post
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_post:
-          id: field_featured_post
-          table: paragraph__field_featured_post
-          field: field_featured_post
-          relationship: reverse__paragraph__field_featured_post
-          group_type: group
-          admin_label: 'field_featured_post: Content'
-          required: false
-          plugin_id: standard
+      relationships: {  }
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
