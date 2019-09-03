@@ -9,6 +9,7 @@ dependencies:
     - paragraphs.paragraphs_type.drawers
   module:
     - entity_reference_revisions
+    - fences
 id: paragraph.drawers.default
 targetEntityType: paragraph
 bundle: drawers
@@ -37,7 +38,14 @@ content:
     settings:
       view_mode: full
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_short_title:
     label: hidden
