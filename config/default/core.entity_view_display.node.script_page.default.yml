@@ -12,6 +12,7 @@ dependencies:
     - node.type.script_page
   module:
     - entity_reference_revisions
+    - fences
     - text
     - user
 _core:
@@ -23,9 +24,9 @@ mode: default
 content:
   content_moderation_control:
     weight: -20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_components:
     label: hidden
     weight: 4
@@ -40,9 +41,16 @@ content:
     weight: 1
     type: entity_reference_entity_view
     settings:
-      view_mode: default
+      view_mode: article
       link: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_embed_list:
     label: hidden
