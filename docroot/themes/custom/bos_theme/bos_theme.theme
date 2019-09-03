@@ -669,6 +669,36 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
       }
     }
   }
+
+  if ($variables["field_name"] == "field_intro_text") {
+    $variables['attributes']->addClass('intro-text');
+    $view_mode = $variables['element']['#view_mode'];
+    $bundle = $variables['element']['#bundle'];
+    // Add view modes and paragraph items to this array that
+    // should not have additional classes.
+    $intro_stripped = [
+      'listing',
+      'short_listing',
+      'long_listing',
+      'featured_item',
+      'user_action',
+    ];
+
+    // The squiggle should not be present.
+    $no_squiggle = [
+      'hero_image',
+    ];
+
+    // If view mode and paragraph item is not in the $intro_stripped array
+    // add additional classes.
+    if (!in_array($view_mode, $intro_stripped) && !in_array($bundle, $intro_stripped)) {
+      $variables['attributes']->addClass("supporting-text");
+      // Don't add squiggle border to intro-field in hero image component.
+      if (!in_array($bundle, $no_squiggle)) {
+        $variables['attributes']->addClass("squiggle-border-bottom");
+      }
+    }
+  }
 }
 
 /**
