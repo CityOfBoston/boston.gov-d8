@@ -467,17 +467,19 @@ David:  D8 Issue#408.
 Where: In paragraph--transaction-grid.html.twig.
 What:  Sizes and centers the icon/image in the transaction box.
  */
-.paragraphs-item-transaction-grid .lwi-ic svg {
-  width: 176px;
-  height: 175px;
-  margin: 0 auto 3em auto;
-}
-.paragraphs-item-transaction-grid img.lwi-i {
-  max-width: 180px;
-  max-height: 100px;
-  margin: 0 auto 3em auto;
-}
+@media screen and (min-width:1280px) {
+  .paragraphs-item-transaction-grid .lwi-ic svg {
+    width: 176px;
+    height: 175px;
+    margin: 0 auto 3em auto;
+  }
 
+  .paragraphs-item-transaction-grid img.lwi-i {
+    max-width: 180px;
+    max-height: 100px;
+    margin: 0 auto 3em auto;
+  }
+}
 /*
 David:  D8 Issue#408.
 Where: In paragraph--bos-signup-emergency-alerts.html.twig.
@@ -830,4 +832,28 @@ What: Brings title over the top of the hero blank layer. Iterators issue #37.
 .desktop-100,
 .desktop-100.node-listing-page {
   position:relative;
+}
+
+/*
+David:  D8 Issue#408 && Iterators issue #42.
+Where: In paragraph--transaction-grid.html.twig.
+What:  Sizes and centers the icon/image in the transaction box.
+ */
+@media screen and (min-width:980px) and (max-width:1280px) {
+  .lwi-i {
+    height: 80%;
+    width: 80%;
+  }
+  .lwi-t {
+    font-size: 1.2rem;
+  }
+}
+@media screen and (max-width:767px) {
+  .lwi-i {
+    float: left;
+    margin: 0;
+  }
+  .lwi-t {
+    float: left;
+  }
 }
