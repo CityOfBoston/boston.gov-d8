@@ -6,11 +6,8 @@
  *
  * @see https://drupal.org/node/1728164
  #}
- <div id="breadcrumb" data-swiftype-index="false">
-   <nav class="brc" role="navigation">
-     {{ drupal_block('system_breadcrumb_block') }}
-   </nav>
-</div>
+
+{{ drupal_block('system_breadcrumb_block') }}
 
 <article id="node-{{ node.id }}" {{ attributes }}>
   <div class="department-info-wrapper desktop-100">
