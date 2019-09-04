@@ -163,8 +163,8 @@ function node_event_preprocess_node__event(&$variables) {
   }
 
   // Now make and render the Intro_image block.
-  $background_image = $variables["elements"]["field_intro_image"];
-  if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+  if (isset($variables["elements"]["field_intro_image"]["#items"]) && $variables["elements"]["field_intro_image"]["#items"]->count()) {
+    $background_image = $variables["elements"]["field_intro_image"];
     $photo_id = Html::getUniqueId('hro');
     $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
     $variables['#attached']['html_head'][] = [

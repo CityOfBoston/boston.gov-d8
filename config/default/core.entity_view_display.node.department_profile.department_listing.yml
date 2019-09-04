@@ -1,6 +1,6 @@
 uuid: 3e321097-26bf-4b5f-9081-52484becccb1
 langcode: en
-status: false
+status: true
 dependencies:
   config:
     - core.entity_view_mode.node.department_listing
@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.department_profile.field_updated_date
     - node.type.department_profile
   module:
+    - fences
     - svg_image
     - user
 _core:
@@ -31,9 +32,9 @@ mode: department_listing
 content:
   content_moderation_control:
     weight: -20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_icon:
     label: hidden
     weight: 0
@@ -41,7 +42,18 @@ content:
     settings:
       image_style: ''
       image_link: ''
-    third_party_settings: {  }
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_phone_number:
     label: hidden
@@ -54,6 +66,8 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   body: true
   field_address: true
