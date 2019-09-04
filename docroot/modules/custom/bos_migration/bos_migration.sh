@@ -307,6 +307,7 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
+doMigrate d7_menu_links,d7_menu --force
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 
