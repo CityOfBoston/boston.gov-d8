@@ -199,6 +199,16 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function bos_list_form_alter(&$form, $form_state, $form_id) {
+  if ($form["#form_id"] == 'views_exposed_form') {
+    $current_path = \Drupal::service('path.current')->getPath();
+    $form["#action"] = $current_path;
+  }
+}
+
+/**
  * Implements hook_theme_suggestions_alter().
  */
 function bos_list_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
