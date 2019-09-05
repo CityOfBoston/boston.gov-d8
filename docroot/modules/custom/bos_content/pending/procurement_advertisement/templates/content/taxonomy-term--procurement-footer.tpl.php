@@ -1,1 +1,0 @@
-<?php print $term->description; ?>
