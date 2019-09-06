@@ -1059,7 +1059,7 @@ class MigrationFixes {
    */
   public static function deleteContent() {
     $del = [
-      'node' => 'script_page'
+      'node' => 'script_page',
     ];
     $cnt = 0;
     foreach ($del as $type => $bundle) {

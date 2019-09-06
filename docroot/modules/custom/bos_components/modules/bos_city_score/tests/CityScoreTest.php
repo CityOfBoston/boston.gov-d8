@@ -1,5 +1,7 @@
 <?php
 
+namespace Drupal\phpunit;
+
 /**
  * @file
  * Test configuration in settings.php.
@@ -10,8 +12,6 @@
  * convenient for an endpoint test to define scenarios in an array and test
  * that array.
  */
-
-namespace Drupal\phpunit;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
