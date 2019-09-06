@@ -1054,4 +1054,25 @@ class MigrationFixes {
     }
   }
 
+  /**
+   * Removes the content specified in the array.
+   */
+  public static function deleteContent() {
+    $del = [
+      'node' => 'script_page',
+    ];
+    $cnt = 0;
+    foreach ($del as $type => $bundle) {
+      $query = \Drupal::entityQuery($type)
+        ->condition('type', $bundle)
+        ->condition('status', 0, ">=");
+      $ids = $query->execute();
+      foreach ($ids as $id) {
+        \Drupal::entityTypeManager()->getStorage($type)->load($id)->delete();
+        $cnt++;
+      }
+      printf("[success] Deleted %d %s %ss.\n\n", $cnt, $bundle, $type);
+    }
+  }
+
 }
