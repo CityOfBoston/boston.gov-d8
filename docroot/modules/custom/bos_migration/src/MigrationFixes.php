@@ -76,7 +76,7 @@ class MigrationFixes {
     'events_and_notices' => [
       'related' => ["events_and_notices", "related"],
       'upcoming' => ["events_and_notices", "upcoming"],
-      ],
+    ],
   ];
 
   /**
