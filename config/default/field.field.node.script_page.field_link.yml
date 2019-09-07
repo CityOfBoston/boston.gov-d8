@@ -1,4 +1,4 @@
-uuid: 89f0f71b-7b43-4fcd-95df-67f20be0a415
+uuid: 7839ca13-322f-45eb-b8e2-5a864d0d0763
 langcode: en
 status: true
 dependencies:
@@ -9,6 +9,8 @@ dependencies:
     - paragraphs.paragraphs_type.external_link
   module:
     - entity_reference_revisions
+_core:
+  default_config_hash: MTYDOkdKCNEf_7eHOpV9OAh7PRgzzAeYK__kOaVX6WI
 id: node.script_page.field_link
 field_name: field_link
 entity_type: node
@@ -113,7 +115,7 @@ settings:
       message_for_the_day:
         enabled: false
         weight: 30
-      news_and_announcements:
+      news_announcements:
         enabled: false
         weight: 31
       photo:
@@ -236,8 +238,5 @@ settings:
       video:
         enabled: false
         weight: 72
-      events_and_notices:
-        weight: 73
-        enabled: false
   handler: 'default:paragraph'
 field_type: entity_reference_revisions

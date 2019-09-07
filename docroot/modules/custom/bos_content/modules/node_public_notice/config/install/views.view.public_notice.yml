@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing
     - field.storage.node.field_cancelled
     - field.storage.node.field_drawer
     - field.storage.node.field_is_there_public_testimony
@@ -79,8 +79,10 @@ display:
                 is_secondary: false
                 placeholder_text: ''
             field_contact_target_id:
-              bef_format: default
+              bef_format: bef
               more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
                 is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
@@ -108,10 +110,15 @@ display:
           quantity: 9
       style:
         type: default
+        options:
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
       row:
         type: 'entity:node'
         options:
-          view_mode: teaser
+          relationship: none
+          view_mode: listing
       fields:
         title:
           id: title
@@ -1309,21 +1316,15 @@ display:
             identifier: field_contact_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
               site_administrator: '0'
+              developer: '0'
               content_editor: '0'
               content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
-              developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -1338,7 +1339,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
+          type: select
           limit: true
           vid: contact
           hierarchy: false
