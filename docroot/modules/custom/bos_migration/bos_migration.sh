@@ -47,11 +47,32 @@ function doMigrate() {
 }
 
 function doExecPHP() {
+    SECONDS=0
+
+    printf " -> Executing PHP: '${*}'"
     if [ -d "/mnt/gfs" ]; then
         ${drush} php-eval $*  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush php-eval $*"  | tee -a ${logfile}
     fi
+
+    printf " -> Run time: " | tee -a ${logfile}
+    if (( $SECONDS > 3600 )); then
+        let "hours=SECONDS/3600"
+        text="hour"
+        if (( $hours > 1 )); then text="hours"; fi
+        printf "$hours $text, " | tee -a ${logfile}
+    fi
+    if (( $SECONDS > 60 )); then
+        let "minutes=(SECONDS%3600)/60"
+        text="minute"
+        if (( $minutes > 1 )); then text="minutes"; fi
+        printf "$minutes $text and " | tee -a ${logfile}
+    fi
+    let "seconds=(SECONDS%3600)%60"
+    text="second"
+    if (( $seconds > 1 )); then text="seconds"; fi
+    printf "$seconds $text.${NC}\n" | tee -a ${logfile}
 }
 
 function restoreDB() {
@@ -64,18 +85,18 @@ function restoreDB() {
 
     if [ ! -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
-            printf "-> ${backup} not found, looking for unzipped backup.\n" | tee -a ${logfile}
+            printf " -> ${backup} not found looking for unzipped backup.\n" | tee -a ${logfile}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
         else
-            printf "-> ${backup} not found, looking for zipped backup.\n" | tee -a ${logfile}
+            printf " -> ${backup} not found looking for zipped backup.\n" | tee -a ${logfile}
             backup="${backup}.gz"
         fi
     fi
 
     if [ -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
-            printf "-> unzip ${backup}.\n" | tee -a ${logfile}
+            printf " -> unzip ${backup}.\n" | tee -a ${logfile}
             gunzip -fq ${backup}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
@@ -86,17 +107,17 @@ function restoreDB() {
         exit 1
     fi
 
-    printf "-> Import ${backup} file into MySQL\n" | tee -a ${logfile}
+    printf " -> Import ${backup} file into MySQL\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
 
-    printf "-> Re-zip backup.\n" | tee -a ${logfile}
+    printf " -> Re-zip backup.\n" | tee -a ${logfile}
     gzip -fq ${backup}
 
-    printf "-> Sync database wih current code.\n" | tee -a ${logfile}
+    printf " -> Sync database wih current code.\n" | tee -a ${logfile}
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
 
@@ -302,15 +323,18 @@ if [ "{$1}" != "reset" ]; then
 fi
 
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
+doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
+doMigrate d7_menu_links,d7_menu --force
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 
 # Takes site out of maintenance mode when migration is done.
 ${drush} sset "system.maintenance_mode" "0"
+${drush} cim -y
 
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"

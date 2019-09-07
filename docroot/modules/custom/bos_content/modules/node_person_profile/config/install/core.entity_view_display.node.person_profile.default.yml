@@ -18,7 +18,7 @@ dependencies:
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
     - node.type.person_profile
-    - responsive_image.styles.person_photos
+    - responsive_image.styles.person_profile_photo
   module:
     - address
     - entity_reference_revisions
@@ -88,7 +88,7 @@ content:
     weight: 2
     type: responsive_image
     settings:
-      responsive_image_style: person_photos
+      responsive_image_style: person_profile_photo
       image_link: ''
     third_party_settings:
       fences:

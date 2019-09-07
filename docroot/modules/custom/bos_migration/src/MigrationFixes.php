@@ -50,6 +50,8 @@ class MigrationFixes {
       'places' => ["news_and_announcements", "related"],
       'posts' => ["news_and_announcements", "related"],
       'programs' => ["news_and_announcements", "related"],
+      'upcoming' => ["news_and_announcements", "upcoming"],
+      'related' => ["news_and_announcements", "related"],
     ],
     'places' => [
       'listing' => ["places", "page_1"],
@@ -69,6 +71,11 @@ class MigrationFixes {
     ],
     'upcoming_events' => [
       'most_recent' => ["upcoming_events", "block_1"],
+    ],
+
+    'events_and_notices' => [
+      'related' => ["events_and_notices", "related"],
+      'upcoming' => ["events_and_notices", "upcoming"],
     ],
   ];
 
@@ -1017,6 +1024,62 @@ class MigrationFixes {
       else {
         printf("[warning] No revisions to process for %s in %s\n\n", $type, $table);
       }
+    }
+  }
+
+  /**
+   * Updates published status for major node.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function fixPublished() {
+
+    $sql = "
+      SELECT d8.nid, d8.vid, d7.status d7_status, d8.status d8_status, d8.title, d8.type, w.published, w.is_current
+        FROM bostond8dev.node_field_data d8
+        INNER JOIN bostond8ddb289903.node d7 ON d8.nid = d7.nid and d8.vid = d8.vid and d8.status <> d7.status
+        INNER JOIN bostond8ddb289903.workbench_moderation_node_history w on d8.vid = w.vid and w.published = 1
+    ";
+
+    $cnt = 0;
+    $nids = Database::getConnection()->query($sql)->fetchAll();
+    if (count($nids)) {
+      printf("[action] Will publish %d unpublished nodes.\n", $cnt);
+      foreach ($nids as $nid) {
+        $node = \Drupal::entityTypeManager()->getStorage("node")
+          ->loadRevision($nid->vid);
+        $node->setPublished(1);
+        $node->set("moderation_state", "published");
+        $node->save();
+        $cnt++;
+      }
+      printf("[success] Published %d nodes.\n\n", $cnt);
+    }
+    else {
+      printf("[warning] No unpublished nodes to process.\n\n");
+    }
+  }
+
+  /**
+   * Removes the content specified in the array.
+   */
+  public static function deleteContent() {
+    $del = [
+      'node' => 'script_page',
+    ];
+    $cnt = 0;
+    foreach ($del as $type => $bundle) {
+      $query = \Drupal::entityQuery($type)
+        ->condition('type', $bundle)
+        ->condition('status', 0, ">=");
+      $ids = $query->execute();
+      foreach ($ids as $id) {
+        \Drupal::entityTypeManager()->getStorage($type)->load($id)->delete();
+        $cnt++;
+      }
+      printf("[success] Deleted %d %s %ss.\n\n", $cnt, $bundle, $type);
     }
   }
 

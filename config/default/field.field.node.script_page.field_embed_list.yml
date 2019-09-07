@@ -1,4 +1,4 @@
-uuid: 0fe159ee-5ed1-4b99-a5e8-50ea0a216d5e
+uuid: 13672d11-6c7e-4f3d-a3a5-955ddb447775
 langcode: en
 status: true
 dependencies:
@@ -8,6 +8,8 @@ dependencies:
     - paragraphs.paragraphs_type.seamless_doc
   module:
     - entity_reference_revisions
+_core:
+  default_config_hash: KtxrW8UsGyHLBSaGkwhkc2aVjE9m9y-OKG2MuIPVr6g
 id: node.script_page.field_embed_list
 field_name: field_embed_list
 entity_type: node
@@ -120,7 +122,7 @@ settings:
       message_for_the_day:
         enabled: false
         weight: 33
-      news_and_announcements:
+      news_announcements:
         enabled: false
         weight: 34
       photo:
@@ -234,8 +236,5 @@ settings:
       transactions:
         enabled: false
         weight: 71
-      events_and_notices:
-        weight: 73
-        enabled: false
   handler: 'default:paragraph'
 field_type: entity_reference_revisions
