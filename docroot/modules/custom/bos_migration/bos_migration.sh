@@ -47,11 +47,32 @@ function doMigrate() {
 }
 
 function doExecPHP() {
+    SECONDS=0
+
+    printf " -> Executing PHP: '${*}'"
     if [ -d "/mnt/gfs" ]; then
         ${drush} php-eval $*  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush php-eval $*"  | tee -a ${logfile}
     fi
+
+    printf " -> Run time: " | tee -a ${logfile}
+    if (( $SECONDS > 3600 )); then
+        let "hours=SECONDS/3600"
+        text="hour"
+        if (( $hours > 1 )); then text="hours"; fi
+        printf "$hours $text, " | tee -a ${logfile}
+    fi
+    if (( $SECONDS > 60 )); then
+        let "minutes=(SECONDS%3600)/60"
+        text="minute"
+        if (( $minutes > 1 )); then text="minutes"; fi
+        printf "$minutes $text and " | tee -a ${logfile}
+    fi
+    let "seconds=(SECONDS%3600)%60"
+    text="second"
+    if (( $seconds > 1 )); then text="seconds"; fi
+    printf "$seconds $text.${NC}\n" | tee -a ${logfile}
 }
 
 function restoreDB() {
@@ -313,6 +334,7 @@ doExecPHP "node_access_rebuild();"
 
 # Takes site out of maintenance mode when migration is done.
 ${drush} sset "system.maintenance_mode" "0"
+${drush} cim -y
 
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"

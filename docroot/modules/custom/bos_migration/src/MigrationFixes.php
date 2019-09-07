@@ -50,6 +50,8 @@ class MigrationFixes {
       'places' => ["news_and_announcements", "related"],
       'posts' => ["news_and_announcements", "related"],
       'programs' => ["news_and_announcements", "related"],
+      'upcoming' => ["news_and_announcements", "upcoming"],
+      'related' => ["news_and_announcements", "related"],
     ],
     'places' => [
       'listing' => ["places", "page_1"],
@@ -69,6 +71,11 @@ class MigrationFixes {
     ],
     'upcoming_events' => [
       'most_recent' => ["upcoming_events", "block_1"],
+    ],
+
+    'events_and_notices' => [
+      'related' => ["events_and_notices", "related"],
+      'upcoming' => ["events_and_notices", "upcoming"],
     ],
   ];
 
@@ -1039,6 +1046,7 @@ class MigrationFixes {
     $cnt = 0;
     $nids = Database::getConnection()->query($sql)->fetchAll();
     if (count($nids)) {
+      printf("[action] Will publish %d unpublished nodes.\n", $cnt);
       foreach ($nids as $nid) {
         $node = \Drupal::entityTypeManager()->getStorage("node")
           ->loadRevision($nid->vid);
@@ -1047,7 +1055,7 @@ class MigrationFixes {
         $node->save();
         $cnt++;
       }
-      printf("[success] Published %d nodes in %s.\n\n", $cnt);
+      printf("[success] Published %d nodes.\n\n", $cnt);
     }
     else {
       printf("[warning] No unpublished nodes to process.\n\n");
