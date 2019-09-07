@@ -15,21 +15,32 @@ BACKUP_FILE="prod-boston-boston-$FNOW.sql"
 REMOTE_BACKUP="$BACKUP_PATH$BACKUP_FILE_ZIP"
 
 # Copy over the latest d7 prod backup.
+printf "\n== START MIGRATION SYNC ==\n\n"
+printf " [info] Will copy current prod drupal 7 DB (${REMOTE_BACKUP}) from ${REMOTE_SERVER}\n"
 scp -i $KEY_FILE $REMOTE_SERVER:$REMOTE_BACKUP $LOCAL_PATH
 
 # Load up the backup onto the local MySQL server.
 LOCAL_BACKUP_ZIP="$LOCAL_PATH$BACKUP_FILE_ZIP"
 if [ $? -eq 0 ] && [ -f "$LOCAL_BACKUP_ZIP" ]; then
+  printf " [success] D7 backup copied to ${LOCAL_PATH}\n"
   LOCAL_BACKUP="$LOCAL_PATH$BACKUP_FILE"
   # Remove existing DB.
+  printf " [info] Remove current D7 database on (local) bostond8 MySQL server.\n"
   drush sql:drop --database=migrate -y
+  printf " [success] (local) D7 database dropped.\n"
   # Unzip backup.
   gunzip -fq $LOCAL_BACKUP_ZIP
   # Restore the prod backup.
+  printf " [info] Load ${LOCAL_PATH} alongside current Drupal8 DB on local MySQL.\n"
   drush sql:cli --database=migrate < $LOCAL_BACKUP
+  printf " [success] Drupal 7 database installed.\n"
   # Cleanup backup file.
   rm -f $LOCAL_BACKUP
 
   # Run the migration.
+  printf " [info] Launch normal migration.\n"
   ./bos_migration.sh reset bostond8dev
+else
+  printf " [error] DB NOT COPIED.\n"
 fi
+printf "\n== END MIGRATION SYNC ==\n"
