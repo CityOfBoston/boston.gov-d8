@@ -1064,11 +1064,20 @@ class MigrationFixes {
 
   /**
    * Removes the content specified in the array.
+   *
+   * @param array $del
+   *   An array with entites to remove.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function deleteContent() {
-    $del = [
-      'node' => 'script_page',
-    ];
+  public static function deleteContent(array $del = []) {
+    if (empty($del)) {
+      $del = [
+        'node' => 'script_page',
+      ];
+    }
     $cnt = 0;
     foreach ($del as $type => $bundle) {
       $query = \Drupal::entityQuery($type)
@@ -1080,6 +1089,105 @@ class MigrationFixes {
         $cnt++;
       }
       printf("[success] Deleted %d %s %ss.\n\n", $cnt, $bundle, $type);
+    }
+  }
+
+  /**
+   * Loads content from a configuration settings file.
+   *
+   * @param string $module
+   *   The mode to read the settings file from.
+   *
+   * @throws \Exception
+   */
+  public static function loadSetup(string $module) {
+    $config = \Drupal::config($module . '.settings');
+    if (empty($config)) {
+      printf("Cannot find %s.module", $module);
+      return;
+    }
+
+    $setup_data = $config->get("setup_data");
+    if (empty($setup_data)) {
+      printf("No 'setup_data' element in settings file.");
+      return;
+    }
+
+    $entity_type = $setup_data["entity_type"];
+    $type = $setup_data["type"];
+    foreach ($setup_data as $key => $data) {
+      if (is_numeric($key)) {
+        self::makeEntity($entity_type, $type, $data);
+      }
+    }
+  }
+
+  /**
+   * Create an entity using the supplied array data (sort of render..).
+   *
+   * @param string $entity_type
+   *   The entity type to create.
+   * @param string $type
+   *   The bundle or type of entity.
+   * @param array $data
+   *   Fields and settings for the entity.
+   *
+   * @return array
+   *   The entityID and revision created.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private static function makeEntity(string $entity_type, string $type, array $data) {
+    $field_array = [
+      "type" => $type,
+    ];
+
+    if (!empty($data["title"])) {
+      $field_array["title"] = $data["title"];
+    }
+
+    foreach ($data as $fieldname => $value) {
+
+      if (is_array($value) && isset($value["entity_type"])) {
+        $sub_entity_type = $value["entity_type"];
+        $sub_type = $value["type"];
+        foreach ($value as $key => $sub_data) {
+          if (is_numeric($key)) {
+            $field_array[$fieldname][$key] = self::makeEntity($sub_entity_type, $sub_type, $sub_data);
+          }
+        }
+      }
+
+      elseif (substr($fieldname, 0, 5) == "field") {
+        $field_array[$fieldname] = $value;
+      }
+    }
+
+    $entity = \Drupal::entityTypeManager()
+      ->getStorage($entity_type)
+      ->create($field_array);
+
+    if ($entity_type == "node") {
+      $entity->setPublished($data["status"]);
+      if ($data["status"] == 1) {
+        $entity->set("moderation_state", "published");
+      }
+    }
+    if (!empty($data['uid'])) {
+      $entity->uid = $data['uid'];
+    }
+    $result = $entity->save();
+
+    if ($result == 1) {
+      return [
+        "target_id" => $entity->id(),
+        "target_revision_id" => $entity->revision_id->value ?? $entity->getRevisionId(),
+      ];
+    }
+    else {
+      throw new \Exception("New $entity_type not saved.");
     }
   }
 
