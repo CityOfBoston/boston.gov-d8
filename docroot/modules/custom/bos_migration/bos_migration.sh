@@ -329,8 +329,8 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
 # Reset status_items.
-doExecPHP "\Drupal\bos_migration\MigrationFixes::deleteContent(['node' => 'status_item']);"
-doExecPHP "\Drupal\bos_migration\MigrationFixes::loadSetup('node_status_item');"
+doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item']);"
+doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
 doMigrate d7_menu_links,d7_menu --force
 ${drush} entup -y  | tee -a ${logfile}
