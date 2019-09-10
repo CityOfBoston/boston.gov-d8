@@ -1,6 +1,6 @@
 setup_data:
-  entity_type : "node"
-  type: "status_item"
+  entity_type: node
+  type: status_item
   0:
     title: "Street Cleaning"
     field_title: "Street Cleaning"
@@ -13,13 +13,15 @@ setup_data:
       width: 64
     field_weight: -6
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>There is no daytime street cleaning today. Overnight street cleaning is on a normal schedule.</p>"
+        field_message:
+          value: "<p>There is no daytime street cleaning today. Overnight street cleaning\_is on a normal schedule.</p>"
+          format: "filtered_html"
         field_link:
           target_id: 48606
           target_revision_id: 9119156
@@ -27,13 +29,15 @@ setup_data:
           infinite: 0
           value: "2019-08-08"
           end_value: "2019-08-08"
-          rrule: "FREQ=DAILY;INTERVAL=1;UNTIL=20190808T040000Z"
-          timezone: "America/New_York"
+          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190808T040000Z
+          timezone: America/New_York
       1:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>Day time street cleaning is canceled due to the holiday. Overnight street cleaning is running on a normal schedule.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Day time street cleaning is canceled due to the holiday. Overnight street cleaning is running on a normal schedule.</p>"
         field_link:
           target_id: 48606
           target_revision_id: 9119156
@@ -41,13 +45,15 @@ setup_data:
           infinite: 0
           value: "2019-08-08"
           end_value: "2019-08-08"
-          rrule: "FREQ=DAILY;INTERVAL=1;UNTIL=20190808T040000Z"
-          timezone: "America/New_York"
+          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190808T040000Z
+          timezone: America/New_York
       2:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>"
         field_link:
           target_id: 48606
           target_revision_id: 9119156
@@ -56,7 +62,7 @@ setup_data:
           value: "2019-08-08"
           end_value: "2019-08-09"
           rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR"
-          timezone: "America/New_York"
+          timezone: America/New_York
   1:
     title: "City building hours"
     field_title: "City building hours"
@@ -69,13 +75,15 @@ setup_data:
       width: 64
     field_weight: -5
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>City Hall is closed. Only City of Boston emergency and snow operations personnel have to report to work.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>City Hall is closed. Only City of Boston emergency\_and snow operations\_personnel have to report to work.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -83,13 +91,15 @@ setup_data:
           infinite: 0
           value: "2019-03-04"
           end_value: "2019-03-04"
-          rrule: "FREQ=DAILY;INTERVAL=1;UNTIL=20190304T040000Z"
-          timezone: "America/New_York"
+          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190304T040000Z
+          timezone: America/New_York
       1:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>All municipal buildings are closed today due to the holiday.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>All municipal buildings are closed today due to the holiday.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -97,13 +107,15 @@ setup_data:
           infinite: 0
           value: "2019-05-27"
           end_value: "2019-05-27"
-          rrule: "FREQ=DAILY;INTERVAL=1;UNTIL=20190528T040000Z"
-          timezone: "America/New_York"
+          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190528T040000Z
+          timezone: America/New_York
       2:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>All municipal buildings are closed. Community centers are also closed, except for Clougherty Pool, Mirabella Pool, and the beach at the Curley Community Center.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>All municipal buildings are closed. Community centers are also closed, except for\_Clougherty Pool,\_Mirabella Pool, and the beach at the\_Curley Community Center.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -111,13 +123,15 @@ setup_data:
           infinite: 0
           value: "2019-07-04"
           end_value: "2019-07-04"
-          rrule: "FREQ=DAILY;INTERVAL=1;UNTIL=20190705T040000Z"
-          timezone: "America/New_York"
+          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190705T040000Z
+          timezone: America/New_York
       3:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>All municipal buildings are open based on their normal hours.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>All municipal buildings are open based on their normal hours.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -126,12 +140,14 @@ setup_data:
           value: "2019-08-08"
           end_value: "2019-08-08"
           rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR"
-          timezone: "America/New_York"
+          timezone: America/New_York
       4:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>On Saturdays, all libraries and some community centers are open. All other municipal buildings are closed.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>On Saturdays, all libraries and some community centers are open. All other municipal buildings are closed.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -139,13 +155,15 @@ setup_data:
           infinite: 1
           value: "2019-02-03"
           end_value: "2019-02-03"
-          rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=SA"
-          timezone: "America/New_York"
+          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SA
+          timezone: America/New_York
       5:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>On Sundays, some community centers are open. The Central Library in Copley Square is open from 1 - 5 p.m. All other municipal buildings and libraries are closed.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>On Sundays, some community centers are open. The Central Library in Copley Square is open from 1 - 5 p.m. All other municipal buildings and libraries are closed.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -153,8 +171,8 @@ setup_data:
           infinite: 1
           value: "2018-07-01"
           end_value: "2018-07-01"
-          rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=SU"
-          timezone: "America/New_York"
+          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SU
+          timezone: America/New_York
   2:
     title: "Trash and recycling"
     field_title: "Trash and recycling"
@@ -167,27 +185,31 @@ setup_data:
       width: 64
     field_weight: -4
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>Pickup is on a normal schedule.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Pickup is on a normal schedule.</p>"
         field_link:
           target_id: 156596
           target_revision_id: 9119048
         field_recurrence:
           end_value: "2019-08-09"
           infinite: 1
-          rrule: "RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR\nEXDATE:20190619,20190620"
-          timezone: "America/New_York"
+          rrule: "RRULE:FREQ=DAILY;INTERVAL=1\nEXDATE:20190619,20190620"
+          timezone: America/New_York
           value: "2017-10-10"
       1:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>There is no residential trash and recycling pickup during the weekend.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>There is no residential trash and recycling pickup during the weekend.</p>"
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -195,13 +217,15 @@ setup_data:
           end_value: "2020-12-31"
           infinite: 1
           rrule: "RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=SA,SU\nEXDATE:20190720"
-          timezone: "America/New_York"
+          timezone: America/New_York
           value: "2017-10-14"
       2:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>Due to the heat emergency, the hazardous waste dropoff event scheduled for [current-date:date_format_status], is canceled.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Due to the heat emergency, the hazardous waste dropoff event scheduled for [current-date:date_format_status], is canceled.</p>"
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -209,13 +233,15 @@ setup_data:
           end_value: "2019-07-20"
           infinite: 0
           rrule: null
-          timezone: "America/New_York"
+          timezone: America/New_York
           value: "2019-07-19"
       3:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>"
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -223,13 +249,15 @@ setup_data:
           end_value: "2019-08-10"
           infinite: 0
           rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR"
-          timezone: "America/New_York"
+          timezone: America/New_York
           value: "2019-08-10"
       4:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>"
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -237,7 +265,7 @@ setup_data:
           end_value: "2019-08-24"
           infinite: 0
           rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=SA,SU;UNTIL=20190824T040000Z"
-          timezone: "America/New_York"
+          timezone: America/New_York
           value: "2019-08-24"
   3:
     title: "Tow lot"
@@ -251,13 +279,15 @@ setup_data:
       width: 64
     field_weight: -3
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>The tow lot is closed. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>The tow lot is closed. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -265,13 +295,15 @@ setup_data:
           value: "2017-10-13"
           end_value: "2017-10-13"
           infinite: 0
-          rrule: "FREQ=DAILY;INTERVAL=1;UNTIL=20190704T040000Z"
-          timezone: "America/New_York"
+          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190704T040000Z
+          timezone: America/New_York
       1:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>The tow lot is closed on Sundays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>The tow lot is closed on Sundays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -279,13 +311,15 @@ setup_data:
           value: "2017-10-13"
           end_value: "2017-10-13"
           infinite: 1
-          rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=SU"
-          timezone: "America/New_York"
+          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SU
+          timezone: America/New_York
       2:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>The tow lot is open from 9 a.m. - 1 p.m. on Saturdays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>The tow lot is open from 9\_a.m. - 1 p.m. on Saturdays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -293,13 +327,15 @@ setup_data:
           value: "2017-10-13"
           end_value: "2017-10-13"
           infinite: 0
-          rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=SA"
-          timezone: "America/New_York"
+          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SA
+          timezone: America/New_York
       3:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>The tow lot is open from 7 a.m. - 11 p.m. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>The tow lot is open from 7 a.m. - 11 p.m. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -308,7 +344,7 @@ setup_data:
           end_value: "2017-10-13"
           infinite: 0
           rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR"
-          timezone: "America/New_York"
+          timezone: America/New_York
   4:
     title: "Parking meters"
     field_title: "Parking meters"
@@ -321,13 +357,15 @@ setup_data:
       width: 64
     field_weight: -2
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>Parking meters are free with no time limit. We enforce all other parking rules.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Parking meters are free with no time limit. We enforce all other parking rules.</p>"
         field_link:
           target_id: 156666
           target_revision_id: 9119108
@@ -336,12 +374,14 @@ setup_data:
           end_value: "2018-12-25"
           infinite: 0
           rrule: null
-          timezone: "America/New_York"
+          timezone: America/New_York
       1:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: "<p>Parking meters are free with no time limit on Sundays.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Parking meters are free with no time limit on Sundays.</p>"
         field_link:
           target_id: 156666
           target_revision_id: 9119108
@@ -349,13 +389,15 @@ setup_data:
           value: "2017-10-13"
           end_value: "2017-10-13"
           infinite: 1
-          rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=SU"
-          timezone: "America/New_York"
+          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SU
+          timezone: America/New_York
       2:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>Parking meters are running on their normal schedules today.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>Parking meters are running on their normal schedules today.</p>"
         field_link:
           target_id: 156666
           target_revision_id: 9119108
@@ -364,10 +406,10 @@ setup_data:
           end_value: "2017-10-13"
           infinite: 1
           rrule: "FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR,SA"
-          timezone: "America/New_York"
+          timezone: America/New_York
   5:
-    title: "Libraries"
-    field_title: "Libraries"
+    title: Libraries
+    field_title: Libraries
     status: 1
     uid: 206
     field_enabled: 0
@@ -377,13 +419,15 @@ setup_data:
       width: 64
     field_weight: -1
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>All Boston Public Library locations are closed today.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>All Boston Public Library locations\_are\_closed today.</p>"
         field_link:
           target_id: 73046
           target_revision_id: 91191084
@@ -392,12 +436,14 @@ setup_data:
           end_value: "2019-03-03"
           infinite: 0
           rrule: null
-          timezone: "America/New_York"
+          timezone: America/New_York
       1:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>All Boston Public Library locations are open today based on their normal schedules.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>All Boston Public Library locations are open today\_based on their normal schedules.</p>"
         field_link:
           target_id: 73046
           target_revision_id: 9119084
@@ -406,7 +452,7 @@ setup_data:
           end_value: "2018-03-04"
           infinite: 1
           rrule: null
-          timezone: "America/New_York"
+          timezone: America/New_York
   6:
     title: "Community centers"
     field_title: "Community centers"
@@ -419,13 +465,15 @@ setup_data:
       width: 64
     field_weight: 10
     field_messages:
-      entity_type: "paragraph"
-      type: "message_for_the_day"
+      entity_type: paragraph
+      type: message_for_the_day
       0:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>With school canceled, the City's Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>With school canceled, the City's Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>"
         field_link:
           target_id: 199381
           target_revision_id: 9119114
@@ -434,12 +482,14 @@ setup_data:
           end_value: "2019-03-03"
           infinite: 0
           rrule: null
-          timezone: "America/New_York"
+          timezone: America/New_York
       1:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>With school canceled, the City's Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m.</p>"
+        field_message:
+          format: "filtered_html"
+          value: "<p>With school canceled, the City"s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m.</p>"
         field_link:
           target_id: 199381
           target_revision_id: 9119114
@@ -448,4 +498,4 @@ setup_data:
           end_value: "2019-03-04"
           infinite: 1
           rrule: null
-          timezone: "America/New_York"
+          timezone: America/New_York
