@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_form_alter().
@@ -25,6 +27,36 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
 
     // Adds a flag used in datetime-wrapper.html.twig.
     $form["field_public_notice_date"]["widget"][0]["end_value"]["#show_checkbox"] = TRUE;
+  }
+}
+
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function node_status_item_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  // Limit the media results to svg items when a field_icon field.
+  if ($view->id() == "media_library" && $view->current_display == "widget"
+    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_test-", "field_icon-"])) {
+    $key = count($query->where) ?? 0;
+    $query->addWhere($key, "media_field_data.name", "%svg%", "like");
+    return $query;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_status_item_preprocess_views_view(&$variables) {
+  // Adding this class to the media entity causes the display to compress on
+  // the widget.
+  $view = $variables["view"];
+  if ($view->id() == "media_library" && $view->current_display == "widget"
+    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_test-", "field_icon-"])) {
+    // Add class which sets panels to be 100px x 100px.
+    $variables["attributes"]["class"][] = "media_svg_only";
+    // Add class to hide the "Add Media" button.
+    $variables["header"]["add_media"]["#attributes"]["class"][] = "hide-media";
   }
 }
 
