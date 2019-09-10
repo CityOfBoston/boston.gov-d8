@@ -34,11 +34,23 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
  * Implements hook_views_query_alter().
  */
 function node_status_item_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  // Limit the media results to svg items when a field_icon field.
+  // Limit the media results to MIME = svg items when a field_icon field.
   if ($view->id() == "media_library" && $view->current_display == "widget"
-    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_test-", "field_icon-"])) {
+    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_icon-"])
+    ) {
+    // Do this here because if we alter the actual view, any updates to
+    // drupal core will likely override the changes.
+    $join = Drupal::service('plugin.manager.views.join')
+      ->createInstance("standard", [
+        "table" => "file_managed",
+        "field" => "fid",
+        "left_table" => "media__image",
+        "left_field" => "image_target_id",
+      ]);
+    $query->addTable("file_managed", NULL, $join, "file_managed");
+    $query->addRelationship("file_managed_media__image", $join, "file_managed", "media__image");
     $key = count($query->where) ?? 0;
-    $query->addWhere($key, "media_field_data.name", "%svg%", "like");
+    $query->addWhere($key, "file_managed.filemime", "%svg%", "LIKE");
     return $query;
   }
 }
@@ -51,7 +63,7 @@ function node_status_item_preprocess_views_view(&$variables) {
   // the widget.
   $view = $variables["view"];
   if ($view->id() == "media_library" && $view->current_display == "widget"
-    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_test-", "field_icon-"])) {
+    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_icon-"])) {
     // Add class which sets panels to be 100px x 100px.
     $variables["attributes"]["class"][] = "media_svg_only";
     // Add class to hide the "Add Media" button.
