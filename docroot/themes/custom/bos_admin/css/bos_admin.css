@@ -1289,3 +1289,31 @@ What: Creates a horizontally arranged group.
 .cob-group-grid .form-item-field-weight label {
   display: none;
 }
+
+/*
+  David:
+  Where: Media widget dialog media--media-library.html.twig.
+  What: Restricts the size of the dialog window.
+ */
+.media_svg_only .media-library-item {
+  width: 100px;
+  height: 100px
+}
+.media_svg_only .media-library-item  img{
+  padding: 18px;
+}
+.media_svg_only .media-library-item__preview {
+  padding-bottom: 0;
+}
+/*
+  David:
+  Where: Media widget component.
+  Where: Media widget dialog media--media-library.html.twig.
+  What: Hides the Add-media buttons on media library..
+ */
+.field--widget-media-library-widget .media-library-add-button {
+  visibility: hidden;
+}
+.media-library-view .hide-media {
+  display: none;
+}
