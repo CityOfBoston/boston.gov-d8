@@ -57,8 +57,8 @@ class MigrationFixes {
       'listing' => ["places", "page_1"],
     ],
     'public_notice' => [
-      'archive' => ["public_notice", "page_1"],
-      'landing' => ["public_notice", "page_2"],
+      'archive' => ["public_notice", "page_2"],
+      'landing' => ["public_notice", "page_1"],
     ],
     'status_displays' => [
       'homepage_status' => ["status_items", "motd"],
