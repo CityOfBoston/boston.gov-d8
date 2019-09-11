@@ -1007,6 +1007,7 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   // Start adding class mn (main-node???) to all nodes.
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page");
+  $variables["attributes"]->setAttribute("id", "page");
 
   if (isset($variables['node']) && is_object($variables['node'])) {
 
@@ -1014,7 +1015,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
       if (!$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
-      $variables["attributes"]->setAttribute("id", "page");
     }
     // This is for the how-to page and others which have a different type of
     // hero and need to be flush with the top of the page.
