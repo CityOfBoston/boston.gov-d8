@@ -242,7 +242,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/09/experiential_icons_boston_public_schools.svg' => 'public://icons/experiential/graduation_cap.svg',
     'public://img/icons/transactions/2017/09/business-opportunities.svg' => 'public://icons/experiential/online_purchase.svg',
     'public://img/icons/transactions/2017/09/bids-and-contracts.svg' => 'public://icons/experiential/mayoral_proclamation.svg',
-    'public://img/icons/transactions/2017/08/money.svg' => 'public://icons/experiential/money.svg',
+    'public://img/icons/transactions/2017/08/money.svg' => 'https://patterns.boston.gov/assets/icons/experiential_icons/SVG/money.svg',
     'public://img/icons/transactions/2017/08/experiential_icons_food_assistance-.svg' => 'public://icons/experiential/fruit_basket.svg',
     'public://img/icons/transactions/2017/08/experiential_icon-_recycle_electronics.svg' => 'public://icons/experiential/electronics_recycle.svg',
     'public://img/icons/transactions/2017/07/experiential_icons_tripple_decker.svg' => 'public://icons/experiential/tripple_decker.svg',
@@ -292,7 +292,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/03/career-center.svg' => 'public://icons/experiential/web_persona.svg',
     'public://img/icons/transactions/2017/03/build_bps_0.svg' => 'public://icons/experiential/historic_building_permit.svg',
     'public://img/icons/transactions/2017/03/build_bps.svg' => 'public://icons/experiential/historic_building_permit.svg',
-    'public://img/icons/transactions/2017/03/boston_basics.svg' => 'public://icons/experiential/birth_certifcate.svg',
+    'public://img/icons/transactions/2017/03/boston_basics.svg' => 'https://patterns.boston.gov/assets/icons/experiential_icons/SVG/birth_certifcate.svg',
     'public://img/icons/transactions/2017/03/benefits-available.svg' => 'public://icons/experiential/id.svg',
     'public://img/icons/transactions/2017/03/become_a_firefighter.svg' => 'public://icons/experiential/fire_truck.svg',
     'public://img/icons/transactions/2017/03/5000_questions.svg' => 'public://icons/experiential/search_forms.svg',
@@ -542,6 +542,7 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_smoke_detector_1.svg' => 'public://icons/experiential/fire_alarm.svg',
     'public://img/2016/e/experiential_icons_smoke_detector.svg' => 'public://icons/experiential/fire_alarm.svg',
     'public://img/2016/e/experiential_icons_search_license_1.svg' => 'public://icons/experiential/certificate_search.svg',
+    'public://img/2016/e/experiential_icons_search_license.svg' => 'https://patterns.boston.gov/assets/icons/experiential_icons/SVG/certificate_search.svg',
     'public://img/2016/e/experiential_icons_search_1.svg' => 'public://icons/experiential/search.svg',
     'public://img/2016/e/experiential_icons_search_0.svg' => 'public://icons/experiential/search.svg',
     'public://img/2016/e/experiential_icons_search.svg' => 'public://icons/experiential/search.svg',
@@ -766,9 +767,9 @@ class MigrationFixes {
     $svgs = \Drupal::database()->query("
         SELECT distinct f.fid, f.uri 
           FROM file_managed f
-	          INNER JOIN file_usage u ON f.fid = u.fid
-          WHERE (f.uri LIKE '%.svg' 
-            OR f.uri LIKE '%.png')
+	         -- INNER JOIN file_usage u ON f.fid = u.fid
+          WHERE f.uri LIKE '%.svg' 
+            -- OR f.uri LIKE '%.png')
             AND f.status = 1;")->fetchAll();
 
     if (!empty($svgs)) {
@@ -777,30 +778,62 @@ class MigrationFixes {
         if (!empty($file) && NULL != ($new_uri = self::$svgMapping[$svg->uri]) && strpos($new_uri, ".svg")) {
           $new_filename = explode("/", $new_uri);
           $new_filename = array_pop($new_filename);
-          $file->setFileUri($new_uri);
-          $file->setFilename($new_filename);
-          $file->save();
-          $cnt++;
+          $result = \Drupal::database()->update("file_managed")
+            ->fields([
+              "uri" => $new_uri,
+              "filename" => strtolower($new_filename),
+            ])
+            ->condition("fid", $svg->fid)
+            ->execute();
+          if ($result) {
+            $cnt++;
+          }
           // Try to find this file_id in the media table.
-          if (NULL == ($mid = \Drupal::entityQuery("media")->condition("image.target_id", $svg->fid, "=")->execute())) {
+          if (NULL == ($mid = \Drupal::entityQuery("media")
+              ->condition("bundle", "icon", "=")
+              ->condition("image.target_id", $svg->fid, "=")
+              ->execute())) {
             // Not there, so create a new one.
-            $media = Media::create(["bundle" => "image"]);
+            $filename = str_replace(".svg", "", $new_filename);
+            $media = Media::create([
+              "bundle" => "icon",
+              "mid" => $svg->fid,
+              'uid' => ($rowsource['uid'] ?? 1),
+              'name' => ($filename ?? "City of Boston stock icon"),
+              'status' => ($rowsource['status'] ?? 1),
+              'thumbnail' => [
+                'title' => ($filename ?? "City of Boston stock icon"),
+                'alt' => "icon for " . ($rowsource['filename'] ?? "City of Boston stock icon"),
+                'width' => 100,
+                'height' => 100,
+              ],
+              'image' => [
+                'target_id' => $svg->fid,
+                'title' => ($filename ?? "City of Boston stock icon"),
+                'alt' => "icon for " . ($filename ?? "City of Boston stock icon"),
+                'width' => 64,
+                'height' => 64,
+              ],
+              'field_media_in_library' => TRUE,
+            ]);
+            $media->setNewRevision(FALSE);
+            try {
+              // Save the new media entity.
+              $media->save();
+              // After saving, a new thumbnail will have been created in
+              // managed_files table.  We need to makes sure the uri for this
+              // is pointing to the new uri location as well.
+              $thumb_id = $media->get("thumbnail")->target_id;
+              if ($thumb_id != $svg->fid) {
+                $thumbnail = \Drupal\file\Entity\File::load($thumb_id);
+                $thumbnail->setFileUri($new_uri);
+                $thumbnail->save();
+              }
+            }
+            catch (Exception $e) {
+              printf("Issue with " . $svg->fid . "(filename) - " . $e->getMessage());
+            }
           }
-          else {
-            $mid = reset($mid);
-            $media = Media::load($mid);
-          }
-          // Update the names etc for the media entity.
-          $media->setName($new_filename);
-          $media->set("thumbnail", [
-            "alt" => $new_filename,
-            "target_id" => $svg->fid,
-          ]);
-          $media->set("image", [
-            "alt" => $new_filename,
-            "target_id" => $svg->fid,
-          ]);
-          $media->save();
           $new_uri = NULL;
         }
       }
