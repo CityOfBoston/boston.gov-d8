@@ -1295,16 +1295,52 @@ What: Creates a horizontally arranged group.
   Where: Media widget dialog media--media-library.html.twig.
   What: Restricts the size of the dialog window.
  */
+.media-library-item {
+  background: #f5f5f5;
+}
+.media-library-item .media_library_cob.field--name-thumbnail img {
+  height: 120px;
+}
+
+.media_library_cob {
+  text-align: center;
+  display: block !important;
+}
+.media_library_cob .field--name-filename {
+  padding: 30px 0px 10px 0px;
+  color: #0c97ed;
+  background: #e5e5e5;
+  border-bottom: 1px solid #999999;
+}
+.media_library_cob .field--name-uri {
+  height: 120px;
+  width: 120px;
+  margin: 0 auto;
+}
+
 .media_svg_only .media-library-item {
   width: 100px;
   height: 100px
 }
-.media_svg_only .media-library-item  img{
-  padding: 18px;
+.media_svg_only .media_library_cob .field--name-uri {
+  height: 100px;
+  width: 100px;
+}
+.media_svg_only .media-library-item .field__items {
+  display: none;
+}
+.media_svg_only .media-library-item .field--name-uri {
+  display: block;
+}
+.media_svg_only .media-library-item img {
+  height: 65px;
+  width: 65px;
+  padding-top: 25px;
 }
 .media_svg_only .media-library-item__preview {
   padding-bottom: 0;
 }
+
 /*
   David:
   Where: Media widget component.
