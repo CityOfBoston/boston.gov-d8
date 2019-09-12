@@ -4,14 +4,14 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_icon
-    - media.type.image
+    - media.type.icon
     - node.type.status_item
 id: node.status_item.field_icon
 field_name: field_icon
 entity_type: node
 bundle: status_item
 label: 'Status Icon'
-description: 'Add an SVG icon representing this status. The dimension for this icon should be 65px x 65px.'
+description: 'Add an SVG icon representing this status.'
 required: true
 translatable: false
 default_value: {  }
@@ -20,10 +20,10 @@ settings:
   handler: 'default:media'
   handler_settings:
     target_bundles:
-      image: image
+      icon: icon
     sort:
       field: name
       direction: ASC
     auto_create: false
-    auto_create_bundle: ''
+    auto_create_bundle: image
 field_type: entity_reference
