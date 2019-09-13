@@ -5,7 +5,6 @@
  * Main file for the bos_text module.
  */
 
-use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Utility\Html;
 
 /**
@@ -188,19 +187,5 @@ function bos_text_preprocess_field__field_intro_text(&$variables) {
     if (!in_array($bundle, $no_squiggle)) {
       $variables['attributes']->addClass("squiggle-border-bottom");
     }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_text_preprocess_image(&$variables) {
-  if ($variables["style_name"] == "media_entity_browser_thumbnail") {
-    return;
-  }
-  $variables['is_picture'] = (isset($variables['srcset']) && count($variables['srcset']));
-  if ($variables['is_picture'] && isset($variables['uri'])) {
-    $uri = preg_replace("~.*/sites/default/files~", "public:/", $variables['uri']);
-    $variables['sources'] = BackgroundResponsiveImage::buildMediaSources($uri, "card_images_2w");
   }
 }

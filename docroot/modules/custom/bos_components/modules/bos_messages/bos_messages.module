@@ -85,14 +85,14 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       // Get the field_icon uri from the parent status_item.
       if (NULL != ($fid = $status_item->field_icon->target_id)) {
         $media = Media::load($fid);
-        if (NULL != ($mid = $media->image->target_id)) {
+        if (!empty($media->image) && NULL != ($mid = $media->image->target_id)) {
           if (NULL != ($file = File::load($mid))) {
             $uri = $file->getFileUri();
-            $uri = \Drupal::service('file_system')->realpath($uri);
-            if (!empty($uri)) {
-              $icon = file_get_contents($uri);
-              $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+            if (\Drupal::service('file_system')->realpath($uri)) {
+              $uri = \Drupal::service('file_system')->realpath($uri);
             }
+            $icon = file_get_contents($uri);
+            $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
           }
         }
       }
