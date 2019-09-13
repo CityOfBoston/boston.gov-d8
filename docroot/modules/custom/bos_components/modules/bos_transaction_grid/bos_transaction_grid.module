@@ -122,7 +122,11 @@ function bos_transaction_grid_form_alter(&$form, FormStateInterface $form_state,
                 $transaction = Paragraph::load($transaction->target_id);
                 $icon = Media::load($transaction->field_icon[0]->target_id);
                 $link = Paragraph::load($transaction->field_grid_link[0]->target_id);
-                foreach (["field_document", "field_internal_link", "field_external_link"] as $field) {
+                foreach ([
+                  "field_document",
+                  "field_internal_link",
+                  "field_external_link",
+                ] as $field) {
                   if ($link->hasField($field)) {
                     if ($field == "field_document") {
                       $doc = File::load($link->{$field}[0]->target_id);
