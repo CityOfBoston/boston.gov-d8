@@ -10,11 +10,9 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_icon
     - field.field.paragraph.bos_signup_emergency_alerts.field_intro_text
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
-    - image.style.square_icon_65px
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
   module:
     - fences
-    - svg_image
     - text
 _core:
   default_config_hash: dKOsjRGeinSLHZtPgnDyO7yCvDWi5W1oACbAlJeknX0
@@ -70,14 +68,10 @@ content:
   field_icon:
     label: hidden
     weight: 5
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_65px
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
