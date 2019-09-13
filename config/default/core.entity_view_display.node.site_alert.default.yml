@@ -10,14 +10,12 @@ dependencies:
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
-    - image.style.square_icon_56px
     - node.type.site_alert
   module:
     - datetime_range
     - entity_reference_revisions
     - fences
     - options
-    - svg_image
     - user
 id: node.site_alert.default
 targetEntityType: node
@@ -51,14 +49,10 @@ content:
   field_icon:
     label: hidden
     weight: 1
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_56px
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
