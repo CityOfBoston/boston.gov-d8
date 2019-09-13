@@ -20,11 +20,15 @@ trait FilesystemReorganizationTrait {
       'jpg',
       'png',
       'jpeg',
-      'svg',
-      'svg+xml',
       'gif',
       'tif',
       'pdf', /* Technically not correct but ... */
+      'svg',
+      'svg+xml',
+    ],
+    'icon' => [
+      'svg',
+      'svg+xml',
     ],
     'file' => [
       'pdf',
