@@ -790,9 +790,9 @@ class MigrationFixes {
           }
           // Try to find this file_id in the media table.
           if (NULL == ($mid = \Drupal::entityQuery("media")
-              ->condition("bundle", "icon", "=")
-              ->condition("image.target_id", $svg->fid, "=")
-              ->execute())) {
+            ->condition("bundle", "icon", "=")
+            ->condition("image.target_id", $svg->fid, "=")
+            ->execute())) {
             // Not there, so create a new one.
             $filename = str_replace(".svg", "", $new_filename);
             $media = Media::create([
@@ -825,7 +825,7 @@ class MigrationFixes {
               // is pointing to the new uri location as well.
               $thumb_id = $media->get("thumbnail")->target_id;
               if ($thumb_id != $svg->fid) {
-                $thumbnail = \Drupal\file\Entity\File::load($thumb_id);
+                $thumbnail = File::load($thumb_id);
                 $thumbnail->setFileUri($new_uri);
                 $thumbnail->save();
               }
