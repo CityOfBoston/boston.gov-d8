@@ -228,7 +228,7 @@ function list_paragraph_summary_alter(array $form_widget, array $para, array $at
   // Add attributes to the summary area.
   // Set the summary content.
   $view = View::load($para["entity"]->field_list[0]->target_id);
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
   $markup[] = Markup::create("<b>View:</b> " . $view->label());
   $markup[] = Markup::create("<b>Display:</b> " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
 

@@ -5,6 +5,8 @@
  * Module file for bos_fyi.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_theme().
  */
@@ -39,4 +41,29 @@ function bos_fyi_theme_suggestions_paragraph_alter(array &$suggestions, array $v
     }
   }
 
+}
+
+/**
+ * Implements paragraph summary for paragraph EXPEREMENTAL widget.
+ *
+ * @param array $form_widget
+ *   The widget for this paragraph item.
+ * @param array $para
+ *   The paragraph entity.
+ * @param array $attributes
+ *   The attributes array for this paragraphs item.
+ *
+ * @return array
+ *   In the format ['attributes' => [attributes array], content => [markup]].
+ */
+function fyi_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_extra_info")->value);
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }

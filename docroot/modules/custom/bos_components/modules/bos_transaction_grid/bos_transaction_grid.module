@@ -5,7 +5,12 @@
  * Primary module hooks for bos_transaction_grid module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
 use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -65,6 +70,82 @@ function bos_transaction_grid_preprocess_paragraph__transactions(&$variables) {
 
       default:
         break;
+    }
+  }
+}
+
+/**
+ * Implements paragraph summary for paragraph EXPEREMENTAL widget.
+ *
+ * @param array $form_widget
+ *   The widget for this paragraph item.
+ * @param array $para
+ *   The paragraph entity.
+ * @param array $attributes
+ *   The attributes array for this paragraphs item.
+ *
+ * @return array
+ *   In the format ['attributes' => [attributes array], content => [markup]].
+ */
+function transaction_grid_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  if ($para["entity"]->hasField("field_contact")) {
+    $contact = $para["entity"]->get("field_contact")->target_id;
+    $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact);
+    $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * This hook creates the paragraph summary for the transactiosn elements
+ * within a transaction_grid.
+ */
+function bos_transaction_grid_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form['field_components'])) {
+    $children = Element::getVisibleChildren($form["field_components"]["widget"]);
+    foreach ($children as $child) {
+      if (is_numeric($child)) {
+        $para = $form_state->getStorage()["field_storage"]["#parents"]["#fields"]["field_components"]["paragraphs"][$child];
+        if ($para["entity"]->type[0]->target_id == "transaction_grid") {
+          if ($para['mode'] == 'edit') {
+            foreach ($para["entity"]->field_transactions as $key => $transaction) {
+              if (!$transaction->isEmpty() && !empty($transaction->target_id)) {
+                $transaction = Paragraph::load($transaction->target_id);
+                $icon = Media::load($transaction->field_icon[0]->target_id);
+                $link = Paragraph::load($transaction->field_grid_link[0]->target_id);
+                foreach (["field_document", "field_internal_link", "field_external_link"] as $field) {
+                  if ($link->hasField($field)) {
+                    if ($field == "field_document") {
+                      $doc = File::load($link->{$field}[0]->target_id);
+                      $dest = $doc->filename[0]->value;
+                      $type = "Document";
+                    }
+                    else {
+                      $type = "Link";
+                      $dest = $link->{$field}[0]->title;
+                    }
+                    break;
+                  }
+                }
+                $filename = str_replace(['_', "-"], " ", $icon->get("name")->value);
+                $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $filename . "</span>");
+                $markup[] = Markup::create("<b>" . $type . ": </b><i>" . $dest . "</i>");
+                $form["field_components"]["widget"][$child]["subform"]["field_transactions"]["widget"][$key]["top"]["summary"]["fields_info"]["#summary"]["content"] = $markup;
+                $markup = [];
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
