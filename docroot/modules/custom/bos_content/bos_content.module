@@ -7,8 +7,6 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\views\Plugin\views\query\QueryPluginBase;
-use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_form_alter().
@@ -43,7 +41,6 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
           $function = $para_type . "_paragraph_summary_alter";
           if (function_exists($function)) {
             $result = call_user_func($function, $widget, $para, $widget["top"]["summary"]["#attributes"]);
-            // $result = ['attributes' => [attributes array], content => [ markup]]
             $form[$component_field]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"] = $result['content'];
             $form[$component_field]["widget"][$child]["top"]["summary"]["#attributes"] = $result['attributes'];
           }
