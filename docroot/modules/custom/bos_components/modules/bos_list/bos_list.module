@@ -5,6 +5,8 @@
  * The Base module file for bos_list module.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_theme().
  */
@@ -206,6 +208,31 @@ function bos_list_form_alter(&$form, $form_state, $form_id) {
     $current_path = \Drupal::service('path.current')->getPath();
     $form["#action"] = $current_path;
   }
+}
+
+/**
+ * @param $form_widget
+ *   The widget for this paragraph item.
+ * @param $para
+ *   The paragraph entity.
+ * @param $attributes
+ *   The attributes array for this paragraphs item.
+ *
+ * @return array
+ *   In the format ['attributes' => [attributes array], content => [markup]].
+ */
+function list_paragraph_summary_alter($form_widget, $para, $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  $view = Drupal\views\Entity\View::load($para["entity"]->field_list[0]->target_id);
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create("<b>View:</b> " . $view->label());
+  $markup[] = Markup::create("<b>Display:</b> " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }
 
 /**
