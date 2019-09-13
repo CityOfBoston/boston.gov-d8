@@ -292,7 +292,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @throws \Drupal\migrate\MigrateException
    */
   public function createMediaEntity(string $src, string $targetBundle, Row $row, MigrateExecutableInterface $migrate_executable) {
-    if (!in_array($targetBundle, ['image', 'document'])) {
+    if (!in_array($targetBundle, ['image', 'document', 'icon'])) {
       throw new MigrateException('Only image and document bundles are supported.');
     }
 
@@ -343,7 +343,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     }
 
-    $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
+    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'field_document');
 
     // Create the Media entity.
     $media = Media::create([
@@ -354,8 +354,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         'target_id' => $file->id(),
       ],
       // Don't add these images to media library. The media library should be
-      // curated by a human.
-      'field_media_in_library' => FALSE,
+      // curated by a human.  Exception is icons, these are always in the media
+      // library.
+      'field_media_in_library' => ($targetBundle == 'icon'),
     ]);
     $media->save();
     return $media;
