@@ -10,22 +10,28 @@
  * @see template_preprocess_image()
  */
 #}
-{% if is_picture %}
+{% if icon %}
+  <div {{ attributes }}>
+    {{ icon | raw }}
+  </div>
+{% else %}
+  {% if is_picture %}
 
-	<picture>
+    <picture>
 
-		{%  if sources %}
+      {%  if sources %}
 
-			{% for attrib in sources %}
-				<source srcset="{{ attrib.srcset }}" media="{{ attrib.media }}" type="{{ attrib.type }}">
-			{% endfor %}
+        {% for attrib in sources %}
+          <source srcset="{{ attrib.srcset }}" media="{{ attrib.media }}" type="{{ attrib.type }}">
+        {% endfor %}
 
-		{% endif %}
+      {% endif %}
 
-{% endif %}
+  {% endif %}
 
-		<img{{ attributes }} />
+      <img{{ attributes }} />
 
-{% if is_picture %}
-	</picture>
+  {% if is_picture %}
+    </picture>
+  {% endif %}
 {% endif %}
