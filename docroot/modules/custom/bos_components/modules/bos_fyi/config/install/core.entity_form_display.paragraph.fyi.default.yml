@@ -7,11 +7,10 @@ dependencies:
     - field.field.paragraph.fyi.field_link
     - field.field.paragraph.fyi.field_short_title
     - field.field.paragraph.fyi.field_title
-    - image.style.square_icon_56px
     - paragraphs.paragraphs_type.fyi
   module:
+    - media_library
     - paragraphs
-    - svg_image
 id: paragraph.fyi.default
 targetEntityType: paragraph
 bundle: fyi
@@ -27,10 +26,8 @@ content:
     region: content
   field_icon:
     weight: 1
-    type: image_image
-    settings:
-      preview_image_style: square_icon_65px
-      progress_indicator: throbber
+    type: media_library_widget
+    settings: {  }
     third_party_settings: {  }
     region: content
   field_link:
