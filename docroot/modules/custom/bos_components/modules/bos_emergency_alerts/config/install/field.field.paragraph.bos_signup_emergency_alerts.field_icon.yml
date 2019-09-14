@@ -1,37 +1,28 @@
-langcode: en
+langcode: und
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_icon
+    - media.type.icon
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
-  module:
-    - image
 id: paragraph.bos_signup_emergency_alerts.field_icon
 field_name: field_icon
 entity_type: paragraph
 bundle: bos_signup_emergency_alerts
 label: Icon
-description: 'This SVG icon will display in a circle on the sign-up form.<br>Icon will be re-colored blue when the background is white, and re-colored white when the background is blue.'
+description: 'This SVG icon will display inside a circle on the sign-up form.<br>Icon will be re-colored blue when the background is white, and re-colored white when the background is blue.'
 required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: img/icons/emergency
-  file_extensions: svg
-  max_filesize: '200 KB'
-  max_resolution: ''
-  min_resolution: ''
-  alt_field: false
-  alt_field_required: false
-  title_field: false
-  title_field_required: false
-  default_image:
-    uuid: ''
-    alt: ''
-    title: ''
-    width: null
-    height: null
-  handler: 'default:file'
-  handler_settings: {  }
-field_type: image
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      icon: icon
+    sort:
+      field: name
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: image
+field_type: entity_reference
