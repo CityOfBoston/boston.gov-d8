@@ -8,12 +8,10 @@ dependencies:
     - field.field.paragraph.fyi.field_link
     - field.field.paragraph.fyi.field_short_title
     - field.field.paragraph.fyi.field_title
-    - image.style.square_icon_56px
     - paragraphs.paragraphs_type.fyi
   module:
     - entity_reference_revisions
     - fences
-    - svg_image
 _core:
   default_config_hash: lXO7QkMB9sMjzeY4wQCpkX2S6TnAE8MZCzQPstmM7Qc
 id: paragraph.fyi.default
@@ -39,14 +37,10 @@ content:
   field_icon:
     label: hidden
     weight: 0
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_56px
-      image_link: ''
-      svg_render_as_image: 0
-      svg_attributes:
-        width: 56px
-        height: 56px
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

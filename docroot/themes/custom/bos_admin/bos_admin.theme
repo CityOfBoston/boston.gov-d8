@@ -26,6 +26,9 @@ function bos_admin_theme($existing, $type, $theme, $path) {
       'path' => 'themes/custom/bos_admin/templates',
       'template' => 'container',
     ],
+    'media__media_library' => [
+      "base hook" => "media",
+    ],
   ];
 }
 
