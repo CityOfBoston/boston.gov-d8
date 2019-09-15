@@ -1013,6 +1013,14 @@ class MigrationFixes {
       // First create a human-friendly name for the file.
       $file->filename = str_replace(["_"], " ", $file->filename);
       $file->filename = str_replace([" and "], " & ", $file->filename);
+      // If local, see if the actual file exists, if not make note in filename.
+      if (strpos($file->uri, "lic://") > 0) {
+        $physical = \Drupal::service('stream_wrapper_manager')
+          ->getViaUri($file->uri);
+        if (isset($physical) && ($physical = $physical->realpath()) && !file_exists($physical)) {
+          $file->filename .= " (MISSING)";
+        }
+      }
       // Create the media entity.
       $param = [
         "bundle" => $file->type,
