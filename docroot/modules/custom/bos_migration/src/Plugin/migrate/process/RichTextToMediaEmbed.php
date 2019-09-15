@@ -10,6 +10,7 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  * fields.
  */
 
+use Drupal\bos_migration\MigrationFixes;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -549,38 +550,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   public function resolveFileType($uri) {
     // White list files based on file_managed table in D7.
-    $allowed_formats = [
-      'image' => [
-        '.jpg',
-        '.png',
-        '.jpeg',
-        '.svg',
-        '.gif',
-        '.tif',
-        '.pdf', /* Technically not correct but ... */
-      ],
-      'file' => [
-        '.pdf',
-        '.xls',
-        '.xlsx',
-        '.docx',
-        '.doc',
-        '.pptx',
-        '.pptm',
-        '.ppt',
-        '.rtf',
-        '.ppt',
-        '.jnlp', /* Not sure we should allow this. */
-        '.xlsm',
-        '.mp3',
-        '.mp4',
-        '.jpg', /* These are images, but could also be. */
-        '.png', /* Downloadable files. */
-        '.jpeg', /* ... */
-        '.tif', /* ... */
-        '.svg', /* ... */
-      ],
-    ];
+    $allowed_formats = MigrationFixes::allowedFormats();
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
     $type = [];

@@ -125,8 +125,18 @@ class FileCopyExt extends FileCopy {
     }
 
     // Now move the file.
-    $this->downloadPlugin->configuration['guzzle_options']["read_timeout"] = 120000;
-    $result = parent::transform($value, $migrate_executable, $row, $destination_property);
+    $filename =
+    $isDoc = strpos($source, ".pdf")
+            || strpos($source, ".doc")
+            || strpos($source, ".xl");
+    if ($isDoc) {
+      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - docs not copied.", MigrationInterface::MESSAGE_INFORMATIONAL);
+      $result = $destination;
+    }
+    else {
+      $this->downloadPlugin->configuration['guzzle_options']["read_timeout"] = 120000;
+      $result = parent::transform($value, $migrate_executable, $row, $destination_property);
+    }
 
     return $result;
 
