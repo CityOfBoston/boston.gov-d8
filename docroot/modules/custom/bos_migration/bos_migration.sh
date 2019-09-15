@@ -326,6 +326,7 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
+doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
 # Reset status_items.
