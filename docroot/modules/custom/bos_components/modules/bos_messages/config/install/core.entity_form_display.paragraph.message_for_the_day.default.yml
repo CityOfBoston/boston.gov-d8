@@ -9,6 +9,7 @@ dependencies:
     - field.field.paragraph.message_for_the_day.field_use_alert
     - paragraphs.paragraphs_type.message_for_the_day
   module:
+    - advanced_text_formatter
     - bos_messages
     - field_group
     - paragraphs
@@ -72,7 +73,9 @@ content:
     settings:
       rows: 5
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: '1'
   field_recurrence:
     type: bos_messages_mod_recur
     weight: 5

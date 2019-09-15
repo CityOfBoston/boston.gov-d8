@@ -7,6 +7,8 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
+use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
 
 /**
@@ -70,8 +72,9 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
     if (!empty($variables["show_message"])) {
       if (isset($motd->field_link[0])) {
         $paragraph = Paragraph::load($motd->field_link[0]->target_id);
-        $link = _bos_core_paragraph_extract_link($paragraph);
-        $variables['card_url'] = $link['url'];
+        if (NULL != $link = _bos_core_paragraph_extract_link($paragraph)) {
+          $variables['card_url'] = $link['url'];
+        }
       }
 
       if (!empty($motd->field_use_alert->value)) {
@@ -79,16 +82,18 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
         $variables['alert'] = trim($alert);
       }
 
-      if (isset($status_item->field_icon->target_id)) {
-        $fid = $status_item->field_icon->target_id;
-        $uri = Drupal::entityTypeManager()
-          ->getStorage('file')
-          ->load($fid)
-          ->getFileUri();
-        $uri = \Drupal::service('file_system')->realpath($uri);
-        if (!empty($uri)) {
-          $icon = file_get_contents($uri);
-          $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+      // Get the field_icon uri from the parent status_item.
+      if (NULL != ($fid = $status_item->field_icon->target_id)) {
+        $media = Media::load($fid);
+        if (!empty($media->image) && NULL != ($mid = $media->image->target_id)) {
+          if (NULL != ($file = File::load($mid))) {
+            $uri = $file->getFileUri();
+            if (\Drupal::service('file_system')->realpath($uri)) {
+              $uri = \Drupal::service('file_system')->realpath($uri);
+            }
+            $icon = file_get_contents($uri);
+            $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+          }
         }
       }
 

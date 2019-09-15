@@ -10,7 +10,9 @@ dependencies:
     - field.field.file.image.field_image_caption
     - file_entity.type.image
   module:
+    - fences
     - file_entity
+    - user
 id: file.image.preview
 targetEntityType: file
 bundle: image
@@ -40,7 +42,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   uid:
-    type: uri_link
+    type: author
     weight: 1
     region: content
     label: above
@@ -56,7 +58,14 @@ content:
       alt: field_image_alt_text
       image_style: ''
       image_link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
 hidden:
   field_file_image_alt_text: true
   field_file_image_title_text: true
