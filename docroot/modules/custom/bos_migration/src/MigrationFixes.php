@@ -3,7 +3,6 @@
 namespace Drupal\bos_migration;
 
 use Drupal\Core\Database\Database;
-use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 
@@ -699,6 +698,7 @@ class MigrationFixes {
    * Makes the allowed formats array to be publicly accessed.
    *
    * @return array
+   *   An array of allowed file formats indexed by type.
    */
   public static function allowedFormats() {
     return self::$allowedFormats;
@@ -830,7 +830,7 @@ class MigrationFixes {
         $svg->file = File::load($svg->fid);
         if (!empty($svg->file) && NULL != ($svg->new_uri = self::$svgMapping[$svg->uri]) && strpos($svg->uri, ".svg")) {
           $svg->filename = explode("/", $svg->new_uri);
-          $svg->filename  = array_pop($svg->filename);
+          $svg->filename = array_pop($svg->filename);
           $svg->filename = str_replace([".svg", "icons", "logo"], "", $svg->filename);
           $svg->filename = str_replace("icon", "", $svg->filename);
           $svg->new_uri = str_replace(["https:", "http:"], "", $svg->new_uri);
@@ -910,8 +910,8 @@ class MigrationFixes {
       ],
       "paragraph" => [
         "field_image",
-        "field_person_photo" => "paragraph",
-        "field_thumbnail" => "paragraph",
+        "field_person_photo",
+        "field_thumbnail",
       ],
     ];
     foreach (["file", "image"] as $media_type) {
@@ -925,7 +925,7 @@ class MigrationFixes {
               AND m.mid IS NULL
               AND f.status = 1;")->fetchAll();
 
-        if (!empty($files))  {
+        if (!empty($files)) {
           foreach ($files as $file) {
             $file->file = File::load($file->fid);
             if (!empty($file->file)) {
@@ -965,15 +965,15 @@ class MigrationFixes {
   /**
    * Determine if the fid_id provided has been referenced in the tables given.
    *
-   * @param $fid
+   * @param string $fid
    *   The file_id.
-   * @param $tables
+   * @param array $tables
    *   A nested array of enityt types and field names.
    *
    * @return bool
    *   If the fid is found in any table/field combo.
    */
-  protected static function isInTables($fid, $tables) {
+  protected static function isInTables($fid, array $tables) {
     foreach ($tables as $node => $fields) {
       foreach ($fields as $field) {
         $table = $node . "__" . $field;
@@ -992,7 +992,7 @@ class MigrationFixes {
   /**
    * Creates a media entity linked to a supplied file entity.
    *
-   * @param $file
+   * @param array $file
    *   Object contining information for new media item.
    *
    * @return bool
@@ -1000,15 +1000,15 @@ class MigrationFixes {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  private static function makeMediaEntity($file) {
+  private static function makeMediaEntity(array $file) {
     // Try to find this file_id in the media table.
     $test = "image.target_id";
     if ($file->type == "document") {
       $test = "mid";
     }
     if (NULL == ($mid = \Drupal::entityQuery("media")
-        ->condition($test, $file->fid, "=")
-        ->execute())) {
+      ->condition($test, $file->fid, "=")
+      ->execute())) {
       // Not there, so create a new one.
       // First create a human-friendly name for the file.
       $file->filename = str_replace(["_"], " ", $file->filename);
