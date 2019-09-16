@@ -49,9 +49,9 @@ function doMigrate() {
 function doExecPHP() {
     SECONDS=0
 
-    printf " -> Executing PHP: '${*}'"
+    printf " -> Executing PHP: '%q'" "${*}"
     if [ -d "/mnt/gfs" ]; then
-        ${drush} php-eval $*  | tee -a ${logfile}
+        ${drush} php-eval "$*"  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush php-eval $*"  | tee -a ${logfile}
     fi

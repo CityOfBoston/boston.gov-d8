@@ -992,7 +992,7 @@ class MigrationFixes {
   /**
    * Creates a media entity linked to a supplied file entity.
    *
-   * @param array $file
+   * @param object $file
    *   Object contining information for new media item.
    *
    * @return bool
@@ -1000,7 +1000,7 @@ class MigrationFixes {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  private static function makeMediaEntity(array $file) {
+  private static function makeMediaEntity($file) {
     // Try to find this file_id in the media table.
     $test = "image.target_id";
     if ($file->type == "document") {
