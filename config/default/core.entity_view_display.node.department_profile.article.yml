@@ -25,8 +25,8 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
+    - media
     - options
-    - svg_image
     - text
     - user
 _core:
@@ -106,14 +106,10 @@ content:
   field_icon:
     label: hidden
     weight: 2
-    type: image
+    type: media_thumbnail
     settings:
       image_style: square_icon_56px
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none
