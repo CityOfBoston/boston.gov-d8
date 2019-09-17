@@ -117,10 +117,11 @@ class MigrationFixes {
     'public://img/icons/transactions/2019/03/download_recycle_app.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/download_recycle_app.svg',
     'public://img/icons/transactions/2019/03/compost_sprout.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/compost_sprout.svg',
     'public://img/icons/transactions/2019/03/clothes.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/clothes.svg',
-    'public://img/icons/transactions/2019/03/car_payment_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/car_paymentsvg',
+    'public://img/icons/transactions/2019/03/car_payment_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/car_payment.svg',
     'public://img/icons/transactions/2019/03/can_recycling_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/can_recycling.svg',
     'public://img/icons/transactions/2019/03/can_recycling_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/can_recycling.svg',
     'public://img/icons/transactions/2019/03/camera.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/camera.svg',
+    'public://img/icons/transactions/2019/03/building_permit_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/building_permit.svg',
     'public://img/icons/transactions/2019/02/neighborhoods.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/neighborhoods.svg',
     'public://img/icons/transactions/2019/02/group.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/group.svg',
     'public://img/icons/transactions/2019/02/document_4.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/document.svg',
@@ -338,7 +339,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2016/07/experiential_icons_repair.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/construction_tool.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_pay_your_real_estate_taxes-.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/real_estate_taxes.svg',
     'public://img/icons/transactions/2016/07/experiential_icons_home_repairs.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/repair_your_home.svg',
-    'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => '//patterns.boston.gov/assets/icons/dept_icons/bos_311_black',
+    'public://img/icons/transactions/2016/07/experiential_icons_2_311.svg' => '//patterns.boston.gov/assets/icons/dept_icons/bos_311_icon_black.svg',
     'public://img/icons/status/trash-recycling.svg' => '//patterns.boston.gov/assets/icons/circle_icons/trash_and_recycling.svg',
     'public://img/icons/status/tow-lot.svg' => '//patterns.boston.gov/assets/icons/circle_icons/tow_lot.svg',
     'public://img/icons/status/street_sweeping.svg' => '//patterns.boston.gov/assets/icons/circle_icons/street_sweeping.svg',
@@ -396,7 +397,7 @@ class MigrationFixes {
     'public://img/icons/department/icons_treasury_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/finance_logo.svg',
     'public://img/icons/department/icons_treasury.svg' => '//patterns.boston.gov/assets/icons/dept_icons/finance_logo.svg',
     'public://img/icons/department/icons_transportation_transportation.svg' => '//patterns.boston.gov/assets/icons/dept_icons/transportation_logo.svg',
-    'public://img/icons/department/icons_tourism.svg' => 'public://icons/',
+    'public://img/icons/department/icons_tourism.svg' => '//patterns.boston.gov/assets/icons/dept_icons/tourism_sports_and_entertainment_logo.svg',
     'public://img/icons/department/icons_purchasing.svg' => '//patterns.boston.gov/assets/icons/dept_icons/purchasing.svg',
     'public://img/icons/department/icons_public_works.svg' => '//patterns.boston.gov/assets/icons/dept_icons/public_works_logo.svg',
     'public://img/icons/department/icons_public_safty_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/public_health_commission_logo.svg',
@@ -416,7 +417,6 @@ class MigrationFixes {
     'public://img/icons/department/icons_ems_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_medical_services_logo.svg',
     'public://img/icons/department/icons_ems.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_medical_services_logo.svg',
     'public://img/icons/department/icons_elections.svg' => '//patterns.boston.gov/assets/icons/dept_icons/elections_logo.svg',
-    'public://img/icons/department/icons_economic_development_0.svg' => 'public://icons/',
     'public://img/icons/department/icons_doit.svg' => '//patterns.boston.gov/assets/icons/dept_icons/innovation_and_technology_logo.svg',
     'public://img/icons/department/icons_disabilities_disabilities.svg' => '//patterns.boston.gov/assets/icons/dept_icons/disabilities__commission__icon.svg',
     'public://img/icons/department/icons_disabilities.svg' => '//patterns.boston.gov/assets/icons/dept_icons/disabilities__commission__icon.svg',
@@ -443,8 +443,6 @@ class MigrationFixes {
     'public://img/icons/department/2019/04/new_urban_mechanics_-_logo.svg' => '//patterns.boston.gov/assets/icons/dept_icons/new_urban_mechanics_logo.svg',
     'public://img/icons/department/2019/01/age-strong-final.svg' => '//patterns.boston.gov/assets/icons/dept_icons/age_strong.svg',
     'public://img/icons/department/2018/10/yee-icon.svg' => '//patterns.boston.gov/assets/icons/dept_icons/mayors_youth_council.svg',
-    'public://img/icons/department/2018/08/asset_332.svg' => 'public://icons/',
-    'public://img/icons/department/2018/05/pm_logo.svg' => 'public://icons/',
     'public://img/icons/department/2017/11/returnign_citizens-05_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/returning_citizens_logo.svg',
     'public://img/icons/department/2017/11/logos-05.svg' => '//patterns.boston.gov/assets/icons/dept_icons/returning_citizens_logo.svg',
     'public://img/icons/department/2017/11/artboard_5.svg' => '//patterns.boston.gov/assets/icons/dept_icons/returning_citizens_logo.svg',
@@ -500,23 +498,10 @@ class MigrationFixes {
     'public://img/how_to/intro_images/default-hero-image_12.svg' => 'public://icons/default-hero-image.svg',
     'public://img/how_to/intro_images/default-hero-image_11.svg' => 'public://icons/default-hero-image.svg',
     'public://img/how_to/intro_images/default-hero-image_1.svg' => 'public://icons/default-hero-image.svg',
-    'public://img/2019/w/warren_webpage_3.svg' => 'public://icons/',
-    'public://img/2019/s/sr_3.svg' => 'public://icons/',
-    'public://img/2019/o/our_partners_-_warren_street_4.svg' => 'public://icons/',
-    'public://img/2019/o/our_partners_-_warren_street_3.svg' => 'public://icons/',
-    'public://img/2019/o/our_partners_-_warren_street_2.svg' => 'public://icons/',
-    'public://img/2019/6/6_0.svg' => 'public://icons/',
-    'public://img/2019/5/5.svg' => 'public://icons/',
-    'public://img/2019/2/2_0.svg' => 'public://icons/',
-    'public://img/2019/1/14.svg' => 'public://icons/',
-    'public://img/2019/1/1.svg' => 'public://icons/',
     'public://img/2018/e/experiential_icons_real_estate_taxes.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/real_estate_taxes.svg',
     'public://img/2018/e/experiential_icons_census_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/fmily.svg',
     'public://img/2018/d/department_icons_emergency_management_1_1.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
     'public://img/2018/d/department_icons_emergency_management_1_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
-    'public://img/2018/a/asset_332_1_1.svg' => 'public://icons/',
-    'public://img/2018/a/asset_332_1_0.svg' => 'public://icons/',
-    'public://img/2018/a/asset_332_1.svg' => 'public://icons/',
     'public://img/2017/s/svg_hosuing_authority_.svg' => '//patterns.boston.gov/assets/icons/dept_icons/housing_authority_logo',
     'public://img/2017/e/experiential_icons_important_6.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/alert.svg',
     'public://img/2017/e/experiential_icons_fire_operations.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/axe.svg',
@@ -632,19 +617,10 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons-cal_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/calendars.svg',
     'public://img/2016/e/experiential_icons-cal_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/calendars.svg',
     'public://img/2016/e/experiential_icons-31.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/weddingrings.svg',
-    'public://img/2016/e/experiential_icons-22.svg' => 'public://icons/',
     'public://img/2016/d/deapartment_icons_emergency_management.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
     'public://img/2016/5/5icons_home_repairs.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/repair_your_home.svg',
     'public://img/2016/3/3icons_get_a_home_energy_assessment.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/energy_report.svg',
-    'public://embed/w/warren_webpage_3.svg' => 'public://icons/',
-    'public://embed/o/our_partners_-_warren_street_1.svg' => 'public://icons/',
     'public://embed/e/experiential_icons_who_is_my_city_councilor-.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/city_council_question.svg',
-    'public://embed/6/6_1.svg' => 'public://icons/',
-    'public://embed/3/34.svg' => 'public://icons/',
-    'public://embed/3/3.svg' => 'public://icons/',
-    'public://embed/1/18.svg' => 'public://icons/',
-    'public://embed/1/14_0.svg' => 'public://icons/',
-    'public://embed/1/11.svg' => 'public://icons/',
     'public://img/icons/transactions/2019/03/tripple_decker_icon.png' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
     'public://img/icons/transactions/2019/05/tripple_decker_-_at_home_renters.png' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
     'public://img/icons/transactions/2019/06/tripple_decker_.png' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
@@ -914,9 +890,10 @@ class MigrationFixes {
         "field_thumbnail",
       ],
     ];
+    $ocnt = 0;
     foreach (["file", "image"] as $media_type) {
+      $cnt = 0;
       foreach ($mimes[$media_type] as $mime => $file_extension) {
-        $cnt = 0;
         $files = \Drupal::database()->query("
           SELECT distinct f.fid, f.uri 
             FROM file_managed f
@@ -926,6 +903,9 @@ class MigrationFixes {
               AND f.status = 1;")->fetchAll();
 
         if (!empty($files)) {
+          $tot = count($files);
+          printf("[info] Will create %d %s (%s) media entries.\n  executing .", $tot, $mime, $media_type);
+          $icnt = $runner = 0;
           foreach ($files as $file) {
             $file->file = File::load($file->fid);
             if (!empty($file->file)) {
@@ -942,20 +922,28 @@ class MigrationFixes {
                 $file->thumbnail = ["height" => 100, "width" => 100];
               }
               if (self::makeMediaEntity($file)) {
-                $cnt++;
+                $icnt++;
+                $calc = intval((($tot - ($tot - $icnt)) / $tot) * 100) / 2;
+                if ($calc > $runner) {
+                  printf(".");
+                  $runner = $calc;
+                }
               }
             }
           }
+          $cnt += $icnt;
+          printf("\n");
+          printf("[success] -> %d %s (%s) media entities created.\n", $icnt, $mime, $media_type);
         }
         else {
-          printf("[notice] there were no %s %s files found to process.\n", $mime, $media_type);
+          printf("[notice] -> There were no %s (%s) files to create media entities for.\n", $mime, $media_type);
         }
-
       }
-      printf("[success] Created %d %s media entries.\n", $cnt, $media_type);
+      $ocnt += $cnt;
+      printf("[success] => Created %d %s media entries.\n\n", $cnt, $media_type);
 
     }
-
+    printf("[success] Created %d media entries in total.\n\n", $ocnt);
     // Need to flush the image/files + views caches.
     printf("[info] Flushing caches.\n", $cnt);
     drupal_flush_all_caches();
@@ -1082,7 +1070,7 @@ class MigrationFixes {
    * Manually create the media entity for the map background image.
    */
   public static function fixMap() {
-    printf("[action] Will ensure map default image is loaded propoerly.\n");
+    printf("[action] Will ensure map default image is loaded properly.\n");
     // Copy map module icons into expected location.
     _bos_core_install_icons("bos_map");
     // Install the map default background image.
@@ -1096,7 +1084,7 @@ class MigrationFixes {
    */
   public static function migrateMessages() {
     // Fetch rows from D7.
-    printf("[action] Will manually copy status_item messages because migration can't handle them.\n");
+    printf("[action] Will manually copy message_for_the_day entities because migration can't handle them properly.\n");
 
     $migrate_tables = [
       "field_revision_field_date" => "paragraph_revision__field_recurrence",
@@ -1300,7 +1288,6 @@ class MigrationFixes {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public static function fixPublished() {
-
     $sql = "
       SELECT d8.nid, d8.vid, d7.status d7_status, d8.status d8_status, d8.title, d8.type, w.published, w.is_current
         FROM bostond8dev.node_field_data d8
@@ -1311,7 +1298,7 @@ class MigrationFixes {
     $cnt = 0;
     $nids = Database::getConnection()->query($sql)->fetchAll();
     if (count($nids)) {
-      printf("[action] Will publish %d unpublished nodes.\n", $cnt);
+      printf("[action] Will publish %d unpublished nodes.\n", count($nids));
       foreach ($nids as $nid) {
         $node = \Drupal::entityTypeManager()->getStorage("node")
           ->loadRevision($nid->vid);

@@ -287,9 +287,7 @@ class MigrationPrepareRow {
                         dat.sticky = rev.sticky,
                         dat.default_langcode = rev.default_langcode,
                         dat.revision_translation_affected = rev.revision_translation_affected,
-                        dat.published_at = rev.published_at,
-                        dat.content_translation_source = rev.content_translation_source,
-                        dat.content_translation_outdated = rev.content_translation_outdated
+                        dat.published_at = rev.published_at
                         WHERE rev.langcode = 'und' 
                             AND rev.vid = " . $workbench->vid . ";";
     \Drupal::database()->query($qstring)->execute();
