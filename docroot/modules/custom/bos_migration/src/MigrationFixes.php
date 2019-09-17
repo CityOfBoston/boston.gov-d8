@@ -914,9 +914,10 @@ class MigrationFixes {
         "field_thumbnail",
       ],
     ];
+    $ocnt = 0;
     foreach (["file", "image"] as $media_type) {
+      $cnt = 0;
       foreach ($mimes[$media_type] as $mime => $file_extension) {
-        $cnt = 0;
         $files = \Drupal::database()->query("
           SELECT distinct f.fid, f.uri 
             FROM file_managed f
@@ -926,6 +927,9 @@ class MigrationFixes {
               AND f.status = 1;")->fetchAll();
 
         if (!empty($files)) {
+          $tot = count($files);
+          printf("[info] Will create %d %s (%s) media entries.\n  executing .", $tot, $mime, $media_type);
+          $icnt = $runner = 0;
           foreach ($files as $file) {
             $file->file = File::load($file->fid);
             if (!empty($file->file)) {
@@ -942,20 +946,28 @@ class MigrationFixes {
                 $file->thumbnail = ["height" => 100, "width" => 100];
               }
               if (self::makeMediaEntity($file)) {
-                $cnt++;
+                $icnt++;
+                $calc = intval((($tot - ($tot-$icnt))/$tot) * 100) / 2;
+                if ($calc > $runner) {
+                  printf (".");
+                  $runner = $calc;
+                }
               }
             }
           }
+          $cnt += $icnt;
+          printf ("\n");
+          printf("[success] -> %d %s (%s) media entities created.\n", $icnt, $mime, $media_type);
         }
         else {
-          printf("[notice] there were no %s %s files found to process.\n", $mime, $media_type);
+          printf("[notice] -> There were no %s (%s) files to create media entities for.\n", $mime, $media_type);
         }
-
       }
-      printf("[success] Created %d %s media entries.\n", $cnt, $media_type);
+      $ocnt += $cnt;
+      printf("[success] => Created %d %s media entries.\n\n", $cnt, $media_type);
 
     }
-
+    printf("[success] Created %d media entries in total.\n\n", $ocnt);
     // Need to flush the image/files + views caches.
     printf("[info] Flushing caches.\n", $cnt);
     drupal_flush_all_caches();
