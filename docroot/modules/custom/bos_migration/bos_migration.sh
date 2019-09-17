@@ -8,7 +8,7 @@ function doMigrate() {
 
     while true; do
         printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
-        ${drush} mim $* --feedback=500
+        ${drush} mim $* --feedback=500 | tee -a ${logfile}
         retVal=$?
         if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
@@ -186,7 +186,7 @@ if [ -d "/mnt/gfs" ]; then
     printf "Running in REMOTE mode:\n"| tee ${logfile}
 else
 #    dbpath=" ~/sources/boston.gov-d8/dump/migration"
-    cd /app/docroot
+    cd  ~/sources/boston.gov-d8/docroot
     dbpath=" /app/dump/migration"
     logfile="./bos_migration.log"
     drush="lando drush"
