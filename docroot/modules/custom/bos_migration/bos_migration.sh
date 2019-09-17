@@ -8,7 +8,7 @@ function doMigrate() {
 
     while true; do
         printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
-        ${drush} mim $* --feedback=500
+        ${drush} mim $* --feedback=500 | tee -a ${logfile}
         retVal=$?
         if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
@@ -49,7 +49,7 @@ function doMigrate() {
 function doExecPHP() {
     SECONDS=0
 
-    printf " -> Executing PHP: '%q'" "${*}"
+    printf " -> Executing PHP: '%q'" "${*}" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} php-eval "$*"  | tee -a ${logfile}
     else
@@ -186,7 +186,7 @@ if [ -d "/mnt/gfs" ]; then
     printf "Running in REMOTE mode:\n"| tee ${logfile}
 else
 #    dbpath=" ~/sources/boston.gov-d8/dump/migration"
-    cd /app/docroot
+    cd  ~/sources/boston.gov-d8/docroot
     dbpath=" /app/dump/migration"
     logfile="./bos_migration.log"
     drush="lando drush"
@@ -204,6 +204,8 @@ if [ "$1" == "reset" ]; then
     restoreDB "${dbpath}/migration_clean_reset.sql" || exit 1
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
     dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
@@ -325,8 +327,6 @@ fi
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
-doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
-doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
 # Reset status_items.

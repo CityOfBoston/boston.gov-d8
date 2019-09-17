@@ -91,8 +91,19 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
             if (\Drupal::service('file_system')->realpath($uri)) {
               $uri = \Drupal::service('file_system')->realpath($uri);
             }
-            $icon = file_get_contents($uri);
-            $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+            // If the icon is in the format //domain/file then add scheme.
+            if (substr($uri, 0, 4) != "http") {
+              $uri = \Drupal::request()->getScheme() . ":" . $uri;
+            }
+
+            if (file_exists($uri) && $icon = file_get_contents($uri)) {
+              $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+            }
+            else {
+              $icon = file_get_contents(file_create_url("public://custom/no-icon.svg"));
+              $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+            }
+
           }
         }
       }

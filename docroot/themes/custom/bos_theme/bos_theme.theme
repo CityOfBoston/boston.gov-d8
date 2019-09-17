@@ -597,7 +597,11 @@ function bos_theme_preprocess_image(&$variables) {
   }
 
   if (strpos($variables["uri"], ".svg") > 0) {
+    if (substr($variables['uri'], 0, 4) != "http") {
+      $variables['uri'] = \Drupal::request()->getScheme() . ":" . $variables['uri'];
+    }
     $icon = file_get_contents($variables['uri']);
+    // If the icon is in the format //domain/file then add scheme.
     $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
     $variables['attributes']->removeAttribute("src");
   }
