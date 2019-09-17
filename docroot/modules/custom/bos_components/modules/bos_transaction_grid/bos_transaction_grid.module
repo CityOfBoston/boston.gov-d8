@@ -93,8 +93,9 @@ function transaction_grid_paragraph_summary_alter(array $form_widget, array $par
   $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
   if ($para["entity"]->hasField("field_contact")) {
     $contact = $para["entity"]->get("field_contact")->target_id;
-    $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact);
-    $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+    if ($contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact)) {
+      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+    }
   }
 
   return [
