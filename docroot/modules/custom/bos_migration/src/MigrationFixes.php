@@ -1070,7 +1070,7 @@ class MigrationFixes {
    * Manually create the media entity for the map background image.
    */
   public static function fixMap() {
-    printf("[action] Will ensure map default image is loaded propoerly.\n");
+    printf("[action] Will ensure map default image is loaded properly.\n");
     // Copy map module icons into expected location.
     _bos_core_install_icons("bos_map");
     // Install the map default background image.
@@ -1084,7 +1084,7 @@ class MigrationFixes {
    */
   public static function migrateMessages() {
     // Fetch rows from D7.
-    printf("[action] Will manually copy status_item messages because migration can't handle them.\n");
+    printf("[action] Will manually copy message_for_the_day entities because migration can't handle them properly.\n");
 
     $migrate_tables = [
       "field_revision_field_date" => "paragraph_revision__field_recurrence",
@@ -1288,7 +1288,6 @@ class MigrationFixes {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public static function fixPublished() {
-
     $sql = "
       SELECT d8.nid, d8.vid, d7.status d7_status, d8.status d8_status, d8.title, d8.type, w.published, w.is_current
         FROM bostond8dev.node_field_data d8
@@ -1299,7 +1298,7 @@ class MigrationFixes {
     $cnt = 0;
     $nids = Database::getConnection()->query($sql)->fetchAll();
     if (count($nids)) {
-      printf("[action] Will publish %d unpublished nodes.\n", $cnt);
+      printf("[action] Will publish %d unpublished nodes.\n", count($nids));
       foreach ($nids as $nid) {
         $node = \Drupal::entityTypeManager()->getStorage("node")
           ->loadRevision($nid->vid);
