@@ -947,16 +947,16 @@ class MigrationFixes {
               }
               if (self::makeMediaEntity($file)) {
                 $icnt++;
-                $calc = intval((($tot - ($tot-$icnt))/$tot) * 100) / 2;
+                $calc = intval((($tot - ($tot - $icnt)) / $tot) * 100) / 2;
                 if ($calc > $runner) {
-                  printf (".");
+                  printf(".");
                   $runner = $calc;
                 }
               }
             }
           }
           $cnt += $icnt;
-          printf ("\n");
+          printf("\n");
           printf("[success] -> %d %s (%s) media entities created.\n", $icnt, $mime, $media_type);
         }
         else {
