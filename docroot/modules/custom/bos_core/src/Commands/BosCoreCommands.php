@@ -61,10 +61,11 @@ class BosCoreCommands extends DrushCommands {
     elseif (BosCoreCssSwitcherService::switchSource($ord)) {
       \Drupal::service('asset.css.collection_optimizer')
         ->deleteAll();
-      $this->output()->writeln(t("Success: Changed source to '@source' (@sourcePath)."), [
-        '@source' => $libArray[$ord][0],
-        '@sourcePath' => $libArray[$ord][1],
-      ]);
+      $res = \Drupal::translation()->translate("Success: Changed source to '@source' (@sourcePath).", [
+        '@source' => $libArray[$ord + 1][0],
+        '@sourcePath' => $libArray[$ord + 1][1],
+      ])->render();
+      $this->output()->writeln($res);
     }
     else {
       $this->output()->writeln(t("FAILED: Could not change source to '@source' (@sourcePath)."), [
