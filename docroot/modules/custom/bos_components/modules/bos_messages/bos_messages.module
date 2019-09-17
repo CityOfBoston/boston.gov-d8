@@ -93,7 +93,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
             }
             // If the icon is in the format //domain/file then add scheme.
             if (substr($uri, 0, 4) != "http") {
-              $uri = \Drupal::request()->getScheme() . ":" . $uri ;
+              $uri = \Drupal::request()->getScheme() . ":" . $uri;
             }
 
             if (file_exists($uri) && $icon = file_get_contents($uri)) {
