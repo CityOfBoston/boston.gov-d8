@@ -125,7 +125,6 @@ class FileCopyExt extends FileCopy {
     }
 
     // Now move the file.
-    $filename =
     $isDoc = strpos($source, ".pdf")
             || strpos($source, ".doc")
             || strpos($source, ".xl");
