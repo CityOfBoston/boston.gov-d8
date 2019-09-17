@@ -5,6 +5,8 @@
  * Module file for bos_emergency_alerts.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_theme().
  */
@@ -52,4 +54,34 @@ function bos_emergency_alerts_mail($key, &$message, $params) {
       <pre>" . print_r($params["message"], TRUE) . "</pre>
       </p>";
   }
+}
+
+/**
+ * Implements paragraph summary for paragraph EXPEREMENTAL widget.
+ *
+ * @param array $form_widget
+ *   The widget for this paragraph item.
+ * @param array $para
+ *   The paragraph entity.
+ * @param array $attributes
+ *   The attributes array for this paragraphs item.
+ *
+ * @return array
+ *   In the format ['attributes' => [attributes array], content => [markup]].
+ */
+function bos_signup_emergency_alerts_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  if ($para["entity"]->hasField("field_contact")) {
+    $contact = $para["entity"]->get("field_contact")->target_id;
+    $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact);
+    $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+    $markup[] = Markup::create(strip_tags($para["entity"]->get("field_intro_text")[0]->value));
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }

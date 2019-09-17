@@ -8,48 +8,6 @@ namespace Drupal\bos_migration;
 trait FilesystemReorganizationTrait {
 
   /**
-   * Maps extensions and mime types to a category for processing into folders.
-   *
-   * Will only be used for files found in the public:// root folder.
-   *
-   * @var array
-   *   Array mapping folder name to file mime/extensions.
-   */
-  protected $allowdFormats = [
-    'image' => [
-      'jpg',
-      'png',
-      'jpeg',
-      'svg',
-      'svg+xml',
-      'gif',
-      'tif',
-      'pdf', /* Technically not correct but ... */
-    ],
-    'file' => [
-      'pdf',
-      'xls',
-      'xlsx',
-      'docx',
-      'doc',
-      'pptx',
-      'pptm',
-      'ppt',
-      'rtf',
-      'ppt',
-      'jnlp', /* Not sure we should allow this. */
-      'xlsm',
-      'mp3',
-      'mp4',
-      'jpg', /* These are images, but could also be. */
-      'png', /* Downloadable files. */
-      'jpeg', /* ... */
-      'tif', /* ... */
-      'svg', /* ... */
-    ],
-  ];
-
-  /**
    * Defines mapping/organization for files not in public:// root folder.
    *
    * @var array
@@ -184,7 +142,8 @@ trait FilesystemReorganizationTrait {
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
     $type = [];
-    foreach ($this->allowdFormats as $file_type => $formats) {
+    $allowedFormats = MigrationFixes::allowedFormats();
+    foreach ($allowedFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if (strpos($parts[$index], $extension) !== FALSE) {
           $type[] = $file_type;
@@ -214,7 +173,8 @@ trait FilesystemReorganizationTrait {
     $parts = explode('/', $mime);
     $index = count($parts) - 1;
     $type = [];
-    foreach ($this->allowdFormats as $file_type => $formats) {
+    $allowedFormats = MigrationFixes::allowedFormats();
+    foreach ($allowedFormats as $file_type => $formats) {
       if (in_array($parts[$index], $formats)) {
         $type[] = $file_type;
       }

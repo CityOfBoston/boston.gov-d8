@@ -7,6 +7,7 @@ dependencies:
     - field.field.media.image.image
     - media.type.image
   module:
+    - fences
     - svg_image
 _core:
   default_config_hash: VLDxfMVPTkd2xvOjFMCh3kWmaOYnd03zggFXuUXQVEY
@@ -22,7 +23,18 @@ content:
     settings:
       image_style: ''
       image_link: ''
-    third_party_settings: {  }
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden:
   created: true

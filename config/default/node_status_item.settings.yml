@@ -19,7 +19,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>There is no daytime street cleaning today. Overnight street cleaning\_is on a normal schedule.</p>"
+        field_message:
+          value: "<p>There is no daytime street cleaning today. Overnight street cleaning\_is on a normal schedule.</p>"
+          format: filtered_html
         field_link:
           target_id: 48606
           target_revision_id: 9119156
@@ -33,7 +35,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>Day time street cleaning is canceled due to the holiday. Overnight street cleaning is running on a normal schedule.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Day time street cleaning is canceled due to the holiday. Overnight street cleaning is running on a normal schedule.</p>'
         field_link:
           target_id: 48606
           target_revision_id: 9119156
@@ -47,7 +51,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: '<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>'
         field_link:
           target_id: 48606
           target_revision_id: 9119156
@@ -75,7 +81,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>City Hall is closed. Only City of Boston emergency\_and snow operations\_personnel have to report to work.</p>"
+        field_message:
+          format: filtered_html
+          value: "<p>City Hall is closed. Only City of Boston emergency\_and snow operations\_personnel have to report to work.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -89,7 +97,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>All municipal buildings are closed today due to the holiday.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>All municipal buildings are closed today due to the holiday.</p>'
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -103,7 +113,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>All municipal buildings are closed. Community centers are also closed, except for\_Clougherty Pool,\_Mirabella Pool, and the beach at the\_Curley Community Center.</p>"
+        field_message:
+          format: filtered_html
+          value: "<p>All municipal buildings are closed. Community centers are also closed, except for\_Clougherty Pool,\_Mirabella Pool, and the beach at the\_Curley Community Center.</p>"
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -117,7 +129,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: '<p>All municipal buildings are open based on their normal hours.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>All municipal buildings are open based on their normal hours.</p>'
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -131,7 +145,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>On Saturdays, all libraries and some community centers are open. All other municipal buildings are closed.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>On Saturdays, all libraries and some community centers are open. All other municipal buildings are closed.</p>'
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -145,7 +161,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>On Sundays, some community centers are open. The Central Library in Copley Square is open from 1 - 5 p.m. All other municipal buildings and libraries are closed.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>On Sundays, some community centers are open. The Central Library in Copley Square is open from 1 - 5 p.m. All other municipal buildings and libraries are closed.</p>'
         field_link:
           target_id: 156611
           target_revision_id: 9119118
@@ -173,7 +191,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: '<p>Pickup is on a normal schedule.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Pickup is on a normal schedule.</p>'
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -187,7 +207,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>There is no residential trash and recycling pickup during the weekend.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>There is no residential trash and recycling pickup during the weekend.</p>'
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -201,7 +223,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>Due to the heat emergency, the hazardous waste dropoff event scheduled for [current-date:date_format_status], is canceled.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Due to the heat emergency, the hazardous waste dropoff event scheduled for [current-date:date_format_status], is canceled.</p>'
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -215,7 +239,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>'
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -229,7 +255,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Pickup is on a normal schedule. We also collect leaf and yard waste this week.</p>'
         field_link:
           target_id: 156596
           target_revision_id: 9119048
@@ -257,7 +285,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>The tow lot is closed. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>The tow lot is closed. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -271,7 +301,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>The tow lot is closed on Sundays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>The tow lot is closed on Sundays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -285,7 +317,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>The tow lot is open from 9\_a.m. - 1 p.m. on Saturdays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
+        field_message:
+          format: filtered_html
+          value: "<p>The tow lot is open from 9\_a.m. - 1 p.m. on Saturdays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -299,7 +333,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: '<p>The tow lot is open from 7 a.m. - 11 p.m. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>The tow lot is open from 7 a.m. - 11 p.m. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
         field_link:
           target_id: 156721
           target_revision_id: 9119088
@@ -327,7 +363,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>Parking meters are free with no time limit. We enforce all other parking rules.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Parking meters are free with no time limit. We enforce all other parking rules.</p>'
         field_link:
           target_id: 156666
           target_revision_id: 9119108
@@ -341,7 +379,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 1
-        field_message: '<p>Parking meters are free with no time limit on Sundays.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Parking meters are free with no time limit on Sundays.</p>'
         field_link:
           target_id: 156666
           target_revision_id: 9119108
@@ -355,7 +395,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: '<p>Parking meters are running on their normal schedules today.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>Parking meters are running on their normal schedules today.</p>'
         field_link:
           target_id: 156666
           target_revision_id: 9119108
@@ -383,7 +425,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: "<p>All Boston Public Library locations\_are\_closed today.</p>"
+        field_message:
+          format: filtered_html
+          value: "<p>All Boston Public Library locations\_are\_closed today.</p>"
         field_link:
           target_id: 73046
           target_revision_id: 91191084
@@ -397,7 +441,9 @@ setup_data:
         status: 1
         field_enabled: 1
         field_use_alert: 0
-        field_message: "<p>All Boston Public Library locations are open today\_based on their normal schedules.</p>"
+        field_message:
+          format: filtered_html
+          value: "<p>All Boston Public Library locations are open today\_based on their normal schedules.</p>"
         field_link:
           target_id: 73046
           target_revision_id: 9119084
@@ -425,7 +471,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>'
         field_link:
           target_id: 199381
           target_revision_id: 9119114
@@ -439,7 +487,9 @@ setup_data:
         status: 1
         field_enabled: 0
         field_use_alert: 1
-        field_message: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m.</p>'
+        field_message:
+          format: filtered_html
+          value: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m.</p>'
         field_link:
           target_id: 199381
           target_revision_id: 9119114
