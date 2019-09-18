@@ -7,6 +7,10 @@ dependencies:
     - file_entity.type.document
   module:
     - datetime
+    - field_display_label
+third_party_settings:
+  field_display_label:
+    display_label: 'Author Date'
 id: file.document.field_updated_date
 field_name: field_updated_date
 entity_type: file
@@ -15,7 +19,10 @@ label: 'Updated Date'
 description: 'Use this field to display a date to the user audience indicating when this document was last updated.'
 required: false
 translatable: false
-default_value: {  }
+default_value:
+  -
+    default_date_type: now
+    default_date: now
 default_value_callback: ''
 settings: {  }
 field_type: datetime
