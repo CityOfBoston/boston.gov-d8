@@ -1,0 +1,43 @@
+uuid: 6b7c4589-deab-4bb8-b980-1c062b583e22
+langcode: und
+status: true
+dependencies:
+  config:
+    - views.view.media_entity_browser
+  module:
+    - lightning_media
+    - views
+name: document_entity_browser
+label: 'Document Entity Browser'
+display: modal
+display_configuration:
+  width: '1070'
+  height: '840'
+  link_text: 'Choose/Upload Document'
+  auto_open: false
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  efcda828-a262-402a-a9ff-3dbd877d7cad:
+    settings:
+      submit_text: 'Upload and Place'
+      target_bundles: {  }
+      form_mode: media_browser
+      return_file: true
+      upload_validators: {  }
+    uuid: efcda828-a262-402a-a9ff-3dbd877d7cad
+    weight: -9
+    label: 'Add Document'
+    id: file_upload
+  ea90b405-b820-4018-9437-107152596698:
+    settings:
+      view: media_entity_browser
+      view_display: entity_browser_1
+      submit_text: 'Select  Document'
+      auto_select: false
+    uuid: ea90b405-b820-4018-9437-107152596698
+    weight: -10
+    label: 'Choose Document'
+    id: view

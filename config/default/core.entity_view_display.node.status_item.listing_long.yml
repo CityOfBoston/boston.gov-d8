@@ -9,13 +9,11 @@ dependencies:
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
     - field.field.node.status_item.field_weight
-    - image.style.square_icon_65px
     - node.type.status_item
   module:
     - entity_reference_revisions
     - fences
     - options
-    - svg_image
     - user
 _core:
   default_config_hash: K7WEvrvyzU_1FQ5VR_JPtvDJNEr-Cnjab0rFsawkPks
@@ -44,14 +42,10 @@ content:
   field_icon:
     label: hidden
     weight: 1
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_65px
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
