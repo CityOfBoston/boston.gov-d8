@@ -7,27 +7,27 @@ function doMigrate() {
     ERRORS=0
 
     while true; do
-        printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+        printf "[migration-step]${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
         ${drush} mim $* --feedback=500 | tee -a ${logfile}
-        retVal=$?
-        if [ $retVal -eq 0 ]; then break; fi
         ERRORS=$((ERRORS+1))
         bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
         if [ "${bad}" == "Importing" ]; then
             bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
         fi
+        if [ "${bad}" == "" ]; then
+          break
+        fi
         ${drush} mrs $bad
         if [ $ERRORS -gt 4 ]; then break; fi
     done
-    echo "ExitCode: ${retVal}"
 
     ${drush} ms ${1} | tee -a ${logfile}
 
     if [ $ERRORS -ne 0 ]; then
-        printf "${RED}Migrate command completed with Errors.${NC}\n"  | tee -a ${logfile}
+        printf "[migration-warning] ${RED}Migrate command completed with Errors.${NC}\n"  | tee -a ${logfile}
     fi
 
-    printf " -> Run time: " | tee -a ${logfile}
+    printf "[migration-runtime] " | tee -a ${logfile}
     if (( $SECONDS > 3600 )); then
         let "hours=SECONDS/3600"
         text="hour"
@@ -43,20 +43,21 @@ function doMigrate() {
     let "seconds=(SECONDS%3600)%60"
     text="second"
     if (( $seconds > 1 )); then text="seconds"; fi
-    printf "$seconds $text.${NC}\n" | tee -a ${logfile}
+    printf "$seconds $text.${NC}\n\n" | tee -a ${logfile}
+
 }
 
 function doExecPHP() {
     SECONDS=0
 
-    printf " -> Executing PHP: '%q'" "${*}" | tee -a ${logfile}
+    printf "[migration-step] Executing PHP: '%q'" "${*}" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} php-eval "$*"  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush php-eval $*"  | tee -a ${logfile}
     fi
 
-    printf " -> Run time: " | tee -a ${logfile}
+    printf "[migration-runtime] " | tee -a ${logfile}
     if (( $SECONDS > 3600 )); then
         let "hours=SECONDS/3600"
         text="hour"
@@ -72,12 +73,12 @@ function doExecPHP() {
     let "seconds=(SECONDS%3600)%60"
     text="second"
     if (( $seconds > 1 )); then text="seconds"; fi
-    printf "$seconds $text.${NC}\n" | tee -a ${logfile}
+    printf "$seconds $text.${NC}\n\n" | tee -a ${logfile}
 }
 
 function restoreDB() {
     # Remove old database and restore baseline
-    printf "\nRESTORING DB ${1}\n" | tee -a ${logfile}
+    printf "[migration-step] Restoring Database ${1}\n" | tee -a ${logfile}
 
     backup=${1}
 
@@ -85,63 +86,86 @@ function restoreDB() {
 
     if [ ! -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
-            printf " -> ${backup} not found looking for unzipped backup.\n" | tee -a ${logfile}
+            printf "[migration-info] ${backup} not found looking for unzipped backup.\n" | tee -a ${logfile}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
         else
-            printf " -> ${backup} not found looking for zipped backup.\n" | tee -a ${logfile}
+            printf "[migration-warning] ${backup} not found looking for zipped backup.\n" | tee -a ${logfile}
             backup="${backup}.gz"
         fi
     fi
 
     if [ -f "${backup}" ];then
         if [ ${backup: -3} == ".gz" ]; then
-            printf " -> unzip ${backup}.\n" | tee -a ${logfile}
+            printf "[migration-info] unzipping ${backup}.\n" | tee -a ${logfile}
             gunzip -fq ${backup}
             backup=$(basename ${backup} .gz)
             backup="${dbpath}/${backup}"
         fi
     else
-        printf "ERROR: a suitable backup file could not be found.\n" | tee -a ${logfile}
-        printf "Script aborting.\n\n" | tee -a ${logfile}
+        printf "[migration-error] a suitable backup file could not be found.\n" | tee -a ${logfile}
+        printf "[migration-info] Script aborting.\n\n" | tee -a ${logfile}
         exit 1
     fi
 
-    printf " -> Import ${backup} file into MySQL\n" | tee -a ${logfile}
+    printf "[migration-info] Import ${backup} file into MySQL\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
     fi
 
-    printf " -> Re-zip backup.\n" | tee -a ${logfile}
+    printf "[migration-info] Re-zip backup.\n" | tee -a ${logfile}
     gzip -fq ${backup}
 
-    printf " -> Sync database wih current code.\n" | tee -a ${logfile}
+    printf "[migration-info] Sync database wih current code.\n" | tee -a ${logfile}
     ## Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
 
     # Ensure the needed modules are enabled.
+    printf "[migration-info] Enable migration modules.\n" | tee -a ${logfile}
     ${drush} cdel views.view.migrate_taxonomy
     ${drush} cdel views.view.migrate_paragraphs
     ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration -y  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
+
+    printf "[migration-info] Load bos_migration (migrate_plus) configs for good measure.\n" | tee -a ${logfile}
     ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
 
     # rebuild the migration configs.
+    printf "[migrate-info] Check for and run any database and module hook_updates.\n" | tee -a ${logfile}
     ${drush} updb -y  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
+
+    printf "[migrate-info] Run entity-schema updates.\n" | tee -a ${logfile}
     ${drush} entup -y  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
+
+    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
     doExecPHP "node_access_rebuild();"
-    printf " -> RESTORED.\n" | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
+
 
     # Set migration variables.
-    ${drush} sset "bos_migration.fileOps" "copy"
-    ${drush} sset "bos_migration.dest_file_exists" "use\ existing"
-    ${drush} sset "bos_migration.dest_file_exists_ext" "skip"
-    ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/"
-    ${drush} sset "bos_migration.active" "1"
+    printf "[migrate-info] Set migration variables (states).\n" | tee -a ${logfile}
+    ${drush} sset "bos_migration.fileOps" "copy" | tee -a ${logfile}
+    ${drush} sset "bos_migration.dest_file_exists" "use\ existing" | tee -a ${logfile}
+    ${drush} sset "bos_migration.dest_file_exists_ext" "skip" | tee -a ${logfile}
+    ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/" | tee -a ${logfile}
+    ${drush} sset "bos_migration.active" "1" | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
 
+    printf "[migrate-info] Rebuild caches.\n" | tee -a ${logfile}
     ${drush} cr  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
+
+    printf "[migrate-info] Printout current migration status.\n" | tee -a ${logfile}
     ${drush} ms  | tee -a ${logfile}
+    printf "\n" | tee -a ${logfile}
+
+    printf "[migration-success] Database has been restored and synchronised with current branch.\n\n" | tee -a ${logfile}
 
     ## Takes site out of maintenance mode before dumping.
     ${drush} sset "system.maintenance_mode" "0"
@@ -156,20 +180,20 @@ function restoreDB() {
 function dumpDB() {
     # Dump current DB.
     backup=${1}
-    printf "DUMPING DB ${backup}\n" | tee -a ${logfile}
+    printf "[migration-step] Dump DB ${backup}\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} sql:dump -y --database=default > ${backup}
     else
         lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
     fi
     gzip -fq ${backup}
-    printf " -> DUMPED ${backup}.gz.\n" | tee -a ${logfile}
+    printf "[migration-success] Database (default) dumped to ${backup}.gz.\n\n" | tee -a ${logfile}
 }
 
 function removeEmptyFiles() {
-    printf  "REMOVING the following zero-byte images:\n"| tee -a ${logfile}
+    printf  "[migration-step] Remove the following zero-byte images:\n"| tee -a ${logfile}
     find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
-    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete && printf "SUCCESS\n" | tee -a ${logfile}
+    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete && printf "[migration-success] Images deleted\n\n" | tee -a ${logfile}
     # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
 }
 
@@ -183,14 +207,14 @@ if [ -d "/mnt/gfs" ]; then
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
     logfile="/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.log"
     drush="drush"
-    printf "Running in REMOTE mode:\n"| tee ${logfile}
+    printf "[migration-info] Running in REMOTE mode:\n"| tee ${logfile}
 else
 #    dbpath=" ~/sources/boston.gov-d8/dump/migration"
     cd  ~/sources/boston.gov-d8/docroot
     dbpath=" /app/dump/migration"
     logfile="./bos_migration.log"
     drush="lando drush"
-    printf "Running in LOCAL DOCKER mode:\n"| tee ${logfile}
+    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
 fi
 
 running=0
@@ -300,11 +324,12 @@ if [ "$1" == "final" ]; then
 fi
 
 if [ $running -eq 0 ]; then
-    printf "Bad script parameter\nOptions are:\n  reset, files, rereq, taxonomy, paragraphs, field_collection, update1, nodes, update2, node_revision, menus, final"
+    printf "[migration-error] Bad script parameter\nOptions are:\n  reset, files, rereq, taxonomy, paragraphs, field_collection, update1, nodes, update2, node_revision, menus, final" | tee -a ${logfile}
     exit 1
 fi
 
 ## Check all migrations completed.
+printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
 while true; do
     bad="$(drush ms | grep Importing | awk '{print $3}')"
@@ -315,8 +340,8 @@ while true; do
     ERRORS=$((ERRORS+1))
     if [ $ERRORS -gt 4 ]; then break; fi
     ${drush} mrs $bad
-    printf "\n${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
-    ${drush} mim $bad --feedback=500
+    printf "[migration-info] Will re-run partial import found for ID ${bad}.\n" | tee -a ${logfile}
+    doMigrate "${bad}" --force
 done
 
 ## Ensure everything is updated.
