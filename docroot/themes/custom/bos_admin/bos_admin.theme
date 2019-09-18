@@ -484,24 +484,32 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
     ->setOption('query', ["filter" => "strip_tags"]);
 }
 
-function bos_admin__form_alter(&$form, FormStateInterface $form_state, $form_id) {
+/**
+ * Implements hook_form_alter().
+ */
+function xbos_admin__form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Seek out paragraph widgets and sub-widgets.
   $form_fields = $children = Element::getVisibleChildren($form);
   foreach ($form_fields as $form_field) {
     if (substr($form_field, 0, 6) == "field_"
       && isset($form[$form_field]["widget"]["#paragraphs_widget"])) {
-        // This is a paragraph component.
-        $widget = $form[$form_field]["widget"];
-        foreach (Element::getVisibleChildren($widget) as $field_key => $field) {
-          if (is_numeric($field)) {
+      // This is a paragraph component.
+      $widget = $form[$form_field]["widget"];
+      foreach (Element::getVisibleChildren($widget) as $field_key => $field) {
+        if (is_numeric($field)) {
 
-          }
         }
+      }
     }
   }
 }
 
-function paragraph_widget_summary() {}
+/**
+ * Helper.
+ */
+function paragraph_widget_summary() {
+
+}
 
 /**
  * Ensure attributes element of variables array is an Attribute object.
@@ -519,5 +527,3 @@ function _bos_admin_fix_attributes(array &$variables, string $check_field = "att
     _bos_core_fix_attributes($variables, $check_field);
   }
 }
-
-
