@@ -1357,3 +1357,45 @@ What: Creates a horizontally arranged group.
 .media-library-view .hide-media {
   display: none;
 }
+/*
+  David:
+  Where: Media widget component.
+  Where: File/Document widget in paragraphs EXPEREMENTAL for document para in bos_link.
+  What: Lays out the display nicely.
+ */
+.field--widget-entity-browser-file table.entities-list td:nth-child(3),
+.field--widget-entity-browser-file table.entities-list td:nth-child(4),
+.field--widget-entity-browser-file table.entities-list td:nth-child(5) {
+  text-align: center;
+  vertical-align: text-top;
+}
+.field--widget-entity-browser-file table.entities-list th:nth-child(2),
+.field--widget-entity-browser-file table.entities-list td:nth-child(2),
+.field--widget-entity-browser-file table.entities-list td:nth-child(4) {
+  display: none;
+}
+.field--widget-entity-browser-file table.entities-list th:nth-child(3) {
+  max-width: 200px;
+  width: 200px;
+}
+.field--widget-entity-browser-file .field--name-filename {
+  font-size: 110%;
+  font-weight: bold;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+.field--widget-entity-browser-file .field--name-filesize {
+  margin-top:5px;
+  padding-left: 20px;
+}
+.field--widget-entity-browser-file .field--name-uid {
+  margin-top:3px;
+}
+.field--widget-entity-browser-file .field--name-uid:before {
+  content: "Uploaded by: ";
+}
+
+/* Removes the "show row weights" notice */
+.tabledrag-toggle-weight-wrapper {
+  display: none;
+}
