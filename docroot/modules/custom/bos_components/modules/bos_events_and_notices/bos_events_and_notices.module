@@ -46,9 +46,10 @@ function bos_events_and_notices_preprocess_paragraph__events_and_notices(&$varia
  */
 function bos_events_and_notices_preprocess_views_view_fields(&$variables) {
   if ($variables["view"]->storage->id() == 'events_and_notices') {
-    if ($node = Node::load($variables["row"]->nid)) {
+    if ($node = $variables["row"]->_entity) {
       $type = $node->getType();
       $variables['type_class'] = 'news-item-' . $type;
+      $variables["thumbnail"] = ($node->hasField("field_thumbnail") && $node->get("field_thumbnail")->target_id);
     }
   }
 }
