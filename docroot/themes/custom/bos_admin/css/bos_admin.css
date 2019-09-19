@@ -1261,9 +1261,9 @@ What: Creates a horizontally arranged group.
   Where: Admin pages using Paragraphs EXPERIEMENTAL
   What: Enhances or fades summary field.
  */
-.cob-para-enabled .paragraphs-description .summary-content {
-  font-weight: bold;
-  color: Black
+.cob-para .paragraphs-description .summary-content {
+  font-weight: normal;
+  color: #555;
 }
 .cob-para-enabled .paragraphs-description .summary-content::before {
   content: "\2713 ";
@@ -1272,7 +1272,7 @@ What: Creates a horizontally arranged group.
 }
 .cob-para-disabled .paragraphs-description .summary-content{
   font-weight: normal;
-  color: grey;
+  color: #999;
 }
 .cob-para-disabled .paragraphs-description .summary-content::before {
   content: "\2715  ";
@@ -1287,5 +1287,115 @@ What: Creates a horizontally arranged group.
   What: Hides the title on the weight field..
  */
 .cob-group-grid .form-item-field-weight label {
+  display: none;
+}
+
+/*
+  David:
+  Where: Media widget dialog media--media-library.html.twig.
+  What: Restricts the size of the dialog window.
+ */
+.media-library-item {
+  background: #ebebeb;
+}
+.media-library-item .media_library_cob.field--name-thumbnail img {
+  height: 120px;
+}
+
+.media_library_cob {
+  text-align: center;
+  display: block !important;
+}
+.media_library_cob .field--name-filename {
+  padding: 30px 0px 10px 0px;
+  color: #0c97ed;
+  background: #e5e5e5;
+  border-bottom: 1px solid #999999;
+}
+.media_library_cob .field--name-uri {
+  height: 120px;
+  width: 120px;
+  margin: 0 auto;
+  padding-top: 5px;
+  padding-bottom: 3px;
+  max-height: 120px;
+  min-height: 120px;
+}
+
+.media_svg_only .media-library-item {
+  width: 100px;
+  height: 100px
+}
+.media_svg_only .media_library_cob .field--name-uri {
+  height: 100px;
+  width: 100px;
+}
+.media_svg_only .media-library-item .field__items {
+  display: none;
+}
+.media_svg_only .media-library-item .field--name-uri {
+  display: block;
+}
+.media_svg_only .media-library-item img {
+  height: 65px;
+  width: 65px;
+  padding-top: 25px;
+}
+.media_svg_only .media-library-item__preview {
+  padding-bottom: 0;
+}
+
+/*
+  David:
+  Where: Media widget component.
+  Where: Media widget dialog media--media-library.html.twig.
+  What: Hides the Add-media buttons on media library..
+ */
+.field--widget-media-library-widget .media-library-add-button {
+  visibility: hidden;
+}
+.media-library-view .hide-media {
+  display: none;
+}
+/*
+  David:
+  Where: Media widget component.
+  Where: File/Document widget in paragraphs EXPEREMENTAL for document para in bos_link.
+  What: Lays out the display nicely.
+ */
+.field--widget-entity-browser-file table.entities-list td:nth-child(3),
+.field--widget-entity-browser-file table.entities-list td:nth-child(4),
+.field--widget-entity-browser-file table.entities-list td:nth-child(5) {
+  text-align: center;
+  vertical-align: text-top;
+}
+.field--widget-entity-browser-file table.entities-list th:nth-child(2),
+.field--widget-entity-browser-file table.entities-list td:nth-child(2),
+.field--widget-entity-browser-file table.entities-list td:nth-child(4) {
+  display: none;
+}
+.field--widget-entity-browser-file table.entities-list th:nth-child(3) {
+  max-width: 200px;
+  width: 200px;
+}
+.field--widget-entity-browser-file .field--name-filename {
+  font-size: 110%;
+  font-weight: bold;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+.field--widget-entity-browser-file .field--name-filesize {
+  margin-top:5px;
+  padding-left: 20px;
+}
+.field--widget-entity-browser-file .field--name-uid {
+  margin-top:3px;
+}
+.field--widget-entity-browser-file .field--name-uid:before {
+  content: "Uploaded by: ";
+}
+
+/* Removes the "show row weights" notice */
+.tabledrag-toggle-weight-wrapper {
   display: none;
 }

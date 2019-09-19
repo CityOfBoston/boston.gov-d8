@@ -5,11 +5,10 @@ dependencies:
   config:
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
-    - image.style.transaction_icon_180x100
     - paragraphs.paragraphs_type.transactions
   module:
+    - media_library
     - paragraphs
-    - svg_image
 _core:
   default_config_hash: qYbjX6bVCSi1z8b9cvUA9uxnR-UztGjtiKBVwCYD9wg
 id: paragraph.transactions.default
@@ -38,10 +37,8 @@ content:
     region: content
   field_icon:
     weight: 2
-    type: image_image
-    settings:
-      preview_image_style: transaction_icon_180x100
-      progress_indicator: throbber
+    type: media_library_widget
+    settings: {  }
     third_party_settings: {  }
     region: content
   moderation_state:

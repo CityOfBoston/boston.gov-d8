@@ -17,17 +17,16 @@ dependencies:
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_updated_date
-    - image.style.square_icon_56px
     - node.type.department_profile
   module:
     - address
     - content_moderation
     - datetime
     - field_group
+    - media_library
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -145,8 +144,7 @@ content:
     third_party_settings: {  }
   field_address:
     weight: 14
-    settings:
-      default_country: US
+    settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
@@ -192,10 +190,8 @@ content:
     region: content
   field_icon:
     weight: 10
-    type: image_image
-    settings:
-      preview_image_style: square_icon_65px
-      progress_indicator: throbber
+    type: media_library_widget
+    settings: {  }
     third_party_settings: {  }
     region: content
   field_intro_text:

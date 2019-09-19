@@ -10,15 +10,14 @@ dependencies:
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
-    - image.style.square_icon_56px
     - node.type.site_alert
   module:
     - datetime_range
     - field_group
+    - media_library
     - paragraphs
     - path
     - publication_date
-    - svg_image
 third_party_settings:
   field_group:
     group_info:
@@ -102,10 +101,8 @@ content:
     region: content
   field_icon:
     weight: 27
-    type: image_image
-    settings:
-      preview_image_style: square_icon_56px
-      progress_indicator: throbber
+    type: media_library_widget
+    settings: {  }
     third_party_settings: {  }
     region: content
   field_link:

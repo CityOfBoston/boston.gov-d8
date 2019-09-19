@@ -5,6 +5,9 @@
  * The Base module file for bos_list module.
  */
 
+use Drupal\Core\Render\Markup;
+use Drupal\views\Entity\View;
+
 /**
  * Implements hook_theme().
  */
@@ -205,6 +208,34 @@ function bos_list_form_alter(&$form, $form_state, $form_id) {
   if ($form["#form_id"] == 'views_exposed_form') {
     $current_path = \Drupal::service('path.current')->getPath();
     $form["#action"] = $current_path;
+  }
+}
+
+/**
+ * Implements paragraph summary for paragraph EXPEREMENTAL widget.
+ *
+ * @param array $form_widget
+ *   The widget for this paragraph item.
+ * @param array $para
+ *   The paragraph entity.
+ * @param array $attributes
+ *   The attributes array for this paragraphs item.
+ *
+ * @return array
+ *   In the format ['attributes' => [attributes array], content => [markup]].
+ */
+function list_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  $markup = [];
+  if ($view = View::load($para["entity"]->field_list[0]->target_id)) {
+    $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+    $markup[] = Markup::create("<b>View:</b> " . $view->label());
+    $markup[] = Markup::create("<b>Display:</b> " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
+    return [
+      'attributes' => $attributes,
+      'content' => $markup,
+    ];
   }
 }
 

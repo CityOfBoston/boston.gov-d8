@@ -13,6 +13,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\GeneratedLink;
 use Drupal\Core\Url;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -25,6 +26,9 @@ function bos_admin_theme($existing, $type, $theme, $path) {
       'base hook' => 'container',
       'path' => 'themes/custom/bos_admin/templates',
       'template' => 'container',
+    ],
+    'media__media_library' => [
+      "base hook" => "media",
     ],
   ];
 }
@@ -478,6 +482,33 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
   $form_state->getRedirect()
     ->setRouteParameters($route)
     ->setOption('query', ["filter" => "strip_tags"]);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function xbos_admin__form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Seek out paragraph widgets and sub-widgets.
+  $form_fields = $children = Element::getVisibleChildren($form);
+  foreach ($form_fields as $form_field) {
+    if (substr($form_field, 0, 6) == "field_"
+      && isset($form[$form_field]["widget"]["#paragraphs_widget"])) {
+      // This is a paragraph component.
+      $widget = $form[$form_field]["widget"];
+      foreach (Element::getVisibleChildren($widget) as $field_key => $field) {
+        if (is_numeric($field)) {
+
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper.
+ */
+function paragraph_widget_summary() {
+
 }
 
 /**

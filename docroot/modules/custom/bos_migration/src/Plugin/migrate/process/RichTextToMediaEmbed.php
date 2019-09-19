@@ -10,6 +10,7 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  * fields.
  */
 
+use Drupal\bos_migration\MigrationFixes;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\ProcessPluginBase;
@@ -292,7 +293,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @throws \Drupal\migrate\MigrateException
    */
   public function createMediaEntity(string $src, string $targetBundle, Row $row, MigrateExecutableInterface $migrate_executable) {
-    if (!in_array($targetBundle, ['image', 'document'])) {
+    if (!in_array($targetBundle, ['image', 'document', 'icon'])) {
       throw new MigrateException('Only image and document bundles are supported.');
     }
 
@@ -343,7 +344,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     }
 
-    $field_name = $targetBundle == 'image' ? 'image' : 'field_document';
+    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'field_document');
 
     // Create the Media entity.
     $media = Media::create([
@@ -354,8 +355,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         'target_id' => $file->id(),
       ],
       // Don't add these images to media library. The media library should be
-      // curated by a human.
-      'field_media_in_library' => FALSE,
+      // curated by a human.  Exception is icons, these are always in the media
+      // library.
+      'field_media_in_library' => ($targetBundle == 'icon'),
     ]);
     $media->save();
     return $media;
@@ -548,38 +550,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   public function resolveFileType($uri) {
     // White list files based on file_managed table in D7.
-    $allowed_formats = [
-      'image' => [
-        '.jpg',
-        '.png',
-        '.jpeg',
-        '.svg',
-        '.gif',
-        '.tif',
-        '.pdf', /* Technically not correct but ... */
-      ],
-      'file' => [
-        '.pdf',
-        '.xls',
-        '.xlsx',
-        '.docx',
-        '.doc',
-        '.pptx',
-        '.pptm',
-        '.ppt',
-        '.rtf',
-        '.ppt',
-        '.jnlp', /* Not sure we should allow this. */
-        '.xlsm',
-        '.mp3',
-        '.mp4',
-        '.jpg', /* These are images, but could also be. */
-        '.png', /* Downloadable files. */
-        '.jpeg', /* ... */
-        '.tif', /* ... */
-        '.svg', /* ... */
-      ],
-    ];
+    $allowed_formats = MigrationFixes::allowedFormats();
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
     $type = [];

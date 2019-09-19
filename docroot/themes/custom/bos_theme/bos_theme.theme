@@ -5,6 +5,7 @@
  * Contains functions to alter Drupal's markup for the STARTERKIT theme.
  */
 
+use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Component\Utility\Html;
@@ -137,7 +138,7 @@ function bos_theme_process_maintenance_page(array &$variables, $hook) {
 }
 
 /**
- * Implements HOOK_preprocess().
+ * Implements hook_preprocess().
  */
 function bos_theme_preprocess(array &$variables, $hook) {
   // Ensure attributes in an Attributes object.
@@ -582,6 +583,31 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_theme_preprocess_image(&$variables) {
+
+  if ($variables["style_name"] == "media_entity_browser_thumbnail") {
+    return;
+  }
+  $variables['is_picture'] = (isset($variables['srcset']) && count($variables['srcset']));
+  if ($variables['is_picture'] && isset($variables['uri'])) {
+    $uri = preg_replace("~.*/sites/default/files~", "public:/", $variables['uri']);
+    $variables['sources'] = BackgroundResponsiveImage::buildMediaSources($uri, "card_images_2w");
+  }
+
+  if (strpos($variables["uri"], ".svg") > 0) {
+    if (substr($variables['uri'], 0, 4) != "http") {
+      $variables['uri'] = \Drupal::request()->getScheme() . ":" . $variables['uri'];
+    }
+    $icon = file_get_contents($variables['uri']);
+    // If the icon is in the format //domain/file then add scheme.
+    $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+    $variables['attributes']->removeAttribute("src");
+  }
+}
+
+/**
  * Set the with_image_title variable if there is an image for this listing page.
  *
  * @param array $variables
@@ -1007,6 +1033,7 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   // Start adding class mn (main-node???) to all nodes.
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page");
+  $variables["attributes"]->setAttribute("id", "page");
 
   if (isset($variables['node']) && is_object($variables['node'])) {
 
@@ -1014,7 +1041,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
       if (!$variables["attributes"]->hasClass("page--nm")) {
         $variables["attributes"]->addClass("page--wa");
       }
-      $variables["attributes"]->setAttribute("id", "page");
     }
     // This is for the how-to page and others which have a different type of
     // hero and need to be flush with the top of the page.
