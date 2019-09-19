@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_form_alter().
@@ -25,6 +26,46 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
 
     // Adds a flag used in datetime-wrapper.html.twig.
     $form["field_public_notice_date"]["widget"][0]["end_value"]["#show_checkbox"] = TRUE;
+  }
+
+  // Process paragraph summaries in field_components and field_side_components.
+  foreach (['field_components', 'field_sub_components', 'field_transactions'] as $component_field) {
+    if (isset($form[$component_field])) {
+      $children = Element::getVisibleChildren($form[$component_field]["widget"]);
+      foreach ($children as $child) {
+        if (is_numeric($child)) {
+          $para = $form_state->getStorage()["field_storage"]["#parents"]["#fields"][$component_field]["paragraphs"][$child];
+          if ($para['mode'] == 'closed') {
+            $para_type = $para["entity"]->getParagraphType()->id();
+            $widget = $form[$component_field]["widget"][$child];
+            $function = $para_type . "_paragraph_summary_alter";
+            if (function_exists($function)) {
+              $widget["top"]["summary"]["#attributes"]["class"][] = "cob-para";
+              if ($result = call_user_func($function, $widget, $para, $widget["top"]["summary"]["#attributes"])) {
+                $form[$component_field]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"] = $result['content'];
+                $form[$component_field]["widget"][$child]["top"]["summary"]["#attributes"] = $result['attributes'];
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_status_item_preprocess_views_view(&$variables) {
+  // Adding this class to the media entity causes the display to compress on
+  // the widget.
+  $view = $variables["view"];
+  if ($view->id() == "media_library" && $view->current_display == "widget"
+    && in_array($view->getRequest()->query->get("media_library_widget_id"), ["field_icon-"])) {
+    // Add class which sets panels to be 100px x 100px.
+    $variables["attributes"]["class"][] = "media_svg_only";
+    // Add class to hide the "Add Media" button.
+    $variables["header"]["add_media"]["#attributes"]["class"][] = "hide-media";
   }
 }
 

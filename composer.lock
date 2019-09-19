@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ad007745cdfd67ef3644cbe39e0a5b7c",
+    "content-hash": "d6990af8e1466da668e31f7e5cdc7350",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -178,7 +178,7 @@
             "version": "v1.8.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:kenwheeler/slick.git",
+                "url": "https://github.com/kenwheeler/slick.git",
                 "reference": "0f40c9d6a02a5c08b5f4dd80fdada3a854a59bee"
             },
             "dist": {
@@ -3400,7 +3400,8 @@
                     "merge-extra": false
                 },
                 "patches_applied": {
-                    "Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
+                    "CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
+                    "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2018-05-14/2794481-60.patch",
                     "2998335 - [regression] \\Drupal\\user\\ContextProvider\\CurrentUserContext broken for anonymous users": "https://www.drupal.org/files/issues/2018-10-04/2998335-currentusercontext-16.patch",
                     "3032548 - ContentModerationRouteSubscriber assumes all parameters in an entity form route contain a 'type' key": "https://www.drupal.org/files/issues/2019-02-13/3032548-2.patch",
                     "2869592 - Disabled update module shouldn't produce a status report warning": "https://www.drupal.org/files/issues/2869592-remove-update-warning-7.patch",
@@ -3663,8 +3664,8 @@
                 },
                 "patches_applied": {
                     "https://www.drupal.org/project/date_recur/issues/3015633": "https://www.drupal.org/files/issues/2019-02-14/rdate-exdate-3015633-3_0.patch",
-                    "Add helper for exdate retreival": "patches/exdate_helper.patch",
-                    "Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
+                    "CoB patch - Add helper for exdate retreival": "patches/exdate_helper.patch",
+                    "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -4928,8 +4929,8 @@
                     }
                 },
                 "patches_applied": {
-                    "Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
-                    "Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
+                    "CoB patch - Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
+                    "CoB patch - Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -5178,72 +5179,6 @@
             "homepage": "https://www.drupal.org/project/file_mdm",
             "support": {
                 "source": "http://cgit.drupalcode.org/file_mdm"
-            }
-        },
-        {
-            "name": "drupal/genpass",
-            "version": "1.0.0-beta2",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/genpass.git",
-                "reference": "8.x-1.0-beta2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/genpass-8.x-1.0-beta2.zip",
-                "reference": "8.x-1.0-beta2",
-                "shasum": "ec600e65941f5cbdc511c98fc927d5fb84105728"
-            },
-            "require": {
-                "drupal/core": "~8.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-1.0-beta2",
-                    "datestamp": "1531164521",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "Kris77",
-                    "homepage": "https://www.drupal.org/u/kris77",
-                    "role": "contributor"
-                },
-                {
-                    "name": "greggles",
-                    "homepage": "https://www.drupal.org/user/36762"
-                },
-                {
-                    "name": "japanitrat",
-                    "homepage": "https://www.drupal.org/user/268715"
-                },
-                {
-                    "name": "joelstein",
-                    "homepage": "https://www.drupal.org/user/36598"
-                },
-                {
-                    "name": "starbow",
-                    "homepage": "https://www.drupal.org/user/33290"
-                }
-            ],
-            "description": "Great utility module which makes the password field optional (or hidden) on the add new user page (admin & registration). If the password field is not set during registration, the system will generate a password. You can optionally display this password at the time it's created.",
-            "homepage": "http://drupal.org/project/genpass",
-            "support": {
-                "source": "https://github.com/luksak/genpass",
-                "issues": "http://drupal.org/project/issues/genpass",
-                "irc": "irc://irc.freenode.org/drupal-contribute"
             }
         },
         {
@@ -5514,8 +5449,9 @@
                     }
                 },
                 "patches_applied": {
-                    "Implements Move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
-                    "Handles data is not set error": "patches/imagemagikToolkit_001.patch"
+                    "CoB patch to implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
+                    "CoB patch - Handles data is not set error": "patches/imagemagikToolkit_001.patch",
+                    "CoB patch to reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -6371,7 +6307,7 @@
                     }
                 },
                 "patches_applied": {
-                    "Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
+                    "CoB patch - Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -7378,65 +7314,6 @@
             "homepage": "https://www.drupal.org/project/paranoia",
             "support": {
                 "source": "https://git.drupalcode.org/project/paranoia"
-            }
-        },
-        {
-            "name": "drupal/password_policy",
-            "version": "dev-3.x",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/password_policy.git",
-                "reference": "c13db36ef3377095159931a6d99dac9f0215d30d"
-            },
-            "require": {
-                "drupal/core": "^8.5.0",
-                "drupal/ctools": "^3.1"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-3.x": "3.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-3.0-alpha5+6-dev",
-                    "datestamp": "1560785288",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
-                    }
-                },
-                "patches_applied": []
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "AohRveTPV",
-                    "homepage": "https://www.drupal.org/user/2760115"
-                },
-                {
-                    "name": "deekayen",
-                    "homepage": "https://www.drupal.org/user/972"
-                },
-                {
-                    "name": "miglius",
-                    "homepage": "https://www.drupal.org/user/18741"
-                },
-                {
-                    "name": "nerdstein",
-                    "homepage": "https://www.drupal.org/user/1557710"
-                },
-                {
-                    "name": "shrop",
-                    "homepage": "https://www.drupal.org/user/14767"
-                }
-            ],
-            "description": "Sets up constraints and expiration of passwords.",
-            "homepage": "https://www.drupal.org/project/password_policy",
-            "support": {
-                "source": "https://git.drupalcode.org/project/password_policy"
             }
         },
         {
@@ -8604,22 +8481,22 @@
         },
         {
             "name": "drupal/simplesamlphp_auth",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/simplesamlphp_auth.git",
-                "reference": "8.x-3.0"
+                "reference": "8.x-3.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/simplesamlphp_auth-8.x-3.0.zip",
-                "reference": "8.x-3.0",
-                "shasum": "2ee230173df2128edb5d72953222d229dabf27e7"
+                "url": "https://ftp.drupal.org/files/projects/simplesamlphp_auth-8.x-3.1.zip",
+                "reference": "8.x-3.1",
+                "shasum": "db464b1a4716ad21e7f2ec141640691b8d040d59"
             },
             "require": {
                 "drupal/core": "*",
-                "drupal/externalauth": "*",
-                "simplesamlphp/simplesamlphp": "~1.15"
+                "drupal/externalauth": "^1.1",
+                "simplesamlphp/simplesamlphp": "~1.17.2"
             },
             "type": "drupal-module",
             "extra": {
@@ -8627,8 +8504,8 @@
                     "dev-3.x": "3.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-3.0",
-                    "datestamp": "1521252787",
+                    "version": "8.x-3.1",
+                    "datestamp": "1565118485",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -10471,6 +10348,7 @@
                 "translation",
                 "twig"
             ],
+            "abandoned": "simplesamlphp/twig-configurable-i18n",
             "time": "2018-10-10T09:12:46+00:00"
         },
         {
@@ -15806,7 +15684,7 @@
             "version": "8.2.12",
             "source": {
                 "type": "git",
-                "url": "https://git.drupal.org/project/coder.git",
+                "url": "https://git.drupalcode.org/project/coder.git",
                 "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f"
             },
             "require": {
@@ -16161,6 +16039,72 @@
             "time": "2017-12-06T20:35:40+00:00"
         },
         {
+            "name": "drupal/genpass",
+            "version": "1.0.0-beta2",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/genpass.git",
+                "reference": "8.x-1.0-beta2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/genpass-8.x-1.0-beta2.zip",
+                "reference": "8.x-1.0-beta2",
+                "shasum": "ec600e65941f5cbdc511c98fc927d5fb84105728"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-beta2",
+                    "datestamp": "1531164521",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Beta releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Kris77",
+                    "homepage": "https://www.drupal.org/u/kris77",
+                    "role": "contributor"
+                },
+                {
+                    "name": "greggles",
+                    "homepage": "https://www.drupal.org/user/36762"
+                },
+                {
+                    "name": "japanitrat",
+                    "homepage": "https://www.drupal.org/user/268715"
+                },
+                {
+                    "name": "joelstein",
+                    "homepage": "https://www.drupal.org/user/36598"
+                },
+                {
+                    "name": "starbow",
+                    "homepage": "https://www.drupal.org/user/33290"
+                }
+            ],
+            "description": "Great utility module which makes the password field optional (or hidden) on the add new user page (admin & registration). If the password field is not set during registration, the system will generate a password. You can optionally display this password at the time it's created.",
+            "homepage": "http://drupal.org/project/genpass",
+            "support": {
+                "source": "https://github.com/luksak/genpass",
+                "issues": "http://drupal.org/project/issues/genpass",
+                "irc": "irc://irc.freenode.org/drupal-contribute"
+            }
+        },
+        {
             "name": "drupal/masquerade",
             "version": "2.0.0-beta2",
             "source": {
@@ -16497,6 +16441,69 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/migrate_upgrade"
             }
+        },
+        {
+            "name": "drupal/password_policy",
+            "version": "dev-3.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/password_policy.git",
+                "reference": "c13db36ef3377095159931a6d99dac9f0215d30d"
+            },
+            "require": {
+                "drupal/core": "^8.5.0",
+                "drupal/ctools": "^3.1"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-3.x": "3.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-3.0-alpha5+6-dev",
+                    "datestamp": "1560785288",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Dev releases are not covered by Drupal security advisories."
+                    }
+                },
+                "patches_applied": {
+                    "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch",
+                    "CoB patch - Reverts extension change for drupal < 8.7": "patches/fixes_unsupported_ConfigurableInterface_extension_001.patch"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "AohRveTPV",
+                    "homepage": "https://www.drupal.org/user/2760115"
+                },
+                {
+                    "name": "deekayen",
+                    "homepage": "https://www.drupal.org/user/972"
+                },
+                {
+                    "name": "miglius",
+                    "homepage": "https://www.drupal.org/user/18741"
+                },
+                {
+                    "name": "nerdstein",
+                    "homepage": "https://www.drupal.org/user/1557710"
+                },
+                {
+                    "name": "shrop",
+                    "homepage": "https://www.drupal.org/user/14767"
+                }
+            ],
+            "description": "Sets up constraints and expiration of passwords.",
+            "homepage": "https://www.drupal.org/project/password_policy",
+            "support": {
+                "source": "https://git.drupalcode.org/project/password_policy"
+            },
+            "time": "2019-06-17T15:29:06+00:00"
         },
         {
             "name": "drupal/stage_file_proxy",
@@ -18893,7 +18900,6 @@
         "drupal/moderation_note": 20,
         "drupal/paragraphs_browser": 20,
         "drupal/paragraphs_edit": 15,
-        "drupal/password_policy": 20,
         "drupal/twig_xdebug": 20
     },
     "prefer-stable": true,

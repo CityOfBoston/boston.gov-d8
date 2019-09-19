@@ -2,7 +2,9 @@
 
 namespace Drupal\bos_migration\Plugin\migrate\process;
 
+use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
+use Drupal\migrate\MigrateSkipRowException;
 use Drupal\migrate\Plugin\migrate\process\FileCopy;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
@@ -45,28 +47,23 @@ class FileCopyExt extends FileCopy {
     $source = $source ?? $row->getSourceProperty('source_base_path');
     $fid = $row->getSource()['fid'];
 
-    // If the file already exists on the destination, then skip.
-    if (file_exists($destination) && $this->configuration["file_exists_ext"] == "skip") {
-      $migrate_executable->saveMessage("Skipping file (fid:" . $fid . ") '" . $source . "' - it already exists.", MigrationInterface::MESSAGE_INFORMATIONAL);
-      return $destination;
-    }
-
-    // If the migration is diabled, then skip.
+    // If the migration is disabled, then skip file operations.
     if (\Drupal::state()->get("bos_migration.active", 0) == 0) {
-      return $destination;
+      throw new MigrateSkipRowException("State bos_migration.active is missing or false.", FALSE);
     }
 
     // Overide the supplied config with state settings.
-    if (\Drupal::state()->get("bos_migration.fileOps", "none") == "none") {
+    $fileOps = \Drupal::state()->get("bos_migration.fileOps", "none");
+    if ($fileOps == "none") {
       $this->configuration['copy'] = $this->configuration['move'] = FALSE;
     }
     else {
-      $this->configuration['copy'] = (\Drupal::state()->get("bos_migration.fileOps") == "copy" ? "true" : "false");
-      $this->configuration['move'] = (\Drupal::state()->get("bos_migration.fileOps") == "move" ? "true" : "false");
+      $this->configuration['copy'] = ($fileOps == "copy" ? "true" : "false");
+      $this->configuration['move'] = ($fileOps == "move" ? "true" : "false");
       $this->configuration['file_exists_ext'] = \Drupal::state()->get("bos_migration.file_exists_ext", "skip");
     }
 
-    // If we don't have an actual file action, then don't do anything.
+    // If we don't have an actual file action, then don't do file operations.
     if (empty($this->configuration['move']) && empty($this->configuration['copy'])) {
       return $destination;
     }
@@ -81,15 +78,66 @@ class FileCopyExt extends FileCopy {
     // and skip.
     if (parent::isLocalUri($source) && !file_exists($source)) {
       $migrate_executable->saveMessage("File (fid:$fid) '$source' does not exist", MigrationInterface::MESSAGE_NOTICE);
-      return $destination;
+      throw new MigrateSkipRowException("Local source file ($source) does not exist.", TRUE);
     }
 
     // Save the newly created source.
     $value[0] = $source;
 
+    // Check for duplicates of this file in managed_files (by name and size).
+    $dup = \Drupal::entityQuery("file")
+      ->condition("filename", $row->getSource()['filename'], "=")
+      ->condition("filesize", $row->getSource()['filesize'], "=")
+      ->execute();
+
+    if (!empty($dup)) {
+      // There is already a file with this name, so create a mapping entry and
+      // step over it.
+      $destid = reset($dup);
+      try {
+        $migrate_executable->saveMessage("Remapping fid:" . $fid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
+        \DRUPAL::database()
+          ->insert("migrate_map_d7_file")
+          ->fields([
+            "source_ids_hash" => hash("sha256", $row->getSource()["uri"] . $fid),
+            "sourceid1" => $fid,
+            "destid1" => $destid,
+            "source_row_status" => 0,
+            "rollback_action" => 0,
+            "last_imported" => 0,
+            "hash" => "",
+          ])
+          ->execute();
+      }
+      catch (\Exception $e) {
+        if ($e->getCode() != 23000) {
+          throw new MigrateException($e->getMessage(), $e->getCode());
+        }
+      }
+      // Jump out and don't save the mapping entry (it's incorrect).
+      throw new MigrateSkipRowException("", FALSE);
+    }
+
+    // If the file already exists on the destination, then skip.
+    if (file_exists($destination) && $this->configuration["file_exists_ext"] == "skip") {
+      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - it already exists.", MigrationInterface::MESSAGE_INFORMATIONAL);
+      return $destination;
+    }
+
     // Now move the file.
-    $this->downloadPlugin->configuration['guzzle_options']["read_timeout"] = 120000;
-    return parent::transform($value, $migrate_executable, $row, $destination_property);
+    $isDoc = strpos($source, ".pdf")
+            || strpos($source, ".doc")
+            || strpos($source, ".xl");
+    if ($isDoc) {
+      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - docs not copied.", MigrationInterface::MESSAGE_INFORMATIONAL);
+      $result = $destination;
+    }
+    else {
+      $this->downloadPlugin->configuration['guzzle_options']["read_timeout"] = 120000;
+      $result = parent::transform($value, $migrate_executable, $row, $destination_property);
+    }
+
+    return $result;
 
   }
 

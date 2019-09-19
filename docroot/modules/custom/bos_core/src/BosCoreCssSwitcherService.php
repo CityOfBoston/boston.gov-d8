@@ -38,7 +38,10 @@ class BosCoreCssSwitcherService {
       }
     }
     if (!empty($opts[$ord])) {
-      \Drupal::logger('bos-core')->info("Switching CSS source to: '@this'", ["@this" => $opts[$ord]]);
+      $res = \Drupal::translation()->translate("Switching CSS source to: '@this'", [
+        "@this" => $opts[$ord],
+      ])->render();
+      \Drupal::logger('bos-core')->info($res);
       try {
         \Drupal::configFactory()
           ->getEditable("bos_theme.settings")

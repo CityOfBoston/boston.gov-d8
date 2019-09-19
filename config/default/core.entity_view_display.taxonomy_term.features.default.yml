@@ -4,11 +4,9 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.features.field_icon
-    - image.style.square_icon_56px
     - taxonomy.vocabulary.features
   module:
     - fences
-    - svg_image
     - text
 id: taxonomy_term.features.default
 targetEntityType: taxonomy_term
@@ -25,14 +23,10 @@ content:
   field_icon:
     label: hidden
     weight: 0
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_56px
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
