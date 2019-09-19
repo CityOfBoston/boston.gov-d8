@@ -1357,6 +1357,7 @@ What: Creates a horizontally arranged group.
 .media-library-view .hide-media {
   display: none;
 }
+
 /*
   David:
   Where: Media widget component.
@@ -1394,8 +1395,17 @@ What: Creates a horizontally arranged group.
 .field--widget-entity-browser-file .field--name-uid:before {
   content: "Uploaded by: ";
 }
-
 /* Removes the "show row weights" notice */
 .tabledrag-toggle-weight-wrapper {
   display: none;
+}
+
+/*
+  David:
+  Where: Commissions paragraph component.
+  Where: content-editor experience in paragraph-EXPEREMENTAL layout.
+  What: make drop down fit inside borders.
+ */
+.field--name-field-commission {
+  max-width: 100%;
 }
