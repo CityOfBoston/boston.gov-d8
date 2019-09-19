@@ -75,19 +75,9 @@ function bos_transaction_grid_preprocess_paragraph__transactions(&$variables) {
 }
 
 /**
- * Implements paragraph summary for paragraph EXPEREMENTAL widget.
- *
- * @param array $form_widget
- *   The widget for this paragraph item.
- * @param array $para
- *   The paragraph entity.
- * @param array $attributes
- *   The attributes array for this paragraphs item.
- *
- * @return array
- *   In the format ['attributes' => [attributes array], content => [markup]].
+ * Implements hook_paragraph_HOOK_summary_alter().
  */
-function transaction_grid_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+function bos_transaction_grid_paragraph_transaction_grid_summary_alter(array $form_widget, array $para, array $attributes) {
   // Add attributes to the summary area.
   // Set the summary content.
   $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
