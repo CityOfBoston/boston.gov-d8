@@ -219,9 +219,11 @@ function bos_list_paragraph_list_summary_alter(array $form_widget, array $para, 
   // Set the summary content.
   $markup = [];
   if ($view = View::load($para["entity"]->field_list[0]->target_id)) {
-    $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
-    $markup[] = Markup::create("<b>View:</b> " . $view->label());
+    $markup[] = Markup::create("<span style='color: navy;'>View: <span style='font-weight: bold; text-transform: uppercase'>" . $view->label() . "</span></span>");
     $markup[] = Markup::create("<b>Display:</b> " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
+    if ($para["entity"]->hasField("field_component_title") && $para["entity"]->get("field_component_title")->value) {
+      $markup[] = Markup::create("<b>Title:</b> " . $para["entity"]->get("field_component_title")->value);
+    }
     return [
       'attributes' => $attributes,
       'content' => $markup,
