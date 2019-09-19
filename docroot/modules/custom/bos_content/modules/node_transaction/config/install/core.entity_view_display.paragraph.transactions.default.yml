@@ -4,12 +4,10 @@ dependencies:
   config:
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
-    - image.style.transaction_icon_180x100
     - paragraphs.paragraphs_type.transactions
   module:
     - entity_reference_revisions
     - fences
-    - svg_image
 id: paragraph.transactions.default
 targetEntityType: paragraph
 bundle: transactions
@@ -34,14 +32,10 @@ content:
   field_icon:
     label: hidden
     weight: 0
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: transaction_icon_180x100
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: default
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

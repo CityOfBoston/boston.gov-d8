@@ -7,15 +7,15 @@ dependencies:
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
     - field.field.node.status_item.field_weight
-    - image.style.square_icon_65px
     - node.type.status_item
   module:
     - content_moderation
+    - entity_browser_entity_form
     - field_group
+    - media_library
     - paragraphs
     - path
     - publication_date
-    - svg_image
 third_party_settings:
   field_group:
     group_status_item:
@@ -98,11 +98,11 @@ content:
     region: content
   field_icon:
     weight: 24
-    type: image_image
-    settings:
-      preview_image_style: square_icon_65px
-      progress_indicator: throbber
-    third_party_settings: {  }
+    type: media_library_widget
+    settings: {  }
+    third_party_settings:
+      entity_browser_entity_form:
+        entity_browser_id: media_entity_browser
     region: content
   field_messages:
     weight: 5
