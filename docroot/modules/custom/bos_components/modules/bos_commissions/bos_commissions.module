@@ -62,8 +62,12 @@ function bos_commissions_preprocess_paragraph(&$variables) {
  * Extracts the string commission ID from "field_commission".
  */
 function bos_commissions_id(&$variables) {
-  $term = Term::load($variables['paragraph']->get('field_commission')->getValue()['0']['target_id']);
-  return $term->get('field_commission_id')->getValue()['0']['value'];
+  if ($term = Term::load($variables['paragraph']->get('field_commission')->getValue()['0']['target_id'])) {
+    return $term->get('field_commission_id')->getValue()['0']['value'];
+  }
+  else {
+    return NULL;
+  }
 }
 
 /**
