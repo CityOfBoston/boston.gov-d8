@@ -6,6 +6,11 @@
  */
 
 /**
+ * @addtogroup hooks
+ * @{
+ */
+
+/**
  * Implements paragraph summary for paragraph EXPEREMENTAL widget.
  *
  * @param array $form_widget
