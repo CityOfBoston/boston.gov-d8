@@ -41,7 +41,7 @@
         <span>Filter by {{ filter.label }}</span>
       </button>
       <div id="drawer-{{ i }}" class="clearfix drawer">
-        <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
+        <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }} views-widget-filter-{{ filter.value }}">
           <div class="views-widget">
             {{ form[filter_name] }}
           </div>
