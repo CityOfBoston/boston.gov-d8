@@ -82,7 +82,7 @@ function node_post_rebuild() {
   $path = drupal::root() . "/sites/default/files/img/post/";
   $destName = "default_news.svg";
   if (!file_exists($path)) {
-    mkdir($path, 0777);
+    mkdir($path, 0777, TRUE);
   }
   if (file_exists($path . $destName)) {
     unlink($path . $destName);
