@@ -143,6 +143,10 @@ function bos_list_theme() {
     'base hook' => 'bef_checkboxes',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['input_title'] = [
+    'base hook' => 'input',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   return $theme;
 }
 
@@ -241,6 +245,11 @@ function bos_list_theme_suggestions_alter(array &$suggestions, array $variables,
     }
     if (isset($variables["element"]["#name"])) {
       $suggestions[] = $hook . '_' . $variables["element"]["#name"];
+    }
+  }
+  if ($hook == 'input') {
+    if (isset($variables["element"]["#parents"][0])) {
+      $suggestions[] = $hook . '_' . $variables["element"]["#parents"][0];
     }
   }
 }
