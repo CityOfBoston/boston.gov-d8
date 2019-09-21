@@ -16,7 +16,6 @@ dependencies:
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_updated_date
-    - image.style.square_icon_56px
     - node.type.department_profile
   module:
     - address
@@ -24,7 +23,6 @@ dependencies:
     - entity_reference_revisions
     - fences
     - options
-    - svg_image
     - text
     - user
 id: node.department_profile.default
@@ -102,14 +100,10 @@ content:
   field_icon:
     label: hidden
     weight: 2
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_56px
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

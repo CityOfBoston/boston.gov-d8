@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_form_alter().
@@ -28,29 +27,6 @@ function bos_content_form_alter(&$form, FormStateInterface $form_state, $form_id
     $form["field_public_notice_date"]["widget"][0]["end_value"]["#show_checkbox"] = TRUE;
   }
 
-  // Process paragraph summaries in field_components and field_side_components.
-  foreach (['field_components', 'field_sub_components', 'field_transactions'] as $component_field) {
-    if (isset($form[$component_field])) {
-      $children = Element::getVisibleChildren($form[$component_field]["widget"]);
-      foreach ($children as $child) {
-        if (is_numeric($child)) {
-          $para = $form_state->getStorage()["field_storage"]["#parents"]["#fields"][$component_field]["paragraphs"][$child];
-          if ($para['mode'] == 'closed') {
-            $para_type = $para["entity"]->getParagraphType()->id();
-            $widget = $form[$component_field]["widget"][$child];
-            $function = $para_type . "_paragraph_summary_alter";
-            if (function_exists($function)) {
-              $widget["top"]["summary"]["#attributes"]["class"][] = "cob-para";
-              if ($result = call_user_func($function, $widget, $para, $widget["top"]["summary"]["#attributes"])) {
-                $form[$component_field]["widget"][$child]["top"]["summary"]["fields_info"]["#summary"]["content"] = $result['content'];
-                $form[$component_field]["widget"][$child]["top"]["summary"]["#attributes"] = $result['attributes'];
-              }
-            }
-          }
-        }
-      }
-    }
-  }
 }
 
 /**
