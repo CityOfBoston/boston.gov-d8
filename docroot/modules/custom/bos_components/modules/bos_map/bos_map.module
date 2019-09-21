@@ -80,7 +80,7 @@ function bos_map_rebuild() {
   $path = drupal::root() . "/sites/default/files/img/maps/";
   $destName = "map-background-image-map.jpg";
   if (!file_exists($path)) {
-    mkdir($path, 0777);
+    mkdir($path, 0777, TRUE);
   }
   if (file_exists($path . $destName)) {
     unlink($path . $destName);
