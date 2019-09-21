@@ -72,10 +72,9 @@ class MigrationFixes {
     'upcoming_events' => [
       'most_recent' => ["upcoming_events", "block_1"],
     ],
-
     'events_and_notices' => [
-      'related' => ["events_and_notices", "related"],
-      'upcoming' => ["events_and_notices", "upcoming"],
+      'related' => ["events_and_notices", "block_1"],
+      'upcoming' => ["events_and_notices", "most_recent"],
     ],
   ];
 

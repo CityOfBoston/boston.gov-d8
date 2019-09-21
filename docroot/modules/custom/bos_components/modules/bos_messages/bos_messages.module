@@ -184,3 +184,17 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
 
   return $replacements;
 }
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_widget, array $para, array $attributes) {
+  $attributes["class"][] = $para["entity"]->field_enabled->value ? "cob-para-enabled" : "cob-para-disabled";
+  $content = $form_widget["top"]["summary"]["fields_info"]["#summary"]["content"];
+  $markup = html_entity_decode(strip_tags($content[0]));
+  $markup = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $markup);
+  return [
+    'attributes' => $attributes,
+    'content' => [$markup],
+  ];
+}
