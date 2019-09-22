@@ -127,7 +127,7 @@ function restoreDB() {
     printf "[migration-info] Enable migration modules.\n" | tee -a ${logfile}
     ${drush} cdel views.view.migrate_taxonomy
     ${drush} cdel views.view.migrate_paragraphs
-    ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration -y  | tee -a ${logfile}
+    ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,migrate_utilities -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
     printf "[migration-info] Load bos_migration (migrate_plus) configs for good measure.\n" | tee -a ${logfile}
@@ -348,7 +348,6 @@ done
 if [ "{$1}" != "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
 fi
-
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
@@ -371,3 +370,4 @@ ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cr
 dumpDB ${dbpath}/migration_FINAL.sql
 ${drush} ms  | tee -a ${logfile}
+printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}
