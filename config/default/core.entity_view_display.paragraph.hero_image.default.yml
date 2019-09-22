@@ -9,11 +9,9 @@ dependencies:
     - field.field.paragraph.hero_image.field_short_title
     - field.field.paragraph.hero_image.field_subheader
     - paragraphs.paragraphs_type.hero_image
-    - responsive_image.styles.hero_fixed_image_fields
   module:
     - entity_reference_revisions
     - fences
-    - responsive_image
 _core:
   default_config_hash: WKW0qZhz8unrTU37t-GBGDPI9oJ-WfZ7lrh1Vilo1Rs
 id: paragraph.hero_image.default
@@ -39,13 +37,13 @@ content:
     third_party_settings: {  }
     region: content
   field_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 4
     region: content
     label: hidden
     settings:
-      responsive_image_style: hero_fixed_image_fields
-      image_link: ''
+      view_mode: responsive_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
