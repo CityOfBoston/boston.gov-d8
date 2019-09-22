@@ -3,6 +3,7 @@
 namespace Drupal\bos_core;
 
 use Drupal\Core\Render\Markup;
+use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 
@@ -33,19 +34,23 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
    */
   public static function createBackgroundCss(array $background_image, $anchorClass = "hro", array $options = []) {
 
-    if ($background_image['#formatter'] != 'responsive_image') {
+    if ($background_image['#formatter'] != 'responsive_image' && substr($background_image[0]["#view_mode"], 0, 10) != "responsive") {
       throw new \Exception("Image is not a responsive style.");
     }
 
-    $responsiveStyle_group = $background_image[0]["#responsive_image_style_id"];
 
-    // Grab the fielditemlist object.
-    $background_image = $background_image["#items"];
+    if (substr($background_image[0]["#view_mode"], 0, 10) == "responsive") {
+      $responsiveStyle_group = $background_image[0]["responsive_image_style_id"];
+      $file = File::load($background_image[0]["#media"]->image->target_id);
+      $uri = $file->getFileUri();
+    }
 
-    if (!empty($background_image->entity)) {
+    elseif (!empty($background_image["#items"]->entity)) {
+      $responsiveStyle_group = $background_image[0]["#responsive_image_style_id"];
+      $uri = $background_image["#items"]->entity->getFileUri();
+    }
 
-      $uri = $background_image->entity->getFileUri();
-
+    if (isset($uri)) {
       return self::buildMediaQueries($uri, $responsiveStyle_group, $anchorClass, $options);
     }
     return FALSE;
