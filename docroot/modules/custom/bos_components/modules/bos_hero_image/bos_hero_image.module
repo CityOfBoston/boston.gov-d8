@@ -48,18 +48,10 @@ function template_preprocess_paragraph__hero_image(array &$variables) {
   // Handle field_image if present.
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if ($variables['paragraph']->hasField('field_image')) {
-    $image = $variables["elements"]["field_image"][0]["#media"]->get("image")[0]->target_id;
-    $file = File::load($image);
-    $background_image = [
-      "#formatter" => "responsive_image",
-      "#items" => [
-        0 => [
-          "#responsive_image_style_id" => "hero_fixed_image_fields",
-          "uri" => $file->getFileUri(),
-        ],
-      ],
-    ];
-    if (isset($background_image)) {
+    $background_image = $variables["elements"]["field_image"];
+    $background_image[0]["responsive_image_style_id"] = "hero_fixed_image_fields";
+
+    if (isset($background_image) && $background_image["#items"]->count()) {
       $anchor_class = "." . $variables["photo_id"];
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, $anchor_class);
       $variables['#attached']['html_head'][] = [
