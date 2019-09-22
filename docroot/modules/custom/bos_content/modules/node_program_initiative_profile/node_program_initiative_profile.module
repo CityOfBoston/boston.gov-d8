@@ -38,6 +38,7 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if (isset($variables['content']['field_intro_image'])) {
     $background_image = $variables["elements"]["field_intro_image"];
+    $background_image[0]["responsive_image_style_id"] = "intro_image_fields";
 
     if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
       $photo_id = Html::getUniqueId('cd-ic-' . $variables["elements"]['#node']->id());
@@ -78,6 +79,8 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
     $variables['title_raw'] = $node->getTitle();
 
     $background_image = $variables["elements"]["field_intro_image"];
+    $background_image[0]["responsive_image_style_id"] = "thumbnail_event";
+
     if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
       $photo_id = Html::getUniqueId('cd-ic-' . $variables["elements"]['#node']->id());
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
