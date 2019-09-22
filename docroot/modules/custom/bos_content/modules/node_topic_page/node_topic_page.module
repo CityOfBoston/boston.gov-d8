@@ -9,6 +9,7 @@ use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_theme().
@@ -163,7 +164,11 @@ function node_topic_page_preprocess_node__topic_page__featured_topics(&$variable
     static $topics_counter = 1;
     $variables['topics_counter'] = $topics_counter++;
     $variables['guide_title'] = strip_tags(html_entity_decode($node->getTitle()));
+    if ($file = File::load($node->field_thumbnail->target_id)) {
+      $variables["url"] = $file->getFileUri();
+    }
   }
+
 }
 
 /**
