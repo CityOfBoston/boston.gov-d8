@@ -17,12 +17,10 @@ dependencies:
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
     - node.type.post
-    - responsive_image.styles.featured_images
   module:
     - advanced_text_formatter
     - datetime
     - fences
-    - responsive_image
     - user
 _core:
   default_config_hash: rQE6pFe7_bigqk-lYler4VF8FT4MXHiFkfvE7ugPLf4
@@ -94,10 +92,10 @@ content:
   field_thumbnail:
     label: hidden
     weight: 0
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: featured_images
-      image_link: ''
+      view_mode: responsive_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

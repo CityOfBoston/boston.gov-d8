@@ -7,16 +7,15 @@ dependencies:
     - field.storage.node.field_intro_image
     - field.storage.node.field_public_notice_date
     - field.storage.node.field_thumbnail
-    - image.style.topic_thumbnail
+    - image.style.card_grid_2w_horizonal_1x
     - node.type.event
     - node.type.public_notice
-    - responsive_image.styles.card_images_2w
   module:
     - datetime
     - datetime_range
+    - media
     - node
     - paragraphs
-    - responsive_image
     - svg_image
     - user
 _core:
@@ -370,9 +369,9 @@ display:
           empty_zero: false
           hide_alter_empty: false
           click_sort_column: target_id
-          type: responsive_image
+          type: media_thumbnail
           settings:
-            responsive_image_style: card_images_2w
+            image_style: card_grid_2w_horizonal_1x
             image_link: ''
           group_column: ''
           group_columns: {  }

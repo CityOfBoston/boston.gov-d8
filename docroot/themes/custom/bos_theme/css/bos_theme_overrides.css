@@ -860,3 +860,16 @@ What:  Sizes and centers the icon/image in the transaction box.
     float: left;
   }
 }
+
+/*
+David:
+Where: responsive image in node--post--featured-item.html.twig.
+What: Reset some funky CSS on featured post image.
+ */
+.event-featured-item-wrapper .featured-thumb-wrapper img,
+.post-featured-item-wrapper .featured-thumb-wrapper img {
+   -webkit-transform: none;
+   transform: none;
+   top: initial;
+   left: initial;
+}
