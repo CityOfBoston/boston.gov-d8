@@ -165,7 +165,7 @@ function node_topic_page_preprocess_node__topic_page__featured_topics(&$variable
     $variables['topics_counter'] = $topics_counter++;
     $variables['guide_title'] = strip_tags(html_entity_decode($node->getTitle()));
     if ($file = File::load($node->field_thumbnail->target_id)) {
-      $variables["url"] = $file->getFileUri();
+      $variables["fileurl"] = $file->getFileUri();
     }
   }
 
