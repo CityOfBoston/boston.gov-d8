@@ -11,11 +11,9 @@ dependencies:
     - field.field.paragraph.photo.field_photo_credit
     - field.field.paragraph.photo.field_short_title
     - paragraphs.paragraphs_type.photo
-    - responsive_image.styles.photo_bleed_images
   module:
     - entity_reference_revisions
     - fences
-    - responsive_image
     - text
 _core:
   default_config_hash: 8UqUolHsLBveEUMlc0r5zORdGpoa9GqXd_s5DBub2g4
@@ -40,13 +38,13 @@ content:
         fences_label_classes: ''
     region: content
   field_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 4
     region: content
     label: hidden
     settings:
-      responsive_image_style: photo_bleed_images
-      image_link: ''
+      view_mode: responsive_image_hero
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
