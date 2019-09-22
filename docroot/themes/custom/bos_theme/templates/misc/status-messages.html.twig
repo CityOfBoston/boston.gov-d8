@@ -19,6 +19,7 @@
  *   - class: HTML classes.
  */
 #}
+<div class="bos-messages-wrapper">
 {% for type, messages in message_list %}
     <div class="bos-messages messages--{{ type }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
       <span class="message--button">X</span>
@@ -45,3 +46,4 @@
     {% endif %}
   </div>
 {% endfor %}
+</div>
