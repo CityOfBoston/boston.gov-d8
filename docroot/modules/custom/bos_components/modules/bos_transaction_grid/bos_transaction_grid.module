@@ -82,9 +82,12 @@ function bos_transaction_grid_paragraph_transaction_grid_summary_alter(array $fo
   // Set the summary content.
   $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
   if ($para["entity"]->hasField("field_contact")) {
-    $contact = $para["entity"]->get("field_contact")->target_id;
-    if ($contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact)) {
+    $contact_id = $para["entity"]->get("field_contact")->target_id;
+    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
       $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+    }
+    else {
+      $markup[] = Markup::create("<b>Contact: </b><i>No contact supplied</i>");
     }
   }
 
