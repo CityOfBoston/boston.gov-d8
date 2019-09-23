@@ -637,7 +637,6 @@ What:  Fixes the message box on the page without disrupting layout.
   border: 2px solid #1871bd;
   z-index: 502;
   background-color: rgba(255,255,255,.7);
-  width: 80%;
 }
 
 /*
@@ -646,15 +645,19 @@ Where: page.html.twig.
 What:  Fixes the message box on the page without disrupting layout.
        Note: Completely overrides public.css.
  */
-.messages,.messages--error,.messages--status,.messages--warning {
-   margin: 1rem 0;
-   position: absolute;
-   padding: 10px 10px 10px 47px;
-  border: 2px solid #1871bd;
-  z-index: 502;
+.bos-messages-wrapper {
+  position: absolute;
+  width: 100%;
+  margin-top: 3rem;
+  padding-right: 16.6667%;
   background-color: rgba(255,255,255,.7);
-  width: 80%;
-  max-width: 1200px;
+}
+.messages,.messages--error,.messages--status,.messages--warning {
+   margin: 0;
+   padding: 10px 10px 10px 47px;
+   border: 2px solid #1871bd;
+   z-index: 502;
+   max-width: 1200px;
 }
 .message--button {
   position: absolute;
@@ -856,4 +859,17 @@ What:  Sizes and centers the icon/image in the transaction box.
   .lwi-t {
     float: left;
   }
+}
+
+/*
+David:
+Where: responsive image in node--post--featured-item.html.twig.
+What: Reset some funky CSS on featured post image.
+ */
+.event-featured-item-wrapper .featured-thumb-wrapper img,
+.post-featured-item-wrapper .featured-thumb-wrapper img {
+   -webkit-transform: none;
+   transform: none;
+   top: initial;
+   left: initial;
 }

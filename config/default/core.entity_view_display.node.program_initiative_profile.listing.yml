@@ -17,11 +17,9 @@ dependencies:
     - field.field.node.program_initiative_profile.field_sidebar_components
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
-    - responsive_image.styles.card_images_3w
   module:
     - advanced_text_formatter
     - fences
-    - responsive_image
     - user
 _core:
   default_config_hash: zCk81BKV0vdITJMe6NBnCLEzXW2Ob6H1_eyWd6xR8n0
@@ -31,13 +29,13 @@ bundle: program_initiative_profile
 mode: listing
 content:
   field_intro_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 1
     region: content
-    label: above
+    label: hidden
     settings:
-      responsive_image_style: card_images_3w
-      image_link: ''
+      view_mode: responsive_image_card
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
