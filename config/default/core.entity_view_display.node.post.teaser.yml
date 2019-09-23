@@ -16,13 +16,11 @@ dependencies:
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
-    - image.style.news_item_thumb
     - node.type.post
   module:
     - advanced_text_formatter
     - datetime
     - fences
-    - svg_image
     - user
 _core:
   default_config_hash: IicNpdUYD9N8G0YiZAfblsz-SeptuSSg_9LGn4FGNmo
@@ -103,14 +101,10 @@ content:
   field_thumbnail:
     label: hidden
     weight: 0
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: news_item_thumb
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: responsive_image_card
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

@@ -46,6 +46,7 @@ function bos_map_preprocess_paragraph__map(&$variables) {
     if (isset($variables['content']['field_thumbnail'])) {
       $background_image = $variables["elements"]["field_thumbnail"];
       if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+        $background_image[0]["default_responsive_image_style_id"] = "photo_bleed_images";
         $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
       }
     }

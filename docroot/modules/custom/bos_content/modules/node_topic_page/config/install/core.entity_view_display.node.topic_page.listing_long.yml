@@ -14,10 +14,8 @@ dependencies:
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_updated_date
     - node.type.topic_page
-    - responsive_image.styles.intro_image_fields
   module:
     - fences
-    - responsive_image
     - user
 id: node.topic_page.listing_long
 targetEntityType: node
@@ -27,10 +25,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 0
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_card_3x
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

@@ -10,10 +10,8 @@ dependencies:
     - field.field.paragraph.map.field_map_inline
     - field.field.paragraph.map.field_short_title
     - paragraphs.paragraphs_type.map
-    - responsive_image.styles.photo_bleed_images
   module:
     - fences
-    - responsive_image
 _core:
   default_config_hash: 61Uika9je8EhZCHdog3xfIbLaqGqS_R4lYtyWIWCogU
 id: paragraph.map.default
@@ -55,8 +53,8 @@ content:
     weight: 4
     label: hidden
     settings:
-      responsive_image_style: photo_bleed_images
-      image_link: ''
+      view_mode: responsive_image_full_width
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -65,7 +63,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: responsive_image
+    type: entity_reference_entity_view
     region: content
   field_map_config_json:
     weight: 5

@@ -9,12 +9,10 @@ dependencies:
     - field.field.node.tabbed_content.field_tabbed_content
     - field.field.node.tabbed_content.field_updated_date
     - node.type.tabbed_content
-    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - responsive_image
     - text
     - user
 id: node.tabbed_content.default
@@ -25,10 +23,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 1
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

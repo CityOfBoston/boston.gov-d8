@@ -2,22 +2,22 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.node.tabbed_content.field_intro_image
     - field.field.node.tabbed_content.field_intro_text
     - field.field.node.tabbed_content.field_manual_date
     - field.field.node.tabbed_content.field_published_date
     - field.field.node.tabbed_content.field_tabbed_content
     - field.field.node.tabbed_content.field_updated_date
-    - image.style.intro_image_mobile_1x
     - node.type.tabbed_content
   module:
     - content_moderation
     - datetime
+    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -89,10 +89,17 @@ content:
     third_party_settings: {  }
   field_intro_image:
     weight: 3
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: intro_image_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:
