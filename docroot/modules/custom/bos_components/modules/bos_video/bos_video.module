@@ -98,6 +98,7 @@ function template_preprocess_paragraph__video(array &$variables) {
   if ($variables['paragraph']->hasField('field_image')) {
     $background_image = $variables["elements"]["field_image"];
     if ($background_image["#items"]->count()) {
+      $background_image[0]["default_responsive_image_style_id"] = "photo_bleed_images";
       $anchor_class = "." . $variables["photo_id"];
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, $anchor_class);
       $variables['#attached']['html_head'][] = [
