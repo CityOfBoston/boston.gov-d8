@@ -501,7 +501,7 @@ class MigrationFixes {
     'public://img/2018/e/experiential_icons_census_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/fmily.svg',
     'public://img/2018/d/department_icons_emergency_management_1_1.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
     'public://img/2018/d/department_icons_emergency_management_1_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
-    'public://img/2017/s/svg_hosuing_authority_.svg' => '//patterns.boston.gov/assets/icons/dept_icons/housing_authority_logo',
+    'public://img/2017/s/svg_hosuing_authority_.svg' => '//patterns.boston.gov/assets/icons/dept_icons/housing_authority_logo.svg',
     'public://img/2017/e/experiential_icons_important_6.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/alert.svg',
     'public://img/2017/e/experiential_icons_fire_operations.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/axe.svg',
     'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/building_permit.svg',
