@@ -6,10 +6,12 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_theme().
@@ -18,6 +20,9 @@ function node_public_notice_theme() {
   return [
     'node__public_notice' => [
       'render element' => 'elements',
+    ],
+    'node__public_notice__listing' => [
+      'base hook' => 'node',
     ],
     'field__field_address__public_notice__mode__full' => [
       'base hook' => 'field',
@@ -71,10 +76,18 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
         $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
         $dept_url = '/node/' . $node->id();
         $variables['dept_url'] = $dept_url;
-        $dept_icon_uri = $node->field_icon->entity->getFileUri();
-        if ($wrapper = \Drupal::service('stream_wrapper_manager')->getViaUri($dept_icon_uri)) {
-          $variables['dept_icon_uri'] = $wrapper->getExternalUrl();
+        $dept_icon = $node->field_icon->target_id;
+
+        $file = File::load($dept_icon);
+        $dept_icon_uri = $file->getFileUri();
+        if (substr($dept_icon_uri, 0, 4) != "http") {
+          $dept_icon_uri = \Drupal::request()->getScheme() . ":" . $dept_icon_uri;
         }
+        $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
+        if (@file_get_contents($dept_icon_uri)) {
+          $variables['dept_icon_uri'] = $dept_icon_uri;
+        }
+
       }
     }
   }
