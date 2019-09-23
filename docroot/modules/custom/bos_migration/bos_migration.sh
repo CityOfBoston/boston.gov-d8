@@ -127,7 +127,7 @@ function restoreDB() {
     printf "[migration-info] Enable migration modules.\n" | tee -a ${logfile}
     ${drush} cdel views.view.migrate_taxonomy
     ${drush} cdel views.view.migrate_paragraphs
-    ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,migrate_utilities -y  | tee -a ${logfile}
+    ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
     printf "[migration-info] Load bos_migration (migrate_plus) configs for good measure.\n" | tee -a ${logfile}
