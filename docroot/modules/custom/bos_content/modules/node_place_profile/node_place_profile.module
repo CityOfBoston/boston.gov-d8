@@ -40,7 +40,7 @@ function node_place_profile_preprocess_node__place_profile(&$variables) {
     $photo_id = Html::getUniqueId('hro');
 
     $background_image = $variables["elements"]["field_intro_image"];
-    $background_image[0]["responsive_image_style_id"] = "intro_image_fields";
+    $background_image[0]["default_responsive_image_style_id"] = "intro_image_fields";
     $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
     $variables['#attached']['html_head'][] = [
       [
@@ -66,7 +66,7 @@ function node_place_profile_preprocess_node__place_profile__listing(&$variables)
   if (!empty($variables['elements']['#node'])) {
     // Handle intro_image if present.
     $background_image = $variables["elements"]["field_intro_image"];
-    $background_image[0]["responsive_image_style_id"] = "intro_image_fields";
+    $background_image[0]["default_responsive_image_style_id"] = "intro_image_fields";
 
     if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
       $photo_id = Html::getUniqueId('cd-ic-' . $variables["elements"]['#node']->id());

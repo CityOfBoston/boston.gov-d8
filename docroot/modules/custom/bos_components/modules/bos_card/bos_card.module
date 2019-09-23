@@ -67,7 +67,7 @@ function bos_card_preprocess_paragraph__card(&$variables) {
       $variables['photo_id'] = $photo_id;
 
       if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
-        $background_image[0]["responsive_image_style_id"] = "card_images_3w";
+        $background_image[0]["default_responsive_image_style_id"] = "card_images_3w";
         $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
         $variables['#attached']['html_head'][] = [
           [
