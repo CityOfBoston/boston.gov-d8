@@ -883,3 +883,13 @@ What: Set a default background image in case no thumbnail provided or supplied i
 .news-item-short-listing .thumb-wrapper.float-left {
   background-image: url(https://boston.lndo.site/modules/custom/bos_content/modules/node_post/default_news.svg);
 }
+
+/*
+David:
+Where: media inside paragraph--columns.html.twig
+What: Fix the image to 200x200px.
+ */
+.paragraphs-item-3-column-w-image .column-wrapper img {
+  width: 200px;
+  height: 200px;
+}
