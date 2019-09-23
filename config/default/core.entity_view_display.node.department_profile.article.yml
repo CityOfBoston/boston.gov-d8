@@ -18,14 +18,12 @@ dependencies:
     - field.field.node.department_profile.field_published_date
     - field.field.node.department_profile.field_sidebar_components
     - field.field.node.department_profile.field_updated_date
-    - image.style.square_icon_56px
     - node.type.department_profile
   module:
     - address
     - datetime
     - entity_reference_revisions
     - fences
-    - media
     - options
     - text
     - user
@@ -106,10 +104,10 @@ content:
   field_icon:
     label: hidden
     weight: 2
-    type: media_thumbnail
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_56px
-      image_link: ''
+      view_mode: default
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
