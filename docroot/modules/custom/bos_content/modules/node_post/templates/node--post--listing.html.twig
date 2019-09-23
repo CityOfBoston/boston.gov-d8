@@ -84,8 +84,8 @@
   <div class="news-item-wrapper">
     <div class="mobile-1-col desktop-60-left news-left">
       <div class="thumb-wrapper float-left">
-        {% if elements.field_thumbnail %}
-          {{ elements.field_thumbnail }}
+        {% if content.field_thumbnail["#items"] %}
+          {{ content.field_thumbnail }}
         {% else %}
           <div class="news-item-default-image" style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
             <span>Default News image</span>
