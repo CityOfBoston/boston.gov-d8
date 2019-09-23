@@ -55,6 +55,7 @@ function node_listing_page_preprocess_node__listing_page(&$variables) {
 
   $background_image = $variables["elements"]["field_intro_image"];
   if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
+    $background_image[0]["default_responsive_image_style_id"] = "intro_image_fields";
     $photo_id = Html::getUniqueId('hro');
     $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
     $variables['#attached']['html_head'][] = [
