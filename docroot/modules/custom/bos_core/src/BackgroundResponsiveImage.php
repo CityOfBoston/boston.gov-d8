@@ -38,7 +38,6 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
       throw new \Exception("Image is not a responsive style.");
     }
 
-
     if (substr($background_image[0]["#view_mode"], 0, 10) == "responsive") {
       $responsiveStyle_group = $background_image[0]["responsive_image_style_id"];
       $file = File::load($background_image[0]["#media"]->image->target_id);
