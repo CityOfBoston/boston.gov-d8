@@ -2,16 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.paragraph.video.field_component_title
     - field.field.paragraph.video.field_contact
     - field.field.paragraph.video.field_extra_info
     - field.field.paragraph.video.field_image
     - field.field.paragraph.video.field_is_channel
     - field.field.paragraph.video.field_short_title
-    - image.style.photo_bleed_a_mobile_1x
     - paragraphs.paragraphs_type.video
   module:
-    - svg_image
+    - entity_browser
 id: paragraph.video.default
 targetEntityType: paragraph
 bundle: video
@@ -44,10 +44,17 @@ content:
     region: content
   field_image:
     weight: 6
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: photo_bleed_a_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: false
     third_party_settings: {  }
     region: content
   field_is_channel:

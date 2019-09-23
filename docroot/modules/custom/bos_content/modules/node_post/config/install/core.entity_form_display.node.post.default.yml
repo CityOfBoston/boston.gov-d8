@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.node.post.body
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
@@ -14,16 +15,15 @@ dependencies:
     - field.field.node.post.field_sidebar_components
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
-    - image.style.thumbnail
     - node.type.post
   module:
     - content_moderation
     - datetime
+    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -164,10 +164,17 @@ content:
     region: content
   field_intro_image:
     weight: 1
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: hero_fixed_a_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: false
     third_party_settings: {  }
     region: content
   field_intro_text:
@@ -230,10 +237,17 @@ content:
     region: content
   field_thumbnail:
     weight: 2
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: thumbnail
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: false
     third_party_settings: {  }
     region: content
   field_updated_date:
