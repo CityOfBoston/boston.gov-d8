@@ -23,13 +23,11 @@ dependencies:
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
-    - responsive_image.styles.intro_image_fields
   module:
     - address
     - datetime
     - entity_reference_revisions
     - fences
-    - responsive_image
     - text
     - user
 _core:
@@ -143,13 +141,13 @@ content:
         fences_label_classes: ''
     region: content
   field_intro_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 2
     region: content
     label: hidden
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

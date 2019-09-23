@@ -16,12 +16,10 @@ dependencies:
     - field.field.node.program_initiative_profile.field_sidebar_components
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
-    - responsive_image.styles.logo_images
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - responsive_image
     - text
     - user
 _core:
@@ -71,13 +69,13 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_intro_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 2
     region: content
     label: hidden
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -101,13 +99,13 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_program_logo:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 4
     region: content
     label: hidden
     settings:
-      responsive_image_style: logo_images
-      image_link: ''
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
