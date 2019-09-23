@@ -69,7 +69,7 @@ function node_listing_page_preprocess_node__listing_page(&$variables) {
 
     // Now make and render the Intro_image block.
     $nestedElement = [
-      ["div" => "b b--fw b--fw--480"],
+      ["div" => "hero-image b b--fw b--fw--480"],
       ["div" => "hro $photo_id hro--pt hro--pb"],
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
