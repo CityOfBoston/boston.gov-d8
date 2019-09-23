@@ -21,7 +21,6 @@ dependencies:
     - node.type.department_profile
   module:
     - fences
-    - svg_image
     - user
 _core:
   default_config_hash: WORBoajtFA74R53etFBEVyKwCzcm5WGuql_TO_cK8Kk
@@ -33,14 +32,10 @@ content:
   field_icon:
     label: hidden
     weight: 0
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: ''
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: responsive_image_logo
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
