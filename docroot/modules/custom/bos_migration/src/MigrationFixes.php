@@ -427,7 +427,7 @@ class MigrationFixes {
     'public://img/icons/department/icons_budget_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/budget_icon.svg',
     'public://img/icons/department/icons_bra.svg' => '//patterns.boston.gov/assets/icons/dept_icons/icons_bra.svg',
     'public://img/icons/department/icons_blue_retirement.svg' => '//patterns.boston.gov/assets/icons/dept_icons/retirement_logo.svg',
-    'public://img/icons/department/icons_blue_neighborhood_services.svg' => '//patterns.boston.gov/assets/icons/dept_icons/neighborhood_development_logo_1.svg',
+    'public://img/icons/department/icons_blue_neighborhood_services.svg' => '//patterns.boston.gov/assets/icons/dept_icons/neighborhood_development_logo.svg',
     'public://img/icons/department/icons_bikes_bikes_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/boston_bikes_icon.svg',
     'public://img/icons/department/icons_bikes_bikes.svg' => '//patterns.boston.gov/assets/icons/dept_icons/boston_bikes_icon.svg',
     'public://img/icons/department/icons_auditing.svg' => '//patterns.boston.gov/assets/icons/dept_icons/auditing_icon.svg',
