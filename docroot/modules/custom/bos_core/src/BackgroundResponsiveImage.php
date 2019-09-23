@@ -39,8 +39,13 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
     }
 
     if (substr($background_image[0]["#view_mode"], 0, 10) == "responsive") {
-      $responsiveStyle_group = $background_image[0]["responsive_image_style_id"];
-      $file = File::load($background_image[0]["#media"]->image->target_id);
+      $responsiveStyle_group = $background_image[0]["default_responsive_image_style_id"];
+      // Extract the responsive style group for this image.
+      if ($config = \Drupal::configFactory()->get("core.entity_view_display.media.image." . $background_image[0]["#view_mode"])) {
+        $responsiveStyle_group = $config->get("content")["image"]["settings"]["responsive_image_style"] ?? $responsiveStyle_group;
+      }
+      $media = $background_image[0]["#media"];
+      $file = File::load($media->image->target_id);
       $uri = $file->getFileUri();
     }
 

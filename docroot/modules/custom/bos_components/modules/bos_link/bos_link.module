@@ -72,6 +72,7 @@ function bos_link_preprocess_field(&$vars) {
   }
   if ($field_name == 'field_external_link') {
     $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
+    $vars['items'][0]['content']['#options']['attributes']['target'] = '_blank';
   }
 }
 
