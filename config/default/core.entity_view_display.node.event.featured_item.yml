@@ -22,6 +22,7 @@ dependencies:
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
     - field.field.node.event.field_intro_image
+    - field.field.node.event.field_intro_text
     - field.field.node.event.field_links
     - field.field.node.event.field_manual_date
     - field.field.node.event.field_metatags
@@ -33,12 +34,10 @@ dependencies:
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
     - node.type.event
-    - responsive_image.styles.thumbnail_event
   module:
     - datetime_range
     - fences
     - link
-    - responsive_image
     - text
     - user
 id: node.event.featured_item
@@ -83,13 +82,13 @@ content:
       target: ''
     third_party_settings: {  }
   field_thumbnail:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 3
     region: content
     label: hidden
     settings:
-      responsive_image_style: thumbnail_event
-      image_link: ''
+      view_mode: responsive_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
