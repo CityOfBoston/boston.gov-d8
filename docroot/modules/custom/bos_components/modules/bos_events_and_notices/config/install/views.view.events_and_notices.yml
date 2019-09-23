@@ -6,13 +6,13 @@ dependencies:
     - field.storage.node.field_intro_image
     - field.storage.node.field_public_notice_date
     - field.storage.node.field_thumbnail
-    - image.style.med_large_square_360x360_
-    - image.style.topic_thumbnail
+    - image.style.card_grid_2w_horizonal_1x
     - node.type.event
     - node.type.public_notice
   module:
     - datetime
     - datetime_range
+    - media
     - node
     - paragraphs
     - svg_image
@@ -364,16 +364,12 @@ display:
           empty: ''
           hide_empty: false
           empty_zero: false
-          hide_alter_empty: true
+          hide_alter_empty: false
           click_sort_column: target_id
-          type: image
+          type: media_thumbnail
           settings:
-            image_style: med_large_square_360x360_
+            image_style: card_grid_2w_horizonal_1x
             image_link: ''
-            svg_render_as_image: 1
-            svg_attributes:
-              width: ''
-              height: ''
           group_column: ''
           group_columns: {  }
           group_rows: true

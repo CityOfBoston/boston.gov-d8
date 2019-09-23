@@ -15,12 +15,10 @@ dependencies:
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
     - node.type.post
-    - responsive_image.styles.hero_fixed_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - responsive_image
     - text
     - user
 id: node.post.default
@@ -75,13 +73,13 @@ content:
         fences_label_classes: ''
     region: content
   field_intro_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 2
     region: content
     label: hidden
     settings:
-      responsive_image_style: hero_fixed_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
