@@ -98,6 +98,7 @@ function node_how_to_preprocess_node__how_to(&$variables) {
   $variables['image_class'] = "hro--d";
   if ($node->hasField('field_intro_image') && $node->get('field_intro_image')->count()) {
     $background_image = $variables["elements"]["field_intro_image"];
+    $background_image[0]["default_responsive_image_style_id"] = "intro_image_fields";
     $photo_id = Html::getUniqueId('hro');
     $css = BackgroundResponsiveImage::createBackgroundCss($background_image, ".$photo_id");
     $variables['#attached']['html_head'][] = [

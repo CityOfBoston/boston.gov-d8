@@ -16,12 +16,10 @@ dependencies:
     - field.field.node.how_to.field_sidebar_components
     - field.field.node.how_to.field_updated_date
     - node.type.how_to
-    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - responsive_image
     - text
     - user
 _core:
@@ -80,10 +78,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 1
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
