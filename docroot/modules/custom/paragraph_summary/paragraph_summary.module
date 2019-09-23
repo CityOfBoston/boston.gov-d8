@@ -46,8 +46,7 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
     if ($element['mode'] == 'closed') {
       $para_type = $paragraph->getParagraphType()->id();
       // Execute hook_paragraph_summary_alter hooks.
-      foreach (\Drupal::moduleHandler()
-                 ->getImplementations('paragraph_summary_alter') as $module) {
+      foreach (\Drupal::moduleHandler()->getImplementations('paragraph_summary_alter') as $module) {
         $function = $module . '_paragraph_summary_alter';
 
         $para_field["top"]["summary"]["#attributes"]["class"][] = "cob-para";
@@ -65,8 +64,7 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
       }
 
       // Execute hook_paragraph_HOOK_summary_alter hooks.
-      foreach (\Drupal::moduleHandler()
-                 ->getImplementations('paragraph_' . $para_type . '_summary_alter') as $module) {
+      foreach (\Drupal::moduleHandler()->getImplementations('paragraph_' . $para_type . '_summary_alter') as $module) {
 
         $para_field["top"]["summary"]["#attributes"]["class"][] = "cob-para";
 
