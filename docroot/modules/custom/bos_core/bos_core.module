@@ -390,11 +390,11 @@ function bos_core_rebuild() {
         $image->setPermanent();
         $image->save();
       }
-      if ($icon == "embed_button_image.png"){
+      if ($icon == "embed_button_image.png") {
         $mod = \Drupal::entityTypeManager()
           ->getStorage("embed_button")
           ->load("media_entity_embed");
-        if (!empty($image) && is_array($image)){
+        if (!empty($image) && is_array($image)) {
           $image = array_pop($image);
         }
         $file_uuid = $image->get("uuid")->value;
