@@ -13,7 +13,6 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\GeneratedLink;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -503,11 +502,4 @@ function _bos_admin_fix_attributes(array &$variables, string $check_field = "att
   if (function_exists("_bos_core_fix_attributes")) {
     _bos_core_fix_attributes($variables, $check_field);
   }
-}
-
-/**
- * Implements hook_entity_embed_alter().
- */
-function bos_admin_entity_embed_alter(array &$build, \Drupal\Core\Entity\EntityInterface $entity, array &$context) {
-  return;
 }
