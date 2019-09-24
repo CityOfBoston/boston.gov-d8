@@ -13,6 +13,7 @@ dependencies:
   module:
     - fences
     - file_entity
+    - smart_trim
     - user
 _core:
   default_config_hash: _Bf428kqU4oErwcNNTL2Wj4HQfES94Bs4usKnK3iL2Q
@@ -21,32 +22,35 @@ targetEntityType: file
 bundle: image
 mode: entity_browser
 content:
-  filemime:
-    type: string
-    weight: 2
-    region: content
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
   filename:
-    type: string
+    type: smart_trim
+    weight: 0
+    region: content
     label: hidden
-    weight: -5
-    region: content
     settings:
-      link_to_entity: false
-    third_party_settings: {  }
-  filesize:
-    type: file_size
-    weight: 3
-    region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
+      trim_length: 30
+      trim_type: chars
+      trim_suffix: ''
+      wrap_class: trimmed
+      more_text: More
+      more_class: more-link
+      trim_options:
+        text: true
+        trim_zero: false
+      wrap_output: false
+      more_link: false
+      summary_handler: full
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
   uid:
     type: author
-    weight: 1
+    weight: 2
     region: content
     label: above
     settings: {  }
@@ -54,7 +58,7 @@ content:
   uri:
     type: file_image
     label: hidden
-    weight: -5
+    weight: 1
     region: content
     settings:
       image_style: media_fixed_width_250px
@@ -74,4 +78,6 @@ hidden:
   field_file_image_title_text: true
   field_icon_category: true
   field_image_caption: true
+  filemime: true
+  filesize: true
   langcode: true
