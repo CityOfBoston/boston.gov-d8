@@ -8,11 +8,9 @@ dependencies:
     - field.field.paragraph.card.field_thumbnail
     - field.field.paragraph.card.field_title
     - paragraphs.paragraphs_type.card
-    - responsive_image.styles.card_images_3w
   module:
     - entity_reference_revisions
     - fences
-    - responsive_image
     - smart_trim
 id: paragraph.card.default
 targetEntityType: paragraph
@@ -65,10 +63,10 @@ content:
   field_thumbnail:
     label: hidden
     weight: 2
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: card_images_3w
-      image_link: ''
+      view_mode: responsive_image_card_3x
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

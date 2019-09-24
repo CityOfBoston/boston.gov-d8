@@ -88,7 +88,8 @@ function template_preprocess_paragraph__photo(array &$variables) {
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if ($variables['paragraph']->hasField('field_image')) {
     $background_image = $variables["elements"]["field_image"];
-    if ($background_image["#items"]->count()) {
+    $background_image[0]["default_responsive_image_style_id"] = "photo_bleed_images";
+    if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
       $anchor_class = "." . $variables["photo_id"];
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, $anchor_class);
       $variables['#attached']['html_head'][] = [

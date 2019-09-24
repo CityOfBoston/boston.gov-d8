@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.node.topic_page.field_components
     - field.field.node.topic_page.field_contacts
     - field.field.node.topic_page.field_intro_image
@@ -13,17 +14,16 @@ dependencies:
     - field.field.node.topic_page.field_thumbnail
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_updated_date
-    - image.style.thumbnail_event_square_190x190_
     - node.type.topic_page
   module:
     - content_moderation
     - datetime
+    - entity_browser
     - field_group
     - metatag
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -141,10 +141,17 @@ content:
     region: content
   field_intro_image:
     weight: 3
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: intro_image_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:
@@ -176,10 +183,17 @@ content:
     region: content
   field_thumbnail:
     weight: 2
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: thumbnail_event_square_190x190_
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: true
     third_party_settings: {  }
     region: content
   field_topic_category:

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.node.place_profile.body
     - field.field.node.place_profile.field_additional_information
     - field.field.node.place_profile.field_address
@@ -21,17 +22,16 @@ dependencies:
     - field.field.node.place_profile.field_sidebar_components
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
-    - image.style.intro_image_mobile_1x
     - node.type.place_profile
   module:
     - address
     - content_moderation
     - datetime
+    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -245,10 +245,17 @@ content:
     region: content
   field_intro_image:
     weight: 1
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: intro_image_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:

@@ -9,12 +9,10 @@ dependencies:
     - field.field.node.listing_page.field_published_date
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
-    - responsive_image.styles.intro_image_fields
   module:
     - datetime
     - entity_reference_revisions
     - fences
-    - responsive_image
     - user
 id: node.listing_page.default
 targetEntityType: node
@@ -45,13 +43,13 @@ content:
     third_party_settings: {  }
     region: content
   field_intro_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 5
     region: content
     label: hidden
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

@@ -32,7 +32,6 @@ dependencies:
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
     - node.type.event
-    - responsive_image.styles.thumbnail_event
   module:
     - address
     - datetime
@@ -41,7 +40,6 @@ dependencies:
     - fences
     - link
     - options
-    - responsive_image
     - text
     - user
 id: node.event.default
@@ -243,13 +241,13 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 18
     region: content
     label: hidden
     settings:
-      responsive_image_style: intro_image_fields
-      image_link: ''
+      view_mode: responsive_image_intro_image
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -362,13 +360,13 @@ content:
       link: ''
     third_party_settings: {  }
   field_thumbnail:
-    type: responsive_image
+    type: entity_reference_entity_view
     weight: 21
     region: content
     label: hidden
     settings:
-      responsive_image_style: thumbnail_event
-      image_link: ''
+      view_mode: responsive_image_card
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

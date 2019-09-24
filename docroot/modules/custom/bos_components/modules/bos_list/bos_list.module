@@ -44,10 +44,6 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
-  $theme['node__department_profile__department_listing'] = [
-    'base hook' => 'node',
-    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
-  ];
   $theme['views_view__news_landing'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
@@ -96,10 +92,6 @@ function bos_list_theme() {
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
-  $theme['node__public_notice__listing'] = [
-    'base hook' => 'node',
-    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
-  ];
   $theme['viewfield__paragraph__field_list'] = [
     'base hook' => 'viewfield',
   ];
@@ -141,6 +133,10 @@ function bos_list_theme() {
   ];
   $theme['bef_checkboxes_field_contact_target_id'] = [
     'base hook' => 'bef_checkboxes',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
+  $theme['input_title'] = [
+    'base hook' => 'input',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
   return $theme;
@@ -212,26 +208,18 @@ function bos_list_form_alter(&$form, $form_state, $form_id) {
 }
 
 /**
- * Implements paragraph summary for paragraph EXPEREMENTAL widget.
- *
- * @param array $form_widget
- *   The widget for this paragraph item.
- * @param array $para
- *   The paragraph entity.
- * @param array $attributes
- *   The attributes array for this paragraphs item.
- *
- * @return array
- *   In the format ['attributes' => [attributes array], content => [markup]].
+ * Implements hook_paragraph_HOOK_summary_alter().
  */
-function list_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+function bos_list_paragraph_list_summary_alter(array $form_widget, array $para, array $attributes) {
   // Add attributes to the summary area.
   // Set the summary content.
   $markup = [];
   if ($view = View::load($para["entity"]->field_list[0]->target_id)) {
-    $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
-    $markup[] = Markup::create("<b>View:</b> " . $view->label());
+    $markup[] = Markup::create("<span style='color: navy;'>View: <span style='font-weight: bold; text-transform: uppercase'>" . $view->label() . "</span></span>");
     $markup[] = Markup::create("<b>Display:</b> " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
+    if ($para["entity"]->hasField("field_component_title") && $para["entity"]->get("field_component_title")->value) {
+      $markup[] = Markup::create("<b>Title:</b> " . $para["entity"]->get("field_component_title")->value);
+    }
     return [
       'attributes' => $attributes,
       'content' => $markup,
@@ -249,6 +237,11 @@ function bos_list_theme_suggestions_alter(array &$suggestions, array $variables,
     }
     if (isset($variables["element"]["#name"])) {
       $suggestions[] = $hook . '_' . $variables["element"]["#name"];
+    }
+  }
+  if ($hook == 'input') {
+    if (isset($variables["element"]["#parents"][0])) {
+      $suggestions[] = $hook . '_' . $variables["element"]["#parents"][0];
     }
   }
 }

@@ -24,10 +24,8 @@ dependencies:
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
-    - responsive_image.styles.card_images_3w
   module:
     - fences
-    - responsive_image
     - smart_trim
     - user
 _core:
@@ -45,10 +43,10 @@ content:
   field_intro_image:
     label: hidden
     weight: 0
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: card_images_3w
-      image_link: ''
+      view_mode: responsive_image_card
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
