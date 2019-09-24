@@ -1,8 +1,9 @@
-uuid: 32ed9870-11af-4036-85f3-d4d5cfcad70a
+uuid: 6eff9771-2096-4bdd-a32b-f75a615b4587
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.file.entity_browser_document
     - field.field.file.image.field_file_image_alt_text
     - field.field.file.image.field_file_image_title_text
     - field.field.file.image.field_icon_category
@@ -13,10 +14,10 @@ dependencies:
     - user
 _core:
   default_config_hash: _Bf428kqU4oErwcNNTL2Wj4HQfES94Bs4usKnK3iL2Q
-id: file.image.default
+id: file.image.entity_browser_document
 targetEntityType: file
 bundle: image
-mode: default
+mode: entity_browser_document
 content:
   filemime:
     type: string
