@@ -1,22 +1,16 @@
-langcode: en
+langcode: und
 status: true
 dependencies:
   module:
-    - file
-    - image
+    - media
     - taxonomy
 id: taxonomy_term.field_icon
 field_name: field_icon
 entity_type: taxonomy_term
-type: image
+type: entity_reference
 settings:
-  default_image:
-    uuid: ''
-  uri_scheme: public
-  target_type: file
-  display_field: false
-  display_default: false
-module: image
+  target_type: media
+module: core
 locked: false
 cardinality: 1
 translatable: true

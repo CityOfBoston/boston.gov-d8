@@ -62,8 +62,13 @@ function bos_commissions_preprocess_paragraph(&$variables) {
  * Extracts the string commission ID from "field_commission".
  */
 function bos_commissions_id(&$variables) {
-  $term = Term::load($variables['paragraph']->get('field_commission')->getValue()['0']['target_id']);
-  return $term->get('field_commission_id')->getValue()['0']['value'];
+  if (($term = Term::load($variables['paragraph']->get('field_commission')->getValue()['0']['target_id']))
+    && $term->hasField("field_commission_id")) {
+    return $term->get('field_commission_id')->value;
+  }
+  else {
+    return FALSE;
+  }
 }
 
 /**
@@ -105,33 +110,34 @@ function bos_commissions_query($graphql) {
  * Adds commission membership from the GraphQL endpoint.
  */
 function bos_commissions_add_members(&$variables) {
-  $commission_id = bos_commissions_id($variables);
-  $query = bos_commissions_get_query('comission_members.graphql');
-  $result = bos_commissions_query(str_replace('$commission_id', $commission_id, $query));
-  $members = $result->data->commission->members;
-  $date_input_format = 'Y-m-d\TH:i:s.u\Z';
-  $date_output_format = 'n/j/Y';
+  if ($commission_id = bos_commissions_id($variables)) {
+    $query = bos_commissions_get_query('comission_members.graphql');
+    $result = bos_commissions_query(str_replace('$commission_id', $commission_id, $query));
+    $members = $result->data->commission->members;
+    $date_input_format = 'Y-m-d\TH:i:s.u\Z';
+    $date_output_format = 'n/j/Y';
 
-  foreach ($members as &$member) {
-    if ($member->appointed) {
-      $datetime = DateTime::createFromFormat($date_input_format, $member->appointed);
-      $member->appointed = format_date(
-        date_timestamp_get($datetime),
-        'custom',
-        $date_output_format
-      );
+    foreach ($members as &$member) {
+      if ($member->appointed) {
+        $datetime = DateTime::createFromFormat($date_input_format, $member->appointed);
+        $member->appointed = format_date(
+          date_timestamp_get($datetime),
+          'custom',
+          $date_output_format
+        );
+      }
+      if ($member->expires) {
+        $datetime = DateTime::createFromFormat($date_input_format, $member->expires);
+        $member->expires = format_date(
+          date_timestamp_get($datetime),
+          'custom',
+          $date_output_format
+        );
+      }
     }
-    if ($member->expires) {
-      $datetime = DateTime::createFromFormat($date_input_format, $member->expires);
-      $member->expires = format_date(
-        date_timestamp_get($datetime),
-        'custom',
-        $date_output_format
-      );
-    }
+
+    $variables['members'] = $members;
   }
-
-  $variables['members'] = $members;
 }
 
 /**

@@ -7,11 +7,10 @@ dependencies:
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
-    - image.style.square_icon_65px
+    - field.field.node.status_item.field_weight
     - node.type.status_item
   module:
     - fences
-    - svg_image
     - user
 id: node.status_item.listing
 targetEntityType: node
@@ -38,14 +37,10 @@ content:
   field_icon:
     label: hidden
     weight: 1
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: square_icon_65px
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      view_mode: thumbnail
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -71,5 +66,6 @@ content:
 hidden:
   content_moderation_control: true
   field_messages: true
+  field_weight: true
   langcode: true
   published_at: true

@@ -8,6 +8,8 @@
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
+use Drupal\media\Entity\Media;
 
 /**
  * Implements hook_theme().
@@ -46,6 +48,8 @@ function template_preprocess_paragraph__hero_image(array &$variables) {
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if ($variables['paragraph']->hasField('field_image')) {
     $background_image = $variables["elements"]["field_image"];
+    $background_image[0]["default_responsive_image_style_id"] = "hero_fixed_image_fields";
+
     if (isset($background_image) && $background_image["#items"]->count()) {
       $anchor_class = "." . $variables["photo_id"];
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, $anchor_class);
@@ -60,4 +64,24 @@ function template_preprocess_paragraph__hero_image(array &$variables) {
     }
   }
 
+}
+
+/**
+ * Implements hook_paragraph_hook_summary_alter().
+ */
+function bos_hero_image_paragraph_hero_image_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  if ($media = Media::load($para["entity"]->get("field_image")->target_id)) {
+    $markup[] = Markup::create("<span style='color: navy;'>Hero Image: <span style='font-weight: bold; text-transform: uppercase'>" . $media->get("name")->value . "</span></span>");
+  }
+  $markup[] = Markup::create("<b>Title:</b> " . $para["entity"]->get("field_header")->value);
+  if ($para["entity"]->hasField("field_sub_header")) {
+    $markup[] = Markup::create($para["entity"]->get("field_subheader")->value);
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }

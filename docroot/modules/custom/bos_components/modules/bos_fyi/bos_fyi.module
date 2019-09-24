@@ -44,19 +44,9 @@ function bos_fyi_theme_suggestions_paragraph_alter(array &$suggestions, array $v
 }
 
 /**
- * Implements paragraph summary for paragraph EXPEREMENTAL widget.
- *
- * @param array $form_widget
- *   The widget for this paragraph item.
- * @param array $para
- *   The paragraph entity.
- * @param array $attributes
- *   The attributes array for this paragraphs item.
- *
- * @return array
- *   In the format ['attributes' => [attributes array], content => [markup]].
+ * Implements hook_paragraph_HOOK_summary_alter().
  */
-function fyi_paragraph_summary_alter(array $form_widget, array $para, array $attributes) {
+function bos_fyi_paragraph_fyi_summary_alter(array $form_widget, array $para, array $attributes) {
   // Add attributes to the summary area.
   // Set the summary content.
   $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_title")->value . "</span>");

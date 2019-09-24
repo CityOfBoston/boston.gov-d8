@@ -2,6 +2,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.node.event.body
     - field.field.node.event.field_address
     - field.field.node.event.field_cancel_event
@@ -31,7 +32,6 @@ dependencies:
     - field.field.node.event.field_sidebar_components
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
-    - image.style.thumbnail_event_square_190x190_
     - node.type.event
   module:
     - address
@@ -39,13 +39,13 @@ dependencies:
     - content_moderation
     - datetime
     - datetime_range
+    - entity_browser
     - field_group
     - link
     - metatag
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -375,11 +375,18 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_intro_image:
-    type: image_image
+    type: entity_browser_entity_reference
     weight: 5
     settings:
-      preview_image_style: intro_image_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: true
     region: content
     third_party_settings: {  }
   field_intro_text:
@@ -472,10 +479,17 @@ content:
     third_party_settings: {  }
   field_thumbnail:
     weight: 6
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: thumbnail_event_square_190x190_
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_display_settings:
+        view_mode: media_library
+      field_widget_edit: false
+      field_widget_replace: false
+      open: true
     region: content
     third_party_settings: {  }
   field_updated_date:
