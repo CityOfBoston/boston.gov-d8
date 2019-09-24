@@ -2,8 +2,10 @@ uuid: 93e50f72-8ecd-4246-a2ad-6df4687dfa91
 langcode: en
 status: true
 dependencies:
+  config:
+    - media.type.image
   content:
-    - 'file:image:59641f3d-9657-44ae-b0a8-571a4c8fe346'
+    - 'file:image:8ae1553f-fa7a-4f0c-bdc1-59db7b26de5e'
   module:
     - entity_embed
     - image
@@ -16,11 +18,12 @@ id: media_entity_embed
 type_id: entity
 type_settings:
   entity_type: media
-  bundles: {  }
+  bundles:
+    - image
   display_plugins:
     - bos_media_image
     - 'view_mode:media.embedded'
   entity_browser: media_entity_browser
   entity_browser_settings:
     display_review: false
-icon_uuid: 59641f3d-9657-44ae-b0a8-571a4c8fe346
+icon_uuid: 8ae1553f-fa7a-4f0c-bdc1-59db7b26de5e
