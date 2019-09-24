@@ -753,11 +753,15 @@ function bos_theme_preprocess_field__field_components(array &$variables, $hook) 
 function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
-  if (!empty($variables['paragraph'])) {
-    $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
-    $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
-    // Add this attribute so that js can change the tooltip and menu text.
-    $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['paragraph']->bundle())));
+  // @var Drupal\paragraphs\Entity\Paragraph $paragraph.
+  $paragraph = $variables['paragraph'];
+  if (!empty($paragraph)) {
+    if ($paragraph->getType() != 'grid_of_people') {
+      $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
+      $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
+      // Add this attribute so that js can change the tooltip and menu text.
+      $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['paragraph']->bundle())));
+    }
   }
 
   $variables["cob"]["is_front_page"] = \Drupal::service('path.matcher')->isFrontPage();
