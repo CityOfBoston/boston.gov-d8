@@ -1,6 +1,4 @@
-<?php
-
-/**
+{#
  * @file
  * Default theme implementation for a single paragraph item.
  *
@@ -24,7 +22,7 @@
  * @see template_preprocess()
  * @see template_preprocess_entity()
  * @see template_process()
- */
+
 $detail_item_variables = array(
   'label' => NULL,
   'body' => render($content['field_daily_hours']),
@@ -36,3 +34,39 @@ if (isset($content['field_title'])) {
   $detail_item_variables['label'] = render($content['field_title']);
 }
 print theme('detail_item', $detail_item_variables);
+#}
+
+<div class="detail-item ">
+  <div class="detail-item__left">
+    <div class="icon {{ content.field_hours_icon.0['#markup'] }}"></div>
+  </div>
+  <div class="detail-item__content">
+    <div class="detail-item__body">
+      <span class="oh-wrapper">
+        {% for index,paragraph in content['#items']['#list'] %}
+          {{ index }}
+        {% endfor %}
+        <span class="oh-display">
+          <span class="oh-display-label" style="width: 6.6em;">Monday: </span>
+          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
+        </span>
+        <span class="oh-display">
+          <span class="oh-display-label" style="width: 6.6em;">Tuesday: </span>
+          <span class="oh-display-times oh-display-hours oh-display-current">9:00 AM-4:30 PM <br></span>
+        </span>
+        <span class="oh-display">
+          <span class="oh-display-label" style="width: 6.6em;">Wednesday: </span>
+          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
+        </span>
+        <span class="oh-display">
+          <span class="oh-display-label" style="width: 6.6em;">Thursday: </span>
+          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
+        </span>
+        <span class="oh-display">
+          <span class="oh-display-label" style="width: 6.6em;">Friday: </span>
+          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
+        </span>
+      </span>
+    </div>
+  </div>
+</div>
