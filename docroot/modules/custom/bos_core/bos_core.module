@@ -348,6 +348,64 @@ function bos_core_media_embed_alter(&$build, $entity, $context) {
 }
 
 /**
+ * Implements hook_rebuild().
+ */
+function bos_core_rebuild() {
+  // Install icons and images from the images/custom folder.
+  $path = drupal::root() . "/sites/default/files/custom";
+  if (!file_exists($path)) {
+    mkdir($path, 0777, TRUE);
+  }
+
+  $modName = basename(__FILE__, ".module");
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $fromPath = $modulePath . "/images/custom";
+  $dir = dir($fromPath);
+  $icons = [];
+  while (FALSE !== ($file = $dir->read())) {
+    if (strpos($file, ".svg") > 0 || strpos($file, ".png") > 0) {
+      $icons[] = $file;
+    }
+  }
+
+  foreach ($icons as $icon) {
+    $destIcon = $path . "/" . $icon;
+    if (file_exists($destIcon)) {
+      unlink($destIcon);
+    }
+    copy($fromPath . "/" . $icon, $destIcon);
+
+    // Check if the file exists that is listed in para.para_type.module.yml.
+    $filesystem = \Drupal::service('file_system');
+    if (!empty($filesystem)) {
+      $destination = "public://custom/" . $icon;
+      $image = Drupal::entityTypeManager()->getStorage("file")
+        ->loadByProperties(["uri" => $destination]);
+      if (count($image) == 0) {
+        $image = File::create();
+        $image->setFileUri($destination);
+        $image->setOwnerId(\Drupal::currentUser()->id());
+        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+        $image->setFileName($filesystem->basename($destination));
+        $image->setPermanent();
+        $image->save();
+      }
+      if ($icon == "embed_button_image.png") {
+        $mod = \Drupal::entityTypeManager()
+          ->getStorage("embed_button")
+          ->load("media_entity_embed");
+        if (!empty($image) && is_array($image)) {
+          $image = array_pop($image);
+        }
+        $file_uuid = $image->get("uuid")->value;
+        $mod->set("icon_uuid", $file_uuid)->save();
+      }
+    }
+  }
+
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
@@ -454,14 +512,15 @@ function _bos_core_install_icons($module) {
   }
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
-    if (file_exists($path . "/" . $icon)) {
-      unlink($path . "/" . $icon);
+    $destfile = $path . "/" . $icon;
+    if (file_exists()) {
+      unlink($destfile);
     }
-    copy($modulePath . "/" . $icon, $path . "/" . $icon);
+    copy($modulePath . "/" . $icon, $destfile);
 
     // Check if the file exists that is listed in para.para_type.module.yml.
     $filesystem = \Drupal::service('file_system');
-    $entity = str_replace("_icon.svg", "", $filesystem->basename($path . "/" . $icon));
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
     $mod = \Drupal::entityTypeManager()
       ->getStorage("paragraphs_type")->load($entity);
     if (!empty($mod)) {
