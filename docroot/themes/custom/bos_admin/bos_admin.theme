@@ -13,7 +13,6 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\GeneratedLink;
 use Drupal\Core\Url;
-use Drupal\editor\Entity\Editor;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -497,9 +496,9 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
  *   going to be called as an implementation of hook_form_BASE_FORM_ID_alter().
  */
 function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
- if (!isset($form["href_dirty_check"])) {
-   return;
- }
+  if (!isset($form["href_dirty_check"])) {
+    return;
+  }
 
   $form["attributes"]["href"]["#description"] = Markup::create("Start typing to find content - or paste a URL copied from elsewhere.");
   $form['cob_tabs'] = [
@@ -512,7 +511,7 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
         "#attributes" => ["class" => [10 => "cob-details-wrapper"]],
         "form" => [
           "#tree" => TRUE,
-          "#parents" => ["cob_tabs",  "stuff", 0, "form"],
+          "#parents" => ["cob_tabs", "stuff", 0, "form"],
           "attributes" => $form["attributes"],
         ],
       ],
@@ -528,21 +527,21 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
             "link_type" => [
               "#type" => "select",
               '#title' => t('Link Type'),
-              '#options' => array(
+              '#options' => [
                 "href" => t('URL'),
                 "mailto" => t('Email'),
-              ),
+              ],
               '#default_value' => "href",
             ],
             "protocol" => [
               "#type" => "select",
               '#title' => t('Protocol'),
-              '#options' => array(
+              '#options' => [
                 "http" => t('http://'),
                 "https" => t('https://'),
                 "ftp" => t('ftp://'),
                 "news" => t('news://'),
-              ),
+              ],
               '#default_value' => "http",
             ],
             "url" => [
