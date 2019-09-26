@@ -363,7 +363,7 @@ function bos_core_rebuild() {
   $dir = dir($fromPath);
   $icons = [];
   while (FALSE !== ($file = $dir->read())) {
-    if (strpos($file, ".svg") > 0 || strpos($file, ".png") > 0) {
+    if (strpos($file, ".svg") > 0 || strpos($file, ".png") || strpos($file, ".gif") > 0) {
       $icons[] = $file;
     }
   }
