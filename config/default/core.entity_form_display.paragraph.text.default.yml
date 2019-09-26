@@ -11,7 +11,6 @@ dependencies:
     - field.field.paragraph.text.field_text_blocks
     - paragraphs.paragraphs_type.text
   module:
-    - content_moderation
     - field_group
     - paragraphs
 third_party_settings:
@@ -32,6 +31,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Text Information'
+      region: content
     group_text_blocks:
       children:
         - field_text_blocks
@@ -45,6 +45,7 @@ third_party_settings:
         id: ''
         classes: ''
       label: 'Formatted Text Blocks'
+      region: content
 _core:
   default_config_hash: SAnBki87S_9wRZTJapAnsT0LdD24Z_G69e_ryTe14X0
 id: paragraph.text.default

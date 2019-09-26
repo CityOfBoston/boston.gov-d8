@@ -38,6 +38,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Info
+      region: content
     group_exclude:
       children:
         - field_excluded_nodes
@@ -51,6 +52,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Exclude pages'
+      region: content
     group_vertical_:
       children:
         - group_info
@@ -63,6 +65,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Vertical tab'
+      region: content
 id: node.site_alert.default
 targetEntityType: node
 bundle: site_alert

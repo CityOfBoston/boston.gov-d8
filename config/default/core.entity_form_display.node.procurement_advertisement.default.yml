@@ -3,6 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - entity_browser.browser.media_entity_browser
     - field.field.node.procurement_advertisement.body
     - field.field.node.procurement_advertisement.field_award_date
     - field.field.node.procurement_advertisement.field_awarded_by
@@ -31,8 +32,8 @@ dependencies:
     - content_moderation
     - datetime
     - datetime_range
+    - entity_browser
     - field_group
-    - file
     - link
     - paragraphs
     - path
@@ -53,6 +54,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Procurement Advertisement'
+      region: content
     group_basic_information:
       children:
         - title
@@ -76,6 +78,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_sidebar:
       children:
         - field_field_date_range
@@ -97,6 +100,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Sidebar
+      region: content
     group_contact:
       children:
         - field_department
@@ -112,6 +116,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Contact
+      region: content
     group_submissions:
       children:
         - field_not_awarded
@@ -127,6 +132,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Submissions
+      region: content
 id: node.procurement_advertisement.default
 targetEntityType: node
 bundle: procurement_advertisement
