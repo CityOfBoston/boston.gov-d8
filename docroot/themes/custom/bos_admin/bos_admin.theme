@@ -9,7 +9,6 @@ use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Component\Utility\Html;
-use Drupal\Core\Path\AliasManager;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
@@ -710,8 +709,8 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
   $attributes = $form_state->getValue($attributes_key);
 
   // If the linkit href has been provided, check it resolves.
-  if ($form_state->getValue(["cob_tabs", "stuff", 0, "form", "attributes", "href"]) != "") {
-    $href = $form_state->getValue(["cob_tabs", "stuff", 0, "form", "attributes", "href"]);
+  if ($form_state->getValue(array_merge($attributes_key, ["href"])) != "") {
+    $href = $form_state->getValue(array_merge($attributes_key, ["href"]));
     $href_dirty_check = $form_state->getValue(['href_dirty_check']);
     if (!empty($href) && $href !== $href_dirty_check) {
       // We are adding/updating a linkit link.
@@ -807,7 +806,15 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
     // Next validity check ...
   }
 
-  elseif ($form_state->getValue(["cob_tabs", "stuff", 1, "form", "email", "email-frame", "address"]) != "") {
+  elseif ($form_state->getValue([
+    "cob_tabs",
+    "stuff",
+    1,
+    "form",
+    "email",
+    "email-frame",
+    "address",
+  ]) != "") {
     // Make sure any linkit value is removed.
     $mail_key = ["cob_tabs", "stuff", 1, "form", "email"];
     $email = $form_state->getValue($mail_key);
@@ -828,14 +835,23 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
         $join = "&";
       }
       if (!empty($email["email-frame"]["body"])) {
-        $attributes["href"] .= $join . "body=" . urlencode(Html::escape($email["email-frame"]["body"]));
+        $body = Html::escape($email["email-frame"]["body"]);
+        $attributes["href"] .= $join . "body=" . urlencode($body);
       }
       $form_state->setValue("attributes", $attributes);
       $form_state->setValue("href_dirty_check", $attributes['href']);
     }
   }
 
-  elseif ($form_state->getValue(["cob_tabs", "stuff", 1, "form", "email", "phone-frame", "phone"]) != "") {
+  elseif ($form_state->getValue([
+    "cob_tabs",
+    "stuff",
+    1,
+    "form",
+    "email",
+    "phone-frame",
+    "phone",
+  ]) != "") {
     // This is a tel: link.
     if (empty($email["phone-frame"]["phone"])) {
       $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#parents"];
