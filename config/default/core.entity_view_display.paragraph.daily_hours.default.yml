@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.daily_hours.field_title
     - paragraphs.paragraphs_type.daily_hours
   module:
+    - office_hours
     - options
 _core:
   default_config_hash: oFrCCP-q-KsmNXh5DREQgPsZ25fkNe6kzGBevWTbdd4
@@ -16,6 +17,33 @@ targetEntityType: paragraph
 bundle: daily_hours
 mode: default
 content:
+  field_daily_hours:
+    type: office_hours
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      day_format: long
+      time_format: G
+      compress: false
+      grouped: false
+      show_closed: all
+      closed_format: Closed
+      separator:
+        days: '<br />'
+        grouped_days: ' - '
+        day_hours: ': '
+        hours_hours: '-'
+        more_hours: ', '
+      current_status:
+        position: ''
+        open_text: 'Currently open!'
+        closed_text: 'Currently closed'
+      schema:
+        enabled: false
+      timezone_field: ''
+      office_hours_first_day: ''
+    third_party_settings: {  }
   field_hours_icon:
     label: hidden
     weight: 0
@@ -31,5 +59,4 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-hidden:
-  field_daily_hours: true
+hidden: {  }
