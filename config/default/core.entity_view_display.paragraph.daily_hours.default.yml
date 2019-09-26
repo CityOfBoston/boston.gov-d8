@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.daily_hours.field_title
     - paragraphs.paragraphs_type.daily_hours
   module:
+    - fences
     - office_hours
     - options
 _core:
@@ -23,11 +24,10 @@ content:
     region: content
     label: hidden
     settings:
-      day_format: long
-      time_format: G
-      compress: false
-      grouped: false
       show_closed: all
+      office_hours_first_day: ''
+      day_format: long
+      time_format: g
       closed_format: Closed
       separator:
         days: '<br />'
@@ -39,11 +39,19 @@ content:
         position: ''
         open_text: 'Currently open!'
         closed_text: 'Currently closed'
+      compress: false
+      grouped: false
       schema:
-        enabled: false
+        enabled: 0
       timezone_field: ''
-      office_hours_first_day: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_hours_icon:
     label: hidden
     weight: 0
