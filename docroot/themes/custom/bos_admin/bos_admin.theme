@@ -5,6 +5,7 @@
  * Contains functions to alter Drupal's markup for the adminimal theme.
  */
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Component\Utility\Html;
@@ -500,15 +501,24 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
     return;
   }
 
-  $form["attributes"]["href"]["#description"] = Markup::create("Start typing to find content - or paste a URL copied from elsewhere.");
+  // Rewrite extisting form elements using placeholders.
+  $form["attributes"]["title"]["#placeholder"] = "Add a title attribute for the link";
+  $form["attributes"]["title"]["#description"] = Markup::create("<b>Tip:</b> <i>This usually appears as a tooltip on hover.</i>");
+  $form["attributes"]["href"]["#placeholder"] = "Start typing to find content";
+  $form["attributes"]["href"]["#description"] = Markup::create("<b>Tip:</b> <i>You can paste a URL copied from elsewhere.</i>");
+
+  // Create the horizontal tabs.
   $form['cob_tabs'] = [
     "#type" => "horizontal_tabs",
     "#tree" => TRUE,
     "stuff" => [
       "0" => [
         "#type" => 'details',
-        "#title" => "Link to Content",
-        "#attributes" => ["class" => [10 => "cob-details-wrapper"]],
+        "#title" => "Internal / External Link",
+        "#attributes" => [
+          "class" => [10 => "cob-details-wrapper"],
+          "data-horiz-id" => 0,
+        ],
         "form" => [
           "#tree" => TRUE,
           "#parents" => ["cob_tabs", "stuff", 0, "form"],
@@ -517,12 +527,85 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
       ],
       "1" => [
         "#type" => 'details',
-        "#title" => "Special Links",
-        "#attributes" => ["class" => [10 => "cob-details-wrapper"]],
+        "#title" => "Email / Phone Link",
+        "#attributes" => [
+          "class" => [10 => "cob-details-wrapper"],
+          "data-horiz-id" => 1,
+        ],
         "form" => [
           "#tree" => TRUE,
           "#parents" => ["cob_tabs", "stuff", 1, "form"],
-          "special" => [
+          "email" => [
+            "#weight" => -100,
+            "radio-group" => [
+              "#type" => "fieldset",
+              "#attributes" => ["class" => [10 => "bos-boxed-content-t fieldgroup"]],
+              "link_type" => [
+                "#type" => "radios",
+                '#title' => t('Select Link Type'),
+                "#attributes" => ["class" => [10 => "cob-radio-wrapper"]],
+                '#options' => [
+                  "0" => t('Email'),
+                  "1" => t('Phone'),
+                ],
+                '#default_value' => "0",
+              ],
+            ],
+            "email-frame" => [
+              '#type' => 'container',
+              "#attributes" => ["class" => [10 => "cob-radio-frameset cob-radio-0"]],
+              '#markup' => "
+                <p>Provide initial values in the email that will be sent.<br>
+                <b>Note:</b> Most users email clients (e.g. gmail) will allow
+                 the user to change all values provided below.</p>  
+              ",
+              "address" => [
+                '#type' => 'textfield',
+                '#title' => t('E-Mail Address'),
+                '#placeholder' => "The email address the user will send to.",
+                '#size' => 60,
+                '#maxlength' => 128,
+              ],
+              "subject" => [
+                '#type' => 'textfield',
+                '#title' => t('E-Mail Subject'),
+                '#placeholder' => "The default message subject the user email will send.",
+                '#size' => 60,
+                '#maxlength' => 128,
+              ],
+              "body" => [
+                '#type' => 'textarea',
+                '#title' => t('E-Mail Body'),
+                '#placeholder' => "The initial message body in mail the user will send.",
+                '#cols' => 60,
+                '#rows' => 5,
+              ],
+            ],
+            "phone-frame" => [
+              '#type' => 'container',
+              "#attributes" => ["class" => [10 => "cob-radio-frameset cob-radio-1"]],
+              "phone" => [
+                '#type' => 'textfield',
+                '#title' => t('Phone'),
+                '#placeholder' => "The phone number to dial.",
+                '#size' => 60,
+                '#maxlength' => 128,
+              ],
+            ],
+          ],
+        ],
+      ],
+      "2" => [
+        "#type" => 'details',
+        "#title" => "Upload & Link Document",
+        "#attributes" => [
+          "class" => [10 => "cob-details-wrapper"],
+          "data-horiz-id" => 2,
+        ],
+        "form" => [
+          "#tree" => TRUE,
+          "#parents" => ["cob_tabs", "stuff", 2, "form"],
+          "document" => [
             "#weight" => -100,
             "link_type" => [
               "#type" => "select",
@@ -558,11 +641,232 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
     ],
   ];
 
+  // Place email/phone link types into correct tabs.
+  $form["cob_tabs"]["#default_tab"] = "edit-cob-tabs-stuff-0";
+  $default_tab = 0;
+  $protocol = explode("://", $form["attributes"]["href"]["#default_value"]);
+  if ($protocol[0] == "tel" && isset($protocol[1])) {
+    $form["cob_tabs"]["#default_tab"] = "edit-cob_tabs-stuff-1";
+    $default_tab = 1;
+    $form["cob_tabs"]["stuff"][1]["form"]["email"]["radio-group"]["link_type"]["#default_value"] = 1;
+    $phone = explode("?", $protocol[1]);
+    $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#default_value"] = urldecode($phone[0]);
+    $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#default_value"] = "";
+  }
+  elseif ($protocol[0] == "mailto" && isset($protocol[1])) {
+    $form["cob_tabs"]["#default_tab"] = "edit-cob_tabs-stuff-1";
+    $default_tab = 1;
+    $form["cob_tabs"]["stuff"][1]["form"]["email"]["radio-group"]["link_type"]["#default_value"] = 0;
+    $link_query = explode("?", $protocol[1]);
+    $email = &$form["cob_tabs"]["stuff"][1]["form"]["email"]["email-frame"];
+    $email["address"]["#default_value"] = urldecode($link_query[0]);
+    if (isset($link_query[1])) {
+      $query = explode("&", $link_query[1]);
+      foreach ($query as $parts) {
+        $part = explode("=", $parts);
+        $email[$part[0]]["#default_value"] = urldecode($part[1]);
+      }
+    }
+    $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#default_value"] = "";
+  }
+
+  $form["current"] = [
+    '#type' => 'hidden',
+    "#attributes" => ["id" => "edit-current"],
+    '#default_value' => $default_tab,
+  ];
+
+  // Remove the attribues element which is now moved into a h-tab.
   unset($form["attributes"]);
+
+  // Add css to drive horizontal tabs, and cob customization.
   $form['#attached']['library'][] = 'field_group/formatter.horizontal_tabs';
   $form['#attached']['library'][] = 'bos_admin/linkit-dialog';
+
+  // Add #validate callback that handles empty attributes.
+  array_unshift($form['#validate'], '_bos_admin_link_attributes_validate');
+
+  // Add #submit callback .
+  array_unshift($form['#submit'], 'bos_admin_editor_link_dialog_submit');
+
   return $form;
 
+}
+
+/**
+ * Submit callback when adding links via linkit dialog.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
+ */
+function bos_admin_editor_link_dialog_submit(array &$form, FormStateInterface $form_state) {
+  // See what sort of link is being added.
+  $href = $form_state->getValue(['attributes', 'href']);
+  $href_dirty_check = $form_state->getValue(['href_dirty_check']);
+  if (!empty($href) && $href !== $href_dirty_check) {
+    // We are adding/updating a linkit link.
+    // This is handled in linkit.module so we have nothing else to do here.
+    return;
+  }
+}
+
+/**
+ * Validate callback when adding content into linkit dialog.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state.
+ */
+function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $form_state) {
+  // Firstly, unpack the elements we added into horizontal tabs.
+  $attributes_key = ["cob_tabs", "stuff", 0, "form", "attributes"];
+  $attributes = $form_state->getValue($attributes_key);
+  $form_state->setValue("attributes", $attributes);
+
+  // If the linkit href has been provided, check it resolves.
+  if ($form_state->getvalue("current") == 0) {
+    $href = $form_state->getValue(['attributes', 'href']);
+    $href_dirty_check = $form_state->getValue(['href_dirty_check']);
+    if (!empty($href) && $href !== $href_dirty_check) {
+      // We are adding/updating a linkit link.
+      // See if a tel or mailto link has been created.
+      if (substr($href, 0, 4) == "mail" || substr($href, 0, 3) == "tel") {
+        $name = $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#parents"];
+        $name = implode("][", $name);
+        $form_state->setErrorByName($name, "Use 'Email / Phone Link' tab to create this link.");
+        return;
+      }
+
+      // See if the link is internal.
+      if (!\Drupal::pathValidator()->isValid($href)) {
+        // Not a valid internal path.
+        if (UrlHelper::isExternal($href)) {
+          $result = @file_get_contents($href, FALSE, NULL, 0, 32);
+          if (!$result) {
+            $name = $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#parents"];
+            $name = implode("][", $name);
+            $form_state->setErrorByName($name, "The supplied URL does not resolve.");
+            return;
+          }
+        }
+        elseif (substr($href, 0, 2) == "//") {
+          $old_href = $href;
+          $href = "https:" . $href;
+          if (!($result = @file_get_contents($href, FALSE, NULL, 0, 32))) {
+            $href = "http:" . $old_href;
+            if (!($result = @file_get_contents($href, FALSE, NULL, 0, 32))) {
+              $name = $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#parents"];
+              $name = implode("][", $name);
+              $form_state->setErrorByName($name, "The supplied URL does not resolve.");
+              return;
+            }
+          }
+          // Set the href in case it was changed.
+          $form_state->setValue([
+            "cob_tabs",
+            "stuff",
+            0,
+            "form",
+            "attributes",
+            "href",
+          ], $href);
+          $form_state->setValue(['attributes', 'href'], $href);
+        }
+        elseif (substr($href, 0, 3) != "htt") {
+          $old_href = $href;
+          $href = "https://" . $href;
+          if (!($result = @file_get_contents($href, FALSE, NULL, 0, 32))) {
+            $href = "http://" . $old_href;
+            if (!($result = @file_get_contents($href, FALSE, NULL, 0, 32))) {
+              $name = $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#parents"];
+              $name = implode("][", $name);
+              $form_state->setErrorByName($name, "The supplied URL does not resolve.");
+              return;
+            }
+          }
+          // Set the href in case it was changed.
+          $form_state->setValue([
+            "cob_tabs",
+            "stuff",
+            0,
+            "form",
+            "attributes",
+            "href",
+          ], $href);
+          $form_state->setValue(['attributes', 'href'], $href);
+        }
+        else {
+          $name = $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#parents"];
+          $name = implode("][", $name);
+          $form_state->setErrorByName($name, "URL is not a valid internal path.");
+          return;
+        }
+      }
+      else {
+        if (strpos($href, "://") === FALSE && substr($href, 0, 1) == "/") {
+          // Seems to be a valid local value.
+          $form_state->setValue(['href_dirty_check'], $href);
+        }
+        elseif (!($result = @file_get_contents($href, FALSE, NULL, 0, 32))) {
+          $name = $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#parents"];
+          $name = implode("][", $name);
+          $form_state->setErrorByName($name, "The supplied URL does not resolve.");
+          return;
+        }
+      }
+    }
+    // Next validity check ...
+  }
+  elseif ($form_state->getvalue("current") == 1) {
+    // Make sure any linkit value is removed.
+    $mail_key = ["cob_tabs", "stuff", 1, "form", "email"];
+    $email = $form_state->getValue($mail_key);
+    if ($email["radio-group"]["link_type"] == 0) {
+      // This is a mailto:// link.
+      if (empty($email["email-frame"]["address"])) {
+        $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["email-frame"]["address"]["#parents"];
+        $name = implode("][", $name);
+        $form_state->setErrorByName($name, "Email type link requires at least an email address to send to.");
+        return;
+      }
+
+      // Build new href element.
+      $attributes["href"] = "mailto://" . urlencode(Html::escape($email["email-frame"]["address"]));
+      $join = "?";
+      if (!empty($email["email-frame"]["subject"])) {
+        $attributes["href"] .= $join . "subject=" . urlencode(Html::escape($email["email-frame"]["subject"]));
+        $join = "&";
+      }
+      if (!empty($email["email-frame"]["body"])) {
+        $attributes["href"] .= $join . "body=" . urlencode(Html::escape($email["email-frame"]["body"]));
+      }
+      $form_state->setValue("attributes", $attributes);
+      $form_state->setValue("href_dirty_check", $attributes['href']);
+    }
+    elseif ($email["radio-group"]["link_type"] == 1) {
+      // This is a mailto:// link.
+      if (empty($email["phone-frame"]["phone"])) {
+        $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#parents"];
+        $name = implode("][", $name);
+        $form_state->setErrorByName($name, "Phone type link requires a phone number.");
+        return;
+      }
+
+      // Build new href element.
+      $attributes["href"] = "tel://" . urlencode(Html::escape($email["phone-frame"]["phone"]));
+      $form_state->setValue("attributes", $attributes);
+      $form_state->setValue("href_dirty_check", $attributes['href']);
+    }
+  }
+
+  elseif ($form_state->getvalue("current") == 2) {
+    // Make sure any linkit value is removed.
+    $attributes["href"] = "";
+    $form_state->setValue("attributes", $attributes);
+  }
 }
 
 /**
