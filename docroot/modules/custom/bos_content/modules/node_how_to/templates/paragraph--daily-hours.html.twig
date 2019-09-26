@@ -43,29 +43,12 @@ print theme('detail_item', $detail_item_variables);
   <div class="detail-item__content">
     <div class="detail-item__body">
       <span class="oh-wrapper">
-        {% for index,paragraph in content['#items']['#list'] %}
-          {{ index }}
+        {% for index,office_hour in content.field_daily_hours.0['#office_hours'] %}
+          <span class="oh-display">
+            <span class="oh-display-label" style="width: 6.6em;">{{ office_hour.label }}</span>
+            <span class="oh-display-times oh-display-hours">{{ office_hour.formatted_slots }} <br></span>
+          </span>    
         {% endfor %}
-        <span class="oh-display">
-          <span class="oh-display-label" style="width: 6.6em;">Monday: </span>
-          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
-        </span>
-        <span class="oh-display">
-          <span class="oh-display-label" style="width: 6.6em;">Tuesday: </span>
-          <span class="oh-display-times oh-display-hours oh-display-current">9:00 AM-4:30 PM <br></span>
-        </span>
-        <span class="oh-display">
-          <span class="oh-display-label" style="width: 6.6em;">Wednesday: </span>
-          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
-        </span>
-        <span class="oh-display">
-          <span class="oh-display-label" style="width: 6.6em;">Thursday: </span>
-          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
-        </span>
-        <span class="oh-display">
-          <span class="oh-display-label" style="width: 6.6em;">Friday: </span>
-          <span class="oh-display-times oh-display-hours">9:00 AM-4:30 PM <br></span>
-        </span>
       </span>
     </div>
   </div>
