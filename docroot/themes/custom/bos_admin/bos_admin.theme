@@ -515,8 +515,6 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
       "0" => [
         "#type" => 'details',
         "#title" => "Internal / External Link",
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 0,
@@ -530,8 +528,6 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
       "1" => [
         "#type" => 'details',
         "#title" => "Email / Phone Link",
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 1,
@@ -602,8 +598,6 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
       "2" => [
         "#type" => 'details',
         "#title" => "Upload & Link Document",
-        '#collapsible' => TRUE,
-        '#collapsed' => FALSE,
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 2,
@@ -654,7 +648,7 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
   if ($protocol[0] == "tel" && isset($protocol[1])) {
     $form["cob_tabs"]["#default_tab"] = "edit-cob_tabs-stuff-1";
     $default_tab = 1;
-    $default_radio = 0;
+    $form["cob_tabs"]["stuff"][1]["form"]["email"]["radio-group"]["link_type"]["#default_value"] = 1;
     $phone = explode("?", $protocol[1]);
     $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#default_value"] = urldecode($phone[0]);
     $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#default_value"] = "";
@@ -662,7 +656,7 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
   elseif ($protocol[0] == "mailto" && isset($protocol[1])) {
     $form["cob_tabs"]["#default_tab"] = "edit-cob_tabs-stuff-1";
     $default_tab = 1;
-    $default_radio = 1;
+    $form["cob_tabs"]["stuff"][1]["form"]["email"]["radio-group"]["link_type"]["#default_value"] = 0;
     $link_query = explode("?", $protocol[1]);
     $email = &$form["cob_tabs"]["stuff"][1]["form"]["email"]["email-frame"];
     $email["address"]["#default_value"] = urldecode($link_query[0]);
