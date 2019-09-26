@@ -385,6 +385,17 @@ What: Fixes right sidebar label:content alignment - Fixes issue also present in 
 .detail-item__body--secondary, .detail-item__body--tertiary a {
   vertical-align: middle;
 }
+
+/*
+Jim
+Where: Office hours in How-to Contact Step
+What: Style previously provided by sites/all/modules/contrib/office_hours/office_hours.css
+*/
+.oh-display-label {
+  display: inline-block;
+  min-width: 3em;
+}
+
 /*
 David
 Where: Paragraphs which cover 100% width.
