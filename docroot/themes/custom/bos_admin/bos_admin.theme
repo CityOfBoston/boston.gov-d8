@@ -14,7 +14,6 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\GeneratedLink;
 use Drupal\Core\Url;
-use Drupal\file\Entity\File;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -656,8 +655,8 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
     $form["cob_tabs"]["#default_tab"] = "edit-cob_tabs-stuff-1";
     $default_tab = 1;
     $default_radio = 0;
-    $phone = explode("?", $protocol)[1];
-    $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#default_value"] = url_decode($phone);
+    $phone = explode("?", $protocol[1]);
+    $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#default_value"] = urldecode($phone[0]);
     $form["cob_tabs"]["stuff"][0]["form"]["attributes"]["href"]["#default_value"] = "";
   }
   elseif ($protocol[0] == "mailto" && isset($protocol[1])) {
@@ -704,7 +703,7 @@ function bos_admin_form_editor_link_dialog_alter(&$form, FormStateInterface $for
  * Submit callback when adding links via linkit dialog.
  *
  * @param array $form
- *  The form array
+ *   The form array.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form_state.
  */
@@ -723,7 +722,7 @@ function bos_admin_editor_link_dialog_submit(array &$form, FormStateInterface $f
  * Validate callback when adding content into linkit dialog.
  *
  * @param array $form
- *  The form array
+ *   The form array.
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   The form_state.
  */
@@ -749,7 +748,7 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
 
       // See if the link is internal.
       if (!\Drupal::pathValidator()->isValid($href)) {
-        // Not a valid internal path
+        // Not a valid internal path.
         if (UrlHelper::isExternal($href)) {
           $result = @file_get_contents($href, FALSE, NULL, 0, 32);
           if (!$result) {
@@ -771,14 +770,14 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
               return;
             }
           }
-          // set the href in case it was changed.
+          // Set the href in case it was changed.
           $form_state->setValue([
             "cob_tabs",
             "stuff",
             0,
             "form",
             "attributes",
-            "href"
+            "href",
           ], $href);
           $form_state->setValue(['attributes', 'href'], $href);
         }
@@ -794,14 +793,14 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
               return;
             }
           }
-          // set the href in case it was changed.
+          // Set the href in case it was changed.
           $form_state->setValue([
             "cob_tabs",
             "stuff",
             0,
             "form",
             "attributes",
-            "href"
+            "href",
           ], $href);
           $form_state->setValue(['attributes', 'href'], $href);
         }
@@ -814,7 +813,7 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
       }
       else {
         if (strpos($href, "://") === FALSE && substr($href, 0, 1) == "/") {
-          // seems to be a valid local value
+          // Seems to be a valid local value.
           $form_state->setValue(['href_dirty_check'], $href);
         }
         elseif (!($result = @file_get_contents($href, FALSE, NULL, 0, 32))) {
@@ -832,7 +831,7 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
     $mail_key = ["cob_tabs", "stuff", 1, "form", "email"];
     $email = $form_state->getValue($mail_key);
     if ($email["radio-group"]["link_type"] == 0) {
-      // This is a mailto:// link
+      // This is a mailto:// link.
       if (empty($email["email-frame"]["address"])) {
         $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["email-frame"]["address"]["#parents"];
         $name = implode("][", $name);
@@ -840,7 +839,7 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
         return;
       }
 
-      // Build new href element
+      // Build new href element.
       $attributes["href"] = "mailto://" . urlencode(Html::escape($email["email-frame"]["address"]));
       $join = "?";
       if (!empty($email["email-frame"]["subject"])) {
@@ -853,6 +852,20 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
       $form_state->setValue("attributes", $attributes);
       $form_state->setValue("href_dirty_check", $attributes['href']);
     }
+    elseif ($email["radio-group"]["link_type"] == 1) {
+      // This is a mailto:// link.
+      if (empty($email["phone-frame"]["phone"])) {
+        $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#parents"];
+        $name = implode("][", $name);
+        $form_state->setErrorByName($name, "Phone type link requires a phone number.");
+        return;
+      }
+
+      // Build new href element.
+      $attributes["href"] = "tel://" . urlencode(Html::escape($email["phone-frame"]["phone"]));
+      $form_state->setValue("attributes", $attributes);
+      $form_state->setValue("href_dirty_check", $attributes['href']);
+    }
   }
 
   elseif ($form_state->getvalue("current") == 2) {
@@ -862,7 +875,7 @@ function _bos_admin_link_attributes_validate(array &$form, FormStateInterface $f
   }
 }
 
-  /**
+/**
  * Ensure attributes element of variables array is an Attribute object.
  *
  * This snippet fixes the situation where a module has defined an attributes
