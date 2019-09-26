@@ -1,5 +1,4 @@
-<?php
-/**
+{#
  * @file
  * Default template implementation to display the value of a field.
  *
@@ -42,7 +41,6 @@
  * @see theme_field()
  *
  * @ingroup themeable
- */
 $detail_item_variables = array(
   'body' => render($items[0]),
   'classes' => array(
@@ -52,3 +50,5 @@ $detail_item_variables = array(
 );
 print theme('detail_item', $detail_item_variables);
 ?>
+ #}
+ {{ dd() }}
