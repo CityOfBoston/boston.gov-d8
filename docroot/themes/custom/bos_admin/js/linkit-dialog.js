@@ -53,14 +53,11 @@
     }, 500);
   };
 
-  // var index = $(".horizontal-tab-button.selected").index();
-  // $("#edit-current").val(index);
-
   window.setTimeout(function () {
     linkitCreateLinks();
   }, 500);
 
-  $(".cke_button__drupallink_icon").click(function (){
+  $(".cke_button__drupallink_icon").click(function () {
     window.setTimeout(function () {
       linkitCreateLinks();
     }, 2000);
