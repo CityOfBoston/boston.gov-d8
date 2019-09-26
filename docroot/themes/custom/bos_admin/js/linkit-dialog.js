@@ -7,13 +7,23 @@
  */
 (function ($, window, document) {
   'use strict';
-  var linkitShowFieldSet = function (obj) {
+
+  var cob_linkitShowSpinner = function (show) {
+    if (show === true) {
+      $("body").append($("<div>").addClass("cob-spinner"));
+    }
+    else {
+      $(".cob-spinner").remove();
+    }
+  };
+
+  var cob_linkitShowFieldSet = function (obj) {
     var index = $(obj).val().toString();
     $(".cob-radio-frameset").hide();
     $(".cob-radio-".concat(index)).show();
   };
 
-  var linkitResetForm = function (obj) {
+  var cob_linkitResetForm = function (obj) {
     var index = 0;
     $(obj).parent().children().each(function (i) {
       if (obj === this) {
@@ -24,45 +34,50 @@
       if (j !== index) {
         $(this).find("input").find('[type="text"], [type="textarea"]').val("");
       }
+      if (j === 1) {
+        var obj = $(".cob-radio-wrapper:checked");
+        if (obj.length !== 0) {
+          cob_linkitShowFieldSet(obj);
+        }
+      }
     });
-    if (index === 1) {
-      $(".cob-radio-0").show();
-      $(".cob-radio-1").hide();
-      $(".cob-radio-wrapper.form-radio").first().prop("checked", true);
-    }
+
+    index = $("#drupal-modal .horizontal-tab-button.selected").index();
+    $("#drupal-modal #edit-current").val(index);
+    $(document).trigger('scroll');
   };
 
-  var linkitCreateLinks = function () {
-    $(".bos-boxed-content-t .form-radio")
+  var cob_linkitCreateLinks = function () {
+    $("#drupal-modal .bos-boxed-content-t .form-radio")
       .off('click touchstart')
       .on('click touchstart', function () {
-        linkitShowFieldSet(this);
+        cob_linkitShowFieldSet(this);
       });
-    $(".horizontal-tab-button")
+    $("#drupal-modal .horizontal-tab-button")
       .off('click touchstart')
       .on('click touchstart', function () {
-        linkitResetForm(this);
-        var index = $(".horizontal-tab-button.selected").index();
-        $("#edit-current").val(index);
-        $(document).trigger('scroll');
-        $(window).trigger('resize');
+        cob_linkitResetForm(this);
       });
-    $(".horizontal-tab-button-".concat($("#edit-current").val())).find("a").click();
+    $("#drupal-modal .horizontal-tab-button-".concat($("#drupal-modal #edit-current").val())).find("a").click();
     window.setTimeout(function () {
-      $(".horizontal-tab-button-".concat($("#edit-current").val())).find("a").click();
+      $("#drupal-modal .horizontal-tab-button-".concat($("#drupal-modal #edit-current").val())).find("a").click();
+      cob_linkitShowSpinner(false);
     }, 500);
   };
 
   window.setTimeout(function () {
-    linkitCreateLinks();
+    cob_linkitShowSpinner(true);
+    cob_linkitCreateLinks();
   }, 500);
 
-  $(".cke_button__drupallink_icon").click(function () {
+  $(".cke_button__drupallink_icon").on("click touchstart", function () {
     window.setTimeout(function () {
-      linkitCreateLinks();
+      cob_linkitShowSpinner(true);
+    }, 500);
+    window.setTimeout(function () {
+      cob_linkitShowSpinner(true);
+      cob_linkitCreateLinks();
     }, 2000);
   });
-
-  $(window).trigger('resize');
 
 })(jQuery, this, this.document);
