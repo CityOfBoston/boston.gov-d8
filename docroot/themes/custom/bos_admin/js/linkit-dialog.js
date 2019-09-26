@@ -81,5 +81,3 @@
   });
 
 })(jQuery, this, this.document);
-
-//# sourceURL=linkit.js.
