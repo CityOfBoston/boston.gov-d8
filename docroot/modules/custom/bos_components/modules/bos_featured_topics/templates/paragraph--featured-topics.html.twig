@@ -24,12 +24,52 @@
  * @see template_process()
  #}
 
+{% set guide_themes = [
+  'ob',
+  'cb',
+  'r',
+  'cb',
+  'cb',
+  'r',
+  'cb',
+  'ob',
+  'ob',
+  'cb',
+  'r',
+  'cb',
+  'cb',
+  'r',
+  'cb',
+  'ob',
+] %}
+
+{% set field_topics = elements.field_topics %}
+{% set nodes = [] %}
+{% for key,value in field_topics %}
+  {# check if key is an int #}
+  {% if key  matches '/^\\d+$/' %}
+    {% set nodes = nodes|merge([value['#node']]) %}
+  {% endif %}  
+{% endfor %}
 <div{{ attributes.addClass("b b--fw") }}>
   <div class="clo">
     {{ content.contextual_links }}
   </div>
   <div class="cdfg-oc">
-    {{ content|without("contextual_links") }}
+    {# content|without("contextual_links") #}
+    {% for key,node in nodes %}
+      <a href="{{ url }}" class="cdfg cdfg--{{ guide_themes[key] }}" style="background-image: url({# file_url(fileurl) #})">
+        <div class="cdfg-c">
+          <div class="cdfg-i">
+            <span>{{ key + 1 }}</span>
+          </div>
+          <div class="cdfg-ic">
+            <div class="cdfg-d">Guide:</div>
+            <div class="cdfg-t">{# guide_title #}test</div>
+          </div>
+        </div>
+      </a>
+    {% endfor %}
   </div>
 
 </div>
