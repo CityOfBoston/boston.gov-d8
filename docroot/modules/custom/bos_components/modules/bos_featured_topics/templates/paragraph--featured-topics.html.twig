@@ -57,15 +57,15 @@
   </div>
   <div class="cdfg-oc">
     {# content|without("contextual_links") #}
-    {% for key,node in nodes %}
-      <a href="{{ url }}" class="cdfg cdfg--{{ guide_themes[key] }}" style="background-image: url({# file_url(fileurl) #})">
+    {% for i,node in nodes %}
+      <a href="{{ path('entity.node.canonical', {'node': node.nid.value}) }}" class="cdfg cdfg--{{ guide_themes[i] }}" style="background-image: url({{ file_url(node.field_thumbnail.entity.uri.value) }})">
         <div class="cdfg-c">
           <div class="cdfg-i">
-            <span>{{ key + 1 }}</span>
+            <span>{{ i + 1 }}</span>
           </div>
           <div class="cdfg-ic">
             <div class="cdfg-d">Guide:</div>
-            <div class="cdfg-t">{# guide_title #}test</div>
+            <div class="cdfg-t">{{ node.title.value }}</div>
           </div>
         </div>
       </a>
