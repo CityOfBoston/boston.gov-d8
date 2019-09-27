@@ -21,6 +21,20 @@ settings:
   available_countries:
     US: US
   langcode_override: ''
-  field_overrides: {  }
+  field_overrides:
+    givenName:
+      override: hidden
+    additionalName:
+      override: hidden
+    familyName:
+      override: hidden
+    organization:
+      override: hidden
+    addressLine2:
+      override: optional
+    sortingCode:
+      override: hidden
+    dependentLocality:
+      override: hidden
   fields: {  }
 field_type: address
