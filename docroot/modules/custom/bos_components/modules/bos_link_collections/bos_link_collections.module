@@ -63,7 +63,7 @@ function bos_link_collections_theme() {
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['paragraph__internal_link__ribbon_link'] = [
-    'base hook' => 'paragraph',
+    'base hook' => 'field',
     'path' => $path,
     'template' => 'link--mode--ribbon-link',
   ];
@@ -158,6 +158,7 @@ function bos_link_collections_preprocess_field(&$vars) {
           $vars['link'] = Link::fromTextAndUrl($title, $url)->toString();
           $vars['title'] = $title;
           $vars['attributes']['class'][] = 'external-link';
+          $vars['attributes']["data-quickedit-entity-id"] = "paragraph/" . $vars["element"]["#object"]->id();
           $vars['has_icon'] = TRUE;
         }
         break;
