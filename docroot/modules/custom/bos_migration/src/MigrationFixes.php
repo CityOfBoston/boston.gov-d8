@@ -1039,6 +1039,12 @@ class MigrationFixes {
         // Save the new media entity.
         $result = $media->save();
 
+        if (($svg->media_library ?? FALSE) && $media->field_media_in_library->value != 1) {
+          $media->field_media_in_library->value = 1;
+          $media->setNewRevision(FALSE);
+          $result = $media->save();
+        }
+
         if ($result && !empty($param['thumbnail'])) {
           // After saving new media, a new thumbnail will have been created in
           // managed_files table.  We need to makes sure the uri for this
