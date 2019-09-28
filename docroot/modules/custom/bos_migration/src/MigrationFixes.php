@@ -1045,7 +1045,6 @@ class MigrationFixes {
           $result = $media->save();
         }
 
-
         if ($result && !empty($param['thumbnail'])) {
           // After saving new media, a new thumbnail will have been created in
           // managed_files table.  We need to makes sure the uri for this
