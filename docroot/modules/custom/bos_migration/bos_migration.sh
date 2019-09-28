@@ -31,7 +31,7 @@ function doMigrate() {
     GROUP="${1}"
 
     while true; do
-        printf "[migration-step]${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+        printf "[migration-step] ${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
 
         retval=0
         (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=${1}
@@ -44,8 +44,12 @@ function doMigrate() {
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
         fi
+
         CYCLE=$((CYCLE+1))
-        if [ $CYCLE -gt 4 ]; then break; fi
+        if [ $CYCLE -gt 10 ]; then
+          printf "[migration-warning] Too many errors in ${GROUP} migration.\n" | tee -a ${logfile}
+          break;
+        fi
     done
 
     ${drush} ms "${GROUP}" | tee -a ${logfile}
