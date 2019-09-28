@@ -105,13 +105,13 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
   $editor = $form_state->getBuildInfo()["args"][0];
   $directory = $editor->getThirdPartySetting("editor_file", "directory");
   $editor->getThirdPartySetting("editor_file", "directory", $directory);
-// jpg jpeg gif png txt doc docx xls xlsx pdf ppt pptx pps ppsx odt ods odp mp3 mov mp4 m4a m4v mpeg avi ogg oga ogv weba webp webm svg.
 
   // Rewrite extisting form elements using placeholders.
   $form["attributes"]["title"]["#placeholder"] = "Add a title attribute for the link";
   $form["attributes"]["title"]["#description"] = Markup::create("<b>Tip:</b> <i>This usually appears as a tooltip on hover.</i>");
   $form["attributes"]["href"]["#placeholder"] = "Start typing to find content";
   $form["attributes"]["href"]["#description"] = Markup::create("<b>Tip:</b> <i>You can paste a URL copied from elsewhere.</i>");
+  // Urldecode the attributes display values.
   // Urldecode the attributes display values.
   $form["attributes"]["href"]["#default_value"] = urldecode($form["attributes"]["href"]["#default_value"]);
   $form["attributes"]["title"]["#default_value"] = urldecode($form["attributes"]["title"]["#default_value"]);
@@ -122,6 +122,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
   // Modify the file storage location to be date-driven.
   $date = date("Y/m", strtotime(now));
   $file_fid["#upload_location"] = "public://file/" . $date;
+  $file_fid["#upload_validators"]["file_validate_extensions"][0] = "jpg jpeg gif png txt doc docx xls xlsx pdf ppt pptx pps ppsx odt ods odp mp3 mov mp4 m4a m4v mpeg avi ogg oga ogv weba webp webm svg";
 
   // Create the horizontal tabs.
   $form['cob_tabs'] = [
@@ -417,13 +418,13 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
   }
 
   elseif ($form_state->getValue([
-      "cob_tabs",
-      "stuff",
-      1,
-      "form",
-      "email",
-      "email-frame",
-      "address",
+    "cob_tabs",
+    "stuff",
+    1,
+    "form",
+    "email",
+    "email-frame",
+    "address",
     ]) != "") {
     // Make sure any linkit value is removed.
     $mail_key = ["cob_tabs", "stuff", 1, "form", "email"];
@@ -454,13 +455,13 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
   }
 
   elseif ($form_state->getValue([
-      "cob_tabs",
-      "stuff",
-      1,
-      "form",
-      "email",
-      "phone-frame",
-      "phone",
+    "cob_tabs",
+    "stuff",
+    1,
+    "form",
+    "email",
+    "phone-frame",
+    "phone",
     ]) != "") {
     // This is a tel: link.
     if (empty($email["phone-frame"]["phone"])) {
