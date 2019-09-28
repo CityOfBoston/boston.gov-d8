@@ -1,10 +1,14 @@
 <?php
 
+/**
+ * @file
+ * The main module for the bos_linkit_extension module.
+ */
+
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
-use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 
 /**
@@ -65,7 +69,7 @@ function bos_linkit_extension_rebuild() {
     }
   }
 
-  // make sure this runs last.
+  // Make sure this runs last.
   module_set_weight("bos_linkit_extension", 100);
 }
 
@@ -425,7 +429,7 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
     "email",
     "email-frame",
     "address",
-    ]) != "") {
+  ]) != "") {
     // Make sure any linkit value is removed.
     $mail_key = ["cob_tabs", "stuff", 1, "form", "email"];
     $email = $form_state->getValue($mail_key);
@@ -462,7 +466,7 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
     "email",
     "phone-frame",
     "phone",
-    ]) != "") {
+  ]) != "") {
     // This is a tel: link.
     if (empty($email["phone-frame"]["phone"])) {
       $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#parents"];
