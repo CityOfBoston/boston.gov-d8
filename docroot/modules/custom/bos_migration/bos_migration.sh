@@ -4,12 +4,12 @@ function doMigrate() {
     NC='\033[0m' # No Color
     RED='\033[0;31m'
     SECONDS=0
-    ERRORS=0
+    CYCLE=0
 
     while true; do
         printf "[migration-step]${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
         ${drush} mim $* --feedback=500 | tee -a ${logfile}
-        ERRORS=$((ERRORS+1))
+        CYCLE=$((CYCLE+1))
         bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
         if [ "${bad}" == "Importing" ]; then
             bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
@@ -17,13 +17,13 @@ function doMigrate() {
         if [ "${bad}" == "" ]; then
           break
         fi
-        ${drush} mrs $bad
-        if [ $ERRORS -gt 4 ]; then break; fi
+        ${drush} mrs "${bad}"
+        if [ $CYCLE -gt 4 ]; then break; fi
     done
 
     ${drush} ms ${1} | tee -a ${logfile}
 
-    if [ $ERRORS -ne 0 ]; then
+    if [ $CYCLE -ne 0 ]; then
         printf "[migration-warning] ${RED}Migrate command completed with Errors.${NC}\n"  | tee -a ${logfile}
     fi
 
