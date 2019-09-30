@@ -12,19 +12,25 @@ use Drupal\Core\Render\Markup;
  * Implements hook_theme().
  */
 function bos_link_theme() {
-  $theme['paragraph__external_link'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
+  return [
+    'paragraph__external_link' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__internal_link' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__document' => [
+      'base hook' => 'paragraph',
+    ],
+    'field__node__field_link__emergency_alert' => [
+      'base hook' => 'field',
+    ],
+    'field__field_internal_link__internal_link__mode__button_blue' => [
+      'base hook' => 'field',
+      'template' => 'field--field-link--button-blue',
+    ],
+
   ];
-  $theme['paragraph__internal_link'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
-  ];
-  $theme['paragraph__document'] = [
-    'base hook' => 'paragraph',
-    'path' => 'modules/custom/bos_components/modules/bos_link/templates',
-  ];
-  return $theme;
 }
 
 /**
@@ -74,6 +80,13 @@ function bos_link_preprocess_field(&$vars) {
     $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
     $vars['items'][0]['content']['#options']['attributes']['target'] = '_blank';
   }
+}
+
+/**
+ * Implements theme_preprocess_hook().
+ */
+function bos_link_preprocess_field__field_internal_link__internal_link__mode__button_blue(array &$variables, $hook) {
+  $variables["items"][0]["content"]["#attributes"]["class"][] = "btn";
 }
 
 /**
