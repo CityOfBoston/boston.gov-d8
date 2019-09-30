@@ -7,7 +7,7 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\core\Template\Attribute;
-
+use Drupal\Core\Entity\EntityInterface;
 /**
  * Implements hook_theme().
  */
@@ -68,7 +68,7 @@ function node_emergency_alert_preprocess_block(&$variables) {
   }
   $variables["attributes"]["class"][] = "page-wa";
   $variables["attributes"]["id"] = "page";
-  // Ensure there is no label
+  // Ensure there is no label.
   unset($variables["label"]);
 }
 
@@ -92,6 +92,7 @@ function template_preprocess_node__emergency_alert(array &$variables) {
 /**
  * Implements hook_entity_create().
  */
-function node_emergency_alert_entity_create(\Drupal\Core\Entity\EntityInterface $entity) {
-  return;
+function node_emergency_alert_entity_create(EntityInterface $entity) {
+  // This may be needed to intercept create events and add node 21
+  // (homepage to show_pages field).
 }
