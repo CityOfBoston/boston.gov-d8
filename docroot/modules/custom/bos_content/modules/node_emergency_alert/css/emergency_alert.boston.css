@@ -1,3 +1,51 @@
+/**
+  Blue theme.
+ */
 article.node-emergency-alert div.contextual {
   padding-right: 70px;
+}
+
+article.node-emergency-alert .b--dark-blue {
+  color: #1871bd;
+}
+
+article.node-emergency-alert .b--dark-blue .str-t,
+article.node-emergency-alert .b--dark-blue .str-c {
+  color: #fff;
+  background-color: #091f2f;
+}
+article.node-emergency-alert .b--dark-blue .str:before {
+  border-color: #fb4d42;
+}
+
+/**
+  Red theme.
+ */
+article.node-emergency-alert .b--red {
+  color: #091f2f;
+}
+article.node-emergency-alert .b--red .str-t,
+article.node-emergency-alert .b--red .str-c {
+  color: #fff;
+  background-color: #fb4d42;
+}
+article.node-emergency-alert .b--red a:not(:disabled) {
+  background-color: #091f2f;
+}
+article.node-emergency-alert .b--red a.btn:hover:not(:disabled) {
+  background-color: #1871bd;
+}
+
+/**
+  Yellow theme.
+ */
+
+.b--yellow {
+  background-color: #f7bd5c;
+  color: #091f2f;
+}
+article.node-emergency-alert .b--yellow .str-t,
+article.node-emergency-alert .b--yellow .str-c {
+  color: #1871bd;
+  background-color: #f7bd5c;
 }
