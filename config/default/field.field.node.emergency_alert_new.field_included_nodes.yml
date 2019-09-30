@@ -1,0 +1,25 @@
+uuid: 3df75f11-1a20-4462-afe9-f4f7e2c2ac44
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_included_nodes
+    - node.type.emergency_alert_new
+id: node.emergency_alert_new.field_included_nodes
+field_name: field_included_nodes
+entity_type: node
+bundle: emergency_alert_new
+label: 'Show on Pages'
+description: 'Add pages the emergency alert should show on (always shows on homepage).'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: emergency_alert_news
+      display_name: include_pages_autocomplete
+      arguments: {  }
+field_type: entity_reference

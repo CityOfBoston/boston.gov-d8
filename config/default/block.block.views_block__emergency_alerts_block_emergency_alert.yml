@@ -1,0 +1,25 @@
+uuid: 8f62db9e-69a1-40cc-88ff-bed83ceb3f92
+langcode: und
+status: true
+dependencies:
+  config:
+    - views.view.emergency_alerts
+  module:
+    - views
+  theme:
+    - bos_theme
+id: views_block__emergency_alerts_block_emergency_alert
+theme: bos_theme
+region: site_alert
+weight: 0
+provider: null
+plugin: 'views_block:emergency_alerts-block_emergency_alert'
+settings:
+  id: 'views_block:emergency_alerts-block_emergency_alert'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility: {  }

@@ -1,17 +1,17 @@
-uuid: 39b0a078-ca49-468f-a7cc-455e85140536
+uuid: cea481c5-161e-4e4f-b098-8d5907125ac4
 langcode: und
 status: true
 dependencies:
   config:
-    - node.type.emergency_alert
-id: node.emergency_alert.promote
+    - node.type.emergency_alert_new
+id: node.emergency_alert_new.promote
 field_name: promote
 entity_type: node
-bundle: emergency_alert
+bundle: emergency_alert_new
 label: 'Promoted to front page'
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value:
   -
     value: 0

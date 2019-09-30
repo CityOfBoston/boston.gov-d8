@@ -19,6 +19,10 @@ function node_emergency_alert_theme() {
       'render element' => 'elements',
       'base hook' => 'node',
     ],
+    'block__views_block__emergency_alerts_block_emergency_alert' => [
+      'render element' => 'elements',
+      'base hook' => 'block',
+    ],
   ];
 }
 
@@ -36,10 +40,32 @@ function node_emergency_alert_preprocess_form_element(&$variables) {
 /**
  * Implements hook_preprocess_HOOK().
  */
+function node_emergency_alert_preprocess_page(&$variables) {
+  $variables['cob']['has_emergency_alert'] = FALSE;
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
 function node_emergency_alert_preprocess_node__emergency_alert(&$variables) {
+  _bos_content_fix_attributes($variables, "attributes");
   $variables["attributes"]->addClass("b");
   $variables["attributes"]->addClass("b--" . $variables["content"]["field_theme"][0]["#markup"]);
-  $variables["attached"]["library"][] = "emergency_alert/emergency_alert.call";
+  $variables["#attached"]["library"][] = "node_emergency_alert/emergency_alert.call";
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_emergency_alert_preprocess_block(&$variables) {
+  if (!isset($variables["content"]["#view"]->current_display) || (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "block_emergency_alert")) {
+    return;
+  }
+  $variables["attributes"]["class"][] = "page-wa";
+  $variables["attributes"]["id"] = "page";
+  // Ensure there is no label
+  unset($variables["label"]);
 }
 
 /**
@@ -53,7 +79,7 @@ function node_emergency_alert_preprocess_node__emergency_alert(&$variables) {
  *     and any fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
  */
-function template_preprocess_emergency_alert(array &$variables) {
+function template_preprocess_node__emergency_alert(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
