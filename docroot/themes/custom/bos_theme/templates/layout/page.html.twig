@@ -74,6 +74,7 @@
   {% if cob.has_site_alert %}
     {{ page.site_alert }}
   {% endif %}
+  {{ drupal_block('views_block:emergency_alerts-block_emergency_alert') }}
 
   <div class="main">
     <div class="container">
