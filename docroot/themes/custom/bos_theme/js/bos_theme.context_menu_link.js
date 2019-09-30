@@ -24,7 +24,8 @@
         if (links.length === 0) {
           links = $(button).parent().find("[class^=paragraphs]");
           entityType = "paragraph";
-        } else {
+        }
+        else {
           entityType = "node";
           if ($(button).parentsUntil("article").hasClass("parent-node")) {
             entityType = "this page";
@@ -43,7 +44,8 @@
             links.parent().parent().click(function () {
               window.location.href = links.first().find("a").prop("href");
             });
-          } else if (links.length > 1) {
+          }
+          else if (links.length > 1) {
             links.each(function (key, listItem) {
               $(listItem).find("a").text($(listItem).find("a").text() + " " + type);
             });
@@ -61,7 +63,7 @@
       });
       $("#main-menu").addClass("contextual-region").append($(".parent-node"));
     };
-    window.setTimeout(function (){
+    window.setTimeout(function () {
       rebuildPage();
     }, 2000);
 
