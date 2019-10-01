@@ -513,7 +513,7 @@ function _bos_core_install_icons($module) {
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
-    if (file_exists()) {
+    if (file_exists($destfile)) {
       unlink($destfile);
     }
     copy($modulePath . "/" . $icon, $destfile);
