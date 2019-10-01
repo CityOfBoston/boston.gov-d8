@@ -63,9 +63,13 @@
       });
       $("#main-menu").addClass("contextual-region").append($(".parent-node"));
     };
-    window.setTimeout(function () {
-      rebuildPage();
-    }, 2000);
+
+    var interval = setInterval(function () {
+      if ($(".contextual button.trigger").length) {
+        clearInterval(interval);
+        rebuildPage();
+      }
+    }, 250);
 
   });
 })(jQuery, this, this.document);
