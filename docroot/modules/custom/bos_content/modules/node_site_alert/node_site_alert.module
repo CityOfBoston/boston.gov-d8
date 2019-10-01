@@ -101,6 +101,7 @@ function node_site_alert_preprocess_page(&$variables) {
       $variables["attributes"]->addClass("page-wa");
       $variables["attributes"]->removeClass("page-nm");
     }
+    $variables["attributes"]->addClass("sa");
 
     foreach ($excluded as $key => $exclude) {
       if (isset($exclude['target_id']) && "node/" . $exclude['target_id'] == $path) {
