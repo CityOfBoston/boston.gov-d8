@@ -411,8 +411,8 @@ function bos_core_rebuild() {
  */
 function bos_core_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if (isset($view->build_info["title"]) && strpos($view->build_info["title"], "negate") !== FALSE) {
-    foreach($query->where as $key => &$conds) {
-      foreach($conds as $cond_key => &$cond) {
+    foreach ($query->where as $key => &$conds) {
+      foreach ($conds as $cond_key => &$cond) {
         if (isset($cond[0]["operator"]) && $cond[0]["operator"] == "formula") {
           $cond[0]["field"] = str_replace("=", "<>", $cond[0]["field"]);
         }
