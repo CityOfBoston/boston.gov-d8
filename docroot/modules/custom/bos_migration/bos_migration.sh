@@ -212,6 +212,8 @@ if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
 
+printf "[migration-start] Starts %s %s\n" $(date +%F\ %T ) | tee ${logfile}
+
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
@@ -229,7 +231,7 @@ fi
 
 running=0
 
-timer=$(date +%s)
+totaltimer=$(date +%s)
 ## Migrate files first.
 if [ "$1" == "reset" ]; then
     running=1
@@ -394,7 +396,7 @@ ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql
 
-text=$(displayTime $(($(date +%s)-timer)))
+text=$(displayTime $(($(date +%s)-totaltimer)))
 printf "[migration-runtime] OVERALL RUNTIME: ${text}" | tee -a ${logfile}
 
 printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}
