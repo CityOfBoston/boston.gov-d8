@@ -146,7 +146,7 @@ function bos_components_theme_suggestions_field_alter(array &$suggestions, array
  * Implements hook_rebuild().
  */
 function bos_components_rebuild() {
-  _bos_components_update_all_icons();
+  _bos_components_update_all_icons(FALSE);
 }
 
 /**
@@ -376,7 +376,7 @@ function _bos_components_fix_attributes(array &$variables, string $check_field =
 /**
  * Runs a process which updates the icons for each module.
  */
-function _bos_components_update_all_icons() {
+function _bos_components_update_all_icons($safe = FALSE) {
   $modules = system_get_info('module');
   $ignore = [
     "bos_migration",
@@ -393,9 +393,9 @@ function _bos_components_update_all_icons() {
     }
   }
   // Content Type modules with paragraphs ...
-  _bos_core_install_icons("node_how_to");
-  _bos_core_install_icons("node_emergency_alert");
-  _bos_core_install_icons("node_tabbed_content");
+  _bos_core_install_icons("node_how_to", FALSE);
+  _bos_core_install_icons("node_emergency_alert", FALSE);
+  _bos_core_install_icons("node_tabbed_content", FALSE);
 
 }
 
