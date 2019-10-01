@@ -1077,7 +1077,7 @@ class MigrationFixes {
   public static function fixMap() {
     printf("[action] Will ensure map default image is loaded properly.\n");
     // Copy map module icons into expected location.
-    _bos_core_install_icons("bos_map");
+    _bos_core_install_icons("bos_map", FALSE);
     // Install the map default background image.
     bos_map_rebuild();
     printf("[info] Finished.\n");
