@@ -11,6 +11,7 @@ use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\bos_core\BosCoreHelp;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
@@ -406,6 +407,21 @@ function bos_core_rebuild() {
 }
 
 /**
+ * Implements hook_views_query_alter().
+ */
+function bos_core_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if (isset($view->build_info["title"]) && strpos($view->build_info["title"], "negate") !== FALSE) {
+    foreach ($query->where as $key => &$conds) {
+      foreach ($conds as $cond_key => &$cond) {
+        if (isset($cond[0]["operator"]) && $cond[0]["operator"] == "formula") {
+          $cond[0]["field"] = str_replace("=", "<>", $cond[0]["field"]);
+        }
+      }
+    }
+  }
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
@@ -497,7 +513,7 @@ function _bos_core_uninstall_boston($module) {
  * @param string $module
  *   The module name.
  */
-function _bos_core_install_icons($module) {
+function _bos_core_install_icons($module, $safe = FALSE) {
   $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
   if (!file_exists($path)) {
     mkdir($path, 0777);
@@ -513,34 +529,38 @@ function _bos_core_install_icons($module) {
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
-    if (file_exists()) {
-      unlink($destfile);
-    }
-    copy($modulePath . "/" . $icon, $destfile);
 
-    // Check if the file exists that is listed in para.para_type.module.yml.
-    $filesystem = \Drupal::service('file_system');
-    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-    $mod = \Drupal::entityTypeManager()
-      ->getStorage("paragraphs_type")->load($entity);
-    if (!empty($mod)) {
-      $destination = "public://paragraphs_type_icon/" . $icon;
-      $image = Drupal::entityTypeManager()->getStorage("file")
-        ->loadByProperties(["uri" => $destination]);
-      if (count($image) == 0) {
-        $image = File::create();
-        $image->setFileUri($destination);
-        $image->setOwnerId(\Drupal::currentUser()->id());
-        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-        $image->setFileName($filesystem->basename($destination));
-        $image->setPermanent();
-        $image->save();
+    if (!$safe || ($safe && !file_exists($destfile))) {
+
+      if (file_exists($destfile)) {
+        unlink($destfile);
       }
-      else {
-        $image = end($image);
+      copy($modulePath . "/" . $icon, $destfile);
+
+      // Check if the file exists that is listed in para.para_type.module.yml.
+      $filesystem = \Drupal::service('file_system');
+      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+      $mod = \Drupal::entityTypeManager()
+        ->getStorage("paragraphs_type")->load($entity);
+      if (!empty($mod)) {
+        $destination = "public://paragraphs_type_icon/" . $icon;
+        $image = Drupal::entityTypeManager()->getStorage("file")
+          ->loadByProperties(["uri" => $destination]);
+        if (count($image) == 0) {
+          $image = File::create();
+          $image->setFileUri($destination);
+          $image->setOwnerId(\Drupal::currentUser()->id());
+          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+          $image->setFileName($filesystem->basename($destination));
+          $image->setPermanent();
+          $image->save();
+        }
+        else {
+          $image = end($image);
+        }
+        $file_uuid = $image->get("uuid")->value;
+        $mod->set("icon_uuid", $file_uuid)->save();
       }
-      $file_uuid = $image->get("uuid")->value;
-      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
