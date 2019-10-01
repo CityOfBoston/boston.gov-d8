@@ -1035,7 +1035,9 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   }
 
   // Start adding class mn (main-node???) to all nodes.
-  $variables["attributes"]->addClass("mn");
+  if (!$variables["attributes"]->hasClass("sa")) {
+    $variables["attributes"]->addClass("mn");
+  }
   $variables["attributes"]->addClass("page");
   $variables["attributes"]->setAttribute("id", "page");
 

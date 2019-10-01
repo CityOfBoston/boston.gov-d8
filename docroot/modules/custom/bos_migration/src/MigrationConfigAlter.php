@@ -104,6 +104,7 @@ class MigrationConfigAlter {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
+    'd7_taxonomy_term:type_of_content',
     'd7_theme_settings',
     'd7_user_flood',
     'd7_user_mail',

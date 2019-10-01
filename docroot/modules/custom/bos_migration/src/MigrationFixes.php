@@ -160,7 +160,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2018/08/landmark_design_review_process.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/landmark_design_review_process.svg',
     'public://img/icons/transactions/2018/08/global_warming_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/weather.svg',
     'public://img/icons/transactions/2018/08/flooding_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/flooded_building.svg',
-    'public://img/icons/transactions/2018/08/file_a_medical_registration_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submitt_for_certificates.svg',
+    'public://img/icons/transactions/2018/08/file_a_medical_registration_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submit_for_certificates.svg',
     'public://img/icons/transactions/2018/08/emergency_alerts.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/alert_2.svg',
     'public://img/icons/transactions/2018/08/65_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/65+.svg',
     'public://img/icons/transactions/2018/07/start_a_resturant.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/plate.svg',
@@ -213,7 +213,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2018/02/how_to_file_for_a_residential_exemption.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/residential_exemption.svg',
     'public://img/icons/transactions/2018/01/public-meetings.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/meeting.svg',
     'public://img/icons/transactions/2018/01/experiential_icons_1_1_pay_your_real_estate_taxes.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/real_estate_taxes.svg',
-    'public://img/icons/transactions/2018/01/calendar.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/calandar.svg',
+    'public://img/icons/transactions/2018/01/calendar.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/calendar.svg',
     'public://img/icons/transactions/2018/01/building-icon.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/building_permit.svg',
     'public://img/icons/transactions/2017/12/non-emergency.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/emergency_medical_kit.svg',
     'public://img/icons/transactions/2017/12/experiential_icons_monum_fellow_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/du_monum_fellow.svg',
@@ -224,7 +224,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/11/rentals.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
     'public://img/icons/transactions/2017/11/experiential_icons_1_3_ticket_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/ballot_ticket.svg',
     'public://img/icons/transactions/2017/10/small-business-center.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/job_search.svg',
-    'public://img/icons/transactions/2017/10/physician_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submitt_for_certificates.svg',
+    'public://img/icons/transactions/2017/10/physician_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submit_for_certificates.svg',
     'public://img/icons/transactions/2017/10/notices.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/document.svg',
     'public://img/icons/transactions/2017/10/icon.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/mayoral_letter.svg',
     'public://img/icons/transactions/2017/10/contracting-list.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/handshake.svg',
@@ -551,9 +551,9 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_neighborhoods_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/du_neighborhoods_info.svg',
     'public://img/2016/e/experiential_icons_neighborhoods.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/neighborhoods.svg',
     'public://img/2016/e/experiential_icons_meet_archaeologist.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/schedule.svg',
-    'public://img/2016/e/experiential_icons_medical_registration__1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submitt_for_certificates.svg',
-    'public://img/2016/e/experiential_icons_medical_registration__0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submitt_for_certificates.svg',
-    'public://img/2016/e/experiential_icons_medical_registration_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submitt_for_certificates.svg',
+    'public://img/2016/e/experiential_icons_medical_registration__1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submit_for_certificates.svg',
+    'public://img/2016/e/experiential_icons_medical_registration__0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submit_for_certificates.svg',
+    'public://img/2016/e/experiential_icons_medical_registration_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/submit_for_certificates.svg',
     'public://img/2016/e/experiential_icons_mayor_proclamation_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/mayoral_proclamation.svg',
     'public://img/2016/e/experiential_icons_mayor_greeting_letter_.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/mayoral_letter.svg',
     'public://img/2016/e/experiential_icons_marriage_certificate.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/marriage_application.svg',
@@ -1077,7 +1077,7 @@ class MigrationFixes {
   public static function fixMap() {
     printf("[action] Will ensure map default image is loaded properly.\n");
     // Copy map module icons into expected location.
-    _bos_core_install_icons("bos_map");
+    _bos_core_install_icons("bos_map", FALSE);
     // Install the map default background image.
     bos_map_rebuild();
     printf("[info] Finished.\n");

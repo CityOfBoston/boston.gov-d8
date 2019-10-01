@@ -35,7 +35,7 @@ function doMigrate() {
 
         retval=0
         (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=${1}
-        if [ $retVal == 0 ]; then break; fi
+        if [ $retVal -eq 0 ]; then break; fi
 
         hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $3}')"
         if [ "${hanging}" == "Importing" ]; then
@@ -43,6 +43,10 @@ function doMigrate() {
         fi
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
+        else
+          # If there are no migrations still importing, then terminate.
+          printf "[migration-warning] Migration reported errors, but no incompleted migrations found in group. \n"
+          break
         fi
 
         CYCLE=$((CYCLE+1))
@@ -208,6 +212,8 @@ if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
 
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
+
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
@@ -225,7 +231,7 @@ fi
 
 running=0
 
-timer=$(date +%s)
+totaltimer=$(date +%s)
 ## Migrate files first.
 if [ "$1" == "reset" ]; then
     running=1
@@ -335,6 +341,11 @@ if [ $running -eq 0 ]; then
     exit 1
 fi
 
+# Just run an update on all entities to be sure everything is in sync.
+printf "\n[migration-step] Update Entities.\n" | tee -a ${logfile}
+#doMigrate --group=bos_paragraphs --update --feedback=1000
+#doMigrate --group=d7_node --update --feedback=1000
+
 ## Check all migrations completed.
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
@@ -390,7 +401,7 @@ ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql
 
-text=$(displayTime $(($(date +%s)-timer)))
+text=$(displayTime $(($(date +%s)-totaltimer)))
 printf "[migration-runtime] OVERALL RUNTIME: ${text}" | tee -a ${logfile}
 
 printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}

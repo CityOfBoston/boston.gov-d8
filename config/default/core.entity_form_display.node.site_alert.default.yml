@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.site_alert.title_field
     - node.type.site_alert
   module:
+    - content_moderation
     - datetime_range
     - field_group
     - media_library
@@ -140,6 +141,12 @@ content:
     settings:
       include_locked: true
     third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   path:
     type: path
     weight: 7
@@ -163,7 +170,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 9
     region: content
     third_party_settings: {  }
   sticky:
@@ -201,5 +208,4 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  moderation_state: true
   title: true

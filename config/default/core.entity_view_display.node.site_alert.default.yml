@@ -22,9 +22,14 @@ targetEntityType: node
 bundle: site_alert
 mode: default
 content:
+  content_moderation_control:
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_date_range:
     type: daterange_plain
-    weight: 7
+    weight: 6
     region: content
     label: hidden
     settings:
@@ -33,14 +38,14 @@ content:
     third_party_settings: {  }
   field_excluded_nodes:
     label: hidden
-    weight: 6
+    weight: 5
     type: entity_reference_entity_id
     settings: {  }
     third_party_settings: {  }
     region: content
   field_extra_info:
     type: string
-    weight: 3
+    weight: 2
     region: content
     label: hidden
     settings:
@@ -48,7 +53,7 @@ content:
     third_party_settings: {  }
   field_icon:
     label: hidden
-    weight: 1
+    weight: 0
     type: entity_reference_entity_view
     settings:
       view_mode: thumbnail
@@ -64,7 +69,7 @@ content:
     region: content
   field_link:
     label: hidden
-    weight: 4
+    weight: 3
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: default
@@ -80,21 +85,20 @@ content:
     region: content
   field_theme:
     label: hidden
-    weight: 5
+    weight: 4
     type: list_default
     settings: {  }
     third_party_settings: {  }
     region: content
   title_field:
     type: string
-    weight: 2
+    weight: 1
     region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
 hidden:
-  content_moderation_control: true
   langcode: true
   links: true
   published_at: true
