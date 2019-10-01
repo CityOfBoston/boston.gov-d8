@@ -143,6 +143,13 @@ function bos_components_theme_suggestions_field_alter(array &$suggestions, array
 }
 
 /**
+ * Implements hook_rebuild().
+ */
+function bos_components_rebuild() {
+  _bos_components_update_all_icons();
+}
+
+/**
  * Implements hook_theme_suggestions_HOOK().
  */
 function bos_components_theme_suggestions_paragraph_alter(array &$suggestions, array $variables) {
