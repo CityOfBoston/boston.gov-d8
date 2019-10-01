@@ -43,6 +43,10 @@ function doMigrate() {
         fi
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
+        else
+          # If there are no migrations still importing, then terminate.
+          printf "[migration-warning] Migration reported errors, but no incompleted migrations found in group. \n"
+          break
         fi
 
         CYCLE=$((CYCLE+1))
