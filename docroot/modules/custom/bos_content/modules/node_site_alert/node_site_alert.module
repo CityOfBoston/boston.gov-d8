@@ -67,7 +67,7 @@ function template_preprocess_node__site_alert(array &$variables) {
  * Implements hook_form_alter().
  */
 function node_site_alert_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == "node_site_alert_form") {
+  if ($form_id == "node_site_alert_edit_form") {
     $field = new TranslatableMarkup("Exclude another page");
     $form["field_excluded_nodes"]["widget"]["add_more"]["#value"] = $field;
   }
@@ -123,16 +123,6 @@ function node_site_alert_preprocess(&$variables, $hook) {
       $variables["url"] = file_create_url($variables["item"]->__get("entity")->get("uri")->value);
     }
   }
-  // Remove context editing for the link paragraph embedded in this paragraph.
-  /*
-  if ($hook == "field"
-  && isset($variables["element"]["#object"]->_referringItem)
-  && $variables["element"]["#object"]->_referringItem->getParent()
-  ->getName() == "field_link") {
-  if (isset($variables["attributes"]["data-quickedit-field-id"])) {
-  unset($variables["attributes"]["data-quickedit-field-id"]);
-  }
-  }*/
 }
 
 /**
