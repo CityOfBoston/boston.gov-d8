@@ -212,7 +212,7 @@ if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
 
-printf "[migration-start] Starts %s %s\n" $(date +%F\ %T ) | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
@@ -340,6 +340,11 @@ if [ $running -eq 0 ]; then
     printf "[migration-error] Bad script parameter\nOptions are:\n  reset, files, rereq, taxonomy, paragraphs, field_collection, update1, nodes, update2, node_revision, menus, final" | tee -a ${logfile}
     exit 1
 fi
+
+# Just run an update on all entities to be sure everything is in sync.
+printf "\n[migration-step] Update Entities.\n" | tee -a ${logfile}
+#doMigrate --group=bos_paragraphs --update --feedback=1000
+#doMigrate --group=d7_node --update --feedback=1000
 
 ## Check all migrations completed.
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
