@@ -71,8 +71,6 @@ function node_site_alert_form_alter(&$form, $form_state, $form_id) {
  */
 function node_site_alert_preprocess_page(&$variables) {
   // Check if we have any active site-alerts.
-  $GLOBALS['cob']['has_site_alert'] = FALSE;
-
   // Call the view passing in the homepage to see if we have an alert set ATM.
   if ($view = Views::getView("site_alerts")) {
     $view->setDisplay("block_site_alerts");
@@ -81,7 +79,6 @@ function node_site_alert_preprocess_page(&$variables) {
     }
     if ($view->execute() && count($view->result) > 0) {
       _bos_content_fix_attributes($variables);
-      $GLOBALS["cob"]['has_site_alert'] = TRUE;
       $variables["attributes"]->addClass("page--wa");
       $variables["attributes"]->removeClass("page--nm");
       $variables["attributes"]->removeClass("mn");

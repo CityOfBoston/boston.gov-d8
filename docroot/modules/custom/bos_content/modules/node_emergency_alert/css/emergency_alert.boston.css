@@ -1,14 +1,17 @@
 /**
-  Blue theme.
+  Locate contextual button out of the way of the main page button.
  */
+
 article.node-emergency-alert div.contextual {
   padding-right: 70px;
 }
 
+/**
+  Blue theme.
+ */
 article.node-emergency-alert .b--dark-blue {
   color: #1871bd;
 }
-
 article.node-emergency-alert .b--dark-blue .str-t,
 article.node-emergency-alert .b--dark-blue .str-c {
   color: #fff;
@@ -48,4 +51,13 @@ article.node-emergency-alert .b--yellow .str-t,
 article.node-emergency-alert .b--yellow .str-c {
   color: #1871bd;
   background-color: #f7bd5c;
+}
+
+/**
+  Manage seal.
+ */
+#page.ea #main-menu #seal.s {
+  -webkit-transform: translateX(-50%) translateY(0%);
+  transform: translateX(-50%) translateY(0%);
+  box-shadow: none;
 }
