@@ -273,7 +273,7 @@ What: Moves the context icon to the left to avoid being cutoff by overflow
       on parent containers.
  */
 .contextual {
-  right: 0px;
+  right: 0;
 }
 /**
 David
@@ -911,4 +911,12 @@ What: Make a round border..
  */
 .node-person-profile .cdp-i img {
   border-radius: 100%;
+}
+/*
+David:
+Where: hero images and intor images
+What: ensure fills the available area.
+ */
+.main-content .hero-image .hro {
+  min-height: 100%;
 }

@@ -1031,7 +1031,9 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   if (!$variables["attributes"]->hasClass("sa")) {
     $variables["attributes"]->addClass("mn");
   }
-  $variables["attributes"]->addClass("page");
+  if (!$variables["attributes"]->hasClass("ea")) {
+    $variables["attributes"]->addClass("page");
+  }
   $variables["attributes"]->setAttribute("id", "page");
 
   if (isset($variables['node']) && is_object($variables['node'])) {
