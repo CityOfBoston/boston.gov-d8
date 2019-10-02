@@ -522,7 +522,7 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_thermostat.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/temperature.svg',
     'public://img/2016/e/experiential_icons_testify.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/testify_at_a_city_council.svg',
     'public://img/2016/e/experiential_icons_temporary_public_art.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/paint_supplies.svg',
-    'public://img/2016/e/experiential_icons_snow_plow_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/plows.svg',
+    'public://img/2016/e/experiential_icons_snow_plow_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/plow.svg',
     'public://img/2016/e/experiential_icons_smoke_detector_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/fire_alarm.svg',
     'public://img/2016/e/experiential_icons_smoke_detector.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/fire_alarm.svg',
     'public://img/2016/e/experiential_icons_search_license_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/certificate_search.svg',
