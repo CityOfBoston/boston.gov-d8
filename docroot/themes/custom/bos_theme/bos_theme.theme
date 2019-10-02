@@ -369,10 +369,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Create necessary page classes.
   _bos_theme_page_classes($variables);
 
-  // By default, there is no site alert.
-  // This is overidden in site_alert_preprocess when there is an alert.
-  $variables['cob']['has_site_alert'] = !empty($variables['cob']['has_site_alert']);
-
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
     $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
@@ -1015,9 +1011,6 @@ function _bos_theme_render_snippets(array &$variables) {
   $vars = array_merge($arr_base, ['#theme' => 'search']);
   $variables['search'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'seal']);
-  if ($variables['cob']['has_site_alert']) {
-    $vars["#hidden"] = " hidden";
-  }
   $variables['seal'] = \Drupal::service('renderer')->render($vars);
 }
 
@@ -1038,7 +1031,9 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   if (!$variables["attributes"]->hasClass("sa")) {
     $variables["attributes"]->addClass("mn");
   }
-  $variables["attributes"]->addClass("page");
+  if (!$variables["attributes"]->hasClass("ea")) {
+    $variables["attributes"]->addClass("page");
+  }
   $variables["attributes"]->setAttribute("id", "page");
 
   if (isset($variables['node']) && is_object($variables['node'])) {
