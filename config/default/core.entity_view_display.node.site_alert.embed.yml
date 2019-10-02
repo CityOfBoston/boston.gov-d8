@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.embed
+    - field.field.node.site_alert.field_date_range
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
     - field.field.node.site_alert.field_icon
@@ -15,8 +16,8 @@ dependencies:
   module:
     - entity_reference_revisions
     - fences
+    - media
     - options
-    - svg_image
     - user
 id: node.site_alert.embed
 targetEntityType: node
@@ -37,18 +38,21 @@ content:
     label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_icon:
     label: hidden
     weight: 0
-    type: image
+    type: media_thumbnail
     settings:
       image_style: square_icon_56px
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none
