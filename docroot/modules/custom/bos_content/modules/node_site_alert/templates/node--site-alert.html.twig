@@ -29,7 +29,7 @@
 <div{{ attributes }}>
   <div class="b-c b-c--xsmv fyi--{{ block_theme }}">
     <div class="fyi-c">
-      {% if content.field_icon %}
+      {% if content.field_icon["#items"] %}
         <div class="fyi-i fyi-i--{{ block_theme }}"> {{ content.field_icon }}</div>
       {% endif %}
       {% if content.title_field %}
