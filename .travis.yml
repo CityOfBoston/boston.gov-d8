@@ -78,4 +78,9 @@ deploy:
     skip_cleanup: true
     script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
     on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    on:
       branch: simplesaml_config
