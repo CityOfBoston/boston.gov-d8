@@ -16,8 +16,8 @@ dependencies:
   module:
     - entity_reference_revisions
     - fences
-    - media
     - options
+    - svg_image
     - user
 id: node.site_alert.embed
 targetEntityType: node
@@ -38,21 +38,18 @@ content:
     label: hidden
     settings:
       link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
+    third_party_settings: {  }
   field_icon:
     label: hidden
     weight: 0
-    type: media_thumbnail
+    type: image
     settings:
       image_style: square_icon_56px
       image_link: ''
+      svg_attributes:
+        width: ''
+        height: ''
+      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none

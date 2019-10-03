@@ -5,12 +5,10 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - node.type.procurement_advertisement
-    - taxonomy.vocabulary.contact
   module:
     - better_exposed_filters
     - datetime
     - node
-    - taxonomy
     - user
 _core:
   default_config_hash: ytRCa2Q_BiyWfNaMGDIasJ8BSZldFozQa2m4aqSNUys
@@ -364,7 +362,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -384,7 +381,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -404,7 +400,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
