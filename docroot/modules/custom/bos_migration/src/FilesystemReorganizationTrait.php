@@ -19,8 +19,7 @@ trait FilesystemReorganizationTrait {
    *   The uri.
    */
   public function rewriteUri(string $uri, array $properties = []) {
-
-    /**
+    /*
      * Defines mapping/organization for files not in public:// root folder.
      *
      * @var array
