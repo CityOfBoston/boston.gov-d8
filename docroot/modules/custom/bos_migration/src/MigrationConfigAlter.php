@@ -1540,12 +1540,6 @@ class MigrationConfigAlter {
       $process_to_insert = ['plugin' => 'rich_text_to_media_embed'];
 
       foreach ($this->migrations as $key => $value) {
-
-        // We do not want to convert rich-text-embeds for older revisions.
-        if ($value['id'] == "d7_node_revision") {
-          continue;
-        }
-
         $matches = array_intersect_key($value['process'], $rich_text_fields);
 
         if (!empty($matches)) {
