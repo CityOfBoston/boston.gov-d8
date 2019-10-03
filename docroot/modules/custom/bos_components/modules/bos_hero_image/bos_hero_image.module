@@ -64,6 +64,9 @@ function template_preprocess_paragraph__hero_image(array &$variables) {
     }
   }
 
+  // Add-in a bit of css.
+  $variables['#attached']['library'][] = "bos_hero_image/hero_image.call";
+
 }
 
 /**

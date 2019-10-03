@@ -794,3 +794,14 @@ function _bos_core_global_update_configs() {
   _bos_core_update_all_configs();
 
 }
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function bos_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (isset($element["uri"])) {
+    if ($context["widget"]->getPluginDefinition()["id"] == "entity_reference_autocomplete") {
+      $element["uri"]["#selection_handler"] = "autocomplete:node";
+    }
+  }
+}
