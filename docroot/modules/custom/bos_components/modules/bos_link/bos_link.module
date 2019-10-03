@@ -137,13 +137,15 @@ function bos_link_tokens($type, $tokens, array $data = [], array $options = []) 
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_link_paragraph_document_summary_alter(array $form_widget, array $para, array $attributes) {
-  $document = File::load($para["entity"]->field_document->target_id);
-  $type = explode("/", $document->filemime->value);
-  $type = end($type);
-  $markup[] = Markup::create("<b>" . $para["entity"]->field_title->value . "</b> <i>(" . $type . ")</i>");
-  $markup[] = Markup::create($document->label());
-  return [
-    'attributes' => $attributes,
-    'content' => $markup,
-  ];
+  if ($para["entity"]->field_document->target_id) {
+    $document = File::load($para["entity"]->field_document->target_id);
+    $type = explode("/", $document->filemime->value);
+    $type = end($type);
+    $markup[] = Markup::create("<b>" . $para["entity"]->field_title->value . "</b> <i>(" . $type . ")</i>");
+    $markup[] = Markup::create($document->label());
+    return [
+      'attributes' => $attributes,
+      'content' => $markup,
+    ];
+  }
 }
