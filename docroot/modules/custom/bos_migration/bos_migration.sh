@@ -69,7 +69,7 @@ function doMigrate() {
 function doExecPHP() {
     timer=$(date +%s)
 
-    printf "[migration-step] Executing PHP: '%q'" "${*}" | tee -a ${logfile}
+    printf "[migration-step] Executing PHP: '%q'\n" "${*}" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} php-eval "$*"  | tee -a ${logfile}
     else
@@ -170,7 +170,9 @@ function restoreDB() {
     ${drush} ms  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
-    printf "[migration-success] Database has been restored and synchronised with current branch.\n\n" | tee -a ${logfile}
+    printf "[migration-success] Database has been restored and synchronised with current branch.\n" | tee -a ${logfile}
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 
     ## Takes site out of maintenance mode before dumping.
     ${drush} sset "system.maintenance_mode" "0"
@@ -180,8 +182,6 @@ function restoreDB() {
     ## Puts site into maintenance mode while migration occurs.
     ${drush} sset "system.maintenance_mode" "1"
 
-    text=$(displayTime $(($(date +%s)-timer)))
-    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
 function dumpDB() {
@@ -402,6 +402,6 @@ ${drush} cr  | tee -a ${logfile}
 dumpDB ${dbpath}/migration_FINAL.sql
 
 text=$(displayTime $(($(date +%s)-totaltimer)))
-printf "[migration-runtime] OVERALL RUNTIME: ${text}" | tee -a ${logfile}
+printf "[migration-runtime] OVERALL RUNTIME: ${text}\n" | tee -a ${logfile}
 
 printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}
