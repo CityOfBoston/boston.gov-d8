@@ -35,7 +35,7 @@ function doMigrate() {
 
         retval=0
         (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=${1}
-        if [ $retVal -eq 0 ]; then break; fi
+        if [[ $retval -eq 0 ]]; then break; fi
 
         hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $3}')"
         if [ "${hanging}" == "Importing" ]; then
