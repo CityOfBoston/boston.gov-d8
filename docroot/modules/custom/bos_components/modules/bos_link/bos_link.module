@@ -22,6 +22,9 @@ function bos_link_theme() {
     'paragraph__document' => [
       'base hook' => 'paragraph',
     ],
+    'paragraph__document__cta_button' => [
+      'base hook' => 'paragraph',
+    ],
     'field__node__field_link__emergency_alert' => [
       'base hook' => 'field',
     ],
@@ -34,6 +37,20 @@ function bos_link_theme() {
 }
 
 /**
+ * Implements hook_preprocess_hook().
+ */
+function bos_link_preprocess_paragraph__document__cta_button(&$variables) {
+  $document = $variables['paragraph']->get('field_document')->getValue();
+  $title = $variables['paragraph']->get('field_title')->getValue();
+  $arr['attributes']['class'] = ['btn'];
+  $variables['link'] = _bos_core_get_file_link(
+    $document['0']['target_id'],
+    $title['0']['value'],
+    $arr
+  );
+}
+
+/**
  * Implements hook_preprocess_paragraph().
  */
 function bos_link_preprocess_paragraph(&$vars) {
@@ -41,6 +58,7 @@ function bos_link_preprocess_paragraph(&$vars) {
   if ($paragraph && $paragraph->bundle() == 'document') {
     $document = $paragraph->get('field_document')->getValue();
     $title = $paragraph->get('field_title')->getValue();
+
     if (!empty($document['0']['target_id']) && !empty($title['0']['value'])) {
       $arr = [];
       switch ($paragraph->getParentEntity()->bundle()) {
@@ -77,8 +95,19 @@ function bos_link_preprocess_field(&$vars) {
     }
   }
   if ($field_name == 'field_external_link') {
-    $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
+    if ($vars["element"]["#view_mode"] == "cta_button") {
+      $vars['items'][0]['content']['#options']['attributes']['class'][] = 'btn';
+    }
+    else {
+      $vars['items'][0]['content']['#options']['attributes']['class'][] = 'lnk-e';
+    }
     $vars['items'][0]['content']['#options']['attributes']['target'] = '_blank';
+  }
+
+  if ($field_name == 'field_internal_link') {
+    if ($vars["element"]["#view_mode"] == "cta_button") {
+      $vars['items'][0]['content']['#options']['attributes']['class'][] = 'btn';
+    }
   }
 }
 
