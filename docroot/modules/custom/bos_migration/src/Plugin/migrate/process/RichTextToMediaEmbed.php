@@ -382,6 +382,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
     if (!preg_match($from_main_domain, $uri, $matches)) {
       // Not a searched absolute uri.
+      \Drupal::logger('Migrate')->notice("$uri is not a local file.");
       return FALSE;
     }
     if (substr($matches[3], 1, 1) != "/") {
