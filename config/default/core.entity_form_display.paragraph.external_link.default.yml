@@ -6,7 +6,6 @@ dependencies:
     - field.field.paragraph.external_link.field_external_link
     - paragraphs.paragraphs_type.external_link
   module:
-    - content_moderation
     - link
 _core:
   default_config_hash: NCz_LHNdynm9okzXhQRYFrL7WCGX-Y-gv1tXQRtCFNg
@@ -23,12 +22,6 @@ content:
       placeholder_title: ''
     third_party_settings: {  }
     region: content
-  moderation_state:
-    type: moderation_state_default
-    weight: 100
-    settings: {  }
-    region: content
-    third_party_settings: {  }
 hidden:
   created: true
   status: true
