@@ -7,6 +7,7 @@
 
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -606,9 +607,13 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           preg_match('~/(.*)~', $link['0']['uri'], $match);
           $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
           $results['url'] = $url->toString();
-          $results['title'] = $link['0']['title'];
           $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
             ->toString();
+          $results['title'] = $link['0']['title'];
+          if ($link['0']['title'] == "Migration stub: link title") {
+            // Load the node and get its title.
+            ($node = Node::load($match[1])) && ($results['title'] = $node->getTitle());
+          }
         }
         break;
     }
