@@ -34,13 +34,10 @@ function doMigrate() {
         printf "[migration-step] ${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
 
         retval=0
-        (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=${1}
+        (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=1
         if [[ $retval -eq 0 ]]; then break; fi
 
-        hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $3}')"
-        if [ "${hanging}" == "Importing" ]; then
-          hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $2}')"
-        fi
+        hanging="$(drush ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
         else
@@ -56,7 +53,7 @@ function doMigrate() {
         fi
     done
 
-    ${drush} ms "${GROUP}" | tee -a ${logfile}
+    ${drush} ms "${GROUP}" --fields=id,status,total,imported,unprocessed| tee -a ${logfile}
 
     if [ $CYCLE -ne 0 ]; then
         printf "[migration-warning] ${RED}Migrate command completed with Errors.${NC}\n"  | tee -a ${logfile}
@@ -349,10 +346,7 @@ printf "\n[migration-step] Update Entities.\n" | tee -a ${logfile}
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
 while true; do
-    hanging="$(drush ms | grep Importing | awk '{print $3}')"
-    if [ "${hanging}" == "Importing" ]; then
-        hanging="$(drush ms | grep Importing | awk '{print $2}')"
-    fi
+    hanging="$(drush ms --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
     if [ -z "${hanging}" ] || [ "${hanging}" == "" ]; then break; fi
     ERRORS=$((ERRORS+1))
     if [ $ERRORS -gt 5 ]; then
