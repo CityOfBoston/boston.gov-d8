@@ -6,14 +6,6 @@ dependencies:
     - filter.format.filtered_html
   module:
     - ckeditor
-    - editor_file
-third_party_settings:
-  editor_file:
-    status: true
-    scheme: public
-    directory: inline-files
-    extensions: 'txt pdf doc xls ppt'
-    max_size: ''
 format: filtered_html
 editor: ckeditor
 settings:
@@ -79,7 +71,6 @@ settings:
           items:
             - '-'
             - media_entity_embed
-            - DrupalFile
         -
           name: Styles
           items:
