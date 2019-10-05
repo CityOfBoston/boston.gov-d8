@@ -628,7 +628,7 @@ class MigrationConfigAlter {
           ],
           [
             'plugin' => 'default_value',
-            'default_value' => 'Migration stub: link title',
+            'default_value' => '',
           ],
         ],
         'field_internal_link/uri' => [
