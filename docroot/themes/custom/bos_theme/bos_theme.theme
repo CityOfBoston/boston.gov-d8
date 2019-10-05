@@ -441,11 +441,11 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
     if (isset($item) && $item->has('node')) {
       if (!empty($item->get('tab_parent'))) {
         // If we are on a non-default tab, use the tab's title.
-        $variables['breadcrumb_title'] = Html::escape($item->get('title'));
+        $variables['breadcrumb_title'] = Html::decodeEntities($item->get('title'));
       }
       else {
         if (is_object($item->get('node'))) {
-          $variables['breadcrumb_title'] = Html::escape($item->get('node')->title->value);
+          $variables['breadcrumb_title'] = Html::decodeEntities($item->get('node')->title->value);
         }
       }
     }
