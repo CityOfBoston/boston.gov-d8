@@ -71,6 +71,15 @@ function node_person_profile_preprocess_node__person_profile(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_person_profile_preprocess_responsive_image_formatter(&$variables) {
+  if ($variables["responsive_image_style_id"] == "person_photos") {
+    $variables["responsive_image"]["#attributes"]['class'][] = "cdp-i";
+  }
+}
+
+/**
  * Prepare the contact method for this person.
  *
  * @param array $variables

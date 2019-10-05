@@ -382,6 +382,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
     if (!preg_match($from_main_domain, $uri, $matches)) {
       // Not a searched absolute uri.
+      \Drupal::logger('Migrate')->notice("$uri is not a local file.");
       return FALSE;
     }
     if (substr($matches[3], 1, 1) != "/") {
@@ -439,7 +440,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   protected function correctSubDomain(string $uri) {
     $regex_swaps = [
-      "~(edit|edit-stg)\.boston.gov~" => "www.boston.gov",
+      "~(edit|edit-stg)\.boston.gov~" => "https://www.boston.gov",
       "~http(s|)://boston\.gov~" => "https://www.boston.gov",
       "~http://.*\.boston\.gov~" => "https://www.boston.gov",
     ];
