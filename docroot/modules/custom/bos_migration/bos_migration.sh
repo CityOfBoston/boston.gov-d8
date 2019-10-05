@@ -191,7 +191,7 @@ function dumpDB() {
         lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
     fi
     gzip -fq ${backup}
-    printf "[migration-success] Database (default) dumped to ${backup}.gz.\n\n" | tee -a ${logfile}
+    printf "[migration-success] Database (default) dumped to ${backup}.gz.\n" | tee -a ${logfile}
     text=$(displayTime $(($(date +%s)-timer)))
     printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
@@ -238,6 +238,8 @@ if [ "$1" == "reset" ]; then
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
+    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
     dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
