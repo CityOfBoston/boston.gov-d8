@@ -34,13 +34,10 @@ function doMigrate() {
         printf "[migration-step] ${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
 
         retval=0
-        (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=${1}
+        (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=1
         if [[ $retval -eq 0 ]]; then break; fi
 
-        hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $3}')"
-        if [ "${hanging}" == "Importing" ]; then
-          hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $2}')"
-        fi
+        hanging="$(drush ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
         else
@@ -56,7 +53,7 @@ function doMigrate() {
         fi
     done
 
-    ${drush} ms "${GROUP}" | tee -a ${logfile}
+    ${drush} ms "${GROUP}" --fields=id,status,total,imported,unprocessed| tee -a ${logfile}
 
     if [ $CYCLE -ne 0 ]; then
         printf "[migration-warning] ${RED}Migrate command completed with Errors.${NC}\n"  | tee -a ${logfile}
@@ -69,7 +66,7 @@ function doMigrate() {
 function doExecPHP() {
     timer=$(date +%s)
 
-    printf "[migration-step] Executing PHP: '%q'" "${*}" | tee -a ${logfile}
+    printf "[migration-step] Executing PHP: '%q'\n" "${*}" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
         ${drush} php-eval "$*"  | tee -a ${logfile}
     else
@@ -170,7 +167,9 @@ function restoreDB() {
     ${drush} ms  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
-    printf "[migration-success] Database has been restored and synchronised with current branch.\n\n" | tee -a ${logfile}
+    printf "[migration-success] Database has been restored and synchronised with current branch.\n" | tee -a ${logfile}
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 
     ## Takes site out of maintenance mode before dumping.
     ${drush} sset "system.maintenance_mode" "0"
@@ -179,9 +178,6 @@ function restoreDB() {
 
     ## Puts site into maintenance mode while migration occurs.
     ${drush} sset "system.maintenance_mode" "1"
-
-    text=$(displayTime $(($(date +%s)-timer)))
-    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
 function dumpDB() {
@@ -350,10 +346,7 @@ printf "\n[migration-step] Update Entities.\n" | tee -a ${logfile}
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
 while true; do
-    hanging="$(drush ms | grep Importing | awk '{print $3}')"
-    if [ "${hanging}" == "Importing" ]; then
-        hanging="$(drush ms | grep Importing | awk '{print $2}')"
-    fi
+    hanging="$(drush ms --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
     if [ -z "${hanging}" ] || [ "${hanging}" == "" ]; then break; fi
     ERRORS=$((ERRORS+1))
     if [ $ERRORS -gt 5 ]; then
@@ -402,6 +395,6 @@ ${drush} cr  | tee -a ${logfile}
 dumpDB ${dbpath}/migration_FINAL.sql
 
 text=$(displayTime $(($(date +%s)-totaltimer)))
-printf "[migration-runtime] OVERALL RUNTIME: ${text}" | tee -a ${logfile}
+printf "[migration-runtime] === OVERALL RUNTIME: ${text} ===\n\n" | tee -a ${logfile}
 
 printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}
