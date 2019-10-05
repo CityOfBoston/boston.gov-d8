@@ -93,7 +93,7 @@
                 <echo message="Problem: trying partial import from ${project.sync}."/>
                 <exec description="Imports the config files in the sync folder at ${project.sync}."
                       dir="${docroot}"
-                      command="${drush.cmd} cim sync --partial -y -v >> ${project.basedir}/setup/config-import.log"
+                      command="${drush.cmd} cim sync --partial -y -vv >> ${project.basedir}/setup/config-import.log"
                       logoutput="true" returnProperty="cim.result2"/>
                 <if>
                     <and>
@@ -106,7 +106,7 @@
                         <exec command="tail -250 ${project.basedir}/setup/config-import.log"
                               passthru="true" logoutput="true"/>
                         <echo message="=== End Log Output PASS 2 ===."/>
-                        <fail message="Fail - Config Import from ${project.sync} failed."/>
+<!--                        <fail message="Fail - Config Import from ${project.sync} failed."/>-->
                     </then>
                     <else>
                         <echo message="Success: Config imported from ${project.sync}."/>
