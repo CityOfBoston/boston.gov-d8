@@ -6,8 +6,6 @@
  */
 
 use Drupal\Core\Render\Markup;
-use Drupal\media\Entity\Media;
-use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -31,13 +29,12 @@ function bos_quote_preprocess_paragraph(&$vars) {
   }
 }
 
-
 /**
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_quote_paragraph_quote_summary_alter(array $form_widget, array $para, array $attributes) {
   $name = $para["entity"]->get("field_first_name")->value . " " . $para["entity"]->get("field_last_name")->value;
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" .$name . "</span>");
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $name . "</span>");
   if ($para["entity"]->hasField("field_person_photo") && count($para["entity"]->get("field_person_photo"))) {
     $markup[] = Markup::create("(has photo)");
   }
