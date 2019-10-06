@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Link;
+use Drupal\Core\Render\Markup;
+use Drupal\media\Entity\Media;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -182,4 +185,56 @@ function bos_link_collections_preprocess_field(&$vars) {
         break;
     }
   }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_collections_paragraph_group_of_links_list_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  if ($para["entity"]->hasField("field_contact")) {
+    $contact_id = $para["entity"]->get("field_contact")->target_id;
+    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
+      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+    }
+  }
+  if ($para["entity"]->hasField("field_list_links") && count($para["entity"]->get("field_list_links"))) {
+    $markup[] = Markup::create("<i>group with " . count($para["entity"]->get("field_list_links")) . " links.</i>");
+  }
+  if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
+    $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
+    $markup[] = Markup::create("<i>has " . $card->bundle() . " CTA.</i>");
+  }
+  else {
+    $markup[] = Markup::create("<i>with no CTA.</i>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_collections_paragraph_gol_list_links_summary_alter(array $form_widget, array $para, array $attributes) {
+  $title = advanced_text_formatter_trim_text(strip_tags($para["entity"]->get("field_description")->value), [
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 40,
+  ]);
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $title . "</span>");
+  if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
+    $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
+    $markup[] = Markup::create("<i>has " . $card->bundle() . " CTA.</i>");
+  }
+  else {
+    $markup[] = Markup::create("<i>with no CTA.</i>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }

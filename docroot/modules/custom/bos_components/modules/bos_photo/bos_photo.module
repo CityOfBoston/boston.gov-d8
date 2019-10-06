@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Markup;
 use Drupal\media\Entity\Media;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
@@ -67,7 +68,7 @@ function bos_photo_preprocess_field(&$vars) {
 function bos_photo_paragraph_photo_summary_alter(array $form_widget, array $para, array $attributes) {
   $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
   if ($para["entity"]->hasField("field_image")) {
-    $mid = $image = $para["entity"]->get("field_image")[0]->target_id;
+    $mid = $para["entity"]->get("field_image")[0]->target_id;
     if ($media = Media::load($mid)) {
       $markup[] = Markup::create("<b>Image Name:</b> " . $media->name->value);
     }
@@ -77,6 +78,13 @@ function bos_photo_paragraph_photo_summary_alter(array $form_widget, array $para
     if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
       $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
     }
+  }
+  if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
+    $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
+    $markup[] = Markup::create("<i>has " . $card->bundle() . " CTA.</i>");
+  }
+  else {
+    $markup[] = Markup::create("<i>has no CTA.</i>");
   }
 
   return [
