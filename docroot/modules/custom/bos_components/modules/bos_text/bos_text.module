@@ -201,20 +201,7 @@ function bos_text_paragraph_text_summary_alter(array $form_widget, array $para, 
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_columns_summary_alter(array $form_widget, array $para, array $attributes) {
-  //  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
-  //  if ($para["entity"]->hasField("field_contact")) {
-  //    $contact_id = $para["entity"]->get("field_contact")->target_id;
-  //    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
-  //      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
-  //    }
-  //  }
-  //  if ($para["entity"]->hasField("field_text_blocks") && count($para["entity"]->get("field_text_blocks"))) {
-  //    $markup[] = Markup::create("<i>has " . count($para["entity"]->get("field_text_blocks")) . " text blocks.</i>");
-  //  }
-  //  else {
-  //    $markup[] = Markup::create("<i>has no text blocks!.</i>");
-  //  }
-
+  $markup[] = "pending";
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -226,22 +213,6 @@ function bos_text_paragraph_columns_summary_alter(array $form_widget, array $par
  */
 function bos_text_paragraph_3_column_w_image_summary_alter(array $form_widget, array $para, array $attributes) {
   $markup[] = "pending";
-  /*
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
-  if ($para["entity"]->hasField("field_contact")) {
-    $contact_id = $para["entity"]->get("field_contact")->target_id;
-    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
-      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
-    }
-  }
-  if ($para["entity"]->hasField("field_text_blocks") && count($para["entity"]->get("field_text_blocks"))) {
-    $markup[] = Markup::create("<i>has " . count($para["entity"]->get("field_text_blocks")) . " text blocks.</i>");
-  }
-  else {
-    $markup[] = Markup::create("<i>has no text blocks!.</i>");
-  }
-  */
-
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -252,13 +223,7 @@ function bos_text_paragraph_3_column_w_image_summary_alter(array $form_widget, a
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_one_column_summary_alter(array $form_widget, array $para, array $attributes) {
-//  $markup[] = Markup::create($para["entity"]->get("field_column_configuration")->value);
-//  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " .$para["entity"]->get("field_right_column")->value);
-//  $markup[] = advanced_text_formatter_trim_text($text, [
-//    'word_boundary' => TRUE,
-//    'ellipsis' => TRUE,
-//    'max_length' => 60,
-//  ]);
+  $markup[] = "pending";
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -275,7 +240,7 @@ function bos_text_paragraph_text_two_column_summary_alter(array $form_widget, ar
     'col_on_one_third' => "Wider on right",
   ];
   $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $map[$para["entity"]->get("field_column_configuration")->value] . "</span>");
-  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " .$para["entity"]->get("field_right_column")->value);
+  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " . $para["entity"]->get("field_right_column")->value);
   $markup[] = advanced_text_formatter_trim_text($text, [
     'word_boundary' => TRUE,
     'ellipsis' => TRUE,
@@ -291,12 +256,7 @@ function bos_text_paragraph_text_two_column_summary_alter(array $form_widget, ar
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_three_column_summary_alter(array $form_widget, array $para, array $attributes) {
-//  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " .$para["entity"]->get("field_middle_column")->value . " " .$para["entity"]->get("field_right_column")->value);
-//  $markup[] = advanced_text_formatter_trim_text($text, [
-//    'word_boundary' => TRUE,
-//    'ellipsis' => TRUE,
-//    'max_length' => 60,
-//  ]);
+  $markup[] = "pending";
   return [
     'attributes' => $attributes,
     'content' => $markup,

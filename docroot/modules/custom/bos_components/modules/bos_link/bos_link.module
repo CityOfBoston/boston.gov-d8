@@ -8,7 +8,6 @@
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Core\Render\Markup;
-use Drupal\media\Entity\Media;
 
 /**
  * Implements hook_theme().
@@ -191,7 +190,7 @@ function bos_link_paragraph_external_link_summary_alter(array $form_widget, arra
   $url["host"] = $url["scheme"] . "://" . $url["host"];
   $url["host"] = (strpos($url["host"], "boston.gov") === FALSE ? $url["host"] : "<span style='color:red'>(internal) </span>");
   $url = $url["host"] . $url['path'];
-  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" .  $uri . "' target='_blank' title='Click to view in new tab'><i>" .  $url ."</i></a>");
+  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $uri . "' target='_blank' title='Click to view in new tab'><i>" . $url . "</i></a>");
 
   return [
     'attributes' => $attributes,
@@ -207,14 +206,15 @@ function bos_link_paragraph_internal_link_summary_alter(array $form_widget, arra
   $uri = $para["entity"]->get("field_internal_link")->uri;
   $url = Url::fromUri($uri);
   $url_rel = $url->toString();
-  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel ."</i></a>");
+  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel . "</i></a>");
 
   return [
     'attributes' => $attributes,
     'content' => $markup,
-  ];}
+  ];
+}
 
-  /**
+/**
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_link_paragraph_lightbox_link_summary_alter(array $form_widget, array $para, array $attributes) {
@@ -222,7 +222,7 @@ function bos_link_paragraph_lightbox_link_summary_alter(array $form_widget, arra
   $uri = $para["entity"]->get("field_lightbox_link")->uri;
   $url = Url::fromUri($uri);
   $url_rel = $url->toString();
-  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel ."</i></a>");
+  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel . "</i></a>");
 
   return [
     'attributes' => $attributes,
