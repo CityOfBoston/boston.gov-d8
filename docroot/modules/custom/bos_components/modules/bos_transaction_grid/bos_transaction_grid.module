@@ -134,7 +134,10 @@ function bos_transaction_grid_form_alter(&$form, FormStateInterface $form_state,
                     break;
                   }
                 }
-                $filename = str_replace(['_', "-"], " ", $icon->get("name")->value);
+                $filename = "[Missing Icon]";
+                if (isset($icon)) {
+                  $filename = str_replace(['_', "-"], " ", $icon->get("name")->value);
+                }
                 $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $filename . "</span>");
                 $markup[] = Markup::create("<b>" . $type . ": </b><i>" . $dest . "</i>");
                 $form["field_components"]["widget"][$child]["subform"]["field_transactions"]["widget"][$key]["top"]["summary"]["fields_info"]["#summary"]["content"] = $markup;

@@ -440,9 +440,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   protected function correctSubDomain(string $uri) {
     $regex_swaps = [
-      "~(edit|edit-stg)\.boston.gov~" => "https://www.boston.gov",
+      "~(edit|edit-stg)\.boston.gov~" => "www.boston.gov",
       "~http(s|)://boston\.gov~" => "https://www.boston.gov",
       "~http://.*\.boston\.gov~" => "https://www.boston.gov",
+      "~^(?!http)(\w+.*)~" => "https://$1",
     ];
     foreach ($regex_swaps as $find => $replace) {
       $swap = $uri;
