@@ -5,6 +5,7 @@
  * The Base module file for bos_link module.
  */
 
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Core\Render\Markup;
 
@@ -177,4 +178,54 @@ function bos_link_paragraph_document_summary_alter(array $form_widget, array $pa
       'content' => $markup,
     ];
   }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_paragraph_external_link_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_external_link")->title . "</span>");
+  $uri = $para["entity"]->get("field_external_link")->uri;
+  $url = parse_url($uri);
+  $url["host"] = $url["scheme"] . "://" . $url["host"];
+  $url["host"] = (strpos($url["host"], "boston.gov") === FALSE ? $url["host"] : "<span style='color:red'>(internal) </span>");
+  $url = $url["host"] . $url['path'];
+  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $uri . "' target='_blank' title='Click to view in new tab'><i>" . $url . "</i></a>");
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_paragraph_internal_link_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_internal_link")->title . "</span>");
+  $uri = $para["entity"]->get("field_internal_link")->uri;
+  $url = Url::fromUri($uri);
+  $url_rel = $url->toString();
+  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel . "</i></a>");
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_paragraph_lightbox_link_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_lightbox_link")->title . "</span>");
+  $uri = $para["entity"]->get("field_lightbox_link")->uri;
+  $url = Url::fromUri($uri);
+  $url_rel = $url->toString();
+  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel . "</i></a>");
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }
