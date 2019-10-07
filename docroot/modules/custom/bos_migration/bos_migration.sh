@@ -1,54 +1,73 @@
 #!/bin/bash
 
+function displayTime() {
+  elapsed=${1};
+  if (( $elapsed > 3600 )); then
+      let "hours=elapsed/3600"
+      text="hour"
+      if (( $hours > 1 )); then text="hours"; fi
+      hours="$hours $text, "
+  fi
+  if (( $elapsed > 60 )); then
+      let "minutes=(elapsed%3600)/60"
+      text="minute"
+      if (( $minutes > 1 )); then text="minutes"; fi
+      minutes="$minutes $text and "
+  fi
+  let "seconds=(elapsed%3600)%60"
+  text="second"
+  if (( $seconds > 1 )); then text="seconds"; fi
+  seconds="$seconds $text."
+
+  echo "${hours} ${minutes} ${seconds}"
+}
+
 function doMigrate() {
     NC='\033[0m' # No Color
     RED='\033[0;31m'
-    SECONDS=0
-    ERRORS=0
+    timer=$(date +%s)
+    CYCLE=0
+    COMMAND="$*"
+    GROUP="${1}"
 
     while true; do
-        printf "[migration-step]${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
-        ${drush} mim $* --feedback=500 | tee -a ${logfile}
-        ERRORS=$((ERRORS+1))
-        bad="$(drush ms $1 | grep Importing | awk '{print $3}')"
-        if [ "${bad}" == "Importing" ]; then
-            bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
+        printf "[migration-step] ${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+
+        retval=0
+        (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=${1}
+        if [[ $retval -eq 0 ]]; then break; fi
+
+        hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $3}')"
+        if [ "${hanging}" == "Importing" ]; then
+          hanging="$(drush ms ${GROUP} | grep Importing | awk '{print $2}')"
         fi
-        if [ "${bad}" == "" ]; then
+        if [ "${hanging}" != "" ]; then
+          ${drush} mrs "${hanging}"
+        else
+          # If there are no migrations still importing, then terminate.
+          printf "[migration-warning] Migration reported errors, but no incompleted migrations found in group. \n"
           break
         fi
-        ${drush} mrs $bad
-        if [ $ERRORS -gt 4 ]; then break; fi
+
+        CYCLE=$((CYCLE+1))
+        if [ $CYCLE -gt 10 ]; then
+          printf "[migration-warning] Too many errors in ${GROUP} migration.\n" | tee -a ${logfile}
+          break;
+        fi
     done
 
-    ${drush} ms ${1} | tee -a ${logfile}
+    ${drush} ms "${GROUP}" | tee -a ${logfile}
 
-    if [ $ERRORS -ne 0 ]; then
+    if [ $CYCLE -ne 0 ]; then
         printf "[migration-warning] ${RED}Migrate command completed with Errors.${NC}\n"  | tee -a ${logfile}
     fi
 
-    printf "[migration-runtime] " | tee -a ${logfile}
-    if (( $SECONDS > 3600 )); then
-        let "hours=SECONDS/3600"
-        text="hour"
-        if (( $hours > 1 )); then text="hours"; fi
-        printf "$hours $text, " | tee -a ${logfile}
-    fi
-    if (( $SECONDS > 60 )); then
-        let "minutes=(SECONDS%3600)/60"
-        text="minute"
-        if (( $minutes > 1 )); then text="minutes"; fi
-        printf "$minutes $text and " | tee -a ${logfile}
-    fi
-    let "seconds=(SECONDS%3600)%60"
-    text="second"
-    if (( $seconds > 1 )); then text="seconds"; fi
-    printf "$seconds $text.${NC}\n\n" | tee -a ${logfile}
-
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
 function doExecPHP() {
-    SECONDS=0
+    timer=$(date +%s)
 
     printf "[migration-step] Executing PHP: '%q'" "${*}" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
@@ -57,27 +76,13 @@ function doExecPHP() {
         lando ssh -c  "/app/vendor/bin/drush php-eval $*"  | tee -a ${logfile}
     fi
 
-    printf "[migration-runtime] " | tee -a ${logfile}
-    if (( $SECONDS > 3600 )); then
-        let "hours=SECONDS/3600"
-        text="hour"
-        if (( $hours > 1 )); then text="hours"; fi
-        printf "$hours $text, " | tee -a ${logfile}
-    fi
-    if (( $SECONDS > 60 )); then
-        let "minutes=(SECONDS%3600)/60"
-        text="minute"
-        if (( $minutes > 1 )); then text="minutes"; fi
-        printf "$minutes $text and " | tee -a ${logfile}
-    fi
-    let "seconds=(SECONDS%3600)%60"
-    text="second"
-    if (( $seconds > 1 )); then text="seconds"; fi
-    printf "$seconds $text.${NC}\n\n" | tee -a ${logfile}
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
 function restoreDB() {
     # Remove old database and restore baseline
+    timer=$(date +%s)
     printf "[migration-step] Restoring Database ${1}\n" | tee -a ${logfile}
 
     backup=${1}
@@ -175,10 +180,13 @@ function restoreDB() {
     ## Puts site into maintenance mode while migration occurs.
     ${drush} sset "system.maintenance_mode" "1"
 
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
 function dumpDB() {
     # Dump current DB.
+    timer=$(date +%s)
     backup=${1}
     printf "[migration-step] Dump DB ${backup}\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
@@ -188,6 +196,8 @@ function dumpDB() {
     fi
     gzip -fq ${backup}
     printf "[migration-success] Database (default) dumped to ${backup}.gz.\n\n" | tee -a ${logfile}
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
 function removeEmptyFiles() {
@@ -201,6 +211,8 @@ acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
+
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
@@ -219,6 +231,7 @@ fi
 
 running=0
 
+totaltimer=$(date +%s)
 ## Migrate files first.
 if [ "$1" == "reset" ]; then
     running=1
@@ -328,20 +341,32 @@ if [ $running -eq 0 ]; then
     exit 1
 fi
 
+# Just run an update on all entities to be sure everything is in sync.
+printf "\n[migration-step] Update Entities.\n" | tee -a ${logfile}
+#doMigrate --group=bos_paragraphs --update --feedback=1000
+#doMigrate --group=d7_node --update --feedback=1000
+
 ## Check all migrations completed.
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
 while true; do
-    bad="$(drush ms | grep Importing | awk '{print $3}')"
-    if [ "${bad}" == "Importing" ]; then
-        bad="$(drush ms $1 | grep Importing | awk '{print $2}')"
+    hanging="$(drush ms | grep Importing | awk '{print $3}')"
+    if [ "${hanging}" == "Importing" ]; then
+        hanging="$(drush ms | grep Importing | awk '{print $2}')"
     fi
-    if [ -z $bad ]; then break; fi
+    if [ -z "${hanging}" ] || [ "${hanging}" == "" ]; then break; fi
     ERRORS=$((ERRORS+1))
-    if [ $ERRORS -gt 4 ]; then break; fi
-    ${drush} mrs $bad
-    printf "[migration-info] Will re-run partial import found for ID ${bad}.\n" | tee -a ${logfile}
-    doMigrate "${bad}" --force
+    if [ $ERRORS -gt 5 ]; then
+      printf "[migration-warning] Too many errors.\n" | tee -a ${logfile}
+      break;
+    fi
+
+    IFS=' ' read -r -a array <<< "${hanging}"
+    for element in "${array[@]}"; do
+      ${drush} mrs "${element}"
+      printf "[migration-info] Will attempt to re-run partial import found for ID ${element}.\n" | tee -a ${logfile}
+      doMigrate ${element} --force --feedback=500
+    done
 done
 
 ## Ensure everything is updated.
@@ -361,13 +386,22 @@ doMigrate d7_menu_links,d7_menu --force
 ${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 
-# Takes site out of maintenance mode when migration is done.
-${drush} sset "system.maintenance_mode" "0"
-${drush} cim -y
+printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
+${drush} ms  | tee -a ${logfile}
 
+# Takes site out of maintenance mode when migration is done.
+printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
+${drush} cim -y  | tee -a ${logfile}
+
+printf "[migration-step] Finish off migration: reset caches and maintenance mode.\n" | tee -a ${logfile}
+${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
-${drush} cr
+${drush} cr  | tee -a ${logfile}
+
 dumpDB ${dbpath}/migration_FINAL.sql
-${drush} ms  | tee -a ${logfile}
+
+text=$(displayTime $(($(date +%s)-totaltimer)))
+printf "[migration-runtime] OVERALL RUNTIME: ${text}" | tee -a ${logfile}
+
 printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}

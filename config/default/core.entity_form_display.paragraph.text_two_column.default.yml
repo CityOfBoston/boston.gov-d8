@@ -8,7 +8,6 @@ dependencies:
     - field.field.paragraph.text_two_column.field_right_column
     - paragraphs.paragraphs_type.text_two_column
   module:
-    - content_moderation
     - field_group
     - text
 third_party_settings:
@@ -27,6 +26,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Column Info'
+      region: content
 _core:
   default_config_hash: 3tTayW83JDWIZIrlmfaLKvJANEcKEn9H1v0YqZeNUus
 id: paragraph.text_two_column.default

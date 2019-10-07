@@ -85,6 +85,9 @@ class MigrationConfigAlter {
     'd7_language_content_settings',
     'd7_language_negotiation_settings',
     'd7_language_types',
+    'd7_metatag_field',
+    'd7_metatag_field_instance',
+    'd7_metatag_field_instance_widget_settings',
     'd7_node_settings',
     'd7_node_title_label',
     'd7_node_translation',
@@ -93,6 +96,7 @@ class MigrationConfigAlter {
     'd7_pathauto_patterns',
     'd7_pathauto_settings',
     'd7_realname_settings',
+    'd7_simplesamlphp_auth',
     'd7_syslog_settings',
     'd7_system_authorize',
     'd7_system_cron',
@@ -100,6 +104,7 @@ class MigrationConfigAlter {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
+    'd7_taxonomy_term:type_of_content',
     'd7_theme_settings',
     'd7_user_flood',
     'd7_user_mail',
@@ -1535,12 +1540,6 @@ class MigrationConfigAlter {
       $process_to_insert = ['plugin' => 'rich_text_to_media_embed'];
 
       foreach ($this->migrations as $key => $value) {
-
-        // We do not want to convert rich-text-embeds for older revisions.
-        if ($value['id'] == "d7_node_revision") {
-          continue;
-        }
-
         $matches = array_intersect_key($value['process'], $rich_text_fields);
 
         if (!empty($matches)) {

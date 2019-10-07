@@ -11,8 +11,10 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  */
 
 use Drupal\bos_migration\MigrationFixes;
+use Drupal\file\Entity\File;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
+use Drupal\migrate\MigrateSkipProcessException;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\Component\Utility\Html;
@@ -111,7 +113,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         // than sorry.
         $parts = explode('/', $src);
         $extension = $parts[count($parts) - 1];
-        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
+        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension . '"');
         continue;
       }
 
@@ -143,7 +145,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       elseif (!in_array("file", $this->resolveFileType($href))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
+        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got "' . $href . '"');
         continue;
       }
 
@@ -201,12 +203,12 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     try {
       if (!is_string($json)) {
-        throw new Exception('Unable to find matching tag');
+        throw new Exception('String selected does not resolve to JSON. ', -889977);
       }
       $tag_info = Json::decode($json);
-      if (!$file = \Drupal::service('entity_type.manager')->getStorage('file')->load($tag_info['fid'])) {
+      if (!$file = File::load($tag_info['fid'])) {
         // Nothing to do if we can't find the file.
-        return NULL;
+        throw new Exception("Image " . $tag_info['fid'] . " could not be found.", -889977);
       }
       $tag_info['file'] = $file;
       if (!empty($tag_info['attributes']) && is_array($tag_info['attributes'])) {
@@ -236,6 +238,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
     catch (Exception $e) {
       // If we hit an error, don't perform replacement.
+      if ($e->getCode() == -889977) {
+        throw new MigrateSkipProcessException($e->getMessage());
+      }
       return NULL;
     }
 
@@ -303,7 +308,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $uri = $this->getRelativeUrl($src);
       if ($uri === FALSE) {
         // Nothing to do if we can't extract the URI.
-        \Drupal::logger('Migrate')->notice('4:URI extraction failed ($src).');
+        \Drupal::logger('Migrate')->notice("4:URI extraction failed ($src).");
         return NULL;
       }
     }

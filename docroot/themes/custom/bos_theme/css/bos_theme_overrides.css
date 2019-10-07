@@ -273,7 +273,7 @@ What: Moves the context icon to the left to avoid being cutoff by overflow
       on parent containers.
  */
 .contextual {
-  right: 0px;
+  right: 0;
 }
 /**
 David
@@ -380,12 +380,22 @@ Where: All modules, display on RHS sidebar
 What: Fixes right sidebar label:content alignment - Fixes issue also present in D7
 */
 .detail-item__body--secondary, .detail-item__body--tertiary {
-  line-height: 1.5rem;
   margin-top: 2px;
 }
 .detail-item__body--secondary, .detail-item__body--tertiary a {
   vertical-align: middle;
 }
+
+/*
+Jim
+Where: Office hours in How-to Contact Step
+What: Style previously provided by sites/all/modules/contrib/office_hours/office_hours.css
+*/
+.oh-display-label {
+  display: inline-block;
+  min-width: 3em;
+}
+
 /*
 David
 Where: Paragraphs which cover 100% width.
@@ -892,4 +902,21 @@ What: Fix the image to 200x200px.
 .paragraphs-item-3-column-w-image .column-wrapper img {
   width: 200px;
   height: 200px;
+}
+
+/*
+David:
+Where: media image in node--person-profile--listing.html.twig
+What: Make a round border..
+ */
+.node-person-profile .cdp-i img {
+  border-radius: 100%;
+}
+/*
+David:
+Where: hero images and intor images
+What: ensure fills the available area.
+ */
+.main-content .hero-image .hro {
+  min-height: 100%;
 }
