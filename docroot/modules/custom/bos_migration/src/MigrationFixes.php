@@ -868,12 +868,18 @@ class MigrationFixes {
     $mimes = [
       "file" => [
         "application/pdf" => "pdf",
+        "application/msword" => "doc",
+        "text/plain" => "txt",
+        "application/rtf" => "rtf",
       ],
       "image" => [
+        "image/tiff" => "tif",
         "image/gif" => "gif",
         "image/jpg" => "jpg",
         "image/jpeg" => "jpg",
+        'image/x-photoshop' => 'jpg',
         "image/png" => "png",
+//  'image/svg+xml' => 'svg',
       ],
     ];
     // Only files referenced by these entity fields will be loaded into the
