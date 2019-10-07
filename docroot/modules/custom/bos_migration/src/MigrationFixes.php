@@ -879,7 +879,6 @@ class MigrationFixes {
         "image/jpeg" => "jpg",
         'image/x-photoshop' => 'jpg',
         "image/png" => "png",
-//  'image/svg+xml' => 'svg',
       ],
     ];
     // Only files referenced by these entity fields will be loaded into the
@@ -917,7 +916,7 @@ class MigrationFixes {
               $file->filename = explode("/", $file->uri);
               $file->filename = array_pop($file->filename);
               $file->filename = str_replace("." . $file_extension, "", $file->filename);
-              $file->type = $media_type == "file" ? "document" : "image";
+              $file->type = ($media_type == "file" ? "document" : "image");
               if ($media_type == "file") {
                 $file->media_library = TRUE;
                 $file->filename .= " (" . $file_extension . ")";
