@@ -113,7 +113,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         // than sorry.
         $parts = explode('/', $src);
         $extension = $parts[count($parts) - 1];
-        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
+        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension . '"');
         continue;
       }
 
@@ -145,7 +145,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       elseif (!in_array("file", $this->resolveFileType($href))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
+        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got "' . $href . '"');
         continue;
       }
 
@@ -382,6 +382,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
     if (!preg_match($from_main_domain, $uri, $matches)) {
       // Not a searched absolute uri.
+      \Drupal::logger('Migrate')->notice("$uri is not a local file.");
       return FALSE;
     }
     if (substr($matches[3], 1, 1) != "/") {
@@ -442,6 +443,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       "~(edit|edit-stg)\.boston.gov~" => "www.boston.gov",
       "~http(s|)://boston\.gov~" => "https://www.boston.gov",
       "~http://.*\.boston\.gov~" => "https://www.boston.gov",
+      "~^(?!http)(\w+.*)~" => "https://$1",
     ];
     foreach ($regex_swaps as $find => $replace) {
       $swap = $uri;
