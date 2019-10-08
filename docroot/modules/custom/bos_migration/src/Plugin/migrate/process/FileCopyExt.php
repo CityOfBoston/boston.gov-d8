@@ -128,7 +128,8 @@ class FileCopyExt extends FileCopy {
     $isDoc = strpos($source, ".pdf")
             || strpos($source, ".doc")
             || strpos($source, ".xl");
-    if (!file_exists('/var/www/site-php') && $isDoc) {
+    if (!file_exists('/var/www/site-php')) {
+    //  if (!file_exists('/var/www/site-php') && $isDoc) {
       $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - docs not copied.", MigrationInterface::MESSAGE_INFORMATIONAL);
       $result = $destination;
     }
