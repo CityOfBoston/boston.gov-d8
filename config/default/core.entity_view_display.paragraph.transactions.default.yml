@@ -5,10 +5,12 @@ dependencies:
   config:
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
+    - image.style.media_fixed_height_100px_
     - paragraphs.paragraphs_type.transactions
   module:
     - entity_reference_revisions
     - fences
+    - media
 _core:
   default_config_hash: XUL-rB3LuHmqMwx9gdJke4a-0YdD8dEivhBDpz_jILo
 id: paragraph.transactions.default
@@ -35,10 +37,10 @@ content:
   field_icon:
     label: hidden
     weight: 0
-    type: entity_reference_entity_view
+    type: media_thumbnail
     settings:
-      view_mode: default
-      link: false
+      image_style: media_fixed_height_100px_
+      image_link: ''
     third_party_settings:
       fences:
         fences_field_tag: none
