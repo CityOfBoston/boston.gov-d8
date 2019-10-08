@@ -141,10 +141,6 @@ function restoreDB() {
     ${drush} updb -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
-    printf "[migrate-info] Run entity-schema updates.\n" | tee -a ${logfile}
-    ${drush} entup -y  | tee -a ${logfile}
-    printf "\n" | tee -a ${logfile}
-
     printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
     doExecPHP "node_access_rebuild();"
     printf "\n" | tee -a ${logfile}

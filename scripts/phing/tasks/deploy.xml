@@ -205,10 +205,6 @@
     <exec dir="${docroot}" passthru="true"
           description="Run update.php to import update hooks."
           command="${travis.drush} ${drush.alias} updb -y"/>
-    <echo message="Update existing entities on deploy target (poss. redundant)." level="info"/>
-    <exec dir="${docroot}" passthru="true"
-          description="Update any entities."
-          command="${travis.drush} ${drush.alias} entup -y"/>
     <echo message="Rebuild user content access permissions on deploy target." level="info"/>
     <exec dir="${docroot}" passthru="true"
           description="Rebuild content access permissions."
