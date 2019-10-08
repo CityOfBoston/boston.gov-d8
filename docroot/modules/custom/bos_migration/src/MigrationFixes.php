@@ -868,11 +868,16 @@ class MigrationFixes {
     $mimes = [
       "file" => [
         "application/pdf" => "pdf",
+        "application/msword" => "doc",
+        "text/plain" => "txt",
+        "application/rtf" => "rtf",
       ],
       "image" => [
+        "image/tiff" => "tif",
         "image/gif" => "gif",
         "image/jpg" => "jpg",
         "image/jpeg" => "jpg",
+        'image/x-photoshop' => 'jpg',
         "image/png" => "png",
       ],
     ];
@@ -911,7 +916,7 @@ class MigrationFixes {
               $file->filename = explode("/", $file->uri);
               $file->filename = array_pop($file->filename);
               $file->filename = str_replace("." . $file_extension, "", $file->filename);
-              $file->type = $media_type == "file" ? "document" : "image";
+              $file->type = ($media_type == "file" ? "document" : "image");
               if ($media_type == "file") {
                 $file->media_library = TRUE;
                 $file->filename .= " (" . $file_extension . ")";
