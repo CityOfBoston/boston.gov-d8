@@ -1385,20 +1385,6 @@ class MigrationConfigAlter {
         }*/
       }
 
-      // Make sure the parent_id defaults to zero if nothing found.
-      if ($entityType == "taxonomy"
-        && in_array($migration["id"], [
-          "d7_taxonomy_term",
-          "d7_taxonomy_term_entity_translation",
-        ])
-        && isset($migration["process"]["parent_id"])) {
-        $migration["process"]["parent_id"][0] = [
-          "plugin" => "default_value",
-          "default_value" => "0",
-          "source" => "parent",
-        ];
-      }
-
       // Regardless of entity type, Update langcode to set itself sensibly.
       if (isset($migration["process"]["langcode"])) {
         if (is_array($migration["process"]["langcode"]) && $migration["process"]["langcode"]["plugin"] == "default_value") {
