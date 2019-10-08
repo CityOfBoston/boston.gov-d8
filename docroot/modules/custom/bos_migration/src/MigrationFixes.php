@@ -419,8 +419,8 @@ class MigrationFixes {
     'public://img/icons/department/icons_doit.svg' => '//patterns.boston.gov/assets/icons/dept_icons/innovation_and_technology_logo.svg',
     'public://img/icons/department/icons_disabilities_disabilities.svg' => '//patterns.boston.gov/assets/icons/dept_icons/disabilities_commission_icon.svg',
     'public://img/icons/department/icons_disabilities.svg' => '//patterns.boston.gov/assets/icons/dept_icons/disabilities_commission_icon.svg',
-    'public://img/icons/department/icons_consumer_affairs_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/licensing_board_logo.svg',
-    'public://img/icons/department/icons_consumer_affairs.svg' => '//patterns.boston.gov/assets/icons/dept_icons/licensing_board_logo.svg',
+    'public://img/icons/department/icons_consumer_affairs_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/consumer_affairs_and_licensing_logo.svg',
+    'public://img/icons/department/icons_consumer_affairs.svg' => '//patterns.boston.gov/assets/icons/dept_icons/consumer_affairs_and_licensing_logo.svg',
     'public://img/icons/department/icons_city_council.svg' => '//patterns.boston.gov/assets/icons/dept_icons/city_council_icon.svg',
     'public://img/icons/department/icons_city_clerk.svg' => '//patterns.boston.gov/assets/icons/dept_icons/city_clerk_icon.svg',
     'public://img/icons/department/icons_cable.svg' => '//patterns.boston.gov/assets/icons/dept_icons/broadband_and_cable_icon.svg',
@@ -469,7 +469,7 @@ class MigrationFixes {
     'public://img/icons/department/2016/08/icons_landmarks.svg' => '//patterns.boston.gov/assets/icons/dept_icons/landmarks_commission_logo.svg',
     'public://img/icons/department/2016/08/icons_labor_relations.svg' => '//patterns.boston.gov/assets/icons/dept_icons/labor_relations_logo.svg',
     'public://img/icons/department/2016/08/icons_digital.svg' => '//patterns.boston.gov/assets/icons/dept_icons/digital_team_icon.svg',
-    'public://img/icons/department/2016/08/department_icons_emergency_management.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
+    'public://img/icons/department/2016/08/department_icons_emergency_management.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management_logo.svg',
     'public://img/icons/department/2016/07/assessing_logo.svg' => '//patterns.boston.gov/assets/icons/dept_icons/assessing_icon.svg',
     'public://img/how_to/intro_images/default-hero-image_9.svg' => 'public://icons/default-hero-image.svg',
     'public://img/how_to/intro_images/default-hero-image_8.svg' => 'public://icons/default-hero-image.svg',
@@ -503,7 +503,7 @@ class MigrationFixes {
     'public://img/2018/d/department_icons_emergency_management_1_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
     'public://img/2017/s/svg_hosuing_authority_.svg' => '//patterns.boston.gov/assets/icons/dept_icons/housing_authority_logo.svg',
     'public://img/2017/e/experiential_icons_important_6.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/alert.svg',
-    'public://img/2017/e/experiential_icons_fire_operations.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/axe.svg',
+    'public://img/2017/e/experiential_icons_fire_operations.svg' => '//patterns.boston.gov/assets/icons/dept_icons/fire_operations_logo.svg',
     'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/building_permit.svg',
     'public://img/2017/e/experiential_icon_how_to_file_for_a_property_tax_abatement.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/building_permit.svg',
     'public://img/2017/d/department_icons_emergency_management_0.svg' => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management__logo.svg',
@@ -624,6 +624,9 @@ class MigrationFixes {
     'public://img/icons/transactions/2019/05/tripple_decker_-_at_home_renters.png' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
     'public://img/icons/transactions/2019/06/tripple_decker_.png' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
     'public://img/icons/transactions/2019/06/tripple_decker__0.png' => '//patterns.boston.gov/assets/icons/experiential_icons/triple_decker.svg',
+    "public://img/icons/department/icons_engagment_-_311_-_ons.svg" => '//patterns.boston.gov/assets/icons/dept_icons/bos_311_icon.svg',
+    "public://img/icons/department/2018/08/asset_332.svg" => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management_logo.svg',
+    "public://img/icons/department/2018/05/pm_logo.svg" => '//patterns.boston.gov/assets/icons/dept_icons/property_and_construction_management_logo.svg',
   ];
 
   /**
