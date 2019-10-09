@@ -46,7 +46,7 @@ build:
         # aquia require ./config/default:
         #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
         sync: "../config/default"
-    simplesaml_config:
+    simplesaml:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
       type: dev
       database:
@@ -104,7 +104,7 @@ deploy:
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-  simplesaml_config:
+  simplesaml:
     # Folder in Travis container where deploy files will be "built"
     dir: ${repo.root}/deploy
     # Name of the target branch in the Acquia repo.
