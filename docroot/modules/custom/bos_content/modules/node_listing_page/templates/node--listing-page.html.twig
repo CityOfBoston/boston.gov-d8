@@ -89,11 +89,12 @@
 {% endif %}
 
 {% if with_image_title %}
+
   <div class="title-wrapper">
     <div class="title-inner-wrapper">
-      {{ title_prefix }}
-        <h1 class="title-with-hero">{{ with_image_title }}</h1>
-      {{ title_suffix }}
+
+      <h1 class="title-with-hero">{{ with_image_title }}</h1>
+
     </div>
   </div>
 {% endif %}
@@ -103,6 +104,10 @@
 </div>
 
 <article{{ attributes }}>
+
+  {{ content.contextual_links }}
+  {{ title_suffix }}
+  {{ title_prefix }}
 
   {% if content.field_header_component %}
     {{ content.field_header_component }}
