@@ -627,6 +627,7 @@ class MigrationFixes {
     "public://img/icons/department/icons_engagment_-_311_-_ons.svg" => '//patterns.boston.gov/assets/icons/dept_icons/bos_311_icon.svg',
     "public://img/icons/department/2018/08/asset_332.svg" => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management_logo.svg',
     "public://img/icons/department/2018/05/pm_logo.svg" => '//patterns.boston.gov/assets/icons/dept_icons/property_and_construction_management_logo.svg',
+    "public://img/icons/department/icons_bcyf.png" => '//patterns.boston.gov/assets/icons/dept_icons/youth_employment_and_engagement_logo.svg',
   ];
 
   /**
@@ -769,7 +770,7 @@ class MigrationFixes {
     Database::getConnection()
       ->query("
         UPDATE file_managed
-        SET filename = SUBSTRING_INDEX(uri, '/', -1) 
+        SET filename = SUBSTRING_INDEX(uri, '/', -1)
         WHERE locate('.', filename) = 0 and fid > 0;
       ")
       ->execute();
@@ -796,10 +797,10 @@ class MigrationFixes {
     printf("[action] Will map old svg path/filename to new path/filenames.\n");
     $cnt = 0;
     $svgs = \Drupal::database()->query("
-        SELECT distinct f.fid, f.uri 
+        SELECT distinct f.fid, f.uri
         FROM file_managed f
           LEFT JOIN media m ON f.fid = m.mid
-        WHERE f.filemime LIKE '%svg%' 
+        WHERE f.filemime LIKE '%svg%'
             AND m.mid IS NULL
             AND f.status = 1;")->fetchAll();
 
