@@ -31,7 +31,7 @@ function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
       $term = \Drupal::entityTypeManager()
         ->getStorage('taxonomy_term')
         ->load($tid);
-      if (!empty($term)) {
+      if (!empty($term) && $term->hasField('field_id')) {
         $variables['newsletter_id'] = $term->get('field_id')
           ->getValue()['0']['value'];
       }
