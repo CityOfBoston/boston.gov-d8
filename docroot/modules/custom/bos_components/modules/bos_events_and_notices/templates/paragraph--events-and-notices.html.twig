@@ -26,7 +26,8 @@
 
 <div class="{{ classes }}" {{ attributes }}>
   <div class="content container"{{ content_attributes }}>
-  	  <div class="sh">
+  	  <div class="sh cl">
+        {{ content.contextual_links }}
         {% if content.field_component_title %}
           {{ content.field_component_title }}
         {% endif %}
