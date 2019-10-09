@@ -85,8 +85,8 @@
       <div class="n-li-a">Canceled{% if elements.field_extra_info %}: {{ elements.field_extra_info }}{% endif %}</div>
     {% else %}
       {% if has_testimony %}
-        {% if elements.field_time %}
-          <div class="n-li-a">Public testimony begins at {{ elements.field_time }}.</div>
+        {% if short_time %}
+          <div class="n-li-a">Public testimony begins at {{ short_time }}.</div>
         {% else %}
           <div class="n-li-a">The public can offer testimony.</div>
         {% endif %}

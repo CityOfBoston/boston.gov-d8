@@ -610,7 +610,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
             ->toString();
           $results['title'] = $link['0']['title'];
-          if (empty($link['0']['title']) && $link['0']['title'] == "Migration stub: link title") {
+          if (empty($link['0']['title']) || $link['0']['title'] == "Migration stub: link title") {
             // Load the node and get its title.
             ($node = Node::load($match[1])) && ($results['title'] = $node->getTitle());
           }
