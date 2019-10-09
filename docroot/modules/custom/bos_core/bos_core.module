@@ -7,12 +7,10 @@
 
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\bos_core\BosCoreHelp;
-use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
@@ -337,7 +335,128 @@ function bos_core_token_info() {
     'name' => t('Boston'),
     'description' => t('A token type for Boston.'),
   ];
+  // Add custom tokens.
+  $info['tokens']['custom']['schema_image'] = [
+    'name' => t('Schema Image'),
+    'description' => t('Image to be used for Schema.org metatag'),
+  ];
+  $info['tokens']['custom']['schema_start_date'] = [
+    'name' => t('Schema Start Date'),
+    'description' => t('Start Date for Events'),
+  ];
+  $info['tokens']['custom']['schema_end_date'] = [
+    'name' => t('Schema End Date'),
+    'description' => t('End Date for Events'),
+  ];
+  $info['tokens']['custom']['schema_how_to_titles'] = [
+    'name' => t('Schema How To Titles'),
+    'description' => t('Titles for How To Steps'),
+  ];
+  $info['tokens']['custom']['schema_how_to_details'] = [
+    'name' => t('Schema How To Details'),
+    'description' => t('Details for How To Steps'),
+  ];
+
   return $info;
+}
+
+/**
+ * Populate token data.
+ */
+function bos_core_tokens($type, $tokens, array $data = [], array $options = []) {
+
+  $custom_tokens = [];
+  // Get field data.
+  if (isset($data['node'])) :
+    // Get info for intro image.
+    if ($data['node']->hasField('field_intro_image')) :
+      if (!empty($data['node']->get('field_intro_image')->getValue())) :
+        // Set default image.
+        $img_id = $data['node']->get('field_intro_image')->getValue();
+        $img_id = $img_id[0]['target_id'];
+        $img_url = File::load($img_id);
+        $img_url = file_create_url($img_url->getFileUri());
+        $schema_img_val = $img_url;
+      else :
+        $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
+      endif;
+    else :
+      $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
+    endif;
+
+    if ($data['node']->hasField('field_date_range')) :
+      $dates = $data['node']->get('field_date_range')[0]->getValue();
+    endif;
+
+    if ($data['node']->hasField('field_public_notice_date')) :
+      $dates = $data['node']->get('field_public_notice_date')[0]->getValue();
+    endif;
+
+    if ($data['node']->hasField('field_address')) :
+      $address = $data['node']->get('field_address')[0]->getValue();
+    endif;
+
+    if ($type == 'custom') {
+      foreach ($tokens as $name => $original) {
+        if (strpos($name, 'how_to') !== FALSE) {
+          $tab_token_type = '';
+          $tab_token_titles = '';
+          $tab_token_details = '';
+          $tabs = $data['node']->get('field_how_to_tabs')->getValue();
+
+          foreach ($tabs as $ht_tab) {
+            $entities = Paragraph::load($ht_tab['target_id']);
+
+            // Get Tab Title info.
+            $tab_items = $entities->field_how_to_title->getValue();
+            $tab_token_type = $tab_items[0]['value'];
+
+            // Get Tab Step info.
+            $field_items = $entities->field_how_to_steps->getValue();
+            foreach ($field_items as $ht_step) {
+              $step_id = $ht_step['target_id'];
+              $step = Paragraph::load($step_id);
+              // Get title of step.
+              $title = $step->field_title->getValue();
+              foreach ($title as $ht_step_title) {
+                $tab_token_titles .= $tab_token_type . ": " . $ht_step_title['value'] . ",";
+              }
+              // Get summary of step.
+              $details = $step->field_step_details->getValue();
+              foreach ($details as $ht_step_details) {
+                $details_trim = str_replace(',', '', $ht_step_details['value']);
+                $tab_token_details .= filter_var($details_trim, FILTER_SANITIZE_STRING) . ",";
+              }
+            }
+          }
+        }
+        switch ($name) {
+
+          case 'schema_image':
+            $custom_tokens[$original] = $schema_img_val;
+            break;
+
+          case 'schema_start_date':
+            $custom_tokens[$original] = $dates['value'];
+            break;
+
+          case 'schema_end_date':
+            $custom_tokens[$original] = ($dates['end_value'] !== $dates['value'] ? $dates['end_value'] : NULL);
+            break;
+
+          case 'schema_how_to_titles':
+            $custom_tokens[$original] = $tab_token_titles;
+            break;
+
+          case 'schema_how_to_details':
+            $custom_tokens[$original] = $tab_token_details;
+            break;
+        }
+      }
+    }
+  endif;
+  // Return the custom and updated tokens.
+  return $custom_tokens;
 }
 
 /**
@@ -365,7 +484,7 @@ function bos_core_rebuild() {
   $dir = dir($fromPath);
   $icons = [];
   while (FALSE !== ($file = $dir->read())) {
-    if (strpos($file, ".svg") > 0 || strpos($file, ".png") || strpos($file, ".gif") > 0) {
+    if (strpos($file, ".svg") > 0 || strpos($file, ".png") > 0) {
       $icons[] = $file;
     }
   }
@@ -405,21 +524,6 @@ function bos_core_rebuild() {
     }
   }
 
-}
-
-/**
- * Implements hook_views_query_alter().
- */
-function bos_core_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if (isset($view->build_info["title"]) && strpos($view->build_info["title"], "negate") !== FALSE) {
-    foreach ($query->where as $key => &$conds) {
-      foreach ($conds as $cond_key => &$cond) {
-        if (isset($cond[0]["operator"]) && $cond[0]["operator"] == "formula") {
-          $cond[0]["field"] = str_replace("=", "<>", $cond[0]["field"]);
-        }
-      }
-    }
-  }
 }
 
 /**
@@ -514,7 +618,7 @@ function _bos_core_uninstall_boston($module) {
  * @param string $module
  *   The module name.
  */
-function _bos_core_install_icons($module, $safe = FALSE) {
+function _bos_core_install_icons($module) {
   $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
   if (!file_exists($path)) {
     mkdir($path, 0777);
@@ -530,38 +634,34 @@ function _bos_core_install_icons($module, $safe = FALSE) {
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
+    if (file_exists($destfile)) {
+      unlink($destfile);
+    }
+    copy($modulePath . "/" . $icon, $destfile);
 
-    if (!$safe || ($safe && !file_exists($destfile))) {
-
-      if (file_exists($destfile)) {
-        unlink($destfile);
+    // Check if the file exists that is listed in para.para_type.module.yml.
+    $filesystem = \Drupal::service('file_system');
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+    $mod = \Drupal::entityTypeManager()
+      ->getStorage("paragraphs_type")->load($entity);
+    if (!empty($mod)) {
+      $destination = "public://paragraphs_type_icon/" . $icon;
+      $image = Drupal::entityTypeManager()->getStorage("file")
+        ->loadByProperties(["uri" => $destination]);
+      if (count($image) == 0) {
+        $image = File::create();
+        $image->setFileUri($destination);
+        $image->setOwnerId(\Drupal::currentUser()->id());
+        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+        $image->setFileName($filesystem->basename($destination));
+        $image->setPermanent();
+        $image->save();
       }
-      copy($modulePath . "/" . $icon, $destfile);
-
-      // Check if the file exists that is listed in para.para_type.module.yml.
-      $filesystem = \Drupal::service('file_system');
-      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-      $mod = \Drupal::entityTypeManager()
-        ->getStorage("paragraphs_type")->load($entity);
-      if (!empty($mod)) {
-        $destination = "public://paragraphs_type_icon/" . $icon;
-        $image = Drupal::entityTypeManager()->getStorage("file")
-          ->loadByProperties(["uri" => $destination]);
-        if (count($image) == 0) {
-          $image = File::create();
-          $image->setFileUri($destination);
-          $image->setOwnerId(\Drupal::currentUser()->id());
-          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-          $image->setFileName($filesystem->basename($destination));
-          $image->setPermanent();
-          $image->save();
-        }
-        else {
-          $image = end($image);
-        }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
+      else {
+        $image = end($image);
       }
+      $file_uuid = $image->get("uuid")->value;
+      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
@@ -607,13 +707,9 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           preg_match('~/(.*)~', $link['0']['uri'], $match);
           $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
           $results['url'] = $url->toString();
+          $results['title'] = $link['0']['title'];
           $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
             ->toString();
-          $results['title'] = $link['0']['title'];
-          if (empty($link['0']['title']) || $link['0']['title'] == "Migration stub: link title") {
-            // Load the node and get its title.
-            ($node = Node::load($match[1])) && ($results['title'] = $node->getTitle());
-          }
         }
         break;
     }
@@ -798,15 +894,4 @@ function _bos_core_global_update_configs() {
   _bos_vocab_update_all_configs();
   _bos_core_update_all_configs();
 
-}
-
-/**
- * Implements hook_field_widget_form_alter().
- */
-function bos_core_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  if (isset($element["uri"])) {
-    if ($context["widget"]->getPluginDefinition()["id"] == "entity_reference_autocomplete") {
-      $element["uri"]["#selection_handler"] = "autocomplete:node";
-    }
-  }
 }
