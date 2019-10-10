@@ -863,15 +863,15 @@ class MigrationFixes {
     printf("[action] Will create media entities for select managed files.\n");
     // Only files with these MIME will loaded as media entities.
     $mimes = [
-      "file" => [
-        "application/pdf" => "pdf",
-        "application/msword" => "doc",
-        "text/plain" => "txt",
-        "application/rtf" => "rtf",
-      ],
+//      "file" => [
+//        "application/pdf" => "pdf",
+//        "application/msword" => "doc",
+//        "text/plain" => "txt",
+//        "application/rtf" => "rtf",
+//      ],
       "image" => [
-        "image/tiff" => "tif",
-        "image/gif" => "gif",
+//        "image/tiff" => "tif",
+//        "image/gif" => "gif",
         "image/jpg" => "jpg",
         "image/jpeg" => "jpg",
         'image/x-photoshop' => 'jpg',
@@ -900,7 +900,7 @@ class MigrationFixes {
             FROM file_managed f
             	LEFT JOIN media m ON f.fid = m.mid
             WHERE f.filemime = '" . $mime . "' 
-              AND m.mid IS NULL
+         --     AND m.mid IS NULL
               AND f.status = 1;")->fetchAll();
 
         if (!empty($files)) {
@@ -1017,7 +1017,7 @@ class MigrationFixes {
         'uid' => ($file->file->uid->target_id ?? 1),
         'name' => ($file->filename ?? "City of Boston stock media item"),
         'status' => ($file->file->status->value ?? 1),
-        'field_media_in_library' => ($svg->media_library ?? FALSE),
+        'field_media_in_library' => ($file->media_library ?? FALSE),
       ];
       if ($file->type != "document") {
         $param['thumbnail'] = [
@@ -1041,7 +1041,7 @@ class MigrationFixes {
         // Save the new media entity.
         $result = $media->save();
 
-        if (($svg->media_library ?? FALSE) && $media->field_media_in_library->value != 1) {
+        if (($file->media_library ?? FALSE) && $media->field_media_in_library->value != 1) {
           $media->field_media_in_library->value = 1;
           $media->setNewRevision(FALSE);
           $result = $media->save();
