@@ -863,15 +863,15 @@ class MigrationFixes {
     printf("[action] Will create media entities for select managed files.\n");
     // Only files with these MIME will loaded as media entities.
     $mimes = [
-//      "file" => [
-//        "application/pdf" => "pdf",
-//        "application/msword" => "doc",
-//        "text/plain" => "txt",
-//        "application/rtf" => "rtf",
-//      ],
+      "file" => [
+        "application/pdf" => "pdf",
+        "application/msword" => "doc",
+        "text/plain" => "txt",
+        "application/rtf" => "rtf",
+      ],
       "image" => [
-//        "image/tiff" => "tif",
-//        "image/gif" => "gif",
+        "image/tiff" => "tif",
+        "image/gif" => "gif",
         "image/jpg" => "jpg",
         "image/jpeg" => "jpg",
         'image/x-photoshop' => 'jpg',
