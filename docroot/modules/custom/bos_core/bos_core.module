@@ -369,19 +369,17 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
   // Get field data.
   if (isset($data['node'])) :
     // Get info for intro image.
+    $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
     if ($data['node']->hasField('field_intro_image')) :
       if (!empty($data['node']->get('field_intro_image')->getValue())) :
         // Set default image.
         $img_id = $data['node']->get('field_intro_image')->getValue();
         $img_id = $img_id[0]['target_id'];
-        $img_url = File::load($img_id);
-        $img_url = file_create_url($img_url->getFileUri());
-        $schema_img_val = $img_url;
-      else :
-        $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
+        if ($img_url = File::load($img_id)) {
+          $img_url = file_create_url($img_url->getFileUri());
+          $schema_img_val = $img_url;
+        }
       endif;
-    else :
-      $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
     endif;
 
     if ($data['node']->hasField('field_date_range')) :
