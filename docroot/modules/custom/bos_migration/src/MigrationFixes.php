@@ -27,38 +27,33 @@ class MigrationFixes {
    * @var array
    */
   protected static $viewListMap = [
-    'bos_department_listing' => [
-      'listing' => ['departments_listing', 'page_1'],
-    ],
-    'bos_news_landing' => [
-      'page' => ["news_landing", 'page_1'],
-    ],
-    'calendar' => [
-      'feed_1' => ["calendar", "page_1"],
-      'listing' => ["calendar", "page_1"],
-    ],
-    'metrolist_affordable_housing' => [
-      'page' => ["metrolist_affordable_housing", "page_1"],
-      'page_1' => ["metrolist_affordable_housing", "page_1"],
+    'events_and_notices' => [
+      'block_1' => ["events_and_notices", "related"],
+      'most_recent' => ["events_and_notices", "upcoming"],
     ],
     'news_and_announcements' => [
-      'departments' => ["news_and_announcements", "related"],
-      'events' => ["news_and_announcements", "related"],
-      'guides' => ["news_and_announcements", "related"],
       'most_recent' => ["news_and_announcements", "upcoming"],
       'news_events' => ["news_and_announcements", "related"],
-      'places' => ["news_and_announcements", "related"],
-      'posts' => ["news_and_announcements", "related"],
-      'programs' => ["news_and_announcements", "related"],
-      'upcoming' => ["news_and_announcements", "upcoming"],
-      'related' => ["news_and_announcements", "related"],
+    ],
+    'bos_department_listing' => [
+      'listing' => ['departments_listing', 'listing'],
+    ],
+    'bos_news_landing' => [
+      'page' => ["news_landing", 'page'],
+    ],
+    'calendar' => [
+      'feed_1' => ["calendar", "listing"],
+      'listing' => ["calendar", "listing"],
+    ],
+    'metrolist_affordable_housing' => [
+      'page' => ["metrolist_affordable_housing", "page"],
     ],
     'places' => [
-      'listing' => ["places", "page_1"],
+      'listing' => ["places", "listing"],
     ],
     'public_notice' => [
-      'archive' => ["public_notice", "page_2"],
-      'landing' => ["public_notice", "page_1"],
+      'archive' => ["public_notice", "archive"],
+      'landing' => ["public_notice", "landing"],
     ],
     'status_displays' => [
       'homepage_status' => ["status_items", "motd"],
@@ -67,14 +62,12 @@ class MigrationFixes {
       'page_1' => ["topic_landing_page", "guide_page"],
     ],
     'transactions' => [
-      'main_transactions' => ["transactions", "page_1"],
+      'main_transactions' => ["transactions", "main_transactions"],
+      'sticky_transactions' => ["transactions", "main_transactions"],
     ],
     'upcoming_events' => [
-      'most_recent' => ["upcoming_events", "block_1"],
-    ],
-    'events_and_notices' => [
-      'related' => ["events_and_notices", "block_1"],
-      'upcoming' => ["events_and_notices", "most_recent"],
+      'most_recent' => ["events_and_notices", "upcoming"],
+      'block_1' => ["events_and_notices", "upcoming"],
     ],
   ];
 
