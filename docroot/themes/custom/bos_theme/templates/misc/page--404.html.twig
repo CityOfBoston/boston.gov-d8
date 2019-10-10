@@ -10,17 +10,19 @@
     {{ logo }}
     {{ seal }}
 </header>
-<div class="main">
-  <div class="container">
-    <section class="main-content err-content" id="content" role="main" {{ attributes }}">
-      <div class="not-found-text error-text column desktop-50">
-        {{ title }}
-        <p><em>{{ error_text|raw }}</em></p>
-        <div class="content bos-search-form">
-            {{ search }}
+<div class="page">
+  <div class="main">
+    <div class="container">
+      <section class="main-content err-content" id="content" role="main" {{ attributes }}">
+        <div class="not-found-text error-text column desktop-50">
+          <h1>{{ title }}</h1>
+          <p><em>{{ error_text|raw }}</em></p>
+          <div class="content bos-search-form">
+              {{ search }}
+          </div>
         </div>
-      </div>
-    </section>
-    <div class="err err--404"></div>
+      </section>
+      <div class="err err--404"></div>
+    </div>
   </div>
 </div>
