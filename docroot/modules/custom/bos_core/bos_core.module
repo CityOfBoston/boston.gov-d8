@@ -382,15 +382,15 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
       endif;
     endif;
 
-    if ($data['node']->hasField('field_date_range')) :
+    if ($data['node']->hasField('field_date_range') && count($data['node']->get('field_date_range'))) :
       $dates = $data['node']->get('field_date_range')[0]->getValue();
     endif;
 
-    if ($data['node']->hasField('field_public_notice_date')) :
+    if ($data['node']->hasField('field_public_notice_date') && count($data['node']->get('field_public_notice_date'))) :
       $dates = $data['node']->get('field_public_notice_date')[0]->getValue();
     endif;
 
-    if ($data['node']->hasField('field_address')) :
+    if ($data['node']->hasField('field_address') && count($data['node']->get('field_address'))) :
       $address = $data['node']->get('field_address')[0]->getValue();
     endif;
 
