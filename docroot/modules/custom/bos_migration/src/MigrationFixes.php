@@ -27,38 +27,33 @@ class MigrationFixes {
    * @var array
    */
   protected static $viewListMap = [
-    'bos_department_listing' => [
-      'listing' => ['departments_listing', 'page_1'],
-    ],
-    'bos_news_landing' => [
-      'page' => ["news_landing", 'page_1'],
-    ],
-    'calendar' => [
-      'feed_1' => ["calendar", "page_1"],
-      'listing' => ["calendar", "page_1"],
-    ],
-    'metrolist_affordable_housing' => [
-      'page' => ["metrolist_affordable_housing", "page_1"],
-      'page_1' => ["metrolist_affordable_housing", "page_1"],
+    'events_and_notices' => [
+      'block_1' => ["events_and_notices", "related"],
+      'most_recent' => ["events_and_notices", "upcoming"],
     ],
     'news_and_announcements' => [
-      'departments' => ["news_and_announcements", "related"],
-      'events' => ["news_and_announcements", "related"],
-      'guides' => ["news_and_announcements", "related"],
       'most_recent' => ["news_and_announcements", "upcoming"],
       'news_events' => ["news_and_announcements", "related"],
-      'places' => ["news_and_announcements", "related"],
-      'posts' => ["news_and_announcements", "related"],
-      'programs' => ["news_and_announcements", "related"],
-      'upcoming' => ["news_and_announcements", "upcoming"],
-      'related' => ["news_and_announcements", "related"],
+    ],
+    'bos_department_listing' => [
+      'listing' => ['departments_listing', 'listing'],
+    ],
+    'bos_news_landing' => [
+      'page' => ["news_landing", 'page'],
+    ],
+    'calendar' => [
+      'feed_1' => ["calendar", "listing"],
+      'listing' => ["calendar", "listing"],
+    ],
+    'metrolist_affordable_housing' => [
+      'page' => ["metrolist_affordable_housing", "page"],
     ],
     'places' => [
-      'listing' => ["places", "page_1"],
+      'listing' => ["places", "listing"],
     ],
     'public_notice' => [
-      'archive' => ["public_notice", "page_2"],
-      'landing' => ["public_notice", "page_1"],
+      'archive' => ["public_notice", "archive"],
+      'landing' => ["public_notice", "landing"],
     ],
     'status_displays' => [
       'homepage_status' => ["status_items", "motd"],
@@ -67,14 +62,12 @@ class MigrationFixes {
       'page_1' => ["topic_landing_page", "guide_page"],
     ],
     'transactions' => [
-      'main_transactions' => ["transactions", "page_1"],
+      'main_transactions' => ["transactions", "main_transactions"],
+      'sticky_transactions' => ["transactions", "main_transactions"],
     ],
     'upcoming_events' => [
-      'most_recent' => ["upcoming_events", "block_1"],
-    ],
-    'events_and_notices' => [
-      'related' => ["events_and_notices", "block_1"],
-      'upcoming' => ["events_and_notices", "most_recent"],
+      'most_recent' => ["events_and_notices", "upcoming"],
+      'block_1' => ["events_and_notices", "upcoming"],
     ],
   ];
 
@@ -627,6 +620,7 @@ class MigrationFixes {
     "public://img/icons/department/icons_engagment_-_311_-_ons.svg" => '//patterns.boston.gov/assets/icons/dept_icons/bos_311_icon.svg',
     "public://img/icons/department/2018/08/asset_332.svg" => '//patterns.boston.gov/assets/icons/dept_icons/emergency_management_logo.svg',
     "public://img/icons/department/2018/05/pm_logo.svg" => '//patterns.boston.gov/assets/icons/dept_icons/property_and_construction_management_logo.svg',
+    "public://img/icons/department/icons_bcyf.png" => '//patterns.boston.gov/assets/icons/dept_icons/youth_employment_and_engagement_logo.svg',
   ];
 
   /**
@@ -769,7 +763,7 @@ class MigrationFixes {
     Database::getConnection()
       ->query("
         UPDATE file_managed
-        SET filename = SUBSTRING_INDEX(uri, '/', -1) 
+        SET filename = SUBSTRING_INDEX(uri, '/', -1)
         WHERE locate('.', filename) = 0 and fid > 0;
       ")
       ->execute();
@@ -796,10 +790,10 @@ class MigrationFixes {
     printf("[action] Will map old svg path/filename to new path/filenames.\n");
     $cnt = 0;
     $svgs = \Drupal::database()->query("
-        SELECT distinct f.fid, f.uri 
+        SELECT distinct f.fid, f.uri
         FROM file_managed f
           LEFT JOIN media m ON f.fid = m.mid
-        WHERE f.filemime LIKE '%svg%' 
+        WHERE f.filemime LIKE '%svg%'
             AND m.mid IS NULL
             AND f.status = 1;")->fetchAll();
 
@@ -1023,7 +1017,7 @@ class MigrationFixes {
         'uid' => ($file->file->uid->target_id ?? 1),
         'name' => ($file->filename ?? "City of Boston stock media item"),
         'status' => ($file->file->status->value ?? 1),
-        'field_media_in_library' => ($svg->media_library ?? FALSE),
+        'field_media_in_library' => ($file->media_library ?? FALSE),
       ];
       if ($file->type != "document") {
         $param['thumbnail'] = [
@@ -1047,7 +1041,7 @@ class MigrationFixes {
         // Save the new media entity.
         $result = $media->save();
 
-        if (($svg->media_library ?? FALSE) && $media->field_media_in_library->value != 1) {
+        if (($file->media_library ?? FALSE) && $media->field_media_in_library->value != 1) {
           $media->field_media_in_library->value = 1;
           $media->setNewRevision(FALSE);
           $result = $media->save();

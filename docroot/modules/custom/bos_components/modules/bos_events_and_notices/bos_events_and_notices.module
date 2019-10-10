@@ -5,6 +5,8 @@
  * The Base module file for bos_events_and_notices module.
  */
 
+use Drupal\views\ViewExecutable;
+
 /**
  * Implements hook_theme().
  */
@@ -42,12 +44,19 @@ function bos_events_and_notices_preprocess_paragraph__events_and_notices(&$varia
 /**
  * Implements hook_preprocess_views_view_fields().
  */
-function bos_events_and_notices_preprocess_views_view_fields(&$variables) {
-  if ($variables["view"]->storage->id() == 'events_and_notices') {
-    if ($node = $variables["row"]->_entity) {
-      $type = $node->getType();
-      $variables['type_class'] = 'news-item-' . $type;
-      $variables["thumbnail"] = ($node->hasField("field_thumbnail") && $node->get("field_thumbnail")->target_id);
-    }
+function bos_events_and_notices_preprocess_views_view_fields__events_and_notices(&$variables) {
+  if ($node = $variables["row"]->_entity) {
+    $type = $node->getType();
+    $variables['type_class'] = 'news-item-' . $type;
+    $variables["thumbnail"] = ($node->hasField("field_thumbnail") && $node->get("field_thumbnail")->target_id);
+  }
+}
+
+/**
+ * Implements hook_views_pre_build().
+ */
+function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
+  if ($view->id() == "news_and_announcements") {
+    $view->setShowAdminLinks(FALSE);
   }
 }
