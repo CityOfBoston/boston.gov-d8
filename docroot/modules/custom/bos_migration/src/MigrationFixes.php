@@ -900,7 +900,7 @@ class MigrationFixes {
             FROM file_managed f
             	LEFT JOIN media m ON f.fid = m.mid
             WHERE f.filemime = '" . $mime . "' 
-         --     AND m.mid IS NULL
+              AND m.mid IS NULL
               AND f.status = 1;")->fetchAll();
 
         if (!empty($files)) {
