@@ -101,4 +101,5 @@ class Form extends ShortcodeBase {
     }
     return $this->classCache;
   }
+
 }

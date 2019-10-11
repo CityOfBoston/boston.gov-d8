@@ -47,7 +47,7 @@ function bos_shortcodes_theme() {
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function bos_shortcodes_form_bos_towing_lookup_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-return;
+  // Can inject things here if necessary.
 }
 
 /**
@@ -68,11 +68,7 @@ return;
  */
 function bos_shortcodes_shortcode_poll(array $attrs, $text) {
 
-  $attrs = shortcode_attrs(array(
-    'id' => '',
-  ),
-    $attrs
-  );
+  $attrs = shortcode_attrs(['id' => ''], $attrs);
 
   if ($attrs['id'] == '') {
     return implode(',', $attrs);
@@ -87,7 +83,7 @@ function bos_shortcodes_shortcode_poll(array $attrs, $text) {
   $output = '';
   if ($poll) {
     $poll_content = node_view($poll, "poll_stub");
-    $output = theme('shortcode_poll', array('content' => $poll_content));
+    $output = theme('shortcode_poll', ['content' => $poll_content]);
   }
   return $output;
 }
@@ -98,15 +94,15 @@ function bos_shortcodes_shortcode_poll(array $attrs, $text) {
  * Used by shortcode_wysiwyg module to add poll elements for attributes.
  */
 function bos_shortcodes_shortcode_poll_attributes($poll, &$poll_state) {
-  $poll['id'] = array(
+  $poll['id'] = [
     '#title' => t('Poll NID'),
     '#type' => 'textfield',
-    '#states' => array(
-      'visible' => array(
-        ':input[name="shortcode"]' => array('value' => 'poll'),
-      ),
-    ),
-  );
+    '#states' => [
+      'visible' => [
+        ':input[name="shortcode"]' => ['value' => 'poll'],
+      ],
+    ],
+  ];
 
   return $poll;
 }
@@ -118,7 +114,7 @@ function bos_shortcodes_shortcode_poll_attributes($poll, &$poll_state) {
  * they know what the shortcode does and how to use it.
  */
 function bos_shortcodes_shortcode_poll_tip($format, $long) {
-  $output = array();
+  $output = [];
   $output[] = '<p><strong>' . t('[poll id="nid" /]') . '</strong> ';
   if ($long) {
     $output[] = t('Outputs a poll.') . '</p>';
