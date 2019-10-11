@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_mnl module.
+ */
+
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+ */
+
+
+function bos_mnl_theme() {
+  $theme['paragraph__my_neighborhood_lookup'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_mnl') . '/templates',
+  ];
+  return $theme;
+}
+
+function bos_mnl_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+        $vars['#attached']['library'][] = 'bos_theme/react';
+        $vars['#attached']['library'][] = 'bos_theme/react-app';
+  }
+}
+
+
+
+
