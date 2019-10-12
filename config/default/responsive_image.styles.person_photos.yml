@@ -6,11 +6,11 @@ dependencies:
     - image.style.person_photo_a_mobile_1x
     - image.style.person_photo_b_tablet_1x
     - image.style.person_photo_c_desktop_1x
-    - image.style.person_photo_d_full_1x
+    - image.style.person_profile_card_173x173_
   theme:
     - bos_theme
 id: person_photos
-label: 'Person Photos'
+label: 'Person Photos Cards'
 image_style_mappings:
   -
     breakpoint_id: boston.person.mobile
@@ -31,6 +31,6 @@ image_style_mappings:
     breakpoint_id: boston.person.full
     multiplier: 1x
     image_mapping_type: image_style
-    image_mapping: person_photo_d_full_1x
-breakpoint_group: person
+    image_mapping: person_profile_card_173x173_
+breakpoint_group: 840-980-1280
 fallback_image_style: person_photo_a_mobile_1x

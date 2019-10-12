@@ -928,3 +928,44 @@ What: Better locate text on page.
   margin-top: 0;
   padding-top: 38px;
 }
+
+/*
+David:
+Where: page.html.twig
+What: Styles the watermark for D8.
+ */
+.watermark-wrapper {
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+  margin-top: 26px;
+}
+.watermark {
+  width: fit-content;
+  font-family: serif;
+  margin: 0 auto;
+  height: 1.15em;
+}
+.watermark--needs_review {
+  color: #277abd;
+  background-color: #f0ffff;
+  opacity: 0.75;
+  border: 1px solid #277abd70;
+}
+.watermark--unpublished,
+.watermark--draft {
+  color: #ffae00;
+  background-color: #feffbe;
+  opacity: 0.75;
+  border: 1px solid #ffae0070;
+}
+.watermark--archive {
+  color: #642b2b;
+  background-color: #c8c0c0;
+  opacity: .9;
+  border: 1px solid #642b2b70;
+}
+.watermark .wm-text {
+  top: 6px;
+  position: relative;
+}
