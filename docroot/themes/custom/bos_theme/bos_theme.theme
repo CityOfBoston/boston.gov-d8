@@ -360,6 +360,23 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     }
   }
 
+  // Find the moderation state of the node.
+  $variables['moderation_state'] = '';
+  if (isset($variables['node'])) {
+
+    $variables['unpublished'] = empty($variables['node']->isPublished());
+    $variables['preview'] = !empty($variables['node']->in_preview);
+    $variables['moderation_state'] = !empty($variables['node']->isPublished());
+
+    $mod = Drupal::entityTypeManager()
+      ->getStorage("node")
+      ->loadRevision($variables['node']->getLoadedRevisionId())
+      ->get('moderation_state')
+      ->getString();
+    if (!empty($mod)) {
+      $variables['moderation_state'] = $mod;
+    }
+  }
   // Determine if a header_image is being used.
   _bos_theme_has_header($variables);
 
@@ -368,6 +385,9 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // Create necessary page classes.
   _bos_theme_page_classes($variables);
+
+  // Watermark
+  _bos_theme_page_watermark($variables);
 
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
@@ -509,6 +529,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
     $variables['unpublished'] = empty($node->isPublished());
+
     $variables['moderation_state'] = Drupal::entityTypeManager()
       ->getStorage("node")
       ->loadRevision($node->getLoadedRevisionId())
@@ -536,9 +557,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     // Add this attribute so that js can change the tooltip and menu text.
     $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['node_type'])));
     if ($variables['unpublished'] || $variables['preview']) {
-      // TODO: These are probably not both required ...
       $variables['attributes']->addClass('node-unpublished');
-      $variables['attributes']->addClass('watermark__wrapper');
     }
     if ($variables['moderation_state']) {
       $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
@@ -1064,6 +1083,45 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
     }
     if (!$variables["attributes"]->hasClass("page-user")) {
       $variables["attributes"]->addClass("page-user");
+    }
+  }
+}
+
+/**
+ * Helper: Determine if a watermark is needed for the page.
+ *
+ * @param array $variables
+ *  Variables array -should have unpublished, preview and moderation_state set.
+ */
+function _bos_theme_page_watermark(array &$variables) {
+
+  $user = \Drupal::currentUser();
+  if ($user->hasPermission("view any unpublished content")) {
+    if (!empty($node = $variables['node'])) {
+      if ($variables['unpublished'] || $variables['preview']) {
+        $variables['attributes']->addClass('node-unpublished');
+        $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
+        $variables['attributes_watermark']->addClass('watermark--unpublished');
+        $variables['watermark_text'] = "Unpublished";
+      }
+      if ($variables['moderation_state']) {
+        $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
+        if (strtolower($variables['moderation_state']) != "published"
+          && strtolower($variables['moderation_state']) != "unpublished") {
+          $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
+          $variables['attributes_watermark']->addClass('watermark--' . $variables['moderation_state']);
+          $variables['attributes_watermark']->removeClass('watermark--unpublished');
+
+          switch ($variables['moderation_state']) {
+            case "needs_review":
+              $variables['watermark_text'] = "review pending";
+              break;
+
+            default:
+              $variables['watermark_text'] = $variables['moderation_state'];
+          }
+        }
+      }
     }
   }
 }
