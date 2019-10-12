@@ -171,8 +171,8 @@ function bos_link_paragraph_document_summary_alter(array $form_widget, array $pa
     $document = File::load($para["entity"]->field_document->target_id);
     $type = explode("/", $document->filemime->value);
     $type = end($type);
-    $markup[] = Markup::create("<b>" . $para["entity"]->field_title->value . "</b> <i>(" . $type . ")</i>");
-    $markup[] = Markup::create($document->label());
+    $markup[] = Markup::create($para["entity"]->field_title->value . " <i>(" . $type . ")</i>");
+    $markup[] = Markup::create("<span class='document'>" . $document->label() . "</span>");
     return [
       'attributes' => $attributes,
       'content' => $markup,
@@ -184,13 +184,13 @@ function bos_link_paragraph_document_summary_alter(array $form_widget, array $pa
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_link_paragraph_external_link_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_external_link")->title . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_external_link")->title);
   $uri = $para["entity"]->get("field_external_link")->uri;
   $url = parse_url($uri);
   $url["host"] = $url["scheme"] . "://" . $url["host"];
-  $url["host"] = (strpos($url["host"], "boston.gov") === FALSE ? $url["host"] : "<span style='color:red'>(internal) </span>");
+  $url["host"] = (strpos($url["host"], "boston.gov") === FALSE ? $url["host"] : "<span style='color: red;'>(internal) </span>");
   $url = $url["host"] . $url['path'];
-  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $uri . "' target='_blank' title='Click to view in new tab'><i>" . $url . "</i></a>");
+  $markup[] = Markup::create("<span class='link'></span><a href='" . $uri . "' target='_blank' title='Click to view in new tab'>" . $url . "</a>");
 
   return [
     'attributes' => $attributes,
@@ -202,11 +202,11 @@ function bos_link_paragraph_external_link_summary_alter(array $form_widget, arra
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_link_paragraph_internal_link_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_internal_link")->title . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_internal_link")->title);
   $uri = $para["entity"]->get("field_internal_link")->uri;
   $url = Url::fromUri($uri);
   $url_rel = $url->toString();
-  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel . "</i></a>");
+  $markup[] = Markup::create("<span class='link'></span><a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'>" . $url_rel . "</a>");
 
   return [
     'attributes' => $attributes,
@@ -218,11 +218,11 @@ function bos_link_paragraph_internal_link_summary_alter(array $form_widget, arra
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_link_paragraph_lightbox_link_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_lightbox_link")->title . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_lightbox_link")->title);
   $uri = $para["entity"]->get("field_lightbox_link")->uri;
   $url = Url::fromUri($uri);
   $url_rel = $url->toString();
-  $markup[] = Markup::create("<b>Link:</b>&nbsp;<a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'><i>" . $url_rel . "</i></a>");
+  $markup[] = Markup::create("<span class='link'></span><a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'>" . $url_rel . "</a>");
 
   return [
     'attributes' => $attributes,
