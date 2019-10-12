@@ -374,7 +374,6 @@ doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'sta
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
 doMigrate d7_menu_links,d7_menu --force
-${drush} entup -y  | tee -a ${logfile}
 doExecPHP "node_access_rebuild();"
 
 printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
