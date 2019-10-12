@@ -60,6 +60,12 @@
   </div>
 </nav>
 
+{% if watermark_text %}
+  <div class="watermark-wrapper">
+    <mark{{ attributes_watermark}}>&#8212;&#8212;[<span class="wm-text">{{ watermark_text }}</span>]&#8212;&#8212;</mark>
+  </div>
+{% endif %}
+
 <div{{ attributes }}>
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
 
@@ -76,7 +82,7 @@
 
   <div class="main">
     <div class="container">
-      <mark class="watermark"></mark>
+
       <section class="main-content" id="content" role="main">
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
