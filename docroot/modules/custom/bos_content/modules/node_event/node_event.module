@@ -219,6 +219,7 @@ function node_event_preprocess_node__event(&$variables) {
  */
 function node_event_preprocess_node__event__featured_item(&$variables) {
   _bos_components_fix_attributes($variables);
+  $variables['attributes']->addClass("contextual-region");
   $variables['attributes']->addClass("event-featured-item-wrapper");
   $variables['attributes']->addClass("mobile-1-col");
   $variables['attributes']->addClass("clearfix");
