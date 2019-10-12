@@ -3,6 +3,57 @@
   Where: Admin pages using Paragraphs EXPERIEMENTAL
   What: Enhances or fades summary field.
  */
+
+/* Provides better column layout on editor pages. */
+@media screen and (min-width: 780px), (min-device-height: 780px) and (orientation: landscape) {
+  .bos_admin .layout-region-node-main,
+  .layout-region-node-footer {
+    width: 80%;
+  }
+  .bos_admin .layout-region-node-secondary {
+    width: 20%;
+  }
+}
+
+.bos_admin .layout-region-node-secondary {
+  margin-top: 10px;
+}
+
+.bos_admin .layout-region-node-secondary .entity-meta__header {
+  background-color: #d2e4fb;
+}
+
+/* Makes icons a bit bigger than default. */
+.js .bos_admin .paragraph-type-icon {
+  height: 30px;
+  width: 30px;
+}
+
+@media (min-width: 780px) {
+  .js .bos_admin.paragraph-top {
+    -ms-grid-columns: 170px auto 1fr auto;
+    grid-template-columns: 170px auto 1fr auto;
+  }
+}
+
+.js .bos_admin .paragraph-top .paragraph-type {
+  font-weight: bold;
+  color: #1871bd;
+  /*color: #0074bd;*/
+}
+@media (min-width: 780px) {
+  .js .bos_admin .paragraph-top {
+    -ms-grid-columns: 180px auto 1fr auto;
+    grid-template-columns: 180px auto 1fr auto;
+  }
+}
+@media (min-width: 992px) {
+  .js .bos_admin .paragraph-top {
+    -ms-grid-columns: 200px auto 1fr auto;
+    grid-template-columns: 200px auto 1fr auto;
+  }
+}
+
 .cob-para .paragraphs-description .summary-content {
   font-weight: normal;
   color: #555;
@@ -21,4 +72,38 @@
   color: red;
   font-size: 140%;
   font-weight: bold;
+}
+
+.cob-para .paragraphs-content-wrapper .summary-content:first-child {
+  color: #458820;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.cob-para .paragraphs-content-wrapper .summary-content:nth-child(2) {
+}
+.cob-para .paragraphs-content-wrapper .summary-content:nth-child(3) {
+  font-style: italic;
+}
+.cob-para .paragraphs-content-wrapper .summary-content:nth-child(4) {
+  color: yellow;
+}
+
+/* Special summary field types. */
+.cob-para .paragraphs-content-wrapper .summary-content span.contact::before {
+  content: "Contact: ";
+  font-weight: bold;
+}
+.cob-para .paragraphs-content-wrapper .summary-content span.info,
+.cob-para .paragraphs-content-wrapper .summary-content span.body-text {
+  font-size: 90%;
+  font-style: italic;
+  opacity: 0.90;
+}
+.cob-para .paragraphs-content-wrapper .summary-content span.document::before {
+  content: "File: ";
+}
+.cob-para .paragraphs-content-wrapper .summary-content span.link::before {
+  content: "Link: ";
+  text-decoration: none;
+  color: #555;
 }
