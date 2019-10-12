@@ -1,0 +1,24 @@
+/*
+  David:
+  Where: Admin pages using Paragraphs EXPERIEMENTAL
+  What: Enhances or fades summary field.
+ */
+.cob-para .paragraphs-description .summary-content {
+  font-weight: normal;
+  color: #555;
+}
+.cob-para-enabled .paragraphs-description .summary-content::before {
+  content: "\2713 ";
+  color: green;
+  font-size: 150%;
+}
+.cob-para-disabled .paragraphs-description .summary-content{
+  font-weight: normal;
+  color: #999;
+}
+.cob-para-disabled .paragraphs-description .summary-content::before {
+  content: "\2715  ";
+  color: red;
+  font-size: 140%;
+  font-weight: bold;
+}
