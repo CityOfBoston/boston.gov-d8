@@ -5,6 +5,8 @@
  * The Base module file for bos311 module.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_theme().
  */
@@ -30,4 +32,31 @@ function bos_311_preprocess_paragraph__bos311__full(&$variables) {
   $variables['attributes']->addClass("b--fw");
   $variables['attributes']->addClass("b--b");
   $variables['attributes']->addClass("b--by");
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_311_paragraph_bos311_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
+  if ($para["entity"]->hasField("field_311_request") && count($para["entity"]->get("field_311_request"))) {
+    $markup[] = Markup::create("<span class='info'>has " . count($para["entity"]->get("field_311_request")) . " links.</span>");
+    $bits = [];
+    foreach ($para["entity"]->get("field_311_request") as $link) {
+      $pg = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($link->target_id);
+      $bits[] = Markup::create($pg->getName());
+      if (count($bits) > 4) {
+        break;
+      }
+    }
+    $markup[] = Markup::create("<span class='info'>" . implode(" / ", $bits) . "</span>");
+  }
+  else {
+    $markup[] = Markup::create("<span class='info'>has no links.</span>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }
