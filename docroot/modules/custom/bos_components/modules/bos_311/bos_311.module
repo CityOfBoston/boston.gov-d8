@@ -40,7 +40,7 @@ function bos_311_preprocess_paragraph__bos311__full(&$variables) {
 function bos_311_paragraph_bos311_summary_alter(array $form_widget, array $para, array $attributes) {
   $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   if ($para["entity"]->hasField("field_311_request") && count($para["entity"]->get("field_311_request"))) {
-    $markup[] = Markup::create("<span class='info'>has " . count($para["entity"]->get("field_311_request")) . " links.</span>");
+    $markup[] = Markup::create("has " . count($para["entity"]->get("field_311_request")) . " links.");
     $bits = [];
     foreach ($para["entity"]->get("field_311_request") as $link) {
       $pg = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($link->target_id);
