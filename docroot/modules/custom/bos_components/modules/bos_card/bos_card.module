@@ -75,22 +75,22 @@ function bos_card_preprocess_paragraph__card(&$variables) {
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_card_paragraph_card_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_title")->value);
   if ($para["entity"]->hasField("field_thumbnail")) {
     $mid = $para["entity"]->get("field_thumbnail")[0]->target_id;
     if ($media = Media::load($mid)) {
-      $markup[] = Markup::create("<b>Image Name:</b> " . $media->name->value);
+      $markup[] = Markup::create("<span class='image-name'>" . $media->name->value . "</span>");
     }
     elseif ($file = File::load($mid)) {
-      $markup[] = Markup::create("<b>Image Name:</b> " . $file->get("filename")->value);
+      $markup[] = Markup::create("<span class='image-name'>" . $file->get("filename")->value . "</span>");
     }
   }
   if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
     $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
-    $markup[] = Markup::create("<i>has " . $card->bundle() . " CTA.</i>");
+    $markup[] = Markup::create("<span class='info'>has " . $card->bundle() . " CTA.</span>");
   }
   else {
-    $markup[] = Markup::create("<i>has no CTA.</i>");
+    $markup[] = Markup::create("<span class='info'>has no CTA.</span>");
   }
   return [
     'attributes' => $attributes,
