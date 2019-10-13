@@ -85,7 +85,7 @@
   font-style: italic;
 }
 .cob-para .paragraphs-content-wrapper .summary-content:nth-child(4) {
-  color: yellow;
+  font-style: italic;
 }
 
 /* Special summary field types. */
@@ -101,6 +101,9 @@
 }
 .cob-para .paragraphs-content-wrapper .summary-content span.document::before {
   content: "File: ";
+}
+.cob-para .paragraphs-content-wrapper .summary-content span.image-name::before {
+  content: "Image Name: ";
 }
 .cob-para .paragraphs-content-wrapper .summary-content span.link::before {
   content: "Link: ";

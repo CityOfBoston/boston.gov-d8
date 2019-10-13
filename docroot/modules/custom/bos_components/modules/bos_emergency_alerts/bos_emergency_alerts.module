@@ -62,13 +62,13 @@ function bos_emergency_alerts_mail($key, &$message, $params) {
 function bos_signup_emergency_alerts_paragraph_bos_signup_emergency_alerts_summary_alter(array $form_widget, array $para, array $attributes) {
   // Add attributes to the summary area.
   // Set the summary content.
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   if ($para["entity"]->hasField("field_contact")) {
     $contact = $para["entity"]->get("field_contact")->target_id;
     $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact);
-    $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
-    $markup[] = Markup::create(strip_tags($para["entity"]->get("field_intro_text")[0]->value));
+    $markup[] = Markup::create("<span class='contact'>Contact: </span>" . $contact->name->value);
   }
+  $markup[] = Markup::create("<span class='body-text'>" . strip_tags($para["entity"]->get("field_intro_text")[0]->value) . "</span>");
 
   return [
     'attributes' => $attributes,
