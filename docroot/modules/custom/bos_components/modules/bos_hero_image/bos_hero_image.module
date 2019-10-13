@@ -76,7 +76,7 @@ function bos_hero_image_paragraph_hero_image_summary_alter(array $form_widget, a
   // Add attributes to the summary area.
   // Set the summary content.
   if ($media = Media::load($para["entity"]->get("field_image")->target_id)) {
-    $markup[] = Markup::create($media->get("name")->value );
+    $markup[] = Markup::create($media->get("name")->value);
   }
   $markup[] = Markup::create($para["entity"]->get("field_header")->value);
   if ($para["entity"]->hasField("field_sub_header")) {

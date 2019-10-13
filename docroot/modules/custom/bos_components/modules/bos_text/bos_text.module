@@ -273,9 +273,9 @@ function bos_text_paragraph_text_two_column_summary_alter(array $form_widget, ar
   $markup[] = Markup::create($map[$para["entity"]->get("field_column_configuration")->value]);
   $text = strip_tags($para["entity"]->get("field_left_column")->value . " " . $para["entity"]->get("field_right_column")->value);
   $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
-      'word_boundary' => TRUE,
-      'ellipsis' => TRUE,
-      'max_length' => 100,
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 100,
   ]) . "</span>");
   return [
     'attributes' => $attributes,
@@ -287,12 +287,12 @@ function bos_text_paragraph_text_two_column_summary_alter(array $form_widget, ar
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_three_column_summary_alter(array $form_widget, array $para, array $attributes) {
-  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " .$para["entity"]->get("field_middle_column")->value . " " . $para["entity"]->get("field_right_column")->value);
+  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " . $para["entity"]->get("field_middle_column")->value . " " . $para["entity"]->get("field_right_column")->value);
   $markup[] = "Equal Split";
   $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
-      'word_boundary' => TRUE,
-      'ellipsis' => TRUE,
-      'max_length' => 100,
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 100,
   ]) . "</span>");
 
   return [
