@@ -249,6 +249,7 @@ function bos_text_paragraph_3_column_w_image_summary_alter(array $form_widget, a
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_one_column_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("Single Column");
   $text = strip_tags($para["entity"]->get("field_middle_column")->value);
   $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
     'word_boundary' => TRUE,
