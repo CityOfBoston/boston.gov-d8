@@ -9,6 +9,8 @@
  * @see https://www.drupal.org/node/2217931
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_theme().
  */
@@ -210,6 +212,84 @@ function bos_components_paragraphs_info() {
     ],
   ];
   return $items;
+}
+
+/**
+ * Implements hook_paragraph_summary_alter().
+ *
+ * This is the generic catch-all formatter for paragraph summaries.
+ * Individual components can be customized/overriden in hooks in their modules.
+ */
+function bos_components_paragraph_summary_alter(array $form_widget, array $para, array $attributes, string $hook) {
+  // First, find the component title.
+  if ($para["entity"]->hasField("field_component_title") && !empty($para["entity"]->get("field_component_title")->value)) {
+    $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
+  }
+  elseif ($para["entity"]->hasField("field_title") && !empty($para["entity"]->hasField("field_title")->value)) {
+    $markup[] = Markup::create($para["entity"]->get("field_title")->value);
+  }
+  elseif ($para["entity"]->hasField("title")) {
+    $markup[] = Markup::create($para["entity"]->get("title")->value);
+  }
+
+  // Second, find a contact if there is one.
+  if ($para["entity"]->hasField("field_contact")) {
+    if (!empty($contact_id = $para["entity"]->get("field_contact")->target_id)) {
+      if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
+        $markup[] = Markup::create("<span class='contact'>" . $contact->name->value . "</span>");
+      }
+      else {
+        $markup[] = Markup::create("<span class='contact' style='color: red;'>(Broken Contact)</span>");
+      }
+    }
+    else {
+      $markup[] = Markup::create("<span class='contact'>No contact</span>");
+    }
+  }
+
+  // Find any text.
+  $at_settings = [
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 25,
+  ];
+  if ($para["entity"]->hasField("field_description")) {
+    $text = strip_tags($para["entity"]->get("field_description")->value);
+    $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, $at_settings) . "</span>");
+  }
+  elseif ($para["entity"]->hasField("field_left_column")
+    || $para["entity"]->hasField("field_middle_column")
+    || $para["entity"]->hasField("field_right_column")) {
+    $text = ($para["entity"]->get("field_left_column")->value ?: "") . " " . ($para["entity"]->get("field_middle_column")->value ?: "") . " " . ($para["entity"]->get("field_right_column")->value ?: "");
+    $text = strip_tags($text);
+    $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, $at_settings) . "</span>");
+  }
+  // Find any sub-fields.
+  foreach ($para["entity"]->getFields() as $field_name => $field) {
+    if ($field_name != "field_contact" &&
+      substr($field_name, 0, 5) == "field" &&
+      ($field->getFieldDefinition()->get("field_type") == "entity_reference_revisions"
+      || $field->getFieldDefinition()->get("field_type") == "entity_reference")) {
+      if (count($field) >= 1) {
+        // This is a collection with elements.
+        $markup[] = Markup::create("<span class='info'>has " . count($field) . " " . $field->getFieldDefinition()->get("label") . "</span>");
+      }
+      else {
+        // This is a collection, but has no elements.
+        $markup[] = Markup::create("<span class='info'>has no " . $field->getFieldDefinition()->get("label") . "!</span>");
+      }
+    }
+  }
+
+  if (empty($markup)) {
+    $markup[] = Markup::create("<span style='color: orange'>Pending!</span>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+
 }
 
 /**
