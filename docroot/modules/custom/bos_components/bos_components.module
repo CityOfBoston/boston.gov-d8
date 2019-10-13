@@ -271,11 +271,11 @@ function bos_components_paragraph_summary_alter(array $form_widget, array $para,
       ($field->getFieldDefinition()->get("field_type") == "entity_reference_revisions"
       || $field->getFieldDefinition()->get("field_type") == "entity_reference")) {
       if (count($field) >= 1) {
-        // this is a collection
+        // This is a collection with elements.
         $markup[] = Markup::create("<span class='info'>has " . count($field) . " " . $field->getFieldDefinition()->get("label") . "</span>");
       }
       else {
-        // this is a collection
+        // This is a collection, but has no elements.
         $markup[] = Markup::create("<span class='info'>has no " . $field->getFieldDefinition()->get("label") . "!</span>");
       }
     }
