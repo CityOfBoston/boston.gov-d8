@@ -29,12 +29,18 @@ function doMigrate() {
     CYCLE=0
     COMMAND="$*"
     GROUP="${1}"
+    FEEDBACK="500"
+
+    testseq="feedback"
+    if [[ ! ${*} =~ $testseq ]]; then
+      COMMAND="${COMMAND} --feedback=$FEEDBACK"
+    fi
 
     while true; do
-        printf "[migration-step] ${drush} mim $* --feedback=500 \n" | tee -a ${logfile}
+        printf "[migration-step] ${drush} mim $COMMAND\n" | tee -a ${logfile}
 
         retval=0
-        (${drush} mim $COMMAND --feedback=500 >> ${logfile}) || retval=1
+        (${drush} mim $COMMAND >> ${logfile}) || retval=1
         if [[ $retval -eq 0 ]]; then break; fi
 
         hanging="$(drush ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
@@ -309,11 +315,22 @@ fi
 if [ "$1" == "update2" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql" || exit 1; fi
-    doMigrate --tag="bos:node_revision:1" --force           # 2h 42 mins
-    doMigrate --tag="bos:node_revision:2" --force           # 8h 50 mins
-    doMigrate --tag="bos:node_revision:3" --force           # 1hr 43 mins
-    doMigrate --tag="bos:node_revision:4" --force           # 30 sec
+    doMigrate --tag="bos:node_revision:1" --force --feedback=350           # 2h 42 mins
+    doMigrate --tag="bos:node_revision:2" --force --feedback=350          # 8h 50 mins
+    doMigrate --tag="bos:node_revision:3" --force --feedback=350          # 1hr 43 mins
+    doMigrate --tag="bos:node_revision:4" --force --feedback=350          # 30 sec
     dumpDB ${dbpath}/migration_clean_after_node_revision.sql
+fi
+
+# This is to resume when the node_revsisions fail mid-way.
+if [ "$1" == "revision_resume" ]; then
+  printf "\n[migration-info] Continues from previous migration %s %s\n" $(date +%F\ %T ) | tee ${logfile}
+  running=1
+  doMigrate --tag="bos:node_revision:1" --force --feedback=350           # 2h 42 mins
+  doMigrate --tag="bos:node_revision:2" --force --feedback=350           # 8h 50 mins
+  doMigrate --tag="bos:node_revision:3" --force --feedback=350           # 1hr 43 mins
+  doMigrate --tag="bos:node_revision:4" --force --feedback=350           # 30 sec
+  dumpDB ${dbpath}/migration_clean_after_node_revision.sql
 fi
 
 ## Finish off.
