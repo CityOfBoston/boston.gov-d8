@@ -105,9 +105,11 @@ function bos_components_preprocess_paragraph(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_featured_topics_preprocess_field(&$variables) {
-  $element = $variables['element'];
-  if (isset($element['#field_name']) && $element['#field_name'] == 'field_short_title') {
-    $variables["short_title"] = $element["#items"]->value;
+  if (isset($variables['element'])) {
+    $element = $variables['element'];
+    if (isset($element['#field_name']) && $element['#field_name'] == 'field_short_title') {
+      $variables["short_title"] = $element["#items"]->value;
+    }
   }
 }
 
@@ -132,7 +134,7 @@ function bos_components_theme_suggestions_field_alter(array &$suggestions, array
   $bundle = $variables['element']['#bundle'];
 
   // Add suggestions for paragraphs.
-  if ('paragraph' == $entity_type = $variables['element']['#entity_type']) {
+  if ('paragraph' == ($entity_type = $variables['element']['#entity_type'])) {
     _bos_component_embed_level($variables);
     if ($variables['is_component_field']) {
       $suggestions[] = 'field__component__' . $variables['element']['#field_name'];
@@ -144,7 +146,7 @@ function bos_components_theme_suggestions_field_alter(array &$suggestions, array
   $base_suggestion = "field__$field_name";
 
   // Add suggestions for taxonomy terms.
-  if ('taxonomy_term' == $entity_type = $variables['element']['#entity_type']) {
+  if ('taxonomy_term' == ($entity_type = $variables['element']['#entity_type'])) {
     $suggestions[] = "{$base_suggestion}__{$bundle}";
   }
   $base_suggestion = "field__{$field_name}";

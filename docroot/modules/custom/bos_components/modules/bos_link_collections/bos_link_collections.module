@@ -13,8 +13,6 @@ use Drupal\paragraphs\Entity\Paragraph;
  * Implements hook_theme().
  */
 function bos_link_collections_theme() {
-  $path = drupal_get_path('module', 'bos_link_collections') . '/templates';
-
   $theme['paragraph__group_of_links_grid'] = [
     'base hook' => 'paragraph',
   ];
@@ -32,36 +30,29 @@ function bos_link_collections_theme() {
   ];
   $theme['paragraph__document__separated_title'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--separated-title',
   ];
   $theme['paragraph__internal_link__separated_title'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--separated-title',
   ];
   $theme['field__field_external_link__external_link__mode__separated_title'] = [
     'base hook' => 'field',
-    'path' => $path,
     'template' => 'link--mode--separated-title',
   ];
   $theme['field__paragraph__gol_list_links'] = [
     'base hook' => 'field',
   ];
   $theme['paragraph__document__ribbon_link'] = [
-    'render element' => "element",
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['field__field_external_link__external_link__mode__ribbon_link'] = [
     'base hook' => 'field',
-    'path' => $path,
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['paragraph__internal_link__ribbon_link'] = [
-    'base hook' => 'field',
-    'path' => $path,
+    'base hook' => 'paragraph',
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['field__paragraph__group_of_links_mini_grid'] = [

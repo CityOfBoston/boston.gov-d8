@@ -14,20 +14,23 @@ function node_department_profile_theme($existing, $type, $theme, $path) {
   return [
     'node__department_profile' => [
       'base hook' => 'node',
-    ],
+      'render element' => 'elements',    ],
     'node__department_profile__published_by' => [
       'base hook' => 'node',
-    ],
+      'render element' => 'elements',    ],
     'node__department_profile__popup_icon' => [
       'base hook' => 'node',
-    ],
+      'render element' => 'elements',    ],
     'node__department_profile_contact' => [
+      'render element' => 'elements',
       'base hook' => 'node',
     ],
     'node__department_profile__card' => [
       'base hook' => 'node',
-    ],
+      'render element' => 'elements',
+      ],
     'node__department_profile__department_listing' => [
+      'render element' => 'elements',
       'base hook' => 'node',
     ],
   ];

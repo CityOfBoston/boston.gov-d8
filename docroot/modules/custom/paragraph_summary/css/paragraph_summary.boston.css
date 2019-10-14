@@ -5,21 +5,20 @@
  */
 
 /* Provides better column layout on editor pages. */
-@media screen and (min-width: 780px), (min-device-height: 780px) and (orientation: landscape) {
-  .bos_admin .layout-region-node-main,
-  .layout-region-node-footer {
-    width: 80%;
-  }
-  .bos_admin .layout-region-node-secondary {
-    width: 20%;
-  }
-}
-
 .bos_admin .layout-region-node-secondary {
   margin-top: 10px;
   position: fixed;
   right: 35px;
-  min-width: 290px;
+}
+@media screen and (min-width: 780px), (min-device-height: 780px) and (orientation: landscape) {
+  .bos_admin .layout-region-node-main,
+  .layout-region-node-footer {
+    width: 100%;
+    padding-right: 305px;
+  }
+  .bos_admin .layout-region-node-secondary {
+    width: 290px;
+  }
 }
 
 .bos_admin .layout-region-node-secondary .entity-meta__header {
