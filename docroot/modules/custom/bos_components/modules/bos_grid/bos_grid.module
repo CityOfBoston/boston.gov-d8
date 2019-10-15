@@ -96,22 +96,22 @@ function bos_grid_preprocess_paragraph__grid_of_cards(&$variables) {
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_grid_paragraph_grid_of_cards_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   if ($para["entity"]->hasField("field_contact")) {
     $contact_id = $para["entity"]->get("field_contact")->target_id;
     if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
-      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+      $markup[] = Markup::create("<span class='contact'></span>" . $contact->name->value);
     }
   }
   if ($para["entity"]->hasField("field_component_theme")) {
     if ($para["entity"]->get("field_component_theme")[0]->value == "b") {
-      $markup[] = Markup::create("(blue theme)");
+      $markup[] = Markup::create("<span class='info'>(blue theme)</span>");
     }
     elseif ($para["entity"]->get("field_component_theme")[0]->value == "g") {
-      $markup[] = Markup::create("(grey theme)");
+      $markup[] = Markup::create("<span class='info'>(grey theme)</span>");
     }
     else {
-      $markup[] = Markup::create("(white theme)");
+      $markup[] = Markup::create("<span class='info'>(white theme)</span>");
     }
   }
 
@@ -132,18 +132,18 @@ function bos_grid_paragraph_grid_of_cards_summary_alter(array $form_widget, arra
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_grid_paragraph_grid_of_quotes_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   if ($para["entity"]->hasField("field_contact")) {
     $contact_id = $para["entity"]->get("field_contact")->target_id;
     if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
-      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+      $markup[] = Markup::create("<span class='contact'></span>" . $contact->name->value);
     }
   }
   if ($para["entity"]->hasField("field_grid_of_quotes") && count($para["entity"]->get("field_grid_of_quotes"))) {
-    $markup[] = Markup::create("<i>grid with " . count($para["entity"]->get("field_grid_of_quotes")) . " quotes.</i>");
+    $markup[] = Markup::create("<span class='info'>grid with " . count($para["entity"]->get("field_grid_of_quotes")) . " quotes.</span>");
   }
   else {
-    $markup[] = Markup::create("<i>grid with no quotes.</i>");
+    $markup[] = Markup::create("<span class='info'>grid with no quotes.</span>");
   }
 
   return [

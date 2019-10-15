@@ -10,16 +10,28 @@ LOCAL_PATH="/mnt/files/bostond8dev/backups/on-demand/"
 
 # Define the latest backup.
 FNOW=$(date +"%Y-%m-%d")
-BACKUP_FILE_ZIP="prod-boston-boston-$FNOW.sql.gz"
-BACKUP_FILE="prod-boston-boston-$FNOW.sql"
-REMOTE_BACKUP="$BACKUP_PATH$BACKUP_FILE_ZIP"
 
 # Copy over the latest d7 prod backup.
 printf "\n== START MIGRATION SYNC ==\n\n"
-printf " [info] Will copy current prod drupal 7 DB (${REMOTE_BACKUP}) from ${REMOTE_SERVER}\n"
-scp -i $KEY_FILE $REMOTE_SERVER:$REMOTE_BACKUP $LOCAL_PATH
+count=0
+while true; do
+  BACKUP_FILE_ZIP="prod-boston-boston-$FNOW.sql.gz"
+  REMOTE_BACKUP="$BACKUP_PATH$BACKUP_FILE_ZIP"
+
+  printf " [info] Will copy current prod drupal 7 DB (${REMOTE_BACKUP}) from ${REMOTE_SERVER}\n"
+  scp -i $KEY_FILE $REMOTE_SERVER:$REMOTE_BACKUP $LOCAL_PATH
+
+  if [ -f "$LOCAL_PATH$BACKUP_FILE_ZIP" ]; then
+    printf " [info] Copied.\n"
+    break
+  fi
+  printf " [info] ${REMOTE_BACKUP} NOT FOUND...\n"
+  count=$((count+24))
+  FNOW=$(date -d "$count hours ago" +"%Y-%m-%d")
+done
 
 # Load up the backup onto the local MySQL server.
+BACKUP_FILE="prod-boston-boston-$FNOW.sql"
 LOCAL_BACKUP_ZIP="$LOCAL_PATH$BACKUP_FILE_ZIP"
 if [ $? -eq 0 ] && [ -f "$LOCAL_BACKUP_ZIP" ]; then
   printf " [success] D7 backup copied to ${LOCAL_PATH}\n"
@@ -44,3 +56,4 @@ else
   printf " [error] DB NOT COPIED.\n"
 fi
 printf "\n== END MIGRATION SYNC ==\n"
+

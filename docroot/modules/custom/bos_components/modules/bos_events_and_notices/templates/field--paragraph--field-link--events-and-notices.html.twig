@@ -1,4 +1,5 @@
 {#
+/**
  * @file
  * Default template implementation to display the value of a field.
  *
@@ -41,8 +42,7 @@
  * @see theme_field()
  *
  * @ingroup themeable
+ */
 #}
 
-{% for item in items %}
-  {{ item }}
-{% endfor %}
+{{ items.0|without("attributes") }}
