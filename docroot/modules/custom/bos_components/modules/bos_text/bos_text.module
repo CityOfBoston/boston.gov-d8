@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Markup;
+use Drupal\media\Entity\Media;
 
 /**
  * Implements hook_theme().
@@ -177,18 +178,21 @@ function bos_text_preprocess_field__field_intro_text(&$variables) {
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   if ($para["entity"]->hasField("field_contact")) {
     $contact_id = $para["entity"]->get("field_contact")->target_id;
     if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
-      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+      $markup[] = Markup::create("<span class='contact'></span>" . $contact->name->value);
+    }
+    else {
+      $markup[] = Markup::create("No dept contact");
     }
   }
   if ($para["entity"]->hasField("field_text_blocks") && count($para["entity"]->get("field_text_blocks"))) {
-    $markup[] = Markup::create("<i>has " . count($para["entity"]->get("field_text_blocks")) . " text blocks.</i>");
+    $markup[] = Markup::create("<span class='info'>has " . count($para["entity"]->get("field_text_blocks")) . " text blocks.</span>");
   }
   else {
-    $markup[] = Markup::create("<i>has no text blocks!.</i>");
+    $markup[] = Markup::create("<span class='info'>has no text blocks!.</span>");
   }
 
   return [
@@ -201,7 +205,17 @@ function bos_text_paragraph_text_summary_alter(array $form_widget, array $para, 
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_columns_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = "pending";
+  if ($media = Media::load($para["entity"]->get("field_image")->target_id)) {
+    $markup[] = Markup::create($media->get("name")->value);
+  }
+  $markup[] = Markup::create($para["entity"]->get("field_column_title")->value);
+  if (!empty($text = strip_tags($para["entity"]->get("field_column_description")->value))) {
+    $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'max_length' => 60,
+    ]) . "</span>");
+  }
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -212,7 +226,19 @@ function bos_text_paragraph_columns_summary_alter(array $form_widget, array $par
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_3_column_w_image_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = "pending";
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
+  if ($para["entity"]->hasField("field_contact")) {
+    $contact_id = $para["entity"]->get("field_contact")->target_id;
+    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
+      $markup[] = Markup::create("<span class='contact'>" . $contact->name->value . "</span>");
+    }
+  }
+  if ($para["entity"]->hasField("field_columns") && count($para["entity"]->get("field_columns"))) {
+    $markup[] = Markup::create("<span class='info'>has " . count($para["entity"]->get("field_columns")) . " columns.</span>");
+  }
+  else {
+    $markup[] = Markup::create("<span class='info'>has no columns!.</span>");
+  }
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -223,7 +249,13 @@ function bos_text_paragraph_3_column_w_image_summary_alter(array $form_widget, a
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_one_column_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = "pending";
+  $markup[] = Markup::create("Single Column");
+  $text = strip_tags($para["entity"]->get("field_middle_column")->value);
+  $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 100,
+  ]) . "</span>");
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -237,15 +269,15 @@ function bos_text_paragraph_text_two_column_summary_alter(array $form_widget, ar
   $map = [
     'col_half' => "Equal split",
     'col_two_one_third' => "Wider on left",
-    'col_on_one_third' => "Wider on right",
+    'col_one_one_third' => "Wider on right",
   ];
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $map[$para["entity"]->get("field_column_configuration")->value] . "</span>");
+  $markup[] = Markup::create($map[$para["entity"]->get("field_column_configuration")->value]);
   $text = strip_tags($para["entity"]->get("field_left_column")->value . " " . $para["entity"]->get("field_right_column")->value);
-  $markup[] = advanced_text_formatter_trim_text($text, [
+  $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
     'word_boundary' => TRUE,
     'ellipsis' => TRUE,
-    'max_length' => 60,
-  ]);
+    'max_length' => 100,
+  ]) . "</span>");
   return [
     'attributes' => $attributes,
     'content' => $markup,
@@ -256,7 +288,14 @@ function bos_text_paragraph_text_two_column_summary_alter(array $form_widget, ar
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_text_paragraph_text_three_column_summary_alter(array $form_widget, array $para, array $attributes) {
-  $markup[] = "pending";
+  $text = strip_tags($para["entity"]->get("field_left_column")->value . " " . $para["entity"]->get("field_middle_column")->value . " " . $para["entity"]->get("field_right_column")->value);
+  $markup[] = "Equal Split";
+  $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, [
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 100,
+  ]) . "</span>");
+
   return [
     'attributes' => $attributes,
     'content' => $markup,

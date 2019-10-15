@@ -200,7 +200,6 @@ class MigrationConfigAlter {
     "paragraph__text_two_column" => ["bos:paragraph:1"],
     "paragraph__transaction_grid" => ["bos:paragraph:2", "bos:paragraph:10"],
     "paragraph__video" => ["bos:paragraph:2"],
-    "d7_node:advpoll" => ["bos:node:1"],
     "d7_node:article" => ["bos:node:2"],
     "d7_node:change" => ["bos:node:1"],
     "d7_node:department_profile" => ["bos:node:1"],

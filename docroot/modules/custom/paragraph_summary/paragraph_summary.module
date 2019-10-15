@@ -20,6 +20,7 @@ function paragraph_summary_form_alter(&$form, FormStateInterface $form_state, $f
     if (substr($form_field, 0, 6) == "field_"
       && !empty($form[$form_field]["widget"]["#paragraphs_widget"])) {
       // This is a paragraph component.
+      $form["#attached"]["library"][] = "paragraph_summary/summary_style";
       $widget = &$form[$form_field]["widget"];
       $fsFields = $form_state->getStorage()['field_storage']["#parents"]["#fields"];
       if (!empty($fsFields[$form_field]["paragraphs"])) {
