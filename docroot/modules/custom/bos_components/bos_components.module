@@ -227,7 +227,7 @@ function bos_components_paragraph_summary_alter(array $form_widget, array $para,
   if ($para["entity"]->hasField("field_component_title") && !empty($para["entity"]->get("field_component_title")->value)) {
     $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   }
-  elseif ($para["entity"]->hasField("field_title") && !empty($para["entity"]->hasField("field_title")->value)) {
+  elseif ($para["entity"]->hasField("field_title") && !empty($para["entity"]->get("field_title")->value)) {
     $markup[] = Markup::create($para["entity"]->get("field_title")->value);
   }
   elseif ($para["entity"]->hasField("title")) {
@@ -266,6 +266,11 @@ function bos_components_paragraph_summary_alter(array $form_widget, array $para,
     $text = strip_tags($text);
     $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, $at_settings) . "</span>");
   }
+  elseif ($para["entity"]->hasField("field_sidebar_text")) {
+    $text = strip_tags($para["entity"]->get("field_sidebar_text")->value);
+    $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, $at_settings) . "</span>");
+  }
+
   // Find any sub-fields.
   foreach ($para["entity"]->getFields() as $field_name => $field) {
     if ($field_name != "field_contact" &&
