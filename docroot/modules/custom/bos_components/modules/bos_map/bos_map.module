@@ -84,7 +84,7 @@ function bos_map_rebuild() {
     mkdir($path, 0777, TRUE);
   }
   if (file_exists($path . $destName)) {
-    unlink($path . $destName);
+    return;
   }
   copy($modulePath . "/map-background-image.jpg", $path . $destName);
 
