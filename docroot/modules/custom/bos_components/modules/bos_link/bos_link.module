@@ -204,10 +204,12 @@ function bos_link_paragraph_external_link_summary_alter(array $form_widget, arra
 function bos_link_paragraph_internal_link_summary_alter(array $form_widget, array $para, array $attributes) {
   $markup[] = Markup::create($para["entity"]->get("field_internal_link")->title);
   $uri = $para["entity"]->get("field_internal_link")->uri;
-  $url = Url::fromUri($uri);
-  $url_rel = $url->toString();
-  $markup[] = Markup::create("<span class='link'></span><a href='" . $url->setAbsolute(TRUE)->toString() . "' target='_blank' title='Click to view in new tab'>" . $url_rel . "</a>");
-
+  if (isset($uri)) {
+    $url = Url::fromUri($uri);
+    $url_rel = $url->toString();
+    $markup[] = Markup::create("<span class='link'></span><a href='" . $url->setAbsolute(TRUE)
+      ->toString() . "' target='_blank' title='Click to view in new tab'>" . $url_rel . "</a>");
+  }
   return [
     'attributes' => $attributes,
     'content' => $markup,
