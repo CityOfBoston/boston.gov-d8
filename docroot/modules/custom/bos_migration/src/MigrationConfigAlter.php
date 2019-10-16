@@ -1858,7 +1858,13 @@ class MigrationConfigAlter {
           "plugin" => "sub_process",
           "source" => $fieldName,
           "process" => [
-            "target_id" => 'fid',
+            "target_id" => [
+              [
+                "plugin" => "migration_lookup",
+                "migration" => "d7_file",
+                "source" => "fid",
+              ],
+            ],
             "alt" => 'alt',
             "title" => 'title',
             "width" => 'width',
