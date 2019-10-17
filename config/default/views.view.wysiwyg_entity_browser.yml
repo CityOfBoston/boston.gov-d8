@@ -79,8 +79,8 @@ display:
         type: default
         options:
           grouping: {  }
-          row_class: ''
-          default_row_class: true
+          row_class: 'media-icon-wrapper media-library-cob'
+          default_row_class: false
       row:
         type: fields
         options:
@@ -785,7 +785,7 @@ display:
               developer: '0'
               content_editor: '0'
               content_author: '0'
-            placeholder: ''
+            placeholder: 'Search by Filename'
           is_grouped: false
           group_info:
             label: ''
@@ -904,6 +904,7 @@ display:
         filters: false
         filter_groups: false
         fields: false
+        sorts: false
       filter_groups:
         operator: AND
         groups:
@@ -1087,6 +1088,21 @@ display:
           entity_type: media
           entity_field: bundle
           plugin_id: field
+      sorts:
+        name:
+          id: name
+          table: media_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: true
+          expose:
+            label: 'Sort by name'
+          entity_type: media
+          entity_field: name
+          plugin_id: standard
     cache_metadata:
       max-age: -1
       contexts:
@@ -1094,6 +1110,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags:
         - 'config:field.storage.media.image'
