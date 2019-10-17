@@ -423,7 +423,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Render the header elements here so just markup is passed to tmplt.
   _bos_theme_render_snippets($variables);
 
-  // Get SSO Login URL
+  // Get SSO Login URL.
   $ssoLoginUrl = Settings::get('sso_login_url', '');
   $variables['sso_login_url'] = $ssoLoginUrl;
 }
