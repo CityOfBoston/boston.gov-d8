@@ -9,6 +9,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Render\Element;
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_theme().
@@ -237,6 +238,32 @@ function node_event_preprocess_field__field_address(&$variables) {
   if (isset($variables["items"])) {
     foreach ($variables["items"] as $key => &$item) {
       $item["content"]["country"]["#attributes"]["class"][] = "hidden";
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_event_preprocess_field_multiple_value_form(array &$variables) {
+  if (!empty(\Drupal::request()->attributes->get("node"))) {
+    $node = \Drupal::request()->attributes->get("node")->getType();
+
+    if ($node != "event") {
+      return;
+    }
+
+    $field_name = FALSE;
+    if (!empty($variables["element"]["#field_name"])) {
+      $field_name = $variables["element"]["#field_name"];
+    }
+    if ($field_name == "field_contacts" && !empty($variables["element"]["add_more"])) {
+      $text = new TranslatableMarkup("Add another department");
+      $variables["button"]["#value"] = $text;
+    }
+    if ($field_name == "field_related" && !empty($variables["element"]["add_more"])) {
+      $text = new TranslatableMarkup("Add more related content");
+      $variables["button"]["#value"] = $text;
     }
   }
 }
