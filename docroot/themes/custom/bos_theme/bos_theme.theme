@@ -425,7 +425,13 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // Get SSO Login URL.
   $ssoLoginUrl = Settings::get('sso_login_url', '');
-  $variables['sso_login_url'] = $ssoLoginUrl;
+  $localLogin = \Drupal::request()->query->get('local');
+  if ($localLogin) {
+    $variables['sso_login_url'] = FALSE;
+  }
+  else {
+    $variables['sso_login_url'] = $ssoLoginUrl;
+  }
 }
 
 /**
