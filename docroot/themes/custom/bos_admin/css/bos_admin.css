@@ -1222,9 +1222,32 @@ What: Creates a horizontally arranged group.
 
 /*
   David:
+  Where: Media diplay in content editor forms.
+  What: Styles the thumbnail view.
+ */
+/** Style the icon media type thumbnail display for use on entity editor forms */
+.media--type-icon.media--view-mode-thumbnail {
+  text-align: left;
+  margin-left: 14px;
+  margin-bottom: 15px;
+}
+.media--type-icon.media--view-mode-thumbnail .content {
+  width: fit-content;
+  max-width: 200px;
+}
+.media--type-icon.media--view-mode-thumbnail .field {
+  text-align: center;
+}
+.media--type-icon.media--view-mode-thumbnail .field--name-name {
+  padding: 20px 0 10px 0;
+}
+
+/*
+  David:
   Where: Media widget dialog media--media-library.html.twig.
   What: Restricts the size of the dialog window.
  */
+
 .media-library-item {
   background: #ebebeb;
 }
@@ -1232,16 +1255,22 @@ What: Creates a horizontally arranged group.
   height: 120px;
 }
 
-.media_library_cob {
+.media_library_cob .content {
   text-align: center;
-  display: block !important;
+  margin-bottom:  15px;
+  /* display: block !important; */
+  /* padding-left: 0; */
 }
+
+/* Is used in media--icon */
+.media_library_cob .field--name-name,
 .media_library_cob .field--name-filename {
   padding: 30px 0px 10px 0px;
   color: #0c97ed;
   background: #e5e5e5;
   border-bottom: 1px solid #999999;
 }
+
 .media_library_cob .field--name-uri {
   height: 120px;
   width: 120px;
@@ -1282,10 +1311,10 @@ What: Creates a horizontally arranged group.
   What: Hides the Add-media buttons on media library..
  */
 .field--widget-media-library-widget .media-library-add-button {
-  visibility: hidden;
+  /*visibility: hidden;*/
 }
 .media-library-view .hide-media {
-  display: none;
+  /*display: none;*/
 }
 
 /*
@@ -1340,12 +1369,4 @@ What: Creates a horizontally arranged group.
   max-width: 69%;
 }
 
-/*
-  David:
-  Where: Content editor ui for paragraph summaries
-  What: Remove the icon indicating # of children.
- */
-.paragraphs-badge {
-  display:none;
-}
 
