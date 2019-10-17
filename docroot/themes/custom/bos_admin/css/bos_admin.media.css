@@ -1,0 +1,60 @@
+/*
+  This stylesheet is used to contain style rules for media displays embedded in editor forms of nodes and paragraphs,
+  and in entity browser media displays (modal windows).
+ */
+
+/* Cross media-type styles in editor forms */
+.media-library-cob .field--name-name,
+.media-library-cob .field--name-filename {
+  margin-top: 30px;
+  padding-bottom: 10px;
+  color: #0c97ed;
+  background: #e5e5e5;
+  border-bottom: 1px solid #999999;
+}
+
+/** Style the icon media type thumbnail display for use on entity editor forms */
+.media--type-icon.media--view-mode-thumbnail {
+  text-align: left;
+  margin-left: 14px;
+  margin-bottom: 15px;
+}
+.media--type-icon.media--view-mode-thumbnail .content {
+  width: fit-content;
+  max-width: 200px;
+}
+.media--type-icon.media--view-mode-thumbnail .field {
+  text-align: center;
+}
+.media--type-icon.media--view-mode-thumbnail .field--name-name {
+  margin-top: 0;
+  padding-top: 10px;
+}
+
+/* Helper to ensure preview formats nicely when editing view */
+.view-wysiwyg-entity-browser .preview-section,
+.view-wysiwyg-entity-browser .view-content {
+  display: flex;
+  flex-wrap: wrap;
+  flex-flow: wrap;
+  flex-direction: row;
+}
+
+/* Style the entity browser (modal form) for the icon media type */
+.media-icon-wrapper {
+  max-width: 200px;
+  min-width: 200px;
+  margin: 0 10px;
+}
+.media-icon-wrapper .field-content {
+  text-align: center;
+}
+.media-library-cob .views-field-entity-browser-select {
+  float: right;
+  background: #e5e5e5;
+  width: 100%;
+}
+.media-library-cob .views-field-entity-browser-select .form-type-checkbox {
+  text-align: right;
+  padding-right: 8px;
+}
