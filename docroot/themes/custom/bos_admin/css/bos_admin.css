@@ -1205,17 +1205,25 @@ What: Creates a horizontally arranged group.
   }
 }
 .cob-group-grid .form-wrapper {
-  /* max-width: 50%; */
+   /*max-width: 50%;*/
 }
-.cob-group-grid img {
-  height: 10px
+.cob-group-grid .field--name-field-use-alert img {
+  height: 10px;
 }
 
-/*
-  David:
-  Where: Status Item admin page.
-  What: Hides the title on the weight field..
- */
+/* Spcific column layout for event node */
+.page-node-type-event .cob-group-grid .field--name-field-intro-image {
+  width: 60%;
+}
+.page-node-type-event .cob-group-grid .field--name-field-thumbnail {
+  width: 40%;
+}
+
+  /*
+    David:
+    Where: Status Item admin page.
+    What: Hides the title on the weight field..
+   */
 .cob-group-grid .form-item-field-weight label {
   display: none;
 }
