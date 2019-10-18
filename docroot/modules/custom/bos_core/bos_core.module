@@ -16,6 +16,7 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 
@@ -902,4 +903,40 @@ function _bos_core_global_update_configs() {
   _bos_vocab_update_all_configs();
   _bos_core_update_all_configs();
 
+}
+
+/**
+ * Renames the add_more button text for fields on a given entity.
+ *
+ * @param array $variables
+ *   Usual variables array.
+ * @param string $type
+ *   The bundle/type for the entity.
+ * @param array $button_text
+ *   Array of fieldname:button_text pairs to replace btn text on specified fld.
+ */
+function _bos_core_rename_multiple_button(array &$variables, string $type, array $button_text) {
+  if (!empty(\Drupal::request()->attributes->get("node"))) {
+    $node = \Drupal::request()->attributes->get("node")->getType();
+    if (isset($node) && $node != $type) {
+      return;
+    }
+  }
+  elseif (!empty(\Drupal::request()->attributes->get("paragraph"))) {
+    $para = \Drupal::request()->attributes->get("paragraph")->getType();
+    if (isset($para) && $para != $type) {
+      return;
+    }
+  }
+  else {
+    return;
+  }
+
+  foreach ($button_text as $field_name => $new_button_text) {
+    if (!empty($variables["element"]["#field_name"])
+      && $variables["element"]["#field_name"] == $field_name
+      && !empty($variables["element"]["add_more"])) {
+      $variables["button"]["#value"] =  new TranslatableMarkup($new_button_text);
+    }
+  }
 }
