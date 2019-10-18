@@ -25,6 +25,7 @@ dependencies:
     - field.field.node.public_notice.field_time
     - field.field.node.public_notice.field_updated_date
     - node.type.public_notice
+    - workflows.workflow.city_of_boston_workflows
   module:
     - address
     - content_moderation
@@ -45,6 +46,7 @@ third_party_settings:
         - group_discussion_topics
         - group_components
         - group_related_content
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -58,7 +60,6 @@ third_party_settings:
       children:
         - field_contact
         - title
-        - field_featured
         - field_intro_text
         - body
       parent_name: group_public_notice
@@ -208,8 +209,8 @@ third_party_settings:
       children:
         - field_manual_date
         - field_updated_date
-      parent_name: ''
-      weight: 1
+      parent_name: group_public_notice
+      weight: 31
       format_type: tab
       format_settings:
         id: ''
@@ -237,7 +238,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 6
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -332,12 +333,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_featured:
-    weight: 4
-    type: options_buttons
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_intro_text:
     weight: 5
     settings:
@@ -422,20 +417,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 3
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 11
+    weight: 9
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 9
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -443,12 +438,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 5
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 5
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -456,14 +451,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 12
+    weight: 10
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 6
     region: content
     third_party_settings: {  }
   title:
@@ -476,7 +471,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60
@@ -484,8 +479,9 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 10
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_featured: true
