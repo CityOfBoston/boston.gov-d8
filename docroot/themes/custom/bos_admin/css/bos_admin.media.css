@@ -4,8 +4,10 @@
  */
 
 /* Cross media-type styles in editor forms */
-.media-library-cob .field--name-name,
-.media-library-cob .field--name-filename {
+.media-icon-wrapper .field--name-name,
+.media-icon-wrapper .field--name-filename,
+.media-image-wrapper .field--name-name,
+.media-image-wrapper .field--name-filename {
   margin-top: 23px;
   padding-bottom: 10px;
   color: #0c97ed;
@@ -62,8 +64,10 @@
   border-bottom: 1px solid #999999;
 }
 /* Helper to ensure preview formats nicely when editing view */
-.view-wysiwyg-entity-browser .preview-section,
-.view-wysiwyg-entity-browser .view-content {
+.view-display-id-icon_library .preview-section,
+.view-display-id-icon_library .view-content,
+.view-display-id-image_library .preview-section,
+.view-display-id-image_library .view-content {
   display: flex;
   flex-wrap: wrap;
   flex-flow: wrap;
@@ -81,16 +85,62 @@
 .media-icon-wrapper .field-content {
   text-align: center;
 }
-.media-library-cob .views-field-entity-browser-select {
+.media-image-wrapper .views-field-entity-browser-select,
+.media-icon-wrapper .views-field-entity-browser-select {
   float: right;
   background: #e5e5e5;
   border-top: 1px solid #999999;
   width: 100%;
 }
-.media-library-cob .views-field-entity-browser-select .form-type-checkbox {
+.media-image-wrapper .views-field-entity-browser-select .form-type-checkbox,
+.media-icon-wrapper .views-field-entity-browser-select .form-type-checkbox {
   text-align: right;
   padding-right: 4px;
   margin: 0;
   background: #0c97ed;
   padding-bottom: 10px;
+}
+
+/** Build document library entity browser view. */
+.view-display-id-document_library .view-content {
+  overflow-y: scroll;
+  max-height: calc(65vh);
+  border: 1px solid #cecece;
+}
+.file-document-wrapper,
+.media-document-wrapper {
+  display: block;
+  padding: 5px 0 5px 10px;
+}
+.file-document-wrapper .views-field-entity-browser-select .form-type-checkbox,
+.media-document-wrapper .views-field-entity-browser-select .form-type-checkbox {
+  margin: 0;
+}
+.file-document-wrapper .views-field:first-child,
+.media-document-wrapper .views-field:first-child {
+  float: left;
+}
+.file-document-wrapper .views-field:nth-child(n+2),
+.media-document-wrapper .views-field:nth-child(n+2) {
+  padding-left: 30px;
+}
+
+.file--type-document .content .field:nth-child(2),
+.file--type-document .content .field:nth-child(3) {
+  float: left;
+  margin-top: 0;
+  margin-right: 10px;
+  line-height: 1.3em;
+}
+.file--type-document .content .field:nth-child(4) {
+  clear: left;
+}
+
+/* Remove scrollbars from modal iframe */
+.ui-dialog-content[id*=document-entity],
+iframe.entity-browser-modal-iframe[name*=document_entity] html {
+  overflow: hidden !important;
+}
+html.no-scroll {
+  overflow: hidden;
 }
