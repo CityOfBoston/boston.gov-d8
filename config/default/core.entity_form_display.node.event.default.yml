@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
     - field.field.node.event.field_date_range
-    - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
@@ -348,16 +347,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: daterange_default
-    region: content
-  field_description:
-    weight: 9
-    settings:
-      rows: 5
-      placeholder: 'Brief descriptive summary of the Event.'
-    third_party_settings:
-      advanced_text_formatter:
-        show_token_tree: 0
-    type: text_textarea
     region: content
   field_details_link:
     type: link_default
