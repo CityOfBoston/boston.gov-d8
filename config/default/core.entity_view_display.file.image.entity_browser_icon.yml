@@ -14,7 +14,6 @@ dependencies:
     - fences
     - file_entity
     - smart_trim
-    - user
 _core:
   default_config_hash: _Bf428kqU4oErwcNNTL2Wj4HQfES94Bs4usKnK3iL2Q
 id: file.image.entity_browser_icon
@@ -34,27 +33,20 @@ content:
       wrap_class: trimmed
       more_text: More
       more_class: more-link
-      trim_options:
-        text: true
-        trim_zero: false
       wrap_output: false
       more_link: false
+      trim_options:
+        text: false
+        trim_zero: false
       summary_handler: full
     third_party_settings:
       fences:
         fences_field_tag: div
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-  uid:
-    type: author
-    weight: 2
-    region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   uri:
     type: file_image
     label: hidden
@@ -81,3 +73,4 @@ hidden:
   filemime: true
   filesize: true
   langcode: true
+  uid: true

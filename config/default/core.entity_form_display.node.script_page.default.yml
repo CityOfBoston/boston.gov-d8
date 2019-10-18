@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.script_page.field_link
     - field.field.node.script_page.field_sidebar_components
     - node.type.script_page
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - field_group
@@ -94,32 +95,49 @@ content:
     third_party_settings: {  }
   field_components:
     weight: 8
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Component
       title_plural: Components
-      edit_mode: open
-      add_mode: select
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: dropdown
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_contact:
     weight: 3
-    type: options_select
-    settings: {  }
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
     region: content
   field_embed_list:
     weight: 3
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: 'Embed Script'
       title_plural: 'Embed Scripts'
-      edit_mode: open
-      add_mode: select
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_intro_text:
@@ -132,26 +150,40 @@ content:
     third_party_settings: {  }
   field_link:
     weight: 4
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: Reference
       title_plural: References
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   field_sidebar_components:
     weight: 9
-    type: entity_reference_paragraphs
+    type: paragraphs
     settings:
       title: 'Sidebar Component'
       title_plural: 'Sidebar Components'
-      edit_mode: open
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
       add_mode: button
       form_display_mode: default
-      default_paragraph_type: ''
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
     third_party_settings: {  }
     region: content
   langcode:

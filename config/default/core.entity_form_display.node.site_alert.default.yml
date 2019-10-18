@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.icon_entity_browser
     - field.field.node.site_alert.field_date_range
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
@@ -11,11 +12,12 @@ dependencies:
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
     - node.type.site_alert
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime_range
+    - entity_browser
     - field_group
-    - media_library
     - paragraphs
     - path
     - publication_date
@@ -105,8 +107,17 @@ content:
     region: content
   field_icon:
     weight: 27
-    type: media_library_widget
-    settings: {  }
+    type: entity_browser_entity_reference
+    settings:
+      entity_browser: icon_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
+      open: false
     third_party_settings: {  }
     region: content
   field_link:
