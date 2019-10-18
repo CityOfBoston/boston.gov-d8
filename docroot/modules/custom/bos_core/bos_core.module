@@ -936,7 +936,7 @@ function _bos_core_rename_multiple_button(array &$variables, string $type, array
     if (!empty($variables["element"]["#field_name"])
       && $variables["element"]["#field_name"] == $field_name
       && !empty($variables["element"]["add_more"])) {
-      $variables["button"]["#value"] =  new TranslatableMarkup($new_button_text);
+      $variables["button"]["#value"] = new TranslatableMarkup($new_button_text);
     }
   }
 }
