@@ -412,27 +412,6 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function bos_admin_preprocess_field_multiple_value_form(array &$variables) {
-  if (!empty($variables["element"]["#field_name"])) {
-    $node = false;
-    if (!empty(\Drupal::request()->attributes->get("node"))) {
-      $node = \Drupal::request()->attributes->get("node")->getType();
-      $field_name = FALSE;
-      if (!empty($variables["element"]["#field_name"])) {
-        $field_name = $variables["element"]["#field_name"];
-      }
-      switch ($node) {
-        default:
-          break;
-      }
-    }
-
-  }
-}
-
-/**
  * Check to see if a log value has been provided when one is needed.
  *
  * @param array $form
