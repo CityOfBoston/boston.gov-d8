@@ -57,13 +57,12 @@ function template_preprocess_node__site_alert(array &$variables) {
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_preprocess_HOOK().
  */
-function node_site_alert_form_alter(&$form, $form_state, $form_id) {
-  if ($form_id == "node_site_alert_edit_form") {
-    $field = new TranslatableMarkup("Exclude another page");
-    $form["field_excluded_nodes"]["widget"]["add_more"]["#value"] = $field;
-  }
+function node_site_alert_preprocess_field_multiple_value_form(array &$variables) {
+  _bos_core_rename_multiple_button($variables, "site_alert", [
+    "field_excluded_nodes" => "Exclude another page",
+  ]);
 }
 
 /**
