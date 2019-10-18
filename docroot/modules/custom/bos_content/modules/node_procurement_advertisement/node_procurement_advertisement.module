@@ -179,6 +179,15 @@ function node_procurement_advertisement_form_procurement_advertisement_node_form
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_procurement_advertisement_preprocess_field_multiple_value_form(array &$variables) {
+  _bos_core_rename_multiple_button($variables, "procurement_advertisement", [
+    "field_related_links" => "Add another link",
+  ]);
+}
+
+/**
  * Form validate callback.
  */
 function bos_content_type_procurement_advertisement_form_validate($form, $form_state) {

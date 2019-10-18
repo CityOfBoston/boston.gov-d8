@@ -12,7 +12,6 @@ dependencies:
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
     - field.field.node.event.field_date_range
-    - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
@@ -155,20 +154,6 @@ content:
         fences_label_classes: ''
     type: daterange_default
     region: content
-  field_description:
-    weight: 3
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: 'intro-text supporting-text squiggle-border-bottom'
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    type: text_default
-    region: content
   field_details_link:
     type: link
     weight: 20
@@ -259,12 +244,12 @@ content:
         fences_label_classes: ''
   field_intro_text:
     weight: 13
-    label: visually_hidden
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_tag: div
+        fences_field_classes: 'intro-text supporting-text squiggle-border-bottom'
         fences_field_item_tag: none
         fences_field_item_classes: ''
         fences_label_tag: none
