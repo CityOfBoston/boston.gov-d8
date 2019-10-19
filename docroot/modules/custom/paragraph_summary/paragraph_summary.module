@@ -100,10 +100,12 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
               $subelements[$element_key]["entity"] = Paragraph::load($element_para->target_id);
               $subelements[$element_key]["mode"] = (isset($widget[$element_key]["top"]["actions"]["actions"]["edit_button"]) ? "closed" : "edit");
             }
-            foreach (Element::getVisibleChildren($widget) as $subform_field_key => $subform_field) {
-              if (is_numeric($subform_field)) {
-                $para_field = &$widget[$subform_field_key];
-                paragraph_summary_widget_summary($para_field, $subelements, $subform_field_key);
+            if (!empty($subelements)) {
+              foreach (Element::getVisibleChildren($widget) as $subform_field_key => $subform_field) {
+                if (is_numeric($subform_field)) {
+                  $para_field = &$widget[$subform_field_key];
+                  paragraph_summary_widget_summary($para_field, $subelements, $subform_field_key);
+                }
               }
             }
           }
