@@ -7,7 +7,6 @@ dependencies:
     - field.field.paragraph.sidebar_item_w_icon.field_title
     - paragraphs.paragraphs_type.sidebar_item_w_icon
   module:
-    - content_moderation
     - field_group
     - text
 third_party_settings:
@@ -26,6 +25,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Item w/ Icon'
+      region: content
 id: paragraph.sidebar_item_w_icon.default
 targetEntityType: paragraph
 bundle: sidebar_item_w_icon

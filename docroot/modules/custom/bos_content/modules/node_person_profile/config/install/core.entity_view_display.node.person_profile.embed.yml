@@ -19,11 +19,9 @@ dependencies:
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
     - node.type.person_profile
-    - responsive_image.styles.person_photos
   module:
     - fences
     - options
-    - responsive_image
     - user
 id: node.person_profile.embed
 targetEntityType: node
@@ -48,10 +46,10 @@ content:
   field_person_photo:
     label: hidden
     weight: 0
-    type: responsive_image
+    type: entity_reference_entity_view
     settings:
-      responsive_image_style: person_photos
-      image_link: ''
+      view_mode: responsive_image_person
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none
