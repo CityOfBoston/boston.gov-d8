@@ -44,7 +44,15 @@
 
                 <h1 id="topicTitle">{{ title.0 }}</h1>
 
-                <div class="topic-subhead">Last updated {{ content.field_updated_date }}</div>
+                <div class="topic-subhead">
+                  {% if (content.field_updated_date["#items"]) %}
+                    Last updated: {{ content.field_updated_date }}
+                  {% elseif (content.field_published_date["#items"]) %}
+                    Last updated: {{ content.field_published_date }}
+                  {% else %}
+                    Not published yet!
+                  {% endif %}
+                </div>
 
               </div>
             </div>

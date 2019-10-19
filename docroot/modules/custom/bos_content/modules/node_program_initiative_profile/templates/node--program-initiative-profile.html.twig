@@ -90,11 +90,15 @@
 
 <article{{ attributes }}>
 
-  {% if content.field_updated_date %}
-    <div class="brc-lu">
+  <div class="brc-lu">
+    {% if (content.field_updated_date["#items"]) %}
       Last updated: {{ content.field_updated_date }}
-    </div>
-  {% endif %}
+    {% elseif (content.field_published_date["#items"]) %}
+      Last updated: {{ content.field_published_date }}
+    {% else %}
+      Not published yet!
+    {% endif %}
+  </div>
 
   <div class="program-info-wrapper desktop-100">
     <div {{ primeColumnAttributes }}>
