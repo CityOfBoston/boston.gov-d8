@@ -6,7 +6,6 @@ dependencies:
     - field.field.paragraph.sidebar_item.field_title
     - paragraphs.paragraphs_type.sidebar_item
   module:
-    - content_moderation
     - field_group
     - text
 third_party_settings:
@@ -24,6 +23,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Item'
+      region: content
 id: paragraph.sidebar_item.default
 targetEntityType: paragraph
 bundle: sidebar_item

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.icon_entity_browser
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_theme
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_title
     - field.field.paragraph.bos_signup_emergency_alerts.field_contact
@@ -11,8 +12,8 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
   module:
+    - entity_browser
     - field_group
-    - media_library
     - text
 third_party_settings:
   field_group:
@@ -29,12 +30,12 @@ third_party_settings:
       weight: 0
       format_type: fieldset
       format_settings:
-        label: Component
         description: ''
         required_fields: true
         id: ''
         classes: ''
       label: Component
+      region: content
 id: paragraph.bos_signup_emergency_alerts.default
 targetEntityType: paragraph
 bundle: bos_signup_emergency_alerts
@@ -70,8 +71,17 @@ content:
     region: content
   field_icon:
     weight: 4
-    type: media_library_widget
-    settings: {  }
+    type: entity_browser_entity_reference
+    settings:
+      entity_browser: icon_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
     third_party_settings: {  }
     region: content
   field_intro_text:

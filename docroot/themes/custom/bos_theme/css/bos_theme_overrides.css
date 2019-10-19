@@ -519,12 +519,16 @@ What:  Sizes and spaces the features icons in the place_profile sidebars.
 
 /*
 David:  D8 Issue#408.
-Where: Affects most node and paragraph wigs.
+Where: Affects most node and paragraph twigs.
 What:  Ensures the contextual editor button sits under the Boston header/menubar.
  */
 .contextual {
-  z-index: 49;
+  z-index: -1;
 }
+.component-section .contextual {
+  z-index: 50;
+}
+
 
 /*
 David:  D8 Issue#408.
@@ -935,16 +939,17 @@ Where: page.html.twig
 What: Styles the watermark for D8.
  */
 .watermark-wrapper {
-  width: 100%;
+  width: 50%;
   position: fixed;
-  z-index: 100;
-  margin-top: 26px;
+  z-index: 51;
+  margin: -4px 25% 0 25%;
 }
 .watermark {
   width: fit-content;
   font-family: serif;
+  font-size: 72px;
   margin: 0 auto;
-  height: 1.15em;
+  height: 76px;
 }
 .watermark--needs_review {
   color: #277abd;
@@ -968,4 +973,7 @@ What: Styles the watermark for D8.
 .watermark .wm-text {
   top: 6px;
   position: relative;
+}
+nav.nv-h {
+  z-index: 57;
 }

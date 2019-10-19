@@ -84,11 +84,15 @@
 
 <article{{ attributes }}>
 
-  {% if elements.field_updated_date %}
-    <div class="brc-lu">
-      Last updated:{{ elements.field_updated_date }}
-    </div>
-  {% endif %}
+  <div class="brc-lu">
+    {% if (content.field_updated_date["#items"]) %}
+      Last updated: {{ content.field_updated_date }}
+    {% elseif (content.field_published_date["#items"]) %}
+      Last updated: {{ content.field_published_date }}
+    {% else %}
+      Not published yet!
+    {% endif %}
+  </div>
 
   <div class="department-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-left">

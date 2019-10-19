@@ -60,12 +60,6 @@
   </div>
 </nav>
 
-{% if watermark_text %}
-  <div class="watermark-wrapper">
-    <mark{{ attributes_watermark}}>&#8212;&#8212;[<span class="wm-text">{{ watermark_text }}</span>]&#8212;&#8212;</mark>
-  </div>
-{% endif %}
-
 <div{{ attributes }}>
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
 
@@ -75,6 +69,11 @@
     {{ seal }}
     {{ secondary_nav }}
     {{ search }}
+    {% if watermark_text %}
+      <div class="watermark-wrapper">
+        <mark{{ attributes_watermark}}>&#8212;&#8212;[<span class="wm-text">{{ watermark_text }}</span>]&#8212;&#8212;</mark>
+      </div>
+    {% endif %}
   </header>
 
   {{ drupal_block('views_block:emergency_alerts-block_emergency_alert') }}
