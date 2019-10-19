@@ -94,7 +94,7 @@ function bos_admin_preprocess_html(&$variables) {
   $variables['attributes']['class'][] = 'bos_admin';
   $variables['#attached']['library'][] = "bos_admin/global-styling";
   if ($variables["root_path"] == "entity-browser") {
-    $variables['#attached']['library'][] = "bos_admin/image-libraries";
+//    $variables['#attached']['library'][] = "bos_admin/image-libraries";
     $variables['attributes']['class'][] = "html-" . $variables["root_path"];
   }
   // For the /admin/config/content/embed page add a class so we can theme
