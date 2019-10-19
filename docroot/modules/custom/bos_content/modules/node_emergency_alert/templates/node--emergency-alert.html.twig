@@ -21,7 +21,13 @@
       <div class="b-c">
 
         <div class="t--upper t--sans lh--000">
-          Last updated: {{ content.field_updated_date }}
+          {% if (content.field_updated_date["#items"]) %}
+            Last updated: {{ content.field_updated_date }}
+          {% elseif (content.field_published_date["#items"]) %}
+            Last updated: {{ content.field_published_date }}
+          {% else %}
+            Not published yet!
+          {% endif %}
         </div>
 
         <div class="str m-v300">

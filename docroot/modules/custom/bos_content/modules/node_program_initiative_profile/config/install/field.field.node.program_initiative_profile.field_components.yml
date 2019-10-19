@@ -10,6 +10,7 @@ dependencies:
     - paragraphs.paragraphs_type.cabinet
     - paragraphs.paragraphs_type.city_score_dashboard
     - paragraphs.paragraphs_type.commission_members
+    - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
     - paragraphs.paragraphs_type.drawers
     - paragraphs.paragraphs_type.events_and_notices
@@ -80,6 +81,7 @@ settings:
       video: video
       commission_members: commission_members
       commission_summary: commission_summary
+      commission_search: commission_search
       events_and_notices: events_and_notices
     target_bundles_drag_drop:
       3_column_w_image:
@@ -263,8 +265,8 @@ settings:
         weight: -27
         enabled: false
       commission_search:
+        enabled: true
         weight: 76
-        enabled: false
       from_library:
         weight: 87
         enabled: false

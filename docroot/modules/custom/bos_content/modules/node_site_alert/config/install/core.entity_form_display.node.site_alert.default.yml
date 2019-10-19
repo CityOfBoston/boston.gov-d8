@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.icon_entity_browser
     - field.field.node.site_alert.field_date_range
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
@@ -10,10 +11,12 @@ dependencies:
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
     - node.type.site_alert
+    - workflows.workflow.city_of_boston_workflows
   module:
+    - content_moderation
     - datetime_range
+    - entity_browser
     - field_group
-    - media_library
     - paragraphs
     - path
     - publication_date
@@ -37,6 +40,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Info
+      region: content
     group_exclude:
       children:
         - field_excluded_nodes
@@ -50,6 +54,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Exclude pages'
+      region: content
     group_vertical_:
       children:
         - group_info
@@ -62,6 +67,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Vertical tab'
+      region: content
 id: node.site_alert.default
 targetEntityType: node
 bundle: site_alert
@@ -100,8 +106,17 @@ content:
     region: content
   field_icon:
     weight: 27
-    type: media_library_widget
-    settings: {  }
+    type: entity_browser_entity_reference
+    settings:
+      entity_browser: icon_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
+      open: false
     third_party_settings: {  }
     region: content
   field_link:
@@ -136,6 +151,12 @@ content:
     settings:
       include_locked: true
     third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   path:
     type: path
     weight: 7
@@ -159,7 +180,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 10
+    weight: 9
     region: content
     third_party_settings: {  }
   sticky:
@@ -197,5 +218,4 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  moderation_state: true
   title: true

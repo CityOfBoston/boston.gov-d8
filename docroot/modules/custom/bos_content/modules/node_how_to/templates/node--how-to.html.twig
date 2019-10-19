@@ -35,11 +35,17 @@
 
 <article{{ attributes }}>
   {{ drupal_block('system_breadcrumb_block') }}
-  {% if content.field_updated_date %}
-    <div class="brc-lu">
-      Last updated:{{ content.field_updated_date }}
-    </div>
-  {% endif %}
+
+  <div class="brc-lu">
+    {% if (content.field_updated_date["#items"]) %}
+      Last updated: {{ content.field_updated_date }}
+    {% elseif (content.field_published_date["#items"]) %}
+      Last updated: {{ content.field_published_date }}
+    {% else %}
+      Not published yet!
+    {% endif %}
+  </div>
+
   {{ title_suffix }}
     <div class="tabbed-info-wrapper desktop-100">
       <div class="column mobile-100 desktop-66-left">

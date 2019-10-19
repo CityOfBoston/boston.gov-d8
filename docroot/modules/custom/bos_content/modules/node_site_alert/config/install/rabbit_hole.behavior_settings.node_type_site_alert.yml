@@ -1,8 +1,10 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - node.type.site_alert
 id: node_type_site_alert
-action: display_page
+action: page_redirect
 allow_override: 0
-redirect: ''
+redirect: /
 redirect_code: 301
