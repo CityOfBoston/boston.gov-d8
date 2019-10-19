@@ -3,16 +3,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.paragraph.hero_image.field_grid_link
     - field.field.paragraph.hero_image.field_header
     - field.field.paragraph.hero_image.field_image
     - field.field.paragraph.hero_image.field_short_title
     - field.field.paragraph.hero_image.field_subheader
-    - image.style.photo_bleed_a_mobile_1x
     - paragraphs.paragraphs_type.hero_image
   module:
+    - entity_browser
     - paragraphs
-    - svg_image
 _core:
   default_config_hash: OnZph8nzqP5F88y1MrYTlTzk2I5G54CMAWMFUBEu4Wc
 id: paragraph.hero_image.default
@@ -30,7 +30,7 @@ content:
       closed_mode: summary
       autocollapse: all
       closed_mode_threshold: 0
-      add_mode: select
+      add_mode: button
       form_display_mode: default
       default_paragraph_type: _none
       features:
@@ -49,10 +49,17 @@ content:
     region: content
   field_image:
     weight: 6
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: photo_bleed_a_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
     third_party_settings: {  }
     region: content
   field_short_title:
