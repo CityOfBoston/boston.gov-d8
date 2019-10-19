@@ -1,17 +1,17 @@
-uuid: 27d1c5fd-0ae1-46eb-a0e8-b6f73b3195e9
+uuid: ecd52102-a97c-443c-8eeb-0e6de01303cb
 langcode: en
-status: false
+status: true
 dependencies:
   config:
-    - image.style.thumbnail
+    - image.style.media_fixed_height_100px_
   module:
     - media
     - svg_image
     - user
 _core:
   default_config_hash: rRzAWaXpJGYA2gPG6BmGxy8gfFd4srCc-LQY3JB6tR8
-id: media
-label: Media
+id: media_cob
+label: 'Media (CoB)'
 module: views
 description: ''
 tag: ''
@@ -241,8 +241,12 @@ display:
           click_sort_column: target_id
           type: image
           settings:
-            image_style: thumbnail
+            image_style: media_fixed_height_100px_
             image_link: ''
+            svg_render_as_image: 1
+            svg_attributes:
+              width: '100'
+              height: '100'
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -644,6 +648,11 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_author: '0'
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
