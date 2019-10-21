@@ -583,7 +583,7 @@ function _bos_admin_base_entity_dialog_content(array &$form, string $type) {
       $form_settings["svg_render_as_image"]["#type"] = "hidden";
       $form_settings["svg_render_as_image"]["#default_value"] = 0;
     }
-    // Remove the  tip about modifying styles as we don't need to encourage that!
+    // Remove the tip about modifying styles as we don't need to encourage that!
     unset($form_settings["image_style"]["#description"]);
 
     // Remove all styles who's machine name does not contain "_ckeditor".
