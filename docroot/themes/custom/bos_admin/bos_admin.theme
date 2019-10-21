@@ -430,7 +430,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
  */
 function bos_admin_form_entity_embed_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (isset($form["entity"])) {
-    if (NULL != $form_state->getValue("op") && $form_state->getValue("op")->__toString() == "Next") {
+    if ((NULL != $form_state->getValue("op")) && ($form_state->getValue("op")->__toString() == "Next")) {
       if ($form_state->hasValue("entity_browser") && isset($form_state->getValue("entity_browser")["entities"][0])) {
         $media_type = $form_state->getValue("entity_browser")["entities"][0]->bundle();
         if ($media_type == "icon") {
@@ -459,13 +459,12 @@ function bos_admin_form_entity_embed_dialog_alter(&$form, FormStateInterface $fo
     elseif (NULL == $form_state->getValue("op")) {
       // An already embedded element is being updated.
       // Make basic customization of the dialog.
-      _bos_admin_base_entity_dialog_content($form, "icon");
+      $media_type = ($form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#default_value"] == "icon_embedded_ck_editor" ? "icon" : "image");
+      _bos_admin_base_entity_dialog_content($form, $media_type);
       // If this is an icon, set the default style & hide the style dialog.
-      if ($form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#default_value"] == "icon_embedded_ck_editor") {
+      if ($media_type == "icon") {
         $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#type"] = "hidden";
-        $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#options"][] = [
-          "icon_embedded_ck_editor" => "Default Icon Style",
-        ];
+        $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#options"]["icon_embedded_ck_editor"] = "Default Icon Style";
       }
     }
   }
@@ -582,6 +581,13 @@ function _bos_admin_base_entity_dialog_content(array &$form, string $type) {
       $form_settings["svg_attributes"]["width"]["#default_value"] = 0;
       $form_settings["svg_render_as_image"]["#type"] = "hidden";
       $form_settings["svg_render_as_image"]["#default_value"] = 0;
+    }
+    if ($type == "icon") {
+      $form_settings["svg_attributes"]["#attributes"]["class"][] = "hidden";
+      $form_settings["svg_attributes"]["height"]["#default_value"] = 150;
+      $form_settings["svg_attributes"]["width"]["#default_value"] = 150;
+      $form_settings["svg_render_as_image"]["#type"] = "hidden";
+      $form_settings["svg_render_as_image"]["#default_value"] = 1;
     }
     // Remove the tip about modifying styles as we don't need to encourage that!
     unset($form_settings["image_style"]["#description"]);

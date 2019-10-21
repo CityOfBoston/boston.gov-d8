@@ -470,6 +470,33 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_core_preprocess_image_style(&$variables) {
+  // This renders the images which have these styles as background elements.
+  // We do this to allow better dynamic image resizing with the page width.
+  switch($variables["style_name"]) {
+    case "150_embedded_ckeditor":
+      $variables["image"]["#height"] = "150";
+    case "200_embedded_ckeditor":
+    case "300_embedded_ckeditor":
+    case "800_embedded_ckeditor":
+      $variables["ckeditor_background"] = TRUE;
+      $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+      $variables["content_attributes"]["class"][] = $variables["style_name"];
+      $style = [
+        "width: 100%",
+        "height: " . $variables["image"]["#height"] . "px",
+        "background-size: cover",
+        "background-position: center",
+        "background-image: url(" . $variables["image"]["#uri"] . ")",
+      ];
+      $variables["content_attributes"]["style"][] = implode(";", $style);
+      break;
+  }
+}
+
+/**
  * Implements hook_media_embed_alter().
  */
 function bos_core_media_embed_alter(&$build, $entity, $context) {
@@ -485,12 +512,14 @@ function bos_core_entity_embed_context_alter(array &$context, EntityInterface $e
   // Make the image style a css safe class.
   if (!empty($context["data-entity-embed-display-settings"]["image_style"])) {
     $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"]);
-    $context["class"] = $newClass;
+    if (isset($context["class"])) {
+      $context["class"] .= " " . $newClass;
+    }
+    else {
+      $context["class"] = $newClass;
+    }
   }
-  if (isset($context["data-entity-embed-display-settings"]["svg_render_as_image"])
-    && $context["data-entity-embed-display-settings"]["svg_render_as_image"] == "1") {
-    unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
-  }
+  unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
 }
 
 /**
