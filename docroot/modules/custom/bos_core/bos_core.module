@@ -481,7 +481,7 @@ function bos_core_media_embed_alter(&$build, $entity, $context) {
 /**
  * Implements hook_entity_embed_context_alter().
  */
-function bos_core_entity_embed_context_alter(array &$context, \Drupal\Core\Entity\EntityInterface $entity) {
+function bos_core_entity_embed_context_alter(array &$context, EntityInterface $entity) {
   // Make the image style a css safe class.
   if (!empty($context["data-entity-embed-display-settings"]["image_style"])) {
     $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"]);
@@ -489,7 +489,7 @@ function bos_core_entity_embed_context_alter(array &$context, \Drupal\Core\Entit
   }
   if (isset($context["data-entity-embed-display-settings"]["svg_render_as_image"])
     && $context["data-entity-embed-display-settings"]["svg_render_as_image"] == "1") {
-    unset ($context["data-entity-embed-display-settings"]["svg_attributes"]);
+    unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
   }
 }
 
