@@ -475,7 +475,7 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
 function bos_core_preprocess_image_style(&$variables) {
   // This renders the images which have these styles as background elements.
   // We do this to allow better dynamic image resizing with the page width.
-  switch($variables["style_name"]) {
+  switch ($variables["style_name"]) {
     case "150_embedded_ckeditor":
       $variables["image"]["#height"] = "150";
     case "200_embedded_ckeditor":
