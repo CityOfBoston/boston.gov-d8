@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\editor\Entity\Editor;
 
 /**
  * Implements hook_theme().
@@ -58,6 +59,13 @@ function node_article_preprocess_node__article(&$variables) {
   _bos_content_fix_attributes($variables);
   $variables['attributes']->addClass("desktop-100");
   $variables['attributes']->addClass("clearfix");
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function node_article_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = drupal_get_path("module", "node_article") . "/css/ckeditor.boston.article.css";
 }
 
 /**
