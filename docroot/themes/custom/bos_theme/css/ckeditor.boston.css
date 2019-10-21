@@ -1,0 +1,40 @@
+/*
+  This stylesheet is used to contain style rules for media displays embedded in editor forms of nodes and paragraphs,
+  and in entity browser media displays (modal windows).
+ */
+html {
+  font-size: 18px !important;
+  line-height: 2.16667em;
+  font-family: Montserrat,sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  min-height: 100%;
+  background-color: #f7f7f7;
+}
+body {
+  font-family: Lora,serif;
+  font-size: 112%;
+  color: #58585b;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #fff;
+  margin: 0 auto;
+  padding: 1px;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  max-width: 1200px;
+}
+p {
+  margin: .49833rem 0 2.16667rem;
+}
+.cke_editable p a,
+.cke_editable p a:visited {
+  color: #1871bd;
+  text-decoration: none;
+}
+
+.cke_widget_element .cob-icon-embedded-ck-editor img,
+.cke_widget_element .cob-icon-embedded-ck-editor svg {
+  height: 150px;
+  width: auto;
+}
