@@ -60,6 +60,10 @@
     <exec command="ls -lah ${repo.root}/simplesamlphp" logoutput="true"/>
     <echo message="List files in /vendor/simplesamlphp/simplesamlphp dir:" level="info"/>
     <exec command="ls -lah ${repo.root}/vendor/simplesamlphp/simplesamlphp" logoutput="true"/>
+    <exec command="rm -R ${repo.root}/vendor/simplesamlphp/simplesamlphp/config" logoutput="true"/>
+    <exec command="rm -R ${repo.root}/vendor/simplesamlphp/simplesamlphp/metadata" logoutput="true"/>
+    <echo message="AFTER RM config and metadata files in /vendor/simplesamlphp/simplesamlphp dir:" level="info"/>
+    <exec command="ls -lah ${repo.root}/vendor/simplesamlphp/simplesamlphp" logoutput="true"/>
     <exec command="cp -R ${repo.root}/simplesamlphp/config ${repo.root}/vendor/simplesamlphp/simplesamlphp/" logoutput="true"/>
     <exec command="cp -R ${repo.root}/simplesamlphp/metadata ${repo.root}/vendor/simplesamlphp/simplesamlphp/" logoutput="true"/>
     <echo message="AFTER COPY: List files in /vendor/simplesamlphp/simplesamlphp dir (again):" level="info"/>
