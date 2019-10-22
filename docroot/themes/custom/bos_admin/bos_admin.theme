@@ -107,6 +107,13 @@ function bos_admin_preprocess_html(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_page__admin__workbench(array &$variables) {
+  $variables['#attached']['library'][] = "bos_admin/workbench";
+}
+
+/**
  * Implements hook_preprocess_HOOK() for HTML document templates.
  */
 function bos_admin_preprocess_html__entity_browser__modal__document_entity_browser(&$variables) {

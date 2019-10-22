@@ -12,3 +12,11 @@ bos_core.admin:
     _form: '\Drupal\bos_core\Form\BosCoreSettingsForm'
   requirements:
     _permission: 'access content'
+
+bos_core.content_moderation.list:
+  path: '/admin/content/needs_review'
+  defaults:
+    _entity_list: 'content_moderation'
+    _title: 'Needs Review'
+  requirements:
+    _permission: 'access content'
