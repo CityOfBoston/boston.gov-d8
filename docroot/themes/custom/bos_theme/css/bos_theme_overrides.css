@@ -980,23 +980,33 @@ nav.nv-h {
 
 /*
 David:
-Where: everywhere
+Where: rich text fields.
 What: Adds style for entity embed images.
  */
-.cob-800-embedded-ckeditor img {
-  width: 100%;
-  height: auto;
+div[class*=embedded-ckeditor].align-right {
+  margin: 0 0 10px 20px;
 }
-.cob-400-embedded-ckeditor-default img {
+div[class*=embedded-ckeditor].align-center {
+  margin: 0 20px 10px 20px;
+}
+div[class*=embedded-ckeditor].align-left {
+  margin: 0 20px 10px 0;
+}
+.cob-150-embedded-ckeditor {
+  width: 150px;
+  height: 150px;
+}
+.cob-300-embedded-ckeditor {
+  width: 33%;
+}
+.cob-400-embedded-ckeditor {
   width: 50%;
-  height: auto;
 }
-.cob-300-embedded-ckeditor img {
-  width: 33.33%;
-  height: auto;
+.cob-800-embedded-ckeditor {
+  width: 100%;
 }
 .cob-icon-embedded-ck-editor,
 .cob-icon-embedded-ck-editor svg {
   width: auto;
-  height: 150px;
+  height: 100px;
 }
