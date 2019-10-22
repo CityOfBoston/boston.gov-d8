@@ -25,6 +25,9 @@ dependencies:
     - node.type.topic_page
     - node.type.transaction
     - system.menu.admin
+    - user.role.administrator
+    - user.role.content_reviewer
+    - user.role.site_administrator
     - workflows.workflow.city_of_boston_workflows
   module:
     - better_exposed_filters
@@ -1519,9 +1522,12 @@ display:
           content: "<br>\r\n<a href=\"/admin/content/needs_review\">> View full content moderation listing</a>"
           plugin_id: text_custom
       access:
-        type: perm
+        type: role
         options:
-          perm: 'use city_of_boston_workflows transition publish'
+          role:
+            administrator: administrator
+            site_administrator: site_administrator
+            content_reviewer: content_reviewer
       allow:
         items_per_page: false
       empty:
@@ -1549,7 +1555,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:workflow_list'
   page_2:
