@@ -406,7 +406,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     'hide_logo' => FALSE,
   ];
 
-  // TODO: review if the secondary menu is needed ...
+  // Secondary menu contains pay and apply, public notices etc.
   $menu_tree = \Drupal::menuTree();
   $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
   $tree = $menu_tree->load("menu-secondary-menu", $parameters);

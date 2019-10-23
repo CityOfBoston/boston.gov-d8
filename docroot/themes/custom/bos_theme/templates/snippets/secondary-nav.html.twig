@@ -23,7 +23,14 @@
                 {{ link(item.title, item.url, { 'class':['nv-h-l-a']}) }}
             </li>
         {% endfor %}
-        <li class="tr nv-h-l-i">
+      {#
+      David:
+      Where: Secondary Menu.
+      What: TEMPORARY: Removes the "translate" button from the secondary_menu by adding <tr-dd-link--hidden>.
+      Note: Doing it this way because we do want the functionality, its just the current Bing engine has been
+      discontinued and a replacement service needs to be found.  Simply hiding the button leaves the back-end
+      logic/functionality in place to be reconnected later if and when a new service is selected. #}
+      <li class="tr nv-h-l-i tr-dd-link--hidden">
             <a href="#translate" title="Translate" class="nv-h-l-a nv-h-l-a--k--s tr-link">Translate</a>
             <ul class="tr-dd">
                 <li><span class="notranslate tr-dd-link tr-dd-link--message">Loading...</span></li>
