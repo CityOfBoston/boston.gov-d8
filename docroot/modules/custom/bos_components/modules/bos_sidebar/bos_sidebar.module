@@ -9,35 +9,26 @@
  * Implements hook_theme().
  */
 function bos_sidebar_theme() {
+  $theme['input__submit__paragraph_action'] = [
+    'base hook' => 'field',
+  ];
   $theme['field__field_sidebar_components'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'field--field-sidebar-components',
   ];
   $theme['field__field_social_media_link'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'field--field-social-media-link',
   ];
   $theme['paragraph__sidebar_item'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--sidebar-item',
   ];
   $theme['paragraph__sidebar_item_w_icon'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--sidebar-item-w-icon',
   ];
   $theme['paragraph__social_media_links'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--social-media-links',
   ];
   $theme['paragraph__social_networking'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_components/modules/bos_sidebar/templates',
-    'template' => 'paragraph--social-networking',
   ];
 
   // Now create mappings from theme suggestions for various node elements back

@@ -6,6 +6,7 @@ use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\MigrateSkipRowException;
 use Drupal\migrate\Plugin\migrate\process\FileCopy;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
 
@@ -95,19 +96,28 @@ class FileCopyExt extends FileCopy {
       // step over it.
       $destid = reset($dup);
       try {
-        $migrate_executable->saveMessage("Remapping fid:" . $fid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
-        \DRUPAL::database()
-          ->insert("migrate_map_d7_file")
-          ->fields([
-            "source_ids_hash" => hash("sha256", $row->getSource()["uri"] . $fid),
-            "sourceid1" => $fid,
-            "destid1" => $destid,
-            "source_row_status" => 0,
-            "rollback_action" => 0,
-            "last_imported" => 0,
-            "hash" => "",
-          ])
-          ->execute();
+        if ($destid != $fid) {
+          $migrate_executable->saveMessage("Remapping fid:" . $fid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
+          $sourceIdValues = $row->getSourceIdValues();
+          $fields["sourceid1"] = $sourceIdValues["fid"];
+          $fields += [
+            'source_row_status' => MigrateIdMapInterface::STATUS_IMPORTED,
+            'rollback_action' => MigrateIdMapInterface::ROLLBACK_DELETE,
+            'hash' => $row->getHash(),
+          ];
+          $fields["destid1"] = $destid;
+          $fields["last_imported"] = 0;
+          $hash = hash('sha256', serialize(array_map('strval', [$sourceIdValues["fid"]])));
+          $keys = ["source_ids_hash" => $hash];
+          \DRUPAL::database()->delete("migrate_map_d7_file")
+            ->condition("sourceid1", $fields["sourceid1"])
+            ->condition("destid1", $destid)
+            ->execute();
+          \DRUPAL::database()->merge("migrate_map_d7_file")
+            ->key($keys)
+            ->fields($fields)
+            ->execute();
+        }
       }
       catch (\Exception $e) {
         if ($e->getCode() != 23000) {
@@ -117,7 +127,6 @@ class FileCopyExt extends FileCopy {
       // Jump out and don't save the mapping entry (it's incorrect).
       throw new MigrateSkipRowException("", FALSE);
     }
-
     // If the file already exists on the destination, then skip.
     if (file_exists($destination) && $this->configuration["file_exists_ext"] == "skip") {
       $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - it already exists.", MigrationInterface::MESSAGE_INFORMATIONAL);

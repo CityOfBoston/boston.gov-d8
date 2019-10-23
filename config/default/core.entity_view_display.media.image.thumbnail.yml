@@ -6,7 +6,7 @@ dependencies:
     - core.entity_view_mode.media.thumbnail
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
-    - image.style.media_fixed_height_100px_
+    - image.style.media_fixed_width_250px
     - media.type.image
   module:
     - fences
@@ -18,30 +18,74 @@ targetEntityType: media
 bundle: image
 mode: thumbnail
 content:
-  image:
-    type: image
-    weight: 0
+  created:
+    type: timestamp
+    weight: 3
+    region: content
     label: hidden
     settings:
-      image_style: media_fixed_height_100px_
-      image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+      date_format: date_format_normal_date
+      custom_date_format: ''
+      timezone: ''
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  image:
+    type: image
+    weight: 1
+    label: hidden
+    settings:
+      image_style: media_fixed_width_250px
+      image_link: ''
+      svg_render_as_image: '1'
+      svg_attributes:
+        width: '250'
+        height: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
     region: content
+  name:
+    type: string
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  uid:
+    type: entity_reference_label
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
 hidden:
-  created: true
   field_media_in_library: true
   langcode: true
-  name: true
   thumbnail: true
-  uid: true

@@ -79,3 +79,12 @@ function node_landing_page_preprocess_breadcrumb(array &$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function node_landing_page_preprocess_field_multiple_value_form(array &$variables) {
+  _bos_core_rename_multiple_button($variables, "landing_page", [
+    "field_contacts" => "Add another department",
+  ]);
+}

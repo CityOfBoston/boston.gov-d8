@@ -240,3 +240,13 @@ function node_event_preprocess_field__field_address(&$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_event_preprocess_field_multiple_value_form(array &$variables) {
+  _bos_core_rename_multiple_button($variables, "event", [
+    "field_contacts" => "Add another department",
+    "field_related" => "Add more related content",
+  ]);
+}

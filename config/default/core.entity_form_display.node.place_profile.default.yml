@@ -24,6 +24,7 @@ dependencies:
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
+    - workflows.workflow.city_of_boston_workflows
   module:
     - address
     - content_moderation
@@ -63,6 +64,7 @@ third_party_settings:
         - group_additional_information
         - group_sidebar_components
         - group_components
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -152,8 +154,8 @@ third_party_settings:
         - field_manual_date
         - field_published_date
         - field_updated_date
-      parent_name: ''
-      weight: 1
+      parent_name: group_place_profile
+      weight: 25
       format_type: tab
       format_settings:
         id: ''
@@ -170,7 +172,6 @@ third_party_settings:
       weight: 8
       format_type: fieldset
       format_settings:
-        label: 'Profile Resources'
         description: ''
         required_fields: true
         id: ''
@@ -261,13 +262,13 @@ content:
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:

@@ -593,6 +593,7 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_certificate_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/certificates.svg',
     'public://img/2016/e/experiential_icons_certificate_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/certificates.svg',
     'public://img/2016/e/experiential_icons_certificate.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/certificates.svg',
+    'public://img/2016/e/experiential_icons_census.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/family.svg',
     'public://img/2016/e/experiential_icons_census_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/family.svg',
     'public://img/2016/e/experiential_icons_car_1.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/car.svg',
     'public://img/2016/e/experiential_icons_car_0.svg' => '//patterns.boston.gov/assets/icons/experiential_icons/car.svg',
@@ -793,7 +794,7 @@ class MigrationFixes {
         SELECT distinct f.fid, f.uri
         FROM file_managed f
           LEFT JOIN media m ON f.fid = m.mid
-        WHERE f.filemime LIKE '%svg%'
+        WHERE f.filemime = 'image/svg+xml'
             AND m.mid IS NULL
             AND f.status = 1;")->fetchAll();
 
