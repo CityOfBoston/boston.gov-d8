@@ -15,6 +15,7 @@ use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
@@ -760,7 +761,20 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           preg_match('~/(.*)~', $link['0']['uri'], $match);
           $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
           $results['url'] = $url->toString();
-          $results['title'] = $link['0']['title'];
+          if (empty($link['0']['title'])) {
+            $param = $url->getRouteParameters();
+            if (!empty($param)
+              && isset($param["node"])
+              && NULL != ($dest = Node::load($param["node"]))) {
+              $results['title'] = $dest->get("title")->value;
+            }
+            else {
+              $results['title'] = "Unknown";
+            }
+          }
+          else {
+            $results['title'] = $link['0']['title'];
+          }
           $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
             ->toString();
         }
