@@ -1205,20 +1205,34 @@ What: Creates a horizontally arranged group.
   }
 }
 .cob-group-grid .form-wrapper {
-  /* max-width: 50%; */
+   /*max-width: 50%;*/
 }
-.cob-group-grid img {
-  height: 10px
+.cob-group-grid .field--name-field-use-alert img {
+  height: 10px;
 }
 
-/*
-  David:
-  Where: Status Item admin page.
-  What: Hides the title on the weight field..
- */
+/* Spcific column layout for event node */
+.page-node-type-post .cob-group-grid .field--name-field-intro-image,
+.page-node-type-topic-page .cob-group-grid .field--name-field-intro-image,
+.page-node-type-event .cob-group-grid .field--name-field-intro-image {
+  width: 60%;
+}
+.page-node-type-post .cob-group-grid .field--name-field-thumbnail,
+.page-node-type-topic-page .cob-group-grid .field--name-field-thumbnail,
+.page-node-type-event .cob-group-grid .field--name-field-thumbnail {
+  width: 40%;
+}
+
+  /*
+    David:
+    Where: Status Item admin page.
+    What: Hides the title on the weight field..
+   */
 .cob-group-grid .form-item-field-weight label {
   display: none;
 }
+
+
 
 /*
   David:
@@ -1232,16 +1246,15 @@ What: Creates a horizontally arranged group.
   height: 120px;
 }
 
-.media_library_cob {
+.media_library_cob .content {
   text-align: center;
-  display: block !important;
+  margin-bottom:  15px;
+  /* display: block !important; */
+  /* padding-left: 0; */
 }
-.media_library_cob .field--name-filename {
-  padding: 30px 0px 10px 0px;
-  color: #0c97ed;
-  background: #e5e5e5;
-  border-bottom: 1px solid #999999;
-}
+
+/* Is used in media--icon */
+
 .media_library_cob .field--name-uri {
   height: 120px;
   width: 120px;
@@ -1282,10 +1295,10 @@ What: Creates a horizontally arranged group.
   What: Hides the Add-media buttons on media library..
  */
 .field--widget-media-library-widget .media-library-add-button {
-  visibility: hidden;
+  /*visibility: hidden;*/
 }
 .media-library-view .hide-media {
-  display: none;
+  /*display: none;*/
 }
 
 /*
@@ -1342,10 +1355,67 @@ What: Creates a horizontally arranged group.
 
 /*
   David:
-  Where: Content editor ui for paragraph summaries
-  What: Remove the icon indicating # of children.
+  Where: Content listing form for Embed Buttons.
+  Where: /admin/config/content/embed.
+  What: Fix size of icon to reflect how it will appear in the WYSIWYG toolbar.
  */
-.paragraphs-badge {
-  display:none;
+.admin-content-embed-buttons td.priority-low img {
+  max-width: 16px;
 }
 
+/*
+  David:
+  Where: Editor form, paragraphs experemental
+  Where: themes/custom/bos_admin/templates/field-multiple-value-form.html.twig.
+  What: Visually differentiate the add new component elements.
+ */
+
+.field--name-field-components .cob-admin-components:not([data-drupal-selector*=subform]) > .description,
+.field--name-field-components .cob-admin-components:not([data-drupal-selector*=subform]) > .cob-admin-button-wrapper,
+.field--name-field-sidebar-components .cob-admin-button-wrapper {
+  padding: 10px;
+  /*background-color: #d2e4fb;*/
+  background-color: #f2f2f0;
+  color: #222;
+}
+.field--name-field-components .cob-admin-components .cob-admin-button-wrapper .form-type-select,
+.field--name-field-sidebar-components .cob-admin-components .cob-admin-button-wrapper .form-type-select {
+  color: #222;
+}
+.field--name-field-components .cob-admin-components:not([data-drupal-selector*=subform]) > .description,
+.field--name-field-components .paragraphs-tabs-wrapper .cob-admin-components #edit-field-components--description.description {
+  border-top: 1px solid #a5a5a5;
+  border-left: 1px solid #a5a5a5;
+  border-right: 1px solid #a5a5a5;
+  margin-bottom: 0;
+}
+.field--name-field-components .cob-admin-components:not([data-drupal-selector*=subform]) > .cob-admin-button-wrapper,
+.field--name-field-sidebar-components .cob-admin-button-wrapper {
+  border-bottom: 1px solid #a5a5a5;
+  border-left: 1px solid #a5a5a5;
+  border-right: 1px solid #a5a5a5;
+  padding-top: 0px;
+  color: #f2f2f0;
+}
+.field--name-field-sidebar-components .cob-admin-button-wrapper {
+  border-top: 1px solid #a5a5a5;
+}
+.field--name-field-components .cob-admin-button-wrapper,
+.field--name-field-sidebar-components .cob-admin-button-wrapper {
+  display: flex;
+  flex-flow: row;
+}
+.field--name-field-components .cob-admin-button-wrapper .button,
+.field--name-field-sidebar-components .cob-admin-button-wrapper .button {
+  height: fit-content;
+  padding: 5px 1.5em;
+  margin-top: 28px;
+  margin-left: 10px;
+}
+.field--name-field-components .cob-admin-button-wrapper .ajax-progress {
+  margin-top: 32px;
+}
+.js .bos_admin .cob-admin-components .dropbutton .dropbutton-action input.button--primary:hover {
+  background-color: #0087cd !important;
+  color: #fff;
+}

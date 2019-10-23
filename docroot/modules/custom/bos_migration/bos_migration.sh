@@ -386,6 +386,9 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
+# re-run this to update icons broght through in WYSIWYG (rich-text) content.
+doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
+
 # Reset status_items.
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"

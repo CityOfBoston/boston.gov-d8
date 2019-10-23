@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_updated_date
     - node.type.article
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -26,15 +27,16 @@ third_party_settings:
         - group_basic_info
         - group_sidebar_components
         - group_components
+        - group_page_meta_data
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        label: Article
         direction: vertical
         id: ''
         classes: ''
       label: Article
+      region: content
     group_basic_info:
       children:
         - field_contact
@@ -51,22 +53,23 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_page_meta_data:
       children:
         - field_manual_date
         - field_updated_date
         - field_published_date
-      parent_name: ''
-      weight: 12
+      parent_name: group_article
+      weight: 4
       format_type: tab
       format_settings:
-        label: 'Page Metadata'
         formatter: closed
         description: ''
         required_fields: true
         id: ''
         classes: 'group-page-metadata field-group-tab'
       label: 'Page Metadata'
+      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -80,6 +83,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
     group_components:
       children:
         - field_components
@@ -93,6 +97,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
 id: node.article.default
 targetEntityType: node
 bundle: article
@@ -172,7 +177,7 @@ content:
       closed_mode: summary
       autocollapse: all
       closed_mode_threshold: 0
-      add_mode: select
+      add_mode: button
       form_display_mode: default
       default_paragraph_type: _none
       features:

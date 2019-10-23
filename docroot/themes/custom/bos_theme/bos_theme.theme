@@ -408,7 +408,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     'hide_logo' => FALSE,
   ];
 
-  // TODO: review if the secondary menu is needed ...
+  // Secondary menu contains pay and apply, public notices etc.
   $menu_tree = \Drupal::menuTree();
   $parameters = $menu_tree->getCurrentRouteMenuTreeParameters("menu-secondary-menu");
   $tree = $menu_tree->load("menu-secondary-menu", $parameters);
@@ -628,7 +628,7 @@ function bos_theme_preprocess_image(&$variables) {
   }
 
   if (strpos($variables["uri"], ".svg") > 0) {
-    if (substr($variables['uri'], 0, 4) != "http") {
+    if (substr($variables['uri'], 0, 4) != "http" && substr($variables['uri'], 0, 6) != "public") {
       $variables['uri'] = \Drupal::request()->getScheme() . ":" . $variables['uri'];
     }
     $icon = file_get_contents($variables['uri']);
@@ -1113,7 +1113,7 @@ function _bos_theme_page_watermark(array &$variables) {
 
   $user = \Drupal::currentUser();
   if ($user->hasPermission("view any unpublished content")) {
-    if (!empty($node = $variables['node'])) {
+    if (!empty($variables['node']) && $node = $variables['node']) {
       if ($variables['unpublished'] || $variables['preview']) {
         $variables['attributes']->addClass('node-unpublished');
         $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);

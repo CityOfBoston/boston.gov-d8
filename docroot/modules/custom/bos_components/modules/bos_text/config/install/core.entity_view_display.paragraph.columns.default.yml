@@ -6,12 +6,10 @@ dependencies:
     - field.field.paragraph.columns.field_column_title
     - field.field.paragraph.columns.field_image
     - field.field.paragraph.columns.field_link
-    - image.style.med_small_square__200x200_
     - paragraphs.paragraphs_type.columns
   module:
     - entity_reference_revisions
     - fences
-    - svg_image
     - text
 id: paragraph.columns.default
 targetEntityType: paragraph
@@ -50,14 +48,10 @@ content:
   field_image:
     label: hidden
     weight: 0
-    type: image
+    type: entity_reference_entity_view
     settings:
-      image_style: med_small_square__200x200_
-      image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
+      view_mode: default
+      link: false
     third_party_settings:
       fences:
         fences_field_tag: none

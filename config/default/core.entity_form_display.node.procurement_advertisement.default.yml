@@ -3,7 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
+    - entity_browser.browser.document_entity_browser
     - field.field.node.procurement_advertisement.body
     - field.field.node.procurement_advertisement.field_award_date
     - field.field.node.procurement_advertisement.field_awarded_by
@@ -28,6 +28,7 @@ dependencies:
     - field.field.node.procurement_advertisement.field_unspsc
     - field.field.node.procurement_advertisement.field_url
     - node.type.procurement_advertisement
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -81,7 +82,6 @@ third_party_settings:
       region: content
     group_sidebar:
       children:
-        - field_field_date_range
         - field_date_range
         - field_awarded_by
         - field_bid_type
@@ -231,12 +231,12 @@ content:
     region: content
     type: entity_browser_file
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
+      entity_browser: document_entity_browser
       field_widget_remove: true
-      field_widget_replace: true
       selection_mode: selection_append
-      view_mode: full
+      view_mode: thumbnail
+      field_widget_edit: false
+      field_widget_replace: false
       open: false
       preview_image_style: thumbnail
     third_party_settings: {  }

@@ -15,7 +15,9 @@ use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 
@@ -469,12 +471,56 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_core_preprocess_image_style(&$variables) {
+  // This renders the images which have these styles as background elements.
+  // We do this to allow better dynamic image resizing with the page width.
+  switch ($variables["style_name"]) {
+    case "150_embedded_ckeditor":
+      $variables["image"]["#height"] = "150";
+    case "200_embedded_ckeditor":
+    case "300_embedded_ckeditor":
+    case "800_embedded_ckeditor":
+      $variables["ckeditor_background"] = TRUE;
+      $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+      $variables["content_attributes"]["class"][] = $variables["style_name"];
+      $style = [
+        "width: 100%",
+        "height: " . $variables["image"]["#height"] . "px",
+        "background-size: cover",
+        "background-position: center",
+        "background-image: url(" . $variables["image"]["#uri"] . ")",
+      ];
+      $variables["content_attributes"]["style"][] = implode(";", $style);
+      break;
+  }
+}
+
+/**
  * Implements hook_media_embed_alter().
  */
 function bos_core_media_embed_alter(&$build, $entity, $context) {
   if (!empty($context['data-style'])) {
     $build['#attributes']['style'][] = $context['data-style'];
   }
+}
+
+/**
+ * Implements hook_entity_embed_context_alter().
+ */
+function bos_core_entity_embed_context_alter(array &$context, EntityInterface $entity) {
+  // Make the image style a css safe class.
+  if (!empty($context["data-entity-embed-display-settings"]["image_style"])) {
+    $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"]);
+    if (isset($context["class"])) {
+      $context["class"] .= " " . $newClass;
+    }
+    else {
+      $context["class"] = $newClass;
+    }
+  }
+  unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
 }
 
 /**
@@ -643,34 +689,33 @@ function _bos_core_install_icons($module) {
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
-    if (file_exists($destfile)) {
-      unlink($destfile);
-    }
-    copy($modulePath . "/" . $icon, $destfile);
+    if (!file_exists($destfile)) {
+      copy($modulePath . "/" . $icon, $destfile);
 
-    // Check if the file exists that is listed in para.para_type.module.yml.
-    $filesystem = \Drupal::service('file_system');
-    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-    $mod = \Drupal::entityTypeManager()
-      ->getStorage("paragraphs_type")->load($entity);
-    if (!empty($mod)) {
-      $destination = "public://paragraphs_type_icon/" . $icon;
-      $image = Drupal::entityTypeManager()->getStorage("file")
-        ->loadByProperties(["uri" => $destination]);
-      if (count($image) == 0) {
-        $image = File::create();
-        $image->setFileUri($destination);
-        $image->setOwnerId(\Drupal::currentUser()->id());
-        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-        $image->setFileName($filesystem->basename($destination));
-        $image->setPermanent();
-        $image->save();
+      // Check if the file exists that is listed in para.para_type.module.yml.
+      $filesystem = \Drupal::service('file_system');
+      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+      $mod = \Drupal::entityTypeManager()
+        ->getStorage("paragraphs_type")->load($entity);
+      if (!empty($mod)) {
+        $destination = "public://paragraphs_type_icon/" . $icon;
+        $image = Drupal::entityTypeManager()->getStorage("file")
+          ->loadByProperties(["uri" => $destination]);
+        if (count($image) == 0) {
+          $image = File::create();
+          $image->setFileUri($destination);
+          $image->setOwnerId(\Drupal::currentUser()->id());
+          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+          $image->setFileName($filesystem->basename($destination));
+          $image->setPermanent();
+          $image->save();
+        }
+        else {
+          $image = end($image);
+        }
+        $file_uuid = $image->get("uuid")->value;
+        $mod->set("icon_uuid", $file_uuid)->save();
       }
-      else {
-        $image = end($image);
-      }
-      $file_uuid = $image->get("uuid")->value;
-      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
@@ -716,7 +761,20 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           preg_match('~/(.*)~', $link['0']['uri'], $match);
           $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
           $results['url'] = $url->toString();
-          $results['title'] = $link['0']['title'];
+          if (empty($link['0']['title'])) {
+            $param = $url->getRouteParameters();
+            if (!empty($param)
+              && isset($param["node"])
+              && NULL != ($dest = Node::load($param["node"]))) {
+              $results['title'] = $dest->get("title")->value;
+            }
+            else {
+              $results['title'] = "Unknown";
+            }
+          }
+          else {
+            $results['title'] = $link['0']['title'];
+          }
           $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
             ->toString();
         }
@@ -903,4 +961,40 @@ function _bos_core_global_update_configs() {
   _bos_vocab_update_all_configs();
   _bos_core_update_all_configs();
 
+}
+
+/**
+ * Renames the add_more button text for fields on a given entity.
+ *
+ * @param array $variables
+ *   Usual variables array.
+ * @param string $type
+ *   The bundle/type for the entity.
+ * @param array $button_text
+ *   Array of fieldname:button_text pairs to replace btn text on specified fld.
+ */
+function _bos_core_rename_multiple_button(array &$variables, string $type, array $button_text) {
+  if (!empty(\Drupal::request()->attributes->get("node"))) {
+    $node = \Drupal::request()->attributes->get("node")->getType();
+    if (isset($node) && $node != $type) {
+      return;
+    }
+  }
+  elseif (!empty(\Drupal::request()->attributes->get("paragraph"))) {
+    $para = \Drupal::request()->attributes->get("paragraph")->getType();
+    if (isset($para) && $para != $type) {
+      return;
+    }
+  }
+  else {
+    return;
+  }
+
+  foreach ($button_text as $field_name => $new_button_text) {
+    if (!empty($variables["element"]["#field_name"])
+      && $variables["element"]["#field_name"] == $field_name
+      && !empty($variables["element"]["add_more"])) {
+      $variables["button"]["#value"] = new TranslatableMarkup($new_button_text);
+    }
+  }
 }

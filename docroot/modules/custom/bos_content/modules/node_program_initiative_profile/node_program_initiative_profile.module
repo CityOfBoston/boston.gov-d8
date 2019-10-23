@@ -102,6 +102,15 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_program_initiative_profile_preprocess_field_multiple_value_form(array &$variables) {
+  _bos_core_rename_multiple_button($variables, "program_initiative_profile", [
+    "field_contacts" => "Add another department",
+  ]);
+}
+
+/**
  * Prepares variables for program initiative profile templates.
  *
  * Default template: program-initiative-profile.html.twig.

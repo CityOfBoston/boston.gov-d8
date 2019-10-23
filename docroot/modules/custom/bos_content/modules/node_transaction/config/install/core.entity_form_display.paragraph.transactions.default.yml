@@ -2,11 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.icon_entity_browser
     - field.field.paragraph.transactions.field_grid_link
     - field.field.paragraph.transactions.field_icon
     - paragraphs.paragraphs_type.transactions
   module:
-    - media_library
+    - entity_browser
     - paragraphs
 id: paragraph.transactions.default
 targetEntityType: paragraph
@@ -34,8 +35,17 @@ content:
     region: content
   field_icon:
     weight: 2
-    type: media_library_widget
-    settings: {  }
+    type: entity_browser_entity_reference
+    settings:
+      entity_browser: icon_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
     third_party_settings: {  }
     region: content
   moderation_state:

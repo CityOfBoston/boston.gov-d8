@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
     - field.field.node.event.field_date_range
-    - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
@@ -54,34 +53,6 @@ content:
       timezone_override: ''
       format_type: date_format_boston_featured
       separator: '-'
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-  field_description:
-    type: advanced_text
-    weight: 3
-    region: content
-    label: hidden
-    settings:
-      trim_length: '200'
-      ellipsis: '1'
-      word_boundary: '1'
-      filter: php
-      format: plain_text
-      allowed_html:
-        - b
-        - em
-        - i
-        - strong
-        - u
-      use_summary: 0
-      token_replace: 0
-      autop: 0
     third_party_settings:
       fences:
         fences_field_tag: none

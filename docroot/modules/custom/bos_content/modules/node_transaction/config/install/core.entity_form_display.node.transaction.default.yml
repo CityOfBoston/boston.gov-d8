@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.transaction.field_link
     - field.field.node.transaction.field_sticky
     - node.type.transaction
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - field_group
@@ -26,12 +27,13 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: Transaction
+      region: content
     group_basic_information:
       children:
         - title
+        - field_sticky
         - field_description
         - field_link
-        - field_sticky
       parent_name: group_transaction
       weight: 15
       format_type: tab
@@ -42,6 +44,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
 id: node.transaction.default
 targetEntityType: node
 bundle: transaction
@@ -81,7 +84,7 @@ content:
     third_party_settings: {  }
     region: content
   field_sticky:
-    weight: 5
+    weight: 2
     type: boolean_checkbox
     settings:
       display_label: true

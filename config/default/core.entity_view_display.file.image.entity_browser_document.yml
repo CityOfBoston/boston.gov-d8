@@ -10,6 +10,7 @@ dependencies:
     - field.field.file.image.field_image_caption
     - file_entity.type.image
   module:
+    - file
     - file_entity
     - user
 _core:
@@ -50,15 +51,13 @@ content:
     settings: {  }
     third_party_settings: {  }
   uri:
-    type: file_image
+    type: file_uri
     label: hidden
     weight: -5
     region: content
     settings:
-      title: field_image_title_text
-      alt: field_image_alt_text
-      image_style: ''
-      image_link: ''
+      link_to_file: false
+      file_download_path: false
     third_party_settings: {  }
 hidden:
   field_file_image_alt_text: true
