@@ -57,7 +57,7 @@
     <exec command="rsync -rlDW --inplace --delete --exclude-from=${deploy.excludes-file} --files-from=${deploy.includes-file} ${repo.root}/ ${deploy.dir}/"
           logoutput="true"/>
 
-    <!-- Ensure all hooks have appropriate executable permissions. -->
+    <!-- Ensure all hooks have appropriate executable permissions.. -->
     <exec command="chmod +x ${deploy.dir}/hooks/**/*.sh" logoutput="true"/>
 
     <!-- Remove config_split -->
