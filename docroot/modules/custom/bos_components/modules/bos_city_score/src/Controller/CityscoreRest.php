@@ -186,6 +186,8 @@ class CityscoreRest extends ControllerBase {
         $taxTerm = $this->entityTypeManager->getStorage('taxonomy_term')
           ->load($term->tid);
         $taxTerm->status = 0;
+        $taxTerm->setNewRevision(FALSE);
+        $taxTerm->enforceIsNew(FALSE);
         $taxTerm->save();
       }
       foreach ($payload as $row) {
@@ -200,12 +202,13 @@ class CityscoreRest extends ControllerBase {
           $tax = [
             'vid' => "cityscore_metrics",
             'name' => $row->metric_name,
+            'weight' => $result['count'],
           ];
           $tax = $this->entityTypeManager
             ->getStorage('taxonomy_term')
             ->create($tax);
-          $result = $tax->save();
-          if ($result != SAVED_NEW) {
+          $didit = $tax->save();
+          if ($didit != SAVED_NEW) {
             // Continue for now.  May fail later.
           }
         }
@@ -221,8 +224,9 @@ class CityscoreRest extends ControllerBase {
           $tax->field_previous_month = $row->previous_month_score;
           $tax->field_previous_week = $row->previous_week_score;
           $tax->field_previous_day = $row->previous_day_score;
-          $tax->weight = $result['count'];
           $tax->status = 1;
+          $tax->setNewRevision(FALSE);
+          $tax->enforceIsNew(FALSE);
           if ($tax->save() == SAVED_UPDATED) {
             $result['saved']++;
           }
