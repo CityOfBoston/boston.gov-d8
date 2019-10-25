@@ -100,7 +100,7 @@ function bos_link_preprocess_field(&$vars) {
     }
   }
   if ($field_name == 'field_external_link') {
-    if ($vars["element"]["#view_mode"] == "button_blue" || $vars["element"]["#view_mode"] == "default") {
+    if ($vars["element"]["#view_mode"] == "button_blue") {
       $vars['items'][0]['content']['#options']['attributes']['class'][] = 'btn';
     }
     else {
