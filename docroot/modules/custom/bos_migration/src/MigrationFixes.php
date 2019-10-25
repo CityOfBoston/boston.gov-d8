@@ -5,6 +5,7 @@ namespace Drupal\bos_migration;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\migrate_utilities\MigUtilTools;
 
 /**
  * Class migrationFixes.
@@ -802,10 +803,7 @@ class MigrationFixes {
       foreach ($svgs as $svg) {
         $svg->file = File::load($svg->fid);
         if (!empty($svg->file) && NULL != ($svg->new_uri = self::$svgMapping[$svg->uri]) && strpos($svg->uri, ".svg")) {
-          $svg->filename = explode("/", $svg->new_uri);
-          $svg->filename = array_pop($svg->filename);
-          $svg->filename = str_replace([".svg", "icons", "logo"], "", $svg->filename);
-          $svg->filename = str_replace("icon", "", $svg->filename);
+          $svg->filename = MigUtilTools::cleanFilename($svg->new_uri);
           $svg->new_uri = str_replace(["https:", "http:"], "", $svg->new_uri);
 
           // Set the new uri and an appropriate filename on the file_managed
@@ -911,9 +909,7 @@ class MigrationFixes {
           foreach ($files as $file) {
             $file->file = File::load($file->fid);
             if (!empty($file->file)) {
-              $file->filename = explode("/", $file->uri);
-              $file->filename = array_pop($file->filename);
-              $file->filename = str_replace("." . $file_extension, "", $file->filename);
+              $file->filename = MigUtilTools::cleanFilename($file->uri);
               $file->type = ($media_type == "file" ? "document" : "image");
               if ($media_type == "file") {
                 $file->media_library = TRUE;
