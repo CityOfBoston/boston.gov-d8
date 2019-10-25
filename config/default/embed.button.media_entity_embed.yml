@@ -4,10 +4,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.media.embedded
+    - core.entity_view_mode.media.media_library
+    - core.entity_view_mode.media.thumbnail
     - entity_browser.browser.media_entity_browser
     - media.type.image
   content:
-    - 'file:image:8ae1553f-fa7a-4f0c-bdc1-59db7b26de5e'
+    - 'file:image:07cf97a5-6e11-46a2-a2f7-47f63e497aeb'
   module:
     - entity_embed
     - image
@@ -25,7 +27,12 @@ type_settings:
   display_plugins:
     - bos_media_image
     - 'view_mode:media.embedded'
+    - 'view_mode:media.media_library'
+    - 'view_mode:media.thumbnail'
+    - 'entity_reference:media_thumbnail'
+    - 'entity_reference:entity_reference_entity_id'
+    - media_image
   entity_browser: media_entity_browser
   entity_browser_settings:
     display_review: false
-icon_uuid: 8ae1553f-fa7a-4f0c-bdc1-59db7b26de5e
+icon_uuid: 07cf97a5-6e11-46a2-a2f7-47f63e497aeb
