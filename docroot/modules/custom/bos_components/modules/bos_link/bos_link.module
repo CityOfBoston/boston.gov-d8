@@ -33,6 +33,10 @@ function bos_link_theme() {
       'base hook' => 'field',
       'template' => 'field--field-link--button-blue',
     ],
+    'field__field_external_link__external_link__mode__button_blue' => [
+      'base hook' => 'field',
+      'template' => 'field--field-link--button-blue',
+    ],
 
   ];
 }
@@ -96,7 +100,7 @@ function bos_link_preprocess_field(&$vars) {
     }
   }
   if ($field_name == 'field_external_link') {
-    if ($vars["element"]["#view_mode"] == "cta_button") {
+    if ($vars["element"]["#view_mode"] == "button_blue") {
       $vars['items'][0]['content']['#options']['attributes']['class'][] = 'btn';
     }
     else {
@@ -116,6 +120,13 @@ function bos_link_preprocess_field(&$vars) {
  * Implements theme_preprocess_hook().
  */
 function bos_link_preprocess_field__field_internal_link__internal_link__mode__button_blue(array &$variables, $hook) {
+  $variables["items"][0]["content"]["#attributes"]["class"][] = "btn";
+}
+
+/**
+ * Implements theme_preprocess_hook().
+ */
+function bos_link_preprocess_field__field_external_link__external_link__mode__button_blue(array &$variables, $hook) {
   $variables["items"][0]["content"]["#attributes"]["class"][] = "btn";
 }
 
@@ -189,6 +200,9 @@ function bos_link_paragraph_external_link_summary_alter(array $form_widget, arra
   $url = parse_url($uri);
   $url["host"] = $url["scheme"] . "://" . $url["host"];
   $url["host"] = (strpos($url["host"], "boston.gov") === FALSE ? $url["host"] : "<span style='color: red;'>(internal) </span>");
+  if (empty($url["path"])) {
+    $url["path"] = "/";
+  }
   $url = $url["host"] . $url['path'];
   $markup[] = Markup::create("<span class='link'></span><a href='" . $uri . "' target='_blank' title='Click to view in new tab'>" . $url . "</a>");
 
