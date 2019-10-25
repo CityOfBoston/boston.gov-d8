@@ -4,6 +4,7 @@
  * @file
  * The install file for bos_city_score module.
  */
+
 use Drupal\redirect\Entity\Redirect;
 
 /**
@@ -27,7 +28,6 @@ function bos_city_score_install() {
  * Adds a url redirect for cityscore rest api.
  */
 function bos_city_score_update_8101(&$sandbox) {
-//  Redirect::load()
   if (empty(Drupal::entityQuery("redirect")->condition('redirect_source__path', 'cityscore/totals/latest.json')->execute())) {
     Redirect::create([
       'redirect_source' => 'cityscore/totals/latest.json',
