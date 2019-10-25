@@ -396,6 +396,7 @@ display:
         pager: false
         arguments: false
         relationships: false
+        cache: false
       allow:
         items_per_page: false
       block_description: 'Site Alerts'
@@ -458,6 +459,9 @@ display:
           plugin_id: numeric
       relationships: {  }
       display_comment: ''
+      cache:
+        type: tag
+        options: {  }
     cache_metadata:
       max-age: -1
       contexts:
