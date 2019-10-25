@@ -349,7 +349,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     }
 
-    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'field_document');
+    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'document');
 
     // Create the Media entity.
     $media = Media::create([
@@ -364,6 +364,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // library.
       'field_media_in_library' => ($targetBundle == 'icon'),
     ]);
+    $media->field_media_in_library = ($targetBundle == 'icon');
     $media->save();
     return $media;
   }

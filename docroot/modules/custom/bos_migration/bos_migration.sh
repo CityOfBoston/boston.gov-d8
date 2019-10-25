@@ -43,7 +43,7 @@ function doMigrate() {
         (${drush} mim $COMMAND >> ${logfile}) || retval=1
         if [[ $retval -eq 0 ]]; then break; fi
 
-        hanging="$(drush ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
+        hanging="$(${drush} ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
         else
