@@ -1305,9 +1305,26 @@ class MigrationConfigAlter {
         "d7_node_entity_translation",
         "d7_taxonomy_term",
         "d7_taxonomy_term_entity_translation",
-      ]) || $migration["source"]["plugin"] == "d7_paragraphs_item"
-      || $migration["source"]["plugin"] == "d7_field_collection_item"
+      ])
+        || $migration["source"]["plugin"] == "d7_paragraphs_item"
+        || $migration["source"]["plugin"] == "d7_field_collection_item"
       ) {
+
+        // Pick the best high_water_mark field.
+        $hasChanged = FALSE;
+        if (array_key_exists("changed", $migration["process"])) {
+          $hasChanged = $migration["process"]["changed"];
+        }
+        elseif (array_key_exists("timestamp", $migration["process"])) {
+          $hasChanged = $migration["process"]["timestamp"];
+        }
+        elseif (array_key_exists("created", $migration["process"])) {
+          $hasChanged = $migration["process"]["created"];
+        }
+        // Add the selected high water property to the migration.
+        if ($hasChanged) {
+          $migration["source"]["high_water_property"]["name"] = $hasChanged;
+        }
 
         // Create dependencies for translations and revisions.
         switch ($migration["id"]) {
