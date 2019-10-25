@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\views\Views;
 
@@ -85,6 +86,20 @@ function node_site_alert_preprocess_page(&$variables) {
   }
 }
 
+/**
+ * Implements hook_entity_presave().
+ */
+function node_site_alert_entity_presave(EntityInterface $entity) {
+  if ($entity->getEntityTypeId() == "node"
+    && $entity->getType() == "site_alert"
+    && isset($entity->title_field->value)) {
+    // Since we have created a separate custom title field, and the form
+    // display does not set the nodes native title field, we need to manually
+    // set the title field here or else we get an "SQL column cannot be null"
+    // exception on save.
+    $entity->setTitle($entity->title_field->value);
+  }
+}
 /**
  * Implements hook_preprocess().
  */
