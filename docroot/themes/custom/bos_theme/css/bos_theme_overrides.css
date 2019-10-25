@@ -939,36 +939,33 @@ Where: page.html.twig
 What: Styles the watermark for D8.
  */
 .watermark-wrapper {
-  width: 50%;
+  width: 100%;
   position: fixed;
   z-index: 51;
-  margin: -4px 25% 0 25%;
+  margin: -5px auto 0 auto;
 }
 .watermark {
   width: fit-content;
   font-family: serif;
   font-size: 72px;
   margin: 0 auto;
-  height: 76px;
+  height: 74px;
 }
 .watermark--needs_review {
   color: #277abd;
-  background-color: #f0ffff;
+  background: linear-gradient(transparent, #f0ffff, transparent);
   opacity: 0.75;
-  border: 1px solid #277abd70;
 }
 .watermark--unpublished,
 .watermark--draft {
   color: #ffae00;
-  background-color: #feffbe;
+  background: linear-gradient(transparent, #feffbe, transparent);
   opacity: 0.75;
-  border: 1px solid #ffae0070;
 }
 .watermark--archive {
   color: #642b2b;
-  background-color: #c8c0c0;
+  background: linear-gradient(transparent, #c8c0c0, transparent);
   opacity: .9;
-  border: 1px solid #642b2b70;
 }
 .watermark .wm-text {
   top: 6px;
