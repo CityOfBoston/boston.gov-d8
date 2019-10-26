@@ -1312,14 +1312,19 @@ class MigrationConfigAlter {
 
         // Pick the best high_water_mark field.
         $hasChanged = FALSE;
-        if (array_key_exists("changed", $migration["process"])) {
-          $hasChanged = $migration["process"]["changed"];
-        }
-        elseif (array_key_exists("timestamp", $migration["process"])) {
-          $hasChanged = $migration["process"]["timestamp"];
-        }
-        elseif (array_key_exists("created", $migration["process"])) {
-          $hasChanged = $migration["process"]["created"];
+        if (in_array($migration["id"], [
+          "d7_node",
+          "d7_taxonomy_term",
+        ])) {
+          if (array_key_exists("changed", $migration["process"])) {
+            $hasChanged = $migration["process"]["changed"];
+          }
+          elseif (array_key_exists("timestamp", $migration["process"])) {
+            $hasChanged = $migration["process"]["timestamp"];
+          }
+          elseif (array_key_exists("created", $migration["process"])) {
+            $hasChanged = $migration["process"]["created"];
+          }
         }
         // Add the selected high water property to the migration.
         if ($hasChanged) {
