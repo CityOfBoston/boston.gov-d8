@@ -6,8 +6,14 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\HtmlResponse;
 
+/**
+ * Controller for login urls.
+ */
 class LoginController extends ControllerBase {
 
+  /**
+   * Cache query params.
+   */
   public static function cacheParam(string $param, HtmlResponse $response) {
     // @var $cache_metadata Drupal\Core\Cache\CacheableMetadata.
     $cache_metadata = (new CacheableMetadata())->addCacheContexts([$param]);
