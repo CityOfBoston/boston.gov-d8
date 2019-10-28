@@ -35,7 +35,7 @@ class FileCopyExt extends FileCopy {
 
   use FilesystemReorganizationTrait;
 
-  protected $migrate_executable;
+  protected $migrateExecutable;
   protected $row;
 
   /**
@@ -48,8 +48,7 @@ class FileCopyExt extends FileCopy {
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
     // If we're stubbing a file entity, return a uri of NULL so it will get
     // stubbed by the general process.
-
-    $this->migrate_executable = $migrate_executable;
+    $this->migrateExecutable = $migrate_executable;
     $this->row = $row;
 
     if ($row->isStub()) {
@@ -97,7 +96,7 @@ class FileCopyExt extends FileCopy {
         // actual file name.  (Check filesize again to be sure e.g. thumbnails
         // may be created with same name as parent).
         $clean_filename = $this->cleanFilename($destination);
-        $files = $this->getFilesByFilename( $clean_filename, $row->getSource()['filesize']);
+        $files = $this->getFilesByFilename($clean_filename, $row->getSource()['filesize']);
       }
     }
     if (isset($files)) {
@@ -144,18 +143,18 @@ class FileCopyExt extends FileCopy {
   /**
    * Creates an entry in the migrate_map_d7_file table for lookups.
    *
-   * @param $sourceid
+   * @param int $sourceid
    *   The fid from the original D7 file.
-   * @param $destid
+   * @param string $destid
    *   The existing fid in d8 for the file with this name/uri.
-   * @param $source
+   * @param string $source
    *   The file uri for reporting/output only.
    *
    * @throws \Drupal\migrate\MigrateException
    */
   protected function createMappingEntry($sourceid, $destid, $source) {
     try {
-      $this->migrate_executable->saveMessage("Remapping fid:" . $sourceid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
+      $this->migrateExecutable->saveMessage("Remapping fid:" . $sourceid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
       $sourceIdValues = $this->row->getSourceIdValues();
       $fields["sourceid1"] = $sourceIdValues["fid"];
       $fields += [
@@ -212,7 +211,6 @@ class FileCopyExt extends FileCopy {
    *
    * @return string
    *   Returns "copy" | "move" | "none".
-   *
    */
   protected function fileOps() {
     if ($this->configuration["copy"]) {

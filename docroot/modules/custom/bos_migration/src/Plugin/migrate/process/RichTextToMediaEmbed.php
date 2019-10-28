@@ -10,7 +10,9 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  * fields.
  */
 
-use Drupal\bos_migration\MigrationFixes;
+use Drupal\bos_migration\FilesystemReorganizationTrait;
+use Drupal\bos_migration\HtmlParsingTrait;
+use Drupal\bos_migration\MediaEntityTrait;
 use Drupal\file\Entity\File;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
@@ -18,9 +20,6 @@ use Drupal\migrate\MigrateSkipProcessException;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\Component\Utility\Html;
-use Drupal\media\MediaInterface;
-use Drupal\migrate\Plugin\MigrationInterface;
-use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
 use Exception;
 
@@ -33,14 +32,14 @@ use Exception;
  */
 class RichTextToMediaEmbed extends ProcessPluginBase {
 
-  use \Drupal\bos_migration\HtmlParsingTrait;
-  use \Drupal\bos_migration\FilesystemReorganizationTrait;
-  use \Drupal\bos_migration\MediaEntityTrait;
+  use HtmlParsingTrait;
+  use FilesystemReorganizationTrait;
+  use MediaEntityTrait;
 
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
   protected $source = [];
   protected $row;
-  protected $migrate_executable;
+  protected $migrateExecutable;
 
   /**
    * {@inheritdoc}
@@ -56,7 +55,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     $this->source = $row->getSource();
     $this->row = $row;
-    $this->migrate_executable = $migrate_executable;
+    $this->migrateExecutable = $migrate_executable;
 
     $value['value'] = $this->convertToEntityEmbed($value['value']);
     return $value;
@@ -65,13 +64,13 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   /**
    * Check the $value to see if we can/need to process this.
    *
-   * @param $value
+   * @param array $value
    *   Value.
    *
    * @return bool
    *   True if we need to exit.
    */
-  private function quitEarly($value) {
+  private function quitEarly(array $value) {
     if (empty($value['value'])) {
       // Skips null and empty values.
       return TRUE;
@@ -94,10 +93,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *
    * @param string $value
    *   The value.
-   * @param \Drupal\migrate\Row $row
-   *   The current row.
-   * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
-   *   The migrate executable.
    *
    * @return string
    *   Process rich text string (html string).
@@ -106,13 +101,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\migrate\MigrateException
+   * @throws \Drupal\migrate\MigrateSkipRowException
    */
-  public function convertToEntityEmbed($value) {
+  public function convertToEntityEmbed(string $value) {
     // D7 media embeds get stored as funky tokens. Replace them with valid HTML
     // so that the preceeding processing works smoothly.
     $this->replaceD7MediaEmbeds($value);
 
-    $document = $this->getDocument($value, $this->migrate_executable);
+    $document = $this->getDocument($value, $this->migrateExecutable);
     $xpath = new \DOMXPath($document);
 
     // Images.
@@ -139,7 +135,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       }
 
       if ($media_entity = $this->process($src, 'image')) {
-        $this->updateImageMediaAlt($media_entity, $image_node, $this->migrate_executable);
+        $this->updateImageMediaAlt($media_entity, $image_node, $this->migrateExecutable);
         // Build <drupal-entity> element.
         $drupal_entity_node = $document->createElement('drupal-entity');
         $drupal_entity_node->setAttribute('data-embed-button', 'media_entity_embed');
@@ -194,19 +190,21 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   /**
    * Creates a File entity, and then a media entity for linking.
    *
-   * @param $src
+   * @param string $src
    *   The original uri for the file.
-   * @param $targetBundle
+   * @param string $targetBundle
    *   The media type.
    *
    * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The Media entity created.
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\migrate\MigrateException
    * @throws \Drupal\migrate\MigrateSkipRowException
    */
-  private function process($src, $targetBundle) {
+  private function process(string $src, string $targetBundle) {
     if (!in_array($targetBundle, ['image', 'document', 'icon'])) {
       throw new MigrateException('Only image and document bundles are supported.');
     }
@@ -231,7 +229,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       // Physically copy the file from $src to $dest.
       $value = [$src, $dest];
       $fileCopyExt = FileCopyExt::create(\Drupal::getContainer(), $config, "file_copy_ext", []);
-      $dest = $fileCopyExt->transform($value, $this->migrate_executable, $this->row, "");
+      $dest = $fileCopyExt->transform($value, $this->migrateExecutable, $this->row, "");
 
       // Create a new File Entity for this file.
       try {
@@ -263,13 +261,13 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   /**
    * Generate a uri to migrate the file to.
    *
-   * @param $uri
+   * @param string $uri
    *   The original source uri.
    *
    * @return string|null
    *   Generated destination uri.
    */
-  private function createDestUri($uri) {
+  private function createDestUri(string $uri) {
     $uri = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $uri);
 
     if (!$this->isRelativeUri($uri)) {
@@ -286,7 +284,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     // We are doing some reorganzing of the filesystem, so make sure that the
     // uri is converted to the new format if applicable.
-    return  $this->rewriteUri($uri, $this->source);
+    return $this->rewriteUri($uri, $this->source);
   }
 
   /**

@@ -1294,12 +1294,10 @@ class MigrationConfigAlter {
 
         // Cull any unwanted field/field operations.
         if (isset($migration['process']['field_type_of_content'])) {
-          // $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
           unset($migration['process']['field_type_of_content']);
         }
         foreach ($migration['process'] as $fieldname => $map) {
           if ($map == "comment") {
-            // $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
             unset($migration['process'][$fieldname]);
           }
         }

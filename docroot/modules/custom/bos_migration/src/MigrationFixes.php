@@ -5,7 +5,6 @@ namespace Drupal\bos_migration;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
-use Drupal\migrate_utilities\MigUtilTools;
 
 /**
  * Class migrationFixes.
@@ -22,7 +21,7 @@ use Drupal\migrate_utilities\MigUtilTools;
  */
 class MigrationFixes {
 
-  use \Drupal\bos_migration\FilesystemReorganizationTrait;
+  use FilesystemReorganizationTrait;
 
   /**
    * An array to map d7 view + displays to d8 equivalents.

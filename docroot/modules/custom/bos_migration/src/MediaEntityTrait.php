@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\bos_migration;
-
 
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -21,17 +19,19 @@ trait MediaEntityTrait {
    * The media entity and file entity have the same id's (mid == fid).
    *
    * @param string $targetBundle
-   *   Media type: icon|media|document
+   *   Media type: icon|media|document.
    * @param int $fid
    *   The (im most cases already existing) file entity id.
    * @param string $filename
    *   Filename for media entity.
-   * @param int|NULL $author
+   * @param int|null $author
    *   The uid of the author.  Will default to uid = 1.
    * @param bool $library
    *   Should this be added to the mwdia library.
    *
    * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The media entity just created or fetched.
+   *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function createMediaEntity(string $targetBundle, int $fid, string $filename, int $author = NULL, bool $library = FALSE) {
@@ -99,8 +99,11 @@ trait MediaEntityTrait {
    * Update the alt text for the media item.
    *
    * @param \Drupal\media\MediaInterface $media_entity
+   *   The Media entity.
    * @param \DOMElement $image_node
+   *   DOM Element for the image element.
    * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
+   *   Migrate_executable.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
