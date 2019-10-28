@@ -220,13 +220,10 @@ function doLogRotate() {
   rm -f {$SCRIPT}
 }
 
-}
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
-
-
 
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
