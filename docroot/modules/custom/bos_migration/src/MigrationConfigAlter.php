@@ -58,6 +58,7 @@ class MigrationConfigAlter {
     'd7_authmap',
     'd7_blocked_ips',
     'd7_block',
+    'd7_block_translation',
     'd7_color',
     'd7_comment',
     'd7_comment_type',
@@ -69,6 +70,7 @@ class MigrationConfigAlter {
     'd7_custom_block',
     'd7_custom_block_translation',
     'd7_dblog_settings',
+    'd7_entity_translation_settings',
     'd7_entity_reference_translation',
     'd7_file_private',
     'd7_filter_format',
@@ -83,6 +85,7 @@ class MigrationConfigAlter {
     'd7_image_settings',
     'd7_image_styles',
     'd7_language_content_settings',
+    'd7_language_content_comment_settings',
     'd7_language_negotiation_settings',
     'd7_language_types',
     'd7_metatag_field',
@@ -91,6 +94,7 @@ class MigrationConfigAlter {
     'd7_node_settings',
     'd7_node_title_label',
     'd7_node_translation',
+    'd7_node_entity_translation',
     'd7_node_type',
     'd7_paragraphs_type',
     'd7_pathauto_patterns',
@@ -104,8 +108,10 @@ class MigrationConfigAlter {
     'd7_system_file',
     'd7_system_mail',
     'd7_system_performance',
+    'd7_taxonomy_term_entity_translation',
     'd7_taxonomy_term:type_of_content',
     'd7_theme_settings',
+    'd7_user_entity_translation',
     'd7_user_flood',
     'd7_user_mail',
     'd7_view_modes',
@@ -293,13 +299,6 @@ class MigrationConfigAlter {
         ],
       ],
     ],
-    "d7_node_entity_translation:department_profile" => [
-      "process" => [
-        "field_address" => [
-          "plugin" => "addressfield",
-        ],
-      ],
-    ],
     // Need to update the process for a date_recur type.
     "d7_node:public_notice" => [
       "process" => [
@@ -323,27 +322,6 @@ class MigrationConfigAlter {
       ],
     ],
     "d7_node_revision:public_notice" => [
-      "process" => [
-        "field_public_notice_date" => [
-          "process" => [
-            "end_value" => [
-              [
-                "plugin" => "format_date",
-                "from_format" => "Y-m-d H:i:s",
-                "to_format" => "Y-m-d\TH:i:s",
-                "source" => "value2",
-              ],
-              [
-                "plugin" => "default_value",
-                "default_value" => "",
-                "strict" => "true",
-              ],
-            ],
-          ],
-        ],
-      ],
-    ],
-    "d7_node_entity_translation:public_notice" => [
       "process" => [
         "field_public_notice_date" => [
           "process" => [
@@ -427,37 +405,6 @@ class MigrationConfigAlter {
         ],
       ],
     ],
-    "d7_node_entity_translation:event" => [
-      "process" => [
-        "field_date_range" => [
-          "plugin" => "sub_process",
-          "source" => "field_event_dates",
-          "process" => [
-            "value" => [
-              [
-                "plugin" => "format_date",
-                "from_format" => "Y-m-d H:i:s",
-                "to_format" => "Y-m-d\TH:i:s",
-                "source" => "value",
-              ],
-            ],
-            "end_value" => [
-              [
-                "plugin" => "format_date",
-                "from_format" => "Y-m-d H:i:s",
-                "to_format" => "Y-m-d\TH:i:s",
-                "source" => "value2",
-              ],
-              [
-                "plugin" => "default_value",
-                "default_value" => "",
-                "strict" => "true",
-              ],
-            ],
-          ],
-        ],
-      ],
-    ],
     // Status_item enabled by default.
     "d7_node:status_item" => [
       "process" => [
@@ -468,14 +415,6 @@ class MigrationConfigAlter {
       ],
     ],
     "d7_node_revision:status_item" => [
-      "process" => [
-        "field_enabled" => [
-          "plugin" => "default_value",
-          "default_value" => 1,
-        ],
-      ],
-    ],
-    "d7_node_entity_translation:status_item" => [
       "process" => [
         "field_enabled" => [
           "plugin" => "default_value",
@@ -514,33 +453,6 @@ class MigrationConfigAlter {
       ],
     ],
     "d7_node_revision:site_alert" => [
-      "process" => [
-        "title_field" => "title_field",
-        "field_date_range/value" => [
-          [
-            "plugin" => "default_value",
-            "default_value" => "2019-01-01 00:00:00",
-          ],
-          [
-            "plugin" => "format_date",
-            "from_format" => "Y-m-d H:i:s",
-            "to_format" => "Y-m-d\TH:i:s",
-          ],
-        ],
-        "field_date_range/end_value" => [
-          [
-            "plugin" => "default_value",
-            "default_value" => "2019-01-01 00:00:00",
-          ],
-          [
-            "plugin" => "format_date",
-            "from_format" => "Y-m-d H:i:s",
-            "to_format" => "Y-m-d\TH:i:s",
-          ],
-        ],
-      ],
-    ],
-    "d7_node_entity_translation:site_alert" => [
       "process" => [
         "title_field" => "title_field",
         "field_date_range/value" => [
@@ -1236,7 +1148,7 @@ class MigrationConfigAlter {
       $this->globalAlterations($entityType);
     }
 
-    // Execute targeted alternations to $this->migrations.
+    // Execute targeted alterations to $this->migrations.
     $this->customAlterations();
     $this->customAlteration("d7_file");
     $this->richTextFieldAlter();
@@ -1247,6 +1159,9 @@ class MigrationConfigAlter {
     if ($this->saveState) {
       \Drupal::state()->set("bos_migration.migrations", $this->migrations);
     }
+
+    Drupal::logger("migration")
+      ->info("bos_migration configuration rebuilt.");
 
     // Return the altered migration array.
     return $this->migrations;
@@ -1302,9 +1217,7 @@ class MigrationConfigAlter {
       if (in_array($migration["id"], [
         "d7_node",
         "d7_node_revision",
-        "d7_node_entity_translation",
         "d7_taxonomy_term",
-        "d7_taxonomy_term_entity_translation",
       ])
         || $migration["source"]["plugin"] == "d7_paragraphs_item"
         || $migration["source"]["plugin"] == "d7_field_collection_item"
@@ -1327,20 +1240,13 @@ class MigrationConfigAlter {
           }
         }
         // Add the selected high water property to the migration.
+        $hasChanged = FALSE;  /* Disable high water mark */
         if ($hasChanged) {
           $migration["source"]["high_water_property"]["name"] = $hasChanged;
         }
 
         // Create dependencies for translations and revisions.
         switch ($migration["id"]) {
-          case "d7_taxonomy_term_entity_translation":
-            $dependencies["required"][] = str_replace($migration["id"], "d7_taxonomy_term", $mkey);
-            break;
-
-          case "d7_node_entity_translation":
-            $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
-            break;
-
           case "d7_node_revision":
             $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
             break;
@@ -1388,12 +1294,10 @@ class MigrationConfigAlter {
 
         // Cull any unwanted field/field operations.
         if (isset($migration['process']['field_type_of_content'])) {
-          $logging["notice"][] = $mkey . " contains reference to deprecated taxonomy 'field_type_of_content': Check entity defintion/config.";
           unset($migration['process']['field_type_of_content']);
         }
         foreach ($migration['process'] as $fieldname => $map) {
           if ($map == "comment") {
-            $logging["notice"][] = $mkey . " contains reference to deprecated field 'comment': Check entity defintion/config.";
             unset($migration['process'][$fieldname]);
           }
         }
@@ -1449,17 +1353,20 @@ class MigrationConfigAlter {
           'plugin' => 'managed_files',
           'key' => 'migrate',
         ];
-        $this->migrations[$migration]['process']['uri']['plugin'] = "file_copy_ext";
         // Adds directives to copy or move. (Cannot move remote files)
-        $this->migrations[$migration]['process']['uri']['copy'] = $this->fileCopy;
-        $this->migrations[$migration]['process']['uri']['move'] = $this->fileMove;
-        // Adds directive to point at remote URL from which to download content.
-        $this->migrations[$migration]['process']['uri']['remote_source'] = $this->source;
-        $this->migrations[$migration]['process']['uri']['file_exists'] = $this->destFileExists;
-        $this->migrations[$migration]['process']['uri']['file_exists_ext'] = $this->destFileExistsExt;
-        $this->migrations[$migration]['process']['uri']['source'] = [
-          "source_base_path",
-          "uri",
+        $this->migrations[$migration]['process']['uri'] = [
+          [
+            'plugin' => "file_copy_ext",
+            'copy' => $this->fileCopy,
+            'move' => $this->fileMove,
+            'remote_source' => $this->source,
+            'file_exists' => $this->destFileExists,
+            'file_exists_ext' => $this->destFileExistsExt,
+            'source' => [
+              "source_base_path",
+              "uri",
+            ],
+          ],
         ];
         $this->migrations[$migration]['process']['rh_actions'] = 'rh_actions';
         $this->migrations[$migration]['process']['rh_redirect'] = 'rh_redirect';
@@ -1886,6 +1793,11 @@ class MigrationConfigAlter {
                 "migration" => "d7_file",
                 "source" => "fid",
               ],
+              [
+                'plugin' => 'create_media_entity',
+                'value_type' => "fid",
+                "media_library" => TRUE,
+              ],
             ],
             "alt" => 'alt',
             "title" => 'title',
@@ -1905,6 +1817,11 @@ class MigrationConfigAlter {
                 'plugin' => "migration_lookup",
                 'source' => "fid",
                 'migration' => "d7_file",
+              ],
+              [
+                'plugin' => 'create_media_entity',
+                'value_type' => "fid",
+                "media_library" => TRUE,
               ],
             ],
             "description" => "@field_title",

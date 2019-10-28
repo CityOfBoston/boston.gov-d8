@@ -84,6 +84,7 @@ services:
       # Now setup the node container.
       - echo -e "\033[1;32m[lando]\033[1;33m  Phing has finished building Drupal.\033[0m\n"
       - echo -e "\033[1;32m[lando]\033[1;33m Verify linux node library/extensions in node container...\033[0m"
+    xdebug: true
 
     config:
       conf: xdebug.ini

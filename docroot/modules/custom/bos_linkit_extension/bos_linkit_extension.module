@@ -124,7 +124,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
   $file_fid = json_decode('{"#title":"File","#type":"managed_file","#upload_location":"public:\/\/inline-files","#default_value":null,"#upload_validators":{"file_validate_extensions":["txt pdf doc xls ppt"],"file_validate_size":[0]}}', TRUE);
 
   // Modify the file storage location to be date-driven.
-  $date = date("Y/m", strtotime(now));
+  $date = date("Y/m", strtotime("now"));
   $file_fid["#upload_location"] = "public://file/" . $date;
   $file_fid["#upload_validators"]["file_validate_extensions"][0] = "jpg jpeg gif png txt doc docx xls xlsx pdf ppt pptx pps ppsx odt ods odp mp3 mov mp4 m4a m4v mpeg avi ogg oga ogv weba webp webm svg";
 
