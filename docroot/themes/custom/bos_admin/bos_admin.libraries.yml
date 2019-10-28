@@ -44,3 +44,10 @@ revisions:
     js/bos_admin.revisions.js: {attributes: {id: "revision_script"}}
   dependencies:
     - core/jquery
+
+ckeditor:
+  js:
+    js/bos_admin.ckeditor_context.js: {attributes: {id: "ckeditor_context_script"}}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
