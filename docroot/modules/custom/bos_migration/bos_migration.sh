@@ -208,25 +208,22 @@ function removeEmptyFiles() {
 function doLogRotate() {
   SCRIPT=${1}
   # Write the logrotate config script.
-  rm -f {$SCRIPT}
-  echo "nocompress" > {$SCRIPT}
-  echo "${logfile} {" > {$SCRIPT}
-  echo "  rotate 5" > {$SCRIPT}
-  echo "  missingok" > {$SCRIPT}
-  echo "}" > {$SCRIPT}
+  rm -f "$SCRIPT"
+  echo "nocompress" > $SCRIPT
+  echo "${logfile} {" >> $SCRIPT
+  echo "  rotate 5" >> $SCRIPT
+  echo "  missingok" >> $SCRIPT
+  echo "}" >> $SCRIPT
   #  Now run the script.
-  logrotate -d {$SCRIPT}
+  logrotate -d "$SCRIPT"
   #  Cleanup
-  rm -f {$SCRIPT}
+  rm -f "$SCRIPT"
 }
 
-}
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
-
-
 
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"

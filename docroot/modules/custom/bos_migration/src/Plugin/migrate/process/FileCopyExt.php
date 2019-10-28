@@ -90,13 +90,19 @@ class FileCopyExt extends FileCopy {
     $files = File::load($fid);
     if (!isset($files)) {
       // Check for dups of this file in managed_files by original name and size.
-      $files = $this->getFilesByFilename($row->getSource()['filename'], $row->getSource()['filesize']);
-      if (!isset($files)) {
+      $filesize = NULL;
+      if (isset($row->getSource()['filesize'])) {
+        $filesize = $row->getSource()['filesize'];
+      }
+      if (isset($row->getSource()['filename'])) {
+        $files = $this->getFilesByFilename($row->getSource()['filename'], $filesize);
+      }
+      if (!isset($files) && isset($destination)) {
         // Check for dups created with a (standard) modified filename from the
         // actual file name.  (Check filesize again to be sure e.g. thumbnails
         // may be created with same name as parent).
         $clean_filename = $this->cleanFilename($destination);
-        $files = $this->getFilesByFilename($clean_filename, $row->getSource()['filesize']);
+        $files = $this->getFilesByFilename($clean_filename, $filesize);
       }
     }
     if (isset($files)) {
