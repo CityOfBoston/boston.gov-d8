@@ -16,7 +16,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
-use Drupal\Core\Cache;
+use Drupal\bos_core\Controllers\Login\LoginController;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -429,12 +429,10 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $request = \Drupal::request();
   // @var $query Symfony\Component\HttpFoundation\ParameterBag.
   $query = $request->query;
-  // @var $response Symfony\Component\HttpFoundation\Response.
-  //$response = new Response();
   // @var $response Drupal\Core\Render\HtmlResponse.
   $response = new HtmlResponse();
   // Cache parameter separate from path.
-  \Drupal\bos_core\Controllers\Login\LoginController::cacheParam('url.query_args:local', $response);
+  LoginController::cacheParam('url.query_args:local', $response);
   // Check if the ?local param is present.
   if ($query->has('local')) {
     // Set SSO to false for local logins.
