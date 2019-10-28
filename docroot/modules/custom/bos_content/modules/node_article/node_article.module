@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\editor\Entity\Editor;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -50,6 +51,19 @@ function node_article_preprocess_page(&$variables) {
   if (isset($variables['node']) && is_object($variables['node']) && $variables['node']->bundle() == "article") {
     $variables["attributes"]->addClass("page");
   }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function node_article_form_node_article_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add styles for the CKEditor boxes on the admin forms.
+  _bos_admin_add_ckeditor_classes($form, [
+    "field_intro_text" => [
+      "html" => "department-info-wrapper desktop-100",
+      "body" => "intro-text supporting-text squiggle-border-bottom column mobile-100 desktop-66-left",
+    ],
+  ]);
 }
 
 /**
