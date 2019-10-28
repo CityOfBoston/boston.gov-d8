@@ -7,6 +7,11 @@ namespace Drupal\bos_migration;
  */
 trait FilesystemReorganizationTrait {
 
+  /**
+   * Regex to capture relevant subdomains of boston.gov.
+   *
+   * @var string
+   */
   protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
 
   /**
@@ -29,7 +34,7 @@ trait FilesystemReorganizationTrait {
       'svg',
       'svg+xml',
     ],
-    'document' => [   // was file
+    'document' => [
       'pdf',
       'xls',
       'xlsx',
@@ -345,7 +350,7 @@ trait FilesystemReorganizationTrait {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function isFileInDB($uri) {
+  public function isFileInDb($uri) {
     return empty($this->getFileEntities($uri));
   }
 
@@ -389,7 +394,6 @@ trait FilesystemReorganizationTrait {
    *
    * @return mixed
    *   Collection of File entity objects, or null.
-   *
    */
   public function getFilesByFilename(string $filename, string $filesize = NULL) {
     $query = \Drupal::entityQuery("file")
