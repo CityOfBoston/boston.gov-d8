@@ -1021,13 +1021,13 @@ function _bos_core_sync_assets() {
       if (empty($file_id->fid)) {
         $file = File::create([
           "uri" => trim($icon_file),
-          "filename" => MigUtilTools::cleanFilename($icon_file),
+          "filename" => MigUtilTools::makeCleanFilename($icon_file),
         ]);
         $file->save();
       }
       else {
         $file = File::load($file_id->fid);
-        $filename = MigUtilTools::cleanFilename($file->getFilename());
+        $filename = MigUtilTools::makeCleanFilename($file->getFilename());
         // Rename the file if necessary.
         if ($filename != $file->getFilename()) {
           $file->setFilename($filename);

@@ -22,6 +22,8 @@ use Drupal\migrate_utilities\MigUtilTools;
  */
 class MigrationFixes {
 
+  use \Drupal\bos_migration\FilesystemReorganizationTrait;
+
   /**
    * An array to map d7 view + displays to d8 equivalents.
    *
@@ -626,49 +628,6 @@ class MigrationFixes {
   ];
 
   /**
-   * Array to identify file by extension and/or mime type.
-   *
-   * @var array
-   */
-  protected static $allowedFormats = [
-    'image' => [
-      'jpg',
-      'png',
-      'jpeg',
-      'gif',
-      'tif',
-      'pdf', /* Technically not correct but ... */
-      'svg',
-      'svg+xml',
-    ],
-    'icon' => [
-      'svg',
-      'svg+xml',
-    ],
-    'file' => [
-      'pdf',
-      'xls',
-      'xlsx',
-      'docx',
-      'doc',
-      'pptx',
-      'pptm',
-      'ppt',
-      'rtf',
-      'ppt',
-      'jnlp', /* Not sure we should allow this. */
-      'xlsm',
-      'mp3',
-      'mp4',
-      'jpg', /* These are images, but could also be. */
-      'png', /* Downloadable files. */
-      'jpeg', /* ... */
-      'tif', /* ... */
-      'svg', /* ... */
-    ],
-  ];
-
-  /**
    * Makes the allowed formats array to be publicly accessed.
    *
    * @return array
@@ -803,7 +762,7 @@ class MigrationFixes {
       foreach ($svgs as $svg) {
         $svg->file = File::load($svg->fid);
         if (!empty($svg->file) && NULL != ($svg->new_uri = self::$svgMapping[$svg->uri]) && strpos($svg->uri, ".svg")) {
-          $svg->filename = MigUtilTools::cleanFilename($svg->new_uri);
+          $svg->filename = self::cleanFilename($svg->new_uri);
           $svg->new_uri = str_replace(["https:", "http:"], "", $svg->new_uri);
 
           // Set the new uri and an appropriate filename on the file_managed
@@ -909,7 +868,7 @@ class MigrationFixes {
           foreach ($files as $file) {
             $file->file = File::load($file->fid);
             if (!empty($file->file)) {
-              $file->filename = MigUtilTools::cleanFilename($file->uri);
+              $file->filename = self::cleanFilename($file->uri);
               $file->type = ($media_type == "file" ? "document" : "image");
               if ($media_type == "file") {
                 $file->media_library = TRUE;
