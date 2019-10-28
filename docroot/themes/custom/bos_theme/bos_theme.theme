@@ -8,6 +8,7 @@
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Core\Render\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Render\HtmlResponse;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\core\Template\Attribute;
@@ -424,8 +425,16 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Render the header elements here so just markup is passed to tmplt.
   _bos_theme_render_snippets($variables);
 
-  // Get current page query string.
-  $query = \Drupal::request()->query;
+  // @var $request Symfony\Component\HttpFoundation\Request.
+  $request = \Drupal::request();
+  // @var $query Symfony\Component\HttpFoundation\ParameterBag.
+  $query = $request->query;
+  // @var $response Symfony\Component\HttpFoundation\Response.
+  //$response = new Response();
+  // @var $response Drupal\Core\Render\HtmlResponse.
+  $response = new HtmlResponse();
+  // Cache parameter separate from path.
+  \Drupal\bos_core\Controllers\Login\LoginController::cacheParam('url.query_args:local', $response);
   // Check if the ?local param is present.
   if ($query->has('local')) {
     // Set SSO to false for local logins.
