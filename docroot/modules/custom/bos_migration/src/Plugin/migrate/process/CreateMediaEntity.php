@@ -37,6 +37,10 @@ class CreateMediaEntity extends ProcessPluginBase {
     $this->row = $row;
     $this->migrateExecutable = $migrate_executable;
 
+    if (NULL == $value) {
+      throw new MigrateSkipProcessException("File entity (fid) is null.");
+    }
+
     if ($this->configuration["value_type"] == "fid" || is_numeric($value)) {
       $this->createMediaFromId($value);
     }
@@ -53,6 +57,7 @@ class CreateMediaEntity extends ProcessPluginBase {
    *   The file id.
    *
    * @throws \Drupal\migrate\MigrateSkipProcessException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function createMediaFromId(int $fid) {
     if (NULL != ($file = File::load($fid))) {
@@ -78,6 +83,7 @@ class CreateMediaEntity extends ProcessPluginBase {
    *   The file src.
    *
    * @throws \Drupal\migrate\MigrateSkipProcessException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function createMediaFromUri(string $src) {
     $targetBundle = reset($this->resolveFileTypeArray($src));
