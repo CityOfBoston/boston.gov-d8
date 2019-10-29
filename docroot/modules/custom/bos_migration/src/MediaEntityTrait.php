@@ -36,6 +36,10 @@ trait MediaEntityTrait {
    */
   public function createMediaEntity(string $targetBundle, int $fid, string $filename, int $author = NULL, bool $library = FALSE) {
     $status = 1;
+    // Image has 3 bundles: image|icon|document, but actually only 2
+    // file-types image|document.  Map icon bundles into the file-type image.
+    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'field_document');
+
     if (empty($author)) {
       if (NULL != ($file = File::load($fid))) {
         $author = $file->get("uid")->target_id;
@@ -49,10 +53,6 @@ trait MediaEntityTrait {
       // If we still dont have an author, then set to user1.
       $author = 1;
     }
-
-    // Image has 3 bundles: image|icon|document, but actually only 2
-    // file-types image|document.  Map icon bundles into the file-type image.
-    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'field_document');
 
     // Create the Media entity if needed.
     $dirty = FALSE;
@@ -71,8 +71,10 @@ trait MediaEntityTrait {
 
     // If media item exists, and filename is different then change.
     // Clean up the filename first though.
+    $filename = $this->cleanFilename($filename);
     if ($media->name->value != $filename) {
-      $media->name = $this->cleanFilename($filename);
+      $media->name = $filename;
+      $media->image[0]->alt = "Image for " . $filename;
       $dirty = TRUE;
     }
     // If media item exists, and media_library setting is different then change.
