@@ -68,7 +68,7 @@ class CreateMediaEntity extends ProcessPluginBase {
       $file_author = $file->get("uid")->target_id;
       $src = $file->get("uri")->value;
       $targetBundle = reset($this->resolveFileTypeArray($src));
-      $this->createMediaEntity($targetBundle, $this->row->getSource()["fid"], $filename, $file_author, $in_library);
+      $this->createMediaEntity($targetBundle, $fid, $filename, $file_author, $in_library);
     }
     else {
       $this->migrateExecutable->saveMessage("File entity $fid not found.");
