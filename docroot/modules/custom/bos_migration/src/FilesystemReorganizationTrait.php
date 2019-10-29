@@ -8,6 +8,56 @@ namespace Drupal\bos_migration;
 trait FilesystemReorganizationTrait {
 
   /**
+   * Regex to capture relevant subdomains of boston.gov.
+   *
+   * @var string
+   */
+  protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
+
+  /**
+   * Array to identify file by extension and/or mime type.
+   *
+   * @var array
+   */
+  protected static $allowedFormats = [
+    'image' => [
+      'jpg',
+      'png',
+      'jpeg',
+      'gif',
+      'tif',
+      /*      'pdf',
+            'svg',
+            'svg+xml',*/
+    ],
+    'icon' => [
+      'svg',
+      'svg+xml',
+    ],
+    'document' => [
+      'pdf',
+      'xls',
+      'xlsx',
+      'docx',
+      'doc',
+      'pptx',
+      'pptm',
+      'ppt',
+      'rtf',
+      'ppt',
+      'jnlp', /* Not sure we should allow this. */
+      'xlsm',
+      'mp3',
+      'mp4',
+      /*      'jpg',
+            'png',
+            'jpeg',
+            'tif',
+            'svg',*/
+    ],
+  ];
+
+  /**
    * Moves images in root public files directory into subdirectory.
    *
    * @param string $uri
@@ -141,8 +191,7 @@ trait FilesystemReorganizationTrait {
     $parts = explode('/', $uri);
     $index = count($parts) - 1;
     $type = [];
-    $allowedFormats = MigrationFixes::allowedFormats();
-    foreach ($allowedFormats as $file_type => $formats) {
+    foreach (self::$allowedFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if (strpos($parts[$index], $extension) !== FALSE) {
           $type[] = $file_type;
@@ -162,19 +211,16 @@ trait FilesystemReorganizationTrait {
    * Determine filetype.
    *
    * @param string $mime
-   *   The URI.
+   *   The MIME for the type.
    *
    * @return array
    *   File type - image, file or link.
    */
   private function resolveFileTypeMime($mime) {
     // White list files based on file_managed table in D7.
-    $parts = explode('/', $mime);
-    $index = count($parts) - 1;
     $type = [];
-    $allowedFormats = MigrationFixes::allowedFormats();
-    foreach ($allowedFormats as $file_type => $formats) {
-      if (in_array($parts[$index], $formats)) {
+    foreach (self::$allowedFormats as $file_type => $formats) {
+      if (in_array($mime, $formats)) {
         $type[] = $file_type;
       }
     }
@@ -185,6 +231,246 @@ trait FilesystemReorganizationTrait {
     // If there is no extension, or the extension is not matched, then return
     // a type of "link".
     return ["link"];
+  }
+
+  /**
+   * Converts relative URIs to stream wrapper format.
+   *
+   * @param string $uri
+   *   The relative URI.
+   *
+   * @return string
+   *   The converted URI.
+   */
+  protected function convertToStreamWrapper(string $uri) {
+    $new_uri = str_replace('/sites/default/files/private/', 'private://', $uri);
+    if ($new_uri === $uri) {
+      // The replacement wasn't found, so this must be a public file.
+      $new_uri = str_replace('/sites/default/files/', 'public://', $uri);
+    }
+
+    return $new_uri;
+  }
+
+  /**
+   * Determines if uri is relative.
+   *
+   * @param string $uri
+   *   The Uri.
+   *
+   * @return bool
+   *   TRUE or FALSE.
+   */
+  protected function isRelativeUri(string $uri) {
+    if (preg_match('@^/sites/default/files/.*@', $uri)) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Retrieves the relative part of an absolute URL.
+   *
+   * @param string $uri
+   *   An uri to inspect.
+   *
+   * @return string|bool
+   *   The request path part of the uri, or FALSE if not an searched absolute
+   *   uri.
+   */
+  protected function getRelativeUrl(string $uri) {
+    $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
+    if (!preg_match($from_main_domain, $uri, $matches)) {
+      // Not a searched absolute uri.
+      \Drupal::logger('Migrate')->notice("$uri is not a local file.");
+      return FALSE;
+    }
+    if (substr($matches[3], 1, 1) != "/") {
+      $matches[3] = "/" . $matches[3];
+    }
+    return $matches[3];
+  }
+
+  /**
+   * Determines if file is external.
+   *
+   * @param string $src
+   *   The file src.
+   *
+   * @return bool
+   *   Yes or no.
+   */
+  protected function isExternalFile($src) {
+    return !preg_match(self::$localReferenceREGEX, $src);
+  }
+
+  /**
+   * Replaces domain/uri strings.
+   *
+   * E.g: edit.boston.gov with www.boston.gov.
+   *
+   * @param string $uri
+   *   The original URI (or source or whatever).
+   *
+   * @return string
+   *   The source with correct destintaion mapped in.
+   */
+  protected function correctSubDomain(string $uri) {
+    $regex_swaps = [
+      "~(edit|edit-stg)\.boston.gov~" => "www.boston.gov",
+      "~http(s|)://boston\.gov~" => "https://www.boston.gov",
+      "~http://.*\.boston\.gov~" => "https://www.boston.gov",
+      "~^(?!http)(\w+.*)~" => "https://$1",
+    ];
+    foreach ($regex_swaps as $find => $replace) {
+      $swap = $uri;
+      try {
+        $uri = preg_replace($find, $replace, $uri);
+        if (is_null($uri)) {
+          $uri = $swap;
+        }
+      }
+      catch (Exception $e) {
+        return $swap;
+      }
+    }
+    return $uri;
+  }
+
+  /**
+   * True/false if the file uri already exists in DB.
+   *
+   * @param string $uri
+   *   Does the files_managed table have a record with this uri.
+   *
+   * @return bool
+   *   True if record is found, else false.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function isFileInDb($uri) {
+    return empty($this->getFileEntities($uri));
+  }
+
+  /**
+   * Retrieves fid(s) for corresponding file entity/ies.
+   *
+   * Best effort search.
+   * Assumes the uri have not changed from d7 to d8 during migration, which is
+   * just an heuristic.
+   *
+   * @param string $uri
+   *   File uri.
+   *
+   * @return \Drupal\file\Entity\File|null
+   *   File entity object.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getFileEntities($uri) {
+    $query = \Drupal::entityQuery("file")
+      ->condition("uri", $uri, "=");
+    $entities = $query->execute();
+    if (empty($entities)) {
+      return NULL;
+    }
+    return $entities;
+  }
+
+  /**
+   * Retrieves the corresponding file entity.
+   *
+   * Best effort search.
+   * Assumes the uri have not changed from d7 to d8 during migration, which is
+   * just an heuristic.
+   *
+   * @param string $filename
+   *   The filename.
+   * @param string|null $filesize
+   *   The filesize (in bytes).
+   *
+   * @return mixed
+   *   Collection of File entity objects, or null.
+   */
+  public function getFilesByFilename(string $filename, string $filesize = NULL) {
+    $query = \Drupal::entityQuery("file")
+      ->condition("filename", $filename, "=");
+    if (isset($filesize)) {
+      $query->condition("filesize", $filesize, "=");
+    }
+    $entities = $query->execute();
+    if (empty($entities)) {
+      return NULL;
+    }
+    return $entities;
+  }
+
+  /**
+   * Create a new File object and save (in table file_managed).
+   *
+   * @param string $uri
+   *   The uri to create in the file_managed table.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The file object just created.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function saveFileEntity(string $uri) {
+    $filename = end(explode("/", $uri));
+    $entity = \Drupal::entityTypeManager()
+      ->getStorage('file')
+      ->create([
+        'uri' => $uri,
+        'uid' => '1',
+        'filename' => $filename,
+        'status' => '1',
+      ]);
+    $entity->save();
+    return $entity;
+  }
+
+  /**
+   * Attempts to find & set a physical path for this media entity.
+   */
+  protected function setPath($uri) {
+    $filename = end(explode("/", $uri));
+    /*$filename = explode(".", $filename)[0];*/
+    return "embed/" . $filename[0];
+  }
+
+  /**
+   * Attempts to build a meaningful filename from a given file path and name.
+   *
+   * @param string $path
+   *   The filename and path.
+   *
+   * @return string
+   *   Reformatted filename.
+   */
+  public function cleanFilename($path) {
+    $filename = explode("/", $path);
+    $filename = array_pop($filename);
+    $filename = str_replace([
+      ".svg",
+      "icons",
+      "logo",
+      ".jpg",
+      ".gif",
+      ".jpeg",
+      ".png",
+      ".xlsx",
+      ".pdf",
+    ], "", $filename);
+    $filename = str_replace("icon", "", $filename);
+    $filename = str_replace(["-", "_", "."], " ", $filename);
+    $filename = preg_replace("~\s+~", " ", $filename);
+    return strtolower($filename);
   }
 
 }

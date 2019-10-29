@@ -16,10 +16,12 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
+use Drupal\media\Entity\Media;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
+use Drupal\migrate_utilities\MigUtilTools;
 
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
@@ -997,4 +999,72 @@ function _bos_core_rename_multiple_button(array &$variables, string $type, array
       $variables["button"]["#value"] = new TranslatableMarkup($new_button_text);
     }
   }
+}
+
+/**
+ * Sync assets.boston.gov into database.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException.
+ */
+function _bos_core_sync_assets() {
+  $manifest_file = DRUPAL_ROOT . '/sites/default/files/manifest.txt';
+  if (!file_exists($manifest_file)) {
+    return;
+  }
+  $manifest = fopen($manifest_file, "r");
+  while ($icon_file = fgets($manifest)) {
+    $file_ids = \Drupal::database()->select("file_managed", "f")
+      ->fields("f", ["fid", "uri"])
+      ->condition("uri", trim($icon_file))
+      ->execute()->fetchAll();
+    foreach ($file_ids as $file_id) {
+      if (empty($file_id->fid)) {
+        $file = File::create([
+          "uri" => trim($icon_file),
+          "filename" => MigUtilTools::makeCleanFilename($icon_file),
+        ]);
+        $file->save();
+      }
+      else {
+        $file = File::load($file_id->fid);
+        $filename = MigUtilTools::makeCleanFilename($file->getFilename());
+        // Rename the file if necessary.
+        if ($filename != $file->getFilename()) {
+          $file->setFilename($filename);
+          $file->save();
+        }
+      }
+      // Should now have the file object.  Can check if a media object is set.
+      if (isset($file)) {
+        // Try to find a media entity attached to this file.
+        $result = \Drupal::database()->query("SELECT fd.mid, fd.thumbnail__target_id, i.image_title FROM media_field_data fd
+          inner join media__image i on fd.mid = i.entity_id
+          inner join file_managed f on i.image_target_id = f.fid
+          where f.fid = " . $file_id->fid)->fetchAll();
+        foreach ($result as $media_entity) {
+          $media = Media::load($media_entity->mid);
+          if (isset($media)) {
+            if ($media->get("field_media_in_library")->value != 1) {
+              $media->setNewRevision(FALSE);
+              $media->set("field_media_in_library", 1);
+            }
+          }
+          else {
+            $media = Media::create([
+              'bundle' => "icon",
+              'uid' => $file->getOwnerId() ?? 1,
+              'status' => 1,
+              'name' => $filename,
+              'image' => [
+                'target_id' => $file->id(),
+              ],
+            ]);
+          }
+          $media->setNewrevision(FALSE);
+          $media->save();
+        }
+      }
+    }
+  }
+  fclose($manifest);
 }

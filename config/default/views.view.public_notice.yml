@@ -15,7 +15,6 @@ dependencies:
     - better_exposed_filters
     - datetime
     - entity_reference_revisions
-    - hal
     - node
     - rest
     - serialization
@@ -43,12 +42,8 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: time
-        options:
-          results_lifespan: 60
-          results_lifespan_custom: 0
-          output_lifespan: 60
-          output_lifespan_custom: 0
+        type: tag
+        options: {  }
       query:
         type: views_query
         options:
@@ -405,7 +400,6 @@ display:
         options:
           uses_fields: true
           formats:
-            hal_json: hal_json
             json: json
       row:
         type: data_field
@@ -646,7 +640,7 @@ display:
           exclude: false
           alter:
             alter_text: false
-            text: ''
+            text: "{% autoescape false %}\r\n{{ title__value }}\r\n{% endautoescape %}"
             make_link: false
             path: ''
             absolute: false
@@ -678,7 +672,7 @@ display:
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
