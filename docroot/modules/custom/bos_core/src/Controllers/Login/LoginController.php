@@ -7,7 +7,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\HtmlResponse;
 
 /**
- * Controller for login urls.
+ * Controller for login.
  */
 class LoginController extends ControllerBase {
 
