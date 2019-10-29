@@ -396,6 +396,7 @@ display:
         pager: false
         arguments: false
         relationships: false
+        cache: false
       allow:
         items_per_page: false
       block_description: 'Site Alerts'
@@ -454,10 +455,13 @@ display:
             fail: 'not found'
           validate_options: {  }
           break_phrase: false
-          not: false
+          not: true
           plugin_id: numeric
       relationships: {  }
       display_comment: ''
+      cache:
+        type: tag
+        options: {  }
     cache_metadata:
       max-age: -1
       contexts:

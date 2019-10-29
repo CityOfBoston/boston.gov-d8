@@ -43,7 +43,7 @@ function doMigrate() {
         (${drush} mim $COMMAND >> ${logfile}) || retval=1
         if [[ $retval -eq 0 ]]; then break; fi
 
-        hanging="$(drush ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
+        hanging="$(${drush} ms ${GROUP} --fields=id,status --format=tsv | grep Importing | awk '{print $1}')"
         if [ "${hanging}" != "" ]; then
           ${drush} mrs "${hanging}"
         else
@@ -151,7 +151,6 @@ function restoreDB() {
     doExecPHP "node_access_rebuild();"
     printf "\n" | tee -a ${logfile}
 
-
     # Set migration variables.
     printf "[migrate-info] Set migration variables (states).\n" | tee -a ${logfile}
     ${drush} sset "bos_migration.fileOps" "copy" | tee -a ${logfile}
@@ -205,18 +204,33 @@ function removeEmptyFiles() {
     # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
 }
 
+# Rotate log files, keeping the last 5.
+function doLogRotate() {
+  SCRIPT=${1}
+  # Write the logrotate config script.
+  rm -f "$SCRIPT"
+  echo "nocompress" > $SCRIPT
+  echo "${logfile} {" >> $SCRIPT
+  echo "  rotate 5" >> $SCRIPT
+  echo "  missingok" >> $SCRIPT
+  echo "}" >> $SCRIPT
+  #  Now run the script.
+  logrotate -d "$SCRIPT"
+  #  Cleanup
+  rm -f "$SCRIPT"
+}
+
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
     acquia_env="${2}"
 fi
-
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
     logfile="/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.log"
     drush="drush"
+    doLogRotate "/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.cfg"
     printf "[migration-info] Running in REMOTE mode:\n"| tee ${logfile}
 else
 #    dbpath=" ~/sources/boston.gov-d8/dump/migration"
@@ -226,6 +240,8 @@ else
     drush="lando drush"
     printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
 fi
+
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 running=0
 
@@ -326,6 +342,17 @@ fi
 if [ "$1" == "revision_resume" ]; then
   printf "\n[migration-info] Continues from previous migration %s %s\n" $(date +%F\ %T ) | tee ${logfile}
   running=1
+  ${drush} sset "bos_migration.fileOps" "copy" | tee -a ${logfile}
+  ${drush} sset "bos_migration.dest_file_exists" "use\ existing" | tee -a ${logfile}
+  ${drush} sset "bos_migration.dest_file_exists_ext" "skip" | tee -a ${logfile}
+  ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/" | tee -a ${logfile}
+  ${drush} sset "bos_migration.active" "1" | tee -a ${logfile}
+  ${drush} cdel views.view.migrate_taxonomy
+  ${drush} cdel views.view.migrate_paragraphs
+  ${drush} en migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
+  ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
+  ${drush} cr  | tee -a ${logfile}
+
   doMigrate --tag="bos:node_revision:1" --force --feedback=350           # 2h 42 mins
   doMigrate --tag="bos:node_revision:2" --force --feedback=350           # 8h 50 mins
   doMigrate --tag="bos:node_revision:3" --force --feedback=350           # 1hr 43 mins

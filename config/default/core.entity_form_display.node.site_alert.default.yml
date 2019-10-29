@@ -14,6 +14,7 @@ dependencies:
     - node.type.site_alert
     - workflows.workflow.city_of_boston_workflows
   module:
+    - advanced_text_formatter
     - content_moderation
     - datetime_range
     - entity_browser
@@ -198,7 +199,9 @@ content:
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {  }
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
   translation:
     weight: 9
     region: content
