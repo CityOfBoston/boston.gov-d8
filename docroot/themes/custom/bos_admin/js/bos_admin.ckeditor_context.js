@@ -1,3 +1,11 @@
+/**
+ * @file
+ */
+
+/*
+ Passes classes into the CKEditor iframe -allows stylesheets to affect content and theme similar to the actual site.
+ */
+
 (function ($, window, document, drupalSettings) {
   'use strict';
   $(document).ready(function () {
@@ -29,7 +37,7 @@
       });
     };
 
-    CKEDITOR.on("instanceReady", function() {
+    CKEDITOR.on("instanceReady", function () {
       $.each(CKEDITOR.instances, function () {
         this.document.appendStyleSheet("https://patterns.boston.gov/css/public.css");
         this.document.appendStyleSheet("https://patterns.boston.gov/legacy/public.css");

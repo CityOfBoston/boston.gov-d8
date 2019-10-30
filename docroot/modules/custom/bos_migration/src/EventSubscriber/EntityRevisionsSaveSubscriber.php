@@ -136,8 +136,8 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       }
 
       // Sets the node back to the correct current revision.
-      // self::setCurrentRevision($workbench["current"]);
-
+      // Self::setCurrentRevision($workbench["current"]);.
+      //
       // The `d7_node:xxx` migration will have imported the latest node.
       //
       // The d7 workbench_moderation maintains its own versioning
@@ -151,12 +151,11 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       // So, the revision ond node need their moderation state to be updated.
       // Set the status for this revision and the current revision.
       // Sets the moderation state for this revision and the current revision.
-      // self::setModerationState($workbench["all"][$vid]);
-      // self::setModerationState($workbench["current"]);
-
+      // Self::setModerationState($workbench["all"][$vid]);.
+      // Self::setModerationState($workbench["current"]);.
+      //
       // Set the moderation_state revision back to current revision.
-      // self::setCurrentModerationRevision($workbench["current"]);
-
+      // Self::setCurrentModerationRevision($workbench["current"]);.
     }
   }
 

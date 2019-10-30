@@ -4,6 +4,11 @@ namespace Drupal\bos_migration;
 
 use Drupal\Core\Database\Database;
 
+/**
+ * Trait migrationModerationStateTrait.
+ *
+ * @package Drupal\bos_migration
+ */
 trait migrationModerationStateTrait {
 
   /**
@@ -202,4 +207,5 @@ trait migrationModerationStateTrait {
       \Drupal::database()->query($qstring)->execute();
     }
   }
+
 }
