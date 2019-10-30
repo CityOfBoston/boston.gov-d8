@@ -55,10 +55,10 @@ class BibblioAPI extends ControllerBase {
    * @param array $items
    *   The array containing Bibblio creds.
    *
-   * @return string 
+   * @return string
    *   The string value prepared for CURL.
    */
-  public function preparePostFieldsToken($items) {
+  public function preparePostFieldsToken(array $items) {
     $params = [];
     foreach ($items as $key => $value) {
       $params[] = $key . '=' . urlencode($value);
@@ -94,10 +94,10 @@ class BibblioAPI extends ControllerBase {
    * @param array $data_update
    *   The array containing Bibblio API specific values.
    *
-   * @return array  $responseGetItem
+   * @return array
    *   The response array for user.
    */
-  public function getItem($data_update) {
+  public function getItem(array $data_update) {
     $ch = curl_init();
     $token = $this->getToken();
     $token = json_decode($token);
@@ -125,10 +125,10 @@ class BibblioAPI extends ControllerBase {
    * @param array $data_update
    *   The array containing Bibblio API specific values.
    *
-   * @return array  $responseGetItem
+   * @return array
    *   The response array for user.
    */
-  public function createItem($data_update) {
+  public function createItem(array $data_update) {
     $ch = curl_init();
     $data_json = json_encode($data_update['fields']);
     $token = $this->getToken();
@@ -158,10 +158,10 @@ class BibblioAPI extends ControllerBase {
    * @param array $data_update
    *   The array containing Bibblio API specific values.
    *
-   * @return array  $responseGetItem
+   * @return array
    *   The response array for user.
    */
-  public function updateItem($data_update) {
+  public function updateItem(array $data_update) {
     $ch = curl_init();
     $data = $data_update;
     $data_json = json_encode($data_update['fields']);
@@ -192,11 +192,7 @@ class BibblioAPI extends ControllerBase {
    * Begin script and API operations.
    */
   public function beginApi() {
-    /**
-     * IMPORTANT -- set to true to test Bibblio API in local env.
-     * Setting to FALSE helps reduce duplicate content in Bibblio Library
-     * due to Drupal redirect URLSs in a non-production env.
-     */
+    /* IMPORTANT -- set to true to test Bibblio API in local env. Setting to FALSE helps reduce duplicate content in Bibblio Library due to Drupal redirect URLSs in a non-production env. */
     $testing = FALSE;
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data and perform API request to specific Bibblio endpoint.
