@@ -34,7 +34,7 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Checks allowed domains to access API.
    */
   public function checkDomain() {
     $allowed = [
@@ -50,7 +50,13 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Prepares the POSTed fields for Bibblio hosted API.
+   *
+   * @param array $items
+   *   The array containing Bibblio creds.
+   *
+   * @return string 
+   *   The string value prepared for CURL.
    */
   public function preparePostFieldsToken($items) {
     $params = [];
@@ -61,7 +67,7 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Get token for Bibblio hosted API auth.
    */
   public function getToken() {
     $ch = curl_init();
@@ -83,7 +89,13 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Get item from Bibblio library.
+   *
+   * @param array $data_update
+   *   The array containing Bibblio API specific values.
+   *
+   * @return array  $responseGetItem
+   *   The response array for user.
    */
   public function getItem($data_update) {
     $ch = curl_init();
@@ -108,7 +120,13 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Create item in Bibblio library.
+   *
+   * @param array $data_update
+   *   The array containing Bibblio API specific values.
+   *
+   * @return array  $responseGetItem
+   *   The response array for user.
    */
   public function createItem($data_update) {
     $ch = curl_init();
@@ -135,7 +153,13 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Update item in Bibblio library.
+   *
+   * @param array $data_update
+   *   The array containing Bibblio API specific values.
+   *
+   * @return array  $responseGetItem
+   *   The response array for user.
    */
   public function updateItem($data_update) {
     $ch = curl_init();
@@ -165,11 +189,14 @@ class BibblioAPI extends ControllerBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Begin script and API operations.
    */
   public function beginApi() {
-    // IMPORTANT -- set to true to test Bibblio API in local env.
-    // Setting to FALSE helps reduce duplicate content in Bibblio Library due to Drupal redirect URLSs in a non-production env.
+    /**
+     * IMPORTANT -- set to true to test Bibblio API in local env.
+     * Setting to FALSE helps reduce duplicate content in Bibblio Library
+     * due to Drupal redirect URLSs in a non-production env.
+     */
     $testing = FALSE;
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data and perform API request to specific Bibblio endpoint.
