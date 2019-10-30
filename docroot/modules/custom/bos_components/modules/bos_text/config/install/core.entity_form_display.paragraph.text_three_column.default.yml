@@ -8,7 +8,6 @@ dependencies:
     - field.field.paragraph.text_three_column.field_short_title
     - paragraphs.paragraphs_type.text_three_column
   module:
-    - content_moderation
     - field_group
     - text
 third_party_settings:
@@ -27,6 +26,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Column Info'
+      region: content
 id: paragraph.text_three_column.default
 targetEntityType: paragraph
 bundle: text_three_column

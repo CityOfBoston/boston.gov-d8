@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.post.field_thumbnail
     - field.field.node.post.field_updated_date
     - node.type.post
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -33,6 +34,7 @@ third_party_settings:
         - group_sidebar_components
         - group_components
         - group_related_content
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -41,11 +43,11 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: post
+      region: content
     group_basic_information:
       children:
         - title
-        - field_intro_image
-        - field_thumbnail
+        - group_horizontal
         - field_intro_text
         - body
         - field_contact
@@ -60,13 +62,14 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_published_date
         - field_updated_date
-      parent_name: ''
-      weight: 5
+      parent_name: group_post
+      weight: 30
       format_type: tab
       format_settings:
         id: ''
@@ -75,6 +78,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -88,6 +92,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
     group_components:
       children:
         - field_components
@@ -101,6 +106,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
     group_related_content:
       children:
         - field_related
@@ -114,13 +120,34 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Related Content'
+      region: content
+    group_horizontal:
+      children:
+        - field_intro_image
+        - field_thumbnail
+      parent_name: group_basic_information
+      weight: 1
+      format_type: html_element
+      format_settings:
+        id: ''
+        classes: cob-group-grid
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        required_fields: true
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Horizontal
+      region: content
 id: node.post.default
 targetEntityType: node
 bundle: post
 mode: default
 content:
   body:
-    weight: 4
+    weight: 5
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -130,7 +157,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 6
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -154,7 +181,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 5
+    weight: 6
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -163,23 +190,23 @@ content:
     third_party_settings: {  }
     region: content
   field_intro_image:
-    weight: 1
+    weight: 2
     type: entity_browser_entity_reference
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:
     type: text_textarea
-    weight: 3
+    weight: 4
     region: content
     settings:
       rows: 5
@@ -193,7 +220,7 @@ content:
     type: boolean_checkbox
     region: content
   field_news_tags:
-    weight: 6
+    weight: 7
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -236,18 +263,18 @@ content:
     third_party_settings: {  }
     region: content
   field_thumbnail:
-    weight: 2
+    weight: 3
     type: entity_browser_entity_reference
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_updated_date:
@@ -258,20 +285,20 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 1
+    weight: 2
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 11
+    weight: 10
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 9
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -279,7 +306,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 6
     region: content
     third_party_settings: {  }
   published_at:
@@ -292,14 +319,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 12
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -312,7 +339,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -320,7 +347,7 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }

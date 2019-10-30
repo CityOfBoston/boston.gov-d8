@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.landing_page.field_published_date
     - field.field.node.landing_page.field_updated_date
     - node.type.landing_page
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -22,6 +23,7 @@ third_party_settings:
       children:
         - group_basic_information
         - group_component
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -30,6 +32,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Landing Page'
+      region: content
     group_basic_information:
       children:
         - title
@@ -38,29 +41,29 @@ third_party_settings:
       weight: 17
       format_type: tab
       format_settings:
-        label: 'Basic Information'
         formatter: open
         description: ''
         required_fields: true
         id: ''
         classes: 'group-basic-info field-group-tab'
       label: 'Basic Information'
+      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_updated_date
         - field_published_date
-      parent_name: ''
-      weight: 12
+      parent_name: group_landing_page
+      weight: 19
       format_type: tab
       format_settings:
-        label: 'Page Metadata'
         formatter: closed
         description: ''
         required_fields: true
         id: ''
         classes: 'group-page-metadata field-group-tab'
       label: 'Page Metadata'
+      region: content
     group_component:
       children:
         - field_components
@@ -74,6 +77,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Component
+      region: content
 _core:
   default_config_hash: 6338HudYt2JzjHU3wYxclqhMGxjm4sO3WDUg2a_LoHg
 id: node.landing_page.default
@@ -83,7 +87,7 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -97,7 +101,7 @@ content:
       closed_mode: summary
       autocollapse: all
       closed_mode_threshold: 0
-      add_mode: select
+      add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: _none
       features:
@@ -136,7 +140,7 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 1
+    weight: 2
     region: content
     settings:
       include_locked: true
@@ -157,12 +161,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 5
+    weight: 6
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -177,7 +181,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -190,7 +194,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60

@@ -49,8 +49,8 @@ function bos_fyi_theme_suggestions_paragraph_alter(array &$suggestions, array $v
 function bos_fyi_paragraph_fyi_summary_alter(array $form_widget, array $para, array $attributes) {
   // Add attributes to the summary area.
   // Set the summary content.
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_title")->value . "</span>");
-  $markup[] = Markup::create($para["entity"]->get("field_extra_info")->value);
+  $markup[] = Markup::create($para["entity"]->get("field_title")->value);
+  $markup[] = Markup::create("<span class='info'>" . $para["entity"]->get("field_extra_info")->value . "</span>");
 
   return [
     'attributes' => $attributes,

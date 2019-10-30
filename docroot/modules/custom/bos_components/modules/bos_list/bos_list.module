@@ -20,6 +20,10 @@ function bos_list_theme() {
     'base hook' => 'field',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
   ];
+  $theme['field__field_component_title__video__mode__full'] = [
+    'base hook' => 'field',
+    'path' => 'modules/custom/bos_components/modules/bos_list/templates',
+  ];
   $theme['views_view__metrolist_affordable_housing'] = [
     'base hook' => 'views_view',
     'path' => 'modules/custom/bos_components/modules/bos_list/templates',
@@ -215,11 +219,14 @@ function bos_list_paragraph_list_summary_alter(array $form_widget, array $para, 
   // Set the summary content.
   $markup = [];
   if ($view = View::load($para["entity"]->field_list[0]->target_id)) {
-    $markup[] = Markup::create("<span style='color: navy;'>View: <span style='font-weight: bold; text-transform: uppercase'>" . $view->label() . "</span></span>");
-    $markup[] = Markup::create("<b>Display:</b> " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
     if ($para["entity"]->hasField("field_component_title") && $para["entity"]->get("field_component_title")->value) {
-      $markup[] = Markup::create("<b>Title:</b> " . $para["entity"]->get("field_component_title")->value);
+      $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
     }
+    else {
+      $markup[] = Markup::create("(No Title)");
+    }
+    $markup[] = Markup::create("View: " . $view->label());
+    $markup[] = Markup::create("Display: " . $view->getDisplay($para["entity"]->field_list[0]->display_id)["display_title"]);
     return [
       'attributes' => $attributes,
       'content' => $markup,

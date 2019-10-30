@@ -6,12 +6,12 @@ dependencies:
     - field.storage.node.field_intro_text
     - field.storage.node.field_published_date
     - field.storage.node.field_thumbnail
+    - image.style.card_grid_2w_horizonal_1x
     - node.type.post
-    - responsive_image.styles.card_images_2w
   module:
     - datetime
+    - media
     - node
-    - responsive_image
     - smart_trim
     - text
     - user
@@ -371,9 +371,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: responsive_image
+          type: media_thumbnail
           settings:
-            responsive_image_style: card_images_2w
+            image_style: card_grid_2w_horizonal_1x
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -496,6 +496,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      show_admin_links: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -917,9 +918,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: responsive_image
+          type: media_thumbnail
           settings:
-            responsive_image_style: card_images_2w
+            image_style: card_grid_2w_horizonal_1x
             image_link: ''
           group_column: ''
           group_columns: {  }

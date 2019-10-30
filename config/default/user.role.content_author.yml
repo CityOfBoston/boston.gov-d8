@@ -9,22 +9,24 @@ third_party_settings:
     description: 'City of Boston user who can create new content and edit exiting content, and submit for review.'
 id: content_author
 label: 'Content Author'
-weight: -4
+weight: -3
 is_admin: false
 permissions:
   - 'access administration pages'
   - 'access content'
   - 'access content overview'
   - 'access contextual links'
+  - 'access document_entity_browser entity browser pages'
   - 'access draggableviews'
   - 'access environment indicator'
+  - 'access icon_entity_browser entity browser pages'
+  - 'access image_entity_browser entity browser pages'
   - 'access media browser'
   - 'access media_entity_browser entity browser pages'
   - 'access moderation notes'
   - 'access shortcuts'
   - 'access toolbar'
   - 'access workbench'
-  - 'administer entity browsers'
   - 'clone media entity'
   - 'clone node entity'
   - 'clone paragraph entity'
@@ -203,6 +205,7 @@ permissions:
   - 'edit any program_initiative_profile content'
   - 'edit any public_notice content'
   - 'edit any script_page content'
+  - 'edit any status_item content'
   - 'edit any tabbed_content content'
   - 'edit any topic_page content'
   - 'edit any transaction content'
@@ -312,6 +315,7 @@ permissions:
   - 'view public_notice revisions'
   - 'view revisions'
   - 'view script_page revisions'
+  - 'view status_item revisions'
   - 'view tabbed_content revisions'
   - 'view the administration theme'
   - 'view topic_page revisions'

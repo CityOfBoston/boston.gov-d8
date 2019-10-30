@@ -5,6 +5,8 @@
  * Code for the Boston Component Cabinet feature.
  */
 
+use Drupal\Core\Render\Markup;
+
 /**
  * Implements hook_preprocess_HOOK__TYPE().
  */
@@ -27,4 +29,23 @@ function bos_cabinet_theme() {
     ],
   ];
   return $theme;
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_cabinet_paragraph_cabinet_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create($para["entity"]->get("field_title")->value);
+  if ($para["entity"]->hasField("field_contacts")) {
+    $contact_id = $para["entity"]->get("field_contacts")->target_id;
+    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
+      $markup[] = Markup::create("<span class='contact'>" . $contact->name->value . "</span>");
+    }
+  }
+  $markup[] = Markup::create("<span class='body-text'>" . strip_tags($para["entity"]->get("field_description")->value) . "</span>");
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }

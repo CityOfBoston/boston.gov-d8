@@ -96,11 +96,13 @@ boston.card.oversize:
 
 boston.person.mobile:
   label: 'boston mobile (person)'
-  mediaQuery: '(min-width: 0px) and (max-width: 839px)'
+  mediaQuery: '(max-width: 839px)'
   weight: 5
   multipliers:
     - 1x
-  group: person
+    - 1.5x
+    - 2x
+  group: 840-980-1280
 
 boston.person.tablet:
   label: 'boston tablet (person)'
@@ -108,7 +110,9 @@ boston.person.tablet:
   weight: 4
   multipliers:
     - 1x
-  group: person
+    - 1.5x
+    - 2x
+  group: 840-980-1280
 
 boston.person.desktop:
   label: 'boston desktop (person)'
@@ -116,7 +120,7 @@ boston.person.desktop:
   weight: 3
   multipliers:
     - 1x
-  group: person
+  group: 840-980-1280
 
 boston.person.full:
   label: 'boston desktop over 1280 (person)'
@@ -124,4 +128,36 @@ boston.person.full:
   weight: 2
   multipliers:
     - 1x
-  group: person
+  group: 840-980-1280
+
+boston.480-768-980.0:
+  label: 'boston mobile (person)'
+  mediaQuery: '(max-width: 479px)'
+  weight: 5
+  multipliers:
+    - 1x
+  group: 480-768-980
+
+boston.480-768-980.480:
+  label: 'boston tablet'
+  mediaQuery: '(min-width: 480px)  and (max-width: 767px)'
+  weight: 4
+  multipliers:
+    - 1x
+  group: 480-768-980
+
+boston.480-768-980.768:
+  label: 'boston desktop'
+  mediaQuery: '(min-width: 768px)  and (max-width: 979px)'
+  weight: 3
+  multipliers:
+    - 1x
+  group: 480-768-980
+
+boston.480-768-980.980:
+  label: 'boston large'
+  mediaQuery: '(min-width: 980px)'
+  weight: 2
+  multipliers:
+    - 1x
+  group: 480-768-980

@@ -90,11 +90,15 @@
 
 <article{{ attributes }}>
 
-  {% if content.field_updated_date %}
-    <div class="brc-lu">
+  <div class="brc-lu">
+    {% if (content.field_updated_date["#items"]) %}
       Last updated: {{ content.field_updated_date }}
-    </div>
-  {% endif %}
+    {% elseif (content.field_published_date["#items"]) %}
+      Last updated: {{ content.field_published_date }}
+    {% else %}
+      Not published yet!
+    {% endif %}
+  </div>
 
   <div class="program-info-wrapper desktop-100">
     <div {{ primeColumnAttributes }}>
@@ -172,5 +176,25 @@
 
   {% endif %}
 
-
 </article>
+<script type="application/ld+json">{
+   "@context": "http://schema.org",
+   "@graph": [
+           {
+           "@type": "Organization",
+           "@id": "http://www.boston.gov{{ node_url }}",
+           "image": "{{ drupal_token('custom:schema_image', {node: node}) }}",
+           "name": "{{ title.0 }}",
+           "department":[
+                        {% for key,value in node.field_contacts %}
+                          {"name":"{{ node.field_contacts[key].entity.name.value}}"} {{(loop.last) ? '' : ','}}
+                        {% endfor %}
+                        ],
+           "description": "{{ node.field_intro_text.0.value|striptags }}{{ node.body.0.value|striptags  }}",
+           "address" : {
+             "addressLocality": "Boston",
+             "addressRegion": "MA"
+           }
+       }
+   ]
+}</script>

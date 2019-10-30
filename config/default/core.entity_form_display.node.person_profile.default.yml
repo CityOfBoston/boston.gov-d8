@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.node.person_profile.field_address
     - field.field.node.person_profile.field_components
     - field.field.node.person_profile.field_contact
@@ -18,16 +19,16 @@ dependencies:
     - field.field.node.person_profile.field_profile_type
     - field.field.node.person_profile.field_sidebar_components
     - field.field.node.person_profile.field_year_elected
-    - image.style.person_photo_a_mobile_1x
     - node.type.person_profile
+    - workflows.workflow.city_of_boston_workflows
   module:
     - address
     - content_moderation
+    - entity_browser
     - field_group
     - paragraphs
     - path
     - publication_date
-    - svg_image
     - text
 third_party_settings:
   field_group:
@@ -46,6 +47,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Person Profile'
+      region: content
     group_basic_information:
       children:
         - title
@@ -64,6 +66,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_biography:
       children:
         - field_description
@@ -80,6 +83,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Biography
+      region: content
     group_contact_info:
       children:
         - field_phone_number
@@ -96,6 +100,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Contact Info'
+      region: content
     group_components:
       children:
         - field_components
@@ -109,6 +114,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -122,6 +128,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
 _core:
   default_config_hash: Mc5ayV0Sj_Bx0i_j4V9gdUhL6SZqTptME6bvHoRcNpo
 id: node.person_profile.default
@@ -203,10 +210,17 @@ content:
     region: content
   field_person_photo:
     weight: 2
-    type: image_image
+    type: entity_browser_entity_reference
     settings:
-      preview_image_style: person_photo_a_mobile_1x
-      progress_indicator: throbber
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
+      open: false
     third_party_settings: {  }
     region: content
   field_phone_number:

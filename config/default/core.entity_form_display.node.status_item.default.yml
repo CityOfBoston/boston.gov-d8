@@ -3,17 +3,18 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.icon_entity_browser
     - field.field.node.status_item.field_enabled
     - field.field.node.status_item.field_icon
     - field.field.node.status_item.field_messages
     - field.field.node.status_item.field_title
     - field.field.node.status_item.field_weight
     - node.type.status_item
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
-    - entity_browser_entity_form
+    - entity_browser
     - field_group
-    - media_library
     - paragraphs
     - path
     - publication_date
@@ -31,6 +32,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Status Item'
+      region: content
     group_basic_information:
       children:
         - group_hoizontal
@@ -47,6 +49,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_messages:
       children:
         - field_messages
@@ -54,13 +57,13 @@ third_party_settings:
       weight: 21
       format_type: tab
       format_settings:
-        label: Messages
         formatter: closed
         description: "<b>The order of messages in this list is important.<br/>\r\n<i>Only the first message which has a rule for the current day will be displayed.</i></b><br />\r\nYou may preview messages at this link <a href=\"/admin/motd\">/admin/motd</a>."
         required_fields: true
         id: ''
         classes: 'group-messages field-group-tab'
       label: Messages
+      region: content
     group_hoizontal:
       children:
         - field_enabled
@@ -79,6 +82,7 @@ third_party_settings:
         effect: none
         speed: fast
       label: hoizontal
+      region: content
 _core:
   default_config_hash: bjotN0ZOH2QCl6-XNJmD02C68QghlD1Z6Ahh9zOMyvM
 id: node.status_item.default
@@ -101,11 +105,18 @@ content:
     region: content
   field_icon:
     weight: 24
-    type: media_library_widget
-    settings: {  }
-    third_party_settings:
-      entity_browser_entity_form:
-        entity_browser_id: media_entity_browser
+    type: entity_browser_entity_reference
+    settings:
+      entity_browser: icon_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
+    third_party_settings: {  }
     region: content
   field_messages:
     weight: 5

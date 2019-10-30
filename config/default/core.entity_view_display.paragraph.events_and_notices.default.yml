@@ -46,11 +46,18 @@ content:
     region: content
   field_link:
     weight: 3
-    label: above
+    label: hidden
     settings:
-      view_mode: default
+      view_mode: cta_button
       link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     type: entity_reference_revisions_entity_view
     region: content
   field_list:
@@ -58,7 +65,7 @@ content:
     label: hidden
     settings:
       view_title: hidden
-      always_build_output: '1'
+      always_build_output: true
       empty_view_title: hidden
     third_party_settings:
       fences:

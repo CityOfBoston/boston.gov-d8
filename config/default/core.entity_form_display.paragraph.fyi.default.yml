@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.icon_entity_browser
     - field.field.paragraph.fyi.field_extra_info
     - field.field.paragraph.fyi.field_icon
     - field.field.paragraph.fyi.field_link
@@ -10,7 +11,7 @@ dependencies:
     - field.field.paragraph.fyi.field_title
     - paragraphs.paragraphs_type.fyi
   module:
-    - media_library
+    - entity_browser
     - paragraphs
 _core:
   default_config_hash: XXwhz-fXLgZ2QsH8wrQYBJJObfPqSmTPocUY8nPk-xg
@@ -29,8 +30,17 @@ content:
     region: content
   field_icon:
     weight: 1
-    type: media_library_widget
-    settings: {  }
+    type: entity_browser_entity_reference
+    settings:
+      entity_browser: icon_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
+      field_widget_edit: false
+      field_widget_replace: false
     third_party_settings: {  }
     region: content
   field_link:

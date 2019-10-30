@@ -4,9 +4,14 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.file.thumbnail
-    - field.field.file.document.field_type_of_content
     - field.field.file.document.field_updated_date
     - file_entity.type.document
+  module:
+    - datetime
+    - fences
+    - file
+    - file_entity
+    - user
 _core:
   default_config_hash: zlB0VonOjJywsH9sIrMlYt9bIpPdi3QysmBkBUaV1YY
 id: file.document.thumbnail
@@ -14,19 +19,81 @@ targetEntityType: file
 bundle: document
 mode: thumbnail
 content:
+  field_updated_date:
+    type: datetime_default
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: date_format_normal_date
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  filemime:
+    type: file_filemime
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_file: false
+      filemime_image: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   filename:
     type: string
     weight: 0
     settings:
-      link_to_entity: false
-    third_party_settings: {  }
+      link_to_entity: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     label: hidden
     region: content
+  filesize:
+    type: file_size
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  uid:
+    type: author
+    weight: 3
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
 hidden:
-  field_type_of_content: true
-  field_updated_date: true
-  filemime: true
-  filesize: true
   langcode: true
-  uid: true
   uri: true

@@ -2,6 +2,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - entity_browser.browser.document_entity_browser
     - field.field.node.procurement_advertisement.body
     - field.field.node.procurement_advertisement.field_award_date
     - field.field.node.procurement_advertisement.field_awarded_by
@@ -26,12 +27,13 @@ dependencies:
     - field.field.node.procurement_advertisement.field_unspsc
     - field.field.node.procurement_advertisement.field_url
     - node.type.procurement_advertisement
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
     - datetime_range
+    - entity_browser
     - field_group
-    - file
     - link
     - paragraphs
     - path
@@ -52,6 +54,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Procurement Advertisement'
+      region: content
     group_basic_information:
       children:
         - title
@@ -75,9 +78,9 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_sidebar:
       children:
-        - field_field_date_range
         - field_date_range
         - field_awarded_by
         - field_bid_type
@@ -96,6 +99,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Sidebar
+      region: content
     group_contact:
       children:
         - field_department
@@ -111,6 +115,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Contact
+      region: content
     group_submissions:
       children:
         - field_not_awarded
@@ -126,6 +131,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Submissions
+      region: content
 id: node.procurement_advertisement.default
 targetEntityType: node
 bundle: procurement_advertisement
@@ -224,12 +230,12 @@ content:
     region: content
     type: entity_browser_file
     settings:
-      entity_browser: media_entity_browser
-      field_widget_edit: true
+      entity_browser: document_entity_browser
       field_widget_remove: true
-      field_widget_replace: true
       selection_mode: selection_append
-      view_mode: full
+      view_mode: thumbnail
+      field_widget_edit: false
+      field_widget_replace: false
       open: false
       preview_image_style: thumbnail
     third_party_settings: {  }

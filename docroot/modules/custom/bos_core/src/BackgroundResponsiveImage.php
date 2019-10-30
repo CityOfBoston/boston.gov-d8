@@ -159,10 +159,12 @@ class BackgroundResponsiveImage extends ResponsiveImageStyle {
           $multiplier = str_replace('x', '', $breakpoint['multiplier']);
           $multiplier = "and (-webkit-min-device-pixel-ratio: $multiplier) ";
         }
-        $url = ImageStyle::load($breakpoint['image_mapping'])
-          ->buildUrl($uri);
-        $breakpoint = $breakpoints[$breakpoint['breakpoint_id']]->getMediaQuery();
-        $css[] = "@media screen and $breakpoint $multiplier{\n    $anchorClass { background-image: url($url); } }";
+        if (isset($breakpoints[$breakpoint['breakpoint_id']])) {
+          $url = ImageStyle::load($breakpoint['image_mapping'])
+            ->buildUrl($uri);
+          $breakpoint = $breakpoints[$breakpoint['breakpoint_id']]->getMediaQuery();
+          $css[] = "@media screen and $breakpoint $multiplier{\n    $anchorClass { background-image: url($url); } }";
+        }
       }
     }
 

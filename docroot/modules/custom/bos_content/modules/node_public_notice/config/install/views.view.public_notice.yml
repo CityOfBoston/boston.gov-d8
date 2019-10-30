@@ -1152,29 +1152,9 @@ display:
         - 'config:field.storage.node.field_is_there_public_testimony'
         - 'config:field.storage.node.field_published_date'
         - 'config:field.storage.node.field_time'
-  page_1:
+  archive:
     display_plugin: page
-    id: page_1
-    display_title: Landing
-    position: 1
-    display_options:
-      display_extenders: {  }
-      path: views/public-notice
-      display_description: ''
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_content'
-        - 'languages:language_interface'
-        - url
-        - url.query_args
-        - user
-        - 'user.node_grants:view'
-        - user.permissions
-      tags: {  }
-  page_2:
-    display_plugin: page
-    id: page_2
+    id: archive
     display_title: Archive
     position: 2
     display_options:
@@ -1352,6 +1332,26 @@ display:
         operator: AND
         groups:
           1: AND
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  landing:
+    display_plugin: page
+    id: landing
+    display_title: Landing
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: views/public-notice
+      display_description: ''
     cache_metadata:
       max-age: -1
       contexts:
