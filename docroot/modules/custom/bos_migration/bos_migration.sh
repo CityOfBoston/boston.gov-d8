@@ -331,10 +331,10 @@ fi
 if [ "$1" == "update2" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql" || exit 1; fi
-    doMigrate --tag="bos:node_revision:1" --force --feedback=350           # 2h 42 mins
-    doMigrate --tag="bos:node_revision:2" --force --feedback=350          # 8h 50 mins
-    doMigrate --tag="bos:node_revision:3" --force --feedback=350          # 1hr 43 mins
-    doMigrate --tag="bos:node_revision:4" --force --feedback=350          # 30 sec
+    doMigrate --tag="bos:node_revision:1" --force --feedback=200           # 2h 42 mins
+    doMigrate --tag="bos:node_revision:2" --force --feedback=200          # 8h 50 mins
+    doMigrate --tag="bos:node_revision:3" --force --feedback=200          # 1hr 43 mins
+    doMigrate --tag="bos:node_revision:4" --force --feedback=200          # 30 sec
     dumpDB ${dbpath}/migration_clean_after_node_revision.sql
 fi
 
@@ -353,10 +353,10 @@ if [ "$1" == "revision_resume" ]; then
   ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
   ${drush} cr  | tee -a ${logfile}
 
-  doMigrate --tag="bos:node_revision:1" --force --feedback=350           # 2h 42 mins
-  doMigrate --tag="bos:node_revision:2" --force --feedback=350           # 8h 50 mins
-  doMigrate --tag="bos:node_revision:3" --force --feedback=350           # 1hr 43 mins
-  doMigrate --tag="bos:node_revision:4" --force --feedback=350           # 30 sec
+  doMigrate --tag="bos:node_revision:1" --force --feedback=200           # 2h 42 mins
+  doMigrate --tag="bos:node_revision:2" --force --feedback=200           # 8h 50 mins
+  doMigrate --tag="bos:node_revision:3" --force --feedback=200           # 1hr 43 mins
+  doMigrate --tag="bos:node_revision:4" --force --feedback=200           # 30 sec
   dumpDB ${dbpath}/migration_clean_after_node_revision.sql
 fi
 
@@ -413,7 +413,7 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
 doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
-# re-run this to update icons broght through in WYSIWYG (rich-text) content.
+# re-run this to update icons brought through in WYSIWYG (rich-text) content.
 doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 
 # Reset status_items.
