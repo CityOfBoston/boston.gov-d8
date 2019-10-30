@@ -188,12 +188,19 @@ trait FilesystemReorganizationTrait {
    */
   private function resolveFileTypeArray($uri) {
     // White list files based on file_managed table in D7.
-    $parts = explode('/', $uri);
-    $index = count($parts) - 1;
     $type = [];
+    // Try to get extension from normal path with a filename that has extension
+    // after a period.
+    $parts = explode('/', $uri);
+    $filename = trim(end($parts));
+    $ext = end(explode(".", $filename));
+    if (empty($ext)) {
+      $ext = substr($filename, -4);
+      $ext = end(explode(".", $ext));
+    }
     foreach (self::$allowedFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
-        if (strpos($parts[$index], $extension) !== FALSE) {
+        if ($ext == $extension) {
           $type[] = $file_type;
         }
       }
@@ -455,21 +462,26 @@ trait FilesystemReorganizationTrait {
    */
   public function cleanFilename($path) {
     $filename = explode("/", $path);
+    $extension = end(explode(".", end($filename)));
     $filename = array_pop($filename);
     $filename = str_replace([
-      ".svg",
       "icons",
       "logo",
+      ".svg",
       ".jpg",
       ".gif",
       ".jpeg",
       ".png",
+      ".txt",
       ".xlsx",
       ".pdf",
     ], "", $filename);
     $filename = str_replace("icon", "", $filename);
     $filename = str_replace(["-", "_", "."], " ", $filename);
     $filename = preg_replace("~\s+~", " ", $filename);
+    if (in_array($extension, ["pdf", "xls", "xlsx", "txt"])) {
+      $filename .= " (" . $extension . ")";
+    }
     return strtolower($filename);
   }
 

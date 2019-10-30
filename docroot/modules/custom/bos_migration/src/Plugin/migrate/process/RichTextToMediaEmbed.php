@@ -45,7 +45,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    if ($this->quitEarly($value)) {
+    if (NULL == $value || $this->quitEarly($value)) {
       return $value;
     }
     if (empty($value['format'])) {
