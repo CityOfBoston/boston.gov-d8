@@ -19,9 +19,13 @@ use Drupal\Core\Database\Database;
  */
 class MigrationPrepareRow {
 
+  use migrationModerationStateTrait;
+
   protected $row;
   protected $source;
   protected $migration;
+  protected $use_cache;
+  protected $cache = NULL;
 
   /**
    * MigrationProcessRow constructor.
@@ -33,10 +37,71 @@ class MigrationPrepareRow {
    * @param \Drupal\migrate\Plugin\MigrationInterface $migration
    *   The migration object.
    */
-  public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
+  public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration, $use_cache = FALSE) {
     $this->row = $row;
     $this->source = $source;
     $this->migration = $migration;
+    $this->use_cache = $use_cache;
+  }
+
+  /**
+   * Returns the current cache.
+   *
+   * @param string $wb_element
+   *   Cache element to fetch.
+   *
+   * @return array
+   *   The cache.
+   */
+  public function getCache(string $wb_element = NULL) {
+    if (!$this->use_cache) {
+      return NULL;
+    }
+    elseif (NULL == $wb_element) {
+      return $this->cache;
+    }
+    elseif (isset($this->cache[$wb_element])) {
+      return $this->cache[$wb_element];
+    }
+    else {
+      return NULL;
+    }
+  }
+
+  /**
+   * Set a cache array element.
+   *
+   * @param string $wb_element
+   *  The element to set.
+   * @param mixed $value
+   *  The value to set (usually an array).
+   *
+   * @return mixed
+   */
+  private function setCache(string $wb_element, $value) {
+    if ($this->use_cache) {
+      $this->cache[$wb_element] = $value;
+      return $this->cache[$wb_element];
+    }
+    return NULL;
+  }
+
+  private function loadCache($nid) {
+    if ($this->use_cache) {
+      $this->cache = $GLOBALS["workbench_cache"][$nid] ?: [];
+    }
+    else {
+      unset($GLOBALS["workbench_cache"][$nid]);
+    }
+  }
+
+  private function saveCache($nid) {
+    if ($this->use_cache) {
+      $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
+    }
+    else {
+      unset($GLOBALS["workbench_cache"][$nid]);
+    }
   }
 
   /**
@@ -64,30 +129,23 @@ class MigrationPrepareRow {
       throw new MigrateSkipRowException("ERROR: vid is null.", FALSE);
     }
 
-    $workbench_all = self::findWorkbench($nid);
-    if (empty($workbench_all)) {
-      throw new MigrateSkipRowException("Workbench moderation not found.", FALSE);
-    }
-    $workbench_current = self::findWorkbenchCurrent($nid);
-    if (empty($workbench_current)) {
-      throw new MigrateSkipRowException("Workbench moderation current not found.", FALSE);
-    }
-    $workbench_published = self::findWorkbenchPublished($nid);
-
+    $this->loadCache($nid);
+    $this->findWorkbench($nid);
+    $this->findWorkbenchCurrent($nid);
+    // $this->findWorkbenchPublished($nid);
     try {
-      $result = self::shouldProcessRow($nid, $vid, $workbench_all, []);
-      $this->row->workbench = [
-        "all" => $workbench_all,
-        "current" => $workbench_current,
-        "published" => $workbench_published ?: NULL,
-      ];
+      $result = $this->shouldProcessRow($nid, $vid, []);
+      $this->row->workbench = $this->getCache();
+      $this->saveCache($nid);
       return $result;
     }
     catch (MigrateSkipRowException $e) {
       // Save to map or else this will be re-processed each migratin.
-      throw new MigrateSkipRowException("", TRUE);
+      $this->saveCache($nid);
+      throw new MigrateSkipRowException($e->getMessage(), TRUE);
     }
     catch (\Exception $e) {
+      $this->saveCache($nid);
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
 
@@ -106,26 +164,16 @@ class MigrationPrepareRow {
    * @return array
    *   Associative array of moderation info for node.
    */
-  public static function findWorkbench($nid) {
-    $connection = Database::getConnection("default", "migrate");
-
-    $query = $connection->select("workbench_moderation_node_history", "history")
-      ->fields('history', [
-        "nid",
-        "vid",
-        "from_state",
-        "state",
-        "published",
-        "is_current",
-      ]);
-    $query->condition("nid", $nid);
-    $or = $query->orConditionGroup()
-      ->condition("state", "published")
-      ->condition("is_current", 1)
-      ->condition("published", 1);
-    $query->condition($or);
-
-    return $query->execute()->fetchAllAssoc("vid");
+  private function findWorkbench($nid) {
+    // Check cache first.
+    if (empty($this->cache[$nid])) {
+      $this->loadCache($nid);
+    }
+    if (NULL == $this->getCache("all")) {
+      $mod = migrationModerationStateTrait::getModerationAll($nid);
+      $this->setCache("all", $mod);
+    }
+    return $this->getCache("all");
   }
 
   /**
@@ -137,22 +185,25 @@ class MigrationPrepareRow {
    * @return array
    *   Associative array of moderation info for node.
    */
-  public static function findWorkbenchCurrent($nid) {
-    $connection = Database::getConnection("default", "migrate");
+  private function findWorkbenchCurrent($nid) {
+    $cache = $this->getCache("current");
+    if (NULL != $cache) {
+      return $cache;
+    }
+    $cache = $this->getCache("all");
+    if (NULL != $cache) {
+      foreach ($cache as $vid) {
+        if ($vid->is_current == "1") {
+          $this->setCache("current", $vid);
+          return $this->getCache("current");
+        }
+      }
+    }
 
-    $query = $connection->select("workbench_moderation_node_history", "history")
-      ->fields('history', [
-        "nid",
-        "vid",
-        "from_state",
-        "state",
-        "published",
-        "is_current",
-      ]);
-    $query->condition("nid", $nid);
-    $query->condition("published", 1);
+    $mod = migrationModerationStateTrait::getModerationPublished($nid);
 
-    return $query->execute()->fetchAssoc();
+    $this->setCache("current", (object) $mod);
+    return $this->getCache("current");
   }
 
   /**
@@ -164,25 +215,25 @@ class MigrationPrepareRow {
    * @return array
    *   Associative array of moderation info for node.
    */
-  public static function findWorkbenchPublished($nid) {
-    $connection = Database::getConnection("default", "migrate");
+  private function findWorkbenchPublished($nid) {
+    $cache = $this->getCache("published") ?: NULL;
+    if (NULL != $cache) {
+      return $cache;
+    }
+    $cache = $this->getCache("all");
+    if (NULL != $cache) {
+      foreach ($cache as $vid) {
+        if ($vid->published == "1") {
+          $this->setCache("published", $vid);
+        }
+      }
+      return $this->getCache("published");
+    }
 
-    $query = $connection->select("workbench_moderation_node_history", "history")
-      ->fields('history', [
-        "nid",
-        "vid",
-        "from_state",
-        "state",
-        "published",
-        "is_current",
-      ]);
-    $query->condition("nid", $nid);
-    $query->condition("published", 1);
+    $mod = migrationModerationStateTrait::getModerationPublishedHistory($nid);
 
-    $result = $query->execute()->fetchAssoc();
-
-    return $result ?: NULL;
-
+    $this->setCache("published", (object) $mod);
+    return $this->getCache("published");
   }
 
   /**
@@ -206,11 +257,9 @@ class MigrationPrepareRow {
    * @throws \Drupal\migrate\MigrateSkipRowException
    *   Thrown if the revisions latest moderation state is "draft".
    */
-  public static function shouldProcessRow(int $nid, int $vid, array $workbench = [], array $properties = []) {
+  private function shouldProcessRow(int $nid, int $vid, array $properties = []) {
     // Ensure we have the D7 workbench info for this node revision.
-    if (empty($workbench)) {
-      $workbench = self::findWorkbench($nid);
-    }
+    $workbench = $this->getCache("all");
 
     // If the D7 revision has anything interesting about it, then include -
     // otherwise skip it.
@@ -235,122 +284,6 @@ class MigrationPrepareRow {
 
     // Tell the processor to skip processing of this entire row (revision).
     throw new MigrateSkipRowException($msg, $map);
-  }
-
-  /**
-   * Sets the correct status for a node revision.
-   *
-   * @param object $workbench
-   *   StdClass with the moderation setting from D7.
-   */
-  public static function setNodeStatus($workbench) {
-    // node_field_revision.
-    \Drupal::database()->update("node_field_revision")
-      ->fields([
-        "status" => $workbench->published,
-      ])
-      ->condition('nid', $workbench->nid)
-      ->condition('vid', $workbench->vid)
-      ->condition('langcode', "und")
-      ->execute();
-  }
-
-  /**
-   * Sets the correct node revision.
-   *
-   * @param object $workbench
-   *   StdClass with the moderation setting from D7.
-   */
-  public static function setCurrentRevision($workbench) {
-    // Set the node vid to be the current revision.
-    // Table: node.
-    \Drupal::database()->update("node")
-      ->fields([
-        "vid" => $workbench->vid,
-      ])
-      ->condition('nid', $workbench->nid)
-      ->execute();
-
-    // Copy current rev of node_field_revision into node_field_data.
-    // Table: node_field_data.
-    $qstring = "UPDATE node_field_data dat
-                      INNER JOIN node_field_revision rev ON dat.nid = rev.nid  
-                      SET
-                        dat.nid = rev.nid,
-                        dat.vid = rev.vid,
-                        dat.status = rev.status,
-                        dat.title = rev.title,
-                        dat.uid = rev.uid,
-                        dat.created = rev.created,
-                        dat.changed = rev.changed,
-                        dat.promote = rev.promote,
-                        dat.sticky = rev.sticky,
-                        dat.default_langcode = rev.default_langcode,
-                        dat.revision_translation_affected = rev.revision_translation_affected,
-                        dat.published_at = rev.published_at
-                        WHERE rev.langcode = 'und' 
-                            AND rev.vid = " . $workbench->vid . ";";
-    \Drupal::database()->query($qstring)->execute();
-  }
-
-  /**
-   * Sets the correct moderation_state for a node revision.
-   *
-   * @param object $workbench
-   *   StdClass with the moderation setting from D7.
-   */
-  public static function setModerationState($workbench) {
-    \Drupal::database()->update("content_moderation_state_field_revision")
-      ->fields([
-        "uid" => $workbench->uid ?: 1,
-        "moderation_state" => $workbench->state,
-      ])
-      ->condition('content_entity_revision_id', $workbench->vid)
-      ->condition('langcode', "und")
-      ->execute();
-  }
-
-  /**
-   * Sets the correct moderation revision.
-   *
-   * @param object $workbench
-   *   StdClass with the moderation setting from D7.
-   */
-  public static function setCurrentModerationRevision($workbench) {
-
-    // Get the id and rev_id for the moderation state.
-    $query = \Drupal::database()->select("content_moderation_state_field_revision", "rev")
-      ->fields("rev", ["id", "revision_id"]);
-    $query->condition('content_entity_id', $workbench->nid);
-    $query->condition('content_entity_revision_id', $workbench->vid);
-
-    if ($rev = $query->execute()->fetchAll()[0]) {
-      \Drupal::database()->update("content_moderation_state")
-        ->fields([
-          "revision_id" => $rev->revision_id,
-        ])
-        ->condition('id', $rev->id)
-        ->execute();
-
-      // Table: content_moderation_state_field_data.
-      $qstring = "UPDATE content_moderation_state_field_data dat
-                    INNER JOIN content_moderation_state_field_revision rev ON dat.id = rev.id  
-                    SET
-                      dat.id = rev.id,
-                      dat.revision_id = rev.revision_id,
-                      dat.langcode = rev.langcode,
-                      dat.uid = rev.uid,
-                      dat.workflow = rev.workflow,
-                      dat.moderation_state = rev.moderation_state,
-                      dat.content_entity_type_id = rev.content_entity_type_id,
-                      dat.content_entity_id = rev.content_entity_id,
-                      dat.content_entity_revision_id = rev.content_entity_revision_id,
-                      dat.default_langcode = rev.default_langcode,
-                      dat.revision_translation_affected = rev.revision_translation_affected
-                    WHERE rev.langcode = 'und' 
-                          and rev.revision_id = " . $rev->revision_id . ";";
-      \Drupal::database()->query($qstring)->execute();
-    }
   }
 
 }
