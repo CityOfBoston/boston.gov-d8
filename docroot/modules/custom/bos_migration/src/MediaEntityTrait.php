@@ -72,9 +72,8 @@ trait MediaEntityTrait {
     // If media item exists, and filename is different then change.
     // Clean up the filename first though.
     $filename = $this->cleanFilename($filename);
-    if ($media->name->value != $filename) {
+    if ($media->get("name")->value != $filename) {
       $media->name = $filename;
-      $media->image[0]->alt = "Image for " . $filename;
       $dirty = TRUE;
     }
     // If media item exists, and media_library setting is different then change.
