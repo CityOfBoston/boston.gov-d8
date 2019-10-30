@@ -2,13 +2,13 @@
 
 /**
  * @file
- * The install file for bos_mnl module.
+ * The install file for bos_bibblio module.
  */
 
 /**
  * Implements hook_uninstall().
  */
-function bos_mnl_uninstall() {
+function bos_bibblio_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
@@ -17,7 +17,7 @@ function bos_mnl_uninstall() {
 /**
  * Implements hook_install().
  */
-function bos_mnl_install() {
+function bos_bibblio_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
 }
