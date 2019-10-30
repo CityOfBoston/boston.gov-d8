@@ -34,5 +34,10 @@ if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/settings.local.php')
   include DRUPAL_ROOT . '/' . $site_path . '/settings/settings.local.php';
 }
 
+/* Include the Salesforce settings file. */
+if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.php')) {
+  include DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.php';
+}
+
 /* End of settings.php in main repo. */
 $settings['install_profile'] = 'bos_profile';
