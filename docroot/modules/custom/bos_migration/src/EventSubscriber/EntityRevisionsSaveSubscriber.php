@@ -2,16 +2,19 @@
 
 namespace Drupal\bos_migration\EventSubscriber;
 
-use Drupal\bos_migration\MigrationPrepareRow;
+use Drupal\bos_migration\migrationModerationStateTrait;
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
 use Drupal\migrate\Event\MigratePreRowSaveEvent;
 use Drupal\migrate\Event\MigrateEvents;
+use Drupal\node\Entity\Node;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Revisions Migration save listener/subscriber.
  */
 class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
+
+  use migrationModerationStateTrait;
 
   /**
    * {@inheritdoc}
@@ -33,6 +36,48 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *   Event.
    */
   public function migrateRowPreSave(MigratePreRowSaveEvent $event) {
+    // If this is an entity revision, then check if the revision exists.
+    if ($event->getMigration()->getBaseId() == "d7_node_revision") {
+      $row = $event->getRow();
+      $migrate_vid = $row->getDestination()["vid"];
+      $id_map = $event->getMigration()->getIdMap();
+      $destination_ids = $id_map->lookupDestinationIds(["vid" => $migrate_vid]);
+      if (!empty($destination_ids)) {
+        // There is already a map for this revision.  This possibly means a
+        // previous import updated another node and gave it this vid or else
+        // an import failed leaving a map to null.
+        // Assuming this is null, fetch and save the node with a new revision
+        // and then save this revision with that ID.
+        $destination_ids = reset($destination_ids);
+        if (NULL == $destination_ids[0]) {
+          // See if this revision actually exists.
+          $revision = \Drupal::entityTypeManager()
+            ->getStorage('node')
+            ->loadRevision($migrate_vid);
+          if (empty($revision)) {
+            // It does, so ....
+            // Create a new revision.
+            $nid = $row->getSource()["nid"];
+            $node = Node::load($nid);
+            $node->setNewRevision(TRUE);
+            $node->save();
+            $destination_ids[0] = $node->getRevisionId();
+          }
+          else {
+            // It does not ....
+            // Set the destinationid to be the revsision id.
+            $destination_ids[0] = $migrate_vid;
+          }
+          $id_map->saveIdMapping($row, $destination_ids, $id_map::STATUS_IMPORTED, $id_map::ROLLBACK_DELETE);
+          // Update everything.
+          $event->getRow()
+            ->setDestinationProperty("vid", $destination_ids[0]);
+          $idmap = $row->getIdMap();
+          $idmap["destid1"] = $destination_ids[0];
+          $event->getRow()->setIdMap($idmap);
+        }
+      }
+    }
   }
 
   /**
@@ -60,43 +105,39 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
 
-    if ($event->getMigration()->get("migration_group") != "d7_node_revision"
-      || NULL == $vid = $event->getDestinationIdValues()[0]) {
+    if ($event->getMigration()->getBaseId() != "d7_node_revision"
+      || NULL == $vid = $event->getRow()->getSourceIdValues()["vid"]) {
       return;
     }
 
     $row = $event->getRow();
-
+    $workbench = $row->workbench;
     // Establish the moderation states from D7.
-    if (NULL == ($workbench = $row->workbench)) {
-      try {
-        $nid = $row->getSource()['nid'];
-        $workbench["all"] = MigrationPrepareRow::findWorkbench($nid);
-        $workbench["current"] = MigrationPrepareRow::findWorkbenchCurrent($nid);
-      }
-      catch (Error $e) {
-        $workbench_all = NULL;
-      }
+    if (NULL == $workbench) {
+      $workbench_all = NULL;
     }
 
     // Get the d7 workbench moderation info for this revision.
-    $workbench_all = $workbench["all"] ?: NULL;
-    $workbench_revision = $workbench_all[$vid] ?: NULL;
-    $workbench_current = $workbench["current"] ?: NULL;
-
-    if (isset($workbench_revision)) {
-      $workbench_current = (object) $workbench_current;
-      if (empty($workbench_revision->published) || !is_numeric($workbench_revision->published)) {
-        $workbench_revision->published = 0;
+    if (isset($workbench) && isset($workbench["all"][$vid])) {
+      if (empty($workbench["all"][$vid]->published) || !is_numeric($workbench["all"][$vid]->published)) {
+        $workbench["all"][$vid]->published = "0";
       }
 
       // Set the status for this revision and the current revision.
-      MigrationPrepareRow::setNodeStatus($workbench_revision);
-      MigrationPrepareRow::setNodeStatus($workbench_current);
+      if ($vid == end($workbench["all"])->vid) {
+        self::setNodeStatus($workbench["all"][$vid]);
+        self::setModerationState($workbench["all"][$vid]);
+      }
+      if ($vid == $workbench["current"]->vid) {
+        self::setNodeStatus($workbench["current"]);
+        self::setCurrentRevision($workbench["current"]);
+        self::setModerationState($workbench["current"]);
+        self::setCurrentModerationRevision($workbench["current"]);
+      }
 
       // Sets the node back to the correct current revision.
-      MigrationPrepareRow::setCurrentRevision($workbench_current);
-
+      // Self::setCurrentRevision($workbench["current"]);.
+      //
       // The `d7_node:xxx` migration will have imported the latest node.
       //
       // The d7 workbench_moderation maintains its own versioning
@@ -110,106 +151,11 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       // So, the revision ond node need their moderation state to be updated.
       // Set the status for this revision and the current revision.
       // Sets the moderation state for this revision and the current revision.
-      MigrationPrepareRow::setModerationState($workbench_revision);
-      MigrationPrepareRow::setModerationState($workbench_current);
-
+      // Self::setModerationState($workbench["all"][$vid]);.
+      // Self::setModerationState($workbench["current"]);.
+      //
       // Set the moderation_state revision back to current revision.
-      MigrationPrepareRow::setCurrentModerationRevision($workbench_current);
-
-    }
-  }
-
-  /**
-   * Delete.
-   *
-   * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
-   *   Std.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  protected function migrateRowPostSaveXx(MigratePostRowSaveEvent $event) {
-
-    if ($event->getMigration()->get("migration_group") != "d7_node_revision"
-      || NULL == $vid = $event->getDestinationIdValues()[0]) {
-      return;
-    }
-
-    // Load the revision that has been imported.
-    if (NULL != $revision_d8 = \Drupal::entityTypeManager()
-      ->getStorage('node')
-      ->loadRevision($vid)) {
-
-      $row = $event->getRow();
-
-      // Establish the moderation states from D7.
-      if (NULL == ($workbench_d7 = $row->workbench)) {
-        try {
-          $vid = $row->getSource()['vid'];
-          $workbench_d7 = MigrationPrepareRow::findWorkbench($vid);
-        }
-        catch (Error $e) {
-          $workbench_d7 = NULL;
-        }
-      }
-
-      if (empty($workbench_d7['published']) || !is_numeric($workbench_d7['published'])) {
-        $workbench_d7['published'] = 0;
-      }
-
-      if (isset($workbench_d7)) {
-        $nid = $revision_d8->id();
-
-        // The `d7_node:xxx` migration will have imported the latest node.
-        //
-        // The d7 workbench_moderation maintains its own versioning
-        // allowing a node_revision to have multiple moderation_states over
-        // time - whereas d8 content moderation links its status with the
-        // node_revision, making a new revision when the moderation state
-        // changes.
-        // The effect of this is that for any node revision, only the first
-        // workbench_moderation state is migrated, and this state is usually
-        // "draft".
-        // So, the revision ond node need their moderation state to be updated.
-        MigrationPrepareRow::setModerationState($vid, $workbench_d7['state']);
-
-        // If revision is "published" i.e status = 1 and content_mod = published
-        // then update revision and node accordingly.
-        // This does not run because the "published" node is usully the one
-        // already migrated by `d7_node:xxxx` migration.
-        if ($workbench_d7['published'] == 1) {
-          // This revision is the published one, so place in the node table
-          // and set its status to 1.
-          MigrationPrepareRow::setNodeStatus($vid, $workbench_d7['published']);
-        }
-
-        // If the last workbench state for this revision is marked "current"
-        // update the node and workbench tables.
-        if ($workbench_d7['is_current'] == 1) {
-          // This is almost never true, because the current revision is usually
-          // the revision migrated with `d7_node:xxx` migration.
-          MigrationPrepareRow::setCurrentRevision($workbench_d7["nid"], $vid);
-          MigrationPrepareRow::setCurrentModerationRevision($workbench_d7["nid"], $vid);
-        }
-        else {
-          // Find the D7 revision marked as published (status=1 and
-          // moderation_state="published") and mark that revision as current
-          // in D8.
-          $current = MigrationPrepareRow::findWorkbenchCurrent($workbench_d7["nid"]);
-          if (empty($current['published']) || !is_numeric($current['published'])) {
-            $current['published'] = 0;
-          }
-          MigrationPrepareRow::setCurrentRevision($current["nid"], $current["vid"]);
-          MigrationPrepareRow::setCurrentModerationRevision($current["nid"], $current["vid"]);
-        }
-
-        // Find the D7 revision for this node which is published and make sure
-        // it is published in D8 as well.
-        if ($pubset = MigrationPrepareRow::findWorkbenchPublished($nid)) {
-          MigrationPrepareRow::setModerationState($pubset["vid"], "published");
-        }
-      }
-
+      // Self::setCurrentModerationRevision($workbench["current"]);.
     }
   }
 

@@ -5,6 +5,9 @@
  * Main file for the bos_migration module.
  */
 
+use Drupal\migrate\MigrateException;
+use Drupal\migrate\MigrateSkipRowException;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Row;
 use Drupal\migrate\Plugin\MigrateSourceInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
@@ -26,10 +29,19 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
  * Implements hook_migrate_prepare_row().
  */
 function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
-  $mig = new MigrationPrepareRow($row, $source, $migration);
-  switch ($migration->get("id")) {
-    case "d7_node_revision":
-      $mig->prepareNodeRevisionRow();
-      break;
+  $mig = new MigrationPrepareRow($row, $source, $migration, TRUE);
+  try {
+    switch ($migration->getBaseId()) {
+      case "d7_node_revision":
+        $mig->prepareNodeRevisionRow();
+        break;
+    }
+  }
+  catch (MigrateSkipRowException $e) {
+    // Save to map or else this will be re-processed each migratin.
+    throw new MigrateSkipRowException($e->getMessage(), $e->getSaveToMap());
+  }
+  catch (MigrateException $e) {
+    throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
   }
 }

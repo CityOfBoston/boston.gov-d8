@@ -1805,6 +1805,9 @@ class MigrationConfigAlter {
             "height" => 'height',
           ],
         ];
+        if ($fieldName == "field_thumbnail") {
+          $process["process"]["target_id"][1]["media_library"] = 0;
+        }
         break;
 
       case "file":
