@@ -8,7 +8,6 @@ use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Row;
 use Drupal\migrate\Plugin\MigrateSourceInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
-use Drupal\Core\Database\Database;
 
 /**
  * Class MigrationPrepareRow.
@@ -24,7 +23,7 @@ class MigrationPrepareRow {
   protected $row;
   protected $source;
   protected $migration;
-  protected $use_cache;
+  protected $useCache;
   protected $cache = NULL;
 
   /**
@@ -36,12 +35,14 @@ class MigrationPrepareRow {
    *   The source object.
    * @param \Drupal\migrate\Plugin\MigrationInterface $migration
    *   The migration object.
+   * @param bool $use_cache
+   *   If the workbench array is to be copied into the global variables.
    */
   public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration, $use_cache = FALSE) {
     $this->row = $row;
     $this->source = $source;
     $this->migration = $migration;
-    $this->use_cache = $use_cache;
+    $this->useCache = $use_cache;
   }
 
   /**
@@ -54,7 +55,7 @@ class MigrationPrepareRow {
    *   The cache.
    */
   public function getCache(string $wb_element = NULL) {
-    if (!$this->use_cache) {
+    if (!$this->useCache) {
       return NULL;
     }
     elseif (NULL == $wb_element) {
@@ -72,22 +73,29 @@ class MigrationPrepareRow {
    * Set a cache array element.
    *
    * @param string $wb_element
-   *  The element to set.
+   *   The element to set.
    * @param mixed $value
-   *  The value to set (usually an array).
+   *   The value to set (usually an array).
    *
    * @return mixed
+   *   The updated cache or NULL.
    */
   private function setCache(string $wb_element, $value) {
-    if ($this->use_cache) {
+    if ($this->useCache) {
       $this->cache[$wb_element] = $value;
       return $this->cache[$wb_element];
     }
     return NULL;
   }
 
+  /**
+   * Load the cache for this nid into the local cache variable from global vars.
+   *
+   * @param int $nid
+   *   The node id to collect from the global vars.
+   */
   private function loadCache($nid) {
-    if ($this->use_cache) {
+    if ($this->useCache) {
       $this->cache = $GLOBALS["workbench_cache"][$nid] ?: [];
     }
     else {
@@ -95,8 +103,14 @@ class MigrationPrepareRow {
     }
   }
 
-  private function saveCache($nid) {
-    if ($this->use_cache) {
+  /**
+   * Save the cache to a global variable for re-use without querying the DB.
+   *
+   * @param int $nid
+   *   The node id to index the array element against.
+   */
+  private function saveCache(int $nid) {
+    if ($this->useCache) {
       $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
     }
     else {
@@ -246,8 +260,6 @@ class MigrationPrepareRow {
    *   The nid for this node.
    * @param int $vid
    *   The revision of the node to be "tested".
-   * @param array $workbench
-   *   Moderation info for each moderation-revision of this node-revision.
    * @param array $properties
    *   Control info for logging and process-mapping.
    *

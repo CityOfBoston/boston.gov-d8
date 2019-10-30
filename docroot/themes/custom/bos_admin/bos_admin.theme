@@ -340,7 +340,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
           || substr($form_field, 0, 4) == "body")
         && isset($form[$form_field]["widget"][0]["#base_type"])
         && $form[$form_field]["widget"][0]["#base_type"] == "textarea") {
-        $classes =  " node_" . ($bundle?:"unk") . " " . $form_field;;
+        $classes = " node_" . ($bundle?:"unk") . " " . $form_field;;
         _bos_admin_add_ckeditor_classes($form, [$form_field => ["body" => $classes]]);
       }
     }
@@ -674,7 +674,7 @@ function bos_admin_preprocess_field_multiple_value_form(array &$variables) {
  *   Array of element/class rules nested by form_field.
  */
 function _bos_admin_add_ckeditor_classes(array &$form, array $classes) {
-  foreach ($classes as $form_field => $rules){
+  foreach ($classes as $form_field => $rules) {
     foreach ($rules as $element => $class_list) {
       $config = &$form['#attached']['drupalSettings']['ckeditor']['cob_styles'][$form_field];
       if (empty($config[$element])) {
