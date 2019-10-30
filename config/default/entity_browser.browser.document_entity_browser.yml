@@ -3,7 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
-    - views.view.media_entity_browser
+    - views.view.document_entity_browser_file_
   module:
     - lightning_media
     - views
@@ -33,8 +33,8 @@ widgets:
     id: file_upload
   ea90b405-b820-4018-9437-107152596698:
     settings:
-      view: media_entity_browser
-      view_display: entity_browser_1
+      view: document_entity_browser_file_
+      view_display: document_library
       submit_text: 'Select  Document'
       auto_select: false
     uuid: ea90b405-b820-4018-9437-107152596698

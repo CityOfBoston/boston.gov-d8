@@ -3,7 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - entity_browser.browser.media_entity_browser
+    - entity_browser.browser.image_entity_browser
     - field.field.node.program_initiative_profile.body
     - field.field.node.program_initiative_profile.field_components
     - field.field.node.program_initiative_profile.field_contacts
@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.program_initiative_profile.field_sidebar_components
     - field.field.node.program_initiative_profile.field_updated_date
     - node.type.program_initiative_profile
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -35,6 +36,7 @@ third_party_settings:
         - group_additional_information
         - group_s
         - group_components
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -43,6 +45,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: PIP
+      region: content
     group_ba:
       children:
         - title
@@ -60,6 +63,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_additional_information:
       children:
         - field_program_type
@@ -74,13 +78,14 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Additional Information'
+      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_updated_date
         - field_published_date
-      parent_name: ''
-      weight: 1
+      parent_name: group_pip
+      weight: 24
       format_type: tab
       format_settings:
         id: ''
@@ -89,6 +94,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+      region: content
     group_s:
       children:
         - field_sidebar_components
@@ -102,6 +108,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
     group_components:
       children:
         - field_components
@@ -115,6 +122,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
 _core:
   default_config_hash: pyjOpPR1ok1_vLm54-fvCi54kRYpfJMft950br6dx8U
 id: node.program_initiative_profile.default
@@ -171,13 +179,13 @@ content:
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:
@@ -205,15 +213,15 @@ content:
     weight: 4
     type: entity_browser_entity_reference
     settings:
-      entity_browser: media_entity_browser
+      entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_program_type:

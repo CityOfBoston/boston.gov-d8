@@ -25,17 +25,17 @@
  * @see template_process()
  */
  #}
+<div{{ attributes.setAttribute("style", "display: none;") }}></div>
 
 <div class="detail-item detail-item--middle detail-item__{{ field_name }}">
 
-   <div class="detail-item__left">
-      <div class="icon {{ content.field_hours_icon.0 }}"></div>
-   </div>
+  <div class="detail-item__left">
+    <div class="icon {{ content.field_hours_icon.0 }}"></div>
+  </div>
 
-   <div class="detail-item__content">
-      <div class="detail-item__body">
-         {{ content.field_custom_hours_text }}
-      </div>
-   </div>
-
+  <div class="detail-item__content">
+    <div class="detail-item__body">
+      {{ content.field_custom_hours_text }}
+    </div>
+  </div>
 </div>

@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.file.document.field_type_of_content
     - field.field.file.document.field_updated_date
     - file_entity.type.document
   module:
@@ -14,12 +13,6 @@ targetEntityType: file
 bundle: document
 mode: default
 content:
-  field_type_of_content:
-    weight: 42
-    type: options_buttons
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_updated_date:
     weight: 44
     type: datetime_default

@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.topic_page.field_topic_category
     - field.field.node.topic_page.field_updated_date
     - node.type.topic_page
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -29,8 +30,8 @@ third_party_settings:
     group_guide:
       children:
         - group_basic_information
-        - group_alternate_display
         - group_components
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -39,10 +40,11 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: Guide
+      region: content
     group_basic_information:
       children:
         - title
-        - field_intro_image
+        - group_horizontal
         - field_intro_text
         - field_contacts
         - field_topic_category
@@ -56,13 +58,14 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_page_metadata:
       children:
         - field_updated_date
         - field_published_date
         - field_manual_date
-      parent_name: ''
-      weight: 1
+      parent_name: group_guide
+      weight: 3
       format_type: tab
       format_settings:
         id: ''
@@ -71,11 +74,12 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+      region: content
     group_components:
       children:
         - field_components
       parent_name: group_guide
-      weight: 3
+      weight: 2
       format_type: tab
       format_settings:
         id: ''
@@ -84,19 +88,27 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
-    group_alternate_display:
+      region: content
+    group_horizontal:
       children:
+        - field_intro_image
         - field_thumbnail
-      parent_name: group_guide
-      weight: 2
-      format_type: tab
+      parent_name: group_basic_information
+      weight: 3
+      format_type: html_element
       format_settings:
         id: ''
-        classes: 'group-alternate-display-info field-group-tab'
-        formatter: closed
-        description: ''
+        classes: cob-group-grid
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
         required_fields: true
-      label: 'Alternate Display'
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Horizontal
+      region: content
 id: node.topic_page.default
 targetEntityType: node
 bundle: topic_page
@@ -128,7 +140,7 @@ content:
     third_party_settings: {  }
     region: content
   field_contacts:
-    weight: 5
+    weight: 7
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
@@ -137,23 +149,23 @@ content:
     third_party_settings: {  }
     region: content
   field_intro_image:
-    weight: 3
+    weight: 4
     type: entity_browser_entity_reference
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:
     type: text_textarea
-    weight: 4
+    weight: 6
     region: content
     settings:
       rows: 5
@@ -179,22 +191,22 @@ content:
     third_party_settings: {  }
     region: content
   field_thumbnail:
-    weight: 2
+    weight: 5
     type: entity_browser_entity_reference
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_topic_category:
-    weight: 6
+    weight: 8
     type: options_buttons
     settings: {  }
     third_party_settings: {  }

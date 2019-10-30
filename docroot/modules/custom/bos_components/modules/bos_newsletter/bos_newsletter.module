@@ -5,6 +5,8 @@
  * The Base module file for bos_newsletter module.
  */
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Implements hook_theme().
  */
@@ -31,7 +33,7 @@ function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
       $term = \Drupal::entityTypeManager()
         ->getStorage('taxonomy_term')
         ->load($tid);
-      if (!empty($term)) {
+      if (!empty($term) && $term->hasField('field_id')) {
         $variables['newsletter_id'] = $term->get('field_id')
           ->getValue()['0']['value'];
       }
@@ -41,11 +43,20 @@ function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
   if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
     // Component Theme.
     $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
-    $variables['component_theme'] = $component_theme;
+    $variables['component_theme'] = new Attribute();
+    $variables['component_theme']->addClass("b b--fw");
+    $variables['component_theme']->addClass("b--" . $component_theme);
 
     // Section Header Theme.
-    $section_header_theme = $component_theme == 'b' ? 'sh--w' : '';
-    $variables['section_header_theme'] = $section_header_theme;
+    $variables['section_header_theme'] = new Attribute();
+    $variables['section_header_theme']->addClass("sh cl m-b300");
+
+    // Make text  white if the theme is blue.
+    if ($component_theme == "b") {
+      $variables['component_theme']->addClass("b--wt");
+      $variables['section_header_theme']->addClass('sh--w');
+    }
+
   }
 
 }

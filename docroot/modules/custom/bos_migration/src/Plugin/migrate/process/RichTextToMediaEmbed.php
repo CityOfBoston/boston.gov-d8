@@ -10,15 +10,16 @@ namespace Drupal\bos_migration\Plugin\migrate\process;
  * fields.
  */
 
-use Drupal\bos_migration\MigrationFixes;
+use Drupal\bos_migration\FilesystemReorganizationTrait;
+use Drupal\bos_migration\HtmlParsingTrait;
+use Drupal\bos_migration\MediaEntityTrait;
+use Drupal\file\Entity\File;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
+use Drupal\migrate\MigrateSkipProcessException;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\Component\Utility\Html;
-use Drupal\media\MediaInterface;
-use Drupal\migrate\Plugin\MigrationInterface;
-use Drupal\media\Entity\Media;
 use Drupal\Component\Serialization\Json;
 use Exception;
 
@@ -30,40 +31,61 @@ use Exception;
  * )
  */
 class RichTextToMediaEmbed extends ProcessPluginBase {
-  use \Drupal\bos_migration\HtmlParsingTrait;
-  use \Drupal\bos_migration\FilesystemReorganizationTrait;
+
+  use HtmlParsingTrait;
+  use FilesystemReorganizationTrait;
+  use MediaEntityTrait;
 
   protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
-  protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
   protected $source = [];
+  protected $row;
+  protected $migrateExecutable;
 
   /**
    * {@inheritdoc}
    */
   public function transform($value, MigrateExecutableInterface $migrate_executable, Row $row, $destination_property) {
-    $this->source = $row->getSource();
+    if ($this->quitEarly($value)) {
+      return $value;
+    }
+    if (empty($value['format'])) {
+      // Ensure the format is filtered_html if empty.
+      $value['format'] = "filtered_html";
+    }
 
+    $this->source = $row->getSource();
+    $this->row = $row;
+    $this->migrateExecutable = $migrate_executable;
+
+    $value['value'] = $this->convertToEntityEmbed($value['value']);
+    return $value;
+  }
+
+  /**
+   * Check the $value to see if we can/need to process this.
+   *
+   * @param array $value
+   *   Value.
+   *
+   * @return bool
+   *   True if we need to exit.
+   */
+  private function quitEarly(array $value) {
     if (empty($value['value'])) {
       // Skips null and empty values.
-      return $value;
+      return TRUE;
     }
     elseif (!empty($value['format']) && $value['format'] == 'plain_text') {
       // Nothing to do here (not a rich text field).
-      return $value;
-    }
-    elseif (empty($value['format'])) {
-      // Ensure the format is filtered_html if empty.
-      $value['format'] = "filtered_html";
+      return TRUE;
     }
     elseif (!is_string($value['value'])) {
       // Will flag this, but in the end just return the value without trying
       // to do anything with it.
       \Drupal::logger('migrate')->warning("RichTextToMediaEmbed process plugin only accepts rich text inputs.");
-      return $value;
+      return TRUE;
     }
-
-    $value['value'] = $this->convertToEntityEmbed($value['value'], $row, $migrate_executable);
-    return $value;
+    return FALSE;
   }
 
   /**
@@ -71,10 +93,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    *
    * @param string $value
    *   The value.
-   * @param \Drupal\migrate\Row $row
-   *   The current row.
-   * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
-   *   The migrate executable.
    *
    * @return string
    *   Process rich text string (html string).
@@ -83,13 +101,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    * @throws \Drupal\migrate\MigrateException
+   * @throws \Drupal\migrate\MigrateSkipRowException
    */
-  public function convertToEntityEmbed($value, Row $row, MigrateExecutableInterface $migrate_executable) {
+  public function convertToEntityEmbed(string $value) {
     // D7 media embeds get stored as funky tokens. Replace them with valid HTML
     // so that the preceeding processing works smoothly.
     $this->replaceD7MediaEmbeds($value);
 
-    $document = $this->getDocument($value, $migrate_executable);
+    $document = $this->getDocument($value, $this->migrateExecutable);
     $xpath = new \DOMXPath($document);
 
     // Images.
@@ -106,23 +125,27 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       if ($this->isExternalFile($src)) {
         continue;
       }
-      elseif (!in_array("image", $this->resolveFileType($src))) {
+      elseif (!in_array("image", $this->resolveFileTypeArray($src))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         $parts = explode('/', $src);
         $extension = $parts[count($parts) - 1];
-        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension);
+        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension . '"');
         continue;
       }
 
-      if ($media_entity = $this->createMediaEntity($src, 'image', $row, $migrate_executable)) {
-        $this->updateImageMedia($media_entity, $image_node, $migrate_executable);
+      if ($media_entity = $this->process($src, 'image')) {
+        $this->updateImageMediaAlt($media_entity, $image_node, $this->migrateExecutable);
         // Build <drupal-entity> element.
         $drupal_entity_node = $document->createElement('drupal-entity');
         $drupal_entity_node->setAttribute('data-embed-button', 'media_entity_embed');
         $drupal_entity_node->setAttribute('data-entity-embed-display', 'bos_media_image');
         $drupal_entity_node->setAttribute('data-entity-type', 'media');
         $drupal_entity_node->setAttribute('data-entity-uuid', $media_entity->uuid());
+        $drupal_entity_node->setAttribute('alt', $media_entity->image[0]->alt);
+        $drupal_entity_node->setAttribute('height', $image_node->getAttribute("height"));
+        $drupal_entity_node->setAttribute('width', $image_node->getAttribute("width"));
+        $drupal_entity_node->setAttribute('class', $image_node->getAttribute("class"));
         $drupal_entity_node->setAttribute('data-style', $image_node->getAttribute('style'));
         // Replace the image node with the created element.
         $image_node->parentNode->insertBefore($drupal_entity_node, $image_node);
@@ -134,32 +157,134 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     // Now links to the local filesystem.
     foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
       $href = $link_node->getAttribute('href');
+
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         \Drupal::logger('Migrate')->notice('Expected an internal "link" but got ' . $href);
         continue;
       }
-      elseif (!in_array("file", $this->resolveFileType($href))) {
+      elseif (!in_array("document", $this->resolveFileTypeArray($href))) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
-        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got ' . $href);
+        \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got "' . $href . '"');
         continue;
       }
 
       // Change references to pre-production or editor sites.
       $href = $this->correctSubDomain(trim($href));
 
-      if ($media_entity = $this->createMediaEntity($href, 'document', $row, $migrate_executable)) {
+      if ($media_entity = $this->process($href, 'document')) {
         // Alter <a> element.
         $link_node->setAttribute('data-entity-substitution', 'media');
         $link_node->setAttribute('data-entity-type', 'media');
         $link_node->setAttribute('data-entity-uuid', $media_entity->uuid());
+        $link_node->setAttribute('alt', $link_node->getAttribute("alt"));
         $link_node->setAttribute('href', "/media/{$media_entity->id()}");
       }
     }
 
     return Html::serialize($document);
+  }
+
+  /**
+   * Creates a File entity, and then a media entity for linking.
+   *
+   * @param string $src
+   *   The original uri for the file.
+   * @param string $targetBundle
+   *   The media type.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   The Media entity created.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\migrate\MigrateException
+   * @throws \Drupal\migrate\MigrateSkipRowException
+   */
+  private function process(string $src, string $targetBundle) {
+    if (!in_array($targetBundle, ['image', 'document', 'icon'])) {
+      throw new MigrateException('Only image and document bundles are supported.');
+    }
+
+    // Create the destination Uri.
+    if (NULL == ($dest = $this->createDestUri($src))) {
+      return NULL;
+    }
+
+    // Try to find this file from its uri, or make a new file entity.
+    if (NULL == ($files = $this->getFileEntities($dest))) {
+      // File is not in the ManagedFiles table -> Need to go fetch the file ...
+      // ... and save it.
+      $config = [
+        "move" => (\Drupal::state()->get("bos_migration.fileOps") == "move"),
+        "copy" => (\Drupal::state()->get("bos_migration.fileOps") == "copy"),
+        "file_exists" => \Drupal::state()->get("bos_migration.dest_file_exists", "use existing"),
+        "file_exists_ext" => \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip"),
+        "remote_source" => \Drupal::state()->get("bos_migration.remoteSource", "https://www.boston.gov/"),
+      ];
+
+      // Physically copy the file from $src to $dest.
+      $value = [$src, $dest];
+      $fileCopyExt = FileCopyExt::create(\Drupal::getContainer(), $config, "file_copy_ext", []);
+      $dest = $fileCopyExt->transform($value, $this->migrateExecutable, $this->row, "");
+
+      // Create a new File Entity for this file.
+      try {
+        $file = $this->saveFileEntity($dest);
+        if (empty($file)) {
+          throw new Exception("Could not copy " . $src . " and save as " . $dest . ".");
+        }
+      }
+      catch (Exception $e) {
+        \Drupal::logger('Migrate')->warning($e->getMessage());
+        return NULL;
+      }
+
+    }
+    else {
+      // A matching file was found: if more than one file, just get the first.
+      $file = reset($files);
+      $file = File::load($file);
+    }
+
+    // Since we only have uri's to work from, make a nice filename.
+    $filename = $this->cleanFilename($file->getFilename());
+
+    // Create and return the Media entity which links to the file entity
+    // found or just created.
+    return $this->createMediaEntity($targetBundle, $file->id(), $filename, $file->getOwnerId(), FALSE);
+  }
+
+  /**
+   * Generate a uri to migrate the file to.
+   *
+   * @param string $uri
+   *   The original source uri.
+   *
+   * @return string|null
+   *   Generated destination uri.
+   */
+  private function createDestUri(string $uri) {
+    $uri = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $uri);
+
+    if (!$this->isRelativeUri($uri)) {
+      $uri = $this->getRelativeUrl($uri);
+      if ($uri === FALSE) {
+        // Nothing to do if we can't extract the URI.
+        \Drupal::logger('Migrate')->notice("4:URI extraction failed ($uri).");
+        return NULL;
+      }
+    }
+
+    // Now we should have a relative URI, convert it to a stream wrapper.
+    $uri = $this->convertToStreamWrapper($uri);
+
+    // We are doing some reorganzing of the filesystem, so make sure that the
+    // uri is converted to the new format if applicable.
+    return $this->rewriteUri($uri, $this->source);
   }
 
   /**
@@ -201,12 +326,12 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     try {
       if (!is_string($json)) {
-        throw new Exception('Unable to find matching tag');
+        throw new Exception('String selected does not resolve to JSON. ', -889977);
       }
       $tag_info = Json::decode($json);
-      if (!$file = \Drupal::service('entity_type.manager')->getStorage('file')->load($tag_info['fid'])) {
+      if (!$file = File::load($tag_info['fid'])) {
         // Nothing to do if we can't find the file.
-        return NULL;
+        throw new Exception("Image " . $tag_info['fid'] . " could not be found.", -889977);
       }
       $tag_info['file'] = $file;
       if (!empty($tag_info['attributes']) && is_array($tag_info['attributes'])) {
@@ -236,6 +361,9 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     }
     catch (Exception $e) {
       // If we hit an error, don't perform replacement.
+      if ($e->getCode() == -889977) {
+        throw new MigrateSkipProcessException($e->getMessage());
+      }
       return NULL;
     }
 
@@ -257,326 +385,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       return strpos($value, '<img') === 0;
     });
     return array_pop($image);
-  }
-
-  /**
-   * Determines if file is external.
-   *
-   * @param string $src
-   *   The file src.
-   *
-   * @return bool
-   *   Yes or no.
-   */
-  protected function isExternalFile($src) {
-    return !preg_match(self::$localReferenceREGEX, $src);
-  }
-
-  /**
-   * Creates a media entity.
-   *
-   * @param string $src
-   *   The file src.
-   * @param string $targetBundle
-   *   The bundle of the media entity we want to create.
-   * @param \Drupal\migrate\Row $row
-   *   The current row.
-   * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
-   *   Interface.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\media\Entity\Media|null
-   *   The media entity.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   * @throws \Drupal\migrate\MigrateException
-   */
-  public function createMediaEntity(string $src, string $targetBundle, Row $row, MigrateExecutableInterface $migrate_executable) {
-    if (!in_array($targetBundle, ['image', 'document', 'icon'])) {
-      throw new MigrateException('Only image and document bundles are supported.');
-    }
-
-    $uri = preg_replace('/[\x00-\x1F\x7F-\xFF]/', '', $src);
-
-    if (!$this->isRelativeUri($src)) {
-      $uri = $this->getRelativeUrl($src);
-      if ($uri === FALSE) {
-        // Nothing to do if we can't extract the URI.
-        \Drupal::logger('Migrate')->notice('4:URI extraction failed ($src).');
-        return NULL;
-      }
-    }
-
-    // Now we should have a relative URI, convert it to a stream wrapper.
-    $uri = $this->convertToStreamWrapper($uri);
-    // We are doing some reorganzing of the filesystem, so make sure that the
-    // uri is converted to the new format if applicable.
-    $uri = $this->rewriteUri($uri, $row->getSource());
-    $file = $this->getFile($uri);
-    if (!$file) {
-      // File is not in the ManagedFiles table -> Need to go fetch the file ...
-      // ... and save it.
-      $config = [
-        "move" => (\Drupal::state()->get("bos_migration.fileOps") == "move"),
-        "copy" => (\Drupal::state()->get("bos_migration.fileOps") == "copy"),
-        "file_exists" => \Drupal::state()->get("bos_migration.dest_file_exists", "use existing"),
-        "file_exists_ext" => \Drupal::state()->get("bos_migration.dest_file_exists_ext", "skip"),
-        "remote_source" => \Drupal::state()->get("bos_migration.remoteSource", "https://www.boston.gov/"),
-      ];
-
-      // Copy the file from $src to $uri.
-      $fileCopyExt = FileCopyExt::create(\Drupal::getContainer(), $config, "file_copy_ext", []);
-      $value = [$src, $uri];
-      $uri = $fileCopyExt->transform($value, $migrate_executable, $row, "");
-
-      // Create a new File Entity for this file.
-      try {
-        $file = $this->saveFile($uri);
-        if (empty($file)) {
-          throw new Exception("Could not copy " . $src . " and save as " . $uri . ".");
-        }
-      }
-      catch (Exception $e) {
-        \Drupal::logger('Migrate')->warning($e->getMessage());
-        return NULL;
-      }
-
-    }
-
-    $field_name = (in_array($targetBundle, ['icon', 'image']) ? 'image' : 'field_document');
-
-    // Create the Media entity.
-    $media = Media::create([
-      'bundle' => $targetBundle,
-      'uid' => $file->getOwnerId() ?? 0,
-      'status' => $file->get("status")->getValue()[0]['value'] ?? 1,
-      $field_name => [
-        'target_id' => $file->id(),
-      ],
-      // Don't add these images to media library. The media library should be
-      // curated by a human.  Exception is icons, these are always in the media
-      // library.
-      'field_media_in_library' => ($targetBundle == 'icon'),
-    ]);
-    $media->save();
-    return $media;
-  }
-
-  /**
-   * Retrieves the relative part of an absolute URL.
-   *
-   * @param string $uri
-   *   An uri to inspect.
-   *
-   * @return string|bool
-   *   The request path part of the uri, or FALSE if not an searched absolute
-   *   uri.
-   */
-  protected function getRelativeUrl(string $uri) {
-    $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
-    if (!preg_match($from_main_domain, $uri, $matches)) {
-      // Not a searched absolute uri.
-      return FALSE;
-    }
-    if (substr($matches[3], 1, 1) != "/") {
-      $matches[3] = "/" . $matches[3];
-    }
-    return $matches[3];
-  }
-
-  /**
-   * Determines if uri is relative.
-   *
-   * @param string $uri
-   *   The Uri.
-   *
-   * @return bool
-   *   TRUE or FALSE.
-   */
-  protected function isRelativeUri(string $uri) {
-    if (preg_match('@^/sites/default/files/.*@', $uri)) {
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * Converts relative URIs to stream wrapper format.
-   *
-   * @param string $uri
-   *   The relative URI.
-   *
-   * @return string
-   *   The converted URI.
-   */
-  protected function convertToStreamWrapper(string $uri) {
-    $new_uri = str_replace('/sites/default/files/private/', 'private://', $uri);
-    if ($new_uri === $uri) {
-      // The replacement wasn't found, so this must be a public file.
-      $new_uri = str_replace('/sites/default/files/', 'public://', $uri);
-    }
-
-    return $new_uri;
-  }
-
-  /**
-   * Replaces domain/uri strings.
-   *
-   * E.g: edit.boston.gov with www.boston.gov.
-   *
-   * @param string $uri
-   *   The original URI (or source or whatever).
-   *
-   * @return string
-   *   The source with correct destintaion mapped in.
-   */
-  protected function correctSubDomain(string $uri) {
-    $regex_swaps = [
-      "~(edit|edit-stg)\.boston.gov~" => "www.boston.gov",
-      "~http(s|)://boston\.gov~" => "https://www.boston.gov",
-      "~http://.*\.boston\.gov~" => "https://www.boston.gov",
-    ];
-    foreach ($regex_swaps as $find => $replace) {
-      $swap = $uri;
-      try {
-        $uri = preg_replace($find, $replace, $uri);
-        if (is_null($uri)) {
-          $uri = $swap;
-        }
-      }
-      catch (Exception $e) {
-        return $swap;
-      }
-    }
-    return $uri;
-  }
-
-  /**
-   * Retrieves the corresponding file entity.
-   *
-   * Best effort search.
-   * Assumes the uri have not changed from d7 to d8 during migration, which is
-   * just an heuristic.
-   *
-   * @param string $uri
-   *   File uri.
-   *
-   * @return \Drupal\file\Entity\File|null
-   *   File entity object.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   *
-   * @todo inject entityTypeManager?
-   */
-  public function getFile($uri) {
-    $file_entities = \Drupal::entityTypeManager()
-      ->getStorage('file')
-      ->loadByProperties(['uri' => $uri]);
-    return !empty($file_entities) ? reset($file_entities) : NULL;
-  }
-
-  /**
-   * Create a new File object and save (in table file_managed).
-   *
-   * @param string $uri
-   *   The uri to create in the file_managed table.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface
-   *   The file object just created.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   */
-  public function saveFile(string $uri) {
-    $filename = end(explode("/", $uri));
-    $entity = \Drupal::entityTypeManager()
-      ->getStorage('file')
-      ->create([
-        'uri' => $uri,
-        'uid' => '1',
-        'filename' => $filename,
-        'status' => '1',
-      ]);
-    $entity->save();
-    return $entity;
-  }
-
-  /**
-   * Updates an image media entity with the passed node element.
-   *
-   * @param \Drupal\media\MediaInterface $media_entity
-   *   The entity to update.
-   * @param \DOMElement $image_node
-   *   The element to use for the update.
-   * @param \Drupal\migrate\MigrateExecutableInterface $migrate_executable
-   *   Related migrate executable object, used to store any message if needed.
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   */
-  public function updateImageMedia(MediaInterface $media_entity, \DOMElement $image_node, MigrateExecutableInterface $migrate_executable) {
-    $alt_text = $image_node->getAttribute('alt');
-    if (empty($alt_text)) {
-      // Nothing to do.
-      return;
-    }
-    $current_alt_text = $media_entity->image[0]->alt;
-    if (!empty($current_alt_text)) {
-      if ($alt_text == $current_alt_text) {
-        // The same, no log entry.
-        return;
-      }
-      // Something different already added, skip, but log.
-      $message = sprintf('Skipping image media (id=%d) alt text update(new_alt="%s"), alt already set (old_alt="%s").', $media_entity->id(), $alt_text, $current_alt_text);
-      $migrate_executable->saveMessage($message, MigrationInterface::MESSAGE_WARNING);
-      return;
-    }
-    // Update alt text for the related media entity image field.
-    $media_entity->image[0]->alt = $alt_text;
-    $media_entity->save();
-  }
-
-  /**
-   * Determine filetype.
-   *
-   * @param string $uri
-   *   The URI.
-   *
-   * @return string
-   *   File type.
-   */
-  public function resolveFileType($uri) {
-    // White list files based on file_managed table in D7.
-    $allowed_formats = MigrationFixes::allowedFormats();
-    $parts = explode('/', $uri);
-    $index = count($parts) - 1;
-    $type = [];
-    foreach ($allowed_formats as $file_type => $formats) {
-      foreach ($formats as $extension) {
-        if (strpos($parts[$index], $extension) !== FALSE) {
-          $type[] = $file_type;
-        }
-      }
-    }
-    if (!empty($type)) {
-      return $type;
-    }
-
-    // If there is no extension, or the extension is not matched, then return
-    // a type of "link".
-    return ["link"];
-  }
-
-  /**
-   * Attempts to find & set a physical path for this media entity.
-   */
-  protected function setPath($uri) {
-    $filename = end(explode("/", $uri));
-    /*$filename = explode(".", $filename)[0];*/
-    return "embed/" . $filename[0];
   }
 
 }

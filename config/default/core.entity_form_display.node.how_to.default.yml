@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.how_to.field_sidebar_components
     - field.field.node.how_to.field_updated_date
     - node.type.how_to
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -44,6 +45,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: How-To
+      region: content
     group_basic_information:
       children:
         - title
@@ -59,6 +61,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_how_to_tab:
       children:
         - field_how_to_tabs
@@ -72,6 +75,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'How-To Tab'
+      region: content
     group_sidebar_info:
       children:
         - field_need_to_know
@@ -88,6 +92,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Info'
+      region: content
     group_page_metadata:
       children:
         - field_manual_date
@@ -103,6 +108,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -116,6 +122,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
     group_components:
       children:
         - field_components
@@ -129,6 +136,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
 _core:
   default_config_hash: a4N_emjrrSKpL9PeGPBK_yH_9kGK-qurKvlH6h0f0_o
 id: node.how_to.default
@@ -204,13 +212,13 @@ content:
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_links:

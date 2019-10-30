@@ -15,9 +15,13 @@ use Drupal\Views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
+use Drupal\media\Entity\Media;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
+use Drupal\migrate_utilities\MigUtilTools;
 
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
@@ -335,7 +339,164 @@ function bos_core_token_info() {
     'name' => t('Boston'),
     'description' => t('A token type for Boston.'),
   ];
+  // Add custom tokens.
+  $info['tokens']['custom']['schema_image'] = [
+    'name' => t('Schema Image'),
+    'description' => t('Image to be used for Schema.org metatag'),
+  ];
+  $info['tokens']['custom']['schema_start_date'] = [
+    'name' => t('Schema Start Date'),
+    'description' => t('Start Date for Events'),
+  ];
+  $info['tokens']['custom']['schema_end_date'] = [
+    'name' => t('Schema End Date'),
+    'description' => t('End Date for Events'),
+  ];
+  $info['tokens']['custom']['schema_how_to_titles'] = [
+    'name' => t('Schema How To Titles'),
+    'description' => t('Titles for How To Steps'),
+  ];
+  $info['tokens']['custom']['schema_how_to_details'] = [
+    'name' => t('Schema How To Details'),
+    'description' => t('Details for How To Steps'),
+  ];
+
   return $info;
+}
+
+/**
+ * Populate token data.
+ */
+function bos_core_tokens($type, $tokens, array $data = [], array $options = []) {
+
+  $custom_tokens = [];
+
+  // Get field data.
+  if (isset($data['node'])) :
+    // Get info for intro image.
+    $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
+    if ($data['node']->hasField('field_intro_image')) :
+      if (!empty($data['node']->get('field_intro_image')->getValue())) :
+        // Set default image.
+        $img_id = $data['node']->get('field_intro_image')->getValue();
+        if (!empty($img_id[0]['target_id'])) {
+          $img_id = $img_id[0]['target_id'];
+          if ($img_url = File::load($img_id)) {
+            $img_url = file_create_url($img_url->getFileUri());
+            $schema_img_val = $img_url;
+          }
+        }
+      endif;
+    endif;
+
+    if ($data['node']->hasField('field_date_range') && !empty($data['node']->get('field_date_range')[0])) :
+      $dates = $data['node']->get('field_date_range')[0]->getValue();
+    endif;
+
+    if ($data['node']->hasField('field_public_notice_date') && !empty($data['node']->get('field_public_notice_date')[0])) :
+      $dates = $data['node']->get('field_public_notice_date')[0]->getValue();
+    endif;
+
+    if ($data['node']->hasField('field_address') && !empty($data['node']->get('field_address')[0])) :
+      $address = $data['node']->get('field_address')[0]->getValue();
+    endif;
+
+    if ($type == 'custom') {
+      foreach ($tokens as $name => $original) {
+        if (strpos($name, 'how_to') !== FALSE) {
+          $tab_token_type = '';
+          $tab_token_titles = '';
+          $tab_token_details = '';
+
+          if ($data['node']->hasField('field_how_to_tabs')) {
+            $tabs = $data['node']->get('field_how_to_tabs')->getValue();
+
+            foreach ($tabs as $ht_tab) {
+              if ($entities = Paragraph::load($ht_tab['target_id'])) {
+
+                // Get Tab Title info.
+                $tab_items = $entities->field_how_to_title->getValue();
+                $tab_token_type = $tab_items[0]['value'];
+
+                // Get Tab Step info.
+                $field_items = $entities->field_how_to_steps->getValue();
+                foreach ($field_items as $ht_step) {
+                  $step_id = $ht_step['target_id'];
+
+                  if ($step = Paragraph::load($step_id)) {
+
+                    // Get title of step.
+                    $title = $step->field_title->getValue();
+                    foreach ($title as $ht_step_title) {
+                      $tab_token_titles .= $tab_token_type . ": " . $ht_step_title['value'] . ",";
+                    }
+
+                    // Get summary of step.
+                    $details = $step->field_step_details->getValue();
+                    foreach ($details as $ht_step_details) {
+                      $details_trim = str_replace(',', '', $ht_step_details['value']);
+                      $tab_token_details .= filter_var($details_trim, FILTER_SANITIZE_STRING) . ",";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        switch ($name) {
+
+          case 'schema_image':
+            $custom_tokens[$original] = $schema_img_val;
+            break;
+
+          case 'schema_start_date':
+            $custom_tokens[$original] = $dates['value'];
+            break;
+
+          case 'schema_end_date':
+            $custom_tokens[$original] = ($dates['end_value'] !== $dates['value'] ? $dates['end_value'] : NULL);
+            break;
+
+          case 'schema_how_to_titles':
+            $custom_tokens[$original] = $tab_token_titles;
+            break;
+
+          case 'schema_how_to_details':
+            $custom_tokens[$original] = $tab_token_details;
+            break;
+        }
+      }
+    }
+  endif;
+  // Return the custom and updated tokens.
+  return $custom_tokens;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_core_preprocess_image_style(&$variables) {
+  // This renders the images which have these styles as background elements.
+  // We do this to allow better dynamic image resizing with the page width.
+  switch ($variables["style_name"]) {
+    case "150_embedded_ckeditor":
+      $variables["image"]["#height"] = "150";
+    case "200_embedded_ckeditor":
+    case "300_embedded_ckeditor":
+    case "800_embedded_ckeditor":
+      $variables["ckeditor_background"] = TRUE;
+      $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+      $variables["content_attributes"]["class"][] = $variables["style_name"];
+      $style = [
+        "width: 100%",
+        "height: " . $variables["image"]["#height"] . "px",
+        "background-size: cover",
+        "background-position: center",
+        "background-image: url(" . $variables["image"]["#uri"] . ")",
+      ];
+      $variables["content_attributes"]["style"][] = implode(";", $style);
+      break;
+  }
 }
 
 /**
@@ -345,6 +506,81 @@ function bos_core_media_embed_alter(&$build, $entity, $context) {
   if (!empty($context['data-style'])) {
     $build['#attributes']['style'][] = $context['data-style'];
   }
+}
+
+/**
+ * Implements hook_entity_embed_context_alter().
+ */
+function bos_core_entity_embed_context_alter(array &$context, EntityInterface $entity) {
+  // Make the image style a css safe class.
+  if (!empty($context["data-entity-embed-display-settings"]["image_style"])) {
+    $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"]);
+    if (isset($context["class"])) {
+      $context["class"] .= " " . $newClass;
+    }
+    else {
+      $context["class"] = $newClass;
+    }
+  }
+  unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
+}
+
+/**
+ * Implements hook_rebuild().
+ */
+function bos_core_rebuild() {
+  // Install icons and images from the images/custom folder.
+  $path = drupal::root() . "/sites/default/files/custom";
+  if (!file_exists($path)) {
+    mkdir($path, 0777, TRUE);
+  }
+
+  $modName = basename(__FILE__, ".module");
+  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $fromPath = $modulePath . "/images/custom";
+  $dir = dir($fromPath);
+  $icons = [];
+  while (FALSE !== ($file = $dir->read())) {
+    if (strpos($file, ".svg") > 0 || strpos($file, ".png") > 0) {
+      $icons[] = $file;
+    }
+  }
+
+  foreach ($icons as $icon) {
+    $destIcon = $path . "/" . $icon;
+    if (file_exists($destIcon)) {
+      unlink($destIcon);
+    }
+    copy($fromPath . "/" . $icon, $destIcon);
+
+    // Check if the file exists that is listed in para.para_type.module.yml.
+    $filesystem = \Drupal::service('file_system');
+    if (!empty($filesystem)) {
+      $destination = "public://custom/" . $icon;
+      $image = Drupal::entityTypeManager()->getStorage("file")
+        ->loadByProperties(["uri" => $destination]);
+      if (count($image) == 0) {
+        $image = File::create();
+        $image->setFileUri($destination);
+        $image->setOwnerId(\Drupal::currentUser()->id());
+        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+        $image->setFileName($filesystem->basename($destination));
+        $image->setPermanent();
+        $image->save();
+      }
+      if ($icon == "embed_button_image.png") {
+        $mod = \Drupal::entityTypeManager()
+          ->getStorage("embed_button")
+          ->load("media_entity_embed");
+        if (!empty($image) && is_array($image)) {
+          $image = array_pop($image);
+        }
+        $file_uuid = $image->get("uuid")->value;
+        $mod->set("icon_uuid", $file_uuid)->save();
+      }
+    }
+  }
+
 }
 
 /**
@@ -454,34 +690,34 @@ function _bos_core_install_icons($module) {
   }
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
-    if (file_exists($path . "/" . $icon)) {
-      unlink($path . "/" . $icon);
-    }
-    copy($modulePath . "/" . $icon, $path . "/" . $icon);
+    $destfile = $path . "/" . $icon;
+    if (!file_exists($destfile)) {
+      copy($modulePath . "/" . $icon, $destfile);
 
-    // Check if the file exists that is listed in para.para_type.module.yml.
-    $filesystem = \Drupal::service('file_system');
-    $entity = str_replace("_icon.svg", "", $filesystem->basename($path . "/" . $icon));
-    $mod = \Drupal::entityTypeManager()
-      ->getStorage("paragraphs_type")->load($entity);
-    if (!empty($mod)) {
-      $destination = "public://paragraphs_type_icon/" . $icon;
-      $image = Drupal::entityTypeManager()->getStorage("file")
-        ->loadByProperties(["uri" => $destination]);
-      if (count($image) == 0) {
-        $image = File::create();
-        $image->setFileUri($destination);
-        $image->setOwnerId(\Drupal::currentUser()->id());
-        $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-        $image->setFileName($filesystem->basename($destination));
-        $image->setPermanent();
-        $image->save();
+      // Check if the file exists that is listed in para.para_type.module.yml.
+      $filesystem = \Drupal::service('file_system');
+      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+      $mod = \Drupal::entityTypeManager()
+        ->getStorage("paragraphs_type")->load($entity);
+      if (!empty($mod)) {
+        $destination = "public://paragraphs_type_icon/" . $icon;
+        $image = Drupal::entityTypeManager()->getStorage("file")
+          ->loadByProperties(["uri" => $destination]);
+        if (count($image) == 0) {
+          $image = File::create();
+          $image->setFileUri($destination);
+          $image->setOwnerId(\Drupal::currentUser()->id());
+          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+          $image->setFileName($filesystem->basename($destination));
+          $image->setPermanent();
+          $image->save();
+        }
+        else {
+          $image = end($image);
+        }
+        $file_uuid = $image->get("uuid")->value;
+        $mod->set("icon_uuid", $file_uuid)->save();
       }
-      else {
-        $image = end($image);
-      }
-      $file_uuid = $image->get("uuid")->value;
-      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
@@ -527,7 +763,20 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           preg_match('~/(.*)~', $link['0']['uri'], $match);
           $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
           $results['url'] = $url->toString();
-          $results['title'] = $link['0']['title'];
+          if (empty($link['0']['title'])) {
+            $param = $url->getRouteParameters();
+            if (!empty($param)
+              && isset($param["node"])
+              && NULL != ($dest = Node::load($param["node"]))) {
+              $results['title'] = $dest->get("title")->value;
+            }
+            else {
+              $results['title'] = "Unknown";
+            }
+          }
+          else {
+            $results['title'] = $link['0']['title'];
+          }
           $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
             ->toString();
         }
@@ -714,4 +963,108 @@ function _bos_core_global_update_configs() {
   _bos_vocab_update_all_configs();
   _bos_core_update_all_configs();
 
+}
+
+/**
+ * Renames the add_more button text for fields on a given entity.
+ *
+ * @param array $variables
+ *   Usual variables array.
+ * @param string $type
+ *   The bundle/type for the entity.
+ * @param array $button_text
+ *   Array of fieldname:button_text pairs to replace btn text on specified fld.
+ */
+function _bos_core_rename_multiple_button(array &$variables, string $type, array $button_text) {
+  if (!empty(\Drupal::request()->attributes->get("node"))) {
+    $node = \Drupal::request()->attributes->get("node")->getType();
+    if (isset($node) && $node != $type) {
+      return;
+    }
+  }
+  elseif (!empty(\Drupal::request()->attributes->get("paragraph"))) {
+    $para = \Drupal::request()->attributes->get("paragraph")->getType();
+    if (isset($para) && $para != $type) {
+      return;
+    }
+  }
+  else {
+    return;
+  }
+
+  foreach ($button_text as $field_name => $new_button_text) {
+    if (!empty($variables["element"]["#field_name"])
+      && $variables["element"]["#field_name"] == $field_name
+      && !empty($variables["element"]["add_more"])) {
+      $variables["button"]["#value"] = new TranslatableMarkup($new_button_text);
+    }
+  }
+}
+
+/**
+ * Sync assets.boston.gov into database.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException.
+ */
+function _bos_core_sync_assets() {
+  $manifest_file = DRUPAL_ROOT . '/sites/default/files/manifest.txt';
+  if (!file_exists($manifest_file)) {
+    return;
+  }
+  $manifest = fopen($manifest_file, "r");
+  while ($icon_file = fgets($manifest)) {
+    $file_ids = \Drupal::database()->select("file_managed", "f")
+      ->fields("f", ["fid", "uri"])
+      ->condition("uri", trim($icon_file))
+      ->execute()->fetchAll();
+    foreach ($file_ids as $file_id) {
+      if (empty($file_id->fid)) {
+        $file = File::create([
+          "uri" => trim($icon_file),
+          "filename" => MigUtilTools::makeCleanFilename($icon_file),
+        ]);
+        $file->save();
+      }
+      else {
+        $file = File::load($file_id->fid);
+        $filename = MigUtilTools::makeCleanFilename($file->getFilename());
+        // Rename the file if necessary.
+        if ($filename != $file->getFilename()) {
+          $file->setFilename($filename);
+          $file->save();
+        }
+      }
+      // Should now have the file object.  Can check if a media object is set.
+      if (isset($file)) {
+        // Try to find a media entity attached to this file.
+        $result = \Drupal::database()->query("SELECT fd.mid, fd.thumbnail__target_id, i.image_title FROM media_field_data fd
+          inner join media__image i on fd.mid = i.entity_id
+          inner join file_managed f on i.image_target_id = f.fid
+          where f.fid = " . $file_id->fid)->fetchAll();
+        foreach ($result as $media_entity) {
+          $media = Media::load($media_entity->mid);
+          if (isset($media)) {
+            if ($media->get("field_media_in_library")->value != 1) {
+              $media->setNewRevision(FALSE);
+              $media->set("field_media_in_library", 1);
+            }
+          }
+          else {
+            $media = Media::create([
+              'bundle' => "icon",
+              'uid' => $file->getOwnerId() ?? 1,
+              'status' => 1,
+              'name' => $filename,
+              'image' => [
+                'target_id' => $file->id(),
+              ],
+            ]);
+          }
+          $media->setNewrevision(FALSE);
+          $media->save();
+        }
+      }
+    }
+  }
+  fclose($manifest);
 }

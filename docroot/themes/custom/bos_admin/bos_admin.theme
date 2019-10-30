@@ -5,6 +5,8 @@
  * Contains functions to alter Drupal's markup for the adminimal theme.
  */
 
+use Drupal\Core\Render\Element;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Component\Utility\Html;
@@ -93,6 +95,32 @@ function bos_admin_preprocess_html(&$variables) {
   // Add adminimal class to the body.
   $variables['attributes']['class'][] = 'bos_admin';
   $variables['#attached']['library'][] = "bos_admin/global-styling";
+  if ($variables["root_path"] == "entity-browser") {
+    $variables['attributes']['class'][] = "html-" . $variables["root_path"];
+  }
+  // For the /admin/config/content/embed page add a class so we can theme
+  // the icon.
+  if (\Drupal::request()->attributes->has("_route_params")
+    && isset(\Drupal::request()->attributes->get("_route_params")["entity_type"])
+    && \Drupal::request()->attributes->get("_route_params")["entity_type"] == "embed_button") {
+    $variables['attributes']['class'][] = 'admin-content-embed-buttons';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_page__admin__workbench(array &$variables) {
+  if ($variables["page"]["#title"]->__toString() == "My Workbench") {
+    $variables['#attached']['library'][] = "bos_admin/workbench";
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for HTML document templates.
+ */
+function bos_admin_preprocess_html__entity_browser__modal__document_entity_browser(&$variables) {
+  $variables["html_attributes"]->addClass("no-scroll");
 }
 
 /**
@@ -119,6 +147,29 @@ function bos_admin_preprocess_admin_block(&$variables) {
     _bos_admin_fix_attributes($variables);
     $variables["attributes"]->addClass("admin-" . strtolower(Html::cleanCssIdentifier($variables["block"]["title"])));
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_input__date(&$variables) {
+  // Set the time widget to display hh:mm only.
+  if ($variables["attributes"]["type"] == "time") {
+    $variables["attributes"]["step"] = 0;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_textarea(&$variables) {
+  // Try to set something that will pass into the CKEditor.
+}
+
+/**
+ * Implements hook_editor_js_settings_alter().
+ */
+function bos_admin_editor_js_settings_alter(array &$settings) {
 }
 
 /**
@@ -280,6 +331,20 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     else {
       $form['#validate'][] = "bos_admin_node_edit_validate";
     }
+    // Add stub for ckeditor context-awareness for themeing.
+    $form["#attached"]["library"][] = "bos_admin/ckeditor";
+
+    foreach (Element::getVisibleChildren($form) as $form_field) {
+      if (
+        (substr($form_field, 0, 6) == "field_"
+          || substr($form_field, 0, 4) == "body")
+        && isset($form[$form_field]["widget"][0]["#base_type"])
+        && $form[$form_field]["widget"][0]["#base_type"] == "textarea") {
+        $classes = " node_" . ($bundle?:"unk") . " " . $form_field;;
+        _bos_admin_add_ckeditor_classes($form, [$form_field => ["body" => $classes]]);
+      }
+    }
+
   }
 
   // Theme the status a little bit.
@@ -408,6 +473,51 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 }
 
 /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function bos_admin_form_entity_embed_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($form["entity"])) {
+    if ((NULL != $form_state->getValue("op")) && ($form_state->getValue("op")->__toString() == "Next")) {
+      if ($form_state->hasValue("entity_browser") && isset($form_state->getValue("entity_browser")["entities"][0])) {
+        $media_type = $form_state->getValue("entity_browser")["entities"][0]->bundle();
+        if ($media_type == "icon") {
+          // User has just selected an icon in the entity browser and is being
+          // shown a dialog with additional settings.
+          // Make basic customization of the dialog.
+          _bos_admin_base_entity_dialog_content($form, $media_type);
+          // Hide image style & set default so it gets mapped into a css class.
+          $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#type"] = "hidden";
+          $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#default_value"] = "icon_embedded_ck_editor";
+          $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#options"] = [
+            "icon_embedded_ck_editor" => "Default Embedded Icon Style",
+          ];
+        }
+        elseif ($media_type == "image") {
+          // User has just selected an image in the entity browser and is being
+          // shown a dialog with additional settings.
+          // Make basic customization of the dialog.
+          _bos_admin_base_entity_dialog_content($form, $media_type);
+          // Hide the title and alt fields as these have already been provided.
+          $form["attributes"]["data-entity-embed-display-settings"]["alt"]["#type"] = "hidden";
+          $form["attributes"]["data-entity-embed-display-settings"]["title"]["#type"] = "hidden";
+        }
+      }
+    }
+    elseif (NULL == $form_state->getValue("op")) {
+      // An already embedded element is being updated.
+      // Make basic customization of the dialog.
+      $media_type = ($form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#default_value"] == "icon_embedded_ck_editor" ? "icon" : "image");
+      _bos_admin_base_entity_dialog_content($form, $media_type);
+      // If this is an icon, set the default style & hide the style dialog.
+      if ($media_type == "icon") {
+        $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#type"] = "hidden";
+        $form["attributes"]["data-entity-embed-display-settings"]["image_style"]["#options"]["icon_embedded_ck_editor"] = "Default Icon Style";
+      }
+    }
+  }
+}
+
+/**
  * Check to see if a log value has been provided when one is needed.
  *
  * @param array $form
@@ -497,5 +607,82 @@ function bos_admin_revisions_defaults(array &$form, FormState &$form_state) {
 function _bos_admin_fix_attributes(array &$variables, string $check_field = "attributes") {
   if (function_exists("_bos_core_fix_attributes")) {
     _bos_core_fix_attributes($variables, $check_field);
+  }
+}
+
+/**
+ * Entity browser dialog window called from CKEditor needs customizing.
+ *
+ * @param array $form
+ *   The form from the form_alter hook.
+ */
+function _bos_admin_base_entity_dialog_content(array &$form, string $type) {
+  if (!empty($form["attributes"]["data-entity-embed-display-settings"])) {
+
+    $form_settings = &$form["attributes"]["data-entity-embed-display-settings"];
+
+    // We need to remove the svg styling content from the dialog window.
+    if ($type == "image") {
+      $form_settings["svg_attributes"]["#attributes"]["class"][] = "hidden";
+      $form_settings["svg_attributes"]["height"]["#default_value"] = 0;
+      $form_settings["svg_attributes"]["width"]["#default_value"] = 0;
+      $form_settings["svg_render_as_image"]["#type"] = "hidden";
+      $form_settings["svg_render_as_image"]["#default_value"] = 0;
+    }
+    if ($type == "icon") {
+      $form_settings["svg_attributes"]["#attributes"]["class"][] = "hidden";
+      $form_settings["svg_attributes"]["height"]["#default_value"] = 150;
+      $form_settings["svg_attributes"]["width"]["#default_value"] = 150;
+      $form_settings["svg_render_as_image"]["#type"] = "hidden";
+      $form_settings["svg_render_as_image"]["#default_value"] = 1;
+    }
+    // Remove the tip about modifying styles as we don't need to encourage that!
+    unset($form_settings["image_style"]["#description"]);
+
+    // Remove all styles who's machine name does not contain "_ckeditor".
+    foreach ($form_settings["image_style"]["#options"] as $style => $style_name) {
+      if (!stripos($style, "_ckeditor") > 0) {
+        unset($form_settings["image_style"]["#options"][$style]);
+      }
+      if (!stripos($style, "_ckeditor_default") > 0
+        && !isset($form_settings["image_style"]["#default_value"])) {
+        // If no default value, then use the machine id "_ckeditor_default".
+        $form_settings["image_style"]["#default_value"] = $style;
+      }
+
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_field_multiple_value_form(array &$variables) {
+  if (!empty($variables["element"]["#field_name"])
+    && $variables["element"]["#field_name"] == "field_components"
+    && !empty($variables["element"]["add_more"])) {
+    $variables["button"]["add_more_button"]["#value"] = new TranslatableMarkup("add this component");
+  }
+}
+
+/**
+ * Helper: Loads the drupalSettings ckeditor cob-style array.
+ *
+ * @param array $form
+ *   Usual form array from form_alter.
+ * @param array $classes
+ *   Array of element/class rules nested by form_field.
+ */
+function _bos_admin_add_ckeditor_classes(array &$form, array $classes) {
+  foreach ($classes as $form_field => $rules) {
+    foreach ($rules as $element => $class_list) {
+      $config = &$form['#attached']['drupalSettings']['ckeditor']['cob_styles'][$form_field];
+      if (empty($config[$element])) {
+        $config[$element] = $class_list;
+      }
+      else {
+        $config[$element] .= " " . $class_list;
+      }
+    }
   }
 }

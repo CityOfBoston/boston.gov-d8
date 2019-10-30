@@ -6,72 +6,108 @@
  */
 
 use Drupal\Core\Link;
+use Drupal\Core\Render\Markup;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_theme().
  */
 function bos_link_collections_theme() {
-  $path = drupal_get_path('module', 'bos_link_collections') . '/templates';
-
   $theme['paragraph__group_of_links_grid'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
   ];
   $theme['paragraph__grid_links'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
   ];
   $theme['paragraph__group_of_links_list'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
   ];
   $theme['paragraph__group_of_links_mini_grid'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
   ];
   $theme['paragraph__gol_list_links'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
   ];
   $theme['paragraph__document__separated_title'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--separated-title',
   ];
   $theme['paragraph__internal_link__separated_title'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--separated-title',
   ];
   $theme['field__field_external_link__external_link__mode__separated_title'] = [
     'base hook' => 'field',
-    'path' => $path,
     'template' => 'link--mode--separated-title',
   ];
   $theme['field__paragraph__gol_list_links'] = [
     'base hook' => 'field',
-    'path' => $path,
   ];
   $theme['paragraph__document__ribbon_link'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['field__field_external_link__external_link__mode__ribbon_link'] = [
     'base hook' => 'field',
-    'path' => $path,
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['paragraph__internal_link__ribbon_link'] = [
     'base hook' => 'paragraph',
-    'path' => $path,
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['field__paragraph__group_of_links_mini_grid'] = [
     'base hook' => 'field',
-    'path' => $path,
+  ];
+  $theme['field__paragraph__field_link__group_of_links_grid'] = [
+    'base hook' => 'paragraph',
   ];
   return $theme;
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function bos_link_collections_preprocess_paragraph__group_of_links_list(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $cta = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_link')
+      ->getValue(), ['class' => ['btn']]);
+    $vars['cta'] = !empty($cta['link']) ? $cta['link'] : [];
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function bos_link_collections_preprocess_paragraph__group_of_links_grid(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $cta = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_link')
+      ->getValue(), ['class' => ['btn']]);
+    $vars['cta'] = !empty($cta['link']) ? $cta['link'] : [];
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    if ($parent = $paragraph->getParentEntity()) {
+      try {
+        if ($parent->get('field_subheader')
+          ->isEmpty() && $parent->get('field_description')
+          ->isEmpty() && $parent->get('field_link')->isEmpty()) {
+          $vars['attributes']['class'][] = 'desktop-4-col';
+        }
+        else {
+          $vars['attributes']['class'][] = 'desktop-3-col';
+        }
+      }
+      catch (Exception $e) {
+        $vars['attributes']['class'][] = 'desktop-3-col';
+      }
+    }
+  }
 }
 
 /**
@@ -81,30 +117,6 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
   if (!empty($vars['paragraph'])) {
     $paragraph = $vars['paragraph'];
     switch ($paragraph->bundle()) {
-      case 'group_of_links_grid':
-      case 'group_of_links_list':
-        $cta = _bos_core_paragraph_extract_link($paragraph->get('field_link')->getValue(), ['class' => ['btn']]);
-        $vars['cta'] = !empty($cta['link']) ? $cta['link'] : [];
-        break;
-
-      case 'grid_links':
-        if ($parent = $paragraph->getParentEntity()) {
-          try {
-            if ($parent->get('field_subheader')
-              ->isEmpty() && $parent->get('field_description')
-              ->isEmpty() && $parent->get('field_link')->isEmpty()) {
-              $vars['attributes']['class'][] = 'desktop-4-col';
-            }
-            else {
-              $vars['attributes']['class'][] = 'desktop-3-col';
-            }
-          }
-          catch (Exception $e) {
-            $vars['attributes']['class'][] = 'desktop-3-col';
-          }
-        }
-        break;
-
       case 'document':
         if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link') {
           if (!$paragraph->get('field_document')->isEmpty() && !$paragraph->get('field_title')->isEmpty()) {
@@ -158,9 +170,62 @@ function bos_link_collections_preprocess_field(&$vars) {
           $vars['link'] = Link::fromTextAndUrl($title, $url)->toString();
           $vars['title'] = $title;
           $vars['attributes']['class'][] = 'external-link';
+          $vars['attributes']["data-quickedit-entity-id"] = "paragraph/" . $vars["element"]["#object"]->id();
           $vars['has_icon'] = TRUE;
         }
         break;
     }
   }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_collections_paragraph_group_of_links_list_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
+  if ($para["entity"]->hasField("field_contact")) {
+    $contact_id = $para["entity"]->get("field_contact")->target_id;
+    if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
+      $markup[] = Markup::create("<span class='contact'></span>" . $contact->name->value);
+    }
+  }
+  if ($para["entity"]->hasField("field_list_links") && count($para["entity"]->get("field_list_links"))) {
+    $markup[] = Markup::create("<span class='info'>group with " . count($para["entity"]->get("field_list_links")) . " links.</span>");
+  }
+  if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
+    $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
+    $markup[] = Markup::create("<span class='info'>has " . $card->bundle() . " CTA.</span>");
+  }
+  else {
+    $markup[] = Markup::create("<span class='info'>with no CTA.</span>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_link_collections_paragraph_gol_list_links_summary_alter(array $form_widget, array $para, array $attributes) {
+  $title = advanced_text_formatter_trim_text(strip_tags($para["entity"]->get("field_description")->value), [
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 40,
+  ]);
+  $markup[] = Markup::create($title);
+  if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
+    $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
+    $markup[] = Markup::create("<span class='info'>has " . $card->bundle() . " CTA.</span>");
+  }
+  else {
+    $markup[] = Markup::create("<span class='info'>with no CTA.</span>");
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }

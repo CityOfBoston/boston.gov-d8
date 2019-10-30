@@ -80,14 +80,14 @@ function bos_transaction_grid_preprocess_paragraph__transactions(&$variables) {
 function bos_transaction_grid_paragraph_transaction_grid_summary_alter(array $form_widget, array $para, array $attributes) {
   // Add attributes to the summary area.
   // Set the summary content.
-  $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $para["entity"]->get("field_component_title")->value . "</span>");
+  $markup[] = Markup::create($para["entity"]->get("field_component_title")->value);
   if ($para["entity"]->hasField("field_contact")) {
     $contact_id = $para["entity"]->get("field_contact")->target_id;
     if ($contact_id && $contact = \Drupal::entityTypeManager()->getStorage("taxonomy_term")->load($contact_id)) {
-      $markup[] = Markup::create("<b>Contact: </b><i>" . $contact->name->value . "</i>");
+      $markup[] = Markup::create("<span class='contact'></span>" . $contact->name->value);
     }
     else {
-      $markup[] = Markup::create("<b>Contact: </b><i>No contact supplied</i>");
+      $markup[] = Markup::create("<span class='contact'></span>No contact supplied");
     }
   }
 
@@ -134,7 +134,10 @@ function bos_transaction_grid_form_alter(&$form, FormStateInterface $form_state,
                     break;
                   }
                 }
-                $filename = str_replace(['_', "-"], " ", $icon->get("name")->value);
+                $filename = "[Missing Icon]";
+                if (isset($icon)) {
+                  $filename = str_replace(['_', "-"], " ", $icon->get("name")->value);
+                }
                 $markup[] = Markup::create("<span style='color: navy; font-weight: bold; text-transform: uppercase'>" . $filename . "</span>");
                 $markup[] = Markup::create("<b>" . $type . ": </b><i>" . $dest . "</i>");
                 $form["field_components"]["widget"][$child]["subform"]["field_transactions"]["widget"][$key]["top"]["summary"]["fields_info"]["#summary"]["content"] = $markup;

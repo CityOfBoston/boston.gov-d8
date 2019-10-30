@@ -1,7 +1,29 @@
-.fyi-d {
-  max-width: 650px;
+/**
+  Locate contextual button out of the way of the main page button.
+ */
+#sa-a .contextual {
+  margin-right: 70px;
 }
-#sa-a .contextual button {
-  margin-top: 7px;
-  margin-right: 20px;
+
+/**
+  Manage seal.
+ */
+#page.sa #main-menu #seal.s {
+  -webkit-transform: translateX(-50%) translateY(0%);
+  transform: translateX(-50%) translateY(0%);
+  box-shadow: none;
+}
+
+/**
+  Manage Topic-pages hero image when have site alert.
+ */
+#page.sa:not(.page--fp) .main-content {
+  top: 18px;
+  position: relative;
+}
+#page.sa .hero-image {
+  padding-top: 0;
+}
+#page.sa .hero-image-wrapper:after {
+  top: 0;
 }

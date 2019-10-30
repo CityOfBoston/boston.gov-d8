@@ -77,9 +77,14 @@
 
         <div class="h2">{{ title }}</div>
 
+        {% if sso_login_url %}
+          <br />
+          <a href="{{ sso_login_url }}" title="Login" class="button">Login</a>
+        {% else %}
         {{ messages }}
 
         {{ page.content }}
+        {% endif %}
 
       </section>
     </div>

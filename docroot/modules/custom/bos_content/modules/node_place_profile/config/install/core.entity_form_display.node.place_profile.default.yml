@@ -23,6 +23,7 @@ dependencies:
     - field.field.node.place_profile.field_single_neighborhood
     - field.field.node.place_profile.field_updated_date
     - node.type.place_profile
+    - workflows.workflow.city_of_boston_workflows
   module:
     - address
     - content_moderation
@@ -54,6 +55,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Basic Information'
+      region: content
     group_place_profile:
       children:
         - group_basic_information
@@ -61,6 +63,7 @@ third_party_settings:
         - group_additional_information
         - group_sidebar_components
         - group_components
+        - group_page_metadata
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -69,6 +72,7 @@ third_party_settings:
         classes: ''
         direction: vertical
       label: 'Place Profile'
+      region: content
     group_is_a:
       children:
         - field_place_neighborhood
@@ -81,6 +85,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Is a Neighborhood'
+      region: content
     group_contact_info:
       children:
         - field_single_neighborhood
@@ -98,6 +103,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Contact Info'
+      region: content
     group_additional_information:
       children:
         - field_features
@@ -113,6 +119,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Additional Information'
+      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -126,6 +133,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
     group_components:
       children:
         - field_components
@@ -139,13 +147,14 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_published_date
         - field_updated_date
-      parent_name: ''
-      weight: 1
+      parent_name: group_place_profile
+      weight: 25
       format_type: tab
       format_settings:
         id: ''
@@ -154,6 +163,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+      region: content
     group_resources:
       children:
         - field_links
@@ -161,12 +171,12 @@ third_party_settings:
       weight: 8
       format_type: fieldset
       format_settings:
-        label: 'Profile Resources'
         description: ''
         required_fields: true
         id: ''
         classes: ''
       label: 'Profile Resources'
+      region: content
 id: node.place_profile.default
 targetEntityType: node
 bundle: place_profile
@@ -249,13 +259,13 @@ content:
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     third_party_settings: {  }
     region: content
   field_intro_text:

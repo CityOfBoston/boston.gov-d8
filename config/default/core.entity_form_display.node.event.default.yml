@@ -13,7 +13,6 @@ dependencies:
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
     - field.field.node.event.field_date_range
-    - field.field.node.event.field_description
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
@@ -34,6 +33,7 @@ dependencies:
     - field.field.node.event.field_thumbnail
     - field.field.node.event.field_updated_date
     - node.type.event
+    - workflows.workflow.city_of_boston_workflows
   module:
     - address
     - advanced_text_formatter
@@ -63,32 +63,29 @@ third_party_settings:
       weight: 0
       format_type: tabs
       format_settings:
-        label: Event
         direction: vertical
         id: ''
         classes: ''
       label: Event
+      region: content
     group_basic_information:
       children:
         - title
         - field_contacts
-        - field_featured
-        - field_intro_image
-        - field_thumbnail
+        - group_horizontal
         - field_intro_text
-        - field_description
         - body
       parent_name: group_article
       weight: 1
       format_type: tab
       format_settings:
-        label: 'Basic Information'
         formatter: open
         description: '<div class="bos-boxed-content"><a href="https://docs.google.com/document/d/1e3hyjdqM9W8M6WQ-VfuBJKy4dJOrp4XwAwqIcek31Hs/edit" target="_blank">Here are some useful tips for creating an event.</a></div>'
         required_fields: true
         id: ''
         classes: ' group-event-basic-info field-group-tab'
       label: 'Basic Information'
+      region: content
     group_event_information:
       children:
         - field_date_range
@@ -107,6 +104,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Event Information'
+      region: content
     group_event_date:
       children:
         - field_cost
@@ -114,12 +112,12 @@ third_party_settings:
       weight: 28
       format_type: details
       format_settings:
-        label: 'Event  Entry Fee'
         required_fields: true
         id: ''
         classes: ''
         open: false
       label: 'Event  Entry Fee'
+      region: content
     group_event_location:
       children:
         - field_city_hall
@@ -134,6 +132,7 @@ third_party_settings:
         open: false
         required_fields: true
       label: 'Event Location'
+      region: content
     group_event_contact:
       children:
         - field_event_contact
@@ -148,6 +147,7 @@ third_party_settings:
         open: false
         required_fields: true
       label: 'Event Contact'
+      region: content
     group_page_metadata:
       children:
         - field_manual_date
@@ -163,6 +163,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Page Metadata'
+      region: content
     group_components:
       children:
         - field_components
@@ -176,6 +177,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Components
+      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
@@ -189,6 +191,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Sidebar Components'
+      region: content
     group_related_content:
       children:
         - field_related
@@ -202,6 +205,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Related Content'
+      region: content
     group_event_cancellation:
       children:
         - field_cancel_event
@@ -210,13 +214,13 @@ third_party_settings:
       weight: 3
       format_type: tab
       format_settings:
-        label: 'Event Cancellation'
         formatter: closed
         description: ''
         required_fields: true
         id: ''
         classes: ''
       label: 'Event Cancellation'
+      region: content
     group_event_details:
       children:
         - field_event_type
@@ -232,6 +236,27 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Event Details'
+      region: content
+    group_horizontal:
+      children:
+        - field_intro_image
+        - field_thumbnail
+      parent_name: group_basic_information
+      weight: 5
+      format_type: html_element
+      format_settings:
+        id: ''
+        classes: cob-group-grid
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        required_fields: true
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Horizontal
+      region: content
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -239,7 +264,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 9
+    weight: 10
     region: content
     settings:
       rows: 9
@@ -248,7 +273,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -299,7 +324,7 @@ content:
         add_above: '0'
     third_party_settings: {  }
   field_contacts:
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
@@ -320,16 +345,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: daterange_default
-    region: content
-  field_description:
-    weight: 8
-    settings:
-      rows: 5
-      placeholder: 'Brief descriptive summary of the Event.'
-    third_party_settings:
-      advanced_text_formatter:
-        show_token_tree: 0
-    type: text_textarea
     region: content
   field_details_link:
     type: link_default
@@ -369,29 +384,23 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_featured:
-    type: options_buttons
-    weight: 4
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_intro_image:
     type: entity_browser_entity_reference
-    weight: 5
+    weight: 6
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     region: content
     third_party_settings: {  }
   field_intro_text:
-    weight: 7
+    weight: 8
     settings:
       rows: 5
       placeholder: ''
@@ -425,7 +434,7 @@ content:
     type: boolean_checkbox
     region: content
   field_metatags:
-    weight: 3
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -479,18 +488,18 @@ content:
         add_above: '0'
     third_party_settings: {  }
   field_thumbnail:
-    weight: 6
+    weight: 7
     type: entity_browser_entity_reference
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_display_settings:
-        view_mode: media_library
+        view_mode: thumbnail
+      field_widget_remove: true
+      open: true
+      selection_mode: selection_append
       field_widget_edit: false
       field_widget_replace: false
-      open: true
     region: content
     third_party_settings: {  }
   field_updated_date:
@@ -501,20 +510,20 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 11
+    weight: 10
     settings: {  }
     region: content
     third_party_settings: {  }
   path:
     type: path
-    weight: 9
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -522,12 +531,12 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 7
+    weight: 6
     region: content
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 6
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -535,14 +544,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 12
+    weight: 11
     region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 8
+    weight: 7
     region: content
     third_party_settings: {  }
   title:
@@ -557,7 +566,7 @@ content:
         show_token_tree: 0
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -565,9 +574,10 @@ content:
     region: content
     third_party_settings: {  }
   url_redirects:
-    weight: 10
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   field_event_dates: true
+  field_featured: true

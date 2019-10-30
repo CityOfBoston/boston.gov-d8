@@ -95,11 +95,15 @@
 
 <article{{ attributes }}>
 
-  {% if content.field_updated_date %}
-    <div class="brc-lu">
+  <div class="brc-lu">
+    {% if (content.field_updated_date["#items"]) %}
       Last updated: {{ content.field_updated_date }}
-    </div>
-  {% endif %}
+    {% elseif (content.field_published_date["#items"]) %}
+      Last updated: {{ content.field_published_date }}
+    {% else %}
+      Not published yet!
+    {% endif %}
+  </div>
 
   <div class="program-info-wrapper desktop-100">
     <div class="column mobile-100 desktop-66-left">
@@ -167,5 +171,21 @@
   {% if content.field_components["#items"] %}
     {{ content.field_components }}
   {% endif %}
-
 </article>
+<script type="application/ld+json">{
+   "@context": "http://schema.org",
+   "@graph": [
+           {
+           "@type": "Place",
+           "@id": "http://www.boston.gov{{ node_url }}",
+           "image": "{{ drupal_token('custom:schema_image', {node: node}) }}",
+           "description": "{{ node.field_intro_text.0.value|striptags }}{{ node.body.0.value|striptags  }}",
+           "address" : {
+             "streetAddress": "{{ node.field_address.address_line1 }}{% if node.field_address.address_line2 %},{{ node.field_address.address_line2 }}{% endif %}",
+             "addressLocality": "Boston",
+             "addressRegion": "MA",
+             "postalCode" : "{{ node.field_address.postal_code }}"
+           }
+       }
+   ]
+}</script>

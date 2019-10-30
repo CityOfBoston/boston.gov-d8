@@ -6,7 +6,6 @@ dependencies:
     - field.field.paragraph.social_networking.field_social_icon
     - paragraphs.paragraphs_type.social_networking
   module:
-    - content_moderation
     - field_group
     - link
 third_party_settings:
@@ -24,6 +23,7 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Social Networking Info'
+      region: content
 id: paragraph.social_networking.default
 targetEntityType: paragraph
 bundle: social_networking

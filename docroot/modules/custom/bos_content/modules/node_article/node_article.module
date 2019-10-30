@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\editor\Entity\Editor;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_theme().
@@ -52,12 +54,32 @@ function node_article_preprocess_page(&$variables) {
 }
 
 /**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function node_article_form_node_article_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add styles for the CKEditor boxes on the admin forms.
+  _bos_admin_add_ckeditor_classes($form, [
+    "field_intro_text" => [
+      "html" => "department-info-wrapper desktop-100",
+      "body" => "intro-text supporting-text squiggle-border-bottom column mobile-100 desktop-66-left",
+    ],
+  ]);
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function node_article_preprocess_node__article(&$variables) {
   _bos_content_fix_attributes($variables);
   $variables['attributes']->addClass("desktop-100");
   $variables['attributes']->addClass("clearfix");
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function node_article_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = drupal_get_path("module", "node_article") . "/css/ckeditor.boston.article.css";
 }
 
 /**

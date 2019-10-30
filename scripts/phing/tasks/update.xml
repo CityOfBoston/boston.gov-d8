@@ -86,6 +86,10 @@
                 <not><equals arg1="${cim.result}" arg2="0" /></not>
             </and>
             <then>
+                <echo message="=== Log Output PASS 1 ===."/>
+                <exec command="tail -100 ${project.basedir}/setup/config-import.log"
+                      passthru="true" logoutput="true"/>
+                <echo message="=== End Log Output PASS 1 ===."/>
                 <echo message="Problem: trying partial import from ${project.sync}."/>
                 <exec description="Imports the config files in the sync folder at ${project.sync}."
                       dir="${docroot}"
@@ -98,8 +102,8 @@
                     </and>
                     <then>
                         <echo message="Config Import Failed." level="error"/>
-                        <echo message="=== Log Output ===."/>
-                        <exec command="tail -50 ${project.basedir}/setup/config-import.log"
+                        <echo message="=== Log Output PASS 2 ===."/>
+                        <exec command="tail -250 ${project.basedir}/setup/config-import.log"
                               passthru="true" logoutput="true"/>
                         <fail message="Fail - Config Import from ${project.sync} failed."/>
                     </then>
