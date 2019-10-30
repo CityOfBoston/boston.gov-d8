@@ -22,6 +22,7 @@ use Drupal\media\Entity\Media;
 class MigrationFixes {
 
   use FilesystemReorganizationTrait;
+  use MemoryManagementTrait;
 
   /**
    * An array to map d7 view + displays to d8 equivalents.
@@ -849,6 +850,7 @@ class MigrationFixes {
       ],
     ];
     $ocnt = 0;
+    (new MigrationFixes)->checkStatus();
     foreach (["file", "image"] as $media_type) {
       $cnt = 0;
       foreach ($mimes[$media_type] as $mime => $file_extension) {
@@ -894,6 +896,7 @@ class MigrationFixes {
         else {
           printf("[notice] -> There were no %s (%s) files to create media entities for.\n", $mime, $media_type);
         }
+        (new MigrationFixes)->clearEntityCache("file");
       }
       $ocnt += $cnt;
       printf("[success] => Created %d %s media entries.\n\n", $cnt, $media_type);
@@ -901,8 +904,6 @@ class MigrationFixes {
     }
     printf("[success] Created %d media entries in total.\n\n", $ocnt);
     // Need to flush the image/files + views caches.
-    printf("[info] Flushing caches.\n", $cnt);
-    drupal_flush_all_caches();
     printf("\n");
   }
 
