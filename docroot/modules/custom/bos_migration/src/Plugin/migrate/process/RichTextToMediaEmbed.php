@@ -123,14 +123,28 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $src = $this->correctSubDomain(trim($src));
 
       if ($this->isExternalFile($src)) {
+        // Don't want to build a media string for an external file.
         continue;
       }
-      elseif (!in_array("image", $this->resolveFileTypeArray($src))) {
+      elseif (!$this->permittedFileType("image", $src)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         $parts = explode('/', $src);
-        $extension = $parts[count($parts) - 1];
-        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension . '"');
+        $filename = trim(end($parts));
+        $extension = end(explode(".", $filename));
+        if (empty($extension)) {
+          $extension = substr($filename, -4);
+          $extension = end(explode(".", $extension));
+        }
+        $msg = t("In @type:@bundle#@id (in @field) expected an \"image\" file but got \"@ext\" (@filename)", [
+          "@ext" => $extension,
+          "@filename" => $filename,
+          "@field" => $this->source["field_name"],
+          "@id" => $this->source["item_id"],
+          "@type" => $this->source["plugin"],
+          "@bundle" => $this->source["bundle"],
+        ]);
+        \Drupal::logger('Migrate')->notice($msg);
         continue;
       }
 
@@ -162,12 +176,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         \Drupal::logger('Migrate')->notice('Expected an internal "link" but got ' . $href);
+        // Don't want to build a media string for an external file.
         continue;
       }
-      elseif (!in_array("document", $this->resolveFileTypeArray($href))) {
+      elseif (!$this->permittedFileType("link", $href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got "' . $href . '"');
+        // Don't want to build a media string for an external file.
         continue;
       }
 
@@ -274,7 +290,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $uri = $this->getRelativeUrl($uri);
       if ($uri === FALSE) {
         // Nothing to do if we can't extract the URI.
-        \Drupal::logger('Migrate')->notice("4:URI extraction failed ($uri).");
         return NULL;
       }
     }

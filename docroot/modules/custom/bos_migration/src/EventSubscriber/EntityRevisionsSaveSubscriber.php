@@ -3,8 +3,10 @@
 namespace Drupal\bos_migration\EventSubscriber;
 
 use Drupal\bos_migration\migrationModerationStateTrait;
+use Drupal\bos_migration\MemoryManagementTrait;
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
 use Drupal\migrate\Event\MigratePreRowSaveEvent;
+use Drupal\migrate\Event\MigrateImportEvent;
 use Drupal\migrate\Event\MigrateEvents;
 use Drupal\node\Entity\Node;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,6 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
 
   use migrationModerationStateTrait;
+  use MemoryManagementTrait;
 
   /**
    * {@inheritdoc}
@@ -26,7 +29,24 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
     return [
       MigrateEvents::PRE_ROW_SAVE => 'migrateRowPreSave',
       MigrateEvents::POST_ROW_SAVE => 'migrateRowPostSave',
+      MigrateEvents::POST_IMPORT => 'migratePostImport',
     ];
+  }
+
+  /**
+   * Reacts to import event.
+   *
+   * @param \Drupal\migrate\Event\MigrateImportEvent $event
+   *   Event.
+   */
+  public function migratePostImport(MigrateImportEvent $event) {
+    if (in_array($event->getMigration()->getBaseId(), [
+      "d7_paragraph",
+      "d7_node",
+      "d7_node_revision",
+    ])) {
+      $this->checkStatus();
+    }
   }
 
   /**
@@ -34,6 +54,11 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\migrate\Event\MigratePreRowSaveEvent $event
    *   Event.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\migrate\MigrateException
    */
   public function migrateRowPreSave(MigratePreRowSaveEvent $event) {
     // If this is an entity revision, then check if the revision exists.
@@ -99,12 +124,8 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
    *   Event.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
-
     if ($event->getMigration()->getBaseId() != "d7_node_revision"
       || NULL == $vid = $event->getRow()->getSourceIdValues()["vid"]) {
       return;
