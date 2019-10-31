@@ -116,11 +116,13 @@ function restoreDB() {
         exit 1
     fi
 
-    printf "[migration-info] Import ${backup} file into MySQL\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
-        ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
+      printf "[migration-info] Import ${backup} file into MySQL\n" | tee -a ${logfile}
+      ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
     else
-        lando ssh -c  "/app/vendor/bin/drush sql:cli -y  < ${backup}" | tee -a ${logfile}
+      landobackup=${2}
+      printf "[migration-info] Import ${landobackup} file into MySQL\n" | tee -a ${logfile}
+      lando ssh -c "/app/vendor/bin/drush sql:cli -y  < ${landobackup}" | tee -a ${logfile}
     fi
 
     printf "[migration-info] Re-zip backup.\n" | tee -a ${logfile}
@@ -199,8 +201,8 @@ function dumpDB() {
 
 function removeEmptyFiles() {
     printf  "[migration-step] Remove the following zero-byte images:\n"| tee -a ${logfile}
-    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -print  | tee -a ${logfile}
-    find /mnt/gfs/${acquia_env}/sites/default/files -type f -size 0b -delete && printf "[migration-success] Images deleted\n\n" | tee -a ${logfile}
+    find ${filespath} -type f -size 0b -print  | tee -a ${logfile}
+    find ${filespath} -type f -size 0b -delete && printf "[migration-success] Images deleted\n\n" | tee -a ${logfile}
     # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
 }
 
@@ -228,15 +230,19 @@ fi
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
-    logfile="/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.log"
+    filespath="/mnt/gfs/${acquia_env}/sites/default/files"
+    logfile="${filespath}/bos_migration.log"
     drush="drush"
-    doLogRotate "/mnt/gfs/${acquia_env}/sites/default/files/bos_migration.cfg"
+    doLogRotate "${filespath}/bos_migration.cfg"
     printf "[migration-info] Running in REMOTE mode:\n"| tee ${logfile}
 else
 #    dbpath=" ~/sources/boston.gov-d8/dump/migration"
+    export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
-    dbpath=" /app/dump/migration"
+    dbpath="/home/david/sources/boston.gov-d8/dump/migration"
+    landodbpath="/app/dump/migration"
     logfile="./bos_migration.log"
+    filespath="/home/david/sources/boston.gov-d8/docroot/sites/default/files"
     drush="lando drush"
     printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
 fi
@@ -252,7 +258,7 @@ if [ "$1" == "reset" ]; then
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
     removeEmptyFiles
     ##
-    restoreDB "${dbpath}/migration_clean_reset.sql" || exit 1
+    restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
     doMigrate --tag="bos:initial:0" --force                 # 31 mins
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
