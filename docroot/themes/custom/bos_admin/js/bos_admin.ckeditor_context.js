@@ -39,9 +39,6 @@
 
     CKEDITOR.on("instanceReady", function () {
       $.each(CKEDITOR.instances, function () {
-        this.document.appendStyleSheet("https://patterns.boston.gov/css/public.css");
-        this.document.appendStyleSheet("https://patterns.boston.gov/legacy/public.css");
-        this.document.appendStyleSheet("/themes/custom/bos_theme/css/bos_theme_overrides.css");
       });
       iframeContext();
     });

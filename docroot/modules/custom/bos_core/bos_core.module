@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Link;
+use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
@@ -247,7 +248,7 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
   if (isset($build["actions"]["view_default"])) {
     $build["actions"]["view_default"]["#attributes"]["class"][] = "button--view-live clearfix";
   }
-  if ($build["actions"]["delete"]) {
+  if (isset($build["actions"]["delete"])) {
     $build["actions"]["delete"]["#attributes"]["class"][] = "button--delete clearfix";
   }
   if (isset($build["actions"]["quick_draft_form"]["discard_draft"])) {
@@ -581,6 +582,14 @@ function bos_core_rebuild() {
     }
   }
 
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function bos_core_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = "https://patterns.boston.gov/css/public.css";
+  $css[] = "https://patterns.boston.gov/legacy/public.css";
 }
 
 /**
