@@ -10,10 +10,6 @@
   'use strict';
   $(document).ready(function () {
 
-    var setIframeBodyClass = function (elem, style) {
-      elem.addClass(style);
-    };
-
     var iframeContext = function () {
       $.each(drupalSettings.ckeditor.cob_styles, function (field, elements) {
 
@@ -25,10 +21,7 @@
           $.each(elements, function (element, style) {
             let elem = sfield.contents().find(element);
             if (elem.length > 0) {
-              setIframeBodyClass(elem, style);
-            }
-            else {
-              console.log("missed");
+              elem.addClass(style);
             }
           });
 
@@ -38,11 +31,6 @@
     };
 
     CKEDITOR.on("instanceReady", function () {
-      $.each(CKEDITOR.instances, function () {
-        this.document.appendStyleSheet("https://patterns.boston.gov/css/public.css");
-        this.document.appendStyleSheet("https://patterns.boston.gov/legacy/public.css");
-        this.document.appendStyleSheet("/themes/bos_theme/css/bos_theme_overrides.css");
-      });
       iframeContext();
     });
 
