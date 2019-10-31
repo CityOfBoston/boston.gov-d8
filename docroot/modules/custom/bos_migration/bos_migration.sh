@@ -187,11 +187,13 @@ function dumpDB() {
     # Dump current DB.
     timer=$(date +%s)
     backup=${1}
-    printf "[migration-step] Dump DB ${backup}\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
-        ${drush} sql:dump -y --database=default > ${backup}
+      printf "[migration-step] Dump DB ${backup}\n" | tee -a ${logfile}
+      ${drush} sql:dump -y --database=default > ${backup}
     else
-        lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${backup}"
+      landobackup=${2}
+      printf "[migration-step] Dump DB ${landobackup}\n" | tee -a ${logfile}
+      lando ssh -c  "/app/vendor/bin/drush sql:dump -y > ${landobackup}"
     fi
     gzip -fq ${backup}
     printf "[migration-success] Database (default) dumped to ${backup}.gz.\n" | tee -a ${logfile}
@@ -230,6 +232,7 @@ fi
 if [ -d "/mnt/gfs" ]; then
     cd "/var/www/html/${acquia_env}/docroot"
     dbpath="/mnt/gfs/${acquia_env}/backups/on-demand"
+    landodbpath=$dbpath
     filespath="/mnt/gfs/${acquia_env}/sites/default/files"
     logfile="${filespath}/bos_migration.log"
     drush="drush"
@@ -263,8 +266,6 @@ if [ "$1" == "reset" ]; then
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
     dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
@@ -273,45 +274,45 @@ if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" "${landodbpath}/migration_clean_with_files.sql" || exit 1; fi
     doMigrate --tag="bos:initial:1" --force                 # 7 mins
-    dumpDB ${dbpath}/migration_clean_with_prereq.sql
+    dumpDB ${dbpath}/migration_clean_with_prereq.sql ${landodbpath}/migration_clean_with_prereq.sql
 fi
 
 # Taxonomies first.
 if [ "$1" == "prereq" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql" || exit 1; fi
+    if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql" "${landodbpath}/migration_clean_with_prereq.sql" || exit 1; fi
     doMigrate d7_taxonomy_vocabulary -q --force             # 6 secs
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixTaxonomyVocabulary();"
     doMigrate --tag="bos:taxonomy:1" --force                # 30 secs
     doMigrate --tag="bos:taxonomy:2" --force                # 12 sec
-    dumpDB ${dbpath}/migration_clean_after_taxonomy.sql
+    dumpDB ${dbpath}/migration_clean_after_taxonomy.sql ${landodbpath}/migration_clean_after_taxonomy.sql
 fi
 
 if [ "$1" == "taxonomy" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "taxonomy" ]; then restoreDB "${dbpath}/migration_clean_after_taxonomy.sql" || exit 1; fi
+    if [ "$1" == "taxonomy" ]; then restoreDB "${dbpath}/migration_clean_after_taxonomy.sql" "${landodbpath}/migration_clean_after_taxonomy.sql" || exit 1; fi
     doMigrate --tag="bos:paragraph:1" --force               # 27 mins
     doMigrate --tag="bos:paragraph:2" --force               # 17 mins
     doMigrate --tag="bos:paragraph:3" --force               # 14 mins
     doMigrate --tag="bos:paragraph:4" --force               # 1 min 15 secs
-    dumpDB ${dbpath}/migration_clean_after_all_paragraphs.sql
+    dumpDB ${dbpath}/migration_clean_after_all_paragraphs.sql ${landodbpath}/migration_clean_after_all_paragraphs.sql
 fi
 
 ## Do these last b/c creates new paragraphs that might steal existing paragraph entity & revision id's.
 if [ "$1" == "paragraphs" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "paragraphs" ]; then restoreDB "${dbpath}/migration_clean_after_all_paragraphs.sql" || exit 1; fi
+    if [ "$1" == "paragraphs" ]; then restoreDB "${dbpath}/migration_clean_after_all_paragraphs.sql" "${landodbpath}/migration_clean_after_all_paragraphs.sql" || exit 1; fi
     doMigrate --group=bos_field_collection --force          # 4 mins
-    dumpDB ${dbpath}/migration_clean_after_field_collection.sql
+    dumpDB ${dbpath}/migration_clean_after_field_collection.sql ${landodbpath}/migration_clean_after_field_collection.sql
 fi
 
 # Redo paragraphs which required field_collections to be migrated to para's first.
 if [ "$1" == "field_collection" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "field_collection" ]; then restoreDB "${dbpath}/migration_clean_after_field_collection.sql" || exit 1; fi
+    if [ "$1" == "field_collection" ]; then restoreDB "${dbpath}/migration_clean_after_field_collection.sql" "${landodbpath}/migration_clean_after_field_collection.sql" || exit 1; fi
     doMigrate --tag="bos:paragraph:10" --force --update      # 3 min 15 secs
     # Fix the listview component to match new view names and displays.
-    dumpDB ${dbpath}/migration_clean_after_para_update_1.sql
+    dumpDB ${dbpath}/migration_clean_after_para_update_1.sql ${landodbpath}/migration_clean_after_para_update_1.sql
 fi
 
 # Migrate nodes in sequence.
