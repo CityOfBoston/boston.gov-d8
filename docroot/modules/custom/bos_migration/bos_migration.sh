@@ -271,7 +271,7 @@ fi
 ## Perform the lowest level safe-dependencies.
 if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" || exit 1; fi
+    if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" "${landodbpath}/migration_clean_with_files.sql" || exit 1; fi
     doMigrate --tag="bos:initial:1" --force                 # 7 mins
     dumpDB ${dbpath}/migration_clean_with_prereq.sql
 fi
