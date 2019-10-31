@@ -10,10 +10,6 @@
   'use strict';
   $(document).ready(function () {
 
-    var setIframeBodyClass = function (elem, style) {
-      elem.addClass(style);
-    };
-
     var iframeContext = function () {
       $.each(drupalSettings.ckeditor.cob_styles, function (field, elements) {
 
@@ -25,10 +21,7 @@
           $.each(elements, function (element, style) {
             let elem = sfield.contents().find(element);
             if (elem.length > 0) {
-              setIframeBodyClass(elem, style);
-            }
-            else {
-              console.log("missed");
+              elem.addClass(style);
             }
           });
 
@@ -38,8 +31,6 @@
     };
 
     CKEDITOR.on("instanceReady", function () {
-      $.each(CKEDITOR.instances, function () {
-      });
       iframeContext();
     });
 
