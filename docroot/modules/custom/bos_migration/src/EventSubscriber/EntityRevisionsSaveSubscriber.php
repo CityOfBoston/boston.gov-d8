@@ -126,18 +126,16 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       // Set the status for this revision and the current revision.
       if ($vid == end($workbench["all"])->vid) {
         self::setNodeStatus($workbench["all"][$vid]);
-        self::setModerationState($workbench["all"][$vid]);
       }
       if ($vid == $workbench["current"]->vid) {
         self::setNodeStatus($workbench["current"]);
-        self::setCurrentRevision($workbench["current"]);
-        self::setModerationState($workbench["current"]);
-        self::setCurrentModerationRevision($workbench["current"]);
       }
 
       // Sets the node back to the correct current revision.
-      // Self::setCurrentRevision($workbench["current"]);.
-      //
+      if ($vid == $workbench["current"]->vid) {
+        self::setCurrentRevision($workbench["current"]);
+      }
+
       // The `d7_node:xxx` migration will have imported the latest node.
       //
       // The d7 workbench_moderation maintains its own versioning
@@ -151,11 +149,17 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       // So, the revision ond node need their moderation state to be updated.
       // Set the status for this revision and the current revision.
       // Sets the moderation state for this revision and the current revision.
-      // Self::setModerationState($workbench["all"][$vid]);.
-      // Self::setModerationState($workbench["current"]);.
-      //
+      if ($vid == end($workbench["all"])->vid) {
+        self::setModerationState($workbench["all"][$vid]);
+      }
+      if ($vid == $workbench["current"]->vid) {
+        self::setModerationState($workbench["current"]);
+      }
+
       // Set the moderation_state revision back to current revision.
-      // Self::setCurrentModerationRevision($workbench["current"]);.
+      if ($vid == $workbench["current"]->vid) {
+        self::setCurrentModerationRevision($workbench["current"]);
+      }
     }
   }
 
