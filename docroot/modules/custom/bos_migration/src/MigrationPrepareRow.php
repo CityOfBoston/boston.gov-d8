@@ -25,6 +25,7 @@ class MigrationPrepareRow {
   protected $migration;
   protected $useCache;
   protected $cache = NULL;
+  protected $trim_revisions = NULL;
 
   /**
    * MigrationProcessRow constructor.
@@ -37,12 +38,15 @@ class MigrationPrepareRow {
    *   The migration object.
    * @param bool $use_cache
    *   If the workbench array is to be copied into the global variables.
+   * @param int|null $limit_revisions
+   *   Restrict the number of revisions to migrate (i.e. # of latest revisions).
    */
-  public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration, $use_cache = FALSE) {
+  public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration, bool $use_cache = FALSE, int $limit_revisions = NULL) {
     $this->row = $row;
     $this->source = $source;
     $this->migration = $migration;
     $this->useCache = $use_cache;
+    $this->trim_revisions = $limit_revisions;
   }
 
   /**
@@ -109,8 +113,12 @@ class MigrationPrepareRow {
    * @param int $nid
    *   The node id to index the array element against.
    */
-  private function saveCache(int $nid) {
-    if ($this->useCache) {
+  private function saveCache(int $nid, bool $full = TRUE) {
+    if ($this->useCache && !$full) {
+      $this->cache["all"] = array_keys($this->cache['all']);
+      $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
+    }
+    if ($this->useCache && $full) {
       $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
     }
     else {
@@ -146,20 +154,19 @@ class MigrationPrepareRow {
     $this->loadCache($nid);
     $this->findWorkbench($nid);
     $this->findWorkbenchCurrent($nid);
-    // $this->findWorkbenchPublished($nid);
     try {
       $result = $this->shouldProcessRow($nid, $vid, []);
       $this->row->workbench = $this->getCache();
-      $this->saveCache($nid);
+      $this->saveCache($nid, FALSE);
       return $result;
     }
     catch (MigrateSkipRowException $e) {
       // Save to map or else this will be re-processed each migratin.
-      $this->saveCache($nid);
+      $this->saveCache($nid, FALSE);
       throw new MigrateSkipRowException($e->getMessage(), TRUE);
     }
     catch (\Exception $e) {
-      $this->saveCache($nid);
+      $this->saveCache($nid, FALSE);
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
 
@@ -184,7 +191,7 @@ class MigrationPrepareRow {
       $this->loadCache($nid);
     }
     if (NULL == $this->getCache("all")) {
-      $mod = migrationModerationStateTrait::getModerationAll($nid);
+      $mod = migrationModerationStateTrait::getModerationAll($nid, $this->trim_revisions);
       $this->setCache("all", $mod);
     }
     return $this->getCache("all");
