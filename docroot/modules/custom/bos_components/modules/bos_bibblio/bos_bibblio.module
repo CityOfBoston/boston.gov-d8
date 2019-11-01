@@ -19,17 +19,19 @@ function bos_bibblio_theme() {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_bibblio_preprocess_node(&$variables) {
-  $getContentType = $variables['node']->getType();
-  $contentTypes = [
-    "how_to",
-    "place_profile",
-    "program_initiative_profile",
-    "article",
-    "department_profile",
-  ];
+function bos_bibblio_preprocess_page(&$variables) {
+  if (isset($variables['node'])) {
+    $getContentType = $variables['node']->getType();
+    $contentTypes = [
+      "how_to",
+      "place_profile",
+      "program_initiative_profile",
+      "article",
+      "department_profile",
+    ];
 
-  if (in_array($getContentType, $contentTypes)) :
-    $variables['#attached']['library'][] = 'bos_bibblio/bos_bibblio';
-  endif;
+    if (in_array($getContentType, $contentTypes)) :
+      $variables['#attached']['library'][] = 'bos_bibblio/bos_bibblio';
+    endif;
+  }
 }
