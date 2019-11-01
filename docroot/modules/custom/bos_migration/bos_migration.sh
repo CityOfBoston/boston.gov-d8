@@ -319,31 +319,31 @@ fi
 # Migrate nodes in sequence.
 if [ "$1" == "update1" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "update1" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_1.sql" || exit 1; fi
+    if [ "$1" == "update1" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_1.sql" "${landodbpath}/migration_clean_after_para_update_1.sql" || exit 1; fi
     doMigrate --tag="bos:node:1" --force
     doMigrate --tag="bos:node:2" --force
     doMigrate --tag="bos:node:3" --force
     doMigrate --tag="bos:node:4" --force
-    dumpDB ${dbpath}/migration_clean_after_nodes.sql
+    dumpDB ${dbpath}/migration_clean_after_nodes.sql ${landodbpath}/migration_clean_after_nodes.sql
 fi
 
 # Redo para's which have nodes in fields.
 if [ "$1" == "nodes" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "nodes" ]; then restoreDB "${dbpath}/migration_clean_after_nodes.sql" || exit 1; fi
+    if [ "$1" == "nodes" ]; then restoreDB "${dbpath}/migration_clean_after_nodes.sql" "${landodbpath}/migration_clean_after_nodes.sql" || exit 1; fi
     doMigrate --tag="bos:paragraph:99" --force --update
-    dumpDB ${dbpath}/migration_clean_after_para_update_2.sql
+    dumpDB ${dbpath}/migration_clean_after_para_update_2.sql ${landodbpath}/migration_clean_after_para_update_2.sql
 fi
 
 # Now do the node revisions (nodes and all paras must be done first)
 if [ "$1" == "update2" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql" || exit 1; fi
+    if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql" "${landodbpath}/migration_clean_after_para_update_2.sql" || exit 1; fi
     doMigrate --tag="bos:node_revision:1" --force --feedback=200
     doMigrate --tag="bos:node_revision:2" --force --feedback=200
     doMigrate --tag="bos:node_revision:3" --force --feedback=200
     doMigrate --tag="bos:node_revision:4" --force --feedback=200
-    dumpDB ${dbpath}/migration_clean_after_node_revision.sql
+    dumpDB ${dbpath}/migration_clean_after_node_revision.sql ${landodbpath}/migration_clean_after_node_revision.sql
 fi
 
 # This is to resume when the node_revsisions fail mid-way.
@@ -365,21 +365,21 @@ if [ "$1" == "revision_resume" ]; then
   doMigrate --tag="bos:node_revision:2" --force --feedback=200
   doMigrate --tag="bos:node_revision:3" --force --feedback=200
   doMigrate --tag="bos:node_revision:4" --force --feedback=200
-  dumpDB ${dbpath}/migration_clean_after_node_revision.sql
+  dumpDB ${dbpath}/migration_clean_after_node_revision.sql ${landodbpath}/migration_clean_after_node_revision.sql
 fi
 
 ## Finish off.
 if [ "$1" == "node_revision" ] || [ $running -eq 1 ]; then
     running=1
-    if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql" || exit 1; fi
+    if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql" "${landodbpath}/migration_clean_after_node_revision.sql" || exit 1; fi
     doMigrate d7_menu_links,d7_menu --force
     doMigrate d7_taxonomy_term:contact --force --update
-    dumpDB ${dbpath}/migration_clean_after_menus.sql
+    dumpDB ${dbpath}/migration_clean_after_menus.sql ${landodbpath}/migration_clean_after_menus.sql
 fi
 
 if [ "$1" == "final" ]; then
     running=1
-    restoreDB "${dbpath}/migration_clean_after_menus.sql"
+    restoreDB "${dbpath}/migration_clean_after_menus.sql" "${landodbpath}/migration_clean_after_menus.sql"
 fi
 
 if [ $running -eq 0 ]; then
@@ -445,7 +445,7 @@ ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cset "pathauto.settings" "update_action" 2 | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
-dumpDB ${dbpath}/migration_FINAL.sql
+dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
 
 text=$(displayTime $(($(date +%s)-totaltimer)))
 printf "[migration-runtime] === OVERALL RUNTIME: ${text} ===\n\n" | tee -a ${logfile}
