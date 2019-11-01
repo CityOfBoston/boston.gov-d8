@@ -809,8 +809,10 @@ class MigrationFixes {
       printf("[warning] no svgs found !!.\n");
     }
     // Need to flush the image/files + views caches.
-    printf("[info] Flushing caches.\n", $cnt);
-    drupal_flush_all_caches();
+    if ($cnt > 0) {
+      printf("[info] Flushing caches.\n", $cnt);
+      drupal_flush_all_caches();
+    }
     printf("\n");
   }
 
