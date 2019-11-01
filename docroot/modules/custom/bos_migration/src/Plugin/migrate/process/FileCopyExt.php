@@ -87,8 +87,7 @@ class FileCopyExt extends FileCopy {
 
     // Check for dups of this file in managed_files using different stategies.
     // First try to load by fid.
-    $files = File::load($fid);
-    if (!isset($files)) {
+    if (NULL != $fid && NULL != ($files = File::load($fid))) {
       // Check for dups of this file in managed_files by original name and size.
       $filesize = NULL;
       if (isset($row->getSource()['filesize'])) {
@@ -103,6 +102,19 @@ class FileCopyExt extends FileCopy {
         // may be created with same name as parent).
         $clean_filename = $this->cleanFilename($destination);
         $files = $this->getFilesByFilename($clean_filename, $filesize);
+      }
+    }
+    if (NULL == $fid) {
+      // The $fid is null, this is probably because transform() has been
+      // manually called from RichTextToMediaEmbed.php:process().  Simply put
+      // a link has been found in a rich text box and is being processed
+      // -therefore there will be no $fid at this time.
+      // We can try to match this to an existing $fid - firstly by searching the
+      // full (remapped) uri.
+      if (NULL == $files = $this->getFileEntities($destination)) {
+        // If that doesn't work, attempt to get by the clean_filename.
+        $clean_filename = $this->cleanFilename($destination);
+        $files = $this->getFilesByFilename($clean_filename, NULL);
       }
     }
     if (isset($files)) {

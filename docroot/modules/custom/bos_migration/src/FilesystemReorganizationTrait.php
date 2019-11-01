@@ -219,15 +219,7 @@ trait FilesystemReorganizationTrait {
   private function resolveFileTypeArray($uri) {
     // White list files based on file_managed table in D7.
     $type = [];
-    // Try to get extension from normal path with a filename that has extension
-    // after a period.
-    $parts = explode('/', $uri);
-    $filename = trim(end($parts));
-    $ext = end(explode(".", $filename));
-    if (empty($ext)) {
-      $ext = substr($filename, -4);
-      $ext = end(explode(".", $ext));
-    }
+    $ext = $this->extractExtension($uri);
     foreach (self::$matchFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if ($ext == $extension) {
@@ -245,6 +237,34 @@ trait FilesystemReorganizationTrait {
   }
 
   /**
+   * Extracts the extension from a file path or uri.
+   *
+   * @param string $src
+   *   The path or Uri.
+   *
+   * @return false|mixed|string
+   *   A three or four character string representing the extension of the file.
+   */
+  private function extractExtension($src) {
+    // Try to get extension from normal path with a filename that has extension
+    // after a period.
+    $parts = explode('/', $src);
+    $filename = trim(end($parts));
+    $extension = end(explode(".", $filename));
+    // Cleanup any parameters/'querystrings'.
+    foreach (["#", "?"] as $delim) {
+      if (strpos($extension, $delim) !== FALSE) {
+        $extension = explode($delim, $extension, 2)[0];
+      }
+    }
+    if (empty($extension)) {
+      $extension = substr($filename, -4);
+      $extension = end(explode(".", $extension));
+    }
+    return $extension;
+  }
+
+  /**
    * Determine filetype.
    *
    * @param string $uri
@@ -254,15 +274,7 @@ trait FilesystemReorganizationTrait {
    *   File type - image, file or link.
    */
   private function permittedFileType($type, $uri) {
-    // Try to get extension from normal path with a filename that has extension
-    // after a period.
-    $parts = explode('/', $uri);
-    $filename = trim(end($parts));
-    $ext = end(explode(".", $filename));
-    if (empty($ext)) {
-      $ext = substr($filename, -4);
-      $ext = end(explode(".", $ext));
-    }
+    $ext = $this->extractExtension($uri);
     foreach (self::$allowedFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if ($ext == $extension) {

@@ -136,13 +136,14 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
           $extension = substr($filename, -4);
           $extension = end(explode(".", $extension));
         }
-        $msg = t("In @type:@bundle#@id (in @field) expected an \"image\" file but got \"@ext\" (@filename)", [
+        $msg = t("In @type:@bundle#@id (in @field) expected an \"image\" file but got \"@ext\" (@filename)\n'@value'", [
           "@ext" => $extension,
           "@filename" => $filename,
           "@field" => $this->source["field_name"],
           "@id" => $this->source["item_id"],
           "@type" => $this->source["plugin"],
           "@bundle" => $this->source["bundle"],
+          "@value" => $value,
         ]);
         \Drupal::logger('Migrate')->notice($msg);
         continue;

@@ -262,7 +262,7 @@ if [ "$1" == "reset" ]; then
     removeEmptyFiles
     ##
     restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
-    doMigrate --tag="bos:initial:0" --force                 # 31 mins
+    doMigrate --tag="bos:initial:0" --force
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
     doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
@@ -273,7 +273,7 @@ fi
 if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" "${landodbpath}/migration_clean_with_files.sql" || exit 1; fi
-    doMigrate --tag="bos:initial:1" --force                 # 7 mins
+    doMigrate --tag="bos:initial:1" --force
     dumpDB ${dbpath}/migration_clean_with_prereq.sql ${landodbpath}/migration_clean_with_prereq.sql
 fi
 
@@ -281,20 +281,20 @@ fi
 if [ "$1" == "prereq" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "prereq" ]; then restoreDB "${dbpath}/migration_clean_with_prereq.sql" "${landodbpath}/migration_clean_with_prereq.sql" || exit 1; fi
-    doMigrate d7_taxonomy_vocabulary -q --force             # 6 secs
+    doMigrate d7_taxonomy_vocabulary -q --force
     doExecPHP "\Drupal\bos_migration\MigrationFixes::fixTaxonomyVocabulary();"
-    doMigrate --tag="bos:taxonomy:1" --force                # 30 secs
-    doMigrate --tag="bos:taxonomy:2" --force                # 12 sec
+    doMigrate --tag="bos:taxonomy:1" --force
+    doMigrate --tag="bos:taxonomy:2" --force
     dumpDB ${dbpath}/migration_clean_after_taxonomy.sql ${landodbpath}/migration_clean_after_taxonomy.sql
 fi
 
 if [ "$1" == "taxonomy" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "taxonomy" ]; then restoreDB "${dbpath}/migration_clean_after_taxonomy.sql" "${landodbpath}/migration_clean_after_taxonomy.sql" || exit 1; fi
-    doMigrate --tag="bos:paragraph:1" --force               # 27 mins
-    doMigrate --tag="bos:paragraph:2" --force               # 17 mins
-    doMigrate --tag="bos:paragraph:3" --force               # 14 mins
-    doMigrate --tag="bos:paragraph:4" --force               # 1 min 15 secs
+    doMigrate --tag="bos:paragraph:1" --force
+    doMigrate --tag="bos:paragraph:2" --force
+    doMigrate --tag="bos:paragraph:3" --force
+    doMigrate --tag="bos:paragraph:4" --force
     dumpDB ${dbpath}/migration_clean_after_all_paragraphs.sql ${landodbpath}/migration_clean_after_all_paragraphs.sql
 fi
 
@@ -302,7 +302,7 @@ fi
 if [ "$1" == "paragraphs" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "paragraphs" ]; then restoreDB "${dbpath}/migration_clean_after_all_paragraphs.sql" "${landodbpath}/migration_clean_after_all_paragraphs.sql" || exit 1; fi
-    doMigrate --group=bos_field_collection --force          # 4 mins
+    doMigrate --group=bos_field_collection --force
     dumpDB ${dbpath}/migration_clean_after_field_collection.sql ${landodbpath}/migration_clean_after_field_collection.sql
 fi
 
@@ -310,7 +310,7 @@ fi
 if [ "$1" == "field_collection" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "field_collection" ]; then restoreDB "${dbpath}/migration_clean_after_field_collection.sql" "${landodbpath}/migration_clean_after_field_collection.sql" || exit 1; fi
-    doMigrate --tag="bos:paragraph:10" --force --update      # 3 min 15 secs
+    doMigrate --tag="bos:paragraph:10" --force --update
     # Fix the listview component to match new view names and displays.
     dumpDB ${dbpath}/migration_clean_after_para_update_1.sql ${landodbpath}/migration_clean_after_para_update_1.sql
 fi
@@ -320,9 +320,9 @@ if [ "$1" == "update1" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "update1" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_1.sql" || exit 1; fi
     doMigrate --tag="bos:node:1" --force
-    doMigrate --tag="bos:node:2" --force                    # 14 mins
-    doMigrate --tag="bos:node:3" --force                    # 52 mins
-    doMigrate --tag="bos:node:4" --force                    # 9 secs
+    doMigrate --tag="bos:node:2" --force
+    doMigrate --tag="bos:node:3" --force
+    doMigrate --tag="bos:node:4" --force
     dumpDB ${dbpath}/migration_clean_after_nodes.sql
 fi
 
@@ -330,7 +330,7 @@ fi
 if [ "$1" == "nodes" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "nodes" ]; then restoreDB "${dbpath}/migration_clean_after_nodes.sql" || exit 1; fi
-    doMigrate --tag="bos:paragraph:99" --force --update     # 5 mins
+    doMigrate --tag="bos:paragraph:99" --force --update
     dumpDB ${dbpath}/migration_clean_after_para_update_2.sql
 fi
 
@@ -338,10 +338,10 @@ fi
 if [ "$1" == "update2" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "update2" ]; then restoreDB "${dbpath}/migration_clean_after_para_update_2.sql" || exit 1; fi
-    doMigrate --tag="bos:node_revision:1" --force --feedback=200           # 2h 42 mins
-    doMigrate --tag="bos:node_revision:2" --force --feedback=200          # 8h 50 mins
-    doMigrate --tag="bos:node_revision:3" --force --feedback=200          # 1hr 43 mins
-    doMigrate --tag="bos:node_revision:4" --force --feedback=200          # 30 sec
+    doMigrate --tag="bos:node_revision:1" --force --feedback=200
+    doMigrate --tag="bos:node_revision:2" --force --feedback=200
+    doMigrate --tag="bos:node_revision:3" --force --feedback=200
+    doMigrate --tag="bos:node_revision:4" --force --feedback=200
     dumpDB ${dbpath}/migration_clean_after_node_revision.sql
 fi
 
@@ -360,10 +360,10 @@ if [ "$1" == "revision_resume" ]; then
   ${drush} cim --partial --source=modules/custom/bos_migration/config/install/ -y  | tee -a ${logfile}
   ${drush} cr  | tee -a ${logfile}
 
-  doMigrate --tag="bos:node_revision:1" --force --feedback=200           # 2h 42 mins
-  doMigrate --tag="bos:node_revision:2" --force --feedback=200           # 8h 50 mins
-  doMigrate --tag="bos:node_revision:3" --force --feedback=200           # 1hr 43 mins
-  doMigrate --tag="bos:node_revision:4" --force --feedback=200           # 30 sec
+  doMigrate --tag="bos:node_revision:1" --force --feedback=200
+  doMigrate --tag="bos:node_revision:2" --force --feedback=200
+  doMigrate --tag="bos:node_revision:3" --force --feedback=200
+  doMigrate --tag="bos:node_revision:4" --force --feedback=200
   dumpDB ${dbpath}/migration_clean_after_node_revision.sql
 fi
 
