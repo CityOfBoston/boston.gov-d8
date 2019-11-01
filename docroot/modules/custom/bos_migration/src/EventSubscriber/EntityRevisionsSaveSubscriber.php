@@ -2,7 +2,6 @@
 
 namespace Drupal\bos_migration\EventSubscriber;
 
-use Drupal\bos_migration\migrationModerationStateTrait;
 use Drupal\bos_migration\MemoryManagementTrait;
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
 use Drupal\migrate\Event\MigratePreRowSaveEvent;
@@ -16,7 +15,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
 
-  use migrationModerationStateTrait;
   use MemoryManagementTrait;
 
   /**
@@ -40,6 +38,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *   Event.
    */
   public function migratePostImport(MigrateImportEvent $event) {
+    // Try to manage memory ...
     if (in_array($event->getMigration()->getBaseId(), [
       "d7_paragraph",
       "d7_node",
@@ -126,61 +125,61 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *   Event.
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
-    if ($event->getMigration()->getBaseId() != "d7_node_revision"
-      || NULL == $vid = $event->getRow()->getSourceIdValues()["vid"]) {
+    $row = $event->getRow();
+    if (($event->getMigration()->getBaseId() != "d7_node_revision"
+      && $event->getMigration()->getBaseId() != "d7_node")
+      || NULL == ($vid = $row->getDestinationProperty("vid"))) {
       return;
     }
 
-    $row = $event->getRow();
-    $workbench = $row->workbench;
-    // Establish the moderation states from D7.
-    if (NULL == $workbench) {
-      $workbench_all = NULL;
+    if ($event->getMigration()->getBaseId() == "d7_node") {
+      // Fetch the content moderation which will have been created as this node
+      // was saved (if there is an associated workflow).
+      $cmid = \Drupal::entityQuery("content_moderation_state")
+        ->condition("content_entity_revision_id", $vid)
+        ->execute();
+      if (isset($cmid)) {
+        $cmid = reset($cmid);
+        if (!empty($cmid)) {
+          // Will access the DB directly to avoid new revisions creeping in.
+          // Now set the moderation state correctly.
+          \Drupal::database()
+            ->update("content_moderation_state_field_data")
+            ->fields([
+              "moderation_state" => $row->getSourceProperty("wb_state"),
+              "uid" => $row->getSourceProperty("wb_uid"),
+            ])
+            ->condition("id", $cmid)
+            ->execute();
+          \Drupal::database()
+            ->update("content_moderation_state_field_revision")
+            ->fields([
+              "moderation_state" => $row->getSourceProperty("wb_state"),
+              "uid" => $row->getSourceProperty("wb_uid"),
+            ])
+            ->condition("id", $cmid)
+            ->execute();
+          // Now update the node.
+          \Drupal::database()
+            ->update("node_field_data")
+            ->fields([
+              "status" => $row->getSourceProperty("wb_published"),
+            ])
+            ->condition("vid", $vid)
+            ->execute();
+          \Drupal::database()
+            ->update("node_revision")
+            ->fields([
+              "revision_default" => 1,
+            ])
+            ->condition("vid", $vid)
+            ->execute();
+        }
+      }
     }
 
-    // Get the d7 workbench moderation info for this revision.
-    if (isset($workbench) && isset($workbench["all"][$vid])) {
-      if (empty($workbench["all"][$vid]->published) || !is_numeric($workbench["all"][$vid]->published)) {
-        $workbench["all"][$vid]->published = "0";
-      }
-
-      // Set the status for this revision and the current revision.
-      if ($vid == end($workbench["all"])->vid) {
-        self::setNodeStatus($workbench["all"][$vid]);
-      }
-      if ($vid == $workbench["current"]->vid) {
-        self::setNodeStatus($workbench["current"]);
-      }
-
-      // Sets the node back to the correct current revision.
-      if ($vid == $workbench["current"]->vid) {
-        self::setCurrentRevision($workbench["current"]);
-      }
-
-      // The `d7_node:xxx` migration will have imported the latest node.
-      //
-      // The d7 workbench_moderation maintains its own versioning
-      // allowing a node_revision to have multiple moderation_states over
-      // time - whereas d8 content moderation links its status with the
-      // node_revision, making a new revision when the moderation state
-      // changes.
-      // The effect of this is that for any node revision, only the first
-      // workbench_moderation state is migrated, and this state is usually
-      // "draft".
-      // So, the revision ond node need their moderation state to be updated.
-      // Set the status for this revision and the current revision.
-      // Sets the moderation state for this revision and the current revision.
-      if ($vid == end($workbench["all"])->vid) {
-        self::setModerationState($workbench["all"][$vid]);
-      }
-      if ($vid == $workbench["current"]->vid) {
-        self::setModerationState($workbench["current"]);
-      }
-
-      // Set the moderation_state revision back to current revision.
-      if ($vid == $workbench["current"]->vid) {
-        self::setCurrentModerationRevision($workbench["current"]);
-      }
+    elseif ($event->getMigration()->getBaseId() == "d7_node_revision") {
+      // Don't actually need to do anything.
     }
   }
 
