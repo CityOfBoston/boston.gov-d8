@@ -101,6 +101,10 @@ class MigrationPrepareRow {
   private function loadCache($nid) {
     if ($this->useCache) {
       $this->cache = $GLOBALS["workbench_cache"][$nid] ?: [];
+      if (empty($this->cache)) {
+        $this->findWorkbench($nid);
+        $this->findWorkbenchCurrent($nid);
+      }
     }
     else {
       unset($GLOBALS["workbench_cache"][$nid]);
@@ -112,6 +116,8 @@ class MigrationPrepareRow {
    *
    * @param int $nid
    *   The node id to index the array element against.
+   * @param bool $full
+   *   Trim the array class out before saving, just keep keys.
    */
   private function saveCache(int $nid, bool $full = TRUE) {
     if ($this->useCache && !$full) {
@@ -131,9 +137,6 @@ class MigrationPrepareRow {
    *
    * Called from bos_migration.module.
    *
-   * @return bool
-   *   True to continue processing.
-   *
    * @throws \Drupal\migrate\MigrateException
    *   If error found.
    * @throws \Drupal\migrate\MigrateSkipRowException
@@ -152,13 +155,10 @@ class MigrationPrepareRow {
     }
 
     $this->loadCache($nid);
-    $this->findWorkbench($nid);
-    $this->findWorkbenchCurrent($nid);
     try {
-      $result = $this->shouldProcessRow($nid, $vid, []);
+      $this->shouldProcessRow($nid, $vid, []);
       $this->row->workbench = $this->getCache();
       $this->saveCache($nid, FALSE);
-      return $result;
     }
     catch (MigrateSkipRowException $e) {
       // Save to map or else this will be re-processed each migratin.
@@ -221,40 +221,10 @@ class MigrationPrepareRow {
       }
     }
 
-    $mod = migrationModerationStateTrait::getModerationPublished($nid);
+    $mod = migrationModerationStateTrait::getModerationCurrent($nid);
 
     $this->setCache("current", (object) $mod);
     return $this->getCache("current");
-  }
-
-  /**
-   * Fetch the published revision of the node.
-   *
-   * @param int $nid
-   *   The nodeID to retrieve info on.
-   *
-   * @return array
-   *   Associative array of moderation info for node.
-   */
-  private function findWorkbenchPublished($nid) {
-    $cache = $this->getCache("published") ?: NULL;
-    if (NULL != $cache) {
-      return $cache;
-    }
-    $cache = $this->getCache("all");
-    if (NULL != $cache) {
-      foreach ($cache as $vid) {
-        if ($vid->published == "1") {
-          $this->setCache("published", $vid);
-        }
-      }
-      return $this->getCache("published");
-    }
-
-    $mod = migrationModerationStateTrait::getModerationPublishedHistory($nid);
-
-    $this->setCache("published", (object) $mod);
-    return $this->getCache("published");
   }
 
   /**
