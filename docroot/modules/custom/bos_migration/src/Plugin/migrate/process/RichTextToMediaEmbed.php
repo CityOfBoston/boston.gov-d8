@@ -143,7 +143,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
           "@id" => $this->source["item_id"],
           "@type" => $this->source["plugin"],
           "@bundle" => $this->source["bundle"],
-          "@value" => $value,
+          "@value" => ($extension == "" ? $value : ""),
         ]);
         \Drupal::logger('Migrate')->notice($msg);
         continue;
