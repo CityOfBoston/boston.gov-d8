@@ -60,4 +60,5 @@ class NodeRevisionExt extends NodeRevision {
     }
     return FALSE;
   }
+
 }
