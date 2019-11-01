@@ -15,7 +15,7 @@ trait FilesystemReorganizationTrait {
   protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
 
   /**
-   * Array to identify file by extension and/or mime type.
+   * Array to identify file extensions allowed by media type.
    *
    * @var array
    */
@@ -26,9 +26,44 @@ trait FilesystemReorganizationTrait {
       'jpeg',
       'gif',
       'tif',
-      /*      'pdf',
-            'svg',
-            'svg+xml',*/
+      'svg',
+      'svg+xml',
+    ],
+    'link' => [
+      'pdf',
+      'xls',
+      'xlsx',
+      'docx',
+      'doc',
+      'pptx',
+      'pptm',
+      'ppt',
+      'rtf',
+      'ppt',
+      'jnlp', /* Not sure we should allow this. */
+      'xlsm',
+      'mp3',
+      'mp4',
+      'jpg',
+      'png',
+      'jpeg',
+      'tif',
+      'svg',
+    ],
+  ];
+
+  /**
+   * Array to identify file by extension and/or mime type.
+   *
+   * @var array
+   */
+  protected static $matchFormats = [
+    'image' => [
+      'jpg',
+      'png',
+      'jpeg',
+      'gif',
+      'tif',
     ],
     'icon' => [
       'svg',
@@ -49,11 +84,6 @@ trait FilesystemReorganizationTrait {
       'xlsm',
       'mp3',
       'mp4',
-      /*      'jpg',
-            'png',
-            'jpeg',
-            'tif',
-            'svg',*/
     ],
   ];
 
@@ -189,16 +219,8 @@ trait FilesystemReorganizationTrait {
   private function resolveFileTypeArray($uri) {
     // White list files based on file_managed table in D7.
     $type = [];
-    // Try to get extension from normal path with a filename that has extension
-    // after a period.
-    $parts = explode('/', $uri);
-    $filename = trim(end($parts));
-    $ext = end(explode(".", $filename));
-    if (empty($ext)) {
-      $ext = substr($filename, -4);
-      $ext = end(explode(".", $ext));
-    }
-    foreach (self::$allowedFormats as $file_type => $formats) {
+    $ext = $this->extractExtension($uri);
+    foreach (self::$matchFormats as $file_type => $formats) {
       foreach ($formats as $extension) {
         if ($ext == $extension) {
           $type[] = $file_type;
@@ -212,6 +234,56 @@ trait FilesystemReorganizationTrait {
     // If there is no extension, or the extension is not matched, then return
     // a type of "link".
     return ["link"];
+  }
+
+  /**
+   * Extracts the extension from a file path or uri.
+   *
+   * @param string $src
+   *   The path or Uri.
+   *
+   * @return false|mixed|string
+   *   A three or four character string representing the extension of the file.
+   */
+  private function extractExtension($src) {
+    // Try to get extension from normal path with a filename that has extension
+    // after a period.
+    $parts = explode('/', $src);
+    $filename = trim(end($parts));
+    $extension = end(explode(".", $filename));
+    // Cleanup any parameters/'querystrings'.
+    foreach (["#", "?"] as $delim) {
+      if (strpos($extension, $delim) !== FALSE) {
+        $extension = explode($delim, $extension, 2)[0];
+      }
+    }
+    if (empty($extension)) {
+      $extension = substr($filename, -4);
+      $extension = end(explode(".", $extension));
+    }
+    return $extension;
+  }
+
+  /**
+   * Determine filetype.
+   *
+   * @param string $type
+   *   The type of file we are looking for.
+   * @param string $uri
+   *   The URI.
+   *
+   * @return bool
+   *   File type - image, file or link.
+   */
+  private function permittedFileType(string $type, string $uri) {
+    $ext = $this->extractExtension($uri);
+    $formats = self::$allowedFormats[$type];
+    foreach ($formats as $extension) {
+      if ($ext == $extension) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**
@@ -290,7 +362,6 @@ trait FilesystemReorganizationTrait {
     $from_main_domain = '@^http(s|)://(www.|edit.|)boston.gov[/]+(.*)@';
     if (!preg_match($from_main_domain, $uri, $matches)) {
       // Not a searched absolute uri.
-      \Drupal::logger('Migrate')->notice("$uri is not a local file.");
       return FALSE;
     }
     if (substr($matches[3], 1, 1) != "/") {
