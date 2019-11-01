@@ -26,6 +26,7 @@ class MigrationPrepareRow {
   protected $useCache;
   protected $cache = NULL;
   protected $trimRevisions = NULL;
+  protected $hasLoadedCache = FALSE;
 
   /**
    * MigrationProcessRow constructor.
@@ -102,8 +103,10 @@ class MigrationPrepareRow {
     if ($this->useCache) {
       $this->cache = $GLOBALS["workbench_cache"][$nid] ?: [];
       if (empty($this->cache)) {
+        $this->hasLoadedCache = TRUE;
         $this->findWorkbench($nid);
         $this->findWorkbenchCurrent($nid);
+        $this->findWorkbenchPublished($nid);
       }
     }
     else {
@@ -122,6 +125,7 @@ class MigrationPrepareRow {
   private function saveCache(int $nid, bool $full = TRUE) {
     if ($this->useCache && !$full) {
       $this->cache["all"] = array_keys($this->cache['all']);
+      $this->cache["published"] = array_keys($this->cache['published']);
       $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
     }
     if ($this->useCache && $full) {
@@ -187,7 +191,7 @@ class MigrationPrepareRow {
    */
   private function findWorkbench($nid) {
     // Check cache first.
-    if (empty($this->cache[$nid])) {
+    if (empty($this->cache[$nid]) && !$this->hasLoadedCache) {
       $this->loadCache($nid);
     }
     if (NULL == $this->getCache("all")) {
@@ -225,6 +229,37 @@ class MigrationPrepareRow {
 
     $this->setCache("current", (object) $mod);
     return $this->getCache("current");
+  }
+
+  /**
+   * Fetch the published revision of the node.
+   *
+   * @param int $nid
+   *   The nodeID to retrieve info on.
+   *
+   * @return array
+   *   Associative array of moderation info for node.
+   */
+  private function findWorkbenchPublished($nid) {
+    $cache = $this->getCache("published");
+    if (NULL != $cache) {
+      return $cache;
+    }
+    $cache = $this->getCache("all");
+    if (NULL != $cache) {
+      foreach ($cache as $vid) {
+        if ($vid->state == "published") {
+          $this->setCache("published", $vid);
+          return $this->getCache("published");
+        }
+      }
+    }
+
+    $mod = migrationModerationStateTrait::getModerationPublished($nid);
+
+    $this->setCache("published", (object) $mod);
+    return $this->getCache("published");
+
   }
 
   /**

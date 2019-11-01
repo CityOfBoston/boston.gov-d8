@@ -45,14 +45,14 @@ class NodeRevisionExt extends NodeRevision {
    */
   public function prepareRow(Row $row) {
     if (parent::prepareRow($row)) {
-      // Only return the row if it is published (it's in workbench["all"]) or
-      // if it is the current record.
+      // Only return the row if it is published (it's in
+      // workbench["published"]) or if it is the current record.
       // Changes to the NodeRevisionExt now make this largely redundant
       // but its one use is to restrict the number of node revisions to migrate
       // in any migration.
       $this_vid = $row->getSourceProperty("vid");
       if (isset($this_vid) && (
-        isset($row->workbench["all"][$this_vid])
+        isset($row->workbench["published"][$this_vid])
         || $row->workbench["current"]->vid == $this_vid)
       ) {
         return TRUE;
