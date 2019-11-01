@@ -29,10 +29,13 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
  * Implements hook_migrate_prepare_row().
  */
 function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
-  $mig = new MigrationPrepareRow($row, $source, $migration, TRUE);
+  $mig = new MigrationPrepareRow($row, $source, $migration, TRUE, 20);
   try {
     switch ($migration->getBaseId()) {
       case "d7_node_revision":
+        // This will cause the generation of the content moderation arrays
+        // which are used in the pre and post migration save events.
+        // (in EntityRevisionSaveSubscriber.php)
         $mig->prepareNodeRevisionRow();
         break;
     }
