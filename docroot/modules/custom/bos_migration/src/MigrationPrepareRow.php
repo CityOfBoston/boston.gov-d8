@@ -25,7 +25,7 @@ class MigrationPrepareRow {
   protected $migration;
   protected $useCache;
   protected $cache = NULL;
-  protected $trim_revisions = NULL;
+  protected $trimRevisions = NULL;
 
   /**
    * MigrationProcessRow constructor.
@@ -46,7 +46,7 @@ class MigrationPrepareRow {
     $this->source = $source;
     $this->migration = $migration;
     $this->useCache = $use_cache;
-    $this->trim_revisions = $limit_revisions;
+    $this->trimRevisions = $limit_revisions;
   }
 
   /**
@@ -191,7 +191,7 @@ class MigrationPrepareRow {
       $this->loadCache($nid);
     }
     if (NULL == $this->getCache("all")) {
-      $mod = migrationModerationStateTrait::getModerationAll($nid, $this->trim_revisions);
+      $mod = migrationModerationStateTrait::getModerationAll($nid, $this->trimRevisions);
       $this->setCache("all", $mod);
     }
     return $this->getCache("all");
