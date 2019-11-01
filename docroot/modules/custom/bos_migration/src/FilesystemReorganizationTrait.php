@@ -267,27 +267,22 @@ trait FilesystemReorganizationTrait {
   /**
    * Determine filetype.
    *
+   * @param string $type
+   *   The type of file we are looking for.
    * @param string $uri
    *   The URI.
    *
-   * @return array
+   * @return bool
    *   File type - image, file or link.
    */
-  private function permittedFileType($type, $uri) {
+  private function permittedFileType(string $type, string $uri) {
     $ext = $this->extractExtension($uri);
-    foreach (self::$allowedFormats as $file_type => $formats) {
-      foreach ($formats as $extension) {
-        if ($ext == $extension) {
-          return TRUE;
-        }
+    $formats = self::$allowedFormats[$type];
+    foreach ($formats as $extension) {
+      if ($ext == $extension) {
+        return TRUE;
       }
     }
-    if (!empty($type)) {
-      return FALSE;
-    }
-
-    // If there is no extension, or the extension is not matched, then return
-    // a type of "link".
     return FALSE;
   }
 
