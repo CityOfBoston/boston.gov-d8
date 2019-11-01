@@ -16,11 +16,13 @@ trait migrationModerationStateTrait {
    *
    * @param int $nid
    *   The node id.
+   * @param int|null $limit
+   *   If provided will select the latest $limit records from the table.
    *
    * @return mixed
    *   An array indexed by vid.
    */
-  public static function getModerationAll(int $nid) {
+  public static function getModerationAll(int $nid, int $limit = NULL) {
     $connection = Database::getConnection("default", "migrate");
     $query = $connection->select("workbench_moderation_node_history", "history")
       ->fields('history', [
@@ -37,6 +39,11 @@ trait migrationModerationStateTrait {
       ->condition("is_current", 1)
       ->condition("published", 1);
     $query->condition($or);
+    // If we are trimming, then just get last $limit records.
+    if (isset($limit)) {
+      $query->range(0, $limit);
+      $query->orderBy("stamp", "DESC");
+    }
     return $query->execute()->fetchAllAssoc("vid");
   }
 
