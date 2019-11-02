@@ -69,7 +69,7 @@ trait migrationModerationStateTrait {
         "is_current",
       ]);
     $query->condition("nid", $nid);
-    $query->condition("published", 1);
+    $query->condition("state", "published");
 
     return (array) $query->execute()->fetchAssoc();
   }
