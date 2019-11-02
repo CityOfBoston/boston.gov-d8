@@ -148,6 +148,7 @@ class MigrationConfigAlter {
     'entity:d7_taxonomy_term:type_of_content',
     'entity:node:metrolist_affordable_housing',
     'entity_revision:node:metrolist_affordable_housing',
+    'entity_revision:node:advpoll',
   ];
 
   /**
@@ -241,7 +242,6 @@ class MigrationConfigAlter {
     "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
-    "d7_node_revision:advpoll" => ["bos:node_revision:1"],
     "d7_node_revision:article" => ["bos:node_revision:2"],
     "d7_node_revision:change" => ["bos:node_revision:1"],
     "d7_node_revision:department_profile" => ["bos:node_revision:1"],
@@ -520,7 +520,6 @@ class MigrationConfigAlter {
           [
             'plugin' => 'migration',
             'migration' => [
-              'd7_node:advpoll',
               'd7_node:article',
               'd7_node:change',
               'd7_node:department_profile',
@@ -575,7 +574,6 @@ class MigrationConfigAlter {
       ],
       'migration_dependencies' => [
         'required' => [
-          'd7_node:advpoll',
           'd7_node:article',
           'd7_node:change',
           'd7_node:department_profile',
@@ -962,7 +960,6 @@ class MigrationConfigAlter {
     ],
     "node" => [
       "all" => [
-        "d7_node:advpoll",
         "d7_node:article",
         "d7_node:change",
         "d7_node:department_profile",
