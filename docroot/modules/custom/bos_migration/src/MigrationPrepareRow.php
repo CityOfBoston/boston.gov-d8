@@ -225,6 +225,8 @@ class MigrationPrepareRow {
       }
     }
 
+    // No cached values so fetch from the database.
+
     $mod = migrationModerationStateTrait::getModerationCurrent($nid);
 
     $this->setCache("current", (object) $mod);
@@ -247,13 +249,17 @@ class MigrationPrepareRow {
     }
     $cache = $this->getCache("all");
     if (NULL != $cache) {
+      $vids = [];
       foreach ($cache as $vid) {
         if ($vid->state == "published") {
-          $this->setCache("published", $vid);
-          return $this->getCache("published");
+          $vids[$vid->vid] = $vid;
         }
       }
+      $this->setCache("published", $vids);
+      return $this->getCache("published");
     }
+
+    // No cached values, to get from DB.
 
     $mod = migrationModerationStateTrait::getModerationPublished($nid);
 
