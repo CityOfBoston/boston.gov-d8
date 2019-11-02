@@ -113,7 +113,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
-      $src = $image_node->getAttribute('src');
+      $src = trim($image_node->getAttribute('src'));
 
       // Tidyup for strange content in COB D7 site.
       $src = str_replace('blob:http', 'http', $src);
@@ -171,7 +171,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     // Now links to the local filesystem.
     foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
-      $href = $link_node->getAttribute('href');
+      $href = trim($link_node->getAttribute('href'));
 
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
