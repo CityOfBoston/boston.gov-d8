@@ -160,7 +160,7 @@ function restoreDB() {
     ${drush} sset "bos_migration.dest_file_exists_ext" "skip" | tee -a ${logfile}
     ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/" | tee -a ${logfile}
     ${drush} sset "bos_migration.active" "1" | tee -a ${logfile}
-    ${drush} cset "pathauto.settings" "update_action" 0 | tee -a ${logfile}
+    ${drush} cset "pathauto.settings" "update_action" 0 -y | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
     printf "[migrate-info] Rebuild caches.\n" | tee -a ${logfile}
@@ -442,7 +442,7 @@ printf "[migration-step] Finish off migration: reset caches and maintenance mode
 ${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
-${drush} cset "pathauto.settings" "update_action" 2 | tee -a ${logfile}
+${drush} cset "pathauto.settings" "update_action" 2 -y | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
