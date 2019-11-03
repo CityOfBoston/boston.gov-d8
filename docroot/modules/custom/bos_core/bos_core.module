@@ -1199,6 +1199,6 @@ function _bos_core_sync_assets() {
   printf("---------------- ---------- ------- ---------- --------------\n");
   printf("Group            Manifest   Files   Imported   Media Library \n");
   printf("---------------- ---------- ------- ---------- --------------\n");
-  printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], $cnt["mFound"]);
+  printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], ($cnt["Media"] + $cnt["mFound"]));
   printf("---------------- ---------- ------- ---------- --------------\n");
 }
