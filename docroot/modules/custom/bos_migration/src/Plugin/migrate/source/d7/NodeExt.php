@@ -25,7 +25,11 @@ class NodeExt extends Node {
     $query->addField("wb", "uid", "wb_uid");
     $query->addField("wb", "published", "wb_published");
     $query->addField("wb", "is_current", "wb_current");
-    $query->condition("wb.is_current", "1");
+    $or = $query->orConditionGroup()
+      ->condition("wb.is_current", "1")
+      ->condition("wb.published", "1")
+      ->condition("wb.state", NULL, "is");
+    $query->condition($or);
     return $query;
   }
 

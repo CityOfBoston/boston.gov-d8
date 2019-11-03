@@ -24,8 +24,8 @@ trait migrationModerationStateTrait {
    */
   public static function getModerationAll(int $nid, int $limit = NULL) {
     $connection = Database::getConnection("default", "migrate");
-    $query = $connection->select("workbench_moderation_node_history", "history")
-      ->fields('history', [
+    $query = $connection->select("workbench_moderation_node_history", "wb")
+      ->fields('wb', [
         "nid",
         "vid",
         "from_state",
@@ -33,16 +33,18 @@ trait migrationModerationStateTrait {
         "published",
         "is_current",
       ]);
-    $query->condition("nid", $nid);
+    $query->condition("n.nid", $nid);
+    $query->join("node", "n", "wb.nid = n.nid");
+    $query->addField("n", "type");
     $or = $query->orConditionGroup()
-      ->condition("state", "published")
-      ->condition("is_current", 1)
-      ->condition("published", 1);
+      ->condition("wb.state", "published")
+      ->condition("wb.is_current", 1)
+      ->condition("wb.published", 1);
     $query->condition($or);
     // If we are trimming, then just get last $limit records.
     if (isset($limit)) {
       $query->range(0, $limit);
-      $query->orderBy("stamp", "DESC");
+      $query->orderBy("wb.stamp", "DESC");
     }
     return $query->execute()->fetchAllAssoc("vid");
   }
@@ -59,8 +61,8 @@ trait migrationModerationStateTrait {
   public static function getModerationPublished(int $nid) {
     $connection = Database::getConnection("default", "migrate");
 
-    $query = $connection->select("workbench_moderation_node_history", "history")
-      ->fields('history', [
+    $query = $connection->select("workbench_moderation_node_history", "wb")
+      ->fields('wb', [
         "nid",
         "vid",
         "from_state",
@@ -68,8 +70,8 @@ trait migrationModerationStateTrait {
         "published",
         "is_current",
       ]);
-    $query->condition("nid", $nid);
-    $query->condition("state", "published");
+    $query->condition("wb.nid", $nid);
+    $query->condition("wb.state", "published");
 
     return (array) $query->execute()->fetchAssoc();
   }
