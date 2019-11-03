@@ -166,14 +166,6 @@ trait FilesystemReorganizationTrait {
             $hash .= isset($properties['timestamp']) ? date("Y\/", $properties['timestamp']) : "";
             $hash .= strtolower($relative_uri[0]);
           }
-          elseif (in_array('document', $fileType)) {
-            if (!empty($properties['timestamp'])) {
-              $hash = "file/" . date("Ymd", $properties['timestamp']);
-            }
-            else {
-              $hash = "file/migrate";
-            }
-          }
           else {
             // The class calling this trait can set the path.
             if (method_exists($this, "setPath")) {
@@ -359,10 +351,13 @@ trait FilesystemReorganizationTrait {
    *   File type - image, file or link.
    */
   private function resolveFileTypeMime($mime) {
+    // Break the MIME apart.
+    $parts = explode("/", $mime);
+    $mime_test = end($parts);
     // White list files based on file_managed table in D7.
     $type = [];
     foreach (self::$allowedFormats as $file_type => $formats) {
-      if (in_array($mime, $formats)) {
+      if (in_array($mime_test, $formats)) {
         $type[] = $file_type;
       }
     }
