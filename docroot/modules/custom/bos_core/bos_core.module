@@ -5,6 +5,7 @@
  * Main file for the bos_core module.
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Link;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
@@ -1025,6 +1026,9 @@ function _bos_core_sync_assets() {
     return;
   }
 
+  /*
+   * Functions to manage entity & database activities.
+   */
   $updateFilename = function ($fid, $filename) {
     // Update the filename if necessary.
     if (NULL != ($file = File::load($fid))) {
@@ -1045,16 +1049,26 @@ function _bos_core_sync_assets() {
     return $result;
 
   };
-  $createMediaEntity = function ($mid, $uid, $filename) {
-    $media = Media::create([
+  $createMediaEntity = function ($fid, $uid, $filename, $mid = 0, $vid = 0) {
+    $media_fields = [
       'bundle' => "icon",
       'uid' => $uid ?? 1,
       'status' => 1,
       'name' => $filename,
       'image' => [
-        'target_id' => $mid,
+        'target_id' => $fid,
       ],
-    ]);
+    ];
+    if ($mid != 0) {
+      // If mid provided then set mid and vid to initially be the same.
+      $media_fields["mid"] = $mid;
+      $media_fields["vid"] = $mid;
+    }
+    if ($vid != 0) {
+      // If vid provided then specify that.
+      $media_fields["vid"] = $mid;
+    }
+    $media = Media::create($media_fields);
     $media->set("field_media_in_library", 1);
     $media->save();
     return $media;
@@ -1064,6 +1078,65 @@ function _bos_core_sync_assets() {
       ->condition("entity_id", $mid)
       ->fields(["field_media_in_library_value" => ($in_library ? 1 : 0)])
       ->execute();
+  };
+  $createMigrateMap = function () {
+    $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
+      ->fetchAll();
+    if (empty($result)) {
+      \Drupal::database()->query("CREATE TABLE `migrate_map_d7_file` (
+      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
+      `sourceid1` int(11) NOT NULL,
+      `destid1` int(10) unsigned DEFAULT NULL,
+      `source_row_status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Indicates current status of the source row',
+      `rollback_action` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Flag indicating what to do for this item on rollback',
+      `last_imported` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UNIX timestamp of the last time this row was imported',
+      `hash` varchar(64) DEFAULT NULL COMMENT 'Hash of source row data, for detecting changes',
+      PRIMARY KEY (`source_ids_hash`),
+      KEY `source` (`sourceid1`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Mappings from source identifier value(s) to destination…';");
+    }
+  };
+  $createMigrateMessage = function () {
+    $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_message_d7_file';")
+      ->fetchAll();
+    if (empty($result)) {
+      \Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
+      `msgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
+      `level` int(10) unsigned NOT NULL DEFAULT '1',
+      `message` mediumtext NOT NULL,
+      PRIMARY KEY (`msgid`)
+      ) ENGINE=InnoDB AUTO_INCREMENT=143506 DEFAULT CHARSET=utf8mb4 COMMENT='Messages generated during a migration process';");
+    }
+  };
+  $findLastIds = function (&$last_file_fid, &$last_media_vid) {
+    // Get the starting value for the fid in files_managed.  We need to make this
+    // larger than anything we are expecting to avoid having these overwritten,
+    // or these overwriting files that will be exported later.
+    // First, set to a big number.
+    $last_file_fid = $last_media_vid = 500000;
+    // Second, get the maximum observed fid for files_managed from d7.
+    $result = Database::getConnection("default", "migrate")
+      ->query("select max(fid) last_fid from file_managed")
+      ->fetchAssoc();
+    if (!empty($result)) {
+      $last_file_fid = $result["last_fid"] + 100;
+    }
+    // Second, get the maximum observed fid for files_managed from d8 and see
+    // if bigger than the number used in d7.
+    $result = Database::getConnection("default", "default")
+      ->query("select max(fid) last_fid from file_managed")
+      ->fetchAssoc();
+    if (!empty($result) && $result["last_fid"] >= $last_file_fid) {
+      $last_file_fid = $result["last_fid"] + 100;
+      $last_media_vid = $last_file_fid;
+    }
+    $result = Database::getConnection("default", "default")
+      ->query("select max(vid) last_vid from media_field_data")
+      ->fetchAssoc();
+    if (!empty($result) && $result["last_vid"] >= $last_file_fid) {
+      $last_media_vid = $result["last_vid"] + 100;
+    }
   };
 
   // Process the file.
@@ -1077,33 +1150,15 @@ function _bos_core_sync_assets() {
   $manifest_library = [];
   $manifest = fopen($manifest_file, "r");
 
-  $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
-    ->fetchAll();
-  if (empty($result)) {
-    \Drupal::database()->query("CREATE TABLE `migrate_map_d7_file` (
-      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
-      `sourceid1` int(11) NOT NULL,
-      `destid1` int(10) unsigned DEFAULT NULL,
-      `source_row_status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Indicates current status of the source row',
-      `rollback_action` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Flag indicating what to do for this item on rollback',
-      `last_imported` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UNIX timestamp of the last time this row was imported',
-      `hash` varchar(64) DEFAULT NULL COMMENT 'Hash of source row data, for detecting changes',
-      PRIMARY KEY (`source_ids_hash`),
-      KEY `source` (`sourceid1`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Mappings from source identifier value(s) to destination…';");
-  }
-  $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_message_d7_file';")
-    ->fetchAll();
-  if (empty($result)) {
-    \Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
-      `msgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
-      `level` int(10) unsigned NOT NULL DEFAULT '1',
-      `message` mediumtext NOT NULL,
-      PRIMARY KEY (`msgid`)
-      ) ENGINE=InnoDB AUTO_INCREMENT=143506 DEFAULT CHARSET=utf8mb4 COMMENT='Messages generated during a migration process';");
-  }
+  // Create the migrate map and message tables if they are not already there.
+  $createMigrateMap();
+  $createMigrateMessage();
 
+  // Find the max fid in the files table and the max vid from the media table.
+  $last_fid = $last_vid = 0;
+  $findLastIds($last_fid, $last_vid);
+
+  // Process each row of the manifest file in turn.
   while ($icon_file = fgets($manifest)) {
     $cnt["Total"]++;
     $multiple = FALSE;
@@ -1116,7 +1171,7 @@ function _bos_core_sync_assets() {
     $file_ids = FilesystemReorganizationTrait::getFileEntities($icon_file);
     if (empty($file_ids)) {
       // The file does not exist in managed_files, so create it.
-      $file = FilesystemReorganizationTrait::createFileEntity($icon_file);
+      $file = FilesystemReorganizationTrait::createFileEntity($icon_file, $last_fid++);
       $cnt["Imported"]++;
       // Need to create a migration id_map for this new file entity.
       try {
@@ -1157,7 +1212,7 @@ function _bos_core_sync_assets() {
           if (NULL == $file || $file->id() != $file_id) {
             $file = File::load($file_id);
           }
-          $media = $createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename);
+          $media = $createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, $file->id(), $last_vid++);
           $cnt["Media"]++;
           // Only put the first media item into the library.
           if ($key == 0) {
@@ -1188,7 +1243,7 @@ function _bos_core_sync_assets() {
         if (NULL == $file || $file->id() != $file_ids[0]) {
           $file = File::load($file_ids[0]);
         }
-        $media = $createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename);
+        $media = $createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, $file->id(), $last_vid++);
         $cnt["Media"]++;
         $updateMediaLibrary($media->id());
       }
