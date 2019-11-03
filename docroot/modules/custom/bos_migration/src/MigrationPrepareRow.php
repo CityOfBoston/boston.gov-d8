@@ -225,7 +225,6 @@ class MigrationPrepareRow {
     }
 
     // No cached values so fetch from the database.
-
     $mod = migrationModerationStateTrait::getModerationCurrent($nid);
 
     $this->setCache("current", (object) $mod);
@@ -259,7 +258,6 @@ class MigrationPrepareRow {
     }
 
     // No cached values, to get from DB.
-
     $mod = migrationModerationStateTrait::getModerationPublished($nid);
 
     $this->setCache("published", (object) $mod);
