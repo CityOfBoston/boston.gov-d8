@@ -154,10 +154,11 @@ trait FilesystemReorganizationTrait {
       $relative_uri = str_replace('public://', NULL, $uri);
       // Now that we have removed he public stream wrapper, files in the root
       // directory should not contain a slash in their URI.
+      $source_uri = $properties['uri'] ?: $uri;
       if (strpos($relative_uri, '/') === FALSE) {
         $fileType = isset($properties['filemime'])
           ? $this->resolveFileTypeMime($properties['filemime'])
-          : $this->resolveFileTypeArray($properties['uri']);
+          : $this->resolveFileTypeArray($source_uri);
 
         if (isset($fileType)) {
           if (in_array('image', $fileType)) {
@@ -165,7 +166,7 @@ trait FilesystemReorganizationTrait {
             $hash .= isset($properties['timestamp']) ? date("Y\/", $properties['timestamp']) : "";
             $hash .= strtolower($relative_uri[0]);
           }
-          elseif (in_array('file', $fileType)) {
+          elseif (in_array('document', $fileType)) {
             if (!empty($properties['timestamp'])) {
               $hash = "file/" . date("Ymd", $properties['timestamp']);
             }
@@ -222,6 +223,9 @@ trait FilesystemReorganizationTrait {
    */
   private function resolveFileTypeArray($uri) {
     // White list files based on file_managed table in D7.
+    if (NULL == $uri) {
+      return NULL;
+    }
     $type = [];
     $ext = $this->extractExtension($uri);
     foreach (self::$matchFormats as $file_type => $formats) {
