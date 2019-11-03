@@ -220,7 +220,7 @@ function doLogRotate() {
   echo "  missingok" >> $SCRIPT
   echo "}" >> $SCRIPT
   #  Now run the script.
-  logrotate -d "$SCRIPT"
+  logrotate -f "$SCRIPT"
   #  Cleanup
   rm -f "$SCRIPT"
 }
