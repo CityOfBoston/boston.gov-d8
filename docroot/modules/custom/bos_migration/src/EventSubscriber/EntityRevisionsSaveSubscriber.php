@@ -130,7 +130,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
     $row = $event->getRow();
 
     if ($event->getMigration()->getBaseId() == "d7_node") {
-      if ( NULL == ($vid = $row->getDestinationProperty("vid"))) {
+      if (NULL == ($vid = $row->getDestinationProperty("vid"))) {
         return;
       }
       // Fetch the content moderation which will have been created as this node
@@ -179,7 +179,7 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
     }
 
     elseif ($event->getMigration()->getBaseId() == "d7_node_revision") {
-      if ( NULL == ($vid = $row->getDestinationProperty("vid"))) {
+      if (NULL == ($vid = $row->getDestinationProperty("vid"))) {
         return;
       }
       // Don't actually need to do anything.

@@ -293,6 +293,8 @@ trait FilesystemReorganizationTrait {
    *
    * @param string $src
    *   The full pathname with folders delimited by "/"..
+   * @param bool $safe
+   *   Flag to simply delete numeric chars at the end of a filename.
    *
    * @return string
    *   The filename extracted from the $src path.
@@ -722,4 +724,5 @@ trait FilesystemReorganizationTrait {
       }
     }
   }
+
 }
