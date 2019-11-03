@@ -128,13 +128,11 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
     $row = $event->getRow();
-    if (($event->getMigration()->getBaseId() != "d7_node_revision"
-      && $event->getMigration()->getBaseId() != "d7_node")
-      || NULL == ($vid = $row->getDestinationProperty("vid"))) {
-      return;
-    }
 
     if ($event->getMigration()->getBaseId() == "d7_node") {
+      if ( NULL == ($vid = $row->getDestinationProperty("vid"))) {
+        return;
+      }
       // Fetch the content moderation which will have been created as this node
       // was saved (if there is an associated workflow).
       $cmid = \Drupal::entityQuery("content_moderation_state")
@@ -181,8 +179,18 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
     }
 
     elseif ($event->getMigration()->getBaseId() == "d7_node_revision") {
+      if ( NULL == ($vid = $row->getDestinationProperty("vid"))) {
+        return;
+      }
       // Don't actually need to do anything.
     }
+
+    elseif ($event->getMigration()->getBaseId() == "d7_file") {
+      // Check if we need to create a media entity.
+      // If there is a duplicate, then skip.
+      // Rename the incoming filesnames using cleanfilename.
+    }
+
   }
 
 }
