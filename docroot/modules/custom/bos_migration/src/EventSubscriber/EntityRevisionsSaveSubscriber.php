@@ -3,10 +3,14 @@
 namespace Drupal\bos_migration\EventSubscriber;
 
 use Drupal\bos_migration\MemoryManagementTrait;
+use Drupal\bos_migration\FilesystemReorganizationTrait;
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
 use Drupal\migrate\Event\MigratePreRowSaveEvent;
 use Drupal\migrate\Event\MigrateImportEvent;
 use Drupal\migrate\Event\MigrateEvents;
+use Drupal\migrate\MigrateException;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\node\Entity\Node;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -16,6 +20,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
 
   use MemoryManagementTrait;
+  use FilesystemReorganizationTrait;
 
   /**
    * {@inheritdoc}
@@ -104,6 +109,19 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
       // Try to manage memory ...
       $this->checkStatus();
     }
+    elseif ($event->getMigration()->getBaseId() == "d7_file") {
+      // If there is a duplicate, then skip.
+      $isDuplicate = FALSE;
+      if ($isDuplicate) {
+        throw new MigrateException("File entry already exists.", 0, NULL, MigrationInterface::MESSAGE_NOTICE, MigrateIdMapInterface::STATUS_IGNORED);
+      }
+      // Cleanup the filename and ensure its written to the file object and
+      // to files_managed.
+      $row = $event->getRow();
+      $filename = $row->getDestinationProperty("filename");
+      $filename = FilesystemReorganizationTrait::cleanFilename($filename);
+      $row->setDestinationProperty("filename", $filename);
+    }
   }
 
   /**
@@ -187,8 +205,14 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
 
     elseif ($event->getMigration()->getBaseId() == "d7_file") {
       // Check if we need to create a media entity.
-      // If there is a duplicate, then skip.
-      // Rename the incoming filesnames using cleanfilename.
+
+      // Rename the incoming filenames using cleanfilename.
+      $filename = $row->getDestinationProperty("filename");
+      $filename = FilesystemReorganizationTrait::cleanFilename($filename);
+      \Drupal::database()->update("file_managed")
+        ->fields(["filename" => $filename])
+        ->condition("fid", $row->getDestinationProperty("fid"))
+        ->execute();
     }
 
   }

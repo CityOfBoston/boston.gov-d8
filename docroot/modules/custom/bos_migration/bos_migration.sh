@@ -264,7 +264,7 @@ if [ "$1" == "reset" ]; then
 
     restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
     # Ensure the icon manifest is loaded (inlucdes loading files into DB).
-    printf "[migration-step] Import icon library manifest ${backup}\n" | tee -a ${logfile}
+    printf "[migration-step] Import icon library manifest\n" | tee -a ${logfile}
     doExecPHP "\Drupal\migrate_utilities\MigUtilTools::updateAssets();"
 
     doMigrate --tag="bos:initial:0" --force
