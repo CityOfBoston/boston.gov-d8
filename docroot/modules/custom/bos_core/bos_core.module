@@ -1092,7 +1092,7 @@ function _bos_core_sync_assets() {
       KEY `source` (`sourceid1`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Mappings from source identifier value(s) to destination…';");
   }
-  $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
+  $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_message_d7_file';")
     ->fetchAll();
   if (empty($result)) {
     \Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
