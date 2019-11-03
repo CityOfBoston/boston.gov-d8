@@ -160,7 +160,7 @@ function restoreDB() {
     ${drush} sset "bos_migration.dest_file_exists_ext" "skip" | tee -a ${logfile}
     ${drush} sset "bos_migration.remoteSource" "https://www.boston.gov/" | tee -a ${logfile}
     ${drush} sset "bos_migration.active" "1" | tee -a ${logfile}
-    ${drush} cset "pathauto.settings" "update_action" 0 | tee -a ${logfile}
+    ${drush} cset "pathauto.settings" "update_action" 0 -y | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
     printf "[migrate-info] Rebuild caches.\n" | tee -a ${logfile}
@@ -261,12 +261,15 @@ if [ "$1" == "reset" ]; then
     running=1
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
     removeEmptyFiles
-    ##
+
     restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
+    # Ensure the icon manifest is loaded (inlucdes loading files into DB).
+    printf "[migration-step] Import icon library manifest ${backup}\n" | tee -a ${logfile}
+    doExecPHP "\Drupal\migrate_utilities\MigUtilTools::updateAssets();"
+
     doMigrate --tag="bos:initial:0" --force
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
+
+#    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
     dumpDB ${dbpath}/migration_clean_with_files.sql
 fi
 
@@ -387,11 +390,6 @@ if [ $running -eq 0 ]; then
     exit 1
 fi
 
-# Just run an update on all entities to be sure everything is in sync.
-printf "\n[migration-step] Update Entities.\n" | tee -a ${logfile}
-#doMigrate --group=bos_paragraphs --update --feedback=1000
-#doMigrate --group=d7_node --update --feedback=1000
-
 ## Check all migrations completed.
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
@@ -412,19 +410,11 @@ while true; do
     done
 done
 
-## Ensure everything is updated.
-if [ "{$1}" != "reset" ]; then
-    doExecPHP "\Drupal\bos_migration\MigrationFixes::fixFilenames();"
-fi
-doExecPHP "\Drupal\bos_migration\MigrationFixes::fixRevisions();"
-doExecPHP "\Drupal\bos_migration\MigrationFixes::fixPublished();"
+# Map D7 view displays to D8 displays.
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
-doExecPHP "\Drupal\bos_migration\MigrationFixes::fixMap();"
-doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
-# re-run this to update icons brought through in WYSIWYG (rich-text) content.
-doExecPHP "\Drupal\bos_migration\MigrationFixes::updateSvgPaths();"
 
 # Reset status_items.
+doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
@@ -442,7 +432,7 @@ printf "[migration-step] Finish off migration: reset caches and maintenance mode
 ${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
-${drush} cset "pathauto.settings" "update_action" 2 | tee -a ${logfile}
+${drush} cset "pathauto.settings" "update_action" 2 -y | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql

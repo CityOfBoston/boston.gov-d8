@@ -106,7 +106,6 @@ class MigrationPrepareRow {
         $this->hasLoadedCache = TRUE;
         $this->findWorkbench($nid);
         $this->findWorkbenchCurrent($nid);
-        $this->findWorkbenchPublished($nid);
       }
     }
     else {
@@ -124,8 +123,8 @@ class MigrationPrepareRow {
    */
   private function saveCache(int $nid, bool $full = TRUE) {
     if ($this->useCache && !$full) {
-      $this->cache["all"] = array_keys($this->cache['all']);
-      $this->cache["published"] = array_keys($this->cache['published']);
+      $this->cache["all"] = array_keys($this->cache['all']) ?: [];
+      $this->cache["published"] = array_keys($this->cache['published']) ?: [];
       $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
     }
     if ($this->useCache && $full) {
@@ -226,7 +225,6 @@ class MigrationPrepareRow {
     }
 
     // No cached values so fetch from the database.
-
     $mod = migrationModerationStateTrait::getModerationCurrent($nid);
 
     $this->setCache("current", (object) $mod);
@@ -260,7 +258,6 @@ class MigrationPrepareRow {
     }
 
     // No cached values, to get from DB.
-
     $mod = migrationModerationStateTrait::getModerationPublished($nid);
 
     $this->setCache("published", (object) $mod);
