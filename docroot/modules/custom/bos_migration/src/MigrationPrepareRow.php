@@ -106,7 +106,6 @@ class MigrationPrepareRow {
         $this->hasLoadedCache = TRUE;
         $this->findWorkbench($nid);
         $this->findWorkbenchCurrent($nid);
-        $this->findWorkbenchPublished($nid);
       }
     }
     else {

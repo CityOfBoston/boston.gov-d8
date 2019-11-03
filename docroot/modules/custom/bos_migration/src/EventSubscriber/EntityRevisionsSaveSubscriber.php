@@ -101,6 +101,8 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
           $event->getRow()->setIdMap($idmap);
         }
       }
+      // Try to manage memory ...
+      $this->checkStatus();
     }
   }
 

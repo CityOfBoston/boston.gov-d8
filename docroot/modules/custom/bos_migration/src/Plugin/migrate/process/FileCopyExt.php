@@ -85,6 +85,18 @@ class FileCopyExt extends FileCopy {
     // Save the newly created source.
     $value[0] = $source;
 
+    // If this is an icon, check the map and remap the destination file uri.
+    if ($this->extractExtension($destination) == "svg") {
+      $destination = $this->remapIconUri($destination);
+      if ($this->isExternalFile($destination)) {
+        // This (previously internal) destination has been mapped to an
+        // external file, probably an AWS or google drive.
+        // We do not need to copy anything.
+        // Todo: look at deduping - this file may already be in the table.
+        return $destination;
+      }
+    }
+
     // Check for dups of this file in managed_files using different stategies.
     // First try to load by fid.
     if (NULL != $fid && NULL != ($files = File::load($fid))) {
@@ -125,7 +137,7 @@ class FileCopyExt extends FileCopy {
       // directly copying the fid from the d7 tables.
       $file_id = reset($files);
       if ($file_id != $fid) {
-        $this->createMappingEntry($fid, $file_id, $source);
+        $this->createMappingEntry($fid, $file_id, "d7_file");
         // Skip any copying/moving of files for this row, and dont save a
         // mapping entry (we already made on and the default map would be
         // incorrect).
@@ -140,13 +152,14 @@ class FileCopyExt extends FileCopy {
     }
 
     // Now move the file.
-    $isDoc = strpos($source, ".pdf")
-            || strpos($source, ".doc")
-            || strpos($source, ".xl");
-    if (!file_exists('/var/www/site-php') && $isDoc) {
+    $type = reset($this->resolveFileTypeArray($source));
+    if (!file_exists('/var/www/site-php') && $type == "document") {
       // Stops copy of docs: (!file_exists('/var/www/site-php') && $isDoc)
-      $fileOps = $this->fileOps();
-      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - docs not copied.", MigrationInterface::MESSAGE_INFORMATIONAL);
+      $migrate_executable->saveMessage(t("Skip file @fileOp on (fid:@fid) '@source' - docs not copied.", [
+        "@fileOp" => $this->fileOps(),
+        "@fid" => $fid,
+        "@source" => $source,
+      ]), MigrationInterface::MESSAGE_INFORMATIONAL);
       $result = $destination;
     }
     else {
@@ -173,27 +186,7 @@ class FileCopyExt extends FileCopy {
   protected function createMappingEntry($sourceid, $destid, $source) {
     try {
       $this->migrateExecutable->saveMessage("Remapping fid:" . $sourceid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
-      $sourceIdValues = $this->row->getSourceIdValues();
-      $fields["sourceid1"] = $sourceIdValues["fid"];
-      $fields += [
-        'source_row_status' => MigrateIdMapInterface::STATUS_IMPORTED,
-        'rollback_action' => MigrateIdMapInterface::ROLLBACK_DELETE,
-        'hash' => $this->row->getHash(),
-      ];
-      $fields["destid1"] = $destid;
-      $fields["last_imported"] = 0;
-      $hash = hash('sha256', serialize(array_map('strval', [$sourceIdValues["fid"]])));
-      $keys = ["source_ids_hash" => $hash];
-
-      \DRUPAL::database()->delete("migrate_map_d7_file")
-        ->condition("sourceid1", $fields["sourceid1"])
-        ->condition("destid1", $destid)
-        ->execute();
-
-      \DRUPAL::database()->merge("migrate_map_d7_file")
-        ->key($keys)
-        ->fields($fields)
-        ->execute();
+      $this->createSimpleMappingEntry($sourceid, $destid, "d7_file", $this->row->getHash());
     }
     catch (\Exception $e) {
       // Got an error. SQL-23000 is a duplicate row entry, thats OK so allow

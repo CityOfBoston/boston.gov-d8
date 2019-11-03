@@ -250,7 +250,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
       // Create a new File Entity for this file.
       try {
-        $file = $this->saveFileEntity($dest);
+        $file = $this->createFileEntity($dest);
         if (empty($file)) {
           throw new Exception("Could not copy " . $src . " and save as " . $dest . ".");
         }
