@@ -52,7 +52,7 @@ class NodeRevisionExt extends NodeRevision {
       // in any migration.
       $this_vid = $row->getSourceProperty("vid");
       if (isset($this_vid) && (
-        isset($row->workbench["published"][$this_vid])
+        isset($row->workbench["all"][$this_vid])
         || $row->workbench["current"]->vid == $this_vid)
       ) {
         return TRUE;

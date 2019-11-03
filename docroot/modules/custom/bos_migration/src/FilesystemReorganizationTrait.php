@@ -2,6 +2,9 @@
 
 namespace Drupal\bos_migration;
 
+use Drupal\migrate\MigrateException;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
+
 /**
  * Logic relevant to filesystem reorganization.
  */
@@ -13,6 +16,7 @@ trait FilesystemReorganizationTrait {
    * @var string
    */
   protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
+  protected static $assetsReferenceREGEX = '((http(s)?://)??(assets|patterns).boston\.gov)';
 
   /**
    * Array to identify file extensions allowed by media type.
@@ -237,31 +241,86 @@ trait FilesystemReorganizationTrait {
   }
 
   /**
+   * Extracts bare filename from normal path with a filename.
+   *
+   * @param string $src
+   *   The full pathname with folders delimited by "/"..
+   *
+   * @return string
+   *   The filename extracted from the $src path.
+   */
+  private function extractFilename(string $src) {
+    $parts = explode('/', $src);
+    $filename = trim(end($parts));
+    // Clean up any parameters/'querystrings'.
+    foreach (["#", "?"] as $delim) {
+      if (strpos($filename, $delim) !== FALSE) {
+        $filename = explode($delim, $filename, 2)[0];
+      }
+    }
+    return trim($filename);
+  }
+
+  /**
    * Extracts the extension from a file path or uri.
    *
    * @param string $src
    *   The path or Uri.
    *
    * @return false|mixed|string
-   *   A three or four character string representing the extension of the file.
+   *   A string representing the extension of the file, FALSE if nothing found.
    */
   private function extractExtension($src) {
-    // Try to get extension from normal path with a filename that has extension
-    // after a period.
-    $parts = explode('/', $src);
-    $filename = trim(end($parts));
+
+    $filename = $this->extractFilename($src);
+
+    // Verify that this file has an extension.
+    if (strpos($filename, ".") === FALSE) {
+      return FALSE;
+    }
+
+    // Now extract chars after the last ".".
     $extension = end(explode(".", $filename));
-    // Cleanup any parameters/'querystrings'.
-    foreach (["#", "?"] as $delim) {
-      if (strpos($extension, $delim) !== FALSE) {
-        $extension = explode($delim, $extension, 2)[0];
+    if (!empty($extension)) {
+      return trim($extension);
+    }
+    // Could try other things ???
+    return FALSE;
+  }
+
+  /**
+   * Extracts bare filename without _1 etc from normal path with a filename.
+   *
+   * @param string $src
+   *   The full pathname with folders delimited by "/"..
+   * @param bool $safe
+   *   Flag to simply delete numeric chars at the end of a filename.
+   *
+   * @return string
+   *   The filename extracted from the $src path.
+   */
+  private function extractBaseFilename(string $src, bool $safe = TRUE) {
+    $filename = $this->extractFilename($src);
+    $parts = explode('.', $filename);
+    $extension = ($parts[1] ?: "");
+    // Remove extension from filename.
+    $base_filename = trim($parts[0]);
+    // See if file has a "_0" style versioning.
+    $parts = explode("_", $base_filename);
+    if (is_numeric(end($parts))) {
+      // So remove the filename versioning.
+      $search = "_" . end($parts);
+      $base_filename = str_replace($search, "", $base_filename) . "." . $extension;
+      return $base_filename;
+    }
+    // Maybe the last char is numeric, if so remove it (dangerous!).
+    // Recommend only use for comparision like in $this->remapIconUri().
+    if (!$safe) {
+      while (is_numeric(substr($base_filename, -1))) {
+        $base_filename = substr($base_filename, 0, -1);
       }
     }
-    if (empty($extension)) {
-      $extension = substr($filename, -4);
-      $extension = end(explode(".", $extension));
-    }
-    return $extension;
+    return trim($base_filename);
   }
 
   /**
@@ -380,7 +439,15 @@ trait FilesystemReorganizationTrait {
    *   Yes or no.
    */
   protected function isExternalFile($src) {
-    return !preg_match(self::$localReferenceREGEX, $src);
+    // If its not on the boston.gov domain then its external.
+    if (!preg_match(self::$localReferenceREGEX, $src)) {
+      return TRUE;
+    }
+    // If its patterns/assets.boston.gov, then its external.
+    if (preg_match(self::$assetsReferenceREGEX, $src)) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
@@ -448,7 +515,7 @@ trait FilesystemReorganizationTrait {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getFileEntities($uri) {
+  public static function getFileEntities($uri) {
     $query = \Drupal::entityQuery("file")
       ->condition("uri", $uri, "=");
     $entities = $query->execute();
@@ -499,8 +566,8 @@ trait FilesystemReorganizationTrait {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function saveFileEntity(string $uri) {
-    $filename = end(explode("/", $uri));
+  public static function createFileEntity(string $uri) {
+    $filename = self::cleanFilename($uri);
     $entity = \Drupal::entityTypeManager()
       ->getStorage('file')
       ->create([
@@ -531,7 +598,7 @@ trait FilesystemReorganizationTrait {
    * @return string
    *   Reformatted filename.
    */
-  public function cleanFilename($path) {
+  public static function cleanFilename($path) {
     $filename = explode("/", $path);
     $extension = end(explode(".", end($filename)));
     $filename = array_pop($filename);
@@ -554,6 +621,108 @@ trait FilesystemReorganizationTrait {
       $filename .= " (" . $extension . ")";
     }
     return strtolower($filename);
+  }
+
+  /**
+   * Remaps the destination uri based upon values in an array.
+   *
+   * @param string $uri
+   *   The original destination uri.
+   *
+   * @return string
+   *   The remapped uri.
+   */
+  public function remapIconUri(string $uri) {
+    $map = MigrationFixes::$svgMapping;
+    if (NULL != ($new_uri = $map[$uri])) {
+      // Found a matching element, just convert and return.
+      return $new_uri;
+    }
+
+    // The manifest provides a map of icons to paths.
+    $base_filename = $this->extractBaseFilename($uri, FALSE);
+    foreach (["experiential_icons_"] as $search) {
+      $base_filename = str_replace($search, "", $base_filename);
+    }
+    $manifest = $this->getIconLibraryManifest();
+    $base_filename = $this::cleanFilename($base_filename);
+    if (NULL != ($manifest_item = $manifest[$base_filename])) {
+      // Found a matching element, just convert and return.
+      return $manifest_item;
+    }
+
+    // Couldn't map, so simply return the $uri provided.
+    return $uri;
+  }
+
+  /**
+   * Grab a list of available icons from library.
+   *
+   * @return array
+   *   The array of icons which exist in the media library.
+   */
+  private function getIconLibraryManifest() {
+    if (NULL == ($result = \Drupal::state()->get("bos_core.icon_library.manifest"))) {
+      $query = \Drupal::database()->select("media_field_data", "m")
+        ->fields("m", ["name", "mid"]);
+      $query->join("media__image", "mi", "m.mid = mi.entity_id");
+      $query->join("file_managed", "f", "mi.image_target_id = f.fid");
+      $query->fields("f", ["fid", "uri"]);
+      $query->join("media__field_media_in_library", "ml", "m.mid = ml.entity_id");
+      $query->condition("ml.field_media_in_library_value", "1");
+      $query->condition("m.bundle", "icon");
+      $result = $query->fetchAllAssoc["name"];
+      \Drupal::state()->get("bos_core.icon_library.manifest", $result);
+    }
+    return $result;
+  }
+
+  /**
+   * Creates simple source:dest entry in the migrate_map_xxx table for lookups.
+   *
+   * @param int $sourceid
+   *   The oringinal ID to map.
+   * @param string $destid
+   *   The new ID to map.
+   * @param string $mig_type
+   *   The table type to write to.
+   * @param string $hash
+   *   The hash (optional) - Note row hash is created in-function.
+   *
+   * @throws \Drupal\migrate\MigrateException
+   */
+  public static function createSimpleMappingEntry($sourceid, $destid, $mig_type, $hash = "") {
+    try {
+      $fields["sourceid1"] = $sourceid;
+      $fields += [
+        'source_row_status' => MigrateIdMapInterface::STATUS_IMPORTED,
+        'rollback_action' => MigrateIdMapInterface::ROLLBACK_DELETE,
+        'hash' => $hash,
+      ];
+      $fields["destid1"] = $destid;
+      $fields["last_imported"] = 0;
+      $row_hash = hash('sha256', serialize(array_map('strval', [$sourceid])));
+      $keys = ["source_ids_hash" => $row_hash];
+
+      $table_name = "migrate_map_" . $mig_type;
+
+      \DRUPAL::database()->delete($table_name)
+        ->condition("sourceid1", $fields["sourceid1"])
+        ->condition("destid1", $destid)
+        ->execute();
+
+      \DRUPAL::database()->merge($table_name)
+        ->key($keys)
+        ->fields($fields)
+        ->execute();
+    }
+    catch (\Exception $e) {
+      // Got an error. SQL-23000 is a duplicate row entry, thats OK so allow
+      // it but dont allow anything else.
+      if ($e->getCode() != 23000) {
+        throw new MigrateException($e->getMessage(), $e->getCode());
+      }
+    }
   }
 
 }

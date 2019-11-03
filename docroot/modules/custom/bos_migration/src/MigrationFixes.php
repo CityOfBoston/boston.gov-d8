@@ -79,7 +79,7 @@ class MigrationFixes {
    *
    * @var array
    */
-  protected static $svgMapping = [
+  public static $svgMapping = [
     'public://img/program/logo/2016/07/experiential_icons_home_center.svg' => '//assets.boston.gov/icons/experiential_icons/triple_decker.svg',
     'public://img/program/intro_images/2016/08/experiential_icons_home_sability.svg' => '//assets.boston.gov/icons/experiential_icons/neighborhood.svg',
     'public://img/post/thumbnails/2017/06/experiential_icons_house_0.svg' => '//assets.boston.gov/icons/experiential_icons/house_2.svg',
