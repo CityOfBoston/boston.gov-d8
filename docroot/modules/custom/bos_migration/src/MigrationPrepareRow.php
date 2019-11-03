@@ -124,7 +124,7 @@ class MigrationPrepareRow {
   private function saveCache(int $nid, bool $full = TRUE) {
     if ($this->useCache && !$full) {
       $this->cache["all"] = array_keys($this->cache['all']) ?: [];
-      $this->cache["published"] = array_keys($this->cache['published']) ?: [];
+      $this->cache["current"] = $this->cache['current'] ?: [];
       $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
     }
     if ($this->useCache && $full) {

@@ -119,6 +119,7 @@ function restoreDB() {
     if [ -d "/mnt/gfs" ]; then
       printf "[migration-info] Import ${backup} file into MySQL\n" | tee -a ${logfile}
       ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
+      landobackup=""
     else
       landobackup=${2}
       printf "[migration-info] Import ${landobackup} file into MySQL\n" | tee -a ${logfile}
@@ -178,10 +179,12 @@ function restoreDB() {
     ## Takes site out of maintenance mode before dumping.
     ${drush} sset "system.maintenance_mode" "0"
 
-    dumpDB ${1}
+    dumpDB ${1} ${landobackup}
 
     ## Puts site into maintenance mode while migration occurs.
     ${drush} sset "system.maintenance_mode" "1"
+
+    return 0
 }
 
 function dumpDB() {
@@ -220,7 +223,7 @@ function doLogRotate() {
   echo "  missingok" >> $SCRIPT
   echo "}" >> $SCRIPT
   #  Now run the script.
-  logrotate -d "$SCRIPT"
+  logrotate -f "$SCRIPT"
   #  Cleanup
   rm -f "$SCRIPT"
 }
@@ -270,7 +273,7 @@ if [ "$1" == "reset" ]; then
     doMigrate --tag="bos:initial:0" --force
 
 #    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
-    dumpDB ${dbpath}/migration_clean_with_files.sql
+    dumpDB ${dbpath}/migration_clean_with_files.sql ${landodbpath}/migration_clean_with_files.sql
 fi
 
 ## Perform the lowest level safe-dependencies.

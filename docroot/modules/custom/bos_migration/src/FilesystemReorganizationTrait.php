@@ -154,24 +154,17 @@ trait FilesystemReorganizationTrait {
       $relative_uri = str_replace('public://', NULL, $uri);
       // Now that we have removed he public stream wrapper, files in the root
       // directory should not contain a slash in their URI.
+      $source_uri = $properties['uri'] ?: $uri;
       if (strpos($relative_uri, '/') === FALSE) {
         $fileType = isset($properties['filemime'])
           ? $this->resolveFileTypeMime($properties['filemime'])
-          : $this->resolveFileTypeArray($properties['uri']);
+          : $this->resolveFileTypeArray($source_uri);
 
         if (isset($fileType)) {
           if (in_array('image', $fileType)) {
             $hash = "img/";
             $hash .= isset($properties['timestamp']) ? date("Y\/", $properties['timestamp']) : "";
             $hash .= strtolower($relative_uri[0]);
-          }
-          elseif (in_array('file', $fileType)) {
-            if (!empty($properties['timestamp'])) {
-              $hash = "file/" . date("Ymd", $properties['timestamp']);
-            }
-            else {
-              $hash = "file/migrate";
-            }
           }
           else {
             // The class calling this trait can set the path.
@@ -222,6 +215,9 @@ trait FilesystemReorganizationTrait {
    */
   private function resolveFileTypeArray($uri) {
     // White list files based on file_managed table in D7.
+    if (NULL == $uri) {
+      return NULL;
+    }
     $type = [];
     $ext = $this->extractExtension($uri);
     foreach (self::$matchFormats as $file_type => $formats) {
@@ -355,10 +351,13 @@ trait FilesystemReorganizationTrait {
    *   File type - image, file or link.
    */
   private function resolveFileTypeMime($mime) {
+    // Break the MIME apart.
+    $parts = explode("/", $mime);
+    $mime_test = end($parts);
     // White list files based on file_managed table in D7.
     $type = [];
     foreach (self::$allowedFormats as $file_type => $formats) {
-      if (in_array($mime, $formats)) {
+      if (in_array($mime_test, $formats)) {
         $type[] = $file_type;
       }
     }
@@ -558,6 +557,8 @@ trait FilesystemReorganizationTrait {
    *
    * @param string $uri
    *   The uri to create in the file_managed table.
+   * @param int $fid
+   *   Force the fid value.
    *
    * @return \Drupal\Core\Entity\EntityInterface
    *   The file object just created.
@@ -566,16 +567,20 @@ trait FilesystemReorganizationTrait {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function createFileEntity(string $uri) {
+  public static function createFileEntity(string $uri, int $fid = 0) {
     $filename = self::cleanFilename($uri);
+    $fields = [
+      'uri' => $uri,
+      'uid' => '1',
+      'filename' => $filename,
+      'status' => '1',
+    ];
+    if ($fid != 0) {
+      $fields["fid"] = $fid;
+    }
     $entity = \Drupal::entityTypeManager()
       ->getStorage('file')
-      ->create([
-        'uri' => $uri,
-        'uid' => '1',
-        'filename' => $filename,
-        'status' => '1',
-      ]);
+      ->create($fields);
     $entity->save();
     return $entity;
   }
