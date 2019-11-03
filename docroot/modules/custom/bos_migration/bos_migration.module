@@ -29,13 +29,13 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
  * Implements hook_migrate_prepare_row().
  */
 function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
-  // Filter here if idlist arguments to drush are provided.
+  // Don't run our stuff if idlist arguments to drush are provided.
   foreach ($_SERVER["argv"] as $arg) {
     if (strpos($arg, "--idlist") !== FALSE) {
       $filter = end(explode("=", $arg));
       $this_id = reset($row->getSourceIdValues());
       if ($filter != $this_id) {
-        throw new MigrateSkipRowException("Skip this id=$this_id, seraching for id=$filter.", FALSE);
+        return;
       }
     }
   }
@@ -45,7 +45,7 @@ function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $sou
       case "d7_node_revision":
         // This will cause the generation of the content moderation arrays
         // which are used in the pre and post migration save events.
-        // (in EntityRevisionSaveSubscriber.php)
+        // (in EntityRevisionSaveSubscriber.php).
         $mig->prepareNodeRevisionRow();
         break;
     }
