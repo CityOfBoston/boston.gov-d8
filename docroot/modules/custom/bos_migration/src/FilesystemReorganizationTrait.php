@@ -562,6 +562,8 @@ trait FilesystemReorganizationTrait {
    *
    * @param string $uri
    *   The uri to create in the file_managed table.
+   * @param int $fid
+   *   Force the fid value.
    *
    * @return \Drupal\Core\Entity\EntityInterface
    *   The file object just created.
@@ -570,16 +572,20 @@ trait FilesystemReorganizationTrait {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function createFileEntity(string $uri) {
+  public static function createFileEntity(string $uri, int $fid = 0) {
     $filename = self::cleanFilename($uri);
+    $fields = [
+      'uri' => $uri,
+      'uid' => '1',
+      'filename' => $filename,
+      'status' => '1',
+    ];
+    if ($fid != 0) {
+      $fields["fid"] = $fid;
+    }
     $entity = \Drupal::entityTypeManager()
       ->getStorage('file')
-      ->create([
-        'uri' => $uri,
-        'uid' => '1',
-        'filename' => $filename,
-        'status' => '1',
-      ]);
+      ->create($fields);
     $entity->save();
     return $entity;
   }
