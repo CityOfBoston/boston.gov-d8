@@ -1076,6 +1076,23 @@ function _bos_core_sync_assets() {
   ];
   $manifest_library = [];
   $manifest = fopen($manifest_file, "r");
+
+  $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
+    ->fetchAll();
+  if (empty($result)) {
+    \Drupal::database()->query("CREATE TABLE `migrate_map_d7_file` (
+      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
+      `sourceid1` int(11) NOT NULL,
+      `destid1` int(10) unsigned DEFAULT NULL,
+      `source_row_status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Indicates current status of the source row',
+      `rollback_action` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Flag indicating what to do for this item on rollback',
+      `last_imported` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UNIX timestamp of the last time this row was imported',
+      `hash` varchar(64) DEFAULT NULL COMMENT 'Hash of source row data, for detecting changes',
+      PRIMARY KEY (`source_ids_hash`),
+      KEY `source` (`sourceid1`)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Mappings from source identifier value(s) to destination…';");
+  }
+
   while ($icon_file = fgets($manifest)) {
     $cnt["Total"]++;
     $multiple = FALSE;
@@ -1182,6 +1199,6 @@ function _bos_core_sync_assets() {
   printf("---------------- ---------- ------- ---------- --------------\n");
   printf("Group            Manifest   Files   Imported   Media Library \n");
   printf("---------------- ---------- ------- ---------- --------------\n");
-  printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], $cnt["mFound"]);
+  printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], ($cnt["Media"] + $cnt["mFound"]));
   printf("---------------- ---------- ------- ---------- --------------\n");
 }
