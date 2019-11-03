@@ -119,6 +119,7 @@ function restoreDB() {
     if [ -d "/mnt/gfs" ]; then
       printf "[migration-info] Import ${backup} file into MySQL\n" | tee -a ${logfile}
       ${drush} sql:cli -y --database=default < ${backup}  | tee -a ${logfile}
+      landobackup=""
     else
       landobackup=${2}
       printf "[migration-info] Import ${landobackup} file into MySQL\n" | tee -a ${logfile}
@@ -178,10 +179,12 @@ function restoreDB() {
     ## Takes site out of maintenance mode before dumping.
     ${drush} sset "system.maintenance_mode" "0"
 
-    dumpDB ${1}
+    dumpDB ${1} ${landobackup}
 
     ## Puts site into maintenance mode while migration occurs.
     ${drush} sset "system.maintenance_mode" "1"
+
+    return 0
 }
 
 function dumpDB() {
@@ -260,9 +263,9 @@ totaltimer=$(date +%s)
 if [ "$1" == "reset" ]; then
     running=1
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
-    removeEmptyFiles
+#    removeEmptyFiles
 
-    restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
+#    restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
     # Ensure the icon manifest is loaded (inlucdes loading files into DB).
     printf "[migration-step] Import icon library manifest\n" | tee -a ${logfile}
     doExecPHP "\Drupal\migrate_utilities\MigUtilTools::updateAssets();"
@@ -270,7 +273,7 @@ if [ "$1" == "reset" ]; then
     doMigrate --tag="bos:initial:0" --force
 
 #    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
-    dumpDB ${dbpath}/migration_clean_with_files.sql
+    dumpDB ${dbpath}/migration_clean_with_files.sql ${landodbpath}/migration_clean_with_files.sql
 fi
 
 ## Perform the lowest level safe-dependencies.
