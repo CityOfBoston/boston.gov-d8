@@ -150,10 +150,9 @@ class FileCopyExt extends FileCopy {
       return $destination;
     }
 
-    // Now move the file.
+    // Now move the file, but only move documents if on the production server.
     $type = reset($this->resolveFileTypeArray($source));
-    if (!file_exists('/var/www/site-php') && $type == "document") {
-      // Stops copy of docs: (!file_exists('/var/www/site-php') && $isDoc)
+    if ($type == "document" && !file_exists('/var/www/bostond8/')) {
       $migrate_executable->saveMessage(t("Skip file @fileOp on (fid:@fid) '@source' - docs not copied.", [
         "@fileOp" => $this->fileOps(),
         "@fid" => $fid,
