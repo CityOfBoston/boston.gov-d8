@@ -1092,6 +1092,17 @@ function _bos_core_sync_assets() {
       KEY `source` (`sourceid1`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Mappings from source identifier value(s) to destination…';");
   }
+  $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
+    ->fetchAll();
+  if (empty($result)) {
+    \Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
+      `msgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
+      `level` int(10) unsigned NOT NULL DEFAULT '1',
+      `message` mediumtext NOT NULL,
+      PRIMARY KEY (`msgid`)
+      ) ENGINE=InnoDB AUTO_INCREMENT=143506 DEFAULT CHARSET=utf8mb4 COMMENT='Messages generated during a migration process';");
+  }
 
   while ($icon_file = fgets($manifest)) {
     $cnt["Total"]++;
