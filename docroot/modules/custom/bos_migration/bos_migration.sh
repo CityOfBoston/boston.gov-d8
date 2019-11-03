@@ -263,9 +263,9 @@ totaltimer=$(date +%s)
 if [ "$1" == "reset" ]; then
     running=1
     ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
-#    removeEmptyFiles
+    removeEmptyFiles
 
-#    restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
+    restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
     # Ensure the icon manifest is loaded (inlucdes loading files into DB).
     printf "[migration-step] Import icon library manifest\n" | tee -a ${logfile}
     doExecPHP "\Drupal\migrate_utilities\MigUtilTools::updateAssets();"
