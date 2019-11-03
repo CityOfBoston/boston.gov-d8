@@ -58,6 +58,13 @@ class FileCopyExt extends FileCopy {
     $source = $source ?? $row->getSourceProperty('source_base_path');
     $fid = $row->getSource()['fid'];
 
+    // If the file is a private .
+    if (stripos($destination, "private://")) {
+      $fileOps = $this->fileOps();
+      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - its in the 'private://' directory.", MigrationInterface::MESSAGE_INFORMATIONAL);
+      return $destination;
+    }
+
     // If the migration is globally disabled, then skip file operations.
     if (\Drupal::state()->get("bos_migration.active", 0) == 0) {
       throw new MigrateSkipRowException("State bos_migration.active is missing or false.", FALSE);
