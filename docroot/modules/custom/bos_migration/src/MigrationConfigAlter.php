@@ -11,6 +11,21 @@ use PDO;
  */
 class MigrationConfigAlter {
 
+  // Note: cannot (or should not) have track changes and high_water.
+  /**
+   * Enable/disable track_changes on taxonomy/nodes.
+   *
+   * @var bool
+   */
+  protected $enableTrack = TRUE;
+
+  /**
+   * Enable/disable high_water on taxonomy/nodes.
+   *
+   * @var bool
+   */
+  protected $enableHighWater = FALSE;
+
   /**
    * Store for the altered migration object.
    *
@@ -133,6 +148,7 @@ class MigrationConfigAlter {
     'entity:d7_taxonomy_term:type_of_content',
     'entity:node:metrolist_affordable_housing',
     'entity_revision:node:metrolist_affordable_housing',
+    'entity_revision:node:advpoll',
   ];
 
   /**
@@ -226,7 +242,6 @@ class MigrationConfigAlter {
     "d7_node:tabbed_content" => ["bos:node:2"],
     "d7_node:topic_page" => ["bos:node:2"],
     "d7_node:transaction" => ["bos:node:1"],
-    "d7_node_revision:advpoll" => ["bos:node_revision:1"],
     "d7_node_revision:article" => ["bos:node_revision:2"],
     "d7_node_revision:change" => ["bos:node_revision:1"],
     "d7_node_revision:department_profile" => ["bos:node_revision:1"],
@@ -505,7 +520,6 @@ class MigrationConfigAlter {
           [
             'plugin' => 'migration',
             'migration' => [
-              'd7_node:advpoll',
               'd7_node:article',
               'd7_node:change',
               'd7_node:department_profile',
@@ -560,7 +574,6 @@ class MigrationConfigAlter {
       ],
       'migration_dependencies' => [
         'required' => [
-          'd7_node:advpoll',
           'd7_node:article',
           'd7_node:change',
           'd7_node:department_profile',
@@ -947,7 +960,6 @@ class MigrationConfigAlter {
     ],
     "node" => [
       "all" => [
-        "d7_node:advpoll",
         "d7_node:article",
         "d7_node:change",
         "d7_node:department_profile",
@@ -1224,31 +1236,47 @@ class MigrationConfigAlter {
       ) {
 
         // Pick the best high_water_mark field.
-        $hasChanged = FALSE;
         if (in_array($migration["id"], [
           "d7_node",
           "d7_taxonomy_term",
-        ])) {
-          if (array_key_exists("changed", $migration["process"])) {
-            $hasChanged = $migration["process"]["changed"];
+        ]) || $migration["source"]["plugin"] == "d7_paragraphs_item") {
+          // Note: cannot (or should not) have track changes and high_water.
+          // Enable track changes.
+          if ($this->enableTrack && !$this->enableHighWater) {
+            $migration["source"]["track_changes"] = $this->enableTrack;
           }
-          elseif (array_key_exists("timestamp", $migration["process"])) {
-            $hasChanged = $migration["process"]["timestamp"];
+          // Find an eligible date field in the entity (for high_water).
+          if (!$migration["source"]["plugin"] == "d7_paragraphs_item") {
+            if (!$this->enableTrack && $this->enableHighWater) {
+              $hasChanged = FALSE;
+              if (array_key_exists("changed", $migration["process"])) {
+                $hasChanged = $migration["process"]["changed"];
+              }
+              elseif (array_key_exists("timestamp", $migration["process"])) {
+                $hasChanged = $migration["process"]["timestamp"];
+              }
+              elseif (array_key_exists("created", $migration["process"])) {
+                $hasChanged = $migration["process"]["created"];
+              }
+              // Add the selected high water property to the migration.
+              if ($hasChanged) {
+                $migration["source"]["high_water_property"]["name"] = $hasChanged;
+              }
+            }
           }
-          elseif (array_key_exists("created", $migration["process"])) {
-            $hasChanged = $migration["process"]["created"];
-          }
-        }
-        // Add the selected high water property to the migration.
-        $hasChanged = FALSE;  /* Disable high water mark */
-        if ($hasChanged) {
-          $migration["source"]["high_water_property"]["name"] = $hasChanged;
         }
 
-        // Create dependencies for translations and revisions.
         switch ($migration["id"]) {
           case "d7_node_revision":
+            // Create dependencies for revisions.
             $dependencies["required"][] = str_replace($migration["id"], "d7_node", $mkey);
+            // Switch out standard node_revision plugin for our extension.
+            $migration["source"]["plugin"] = "d7_node_revision_ext";
+            break;
+
+          case "d7_node":
+            // Switch out standard node_revision plugin for our extension.
+            $migration["source"]["plugin"] = "d7_node_ext";
             break;
         }
 

@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_bibblio module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function bos_bibblio_theme() {
+  $theme['paragraph__bibblio'] = [
+    'base hook' => 'paragraph',
+    'path' => drupal_get_path('module', 'bos_bibblio') . '/templates',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_bibblio_preprocess_page(&$variables) {
+  if (isset($variables['node'])) {
+    $getContentType = $variables['node']->getType();
+    $contentTypes = [
+      "how_to",
+      "place_profile",
+      "program_initiative_profile",
+      "article",
+      "department_profile",
+    ];
+
+    if (in_array($getContentType, $contentTypes)) :
+      $variables['#attached']['library'][] = 'bos_bibblio/bos_bibblio';
+    endif;
+  }
+}
