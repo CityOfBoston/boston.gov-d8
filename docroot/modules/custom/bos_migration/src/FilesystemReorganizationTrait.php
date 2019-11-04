@@ -730,4 +730,32 @@ trait FilesystemReorganizationTrait {
     }
   }
 
+  /**
+   * Creates a node access rule, but on if the node_access table exists.
+   *
+   * @param int $nid
+   *   The node id to create a node access (content_access module) rule for.
+   *
+   * @throws \Exception
+   */
+  public static function createNodeAccessRule(int $nid) {
+    $result = \Drupal::database()->query("SHOW TABLES LIKE 'node_access';")
+      ->fetchAll();
+    if (!empty($result)) {
+      \Drupal::database()->merge("node_access")
+        ->fields([
+          'nid' => $nid,
+          'langcode' => "und",
+          'fallback' => 1,
+          'gid' => 0,
+          'realm' => "all",
+          'grant_view' => 1,
+          'grant_update' => 0,
+          'grant_delete' => 0,
+        ])
+        ->condition("nid", $nid)
+        ->execute();
+    }
+  }
+
 }

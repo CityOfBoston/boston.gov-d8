@@ -194,6 +194,9 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
             ->execute();
         }
       }
+      // Need to update the content_access node setting.
+      $nid = $row->getSourceProperty("nid");
+      FilesystemReorganizationTrait::createNodeAccessRule($nid);
     }
 
     elseif ($event->getMigration()->getBaseId() == "d7_node_revision") {
