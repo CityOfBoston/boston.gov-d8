@@ -340,8 +340,9 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
           || substr($form_field, 0, 4) == "body")
         && isset($form[$form_field]["widget"][0]["#base_type"])
         && $form[$form_field]["widget"][0]["#base_type"] == "textarea") {
-        $classes = " node_" . ($bundle?:"unk") . " " . $form_field;;
-        _bos_admin_add_ckeditor_classes($form, [$form_field => ["body" => $classes]]);
+        $type = $form["#entity_type"];
+        $classes = " " . $type . "_" . ($bundle?:"unk") . " " . $form_field;
+        _bos_admin_add_ckeditor_classes($form, [$form_field => ["body" => $classes, "html" => " " . $type . "_" . ($bundle?:"unk") . "_wrapper"]]);
       }
     }
 

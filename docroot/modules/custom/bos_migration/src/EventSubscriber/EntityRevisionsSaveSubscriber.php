@@ -2,10 +2,15 @@
 
 namespace Drupal\bos_migration\EventSubscriber;
 
-use Drupal\bos_migration\migrationModerationStateTrait;
+use Drupal\bos_migration\MemoryManagementTrait;
+use Drupal\bos_migration\FilesystemReorganizationTrait;
 use Drupal\migrate\Event\MigratePostRowSaveEvent;
 use Drupal\migrate\Event\MigratePreRowSaveEvent;
+use Drupal\migrate\Event\MigrateImportEvent;
 use Drupal\migrate\Event\MigrateEvents;
+use Drupal\migrate\MigrateException;
+use Drupal\migrate\Plugin\MigrateIdMapInterface;
+use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\node\Entity\Node;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,7 +19,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
 
-  use migrationModerationStateTrait;
+  use MemoryManagementTrait;
+  use FilesystemReorganizationTrait;
 
   /**
    * {@inheritdoc}
@@ -26,7 +32,25 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
     return [
       MigrateEvents::PRE_ROW_SAVE => 'migrateRowPreSave',
       MigrateEvents::POST_ROW_SAVE => 'migrateRowPostSave',
+      MigrateEvents::POST_IMPORT => 'migratePostImport',
     ];
+  }
+
+  /**
+   * Reacts to import event.
+   *
+   * @param \Drupal\migrate\Event\MigrateImportEvent $event
+   *   Event.
+   */
+  public function migratePostImport(MigrateImportEvent $event) {
+    // Try to manage memory ...
+    if (in_array($event->getMigration()->getBaseId(), [
+      "d7_paragraph",
+      "d7_node",
+      "d7_node_revision",
+    ])) {
+      $this->checkStatus();
+    }
   }
 
   /**
@@ -34,6 +58,11 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\migrate\Event\MigratePreRowSaveEvent $event
    *   Event.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\migrate\MigrateException
    */
   public function migrateRowPreSave(MigratePreRowSaveEvent $event) {
     // If this is an entity revision, then check if the revision exists.
@@ -77,6 +106,21 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
           $event->getRow()->setIdMap($idmap);
         }
       }
+      // Try to manage memory ...
+      $this->checkStatus();
+    }
+    elseif ($event->getMigration()->getBaseId() == "d7_file") {
+      // If there is a duplicate, then skip.
+      $isDuplicate = FALSE;
+      if ($isDuplicate) {
+        throw new MigrateException("File entry already exists.", 0, NULL, MigrationInterface::MESSAGE_NOTICE, MigrateIdMapInterface::STATUS_IGNORED);
+      }
+      // Cleanup the filename and ensure its written to the file object and
+      // to files_managed.
+      $row = $event->getRow();
+      $filename = $row->getDestinationProperty("filename");
+      $filename = FilesystemReorganizationTrait::cleanFilename($filename);
+      $row->setDestinationProperty("filename", $filename);
     }
   }
 
@@ -99,64 +143,78 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\migrate\Event\MigratePostRowSaveEvent $event
    *   Event.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function migrateRowPostSave(MigratePostRowSaveEvent $event) {
-
-    if ($event->getMigration()->getBaseId() != "d7_node_revision"
-      || NULL == $vid = $event->getRow()->getSourceIdValues()["vid"]) {
-      return;
-    }
-
     $row = $event->getRow();
-    $workbench = $row->workbench;
-    // Establish the moderation states from D7.
-    if (NULL == $workbench) {
-      $workbench_all = NULL;
+
+    if ($event->getMigration()->getBaseId() == "d7_node") {
+      if (NULL == ($vid = $row->getDestinationProperty("vid"))) {
+        return;
+      }
+      // Fetch the content moderation which will have been created as this node
+      // was saved (if there is an associated workflow).
+      $cmid = \Drupal::entityQuery("content_moderation_state")
+        ->condition("content_entity_revision_id", $vid)
+        ->execute();
+      if (isset($cmid)) {
+        $cmid = reset($cmid);
+        if (!empty($cmid)) {
+          // Will access the DB directly to avoid new revisions creeping in.
+          // Now set the moderation state correctly.
+          \Drupal::database()
+            ->update("content_moderation_state_field_data")
+            ->fields([
+              "moderation_state" => $row->getSourceProperty("wb_state"),
+              "uid" => $row->getSourceProperty("wb_uid"),
+            ])
+            ->condition("id", $cmid)
+            ->execute();
+          \Drupal::database()
+            ->update("content_moderation_state_field_revision")
+            ->fields([
+              "moderation_state" => $row->getSourceProperty("wb_state"),
+              "uid" => $row->getSourceProperty("wb_uid"),
+            ])
+            ->condition("id", $cmid)
+            ->execute();
+          // Now update the node.
+          \Drupal::database()
+            ->update("node_field_data")
+            ->fields([
+              "status" => $row->getSourceProperty("wb_published"),
+            ])
+            ->condition("vid", $vid)
+            ->execute();
+          \Drupal::database()
+            ->update("node_revision")
+            ->fields([
+              "revision_default" => 1,
+            ])
+            ->condition("vid", $vid)
+            ->execute();
+        }
+      }
     }
 
-    // Get the d7 workbench moderation info for this revision.
-    if (isset($workbench) && isset($workbench["all"][$vid])) {
-      if (empty($workbench["all"][$vid]->published) || !is_numeric($workbench["all"][$vid]->published)) {
-        $workbench["all"][$vid]->published = "0";
+    elseif ($event->getMigration()->getBaseId() == "d7_node_revision") {
+      if (NULL == ($vid = $row->getDestinationProperty("vid"))) {
+        return;
       }
-
-      // Set the status for this revision and the current revision.
-      if ($vid == end($workbench["all"])->vid) {
-        self::setNodeStatus($workbench["all"][$vid]);
-        self::setModerationState($workbench["all"][$vid]);
-      }
-      if ($vid == $workbench["current"]->vid) {
-        self::setNodeStatus($workbench["current"]);
-        self::setCurrentRevision($workbench["current"]);
-        self::setModerationState($workbench["current"]);
-        self::setCurrentModerationRevision($workbench["current"]);
-      }
-
-      // Sets the node back to the correct current revision.
-      // Self::setCurrentRevision($workbench["current"]);.
-      //
-      // The `d7_node:xxx` migration will have imported the latest node.
-      //
-      // The d7 workbench_moderation maintains its own versioning
-      // allowing a node_revision to have multiple moderation_states over
-      // time - whereas d8 content moderation links its status with the
-      // node_revision, making a new revision when the moderation state
-      // changes.
-      // The effect of this is that for any node revision, only the first
-      // workbench_moderation state is migrated, and this state is usually
-      // "draft".
-      // So, the revision ond node need their moderation state to be updated.
-      // Set the status for this revision and the current revision.
-      // Sets the moderation state for this revision and the current revision.
-      // Self::setModerationState($workbench["all"][$vid]);.
-      // Self::setModerationState($workbench["current"]);.
-      //
-      // Set the moderation_state revision back to current revision.
-      // Self::setCurrentModerationRevision($workbench["current"]);.
+      // Don't actually need to do anything.
     }
+
+    elseif ($event->getMigration()->getBaseId() == "d7_file") {
+      // Check if we need to create a media entity.
+
+      // Rename the incoming filenames using cleanfilename.
+      $filename = $row->getDestinationProperty("filename");
+      $filename = FilesystemReorganizationTrait::cleanFilename($filename);
+      \Drupal::database()->update("file_managed")
+        ->fields(["filename" => $filename])
+        ->condition("fid", $row->getDestinationProperty("fid"))
+        ->execute();
+    }
+
   }
 
 }
