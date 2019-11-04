@@ -626,6 +626,16 @@ class MigrationConfigAlter {
             "arguments" => "vargs",
           ],
         ],
+        "field_component_theme" => [
+          [
+            "plugin" => "get",
+            "source" => "field_component_theme",
+          ],
+          [
+            "plugin" => "default_value",
+            "default_value" => "w",
+          ],
+        ]
       ],
     ],
     "paragraph__news_and_announcements" => [
