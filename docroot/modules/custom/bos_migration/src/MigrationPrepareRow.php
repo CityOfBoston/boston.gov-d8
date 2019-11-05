@@ -25,6 +25,8 @@ class MigrationPrepareRow {
   protected $migration;
   protected $useCache;
   protected $cache = NULL;
+  protected $trimRevisions = NULL;
+  protected $hasLoadedCache = FALSE;
 
   /**
    * MigrationProcessRow constructor.
@@ -37,12 +39,15 @@ class MigrationPrepareRow {
    *   The migration object.
    * @param bool $use_cache
    *   If the workbench array is to be copied into the global variables.
+   * @param int|null $limit_revisions
+   *   Restrict the number of revisions to migrate (i.e. # of latest revisions).
    */
-  public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration, $use_cache = FALSE) {
+  public function __construct(Row $row, MigrateSourceInterface $source, MigrationInterface $migration, bool $use_cache = FALSE, int $limit_revisions = NULL) {
     $this->row = $row;
     $this->source = $source;
     $this->migration = $migration;
     $this->useCache = $use_cache;
+    $this->trimRevisions = $limit_revisions;
   }
 
   /**
@@ -97,6 +102,11 @@ class MigrationPrepareRow {
   private function loadCache($nid) {
     if ($this->useCache) {
       $this->cache = $GLOBALS["workbench_cache"][$nid] ?: [];
+      if (empty($this->cache)) {
+        $this->hasLoadedCache = TRUE;
+        $this->findWorkbench($nid);
+        $this->findWorkbenchCurrent($nid);
+      }
     }
     else {
       unset($GLOBALS["workbench_cache"][$nid]);
@@ -108,9 +118,16 @@ class MigrationPrepareRow {
    *
    * @param int $nid
    *   The node id to index the array element against.
+   * @param bool $full
+   *   Trim the array class out before saving, just keep keys.
    */
-  private function saveCache(int $nid) {
-    if ($this->useCache) {
+  private function saveCache(int $nid, bool $full = TRUE) {
+    if ($this->useCache && !$full) {
+      $this->cache["all"] = array_keys($this->cache['all']) ?: [];
+      $this->cache["current"] = $this->cache['current'] ?: [];
+      $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
+    }
+    if ($this->useCache && $full) {
       $GLOBALS["workbench_cache"][$nid] = $this->cache ?: [];
     }
     else {
@@ -122,9 +139,6 @@ class MigrationPrepareRow {
    * Raises a skipMigration event if d7 revision is a draft.
    *
    * Called from bos_migration.module.
-   *
-   * @return bool
-   *   True to continue processing.
    *
    * @throws \Drupal\migrate\MigrateException
    *   If error found.
@@ -144,22 +158,18 @@ class MigrationPrepareRow {
     }
 
     $this->loadCache($nid);
-    $this->findWorkbench($nid);
-    $this->findWorkbenchCurrent($nid);
-    // $this->findWorkbenchPublished($nid);
     try {
-      $result = $this->shouldProcessRow($nid, $vid, []);
+      $this->shouldProcessRow($nid, $vid, []);
       $this->row->workbench = $this->getCache();
-      $this->saveCache($nid);
-      return $result;
+      $this->saveCache($nid, FALSE);
     }
     catch (MigrateSkipRowException $e) {
       // Save to map or else this will be re-processed each migratin.
-      $this->saveCache($nid);
+      $this->saveCache($nid, FALSE);
       throw new MigrateSkipRowException($e->getMessage(), TRUE);
     }
     catch (\Exception $e) {
-      $this->saveCache($nid);
+      $this->saveCache($nid, FALSE);
       throw new MigrateException($e->getMessage(), $e->getCode(), $e->getPrevious(), MigrationInterface::MESSAGE_ERROR, MigrateIdMapInterface::STATUS_NEEDS_UPDATE);
     }
 
@@ -180,11 +190,11 @@ class MigrationPrepareRow {
    */
   private function findWorkbench($nid) {
     // Check cache first.
-    if (empty($this->cache[$nid])) {
+    if (empty($this->cache[$nid]) && !$this->hasLoadedCache) {
       $this->loadCache($nid);
     }
     if (NULL == $this->getCache("all")) {
-      $mod = migrationModerationStateTrait::getModerationAll($nid);
+      $mod = migrationModerationStateTrait::getModerationAll($nid, $this->trimRevisions);
       $this->setCache("all", $mod);
     }
     return $this->getCache("all");
@@ -214,7 +224,8 @@ class MigrationPrepareRow {
       }
     }
 
-    $mod = migrationModerationStateTrait::getModerationPublished($nid);
+    // No cached values so fetch from the database.
+    $mod = migrationModerationStateTrait::getModerationCurrent($nid);
 
     $this->setCache("current", (object) $mod);
     return $this->getCache("current");
@@ -230,24 +241,28 @@ class MigrationPrepareRow {
    *   Associative array of moderation info for node.
    */
   private function findWorkbenchPublished($nid) {
-    $cache = $this->getCache("published") ?: NULL;
+    $cache = $this->getCache("published");
     if (NULL != $cache) {
       return $cache;
     }
     $cache = $this->getCache("all");
     if (NULL != $cache) {
+      $vids = [];
       foreach ($cache as $vid) {
-        if ($vid->published == "1") {
-          $this->setCache("published", $vid);
+        if ($vid->state == "published") {
+          $vids[$vid->vid] = $vid;
         }
       }
+      $this->setCache("published", $vids);
       return $this->getCache("published");
     }
 
-    $mod = migrationModerationStateTrait::getModerationPublishedHistory($nid);
+    // No cached values, to get from DB.
+    $mod = migrationModerationStateTrait::getModerationPublished($nid);
 
     $this->setCache("published", (object) $mod);
     return $this->getCache("published");
+
   }
 
   /**

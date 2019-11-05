@@ -7,9 +7,14 @@
 /* Provides better column layout on editor pages. */
 .bos_admin .layout-region-node-secondary {
   margin-top: 10px;
-  position: fixed;
+  position: absolute;
   right: 35px;
 }
+.bos_admin .layout-region-node-secondary.fixed {
+  position: fixed;
+  top: 90px;
+}
+
 @media screen and (min-width: 780px), (min-device-height: 780px) and (orientation: landscape) {
   .bos_admin .layout-region-node-main,
   .layout-region-node-footer {
