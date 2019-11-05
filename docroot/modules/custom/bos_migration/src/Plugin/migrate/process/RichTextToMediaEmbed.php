@@ -113,7 +113,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     // Images.
     foreach ($xpath->query("//img") as $image_node) {
-      $src = $image_node->getAttribute('src');
+      $src = trim($image_node->getAttribute('src'));
 
       // Tidyup for strange content in COB D7 site.
       $src = str_replace('blob:http', 'http', $src);
@@ -123,14 +123,29 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $src = $this->correctSubDomain(trim($src));
 
       if ($this->isExternalFile($src)) {
+        // Don't want to build a media string for an external file.
         continue;
       }
-      elseif (!in_array("image", $this->resolveFileTypeArray($src))) {
+      elseif (!$this->permittedFileType("image", $src)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         $parts = explode('/', $src);
-        $extension = $parts[count($parts) - 1];
-        \Drupal::logger('Migrate')->notice('Expected an "image" file but got "' . $extension . '"');
+        $filename = trim(end($parts));
+        $extension = end(explode(".", $filename));
+        if (empty($extension)) {
+          $extension = substr($filename, -4);
+          $extension = end(explode(".", $extension));
+        }
+        $msg = t("In @type:@bundle#@id (in @field) expected an \"image\" file but got \"@ext\" (@filename)\n'@value'", [
+          "@ext" => $extension,
+          "@filename" => $filename,
+          "@field" => $this->source["field_name"],
+          "@id" => $this->source["item_id"],
+          "@type" => $this->source["plugin"],
+          "@bundle" => $this->source["bundle"],
+          "@value" => ($extension == "" ? $value : ""),
+        ]);
+        \Drupal::logger('Migrate')->notice($msg);
         continue;
       }
 
@@ -156,18 +171,20 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     // Now links to the local filesystem.
     foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
-      $href = $link_node->getAttribute('href');
+      $href = trim($link_node->getAttribute('href'));
 
       if ($this->isExternalFile($href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         \Drupal::logger('Migrate')->notice('Expected an internal "link" but got ' . $href);
+        // Don't want to build a media string for an external file.
         continue;
       }
-      elseif (!in_array("document", $this->resolveFileTypeArray($href))) {
+      elseif (!$this->permittedFileType("link", $href)) {
         // This shouldn't ever be the case based on our query, but better safe
         // than sorry.
         \Drupal::logger('Migrate')->notice('Expected an internal link to a "file" but got "' . $href . '"');
+        // Don't want to build a media string for an external file.
         continue;
       }
 
@@ -233,7 +250,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
       // Create a new File Entity for this file.
       try {
-        $file = $this->saveFileEntity($dest);
+        $file = $this->createFileEntity($dest);
         if (empty($file)) {
           throw new Exception("Could not copy " . $src . " and save as " . $dest . ".");
         }
@@ -274,7 +291,6 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       $uri = $this->getRelativeUrl($uri);
       if ($uri === FALSE) {
         // Nothing to do if we can't extract the URI.
-        \Drupal::logger('Migrate')->notice("4:URI extraction failed ($uri).");
         return NULL;
       }
     }

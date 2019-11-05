@@ -81,6 +81,17 @@ trait MediaEntityTrait {
       $media->field_media_in_library = $library;
       $dirty = TRUE;
     }
+
+    if ($targetBundle == "image" && empty($media->image)) {
+      if (NULL == ($file = File::load($fid))) {
+        return NULL;
+      }
+      $media->image[0] = new \stdClass();
+      $media->image[0]->target_id = $fid;
+      $media->image[0]->alt = "Image for " . $filename;
+      $media->image[0]->title = "";
+      $dirty = TRUE;
+    }
     // Create alt text if none exists.
     if ($targetBundle == "image" && empty($media->image[0]->alt)) {
       $media->image[0]->alt = "Image for " . $filename;

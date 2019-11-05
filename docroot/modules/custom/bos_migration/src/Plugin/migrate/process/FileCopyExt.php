@@ -9,7 +9,6 @@ use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\MigrateSkipRowException;
 use Drupal\migrate\Plugin\migrate\process\FileCopy;
-use Drupal\migrate\Plugin\MigrateIdMapInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\Row;
 
@@ -59,6 +58,13 @@ class FileCopyExt extends FileCopy {
     $source = $source ?? $row->getSourceProperty('source_base_path');
     $fid = $row->getSource()['fid'];
 
+    // If the file is a private .
+    if (stripos($destination, "private://")) {
+      $fileOps = $this->fileOps();
+      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - its in the 'private://' directory.", MigrationInterface::MESSAGE_INFORMATIONAL);
+      return $destination;
+    }
+
     // If the migration is globally disabled, then skip file operations.
     if (\Drupal::state()->get("bos_migration.active", 0) == 0) {
       throw new MigrateSkipRowException("State bos_migration.active is missing or false.", FALSE);
@@ -85,10 +91,21 @@ class FileCopyExt extends FileCopy {
     // Save the newly created source.
     $value[0] = $source;
 
+    // If this is an icon, check the map and remap the destination file uri.
+    if ($this->extractExtension($destination) == "svg") {
+      $destination = $this->remapIconUri($destination);
+      if ($this->isExternalFile($destination)) {
+        // This (previously internal) destination has been mapped to an
+        // external file, probably an AWS or google drive.
+        // We do not need to copy anything.
+        // Todo: look at deduping - this file may already be in the table.
+        return $destination;
+      }
+    }
+
     // Check for dups of this file in managed_files using different stategies.
     // First try to load by fid.
-    $files = File::load($fid);
-    if (!isset($files)) {
+    if (NULL != $fid && NULL != ($files = File::load($fid))) {
       // Check for dups of this file in managed_files by original name and size.
       $filesize = NULL;
       if (isset($row->getSource()['filesize'])) {
@@ -105,6 +122,19 @@ class FileCopyExt extends FileCopy {
         $files = $this->getFilesByFilename($clean_filename, $filesize);
       }
     }
+    if (NULL == $fid) {
+      // The $fid is null, this is probably because transform() has been
+      // manually called from RichTextToMediaEmbed.php:process().  Simply put
+      // a link has been found in a rich text box and is being processed
+      // -therefore there will be no $fid at this time.
+      // We can try to match this to an existing $fid - firstly by searching the
+      // full (remapped) uri.
+      if (NULL == $files = $this->getFileEntities($destination)) {
+        // If that doesn't work, attempt to get by the clean_filename.
+        $clean_filename = $this->cleanFilename($destination);
+        $files = $this->getFilesByFilename($clean_filename, NULL);
+      }
+    }
     if (isset($files)) {
       // So there is a file with this name in file_managed.  We don't want
       // to create duplicates, so create a mapping entry and step over this row.
@@ -113,7 +143,7 @@ class FileCopyExt extends FileCopy {
       // directly copying the fid from the d7 tables.
       $file_id = reset($files);
       if ($file_id != $fid) {
-        $this->createMappingEntry($fid, $file_id, $source);
+        $this->createMappingEntry($fid, $file_id, "d7_file");
         // Skip any copying/moving of files for this row, and dont save a
         // mapping entry (we already made on and the default map would be
         // incorrect).
@@ -127,14 +157,14 @@ class FileCopyExt extends FileCopy {
       return $destination;
     }
 
-    // Now move the file.
-    $isDoc = strpos($source, ".pdf")
-            || strpos($source, ".doc")
-            || strpos($source, ".xl");
-    if (!file_exists('/var/www/site-php') && $isDoc) {
-      // Stops copy of docs: (!file_exists('/var/www/site-php') && $isDoc)
-      $fileOps = $this->fileOps();
-      $migrate_executable->saveMessage("Skip file $fileOps on (fid:" . $fid . ") '" . $source . "' - docs not copied.", MigrationInterface::MESSAGE_INFORMATIONAL);
+    // Now move the file, but only move documents if on the production server.
+    $type = reset($this->resolveFileTypeArray($source));
+    if ($type == "document" && !file_exists('/var/www/bostond8/')) {
+      $migrate_executable->saveMessage(t("Skip file @fileOp on (fid:@fid) '@source' - docs not copied.", [
+        "@fileOp" => $this->fileOps(),
+        "@fid" => $fid,
+        "@source" => $source,
+      ]), MigrationInterface::MESSAGE_INFORMATIONAL);
       $result = $destination;
     }
     else {
@@ -161,27 +191,7 @@ class FileCopyExt extends FileCopy {
   protected function createMappingEntry($sourceid, $destid, $source) {
     try {
       $this->migrateExecutable->saveMessage("Remapping fid:" . $sourceid . " => " . $destid . " (" . $source . ")", MigrationInterface::MESSAGE_INFORMATIONAL);
-      $sourceIdValues = $this->row->getSourceIdValues();
-      $fields["sourceid1"] = $sourceIdValues["fid"];
-      $fields += [
-        'source_row_status' => MigrateIdMapInterface::STATUS_IMPORTED,
-        'rollback_action' => MigrateIdMapInterface::ROLLBACK_DELETE,
-        'hash' => $this->row->getHash(),
-      ];
-      $fields["destid1"] = $destid;
-      $fields["last_imported"] = 0;
-      $hash = hash('sha256', serialize(array_map('strval', [$sourceIdValues["fid"]])));
-      $keys = ["source_ids_hash" => $hash];
-
-      \DRUPAL::database()->delete("migrate_map_d7_file")
-        ->condition("sourceid1", $fields["sourceid1"])
-        ->condition("destid1", $destid)
-        ->execute();
-
-      \DRUPAL::database()->merge("migrate_map_d7_file")
-        ->key($keys)
-        ->fields($fields)
-        ->execute();
+      $this->createSimpleMappingEntry($sourceid, $destid, "d7_file", $this->row->getHash());
     }
     catch (\Exception $e) {
       // Got an error. SQL-23000 is a duplicate row entry, thats OK so allow
