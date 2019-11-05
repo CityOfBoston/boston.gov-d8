@@ -601,6 +601,20 @@ class MigrationConfigAlter {
     // Add a default value to field description which is changing type.
     "paragraph__newsletter" => [
       "process" => [
+        "field_description" => [
+          "plugin" => "sub_process",
+          "source" => "field_description",
+          "process" => [
+            [
+              "plugin" => "get",
+              "source" => "field_description",
+            ],
+            [
+              "plugin" => "default_value",
+              "default_value" => "",
+            ],
+          ],
+        ],
         "field_description/0/format" => [
           [
             "plugin" => "default_value",
