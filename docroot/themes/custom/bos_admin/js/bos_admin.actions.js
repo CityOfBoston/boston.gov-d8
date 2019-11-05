@@ -52,3 +52,20 @@
     }
   });
 })(jQuery, this, this.document);
+
+/**
+ * Stops RHS Info Box from scrolling off page
+ */
+(function ($, window, document) {
+  $(document).ready(function () {
+    let anchor = jQuery(".dialog-off-canvas-main-canvas").position().top + 20;
+    $(document).on("scroll", function() {
+      if ($(document).scrollTop() > anchor) {
+        $(".layout-region-node-secondary").addClass("fixed");
+      }
+      else {
+        $(".layout-region-node-secondary").removeClass("fixed");
+      }
+    });
+  });
+})(jQuery, this, this.document);
