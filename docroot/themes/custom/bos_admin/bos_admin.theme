@@ -167,12 +167,6 @@ function bos_admin_preprocess_textarea(&$variables) {
 }
 
 /**
- * Implements hook_editor_js_settings_alter().
- */
-function bos_admin_editor_js_settings_alter(array &$settings) {
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  */
 function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
@@ -546,6 +540,33 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
       }
     }
   }
+
+  // Build out more meaningful error messages.
+  if (!empty($errors = $form_state->getErrors())) {
+    foreach ($errors as $key => &$error) {
+      $key_parts = explode("][", $key);
+      if (!empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
+        $text = $error->getUntranslatedString();
+        if (stripos($text, "collapsed paragraph") !== FALSE) {
+          $text = str_replace("@path:", "<b>@para</b> (@path) - ", $text);
+        }
+        $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"]];
+        $error = new TranslatableMarkup($text, $arguments, $error->getOptions());
+      }
+    }
+    // Write the messages back into the form_state.
+    $form_state->clearErrors();
+    foreach ($errors as $name => $new_error) {
+      $form_state->setErrorByName($name, $new_error);
+    }
+  }
+}
+
+/**
+ * Implements hook_paragraphs_widget_actions_alter().
+ */
+function bos_admin_paragraphs_widget_actions_alter(array &$widget_actions, array &$context) {
+  return;
 }
 
 /**
