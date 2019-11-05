@@ -437,6 +437,11 @@ printf "[migration-step] Reset development environment modules.\n" | tee -a ${lo
 printf "[migration-step] Rebuild auto-path urls.\n" | tee -a ${logfile}
 ${drush} pathauto:aliases-delete canonical_entities:node              # Delete all automatically generated node URL aliases (preserving manually created ones).
 ${drush} pathauto:aliases-generate create canonical_entities:node -q  # Re-generate all node URL aliases.
+if [ -d "/mnt/gfs" ]; then
+  doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'${acquia_env}\', \'bostond8ddb289903\');"
+else
+  doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'drupal\', \'drupal_d7\');"
+fi
 
 # Takes site out of maintenance mode when migration is done.
 printf "[migration-step] Finish off migration: reset caches and maintenance mode.\n" | tee -a ${logfile}

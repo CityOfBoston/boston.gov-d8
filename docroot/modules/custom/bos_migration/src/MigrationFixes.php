@@ -5,6 +5,7 @@ namespace Drupal\bos_migration;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\redirect\Entity\Redirect;
 
 /**
  * Class migrationFixes.
@@ -1306,6 +1307,75 @@ class MigrationFixes {
           ->fields("f", ["fid"])
           ->condition("uri", $dup_file_id);
 
+      }
+    }
+  }
+
+  /**
+   * Recreate deleted url aliases.
+   *
+   * This will update the redirects table with url aliases which were deleted
+   * during migration and nort re-created.
+   *
+   * @param string $d8
+   *   The schema name for the d8 database.
+   * @param string $d7
+   *   The schema name for the d7 database.
+   */
+  public static function fixUnMappedUrlAliases(string $d8 = "", string $d7 = "") {
+    // Find url aliases from D7 that dont exist in D8 and insert
+    // them as redirects into the redirect table.
+    if (empty($d7)) {
+      $d7 = "bostond8ddb289903";
+    }
+    if (empty($d8)) {
+      $d8 = "bostond8dev";
+    }
+    $query_string = "        
+      INSERT INTO $d8.redirect (
+        type, uuid, language, hash, 
+        uid, redirect_source__path,
+        redirect_source__query, redirect_redirect__uri, redirect_redirect__title,
+        redirect_redirect__options, status_code, created)
+      SELECT 
+        'redirect', uuid(), 'und', concat('unhashed-', sha(concat(unix_timestamp(),'internal:/', d7.alias))),
+        '0', d7.alias, 
+        'N', concat('internal:/', d7.source), '', 
+        'a:0:{}', 301, unix_timestamp()
+      FROM $d8.url_alias d8
+        RIGHT OUTER JOIN $d7.url_alias d7 ON d8.source = concat('/', d7.source) and d8.alias = concat('/', d7.alias)
+      WHERE d8.pid IS NULL
+        AND d7.source LIKE 'node%'";
+    \Drupal::database()->query($query_string);
+
+    // Now find these and generate and update the correct hash's.
+    $urls = \Drupal::database()->select("redirect", "r")
+      ->fields("r", [
+        "rid",
+        "redirect_source__path",
+        "redirect_redirect__uri",
+        "language",
+      ])
+      ->condition("hash", "unhashed-%", "LIKE")
+      ->execute()
+      ->fetchAllAssoc("rid");
+    foreach ($urls as $rid => $url) {
+      $hash = Redirect::generateHash($url->redirect_source__path, [], $url->language);
+      try {
+        $result = \Drupal::database()->update("redirect")
+          ->fields([
+            "hash" => $hash ?: $url->redirect_redirect__uri,
+          ])
+          ->condition("rid", $rid, "=")
+          ->execute();
+      }
+      catch (\Exception $e) {
+        if ($e->getCode() == 23000) {
+          // Remove this duplicate.
+          \Drupal::database()->delete("redirect")
+            ->condition("rid", $rid, "=")
+            ->execute();
+        }
       }
     }
   }
