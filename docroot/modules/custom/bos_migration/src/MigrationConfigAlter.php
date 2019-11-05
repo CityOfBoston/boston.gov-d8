@@ -606,10 +606,6 @@ class MigrationConfigAlter {
           "source" => "field_description",
           "process" => [
             [
-              "plugin" => "get",
-              "source" => "field_description",
-            ],
-            [
               "plugin" => "default_value",
               "default_value" => "",
             ],
@@ -1202,6 +1198,7 @@ class MigrationConfigAlter {
 
     Drupal::logger("migration")
       ->info("bos_migration configuration rebuilt.");
+    printf("[notice] bos_migration configuration rebuilt.\n");
 
     // Return the altered migration array.
     return $this->migrations;
