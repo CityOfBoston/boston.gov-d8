@@ -1,18 +1,18 @@
-uuid: 1c89679b-6b4d-4cf3-b789-787f433e9cef
+uuid: ce222f44-8ef4-4f40-8769-00fec6181d07
 langcode: en
 status: true
 dependencies:
   config:
     - node.type.department_profile
-id: node.department_profile.title
-field_name: title
+id: node.department_profile.changed
+field_name: changed
 entity_type: node
 bundle: department_profile
-label: 'Department Name'
-description: ''
-required: true
+label: Changed
+description: 'The time that the node was last edited.'
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: string
+field_type: changed

@@ -27,8 +27,9 @@ function paragraph_summary_form_alter(&$form, FormStateInterface $form_state, $f
         $elements = $fsFields[$form_field]["paragraphs"];
         foreach (Element::getVisibleChildren($widget) as $field_key => $field) {
           if (is_numeric($field)) {
-            $para_field = &$widget[$field_key];
-            paragraph_summary_widget_summary($para_field, $elements, $field_key);
+            if (!empty($para_field = &$widget[$field_key])) {
+              paragraph_summary_widget_summary($para_field, $elements, $field_key);
+            }
           }
         }
       }
