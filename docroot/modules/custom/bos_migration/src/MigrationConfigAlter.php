@@ -601,6 +601,16 @@ class MigrationConfigAlter {
     // Add a default value to field description which is changing type.
     "paragraph__newsletter" => [
       "process" => [
+        "field_description" => [
+          "plugin" => "sub_process",
+          "source" => "field_description",
+          "process" => [
+            [
+              "plugin" => "default_value",
+              "default_value" => "",
+            ],
+          ],
+        ],
         "field_description/0/format" => [
           [
             "plugin" => "default_value",
@@ -624,6 +634,20 @@ class MigrationConfigAlter {
             "target_id" => "@_view/0",
             "display_id" => "@_view/1",
             "arguments" => "vargs",
+          ],
+        ],
+        "field_component_theme" => [
+          "plugin" => "sub_process",
+          "source" => "field_component_theme",
+          "process" => [
+            [
+              "plugin" => "get",
+              "source" => "field_component_theme",
+            ],
+            [
+              "plugin" => "default_value",
+              "default_value" => "w",
+            ],
           ],
         ],
       ],
@@ -1174,6 +1198,7 @@ class MigrationConfigAlter {
 
     Drupal::logger("migration")
       ->info("bos_migration configuration rebuilt.");
+    printf("[notice] bos_migration configuration rebuilt.\n");
 
     // Return the altered migration array.
     return $this->migrations;
