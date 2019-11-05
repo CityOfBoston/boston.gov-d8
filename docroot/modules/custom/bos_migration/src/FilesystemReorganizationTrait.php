@@ -578,11 +578,11 @@ trait FilesystemReorganizationTrait {
     if ($fid != 0) {
       $fields["fid"] = $fid;
     }
-    $entity = \Drupal::entityTypeManager()
+    $file_entity = \Drupal::entityTypeManager()
       ->getStorage('file')
       ->create($fields);
-    $entity->save();
-    return $entity;
+    $file_entity->save();
+    return $file_entity;
   }
 
   /**

@@ -1154,20 +1154,20 @@ class MigrationFixes {
           }
           $infinite = ($infinite ?? 0);
 
-          $entity = \Drupal::entityTypeManager()->getStorage("paragraph");
+          $paragraph = \Drupal::entityTypeManager()->getStorage("paragraph");
           if ($source_table == "field_revision_field_date") {
-            $entity = $entity->loadRevision($source_row->revision_id);
+            $paragraph = $paragraph->loadRevision($source_row->revision_id);
           }
           else {
-            $entity = $entity->load($source_row->entity_id);
+            $paragraph = $paragraph->load($source_row->entity_id);
           }
-          if (!empty($entity)) {
-            $entity->field_enabled = $enabled;
-            $entity->field_recurrence->value = $start_date;
-            $entity->field_recurrence->end_value = $end_date;
-            $entity->field_recurrence->rrule = $rules;
-            $entity->field_recurrence->infinite = $infinite;
-            $entity->save();
+          if (!empty($paragraph)) {
+            $paragraph->field_enabled = $enabled;
+            $paragraph->field_recurrence->value = $start_date;
+            $paragraph->field_recurrence->end_value = $end_date;
+            $paragraph->field_recurrence->rrule = $rules;
+            $paragraph->field_recurrence->infinite = $infinite;
+            $paragraph->save();
             $cnt++;
           }
         }
@@ -1184,12 +1184,12 @@ class MigrationFixes {
     if (!empty($nodes)) {
       $cnt = 0;
       foreach ($nodes as $node) {
-        $entity = \Drupal::entityTypeManager()->getStorage("node")
+        $node_status_item = \Drupal::entityTypeManager()->getStorage("node")
           ->load($node->id());
-        if (!empty($entity) && !isset($entity->field_enabled->value)) {
-          $entity->field_weight = 0;
-          $entity->field_enabled = 1;
-          $entity->save();
+        if (!empty($node_status_item) && !isset($node_status_item->field_enabled->value)) {
+          $node_status_item->field_weight = 0;
+          $node_status_item->field_enabled = 1;
+          $node_status_item->save();
           $cnt++;
         }
       }
