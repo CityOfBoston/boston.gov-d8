@@ -98,8 +98,8 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
-#    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true remote_host=10.0.0.122 idekey=PHPSTORM" && /app/vendor/bin/drush
-    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216" && /app/vendor/bin/drush
+    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true remote_host=10.0.0.122 idekey=PHPSTORM" && /app/vendor/bin/drush
+#    - export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216" && /app/vendor/bin/drush
 #    - /app/vendor/bin/drush
 
   drupal:
