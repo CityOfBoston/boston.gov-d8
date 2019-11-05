@@ -1,18 +1,20 @@
-uuid: 1c89679b-6b4d-4cf3-b789-787f433e9cef
+uuid: 35eb2497-0762-4a41-906f-927fbac41eef
 langcode: en
 status: true
 dependencies:
   config:
     - node.type.department_profile
-id: node.department_profile.title
-field_name: title
+  module:
+    - path
+id: node.department_profile.path
+field_name: path
 entity_type: node
 bundle: department_profile
-label: 'Department Name'
+label: 'URL alias'
 description: ''
-required: true
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings: {  }
-field_type: string
+field_type: path
