@@ -208,7 +208,6 @@ class EntityRevisionsSaveSubscriber implements EventSubscriberInterface {
 
     elseif ($event->getMigration()->getBaseId() == "d7_file") {
       // Check if we need to create a media entity.
-
       // Rename the incoming filenames using cleanfilename.
       $filename = $row->getDestinationProperty("filename");
       $filename = FilesystemReorganizationTrait::cleanFilename($filename);

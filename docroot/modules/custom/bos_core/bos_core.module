@@ -1110,7 +1110,7 @@ function _bos_core_sync_assets() {
     }
   };
   $findLastIds = function (&$last_file_fid, &$last_media_vid) {
-    // Get the starting value for the fid in files_managed.  We need to make this
+    // Get the starting value for the fid in files_managed. We need to make this
     // larger than anything we are expecting to avoid having these overwritten,
     // or these overwriting files that will be exported later.
     // First, set to a big number.
@@ -1145,7 +1145,7 @@ function _bos_core_sync_assets() {
     "Imported" => 0,
     "Media" => 0,
     "Found" => 0,
-    "mFound" => 0
+    "mFound" => 0,
   ];
   $manifest_library = [];
   $manifest = fopen($manifest_file, "r");
