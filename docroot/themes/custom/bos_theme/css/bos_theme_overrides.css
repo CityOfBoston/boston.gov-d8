@@ -1007,3 +1007,14 @@ div[class*=embedded-ckeditor].align-left {
   width: auto;
   height: 100px;
 }
+
+/*
+David:
+Where: How-to nodes.
+What: Ensure tabs across top are loacted properly Issue #783.
+ */
+@media screen and (min-width: 1280px) {
+  .node-type-how-to .tab {
+    display: flex;
+  }
+}
