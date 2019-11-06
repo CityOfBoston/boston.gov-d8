@@ -83,7 +83,10 @@ function node_article_preprocess_node__article(&$variables) {
  * Implements hook_ckeditor_css_alter().
  */
 function node_article_ckeditor_css_alter(array &$css, Editor $editor) {
-  $css[] = drupal_get_path("module", "node_article") . "/css/ckeditor.boston.article.css";
+  if (\Drupal::routeMatch()->getParameters()->has("node")
+    && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "article") {
+    $css[] = drupal_get_path("module", "node_article") . "/css/ckeditor.boston.article.css";
+  }
 }
 
 /**
