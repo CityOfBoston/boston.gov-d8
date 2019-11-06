@@ -5,6 +5,7 @@
  * Main file for the bos_migration module.
  */
 
+use Drupal\Component\Utility\Bytes;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateSkipRowException;
 use Drupal\migrate\Plugin\MigrateIdMapInterface;
@@ -13,6 +14,8 @@ use Drupal\migrate\Plugin\MigrateSourceInterface;
 use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\bos_migration\MigrationConfigAlter;
 use Drupal\bos_migration\MigrationPrepareRow;
+use Drupal\bos_migration\MemoryManagementTrait;
+use Drupal\bos_migration\FilesystemReorganizationTrait;
 
 /**
  * Implements hook_migration_plugins_alter().
@@ -30,6 +33,18 @@ function bos_migration_migration_plugins_alter(array &$migrations) {
  */
 function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $source, MigrationInterface $migration) {
   // Don't run our stuff if idlist arguments to drush are provided.
+  $limit = trim(ini_get('memory_limit'));
+  if (empty($limit)) {
+    // Set limit to 512 because we have nothing.
+    $limit = 512 * Bytes::KILOBYTE * Bytes::KILOBYTE;
+    ini_set('memory_limit', $limit . "M");
+  }
+  elseif ($limit == '-1') {
+    // Set limit to 512 even though we have unlimited.
+    $limit = 512 * Bytes::KILOBYTE * Bytes::KILOBYTE;
+    ini_set('memory_limit', $limit . "M");
+  }
+
   foreach ($_SERVER["argv"] as $arg) {
     if (strpos($arg, "--idlist") !== FALSE) {
       $filter = end(explode("=", $arg));
