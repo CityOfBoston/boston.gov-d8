@@ -35,7 +35,6 @@ function paragraph_summary_form_alter(&$form, FormStateInterface $form_state, $f
       }
     }
   }
-
 }
 
 /**
@@ -98,7 +97,9 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
             foreach ($element["entity"]->{$subform_field} as $element_key => $element_para) {
               $type = $widget[$element_key]["#paragraph_type"];
               $subelements[$element_key]["display"] = EntityFormDisplay::load("paragraph.$type.default");
-              $subelements[$element_key]["entity"] = Paragraph::load($element_para->target_id);
+              if (!empty($element_para->target_id)) {
+                $subelements[$element_key]["entity"] = Paragraph::load($element_para->target_id);
+              }
               $subelements[$element_key]["mode"] = (isset($widget[$element_key]["top"]["actions"]["actions"]["edit_button"]) ? "closed" : "edit");
             }
             if (!empty($subelements)) {
@@ -110,7 +111,6 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
               }
             }
           }
-
         }
       }
     }
