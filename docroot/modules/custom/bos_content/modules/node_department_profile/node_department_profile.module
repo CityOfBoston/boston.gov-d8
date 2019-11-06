@@ -83,7 +83,10 @@ function node_department_profile_form_node_department_profile_edit_form_alter(&$
  * Implements hook_ckeditor_css_alter().
  */
 function node_department_profile_ckeditor_css_alter(array &$css, Editor $editor) {
-  $css[] = drupal_get_path("module", "node_department_profile") . "/css/ckeditor.boston.department_profile.css";
+  if (\Drupal::routeMatch()->getParameters()->has("node")
+    && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "department_profile") {
+    $css[] = drupal_get_path("module", "node_department_profile") . "/css/ckeditor.boston.department_profile.css";
+  }
 }
 
 /**
