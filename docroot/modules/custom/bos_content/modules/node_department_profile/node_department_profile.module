@@ -5,7 +5,9 @@
  * Provides a department_profile entity type.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\editor\Entity\Editor;
 
 /**
  * Implements hook_theme().
@@ -60,6 +62,29 @@ function template_preprocess_node__node_department_profile(array &$variables) {
   }
 }
 
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function node_department_profile_form_node_department_profile_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add styles for the CKEditor boxes on the admin forms.
+  _bos_admin_add_ckeditor_classes($form, [
+    "field_intro_text" => [
+      "html" => "department-info-wrapper desktop-100",
+      "body" => "intro-text supporting-text squiggle-border-bottom column mobile-100 desktop-66-left",
+    ],
+    "body" => [
+      "html" => "department-info-wrapper desktop-100",
+      "body" => "body mobile-100 desktop-66-left",
+    ],
+  ]);
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function node_department_profile_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = drupal_get_path("module", "node_department_profile") . "/css/ckeditor.boston.department_profile.css";
+}
 /**
  * Implements hook_preprocess_HOOK().
  */
