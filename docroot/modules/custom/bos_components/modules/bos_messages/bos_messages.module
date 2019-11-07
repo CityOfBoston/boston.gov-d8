@@ -35,6 +35,12 @@ function bos_messages_theme($existing, $type, $theme, $path) {
  */
 function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form["#attached"]["library"][] = "bos_messages/mod.assets";
+  _bos_admin_add_ckeditor_classes($form, [
+    "field_message" => [
+      "html" => "paragraphs-item-message-for-the-day g--24",
+      "body" => "cds-d t--subinfo",
+    ],
+  ]);
 }
 
 /**
@@ -227,4 +233,13 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
     'attributes' => $attributes,
     'content' => $markup,
   ];
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function bos_messages_ckeditor_css_alter(array &$css, Editor $editor) {
+  if ($editor->getThirdPartySetting("cob", "entity")["entityType"] == "status_item") {
+    $css[] = drupal_get_path("module", "bos_messages") . "/css/ckeditor.boston.messages.css";
+  }
 }
