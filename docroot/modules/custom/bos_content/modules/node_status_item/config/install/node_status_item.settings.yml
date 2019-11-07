@@ -8,7 +8,7 @@ setup_data:
     uid: 206
     field_enabled: 1
     field_icon:
-      target_id: 7211
+      target_id: 163147
       height: 64
       width: 64
     field_weight: -6
@@ -20,16 +20,16 @@ setup_data:
         field_enabled: 0
         field_use_alert: 1
         field_message:
-          value: "<p>There is no daytime street cleaning today. Overnight street cleaning\_is on a normal schedule.</p>"
+          value: "<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>"
           format: filtered_html
         field_link:
-          target_id: 48606
-          target_revision_id: 9119156
+          target_id: 369346
+          target_revision_id: 8740631
         field_recurrence:
-          infinite: 0
-          value: '2019-08-08'
-          end_value: '2019-08-08'
-          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190808T040000Z
+          infinite: 1
+          value: '2019-11-06'
+          end_value: '2019-11-07'
+          rrule: FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
           timezone: America/New_York
       1:
         status: 1
@@ -37,31 +37,15 @@ setup_data:
         field_use_alert: 1
         field_message:
           format: filtered_html
-          value: '<p>Day time street cleaning is canceled due to the holiday. Overnight street cleaning is running on a normal schedule.</p>'
+          value: '<p>There is no daytime street cleaning. Overnight street cleaning is on a normal schedule.</p>'
         field_link:
-          target_id: 48606
-          target_revision_id: 9119156
-        field_recurrence:
-          infinite: 0
-          value: '2019-08-08'
-          end_value: '2019-08-08'
-          rrule: FREQ=DAILY;INTERVAL=1;UNTIL=20190808T040000Z
-          timezone: America/New_York
-      2:
-        status: 1
-        field_enabled: 1
-        field_use_alert: 0
-        field_message:
-          format: filtered_html
-          value: '<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>'
-        field_link:
-          target_id: 48606
-          target_revision_id: 9119156
+          target_id: 369351
+          target_revision_id: 8740641
         field_recurrence:
           infinite: 1
-          value: '2019-08-08'
-          end_value: '2019-08-09'
-          rrule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
+          value: '2019-11-06'
+          end_value: '2019-11-07'
+          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SA,SU
           timezone: America/New_York
   1:
     title: 'City building hours'
@@ -70,7 +54,7 @@ setup_data:
     uid: 206
     field_enabled: 1
     field_icon:
-      target_id: 64026
+      target_id: 163087
       height: 64
       width: 64
     field_weight: -5
@@ -180,7 +164,7 @@ setup_data:
     uid: 111
     field_enabled: 1
     field_icon:
-      target_id: 7306
+      target_id: 163153
       height: 64
       width: 64
     field_weight: -4
@@ -274,7 +258,7 @@ setup_data:
     uid: 206
     field_enabled: 1
     field_icon:
-      target_id: 7386
+      target_id: 163151
       height: 64
       width: 64
     field_weight: -3
@@ -352,7 +336,7 @@ setup_data:
     uid: 206
     field_enabled: 1
     field_icon:
-      target_id: 7311
+      target_id: 163122
       height: 64
       width: 64
     field_weight: -2
@@ -414,7 +398,7 @@ setup_data:
     uid: 206
     field_enabled: 0
     field_icon:
-      target_id: 20326
+      target_id: 163111
       height: 64
       width: 64
     field_weight: -1
@@ -460,7 +444,7 @@ setup_data:
     uid: 206
     field_enabled: 0
     field_icon:
-      target_id: 20336
+      target_id: 163096
       height: 64
       width: 64
     field_weight: 10
@@ -497,5 +481,95 @@ setup_data:
           value: '2019-03-04'
           end_value: '2019-03-04'
           infinite: 1
+          rrule: null
+          timezone: America/New_York
+  7:
+    title: 'State offices'
+    field_title: 'State offices'
+    status: 0
+    uid: 206
+    field_enabled: 0
+    field_icon:
+      target_id: 163146
+      height: 64
+      width: 64
+    field_weight: 10
+    field_messages:
+      entity_type: paragraph
+      type: message_for_the_day
+      0:
+        status: 1
+        field_enabled: 0
+        field_use_alert: 1
+        field_message:
+          format: filtered_html
+          value: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>'
+        field_link:
+          target_id: 199381
+          target_revision_id: 9119114
+        field_recurrence:
+          value: '2019-03-03'
+          end_value: '2019-03-03'
+          infinite: 0
+          rrule: null
+          timezone: America/New_York
+  8:
+    title: 'Parking ban'
+    field_title: 'Parking ban'
+    status: 0
+    uid: 206
+    field_enabled: 0
+    field_icon:
+      target_id: 163136
+      height: 64
+      width: 64
+    field_weight: 10
+    field_messages:
+      entity_type: paragraph
+      type: message_for_the_day
+      0:
+        status: 1
+        field_enabled: 0
+        field_use_alert: 1
+        field_message:
+          format: filtered_html
+          value: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>'
+        field_link:
+          target_id: 199381
+          target_revision_id: 9119114
+        field_recurrence:
+          value: '2019-03-03'
+          end_value: '2019-03-03'
+          infinite: 0
+          rrule: null
+          timezone: America/New_York
+  9:
+    title: 'Public Transit'
+    field_title: 'Public Transit'
+    status: 0
+    uid: 206
+    field_enabled: 0
+    field_icon:
+      target_id: 163148
+      height: 64
+      width: 64
+    field_weight: 10
+    field_messages:
+      entity_type: paragraph
+      type: message_for_the_day
+      0:
+        status: 1
+        field_enabled: 0
+        field_use_alert: 1
+        field_message:
+          format: filtered_html
+          value: '<p>With school canceled, the City''s Youth Snow Day Drop-in Program will run from 7:30 a.m. - 6 p.m. tomorrow.</p>'
+        field_link:
+          target_id: 199381
+          target_revision_id: 9119114
+        field_recurrence:
+          value: '2019-03-03'
+          end_value: '2019-03-03'
+          infinite: 0
           rrule: null
           timezone: America/New_York
