@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.paragraph.field_commission
     - paragraphs.paragraphs_type.commission_members
+    - taxonomy.vocabulary.commissions
 _core:
   default_config_hash: hKskqDPpOwBaMu-lVoq7-QUA-i-DDWIeTB3Pw5knYUs
 id: paragraph.commission_members.field_commission
@@ -19,5 +20,12 @@ default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
-  handler_settings: {  }
+  handler_settings:
+    target_bundles:
+      commissions: commissions
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference
