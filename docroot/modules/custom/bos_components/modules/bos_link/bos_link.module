@@ -89,6 +89,27 @@ function bos_link_preprocess_paragraph(&$vars) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_link_preprocess_paragraph__internal_link(&$variables) {
+  // Try to catch where the link text has not been provided, and use the
+  // title of the internally referenced node.
+  $paragraph = &$variables['paragraph'];
+  if (empty($paragraph->field_internal_link->title)) {
+    $uri = explode(":", $paragraph->field_internal_link->uri);
+    $scheme = $uri[0];
+    if ($scheme == "entity" && count($uri) > 1) {
+      $parts = explode("/", $uri[1]);
+      $entity = $parts[0] ?: NULL;
+      $id = $parts[1] ?: NULL;
+      if (NULL != ($ent = \Drupal::entityTypeManager()->getStorage($entity)->load($id))) {
+        $paragraph->field_internal_link->title = ($ent->title ?: "");
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_field().
  */
 function bos_link_preprocess_field(&$vars) {
@@ -112,6 +133,15 @@ function bos_link_preprocess_field(&$vars) {
   if ($field_name == 'field_internal_link') {
     if ($vars["element"]["#view_mode"] == "cta_button") {
       $vars['items'][0]['content']['#options']['attributes']['class'][] = 'btn';
+    }
+    // Try to catch where the link text has not been provided, and use the
+    // title of the internally referenced node. (the hook_paragraph above should
+    // already have handled this...).
+    if (empty($vars["element"]["#title"])
+      && !empty($id = $vars["element"][0]["#url"]->getRouteParameters()["node"])) {
+      if (NULL != ($ent = \Drupal::entityTypeManager()->getStorage("node")->load($id))) {
+        $vars["element"]["#title"] = ($ent->title ?: "");
+      }
     }
   }
 }
