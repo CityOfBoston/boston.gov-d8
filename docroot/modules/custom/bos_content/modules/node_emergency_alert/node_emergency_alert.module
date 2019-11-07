@@ -5,8 +5,10 @@
  * Provides an emergency alert entity type.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\core\Template\Attribute;
+use Drupal\editor\Entity\Editor;
 use Drupal\views\Views;
 
 /**
@@ -78,6 +80,30 @@ function node_emergency_alert_preprocess_block(&$variables) {
   }
   // Ensure there is no label.
   unset($variables["label"]);
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function node_emergency_alert_form_node_emergency_alert_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add styles for the CKEditor boxes on the admin forms.
+  _bos_admin_add_ckeditor_classes($form, [
+    "field_description" => [
+      "html" => "b--cc desktop-100 node-emergency-alert b--dark-blue",
+      "body" => "lh--000  t--sans b--dark-blue",
+    ],
+  ]);
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function node_emergency_alert_ckeditor_css_alter(array &$css, Editor $editor) {
+  if (\Drupal::routeMatch()->getParameters()->has("node")
+    && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "emergency_alert") {
+    $css[] = drupal_get_path("module", "node_emergency_alert") . "/css/emergency_alert.boston.css";
+    $css[] = drupal_get_path("module", "node_emergency_alert") . "/css/ckeditor.boston.emergency_alert.css";
+  }
 }
 
 /**

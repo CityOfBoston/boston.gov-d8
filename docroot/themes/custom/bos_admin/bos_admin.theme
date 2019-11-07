@@ -544,14 +544,16 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
   // Build out more meaningful error messages.
   if (!empty($errors = $form_state->getErrors())) {
     foreach ($errors as $key => &$error) {
-      $key_parts = explode("][", $key);
-      if (!empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
-        $text = $error->getUntranslatedString();
-        if (stripos($text, "collapsed paragraph") !== FALSE) {
-          $text = str_replace("@path:", "<b>@para</b> (@path) - ", $text);
+      if (strpos($error, "][") != FALSE) {
+        $key_parts = explode("][", $key);
+        if (!empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
+          $text = $error->getUntranslatedString();
+          if (stripos($text, "collapsed paragraph") !== FALSE) {
+            $text = str_replace("@path:", "<b>@para</b> (@path) - ", $text);
+          }
+          $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"]];
+          $error = new TranslatableMarkup($text, $arguments, $error->getOptions());
         }
-        $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"]];
-        $error = new TranslatableMarkup($text, $arguments, $error->getOptions());
       }
     }
     // Write the messages back into the form_state.

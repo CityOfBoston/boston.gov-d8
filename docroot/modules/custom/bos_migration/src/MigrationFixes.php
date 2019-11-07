@@ -5,6 +5,7 @@ namespace Drupal\bos_migration;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\redirect\Entity\Redirect;
 
 /**
  * Class migrationFixes.
@@ -1154,20 +1155,20 @@ class MigrationFixes {
           }
           $infinite = ($infinite ?? 0);
 
-          $entity = \Drupal::entityTypeManager()->getStorage("paragraph");
+          $paragraph = \Drupal::entityTypeManager()->getStorage("paragraph");
           if ($source_table == "field_revision_field_date") {
-            $entity = $entity->loadRevision($source_row->revision_id);
+            $paragraph = $paragraph->loadRevision($source_row->revision_id);
           }
           else {
-            $entity = $entity->load($source_row->entity_id);
+            $paragraph = $paragraph->load($source_row->entity_id);
           }
-          if (!empty($entity)) {
-            $entity->field_enabled = $enabled;
-            $entity->field_recurrence->value = $start_date;
-            $entity->field_recurrence->end_value = $end_date;
-            $entity->field_recurrence->rrule = $rules;
-            $entity->field_recurrence->infinite = $infinite;
-            $entity->save();
+          if (!empty($paragraph)) {
+            $paragraph->field_enabled = $enabled;
+            $paragraph->field_recurrence->value = $start_date;
+            $paragraph->field_recurrence->end_value = $end_date;
+            $paragraph->field_recurrence->rrule = $rules;
+            $paragraph->field_recurrence->infinite = $infinite;
+            $paragraph->save();
             $cnt++;
           }
         }
@@ -1184,12 +1185,12 @@ class MigrationFixes {
     if (!empty($nodes)) {
       $cnt = 0;
       foreach ($nodes as $node) {
-        $entity = \Drupal::entityTypeManager()->getStorage("node")
+        $node_status_item = \Drupal::entityTypeManager()->getStorage("node")
           ->load($node->id());
-        if (!empty($entity) && !isset($entity->field_enabled->value)) {
-          $entity->field_weight = 0;
-          $entity->field_enabled = 1;
-          $entity->save();
+        if (!empty($node_status_item) && !isset($node_status_item->field_enabled->value)) {
+          $node_status_item->field_weight = 0;
+          $node_status_item->field_enabled = 1;
+          $node_status_item->save();
           $cnt++;
         }
       }
@@ -1306,6 +1307,75 @@ class MigrationFixes {
           ->fields("f", ["fid"])
           ->condition("uri", $dup_file_id);
 
+      }
+    }
+  }
+
+  /**
+   * Recreate deleted url aliases.
+   *
+   * This will update the redirects table with url aliases which were deleted
+   * during migration and nort re-created.
+   *
+   * @param string $d8
+   *   The schema name for the d8 database.
+   * @param string $d7
+   *   The schema name for the d7 database.
+   */
+  public static function fixUnMappedUrlAliases(string $d8 = "", string $d7 = "") {
+    // Find url aliases from D7 that dont exist in D8 and insert
+    // them as redirects into the redirect table.
+    if (empty($d7)) {
+      $d7 = "bostond8ddb289903";
+    }
+    if (empty($d8)) {
+      $d8 = "bostond8dev";
+    }
+    $query_string = "        
+      INSERT INTO $d8.redirect (
+        type, uuid, language, hash, 
+        uid, redirect_source__path,
+        redirect_source__query, redirect_redirect__uri, redirect_redirect__title,
+        redirect_redirect__options, status_code, created)
+      SELECT 
+        'redirect', uuid(), 'und', concat('unhashed-', sha(concat(unix_timestamp(),'internal:/', d7.alias))),
+        '0', d7.alias, 
+        'N', concat('internal:/', d7.source), '', 
+        'a:0:{}', 301, unix_timestamp()
+      FROM $d8.url_alias d8
+        RIGHT OUTER JOIN $d7.url_alias d7 ON d8.source = concat('/', d7.source) and d8.alias = concat('/', d7.alias)
+      WHERE d8.pid IS NULL
+        AND d7.source LIKE 'node%'";
+    \Drupal::database()->query($query_string);
+
+    // Now find these and generate and update the correct hash's.
+    $urls = \Drupal::database()->select("redirect", "r")
+      ->fields("r", [
+        "rid",
+        "redirect_source__path",
+        "redirect_redirect__uri",
+        "language",
+      ])
+      ->condition("hash", "unhashed-%", "LIKE")
+      ->execute()
+      ->fetchAllAssoc("rid");
+    foreach ($urls as $rid => $url) {
+      $hash = Redirect::generateHash($url->redirect_source__path, [], $url->language);
+      try {
+        $result = \Drupal::database()->update("redirect")
+          ->fields([
+            "hash" => $hash ?: $url->redirect_redirect__uri,
+          ])
+          ->condition("rid", $rid, "=")
+          ->execute();
+      }
+      catch (\Exception $e) {
+        if ($e->getCode() == 23000) {
+          // Remove this duplicate.
+          \Drupal::database()->delete("redirect")
+            ->condition("rid", $rid, "=")
+            ->execute();
+        }
       }
     }
   }
