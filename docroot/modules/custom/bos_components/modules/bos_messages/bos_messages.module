@@ -7,6 +7,8 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -33,6 +35,12 @@ function bos_messages_theme($existing, $type, $theme, $path) {
  */
 function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form["#attached"]["library"][] = "bos_messages/mod.assets";
+  _bos_admin_add_ckeditor_classes($form, [
+    "field_message" => [
+      "html" => "paragraphs-item-message-for-the-day g--24",
+      "body" => "cds-d t--subinfo",
+    ],
+  ]);
 }
 
 /**
@@ -190,11 +198,48 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
  */
 function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_widget, array $para, array $attributes) {
   $attributes["class"][] = $para["entity"]->field_enabled->value ? "cob-para-enabled" : "cob-para-disabled";
-  $content = $form_widget["top"]["summary"]["fields_info"]["#summary"]["content"];
-  $markup = html_entity_decode(strip_tags($content[0]));
-  $markup = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $markup);
+  $at_settings = [
+    'word_boundary' => TRUE,
+    'ellipsis' => TRUE,
+    'max_length' => 30,
+  ];
+  $message = html_entity_decode(strip_tags($para["entity"]->get("field_message")->value));
+  $message = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $message) ?: "";
+  $message = advanced_text_formatter_trim_text($message, $at_settings);
+  $markup[] = Markup::create("<span class='body-text'>" . $message . "</span>");
+  $pattern = $para["entity"]->get("field_recurrence");
+  $patt = explode(";", $pattern->rrule);
+  foreach ($patt as $key => $value) {
+    $parts = explode("=", $value);
+    $pattern->{$parts[0]} = $parts[1];
+  }
+  $end = "";
+  if (!empty($pattern->UNTIL)) {
+    $end = "until " . \Drupal::service('date.formatter')
+      ->format(strtotime($pattern->UNTIL), "custom", "M d Y");
+  }
+  $recur = t("every @interval @freq @until", [
+    "@interval" => $pattern->INTERVAL ?: "",
+    "@freq" => ($pattern->FREQ == "DAILY" ? "day" : "week"),
+    "@until" => $end,
+  ]);
+  $pattern_msg = t("From: @from, @recur", [
+    "@from" => \Drupal::service('date.formatter')->format(strtotime($pattern->value), "custom", "M d Y"),
+    "@recur" => $recur,
+  ]);
+  $markup[] = Markup::create("<span class='info'>" . $pattern_msg . "</span>");
+
   return [
     'attributes' => $attributes,
-    'content' => [$markup],
+    'content' => $markup,
   ];
+}
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ */
+function bos_messages_ckeditor_css_alter(array &$css, Editor $editor) {
+  if ($editor->getThirdPartySetting("cob", "entity")["entityType"] == "status_item") {
+    $css[] = drupal_get_path("module", "bos_messages") . "/css/ckeditor.boston.messages.css";
+  }
 }
