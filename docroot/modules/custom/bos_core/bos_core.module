@@ -599,14 +599,14 @@ function bos_core_ckeditor_css_alter(array &$css, Editor $editor) {
  * Implements hook_ENTITY_TYPE_load().
  */
 function bos_core_editor_load(array $entities) {
-  foreach($entities as $filter => $editor) {
+  foreach ($entities as $filter => $editor) {
     if (\Drupal::routeMatch()->getParameters()->has("node")) {
       $node = \Drupal::routeMatch()->getParameters()->get("node");
       $entity_array = [
         "entityType" => $node->getType(),
         "id" => $node->id(),
       ];
-      foreach($node->getFields() as $child => $item) {
+      foreach ($node->getFields() as $child => $item) {
         if (strpos($child, "field_") !== FALSE) {
           if ($item->getFieldDefinition()->get("field_type") == "entity_reference_revisions") {
             $entity_array[$child] = $item->getValue();
