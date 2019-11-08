@@ -1018,3 +1018,14 @@ What: Ensure tabs across top are loacted properly Issue #783.
     display: flex;
   }
 }
+
+/*
+David:
+Where:  public.css override in views-view-fields--news-and-announcements.html.twig and
+        views-view-fields--events-and-notices.html.twig.
+What: Replace the ribbon currently linked to https://patterns.boston.gov/images/global/icons/ribbon.svg to new
+      //assets.boston.gov location..
+ */
+.thumb-wrapper .date-flag {
+  background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);
+}
