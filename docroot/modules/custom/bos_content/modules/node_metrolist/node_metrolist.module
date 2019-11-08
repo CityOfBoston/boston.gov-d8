@@ -15,6 +15,11 @@ function node_metrolist_theme() {
     'node__metrolist_affordable_housing' => [
       'render element' => 'elements',
     ],
+    'views_view_table__metrolist_affordable_housing__page' => [
+      'base hook' => 'views',
+      'path' => 'modules/custom/bos_content/modules/node_metrolist/templates',
+      'render element' => 'elements',
+    ],
   ];
 }
 
