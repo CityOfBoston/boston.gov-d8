@@ -19,7 +19,9 @@ dependencies:
     - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
     - field.field.node.metrolist_affordable_housing.field_mah_zipcode
     - node.type.metrolist_affordable_housing
+    - workflows.workflow.unmanaged_workflow
   module:
+    - content_moderation
     - datetime
     - field_group
     - link
@@ -52,7 +54,6 @@ third_party_settings:
       weight: 20
       format_type: tab
       format_settings:
-        label: 'Imported Data'
         formatter: closed
         description: "<b>Data imported from salesforce.</b><br/>\r\nNOTE: Any changes made here will be overwritten on next salesforce sync."
         required_fields: true
@@ -245,12 +246,10 @@ content:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
-    type: string_textfield
+    type: moderation_state_default
     weight: 1
     region: content
-    settings:
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
