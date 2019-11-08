@@ -449,6 +449,7 @@ ${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cset "pathauto.settings" "update_action" 2 -y | tee -a ${logfile}
+${drush} cset "system.logging" "error_level" "hide"   -y | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
