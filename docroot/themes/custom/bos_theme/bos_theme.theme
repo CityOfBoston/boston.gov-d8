@@ -642,7 +642,16 @@ function bos_theme_preprocess_image(&$variables) {
     // If the icon is in the format //domain/file then add scheme.
     $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
     $variables['attributes']->removeAttribute("src");
+
+    // If we are using the local css, then also re-rirect requests for icons from
+    // asset.boston.gov.
+    $theme = theme_get_setting('asset_source');
+    if (!empty($theme) && $theme == "global-styling.default"
+      && strpos($variables['uri'], "assets.boston.gov")) {
+      $variables['uri'] = str_replace("https://assets.boston.gov/icons", "/themes/custom/patterns/assets/icons", $variables['uri']);
+    }
   }
+
 }
 
 /**
