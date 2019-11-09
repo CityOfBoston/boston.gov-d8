@@ -785,6 +785,8 @@ What: Stops the svg icons title from displaying in a tooltip (could consider mak
 */
 .di-tt svg {
   pointer-events: none;
+  height: 70px;
+  margin-top: 30px;
 }
 .news-item-listing .di-tt:before {
   content: attr(cob-title);
@@ -1017,4 +1019,20 @@ What: Ensure tabs across top are loacted properly Issue #783.
   .node-type-how-to .tab {
     display: flex;
   }
+}
+
+/*
+David:
+Where:  public.css override in views-view-fields--news-and-announcements.html.twig and
+        views-view-fields--events-and-notices.html.twig.
+What: Replace the ribbon currently linked to https://patterns.boston.gov/images/global/icons/ribbon.svg to new
+      //assets.boston.gov location..
+ */
+.thumb-wrapper .date-flag,
+.featured-item-details .thumb-wrapper .date-flag,
+.post-featured-item-wrapper .thumb-wrapper .date-flag,
+.news-item .thumb-wrapper .date-flag {
+  background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);
+  top: 0px;
+  width: 70px;
 }
