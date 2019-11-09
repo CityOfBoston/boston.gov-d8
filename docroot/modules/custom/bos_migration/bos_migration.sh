@@ -417,8 +417,7 @@ done
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 
 # Reset status_items.
-doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
-doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item']);"
+doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
 doMigrate d7_menu_links,d7_menu --force
