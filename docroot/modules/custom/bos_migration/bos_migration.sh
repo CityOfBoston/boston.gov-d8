@@ -417,8 +417,7 @@ done
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 
 # Reset status_items.
-doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
-doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item']);"
+doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
 doMigrate d7_menu_links,d7_menu --force
@@ -449,6 +448,7 @@ ${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cset "pathauto.settings" "update_action" 2 -y | tee -a ${logfile}
+${drush} cset "system.logging" "error_level" "hide"   -y | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
