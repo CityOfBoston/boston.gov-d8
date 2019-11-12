@@ -1270,6 +1270,7 @@ class MigrationFixes {
           ->loadRevision($nid->vid);
         $node->setPublished(1);
         $node->set("moderation_state", "published");
+        $node->setNewRevision(FALSE);
         $node->save();
         $cnt++;
       }
