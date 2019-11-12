@@ -186,7 +186,7 @@ function bos_list_preprocess_views_view__topic_landing_page(&$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
-  if ($form["#id"] == 'views-exposed-form-places-page-1') {
+  if ($form["#id"] == 'views-exposed-form-places-listing') {
     $form['title']['#attributes']['class'] = ['sf-i-f', 'form-text'];
     $form['title']['#attributes']['placeholder'] = 'Search...';
     $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
