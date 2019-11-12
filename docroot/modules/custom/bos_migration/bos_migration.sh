@@ -458,10 +458,10 @@ printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
 ${drush} ms  | tee -a ${logfile}
 
 # Reset dev-only modules.
-printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
-${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
-printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
-${drush} cim -y  | tee -a ${logfile}
+#printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
+#${drush} cim -y  | tee -a ${logfile}
+#printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
+#${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
 
 # Takes site out of maintenance mode when migration is done.
 printf "[migration-step] Rebuild auto-path urls.\n" | tee -a ${logfile}
