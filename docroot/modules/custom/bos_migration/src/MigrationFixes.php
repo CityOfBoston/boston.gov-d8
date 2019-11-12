@@ -444,7 +444,7 @@ class MigrationFixes {
     'public://img/icons/department/2017/11/artboard_5.svg' => '//assets.boston.gov/icons/dept_icons/returning_citizens_logo.svg',
     'public://img/icons/department/2017/10/procurement-icon.svg' => '//assets.boston.gov/icons/dept_icons/procurement_logo.svg',
     'public://img/icons/department/2017/10/icons_mayors_youth_council_1.svg' => '//assets.boston.gov/icons/dept_icons/mayors_youth_council_logo.svg',
-    'public://img/icons/department/2017/09/police.svg' => '//assets.boston.gov/icons/dept_icons/police_icon.svg',
+    'public://img/icons/department/2017/09/police.svg' => '//assets.boston.gov/icons/dept_icons/police_logo.svg',
     'public://img/icons/department/2017/06/recovery_services_i_con.svg' => '//assets.boston.gov/icons/dept_icons/recovery_services_logo.svg',
     'public://img/icons/department/2017/02/public_records.svg' => '//assets.boston.gov/icons/dept_icons/public_records_logo.svg',
     'public://img/icons/department/2017/01/icons_isd.svg' => '//assets.boston.gov/icons/dept_icons/inspectional_services_logo.svg',
