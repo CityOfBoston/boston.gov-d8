@@ -32,6 +32,13 @@ third_party_settings:
   field_group:
     group_mah:
       children:
+        - field_mah_not_active
+        - field_mah_publish_to_metrolist
+        - title
+        - body
+        - field_mah_household_income_limit
+        - group_address_
+        - group_lottery_info
         - group_imported_data
       parent_name: ''
       weight: 0
@@ -43,17 +50,9 @@ third_party_settings:
       label: MAH
       region: content
     group_imported_data:
-      children:
-        - field_mah_not_active
-        - field_mah_publish_to_metrolist
-        - group_status
-        - title
-        - body
-        - field_mah_household_income_limit
-        - group_address_
-        - group_lottery_info
+      children: {  }
       parent_name: group_mah
-      weight: 20
+      weight: 28
       format_type: tab
       format_settings:
         formatter: closed
@@ -69,8 +68,8 @@ third_party_settings:
         - field_mah_lottery_type
         - field_mah_lottery_url
         - field_mah_lottery_deadline
-      parent_name: group_imported_data
-      weight: 28
+      parent_name: group_mah
+      weight: 27
       format_type: details
       format_settings:
         id: ''
@@ -88,8 +87,8 @@ third_party_settings:
         - field_mah_contact
         - field_mah_phone
         - field_mah_email
-      parent_name: group_imported_data
-      weight: 27
+      parent_name: group_mah
+      weight: 26
       format_type: details
       format_settings:
         id: ''
@@ -106,7 +105,7 @@ bundle: metrolist_affordable_housing
 mode: default
 content:
   body:
-    weight: 25
+    weight: 24
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -145,7 +144,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_household_income_limit:
-    weight: 26
+    weight: 25
     type: string_textfield
     settings:
       size: 60
@@ -274,7 +273,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 24
+    weight: 23
     region: content
     settings:
       size: 60
