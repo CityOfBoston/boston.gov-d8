@@ -1273,6 +1273,12 @@ class MigrationFixes {
         $node->setNewRevision(FALSE);
         $node->save();
         $cnt++;
+        if ($cnt < 25) {
+          printf("[info] Published node #%d (%s). [vid was changed from %d to %d].\n", $node->id(), $node->get("title")->value, $nid->vid, $node->get("vid")->value);
+        }
+        elseif ($cnt == 25) {
+          printf("[info] Further publish messages supressed.\n");
+        }
       }
       printf("[success] Published %d nodes.\n\n", $cnt);
     }
