@@ -224,6 +224,7 @@ class CityscoreRest extends ControllerBase {
           $tax->field_previous_month = $row->previous_month_score;
           $tax->field_previous_week = $row->previous_week_score;
           $tax->field_previous_day = $row->previous_day_score;
+          $tax->weight = $result['count'];
           $tax->status = 1;
           $tax->setNewRevision(FALSE);
           $tax->enforceIsNew(FALSE);

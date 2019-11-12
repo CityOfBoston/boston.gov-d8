@@ -70,8 +70,8 @@
 
         <div class="column mobile-100 desktop-33-right">
             <div class="contact-info">
-                {% if content.field_contact %}
-{#                    <div>Still have questions? Contact:</div>#}
+                {% if content.field_contact["#items"] %}
+                    <div>Still have questions? Contact:</div>
                     {{ content.field_contact }}
                 {%  endif %}
             </div>
