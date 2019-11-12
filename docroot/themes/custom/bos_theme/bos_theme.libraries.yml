@@ -8,11 +8,17 @@ global-styling.always:
   - core/jquery
 
 global-styling.default:
+  js:
+    /themes/custom/patterns/js/all.js: {  }
+  dependencies:
+    - core/jquery
   css:
     theme:
-      css/bos_theme.css: {}
+      /themes/custom/patterns/css/public.css: {  }
+      /themes/custom/patterns/css/legacy/public.css: {  }
+      /themes/custom/patterns/css/ie.css: {  }
   data:
-    name: 'Default (bos_theme)'
+    name: 'Local from bos_theme cache'
 
 global-styling.local:
   remote: https://127.0.0.1:3030

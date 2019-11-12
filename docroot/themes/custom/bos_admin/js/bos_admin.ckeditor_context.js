@@ -30,9 +30,14 @@
       });
     };
 
-    CKEDITOR.on("instanceReady", function () {
-      iframeContext();
-    });
+    let a = window.setInterval(function () {
+      if (typeof CKEDITOR !== "undefined") {
+        window.clearInterval(a);
+        CKEDITOR.on("instanceReady", function () {
+          iframeContext();
+        });
+      }
+    }, 1000);
 
   });
 })(jQuery, this, this.document, drupalSettings);

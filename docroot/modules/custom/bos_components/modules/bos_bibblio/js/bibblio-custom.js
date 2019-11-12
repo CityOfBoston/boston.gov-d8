@@ -145,9 +145,9 @@ const siteLocation = "https://www.boston.gov";
 let JSON_LD = false;
 let bibData2JSON;
 if (
-  typeof jQuery('script[type="application/ld+json"]')[0].innerHTML !==
+  typeof jQuery('script[type="application/ld+json"]')[0] !==
     "undefined" &&
-  jQuery('script[type="application/ld+json"]')[0].innerHTML !== null
+  jQuery('script[type="application/ld+json"]')[0] !== null
 ) {
   let getJSON_LD = jQuery('script[type="application/ld+json"]')[0].innerHTML;
   getJSON_LD = JSON.parse(getJSON_LD);
