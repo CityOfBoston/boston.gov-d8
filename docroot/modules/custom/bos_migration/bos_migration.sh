@@ -417,8 +417,7 @@ done
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 
 # Reset status_items.
-doExecPHP "\Drupal\bos_migration\MigrationFixes::migrateMessages();"
-doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item']);"
+doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
 doMigrate d7_menu_links,d7_menu --force
@@ -427,15 +426,29 @@ doExecPHP "node_access_rebuild();"
 printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
 ${drush} ms  | tee -a ${logfile}
 
-# Takes site out of maintenance mode when migration is done.
-printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
-${drush} cim -y  | tee -a ${logfile}
+# Reset dev-only modules.
+printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
+#${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
+#printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
+#${drush} cim -y  | tee -a ${logfile}
 
+# Takes site out of maintenance mode when migration is done.
+printf "[migration-step] Rebuild auto-path urls.\n" | tee -a ${logfile}
+${drush} pathauto:aliases-delete canonical_entities:node              # Delete all automatically generated node URL aliases (preserving manually created ones).
+${drush} pathauto:aliases-generate create canonical_entities:node -q  # Re-generate all node URL aliases.
+if [ -d "/mnt/gfs" ]; then
+  doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'${acquia_env}\', \'bostond8ddb289903\');"
+else
+  doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'drupal\', \'drupal_d7\');"
+fi
+
+# Takes site out of maintenance mode when migration is done.
 printf "[migration-step] Finish off migration: reset caches and maintenance mode.\n" | tee -a ${logfile}
 ${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cset "pathauto.settings" "update_action" 2 -y | tee -a ${logfile}
+${drush} cset "system.logging" "error_level" "hide"   -y | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
