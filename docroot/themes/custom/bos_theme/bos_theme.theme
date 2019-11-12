@@ -638,11 +638,21 @@ function bos_theme_preprocess_image(&$variables) {
     if (substr($variables['uri'], 0, 4) != "http" && substr($variables['uri'], 0, 6) != "public") {
       $variables['uri'] = \Drupal::request()->getScheme() . ":" . $variables['uri'];
     }
+    // If we are using the local css, then also re-rirect requests for icons from
+    // asset.boston.gov.
+    $theme = theme_get_setting('asset_source');
+    if (!empty($theme) && $theme == "global-styling.default"
+      && strpos($variables['uri'], "assets.boston.gov")) {
+      $path = \Drupal::request()->getSchemeAndHttpHost();
+      $variables['uri'] = str_replace("https://assets.boston.gov/icons", $path . "/themes/custom/patterns/assets/icons", $variables['uri']);
+    }
+    // Load the icon.
     $icon = file_get_contents($variables['uri']);
     // If the icon is in the format //domain/file then add scheme.
     $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
     $variables['attributes']->removeAttribute("src");
   }
+
 }
 
 /**

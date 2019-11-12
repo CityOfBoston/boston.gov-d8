@@ -95,16 +95,18 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
             // This is a paragraph component.
             $widget = &$subform[$subform_field]["widget"];
             foreach ($element["entity"]->{$subform_field} as $element_key => $element_para) {
-              $type = $widget[$element_key]["#paragraph_type"];
-              $subelements[$element_key]["display"] = EntityFormDisplay::load("paragraph.$type.default");
-              if (!empty($element_para->target_id)) {
-                $subelements[$element_key]["entity"] = Paragraph::load($element_para->target_id);
+              if (isset($widget[$element_key])) {
+                $type = $widget[$element_key]["#paragraph_type"];
+                $subelements[$element_key]["display"] = EntityFormDisplay::load("paragraph.$type.default");
+                if (!empty($element_para->target_id)) {
+                  $subelements[$element_key]["entity"] = Paragraph::load($element_para->target_id);
+                }
+                $subelements[$element_key]["mode"] = (isset($widget[$element_key]["top"]["actions"]["actions"]["edit_button"]) ? "closed" : "edit");
               }
-              $subelements[$element_key]["mode"] = (isset($widget[$element_key]["top"]["actions"]["actions"]["edit_button"]) ? "closed" : "edit");
             }
             if (!empty($subelements)) {
               foreach (Element::getVisibleChildren($widget) as $subform_field_key => $subform_field) {
-                if (is_numeric($subform_field)) {
+                if (is_numeric($subform_field) && isset($widget[$subform_field_key])) {
                   $para_field = &$widget[$subform_field_key];
                   paragraph_summary_widget_summary($para_field, $subelements, $subform_field_key);
                 }

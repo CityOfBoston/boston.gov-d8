@@ -48,10 +48,10 @@ display:
         type: bef
         options:
           submit_button: Apply
-          reset_button: true
+          reset_button: false
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
+          expose_sort_order: false
           sort_asc_label: Asc
           sort_desc_label: Desc
           input_required: false
@@ -69,8 +69,10 @@ display:
                 is_secondary: false
                 placeholder_text: ''
             field_contact_target_id:
-              bef_format: default
+              bef_format: bef
               more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
                 is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
@@ -247,21 +249,16 @@ display:
             identifier: field_contact_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
               site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
               developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -276,11 +273,11 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
+          type: select
           limit: true
           vid: contact
           hierarchy: false
-          error_message: true
+          error_message: false
           plugin_id: taxonomy_index_tid
         field_published_date_value:
           id: field_published_date_value
@@ -371,6 +368,7 @@ display:
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      use_ajax: true
     cache_metadata:
       max-age: -1
       contexts:
