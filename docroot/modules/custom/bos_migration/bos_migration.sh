@@ -229,7 +229,13 @@ function doLogRotate() {
   echo "  missingok" >> $SCRIPT
   echo "}" >> $SCRIPT
   #  Now run the script.
-  logrotate -f "$SCRIPT"
+  logrotate -f  -s ~/status.tmp "$SCRIPT"
+
+  if [ $? -ne 0 ]; then
+    printf "[migration-info] Log rotated sucesfully. Previous log found at boston_migration.log.1\n"
+  else
+    printf "[migration-warning] Previous bos_migration.log was may not have been rotated sucesfully.\n"
+  fi
   #  Cleanup
   rm -f "$SCRIPT"
 }
@@ -254,6 +260,9 @@ function doPaths() {
 
 }
 
+printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n", "${*}" | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
+
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
     acquia_env="${2}"
@@ -267,9 +276,8 @@ if [ -d "/mnt/gfs" ]; then
     logfile="${filespath}/bos_migration.log"
     drush="drush"
     doLogRotate "${filespath}/bos_migration.cfg"
-    printf "[migration-info] Running in REMOTE mode:\n"| tee ${logfile}
+    printf "[migration-info] Running in REMOTE mode:\n" | tee ${logfile}
 else
-#    dbpath=" ~/sources/boston.gov-d8/dump/migration"
     export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
     dbpath="/home/david/sources/boston.gov-d8/dump/migration"
@@ -279,8 +287,6 @@ else
     drush="lando drush"
     printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
 fi
-
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 running=0
 
@@ -475,4 +481,4 @@ dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
 text=$(displayTime $(($(date +%s)-totaltimer)))
 printf "[migration-runtime] === OVERALL RUNTIME: ${text} ===\n\n" | tee -a ${logfile}
 
-printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}
+printf "[MIGRATION] Script 'bos_migration.sh' ends.\n" | tee -a ${logfile}
