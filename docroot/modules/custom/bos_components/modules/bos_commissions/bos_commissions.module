@@ -9,6 +9,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Site\Settings;
 
 /**
  * Implements hook_theme().
@@ -51,8 +52,8 @@ function bos_commissions_preprocess_paragraph(&$variables) {
 
       case 'commission_search':
         $variables['#attached']['library'][] = 'bos_commissions/bos_commissions_search';
-        $variables['#attached']['drupalSettings']['bos_commissions']['bos_commissions_search']['api_key'] = \Drupal::config('bos_commissions.settings')->get('graphql_api_key');
-        $variables['#attached']['drupalSettings']['bos_commissions']['bos_commissions_search']['graphql_endpoint'] = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
+        $variables['#attached']['drupalSettings']['bos_commissions_search']['graphql_api_key'] = Settings::get('graphql_api_key');
+        $variables['#attached']['drupalSettings']['bos_commissions_search']['graphql_endpoint'] = Settings::get('graphql_endpoint');
         break;
     }
   }
