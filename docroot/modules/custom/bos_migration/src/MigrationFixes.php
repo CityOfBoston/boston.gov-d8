@@ -227,7 +227,7 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/10/icon.svg' => '//assets.boston.gov/icons/experiential_icons/mayoral_letter.svg',
     'public://img/icons/transactions/2017/10/contracting-list.svg' => '//assets.boston.gov/icons/experiential_icons/handshake.svg',
     'public://img/icons/transactions/2017/10/contacting-city.svg' => '//assets.boston.gov/icons/experiential_icons/neighborhoods.svg',
-    'public://img/icons/transactions/2017/10/contable.svg' => '//assets.boston.gov/icons/experiential_icons/ veteran_s_benefit_verification.svg',
+    'public://img/icons/transactions/2017/10/contable.svg' => '//assets.boston.gov/icons/experiential_icons/veterans_certificate.svg',
     'public://img/icons/transactions/2017/09/supplier-portal.svg' => '//assets.boston.gov/icons/experiential_icons/web_persona.svg',
     'public://img/icons/transactions/2017/09/state-bid-contracts.svg' => '//assets.boston.gov/icons/experiential_icons/historic_building_permit.svg',
     'public://img/icons/transactions/2017/09/rentsmart-boston.svg' => '//assets.boston.gov/icons/experiential_icons/neighborhood.svg',
