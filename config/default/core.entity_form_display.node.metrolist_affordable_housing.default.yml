@@ -32,9 +32,15 @@ third_party_settings:
   field_group:
     group_mah:
       children:
-        - group_imported_data
+        - field_mah_not_active
+        - field_mah_publish_to_metrolist
+        - title
+        - body
+        - field_mah_household_income_limit
+        - group_address_
+        - group_lottery_info
       parent_name: ''
-      weight: 0
+      weight: 2
       format_type: tabs
       format_settings:
         id: ''
@@ -42,35 +48,14 @@ third_party_settings:
         direction: vertical
       label: MAH
       region: content
-    group_imported_data:
-      children:
-        - field_mah_not_active
-        - field_mah_publish_to_metrolist
-        - group_status
-        - title
-        - body
-        - field_mah_household_income_limit
-        - group_address_
-        - group_lottery_info
-      parent_name: group_mah
-      weight: 20
-      format_type: tab
-      format_settings:
-        formatter: closed
-        description: "<b>Data imported from salesforce.</b><br/>\r\nNOTE: Any changes made here will be overwritten on next salesforce sync."
-        required_fields: true
-        id: ''
-        classes: ''
-      label: 'Imported Data'
-      region: content
     group_lottery_info:
       children:
         - field_mah_lottery_indicator
         - field_mah_lottery_type
         - field_mah_lottery_url
         - field_mah_lottery_deadline
-      parent_name: group_imported_data
-      weight: 28
+      parent_name: group_mah
+      weight: 27
       format_type: details
       format_settings:
         id: ''
@@ -88,8 +73,8 @@ third_party_settings:
         - field_mah_contact
         - field_mah_phone
         - field_mah_email
-      parent_name: group_imported_data
-      weight: 27
+      parent_name: group_mah
+      weight: 26
       format_type: details
       format_settings:
         id: ''
@@ -106,7 +91,7 @@ bundle: metrolist_affordable_housing
 mode: default
 content:
   body:
-    weight: 25
+    weight: 3
     type: text_textarea_with_summary
     settings:
       rows: 9
@@ -116,7 +101,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -145,7 +130,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_household_income_limit:
-    weight: 26
+    weight: 4
     type: string_textfield
     settings:
       size: 60
@@ -189,7 +174,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_not_active:
-    weight: 21
+    weight: 0
     type: boolean_checkbox
     settings:
       display_label: true
@@ -212,7 +197,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_publish_to_metrolist:
-    weight: 22
+    weight: 1
     type: boolean_checkbox
     settings:
       display_label: true
@@ -228,53 +213,53 @@ content:
     region: content
   langcode:
     type: language_select
-    weight: 7
+    weight: 9
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 1
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 8
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 6
+    weight: 8
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 2
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 5
+    weight: 7
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 10
+    weight: 12
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 24
+    weight: 2
     region: content
     settings:
       size: 60
@@ -282,7 +267,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
@@ -290,7 +275,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 9
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
