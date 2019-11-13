@@ -150,9 +150,9 @@ function restoreDB() {
     ${drush} updb -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
-    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
-    doExecPHP "node_access_rebuild();"
-    printf "\n" | tee -a ${logfile}
+#    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
+#    doExecPHP "node_access_rebuild();"
+#    printf "\n" | tee -a ${logfile}
 
     # Set migration variables.
     printf "[migrate-info] Set migration variables (states).\n" | tee -a ${logfile}
@@ -462,6 +462,7 @@ ${drush} ms  | tee -a ${logfile}
 #${drush} cim -y  | tee -a ${logfile}
 #printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
 #${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
+${drush} en acquia_purge,acquia_connector
 
 # Takes site out of maintenance mode when migration is done.
 printf "[migration-step] Rebuild auto-path urls.\n" | tee -a ${logfile}
