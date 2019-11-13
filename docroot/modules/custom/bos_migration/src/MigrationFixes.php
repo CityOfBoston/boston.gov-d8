@@ -51,6 +51,7 @@ class MigrationFixes {
     ],
     'metrolist_affordable_housing' => [
       'page' => ["metrolist_affordable_housing", "page"],
+      'page_1' => ["metrolist_affordable_housing", "page_lottery"],
     ],
     'places' => [
       'listing' => ["places", "listing"],
