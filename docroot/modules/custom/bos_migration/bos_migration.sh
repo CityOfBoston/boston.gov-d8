@@ -150,10 +150,6 @@ function restoreDB() {
     ${drush} updb -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
-#    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
-#    doExecPHP "node_access_rebuild();"
-#    printf "\n" | tee -a ${logfile}
-
     # Set migration variables.
     printf "[migrate-info] Set migration variables (states).\n" | tee -a ${logfile}
     ${drush} sset "bos_migration.fileOps" "copy" | tee -a ${logfile}
@@ -245,15 +241,15 @@ function doPaths() {
     timer=$(date +%s)
 
     ${drush} pathauto:aliases-delete canonical_entities:node  -q          # Delete all automatically generated node URL aliases (preserving manually created ones).
-    printf "[migration-info] All automatatically generated node paths migrated from D7 have been deleted.\n"| tee ${logfile}
+    printf "[migration-info] All automatatically generated node paths migrated from D7 have been deleted.\n" | tee -a ${logfile}
     ${drush} pathauto:aliases-generate create canonical_entities:node -q  # Re-generate all node URL aliases.
-    printf "[migration-info] Regenerated all node content paths using current pathauto rules.\n"| tee ${logfile}
+    printf "[migration-info] Regenerated all node content paths using current pathauto rules.\n" | tee -a ${logfile}
     if [ -d "/mnt/gfs" ]; then
       doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases('${acquia_env}', 'bostond8ddb289903');"
     else
       doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'drupal\', \'drupal_d7\');"
     fi
-    printf "[migration-info] Created path redirects to preserve D7 pathauto paths are have not been regenerated for D8.\n"| tee ${logfile}
+    printf "[migration-info] Created path redirects to preserve D7 pathauto paths are have not been regenerated for D8.\n" | tee -a ${logfile}
 
   text=$(displayTime $(($(date +%s)-timer)))
   printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
@@ -261,7 +257,7 @@ function doPaths() {
 }
 
 printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n", "${*}" | tee ${logfile}
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee -a ${logfile}
 
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
@@ -276,7 +272,7 @@ if [ -d "/mnt/gfs" ]; then
     logfile="${filespath}/bos_migration.log"
     drush="drush"
     doLogRotate "${filespath}/bos_migration.cfg"
-    printf "[migration-info] Running in REMOTE mode:\n" | tee ${logfile}
+    printf "[migration-info] Running in REMOTE mode:\n" | tee -a ${logfile}
 else
     export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
@@ -285,7 +281,7 @@ else
     logfile="./bos_migration.log"
     filespath="/home/david/sources/boston.gov-d8/docroot/sites/default/files"
     drush="lando drush"
-    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
+    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee -a ${logfile}
 fi
 
 running=0
@@ -386,7 +382,7 @@ fi
 
 # This is to resume when the node_revsisions fail mid-way.
 if [ "$1" == "revision_resume" ]; then
-  printf "\n[migration-info] Continues from previous migration %s %s\n" $(date +%F\ %T ) | tee ${logfile}
+  printf "\n[migration-info] Continues from previous migration %s %s\n" $(date +%F\ %T ) | tee -a ${logfile}
   running=1
   ${drush} sset "bos_migration.fileOps" "copy" | tee -a ${logfile}
   ${drush} sset "bos_migration.dest_file_exists" "use\ existing" | tee -a ${logfile}
@@ -451,8 +447,6 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 # Reset status_items.
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
-
-doExecPHP "node_access_rebuild();"
 
 printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
 ${drush} ms  | tee -a ${logfile}
