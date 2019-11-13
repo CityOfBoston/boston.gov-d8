@@ -1,32 +1,30 @@
-uuid: 1550051f-f444-41ed-87b4-ef660827df73
+uuid: 830300bc-a7c8-4429-aa27-cdaaa2ff4ecc
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.media.columns
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
     - media.type.image
+    - responsive_image.styles.columns
   module:
     - fences
-    - svg_image
+    - responsive_image
 _core:
   default_config_hash: VLDxfMVPTkd2xvOjFMCh3kWmaOYnd03zggFXuUXQVEY
-id: media.image.default
+id: media.image.columns
 targetEntityType: media
 bundle: image
-mode: default
+mode: columns
 content:
   image:
-    type: image
+    type: responsive_image
     weight: 0
     label: hidden
     settings:
+      responsive_image_style: columns
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: true
-      image_style: ''
     third_party_settings:
       fences:
         fences_field_tag: none

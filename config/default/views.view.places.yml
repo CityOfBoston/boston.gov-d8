@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.listing
     - node.type.place_profile
   module:
+    - better_exposed_filters
     - node
     - user
 _core:
@@ -41,21 +42,40 @@ display:
           query_comment: ''
           query_tags: {  }
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Apply
           reset_button: false
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
+          expose_sort_order: false
           sort_asc_label: Asc
           sort_desc_label: Desc
+          input_required: false
+          text_input_required: 'Select any filter and click on Apply to see results'
+          bef:
+            general:
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_hide: false
+            title:
+              bef_format: default
+              more_options:
+                is_secondary: false
+                placeholder_text: Search...
+          text_input_required_format: filtered_html
       pager:
         type: none
         options:
           offset: 0
       style:
         type: default
+        options:
+          row_class: ''
+          default_row_class: false
+          uses_fields: false
       row:
         type: 'entity:node'
         options:
@@ -143,7 +163,7 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: Title
+            label: ''
             description: ''
             use_operator: false
             operator: title_op
@@ -156,16 +176,11 @@ display:
               anonymous: '0'
               administrator: '0'
               site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
               developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
-            placeholder: ''
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+            placeholder: 'Search ...'
           is_grouped: false
           group_info:
             label: ''

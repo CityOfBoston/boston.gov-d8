@@ -150,9 +150,9 @@ function restoreDB() {
     ${drush} updb -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
-    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
-    doExecPHP "node_access_rebuild();"
-    printf "\n" | tee -a ${logfile}
+#    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
+#    doExecPHP "node_access_rebuild();"
+#    printf "\n" | tee -a ${logfile}
 
     # Set migration variables.
     printf "[migrate-info] Set migration variables (states).\n" | tee -a ${logfile}
@@ -206,10 +206,16 @@ function dumpDB() {
 }
 
 function removeEmptyFiles() {
+    timer=$(date +%s)
+
     printf  "[migration-step] Remove the following zero-byte images:\n"| tee -a ${logfile}
     find ${filespath} -type f -size 0b -print  | tee -a ${logfile}
     find ${filespath} -type f -size 0b -delete && printf "[migration-success] Images deleted\n\n" | tee -a ${logfile}
     # ${drush} sql:query -y --database=default "DELETE FROM file_managed where filesize=0;" | tee -a ${logfile}
+
+    text=$(displayTime $(($(date +%s)-timer)))
+    printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
+
 }
 
 # Rotate log files, keeping the last 5.
@@ -223,10 +229,39 @@ function doLogRotate() {
   echo "  missingok" >> $SCRIPT
   echo "}" >> $SCRIPT
   #  Now run the script.
-  logrotate -f "$SCRIPT"
+  logrotate -f  -s ~/status.tmp "$SCRIPT"
+
+  if [ $? -ne 0 ]; then
+    printf "[migration-info] Log rotated sucesfully. Previous log found at boston_migration.log.1\n"
+  else
+    printf "[migration-warning] Previous bos_migration.log was may not have been rotated sucesfully.\n"
+  fi
   #  Cleanup
   rm -f "$SCRIPT"
 }
+
+# Manage automatic paths (pathauto) (URL's) in D8.
+function doPaths() {
+    timer=$(date +%s)
+
+    ${drush} pathauto:aliases-delete canonical_entities:node  -q          # Delete all automatically generated node URL aliases (preserving manually created ones).
+    printf "[migration-info] All automatatically generated node paths migrated from D7 have been deleted.\n"| tee ${logfile}
+    ${drush} pathauto:aliases-generate create canonical_entities:node -q  # Re-generate all node URL aliases.
+    printf "[migration-info] Regenerated all node content paths using current pathauto rules.\n"| tee ${logfile}
+    if [ -d "/mnt/gfs" ]; then
+      doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases('${acquia_env}', 'bostond8ddb289903');"
+    else
+      doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'drupal\', \'drupal_d7\');"
+    fi
+    printf "[migration-info] Created path redirects to preserve D7 pathauto paths are have not been regenerated for D8.\n"| tee ${logfile}
+
+  text=$(displayTime $(($(date +%s)-timer)))
+  printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
+
+}
+
+printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n", "${*}" | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
@@ -241,9 +276,8 @@ if [ -d "/mnt/gfs" ]; then
     logfile="${filespath}/bos_migration.log"
     drush="drush"
     doLogRotate "${filespath}/bos_migration.cfg"
-    printf "[migration-info] Running in REMOTE mode:\n"| tee ${logfile}
+    printf "[migration-info] Running in REMOTE mode:\n" | tee ${logfile}
 else
-#    dbpath=" ~/sources/boston.gov-d8/dump/migration"
     export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
     dbpath="/home/david/sources/boston.gov-d8/dump/migration"
@@ -253,8 +287,6 @@ else
     drush="lando drush"
     printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
 fi
-
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
 
 running=0
 
@@ -420,27 +452,21 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
-doMigrate d7_menu_links,d7_menu --force
 doExecPHP "node_access_rebuild();"
 
 printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
 ${drush} ms  | tee -a ${logfile}
 
 # Reset dev-only modules.
-printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
-#${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
 #printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
 #${drush} cim -y  | tee -a ${logfile}
+#printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
+#${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
+${drush} en acquia_purge,acquia_connector
 
 # Takes site out of maintenance mode when migration is done.
 printf "[migration-step] Rebuild auto-path urls.\n" | tee -a ${logfile}
-${drush} pathauto:aliases-delete canonical_entities:node              # Delete all automatically generated node URL aliases (preserving manually created ones).
-${drush} pathauto:aliases-generate create canonical_entities:node -q  # Re-generate all node URL aliases.
-if [ -d "/mnt/gfs" ]; then
-  doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'${acquia_env}\', \'bostond8ddb289903\');"
-else
-  doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'drupal\', \'drupal_d7\');"
-fi
+doPaths
 
 # Takes site out of maintenance mode when migration is done.
 printf "[migration-step] Finish off migration: reset caches and maintenance mode.\n" | tee -a ${logfile}
@@ -456,4 +482,4 @@ dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
 text=$(displayTime $(($(date +%s)-totaltimer)))
 printf "[migration-runtime] === OVERALL RUNTIME: ${text} ===\n\n" | tee -a ${logfile}
 
-printf "[migration-info] MIGRATION ENDS.\n" | tee -a ${logfile}
+printf "[MIGRATION] Script 'bos_migration.sh' ends.\n" | tee -a ${logfile}
