@@ -147,12 +147,17 @@ function node_how_to_preprocess_page(&$variables) {
     if ($node->bundle() == "how_to") {
       // Add intro_image as background to the title panel.
       // Now make and render the Intro_image block.
-      if (isset($variables['content']['field_intro_image'])
-        && $variables["node"]->get('field_intro_image')->count()) {
+      $pathinfo = Drupal::request()->getPathInfo();
+      $pathinfo = explode("/", $pathinfo);
+      if (end($pathinfo) != "edit" && end($pathinfo) != "revisions") {
         _bos_content_fix_attributes($variables);
-        $variables["attributes"]->addClass("mn");
+        // Start by adding id page to all nodes.
         $variables["attributes"]->setAttribute("id", "page");
+        // Make responsive to menu appearing on right by adding class mn.
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->addClass("page--fp");
       }
+
     }
   }
 }

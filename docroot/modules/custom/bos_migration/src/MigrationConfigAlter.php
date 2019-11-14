@@ -1188,6 +1188,7 @@ class MigrationConfigAlter {
     $this->customAlterations();
     $this->customAlteration("d7_file");
     $this->richTextFieldAlter();
+    $this->dateTimeAlter();
     $this->customAlteration("paragraph__map");
     $this->breakCyclicalDependencies();
 
@@ -1541,6 +1542,69 @@ class MigrationConfigAlter {
               }
             }
           }
+        }
+      }
+    }
+  }
+
+  /**
+   * D7 stores dates in -0400 format and D8 in +0000.  So need to convert.
+   */
+  private function dateTimeAlter() {
+
+    $dateFields = [
+      'field_date',
+      'field_time',
+      'field_published_date',
+      'field_updated_date',
+      'field_date_range',
+      'field_public_notice_date',
+      // 'field_event_dates',.
+    ];
+    $dateFields = array_flip($dateFields);
+    // $migrations = \Drupal::state()->get("bos_migration.migrations");
+    foreach ($this->migrations as $key => &$value) {
+      // Find if this migration has one of these date fields.
+      $matches = array_intersect_key($value['process'], $dateFields);
+      if (!empty($matches)) {
+        // Process each one and add the timezone information.
+        foreach ($matches as $destination => &$process) {
+          if (is_array($process)) {
+            if (isset($process["process"]["value"][0])) {
+              foreach ($process["process"]["value"] as $item => $plugin) {
+                if ($plugin["plugin"] == "format_date") {
+                  $process["process"]["value"][$item]["from_timezone"] = "America/New_York";
+                  $process["process"]["value"][$item]["to_timezone"] = "UTC";
+                }
+              }
+            }
+            else {
+              $process["process"]["value"]["from_timezone"] = "America/New_York";
+              $process["process"]["value"]["to_timezone"] = "UTC";
+            }
+
+            if (in_array($destination, [
+              'field_date_range',
+              'field_public_notice_date',
+            ])) {
+              // These also have an end_date field.
+              if (isset($process["process"]["end_value"])) {
+                if (isset($process["process"]["end_value"][0])) {
+                  foreach ($process["process"]["end_value"] as $item => $plugin) {
+                    if ($plugin["plugin"] == "format_date") {
+                      $process["process"]["end_value"][$item]["from_timezone"] = "America/New_York";
+                      $process["process"]["end_value"][$item]["to_timezone"] = "UTC";
+                    }
+                  }
+                }
+                else {
+                  $process["process"]["end_value"]["from_timezone"] = "America/New_York";
+                  $process["process"]["end_value"]["to_timezone"] = "UTC";
+                }
+              }
+            }
+          }
+          $this->migrations[$key]["process"][$destination] = $process;
         }
       }
     }

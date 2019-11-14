@@ -130,7 +130,7 @@ function restoreDB() {
     gzip -fq ${backup}
 
     printf "[migration-info] Sync database wih current code.\n" | tee -a ${logfile}
-    ## Sync current config with the database.
+    # Sync current config with the database.
     ${drush} cim -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
 
@@ -149,10 +149,6 @@ function restoreDB() {
     printf "[migrate-info] Check for and run any database and module hook_updates.\n" | tee -a ${logfile}
     ${drush} updb -y  | tee -a ${logfile}
     printf "\n" | tee -a ${logfile}
-
-#    printf "[migrate-info] Rebuild permissions on nodes.\n" | tee -a ${logfile}
-#    doExecPHP "node_access_rebuild();"
-#    printf "\n" | tee -a ${logfile}
 
     # Set migration variables.
     printf "[migrate-info] Set migration variables (states).\n" | tee -a ${logfile}
@@ -176,12 +172,12 @@ function restoreDB() {
     text=$(displayTime $(($(date +%s)-timer)))
     printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 
-    ## Takes site out of maintenance mode before dumping.
+    # Takes site out of maintenance mode before dumping.
     ${drush} sset "system.maintenance_mode" "0"
 
     dumpDB ${1} ${landobackup}
 
-    ## Puts site into maintenance mode while migration occurs.
+    # Puts site into maintenance mode while migration occurs.
     ${drush} sset "system.maintenance_mode" "1"
 
     return 0
@@ -244,24 +240,28 @@ function doLogRotate() {
 function doPaths() {
     timer=$(date +%s)
 
-    ${drush} pathauto:aliases-delete canonical_entities:node  -q          # Delete all automatically generated node URL aliases (preserving manually created ones).
-    printf "[migration-info] All automatatically generated node paths migrated from D7 have been deleted.\n"| tee ${logfile}
-    ${drush} pathauto:aliases-generate create canonical_entities:node -q  # Re-generate all node URL aliases.
-    printf "[migration-info] Regenerated all node content paths using current pathauto rules.\n"| tee ${logfile}
+    # Delete all automatically generated node URL aliases (preserving manually created ones).
+    ${drush} pathauto:aliases-delete canonical_entities:node  -q
+    printf "[migration-info] All automatatically generated node paths migrated from D7 have been deleted.\n" | tee -a ${logfile}
+
+    # Re-generate all node URL aliases.
+    ${drush} pathauto:aliases-generate create canonical_entities:node -q
+    printf "[migration-info] Regenerated all node content paths using current pathauto rules.\n" | tee -a ${logfile}
+
     if [ -d "/mnt/gfs" ]; then
       doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases('${acquia_env}', 'bostond8ddb289903');"
     else
       doExecPHP "\Drupal\bos_migration\MigrationFixes::fixUnMappedUrlAliases(\'drupal\', \'drupal_d7\');"
     fi
-    printf "[migration-info] Created path redirects to preserve D7 pathauto paths are have not been regenerated for D8.\n"| tee ${logfile}
+
+    printf "[migration-info] Created path redirects to preserve D7 pathauto paths are have not been regenerated for D8.\n" | tee -a ${logfile}
 
   text=$(displayTime $(($(date +%s)-timer)))
   printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
-
 }
 
 printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n", "${*}" | tee ${logfile}
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee -a ${logfile}
 
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
@@ -276,7 +276,7 @@ if [ -d "/mnt/gfs" ]; then
     logfile="${filespath}/bos_migration.log"
     drush="drush"
     doLogRotate "${filespath}/bos_migration.cfg"
-    printf "[migration-info] Running in REMOTE mode:\n" | tee ${logfile}
+    printf "[migration-info] Running in REMOTE mode:\n" | tee -a ${logfile}
 else
     export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
@@ -285,30 +285,30 @@ else
     logfile="./bos_migration.log"
     filespath="/home/david/sources/boston.gov-d8/docroot/sites/default/files"
     drush="lando drush"
-    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee ${logfile}
+    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee -a ${logfile}
 fi
 
 running=0
 
 totaltimer=$(date +%s)
-## Migrate files first.
+
+# Migrate files first.
 if [ "$1" == "reset" ]; then
     running=1
-    ## Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
+    # Remove zero byte images.  These sometimes migrate in because the file copy comes across HTTP.
     removeEmptyFiles
 
     restoreDB "${dbpath}/migration_clean_reset.sql" "${landodbpath}/migration_clean_reset.sql" || exit 1
-    # Ensure the icon manifest is loaded (inlucdes loading files into DB).
+    # Ensure the icon manifest is loaded (includes loading files into DB).
     printf "[migration-step] Import icon library manifest\n" | tee -a ${logfile}
     doExecPHP "\Drupal\migrate_utilities\MigUtilTools::updateAssets();"
 
     doMigrate --tag="bos:initial:0" --force
 
-#    doExecPHP "\Drupal\bos_migration\MigrationFixes::createMediaFromFiles();"
     dumpDB ${dbpath}/migration_clean_with_files.sql ${landodbpath}/migration_clean_with_files.sql
 fi
 
-## Perform the lowest level safe-dependencies.
+# Perform the lowest level safe-dependencies.
 if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" "${landodbpath}/migration_clean_with_files.sql" || exit 1; fi
@@ -337,7 +337,7 @@ if [ "$1" == "taxonomy" ] || [ $running -eq 1 ]; then
     dumpDB ${dbpath}/migration_clean_after_all_paragraphs.sql ${landodbpath}/migration_clean_after_all_paragraphs.sql
 fi
 
-## Do these last b/c creates new paragraphs that might steal existing paragraph entity & revision id's.
+# Do these last b/c creates new paragraphs that might steal existing paragraph entity & revision id's.
 if [ "$1" == "paragraphs" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "paragraphs" ]; then restoreDB "${dbpath}/migration_clean_after_all_paragraphs.sql" "${landodbpath}/migration_clean_after_all_paragraphs.sql" || exit 1; fi
@@ -386,7 +386,7 @@ fi
 
 # This is to resume when the node_revsisions fail mid-way.
 if [ "$1" == "revision_resume" ]; then
-  printf "\n[migration-info] Continues from previous migration %s %s\n" $(date +%F\ %T ) | tee ${logfile}
+  printf "\n[migration-info] Continues from previous migration %s %s\n" $(date +%F\ %T ) | tee -a ${logfile}
   running=1
   ${drush} sset "bos_migration.fileOps" "copy" | tee -a ${logfile}
   ${drush} sset "bos_migration.dest_file_exists" "use\ existing" | tee -a ${logfile}
@@ -406,7 +406,7 @@ if [ "$1" == "revision_resume" ]; then
   dumpDB ${dbpath}/migration_clean_after_node_revision.sql ${landodbpath}/migration_clean_after_node_revision.sql
 fi
 
-## Finish off.
+# Finish off.
 if [ "$1" == "node_revision" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "node_revision" ]; then restoreDB "${dbpath}/migration_clean_after_node_revision.sql" "${landodbpath}/migration_clean_after_node_revision.sql" || exit 1; fi
@@ -425,7 +425,7 @@ if [ $running -eq 0 ]; then
     exit 1
 fi
 
-## Check all migrations completed.
+# Check all migrations completed.
 printf "[migration-step] Check status of migration.\n" | tee -a ${logfile}
 ERRORS=0
 while true; do
@@ -452,15 +452,11 @@ doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
-doExecPHP "node_access_rebuild();"
-
 printf "[migration-step] Show final migration status.\n" | tee -a ${logfile}
 ${drush} ms  | tee -a ${logfile}
 
 # Reset dev-only modules.
-#printf "[migration-step] Re-import configuration.\n" | tee -a ${logfile}
-#${drush} cim -y  | tee -a ${logfile}
-#printf "[migration-step] Reset development environment modules.\n" | tee -a ${logfile}
+printf "[migration-step] Reset modules.\n" | tee -a ${logfile}
 #${drush} pmu migrate,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,migrate_tools,bos_migration,config_devel,migrate_utilities -y  | tee -a ${logfile}
 ${drush} en acquia_purge,acquia_connector
 
@@ -474,7 +470,7 @@ ${drush} sset "system.maintenance_mode" "0"
 ${drush} sdel "bos_migration.active"
 ${drush} sset "bos_migration.fileOps" "copy"
 ${drush} cset "pathauto.settings" "update_action" 2 -y | tee -a ${logfile}
-${drush} cset "system.logging" "error_level" "hide"   -y | tee -a ${logfile}
+${drush} cset "system.logging" "error_level" "hide" -y | tee -a ${logfile}
 ${drush} cr  | tee -a ${logfile}
 
 dumpDB ${dbpath}/migration_FINAL.sql ${landodbpath}/migration_FINAL.sql
