@@ -12,11 +12,10 @@ dependencies:
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
-    - field.field.node.event.field_date_range
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
-    - field.field.node.event.field_event_dates
+    - field.field.node.event.field_event_date_recur
     - field.field.node.event.field_event_type
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
@@ -38,8 +37,8 @@ dependencies:
     - address
     - advanced_text_formatter
     - content_moderation
+    - date_recur
     - datetime
-    - datetime_range
     - entity_browser
     - field_group
     - link
@@ -88,7 +87,7 @@ third_party_settings:
       region: content
     group_event_information:
       children:
-        - field_date_range
+        - field_event_date_recur
         - field_city_sponsored
         - group_event_details
         - group_event_location
@@ -109,7 +108,7 @@ third_party_settings:
       children:
         - field_cost
       parent_name: group_event_information
-      weight: 28
+      weight: 14
       format_type: details
       format_settings:
         required_fields: true
@@ -124,7 +123,7 @@ third_party_settings:
         - field_address
         - field_multiple_neighborhoods
       parent_name: group_event_information
-      weight: 26
+      weight: 12
       format_type: details
       format_settings:
         id: ''
@@ -139,7 +138,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_event_information
-      weight: 27
+      weight: 13
       format_type: details
       format_settings:
         id: ''
@@ -227,7 +226,7 @@ third_party_settings:
         - field_details_link
         - field_links
       parent_name: group_event_information
-      weight: 25
+      weight: 11
       format_type: tab
       format_settings:
         id: ''
@@ -299,7 +298,7 @@ content:
     third_party_settings: {  }
   field_city_sponsored:
     type: boolean_checkbox
-    weight: 23
+    weight: 10
     region: content
     settings:
       display_label: true
@@ -334,18 +333,12 @@ content:
     region: content
   field_cost:
     type: string_textfield
-    weight: 32
+    weight: 4
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_date_range:
-    weight: 22
-    settings: {  }
-    third_party_settings: {  }
-    type: daterange_default
-    region: content
   field_details_link:
     type: link_default
     weight: 6
@@ -370,6 +363,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_event_date_recur:
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+    type: date_recur_basic_widget
+    region: content
   field_event_type:
     type: options_select
     weight: 5
@@ -470,7 +469,7 @@ content:
     region: content
   field_sidebar_components:
     type: paragraphs
-    weight: 1
+    weight: 4
     region: content
     settings:
       title: 'Sidebar Component'
@@ -579,5 +578,4 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
-  field_event_dates: true
   field_featured: true
