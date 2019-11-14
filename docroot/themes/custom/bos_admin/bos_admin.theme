@@ -563,7 +563,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
             $file_ids = array_pop(explode(":", $file_id));
             $file = File::load($file_ids);
             $file_uri = $file->get("uri")->value;
-            // Now get the extension
+            // Now get the extension.
             if (strpos($file_uri, ".") !== FALSE) {
               $extension = array_pop(explode(".", $file_uri));
               if (!empty($extension)) {
@@ -575,7 +575,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
                   // Extension is allowed, so remove error.
                   unset($errors[$key]);
                   // If all errors gone, then reset error flag.
-                  if (count($errors == 0 )) {
+                  if (count($errors == 0)) {
                     $form_state->clearErrors();
                     return;
                   }
