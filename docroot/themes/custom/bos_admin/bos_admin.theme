@@ -544,7 +544,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
   // Build out more meaningful error messages.
   if (!empty($errors = $form_state->getErrors())) {
     foreach ($errors as $key => &$error) {
-      if (strpos($error, "][") != FALSE) {
+      if (strpos($key, "][") != FALSE) {
         $key_parts = explode("][", $key);
         if (!empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
           $text = $error->getUntranslatedString();
