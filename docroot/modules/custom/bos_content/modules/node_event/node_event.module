@@ -71,10 +71,28 @@ function node_event_preprocess_page(&$variables) {
       && $variables['node']->get('field_intro_image')->count());
   }
 
-  if (isset($variables['node']) && is_object($variables['node'])
-    && $variables['node']->bundle() == "event"
-    && !$variables['cob']['header_image']) {
-    $variables["attributes"]->addClass("page");
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+    if (is_numeric($node)) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+    if ($node->bundle() == "event") {
+      // Determine if this is an edit page or a display page.
+      $pathinfo = Drupal::request()->getPathInfo();
+      $pathinfo = explode("/", $pathinfo);
+      if (end($pathinfo) != "edit" && end($pathinfo) != "revisions") {
+        _bos_components_fix_attributes($variables);
+        // Start by adding id page to all nodes.
+        $variables["attributes"]->setAttribute("id", "page");
+        // Make responsive to menu appearing on right by adding class mn.
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->addClass("page--wa");
+
+        // If there is a header then add a page class to relocate main body.
+        if ($variables['cob']['header_image']) {
+          $variables["attributes"]->addClass("page");
+        }
+      }
+    }
   }
 }
 
