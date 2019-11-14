@@ -1020,8 +1020,12 @@ Where: How-to nodes.
 What: Ensure tabs across top are loacted properly Issue #783.
  */
 @media screen and (min-width: 1280px) {
+  .node-type-tabbed-content .tab,
   .node-type-how-to .tab {
     display: flex;
+  }
+  .node-type-tabbed-content .tab-li-a {
+    overflow: hidden;
   }
 }
 
