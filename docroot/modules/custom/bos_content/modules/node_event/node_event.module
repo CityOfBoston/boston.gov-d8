@@ -61,7 +61,7 @@ function template_preprocess_node__event(array &$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function node_event_preprocess_page(&$variables) {
-  _bos_components_fix_attributes($variables);
+  _bos_content_fix_attributes($variables);
 
   if (function_exists("_bos_theme_has_header")) {
     _bos_theme_has_header($variables);
@@ -71,10 +71,27 @@ function node_event_preprocess_page(&$variables) {
       && $variables['node']->get('field_intro_image')->count());
   }
 
-  if (isset($variables['node']) && is_object($variables['node'])
-    && $variables['node']->bundle() == "event"
-    && !$variables['cob']['header_image']) {
-    $variables["attributes"]->addClass("page");
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+    if (is_numeric($node)) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+    if ($node->bundle() == "event") {
+      // Determine if this is an edit page or a display page.
+      $pathinfo = Drupal::request()->getPathInfo();
+      $pathinfo = explode("/", $pathinfo);
+      if (end($pathinfo) != "edit" && end($pathinfo) != "revisions") {
+        // Start by adding id page to all nodes.
+        $variables["attributes"]->setAttribute("id", "page");
+        // Make responsive to menu appearing on right by adding class mn.
+        $variables["attributes"]->addClass("mn");
+        $variables["attributes"]->addClass("page--wa");
+
+        // If there is a header then add a page class to relocate main body.
+        if ($variables['cob']['header_image']) {
+          $variables["attributes"]->addClass("page");
+        }
+      }
+    }
   }
 }
 
@@ -218,7 +235,7 @@ function node_event_preprocess_node__event(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function node_event_preprocess_node__event__featured_item(&$variables) {
-  _bos_components_fix_attributes($variables);
+  _bos_content_fix_attributes($variables);
   $variables['attributes']->addClass("contextual-region");
   $variables['attributes']->addClass("event-featured-item-wrapper");
   $variables['attributes']->addClass("mobile-1-col");
