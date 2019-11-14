@@ -48,7 +48,10 @@ function node_emergency_alert_preprocess_page(&$variables) {
   // Call the view passing in the homepage to see if we have an alert set ATM.
   if ($view = Views::getView("emergency_alerts")) {
     $view->setDisplay("block_emergency_alert");
-    if (isset($variables["node"]) && $variables["node"]->hasField("nid")) {
+    if (isset($variables["node"]) && is_numeric($variables["node"])) {
+      $view->preExecute(["nid" => $variables["node"]]);
+    }
+    elseif (isset($variables["node"]) && $variables["node"]->hasField("nid")) {
       $view->preExecute(["nid" => $variables["node"]->id()]);
     }
     if ($view->execute() && count($view->result) > 0) {

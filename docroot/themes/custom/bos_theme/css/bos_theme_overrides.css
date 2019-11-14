@@ -536,9 +536,13 @@ Where: node-topic-page.html.twig.
 What:  Adds a background to the hero image now we have made it a background rather than
         <picture>.
  */
-.hero-image {
-  background-color: rgba(10,154,255,.5);
+.hero-image,
+.node-type-topic-page .page--wa .hero-image {
+  /* background-color: rgba(10,154,255,.5); */
   background-position: 50%;
+}
+.node-type-topic-page .page--wa .hero-image-wrapper:after {
+  top: 0;
 }
 
 /*
@@ -1016,8 +1020,12 @@ Where: How-to nodes.
 What: Ensure tabs across top are loacted properly Issue #783.
  */
 @media screen and (min-width: 1280px) {
+  .node-type-tabbed-content .tab,
   .node-type-how-to .tab {
     display: flex;
+  }
+  .node-type-tabbed-content .tab-li-a {
+    overflow: hidden;
   }
 }
 

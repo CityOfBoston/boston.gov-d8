@@ -12,18 +12,27 @@
   -webkit-transform: translateX(-50%) translateY(0%);
   transform: translateX(-50%) translateY(0%);
   box-shadow: none;
+  display: none;
 }
 
 /**
   Manage Topic-pages hero image when have site alert.
  */
 #page.sa:not(.page--fp) .main-content {
-  top: 18px;
-  position: relative;
+ top: 18px;
+ position: relative;
 }
 #page.sa .hero-image {
   padding-top: 0;
 }
 #page.sa .hero-image-wrapper:after {
   top: 0;
+}
+
+/* Enable/disable site alerts using the sa class */
+.node-site-alert {
+  display: none;
+}
+.sa .node-site-alert {
+  display: block;
 }
