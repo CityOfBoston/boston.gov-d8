@@ -15,6 +15,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\GeneratedLink;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -543,9 +544,47 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
 
   // Build out more meaningful error messages.
   if (!empty($errors = $form_state->getErrors())) {
+    // Remove all errors which check the filename (string) against the list of
+    // accepted extensions.
+    // But, retest using the extension taken from the URI.
     foreach ($errors as $key => &$error) {
       if (strpos($key, "][") != FALSE) {
         $key_parts = explode("][", $key);
+
+        if (!is_string($error) && NULL != ($err = $error->render())) {
+          if (array_key_exists("%files-allowed", $error->getArguments())) {
+            // Dig in and get the file ...
+            $file_id = $form_state->getValue("field_links");
+            array_shift($key_parts);
+            foreach ($key_parts as $key_part) {
+              $file_id = $file_id[$key_part];
+            }
+            $file_id = $file_id["target_id"];
+            $file_ids = array_pop(explode(":", $file_id));
+            $file = File::load($file_ids);
+            $file_uri = $file->get("uri")->value;
+            // Now get the extension
+            if (strpos($file_uri, ".") !== FALSE) {
+              $extension = array_pop(explode(".", $file_uri));
+              if (!empty($extension)) {
+                // Revalidate using the uri.
+                $list = array_values($error->getArguments());
+                $list = explode(" ", $list[0]);
+                // Validate.
+                if (in_array($extension, $list)) {
+                  // Extension is allowed, so remove error.
+                  unset($errors[$key]);
+                  // If all errors gone, then reset error flag.
+                  if (count($errors == 0 )) {
+                    $form_state->clearErrors();
+                    return;
+                  }
+                }
+              }
+            }
+          }
+        }
+
         if (!empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
           $text = $error->getUntranslatedString();
           if (stripos($text, "collapsed paragraph") !== FALSE) {
