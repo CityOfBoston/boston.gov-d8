@@ -388,7 +388,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
   // Create necessary page classes.
   // _bos_theme_page_classes($variables);
-
   // Watermark.
   _bos_theme_page_watermark($variables);
 
@@ -638,8 +637,8 @@ function bos_theme_preprocess_image(&$variables) {
     if (substr($variables['uri'], 0, 4) != "http" && substr($variables['uri'], 0, 6) != "public") {
       $variables['uri'] = \Drupal::request()->getScheme() . ":" . $variables['uri'];
     }
-    // If we are using the local css, then also re-rirect requests for icons from
-    // asset.boston.gov.
+    // If we are using the local css, then also re-rirect requests for icons
+    // from asset.boston.gov.
     $theme = theme_get_setting('asset_source');
     if (!empty($theme) && $theme == "global-styling.default"
       && strpos($variables['uri'], "assets.boston.gov")) {
