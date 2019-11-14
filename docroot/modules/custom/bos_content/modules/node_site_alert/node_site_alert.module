@@ -94,9 +94,6 @@ function node_site_alert_preprocess_page(&$variables) {
     }
     if ($view->execute() && count($view->result) > 0) {
       _bos_content_fix_attributes($variables);
-      $variables["attributes"]->addClass("page--wa");
-      $variables["attributes"]->removeClass("page--nm");
-      $variables["attributes"]->removeClass("mn");
       $variables["attributes"]->addClass("sa");
     }
   }
