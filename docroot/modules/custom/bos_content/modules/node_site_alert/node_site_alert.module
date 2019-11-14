@@ -89,7 +89,10 @@ function node_site_alert_preprocess_page(&$variables) {
   // Call the view passing in the homepage to see if we have an alert set ATM.
   if ($view = Views::getView("site_alerts")) {
     $view->setDisplay("block_site_alerts");
-    if (isset($variables["node"])) {
+    if (isset($variables["node"]) && is_numeric($variables["node"])) {
+      $view->preExecute(["nid" => $variables["node"]]);
+    }
+    elseif (isset($variables["node"]) && $variables["node"]->hasField("nid")) {
       $view->preExecute(["nid" => $variables["node"]->id()]);
     }
     if ($view->execute() && count($view->result) > 0) {
