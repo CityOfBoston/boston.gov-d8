@@ -387,7 +387,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   _bos_theme_metatags($variables);
 
   // Create necessary page classes.
-  _bos_theme_page_classes($variables);
+  // _bos_theme_page_classes($variables);
 
   // Watermark.
   _bos_theme_page_watermark($variables);
@@ -1069,6 +1069,20 @@ function _bos_theme_render_snippets(array &$variables) {
 /**
  * Helper: Create necessary page classes.
  *
+ * #page      (legacy/public.css) [page body] main content area. Moves elements
+ *            +/- 300px left when menu is showing (when .brg-tr is checked).
+ * .page      -- nothing?
+ * .page--fp  -- nothing?
+ * .page--nm  -- nothing?
+ * .page-wa   (legacy/public.css) [page body] (wa=white area?) primarily moves
+ *            main page body (but not menu) down to allow space for menu.
+ * .mn        (css/public.css) [menu] (mn=menu?) primarily moves elements
+ *            +/- 300px left when menu is showing (when .brg-tr is checked).
+ * .sa        (overrides) [page body] (sa=site alert) primarily moves the page
+ *            body down to accomodate site alert.
+ * .ea        (overrides) [page body] (sa=site alert) primarily moves the page
+ *            body down to accomodate emergency alert.
+ *
  * @param array $variables
  *   The usual variables array from a hook preprocess.
  * @param string $current_path
@@ -1079,16 +1093,35 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
     $current_path = \Drupal::service('path.current')->getPath();
   }
 
-  // Start adding class mn (main-node???) to all nodes.
+  // Start by adding id page to all nodes.
+  $variables["attributes"]->setAttribute("id", "page");
+
+  // Make responsive to menu appearing on right by adding class mn.
+  $variables["attributes"]->addClass("mn");
+
+  // Add page--wa to those pages which have an intro image.
+  if ($variables['node']->getType() == "topic_page"
+    || !empty($variables['cob']['header_image'])) {
+    $variables["attributes"]->addClass("page--wa");
+  }
+  // Start by adding class mn to all nodes.
   if (!$variables["attributes"]->hasClass("sa")) {
     // Add 'mn' when there is no site alert.
-    $variables["attributes"]->addClass("mn");
   }
+  // D8 OK: If we are on the employee directory page, change the title.
+  if (explode("/", $current_path)[1] == 'user') {
+    if (!$variables["attributes"]->hasClass("page--wa")) {
+      $variables["attributes"]->addClass("page--wa");
+    }
+    if (!$variables["attributes"]->hasClass("page-user")) {
+      $variables["attributes"]->addClass("page-user");
+    }
+  }
+
   if ($variables["attributes"]->hasClass("ea")) {
     // Add page when there is no emergency alert.
     $variables["attributes"]->removeClass("page");
   }
-  $variables["attributes"]->setAttribute("id", "page");
 
   if (isset($variables['node']) && is_object($variables['node'])) {
 
@@ -1111,15 +1144,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
     }
   }
 
-  // D8 OK: If we are on the employee directory page, change the title.
-  if (explode("/", $current_path)[1] == 'user') {
-    if (!$variables["attributes"]->hasClass("page--wa")) {
-      $variables["attributes"]->addClass("page--wa");
-    }
-    if (!$variables["attributes"]->hasClass("page-user")) {
-      $variables["attributes"]->addClass("page-user");
-    }
-  }
 }
 
 /**
