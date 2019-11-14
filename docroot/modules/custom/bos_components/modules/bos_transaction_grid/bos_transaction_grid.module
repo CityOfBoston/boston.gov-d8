@@ -98,6 +98,43 @@ function bos_transaction_grid_paragraph_transaction_grid_summary_alter(array $fo
 }
 
 /**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_transaction_grid_paragraph_transactions_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  if ($para["entity"]->hasField("field_grid_link")) {
+    if (NULL != ($link_id = $para["entity"]->get("field_grid_link")->target_id)) {
+      if (NULL != ($link = Paragraph::load($link_id))) {
+        $title = "";
+        if ($link->hasField("field_internal_link")) {
+          $title = $link->get("field_internal_link")->title;
+        }
+        elseif ($link->hasField("field_external_link")) {
+          $title = $link->get("field_external_link")->title;
+        }
+        $markup[] = Markup::create(t("<span class='summary-content'>@title</span>", [
+          "@title" => $title
+        ]));
+
+      }
+    }
+  }
+  if ($para["entity"]->hasField("field_icon")) {
+    if (NULL != ($icon_count = count($para["entity"]->get("field_icon")))) {
+      $markup[] = Markup::create(t("<span class='info'>Has @count icon</span>", [
+        "@count" => $icon_count
+      ]));
+    }
+  }
+
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
  * Implements hook_form_alter().
  *
  * This hook creates the paragraph summary for the transactiosn elements
