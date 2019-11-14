@@ -50,7 +50,7 @@ function node_listing_page_preprocess_page(&$variables) {
       $pathinfo = Drupal::request()->getPathInfo();
       $pathinfo = explode("/", $pathinfo);
       if (end($pathinfo) != "edit" && end($pathinfo) != "revisions") {
-        _bos_components_fix_attributes($variables);
+        _bos_content_fix_attributes($variables);
         // Start by adding id page to all nodes.
         $variables["attributes"]->setAttribute("id", "page");
         // Make responsive to menu appearing on right by adding class mn.
