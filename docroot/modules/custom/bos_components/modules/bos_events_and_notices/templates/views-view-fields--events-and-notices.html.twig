@@ -39,7 +39,7 @@
       {% if thumbnail %}
         {{ fields.field_thumbnail.content }}
       {% else %}
-        {% if fields.field_intro_image.content %}
+        {% if fields.field_intro_image.content and not fields.field_intro_image.content|striptags == 'default' %}
           {{ fields.field_intro_image.content }}
         {% else %}
           <div class="news-item-default-image">
