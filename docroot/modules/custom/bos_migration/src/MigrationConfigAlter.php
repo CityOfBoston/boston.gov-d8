@@ -360,7 +360,7 @@ class MigrationConfigAlter {
     // Event may have an end date.
     "d7_node:event" => [
       "process" => [
-        "field_date_range" => [
+        "field_event_date_recur" => [
           "plugin" => "sub_process",
           "source" => "field_event_dates",
           "process" => [
@@ -370,6 +370,8 @@ class MigrationConfigAlter {
                 "from_format" => "Y-m-d H:i:s",
                 "to_format" => "Y-m-d\TH:i:s",
                 "source" => "value",
+                "from_timezone" => "America/New_York",
+                "to_timezone" => "America/New_York",
               ],
             ],
             "end_value" => [
@@ -378,12 +380,23 @@ class MigrationConfigAlter {
                 "from_format" => "Y-m-d H:i:s",
                 "to_format" => "Y-m-d\TH:i:s",
                 "source" => "value2",
+                "from_timezone" => "America/New_York",
+                "to_timezone" => "America/New_York",
               ],
               [
                 "plugin" => "default_value",
                 "default_value" => "",
                 "strict" => "true",
               ],
+            ],
+            "rrule" => "rrule",
+            "timezone" => [
+              "plugin" => "default_value",
+              "default_value" => "America/New_York",
+            ],
+            "infinite" => [
+              "plugin" => "default_value",
+              "default_value" => "0",
             ],
           ],
         ],
@@ -391,7 +404,7 @@ class MigrationConfigAlter {
     ],
     "d7_node_revision:event" => [
       "process" => [
-        "field_date_range" => [
+        "field_event_date_recur" => [
           "plugin" => "sub_process",
           "source" => "field_event_dates",
           "process" => [
@@ -401,6 +414,8 @@ class MigrationConfigAlter {
                 "from_format" => "Y-m-d H:i:s",
                 "to_format" => "Y-m-d\TH:i:s",
                 "source" => "value",
+                "from_timezone" => "America/New_York",
+                "to_timezone" => "America/New_York",
               ],
             ],
             "end_value" => [
@@ -409,12 +424,23 @@ class MigrationConfigAlter {
                 "from_format" => "Y-m-d H:i:s",
                 "to_format" => "Y-m-d\TH:i:s",
                 "source" => "value2",
+                "from_timezone" => "America/New_York",
+                "to_timezone" => "America/New_York",
               ],
               [
                 "plugin" => "default_value",
                 "default_value" => "",
                 "strict" => "true",
               ],
+            ],
+            "rrule" => "rrule",
+            "timezone" => [
+              "plugin" => "default_value",
+              "default_value" => "America/New_York",
+            ],
+            "infinite" => [
+              "plugin" => "default_value",
+              "default_value" => "0",
             ],
           ],
         ],
@@ -1559,11 +1585,16 @@ class MigrationConfigAlter {
       'field_updated_date',
       'field_date_range',
       'field_public_notice_date',
-      // 'field_event_dates',.
     ];
     $dateFields = array_flip($dateFields);
     // $migrations = \Drupal::state()->get("bos_migration.migrations");
     foreach ($this->migrations as $key => &$value) {
+      // Drop redacted fields.
+      if ($key == "d7_node:event" || $key == "d7_node_revision:event") {
+        if (isset($value["process"]["field_event_dates"])) {
+          unset($value["process"]["field_event_dates"]);
+        }
+      }
       // Find if this migration has one of these date fields.
       $matches = array_intersect_key($value['process'], $dateFields);
       if (!empty($matches)) {
