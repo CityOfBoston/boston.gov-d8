@@ -393,6 +393,11 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
       endif;
     endif;
 
+    $dates = [
+      "value" => (new DateTime("now"))->format("Y-m-d\TH:i:s"),
+      "end_value" => (new DateTime("now"))->format("Y-m-d\TH:i:s"),
+    ];
+
     if ($data['node']->hasField('field_date_range') && !empty($data['node']->get('field_date_range')[0])) :
       $dates = $data['node']->get('field_date_range')[0]->getValue();
     endif;
