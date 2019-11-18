@@ -784,11 +784,9 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'document':
         $link = $paragraph->get('field_document')->getValue();
-        if (isset($link['0']['target_id']) && isset($link['0']['uri'])) {
-          $results['url'] = _bos_core_get_file_link($link['0']['target_id'], NULL, $attributes);
-          $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
-          $results['title'] = 'TMP';
-          $results['link'] = Link::fromTextAndUrl($results['title'], $url)->toString();
+        if (isset($link['0']['target_id'])) {
+          $results['title'] = $paragraph->get("field_title")->value;
+          $results['link'] = $results['url'] = _bos_core_get_file_link($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
         }
         break;
 
@@ -838,6 +836,10 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
  *   Link Text.
  * @param array $attributes
  *   Link attributes.
+ *
+ * @return \Drupal\Core\GeneratedLink|\Drupal\Core\GeneratedUrl|string
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function _bos_core_get_file_link($fid, string $link_text = NULL, array $attributes = []) {
   if (is_array($fid) && !empty($fid['0']['target_id'])) {
