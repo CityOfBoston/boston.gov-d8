@@ -175,13 +175,11 @@
     </div>
     {#  This is the RHS sidebar. #}
     <div class="column mobile-100 desktop-33-right">
-      {% if content.field_date_range %}
+      {% if content.field_event_date_recur['#items'] %}
         <div class="event-date-wrapper">
           <div class="event-date sidebar-header">
-            {% if content.field_date_range.0.start_date %}
-              {{ content.field_date_range.0.start_date }}
-            {% elseif content.field_date_range.0["#text"] %}
-              {{ content.field_date_range.0 }}
+            {% if content.field_event_date_recur.0['#date']['#text'] %}
+              {{ content.field_event_date_recur.0['#date']['#text'] }}
             {% endif %}
           </div>
         </div>
