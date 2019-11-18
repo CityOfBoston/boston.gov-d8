@@ -22,12 +22,6 @@ function bos_video_theme() {
 }
 
 /**
- * Implements hook_preprocess_paragraph().
- */
-function bos_video_preprocess_paragraph(&$vars) {
-}
-
-/**
  * Implements hook_preprocess_HOOK().
  */
 function bos_video_preprocess_paragraph__video(&$variables) {
@@ -80,6 +74,8 @@ function bos_video_preprocess_paragraph__video(&$variables) {
  *   - elements: An associative array containing the post information and any
  *     fields attached to the entity.
  *   - attributes: HTML attributes for the containing element.
+ *
+ * @throws \Exception
  */
 function template_preprocess_paragraph__video(array &$variables) {
   foreach (Element::children($variables['elements']) as $key) {
@@ -97,7 +93,7 @@ function template_preprocess_paragraph__video(array &$variables) {
   // Has to happen in this template_preprocess_hook or does not #attach(ed).
   if ($variables['paragraph']->hasField('field_image')) {
     $background_image = $variables["elements"]["field_image"];
-    if ($background_image["#items"]->count()) {
+    if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
       $background_image[0]["default_responsive_image_style_id"] = "photo_bleed_images";
       $anchor_class = "." . $variables["photo_id"];
       $css = BackgroundResponsiveImage::createBackgroundCss($background_image, $anchor_class);
