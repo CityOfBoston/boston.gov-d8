@@ -260,8 +260,6 @@ function doPaths() {
   printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
-printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n", "${*}" | tee ${logfile}
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee -a ${logfile}
 
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
@@ -276,7 +274,7 @@ if [ -d "/mnt/gfs" ]; then
     logfile="${filespath}/bos_migration.log"
     drush="drush"
     doLogRotate "${filespath}/bos_migration.cfg"
-    printf "[migration-info] Running in REMOTE mode:\n" | tee -a ${logfile}
+    mode="REMOTE"
 else
     export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
@@ -285,8 +283,12 @@ else
     logfile="./bos_migration.log"
     filespath="/home/david/sources/boston.gov-d8/docroot/sites/default/files"
     drush="lando drush"
-    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee -a ${logfile}
+    mode="LOCAL DOCKER"
 fi
+
+printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n" "${*}" | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee -a ${logfile}
+printf "[migration-info] Running in %s mode:\n" "${mode}" | tee -a ${logfile}
 
 running=0
 
