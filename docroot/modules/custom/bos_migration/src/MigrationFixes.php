@@ -977,6 +977,8 @@ class MigrationFixes {
         'uid' => ($file->file->uid->target_id ?? 1),
         'name' => ($file->filename ?? "City of Boston stock media item"),
         'status' => ($file->file->status->value ?? 1),
+        'created' => $file->get("created")->value,
+        'changed' => $file->get("changed")->value,
         'field_media_in_library' => ($file->media_library ?? FALSE),
       ];
       if ($file->type != "document") {
