@@ -448,6 +448,9 @@ done
 # Map D7 view displays to D8 displays.
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 
+# Update Media entity dates to match file entity dates.
+doExecPHP "\Drupal\bos_migration\MigrationFixes::syncMediaDates();"
+
 # Reset status_items.
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
