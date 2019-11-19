@@ -1388,4 +1388,16 @@ class MigrationFixes {
     }
   }
 
+  /**
+   * Updates the date of img/media entities to match the underlying file entity.
+   */
+  public static function syncMediaDates() {
+    \Drupal::database()->query("
+      UPDATE media_field_data media
+        INNER JOIN media__image img ON media.mid = img.entity_id
+        INNER JOIN file_managed file ON img.image_target_id = file.fid
+          SET media.created = file.created,
+              media.changed = file.changed;")->execute();
+  }
+
 }
