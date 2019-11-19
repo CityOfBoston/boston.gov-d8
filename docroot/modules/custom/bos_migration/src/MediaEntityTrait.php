@@ -57,11 +57,17 @@ trait MediaEntityTrait {
     // Create the Media entity if needed.
     $dirty = FALSE;
     if (NULL == ($media = Media::load($fid))) {
+      // Make sure the media created and file dates match.
+      if (empty($file)) {
+        $file = File::load($fid);
+      }
       $media = Media::create([
         'mid' => $fid,
         'bundle' => $targetBundle,
         'uid' => $author,
         'status' => $status,
+        'created' => $file->get("created")->value,
+        'changed' => $file->get("changed")->value,
         $field_name => [
           'target_id' => $fid,
         ],
