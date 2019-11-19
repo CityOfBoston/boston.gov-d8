@@ -481,10 +481,10 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
-        field_event_dates_value:
-          id: field_event_dates_value
-          table: node__field_event_dates
-          field: field_event_dates_value
+        field_event_date_recur_end_value:
+          id: field_event_date_recur_end_value
+          table: node__field_event_date_recur
+          field: field_event_date_recur_end_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -525,19 +525,6 @@ display:
             group_items: {  }
           plugin_id: datetime
       sorts:
-        field_event_dates_value:
-          id: field_event_dates_value
-          table: node__field_event_dates
-          field: field_event_dates_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
-          granularity: second
-          plugin_id: datetime
         field_public_notice_date_value:
           id: field_public_notice_date_value
           table: node__field_public_notice_date
@@ -551,6 +538,18 @@ display:
             label: ''
           granularity: second
           plugin_id: datetime
+        field_event_date_recur_rrule:
+          id: field_event_date_recur_rrule
+          table: node__field_event_date_recur
+          field: field_event_date_recur_rrule
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
       title: Upcoming
       header: {  }
       footer: {  }
