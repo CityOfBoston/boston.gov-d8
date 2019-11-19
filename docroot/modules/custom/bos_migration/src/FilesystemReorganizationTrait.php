@@ -320,6 +320,21 @@ trait FilesystemReorganizationTrait {
   }
 
   /**
+   * Get the MIME type of a local file.
+   *
+   * @param string $filename
+   *   The (path and) OS filename including extension to get the mime type of.
+   *
+   * @return string
+   *   The MIME type string.
+   */
+  private function getMimeFromFile(string $filename) {
+    $filename = escapeshellcmd($filename);
+    $mimeType = shell_exec("file -b --mime-type -m /usr/share/misc/magic {$filename}");
+    return trim($mimeType);
+  }
+
+  /**
    * Determine filetype.
    *
    * @param string $type
