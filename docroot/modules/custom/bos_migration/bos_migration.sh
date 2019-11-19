@@ -448,12 +448,19 @@ while true; do
 done
 
 # Map D7 view displays to D8 displays.
+printf "[migration-info] Map D7 views to D8 equivalents.\n" | tee -a ${logfile}
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 
+# Update icons and images which missed getting mapped during migration.
+printf "[migration-info] Map images and icons to new locations (those missed during migration).\n" | tee -a ${logfile}
+doExecPHP "\Drupal\bos_migration\MigrationFixes::forceUpdateSvgPaths();"
+
 # Update Media entity dates to match file entity dates.
+printf "[migration-info] Update Media entity dates to match file entity dates (those missed during migration).\n" | tee -a ${logfile}
 doExecPHP "\Drupal\bos_migration\MigrationFixes::syncMediaDates();"
 
 # Reset status_items.
+printf "[migration-info] Rebuild status_items (message of the day).\n" | tee -a ${logfile}
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
