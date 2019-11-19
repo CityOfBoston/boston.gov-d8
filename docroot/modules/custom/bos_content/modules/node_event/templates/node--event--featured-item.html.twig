@@ -4,9 +4,9 @@
 
   <div class="desktop-2-col featured-item-details featured-item-details--relative">
 
-    {% if content.field_date_range.0.start_date %}
+    {% if content.field_event_date_recur.0['#date']['#text'] %}
       <div class="date-flag date-flag--blue date-flag--left">
-        {{ content.field_date_range.0.start_date }}
+        {{ content.field_event_date_recur.0['#date']['#text'] }}
       </div>
     {% endif %}
 
