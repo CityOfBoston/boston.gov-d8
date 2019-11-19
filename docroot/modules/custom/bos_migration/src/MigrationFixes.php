@@ -1397,7 +1397,15 @@ class MigrationFixes {
         INNER JOIN media__image img ON media.mid = img.entity_id
         INNER JOIN file_managed file ON img.image_target_id = file.fid
           SET media.created = file.created,
-              media.changed = file.changed;")->execute();
+              media.changed = file.changed
+        WHERE media.created <> file.created;")->execute();
+
+    \Drupal::database()->query("
+      UPDATE media_field_data media
+        INNER JOIN media__image img ON media.mid = img.entity_id
+        INNER JOIN file_managed file ON img.image_target_id = file.fid
+          SET media.name = file.filename
+        WHERE media.name <> file.filename;")->execute();
   }
 
 }
