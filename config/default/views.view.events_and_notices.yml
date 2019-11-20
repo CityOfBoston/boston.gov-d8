@@ -3,6 +3,8 @@ langcode: und
 status: true
 dependencies:
   config:
+    - core.date_format.date_format_boston_featured
+    - field.storage.node.field_event_date_recur
     - field.storage.node.field_intro_image
     - field.storage.node.field_public_notice_date
     - field.storage.node.field_thumbnail
@@ -10,6 +12,7 @@ dependencies:
     - node.type.event
     - node.type.public_notice
   module:
+    - date_recur
     - datetime
     - datetime_range
     - media
@@ -384,6 +387,76 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_event_date_recur:
+          id: field_event_date_recur
+          table: node__field_event_date_recur
+          field: field_event_date_recur
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ field_event_date_recur__value }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: date_recur_basic_formatter
+          settings:
+            format_type: date_format_boston_featured
+            occurrence_format_type: date_format_boston_featured
+            same_end_date_format_type: date_format_boston_featured
+            separator: '-'
+            timezone_override: ''
+            interpreter: ''
+            show_next: 5
+            count_per_item: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         status:
           value: '1'
@@ -604,6 +677,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_event_date_recur'
         - 'config:field.storage.node.field_intro_image'
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
@@ -678,6 +752,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_event_date_recur'
         - 'config:field.storage.node.field_intro_image'
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
@@ -697,6 +772,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_event_date_recur'
         - 'config:field.storage.node.field_intro_image'
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
