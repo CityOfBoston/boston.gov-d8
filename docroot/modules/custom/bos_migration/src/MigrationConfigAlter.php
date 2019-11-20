@@ -157,6 +157,7 @@ class MigrationConfigAlter {
    * @var array
    */
   protected static $migrationTags = [
+    "d7_user_role" => ["bos:initial:1"],
     "d7_user" => ["bos:initial:1"],
     "d7_url_alias" => ["bos:initial:1"],
     "d7_path_redirect" => ["bos:initial:1"],
