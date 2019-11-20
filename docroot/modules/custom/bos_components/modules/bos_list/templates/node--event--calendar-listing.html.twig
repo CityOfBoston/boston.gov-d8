@@ -83,8 +83,14 @@
   {# $live_stream = $live_stream_active == 1; #}
 {% endif %}
 
-{% set start_date = content.field_date_range.0.start_date['#attributes'].datetime %}
-{% set end_date = content.field_date_range.0.end_date['#attributes'].datetime %}
+{# TODO: Loop through occurances: dd(content.field_event_date_recur.0['#occurrences']) #}
+
+{% if content.field_event_date_recur.0['#date']['#attributes'] %}
+  {% set start_date = content.field_event_date_recur.0['#date']['#attributes'] %}
+{% else %}
+  {% set start_date = content.field_event_date_recur.0['#date'].start_date['#attributes'].datetime %}
+  {% set end_date = content.field_event_date_recur.0['#date'].end_date['#attributes'].datetime %}
+{% endif %}
 
 {% if start_date is empty %}
   {% set start_date = content.field_date_range.0['#attributes'].datetime %}
