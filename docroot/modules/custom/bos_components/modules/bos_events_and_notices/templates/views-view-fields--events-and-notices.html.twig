@@ -48,8 +48,12 @@
         {% endif %}
       {% endif %}
       <div class="date-flag">
-        {{ fields.field_event_dates.content }}
-        {{ fields.field_public_notice_date.content }}
+        {%- set date_recur = fields.field_event_date_recur.content|striptags -%}
+        {% if date_recur %}
+          {{ date_recur|date("U")|format_date('custom', 'M j') }}
+        {% else %}
+          {{ fields.field_public_notice_date.content }}
+        {% endif %}
       </div>
     </div>
     <div class="text-wrapper">
