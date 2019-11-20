@@ -175,8 +175,7 @@ function node_topic_page_preprocess_node__topic_page__listing_long(&$variables) 
  */
 function node_topic_page_preprocess_node__topic_page__featured_topics(&$variables) {
   if ($node = $variables['node']) {
-    static $topics_counter = 1;
-    $variables['topics_counter'] = $topics_counter++;
+    $variables['topics_counter'] = $variables["elements"]["#seq"] + 1;
     $variables['guide_title'] = strip_tags(html_entity_decode($node->getTitle()));
     if ($file = File::load($node->field_thumbnail->target_id)) {
       $variables["fileurl"] = $file->getFileUri();
