@@ -85,15 +85,11 @@
 
 {# TODO: Loop through occurances: dd(content.field_event_date_recur.0['#occurrences']) #}
 
-{% if content.field_event_date_recur.0['#date']['#attributes'] %}
-  {% set start_date = content.field_event_date_recur.0['#date']['#attributes'] %}
-{% else %}
-  {% set start_date = content.field_event_date_recur.0['#date'].start_date['#attributes'].datetime %}
-  {% set end_date = content.field_event_date_recur.0['#date'].end_date['#attributes'].datetime %}
-{% endif %}
+{% set start_date = content.field_event_date_recur.0['#date'].start_date['#attributes'].datetime %}
+{% set end_date = content.field_event_date_recur.0['#date'].end_date['#attributes'].datetime %}
 
 {% if start_date is empty %}
-  {% set start_date = content.field_date_range.0['#attributes'].datetime %}
+  {% set start_date = content.field_event_date_recur.0['#date']['#attributes'].datetime %}
 {% endif %}
 
 {% set node = elements['#node'] %}
