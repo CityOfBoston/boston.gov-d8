@@ -833,8 +833,9 @@ class MigrationFixes {
   public static function forceUpdateSvgPaths() {
     printf("[action] Will map all old image path/filename to new path/filenames.\n");
     $cnt = 0;
+    $mf = new MigrationFixes();
     foreach (self::$svgMapping as $oldUri => $newUri) {
-      $mimetype = (new MigrationFixes)->getMimeFromFile($newUri);
+      $mimetype = $mf->getMimeFromFile($newUri);
       $result = Database::getConnection()->update("file_managed")
         ->fields([
           "uri" => $newUri,
@@ -851,6 +852,13 @@ class MigrationFixes {
         $cnt++;
       }
     }
+
+    // Need to flush the image/files + views caches.
+    if ($cnt > 0) {
+      printf("[info] Flushing caches.\n", $cnt);
+      drupal_flush_all_caches();
+    }
+
     printf("[success] Remapped uri's for %d media entries.\n", $cnt);
   }
 
