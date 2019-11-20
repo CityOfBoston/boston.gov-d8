@@ -315,6 +315,8 @@ if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" "${landodbpath}/migration_clean_with_files.sql" || exit 1; fi
     doMigrate --tag="bos:initial:1" --force
+    # Run drush cim again to allow the user roles to ammended.
+    ${drush} cim -y  | tee -a ${logfile}
     dumpDB ${dbpath}/migration_clean_with_prereq.sql ${landodbpath}/migration_clean_with_prereq.sql
 fi
 
