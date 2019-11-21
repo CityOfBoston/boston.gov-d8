@@ -304,7 +304,6 @@ class MigrationFixes {
     'public://img/icons/transactions/2017/01/experiential_icons_important.svg' => '//assets.boston.gov/icons/experiential_icons/alert.svg',
     'public://img/icons/transactions/2017/01/experiential_icons_city_of_boston_owned_property.svg' => '//assets.boston.gov/icons/experiential_icons/city_of_boston_owned_property.svg',
     'public://img/icons/transactions/2017/01/experiential_icons_board_of_trustees.svg' => '//assets.boston.gov/icons/experiential_icons/meeting.svg',
-    'public://img/icons/transactions/2017/01/boston_childrens_hospital_logo.svg.png' => '//assets.boston.gov/icons/experiential_icons/',
     'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_trash_when_it_snows.svg' => '//assets.boston.gov/icons/experiential_icons/snow_trash.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_what_to_do_with_your_car_when_it_snows.svg' => '//assets.boston.gov/icons/experiential_icons/snow_parking.svg',
     'public://img/icons/transactions/2016/11/experiential_icons_view_your_collection_schedule.svg' => '//assets.boston.gov/icons/experiential_icons/calendar.svg',
@@ -582,6 +581,7 @@ class MigrationFixes {
     'public://img/2016/e/experiential_icons_food_assistance-.svg' => '//assets.boston.gov/icons/experiential_icons/fruit_basket.svg',
     'public://img/2016/e/experiential_icons_find_a_career_center.svg' => '//assets.boston.gov/icons/experiential_icons/job_search.svg',
     'public://img/2016/e/experiential_icons_find_a_aprk.svg' => '//assets.boston.gov/icons/experiential_icons/park_location.svg',
+    'public://img/2016/e/experiential_icons_find_a_park.svg' => '//assets.boston.gov/icons/experiential_icons/park_location.svg',
     'public://img/2016/e/experiential_icons_feed_back.svg' => '//assets.boston.gov/icons/experiential_icons/report.svg',
     'public://img/2016/e/experiential_icons_emergency_kit.svg' => '//assets.boston.gov/icons/experiential_icons/emergency_kit.svg',
     'public://img/2016/e/experiential_icons_download_0.svg' => '//assets.boston.gov/icons/experiential_icons/cell_phone_download.svg',
@@ -627,6 +627,15 @@ class MigrationFixes {
     "public://img/icons/department/2018/08/asset_332.svg" => '//assets.boston.gov/icons/dept_icons/emergency_management_logo.svg',
     "public://img/icons/department/2018/05/pm_logo.svg" => '//assets.boston.gov/icons/dept_icons/property_and_construction_management_logo.svg',
     "public://img/icons/department/icons_bcyf.png" => '//assets.boston.gov/icons/dept_icons/mayors_youth_council_logo.svg',
+    "public://img/icons/department/icons_archaeology_0.png" => '//assets.boston.gov/icons/dept_icons/archaeology_icon.svg',
+    "public://img/icons/department/icons_archives.png" => '//assets.boston.gov/icons/dept_icons/archives_and_records_icon.svg',
+    "public://img/icons/department/icons_fair_housing.png" => '//assets.boston.gov/icons/dept_icons/fair_housing_and_equity_logo.svg',
+    "public://img/icons/department/icons_fire_0.png" => '//assets.boston.gov/icons/dept_icons/fire_operations_logo.svg',
+    "public://img/icons/department/icons_new_bosonians.png" => '//assets.boston.gov/icons/dept_icons/immigrant_advancement_logo.svg',
+    "public://img/icons/department/icons_intergovermental_relations.png" => '//assets.boston.gov/icons/dept_icons/intergovernmental_relations_logo.svg',
+    "public://img/icons/department/icons_law.png" => '//assets.boston.gov/icons/dept_icons/law_department_logo.svg',
+    "public://img/icons/department/mechanics-logo-final.png" => '//assets.boston.gov/icons/dept_icons/new_urban_mechanics_logo.svg',
+    "public://img/icons/department/icon_registry.png" => '//assets.boston.gov/icons/dept_icons/registry_logo.svg',
   ];
 
   /**
@@ -819,6 +828,41 @@ class MigrationFixes {
   }
 
   /**
+   * Updates the D7 svg icons to the new D8 located icons.
+   */
+  public static function forceUpdateSvgPaths() {
+    printf("[action] Will map all old image path/filename to new path/filenames.\n");
+    $cnt = 0;
+    $mf = new MigrationFixes();
+    foreach (self::$svgMapping as $oldUri => $newUri) {
+      $mimetype = $mf->getMimeFromFile($newUri);
+      $result = Database::getConnection()->update("file_managed")
+        ->fields([
+          "uri" => $newUri,
+          "filemime" => trim($mimetype),
+        ])
+        ->condition("uri", $oldUri, "=")
+        ->execute();
+      if (!empty($result)) {
+        // Delete the old uri as we have now linked to a new path.
+        $file = \Drupal::service('file_system')->realpath($oldUri);
+        if (file_exists($file)) {
+          @unlink($file);
+        }
+        $cnt++;
+      }
+    }
+
+    // Need to flush the image/files + views caches.
+    if ($cnt > 0) {
+      printf("[info] Flushing caches.\n", $cnt);
+      drupal_flush_all_caches();
+    }
+
+    printf("[success] Remapped uri's for %d media entries.\n", $cnt);
+  }
+
+  /**
    * Creates media entities for files, and loads some into the media library.
    */
   public static function createMediaFromFiles() {
@@ -977,6 +1021,8 @@ class MigrationFixes {
         'uid' => ($file->file->uid->target_id ?? 1),
         'name' => ($file->filename ?? "City of Boston stock media item"),
         'status' => ($file->file->status->value ?? 1),
+        'created' => $file->get("created")->value,
+        'changed' => $file->get("changed")->value,
         'field_media_in_library' => ($file->media_library ?? FALSE),
       ];
       if ($file->type != "document") {
@@ -1386,6 +1432,26 @@ class MigrationFixes {
         }
       }
     }
+  }
+
+  /**
+   * Updates the date of img/media entities to match the underlying file entity.
+   */
+  public static function syncMediaDates() {
+    \Drupal::database()->query("
+      UPDATE media_field_data media
+        INNER JOIN media__image img ON media.mid = img.entity_id
+        INNER JOIN file_managed file ON img.image_target_id = file.fid
+          SET media.created = file.created,
+              media.changed = file.changed
+        WHERE media.created <> file.created;")->execute();
+
+    \Drupal::database()->query("
+      UPDATE media_field_data media
+        INNER JOIN media__image img ON media.mid = img.entity_id
+        INNER JOIN file_managed file ON img.image_target_id = file.fid
+          SET media.name = file.filename
+        WHERE media.name <> file.filename;")->execute();
   }
 
 }

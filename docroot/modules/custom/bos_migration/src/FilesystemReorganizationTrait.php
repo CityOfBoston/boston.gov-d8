@@ -5,6 +5,8 @@ namespace Drupal\bos_migration;
 use Drupal\migrate\MigrateException;
 use Drupal\migrate\Plugin\MigrateIdMapInterface;
 
+define('APACHE_MIME_TYPES_URL', 'http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types');
+
 /**
  * Logic relevant to filesystem reorganization.
  */
@@ -90,6 +92,13 @@ trait FilesystemReorganizationTrait {
       'mp4',
     ],
   ];
+
+  /**
+   * Array to hold latest mime types.
+   *
+   * @var array
+   */
+  protected $mimeTypes = [];
 
   /**
    * Moves images in root public files directory into subdirectory.
@@ -317,6 +326,39 @@ trait FilesystemReorganizationTrait {
       }
     }
     return trim($base_filename);
+  }
+
+  /**
+   * Get the MIME type of a local file.
+   *
+   * @param string $filename
+   *   The (path and) OS filename including extension to get the mime type of.
+   *
+   * @return string
+   *   The MIME type string.
+   */
+  private function getMimeFromFile(string $filename) {
+    $mimeType = "application/octet-stream";
+    if (file_exists($filename)) {
+      $filename = escapeshellcmd($filename);
+      $mimeType = shell_exec("file -b --mime-type -m /usr/share/misc/magic {$filename}");
+    }
+    else {
+      if (empty($this->mimeTypes)) {
+        foreach (@explode("\n", @file_get_contents(APACHE_MIME_TYPES_URL)) as $x) {
+          if (isset($x[0]) && $x[0] !== '#' && preg_match_all('#([^\s]+)#', $x, $out) && isset($out[1]) && ($c = count($out[1])) > 1) {
+            for ($i = 1; $i < $c; $i++) {
+              $this->mimeTypes[$out[1][$i]] = $out[1][0];
+            }
+          }
+        }
+      }
+      $ext = $this->extractExtension($filename);
+      if (isset($this->mimeTypes[$ext])) {
+        $mimeType = $this->mimeTypes[$ext];
+      }
+    }
+    return trim($mimeType);
   }
 
   /**

@@ -319,7 +319,9 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     $form["meta"]["#attributes"]["class"][] = "entity-meta";
   }
 
-  if (!empty($form["#entity_type"]) && $form["#entity_type"] == "node" && preg_match("/node\-.*\-edit\-form*/", $form["#id"])) {
+  if ((!empty($form["#entity_type"]) && $form["#entity_type"] == "node" && preg_match("/node\-.*\-edit\-form*/", $form["#id"]))
+    || ($form["#form_id"] == "views_exposed_form" && $form["#action"] == "/entity-browser/modal/document_entity_browser")
+    || ($form["#form_id"] == "entity_browser_document_entity_browser_form")) {
     if (isset($form["#validate"]) && count($form['#validate']) > 1) {
       array_splice($form["#validate"], 1, 0, "bos_admin_node_edit_validate");
     }
@@ -548,19 +550,28 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
     // accepted extensions.
     // But, retest using the extension taken from the URI.
     foreach ($errors as $key => &$error) {
-      if (strpos($key, "][") != FALSE) {
+      if ($key == "widget" || strpos($key, "][") != FALSE) {
         $key_parts = explode("][", $key);
 
         if (!is_string($error) && NULL != ($err = $error->render())) {
           if (array_key_exists("%files-allowed", $error->getArguments())) {
             // Dig in and get the file ...
-            $file_id = $form_state->getValue("field_links");
-            array_shift($key_parts);
-            foreach ($key_parts as $key_part) {
-              $file_id = $file_id[$key_part];
+            if ($key == "widget") {
+              $file_id = array_filter($form_state->getValue("entity_browser_select"));
+              $file_id = array_values($file_id);
+              $file_ids = explode(":", reset($file_id));
+              $file_ids = array_pop($file_ids);
             }
-            $file_id = $file_id["target_id"];
-            $file_ids = array_pop(explode(":", $file_id));
+            else {
+              $file_id = $form_state->getValue($key_parts[0]);
+              array_shift($key_parts);
+              foreach ($key_parts as $key_part) {
+                $file_id = $file_id[$key_part];
+              }
+              $file_id = $file_id["target_id"];
+              $file_ids = explode(":", $file_id);
+              $file_ids = array_pop($file_ids);
+            }
             $file = File::load($file_ids);
             $file_uri = $file->get("uri")->value;
             // Now get the extension.
@@ -585,7 +596,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
           }
         }
 
-        if (!empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
+        if (isset($key_parts[1]) && !empty($para = $form[$key_parts[0]]['widget'][$key_parts[1]])) {
           $text = $error->getUntranslatedString();
           if (stripos($text, "collapsed paragraph") !== FALSE) {
             $text = str_replace("@path:", "<b>@para</b> (@path) - ", $text);
@@ -595,11 +606,11 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
         }
       }
     }
-    // Write the messages back into the form_state.
-    $form_state->clearErrors();
-    foreach ($errors as $name => $new_error) {
-      $form_state->setErrorByName($name, $new_error);
-    }
+  }
+  // Write the messages back into the form_state.
+  $form_state->clearErrors();
+  foreach ($errors as $name => $new_error) {
+    $form_state->setErrorByName($name, $new_error);
   }
 }
 
