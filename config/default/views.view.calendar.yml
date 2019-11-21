@@ -3,12 +3,16 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.date_format.date_format_boston_featured
+    - core.date_format.date_format_normal_date
     - core.entity_view_mode.node.calendar_listing
     - field.storage.node.field_date_range
+    - field.storage.node.field_event_date_recur
     - node.type.event
     - taxonomy.vocabulary.311_request
   module:
     - better_exposed_filters
+    - date_recur
     - datetime
     - datetime_range
     - node
@@ -127,7 +131,7 @@ display:
         options:
           grouping:
             -
-              field: field_date_range
+              field: field_event_date_recur
               rendered: true
               rendered_strip: false
           row_class: ''
@@ -251,6 +255,76 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_event_date_recur:
+          id: field_event_date_recur
+          table: node__field_event_date_recur
+          field: field_event_date_recur
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: '<h2 class="listing-group-title">{{ field_event_date_recur__value|date(''F j, Y'', false) }}</h2>'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: date_recur_basic_formatter
+          settings:
+            format_type: date_format_normal_date
+            occurrence_format_type: date_format_boston_featured
+            same_end_date_format_type: date_format_boston_featured
+            separator: '-'
+            timezone_override: ''
+            interpreter: ''
+            show_next: 5
+            count_per_item: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         status:
           value: '1'
@@ -272,116 +346,6 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        field_event_dates_value:
-          id: field_event_dates_value
-          table: node__field_event_dates
-          field: field_event_dates_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '>='
-          value:
-            min: ''
-            max: ''
-            value: now
-            type: offset
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_event_dates_value_op
-            label: 'Event Start'
-            description: ''
-            use_operator: false
-            operator: field_event_dates_value_op
-            identifier: field_event_dates_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
-              developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
-        field_event_dates_value_1:
-          id: field_event_dates_value_1
-          table: node__field_event_dates
-          field: field_event_dates_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '<='
-          value:
-            min: ''
-            max: ''
-            value: 'now +3 months'
-            type: offset
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_event_dates_value_1_op
-            label: 'End Date'
-            description: ''
-            use_operator: false
-            operator: field_event_dates_value_1_op
-            identifier: field_event_dates_value_1
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
-              developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
         title:
           id: title
           table: node_field_data
@@ -579,44 +543,33 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: boolean
-        field_related_departments_target_id:
-          id: field_related_departments_target_id
-          table: node__field_related_departments
-          field: field_related_departments_target_id
+        field_event_date_recur_value:
+          id: field_event_date_recur_value
+          table: node__field_event_date_recur
+          field: field_event_date_recur_value
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
+          operator: '>='
           value:
             min: ''
             max: ''
-            value: ''
+            value: now
+            type: offset
           group: 1
-          exposed: true
+          exposed: false
           expose:
-            operator_id: field_related_departments_target_id_op
-            label: 'Related departments'
+            operator_id: ''
+            label: ''
             description: ''
             use_operator: false
-            operator: field_related_departments_target_id_op
-            identifier: field_related_departments_target_id
+            operator: ''
+            identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
-              developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
@@ -632,12 +585,12 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: numeric
+          plugin_id: datetime
       sorts:
-        field_event_dates_value:
-          id: field_event_dates_value
-          table: node__field_event_dates
-          field: field_event_dates_value
+        field_event_date_recur_value:
+          id: field_event_date_recur_value
+          table: node__field_event_date_recur
+          field: field_event_date_recur_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -802,6 +755,7 @@ display:
         - 'config:core.entity_view_display.node.transaction.default'
         - 'config:core.entity_view_display.node.transaction.listing'
         - 'config:field.storage.node.field_date_range'
+        - 'config:field.storage.node.field_event_date_recur'
   listing:
     display_plugin: page
     id: listing
@@ -946,3 +900,4 @@ display:
         - 'config:core.entity_view_display.node.transaction.default'
         - 'config:core.entity_view_display.node.transaction.listing'
         - 'config:field.storage.node.field_date_range'
+        - 'config:field.storage.node.field_event_date_recur'
