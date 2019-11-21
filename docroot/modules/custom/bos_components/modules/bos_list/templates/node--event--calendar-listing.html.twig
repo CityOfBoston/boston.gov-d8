@@ -83,11 +83,13 @@
   {# $live_stream = $live_stream_active == 1; #}
 {% endif %}
 
-{% set start_date = content.field_date_range.0.start_date['#attributes'].datetime %}
-{% set end_date = content.field_date_range.0.end_date['#attributes'].datetime %}
+{# TODO: Loop through occurances: dd(content.field_event_date_recur.0['#occurrences']) #}
+
+{% set start_date = content.field_event_date_recur.0['#date'].start_date['#attributes'].datetime %}
+{% set end_date = content.field_event_date_recur.0['#date'].end_date['#attributes'].datetime %}
 
 {% if start_date is empty %}
-  {% set start_date = content.field_date_range.0['#attributes'].datetime %}
+  {% set start_date = content.field_event_date_recur.0['#date']['#attributes'].datetime %}
 {% endif %}
 
 {% set node = elements['#node'] %}
@@ -97,7 +99,7 @@
     {% if start_date %}
       <span class="time-range">
         {% if live_stream %}<span class="live-stream-flag">Live:</span>{% endif %}
-        {{ start_date|date('g:ia') }}{% if end_date %}-{{ end_date|date('g:ia') }}{% endif %}
+        {{ start_date|date('g:ia', false) }}{% if end_date %}-{{ end_date|date('g:ia', false) }}{% endif %}
       </span>
     {% endif %}
     <div class="title">

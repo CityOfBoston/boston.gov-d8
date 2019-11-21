@@ -1584,7 +1584,6 @@ class MigrationConfigAlter {
       'field_published_date',
       'field_updated_date',
       'field_date_range',
-      'field_public_notice_date',
     ];
     $dateFields = array_flip($dateFields);
     // $migrations = \Drupal::state()->get("bos_migration.migrations");

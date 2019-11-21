@@ -260,8 +260,6 @@ function doPaths() {
   printf "[migration-runtime] ${text}\n\n" | tee -a ${logfile}
 }
 
-printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n", "${*}" | tee ${logfile}
-printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee -a ${logfile}
 
 acquia_env="${AH_SITE_NAME}"
 if [ ! -z $2 ]; then
@@ -276,7 +274,7 @@ if [ -d "/mnt/gfs" ]; then
     logfile="${filespath}/bos_migration.log"
     drush="drush"
     doLogRotate "${filespath}/bos_migration.cfg"
-    printf "[migration-info] Running in REMOTE mode:\n" | tee -a ${logfile}
+    mode="REMOTE"
 else
     export PHP_IDE_CONFIG="serverName=boston.lndo.site" && export XDEBUG_CONFIG="remote_enable=true idekey=PHPSTORM remote_host=10.241.172.216"
     cd  ~/sources/boston.gov-d8/docroot
@@ -285,8 +283,12 @@ else
     logfile="./bos_migration.log"
     filespath="/home/david/sources/boston.gov-d8/docroot/sites/default/files"
     drush="lando drush"
-    printf "[migration-info] Running in LOCAL DOCKER mode:\n"| tee -a ${logfile}
+    mode="LOCAL DOCKER"
 fi
+
+printf "\n[MIGRATION] Executing 'bos_migration.sh %s'.\n\n" "${*}" | tee ${logfile}
+printf "[migration-start] Starts %s %s\n\n" $(date +%F\ %T ) | tee -a ${logfile}
+printf "[migration-info] Running in %s mode:\n" "${mode}" | tee -a ${logfile}
 
 running=0
 
@@ -313,6 +315,8 @@ if [ "$1" == "files" ] || [ $running -eq 1 ]; then
     running=1
     if [ "$1" == "files" ]; then restoreDB "${dbpath}/migration_clean_with_files.sql" "${landodbpath}/migration_clean_with_files.sql" || exit 1; fi
     doMigrate --tag="bos:initial:1" --force
+    # Run drush cim again to allow the user roles to ammended.
+    ${drush} cim -y  | tee -a ${logfile}
     dumpDB ${dbpath}/migration_clean_with_prereq.sql ${landodbpath}/migration_clean_with_prereq.sql
 fi
 
@@ -446,9 +450,19 @@ while true; do
 done
 
 # Map D7 view displays to D8 displays.
+printf "[migration-info] Map D7 views to D8 equivalents.\n" | tee -a ${logfile}
 doExecPHP "\Drupal\bos_migration\MigrationFixes::fixListViewField();"
 
+# Update icons and images which missed getting mapped during migration.
+printf "[migration-info] Map images and icons to new locations (those missed during migration).\n" | tee -a ${logfile}
+doExecPHP "\Drupal\bos_migration\MigrationFixes::forceUpdateSvgPaths();"
+
+# Update Media entity dates to match file entity dates.
+printf "[migration-info] Update Media entity dates to match file entity dates (those missed during migration).\n" | tee -a ${logfile}
+doExecPHP "\Drupal\bos_migration\MigrationFixes::syncMediaDates();"
+
 # Reset status_items.
+printf "[migration-info] Rebuild status_items (message of the day).\n" | tee -a ${logfile}
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::deleteContent(['node' => 'status_item', 'paragraph' => 'message_for_the_day']);"
 doExecPHP "\Drupal\migrate_utilities\MigUtilTools::loadSetup('node_status_item');"
 
