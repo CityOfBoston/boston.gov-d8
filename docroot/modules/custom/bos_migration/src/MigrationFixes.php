@@ -900,7 +900,6 @@ class MigrationFixes {
       }
     }
 
-
     // Need to flush the image/files + views caches.
     if ($cnt > 0) {
       printf("[info] Flushing caches.\n", $cnt);
