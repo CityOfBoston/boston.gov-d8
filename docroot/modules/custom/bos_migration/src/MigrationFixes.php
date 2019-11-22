@@ -834,15 +834,62 @@ class MigrationFixes {
     printf("[action] Will map all old image path/filename to new path/filenames.\n");
     $cnt = 0;
     $mf = new MigrationFixes();
+
     foreach (self::$svgMapping as $oldUri => $newUri) {
       $mimetype = $mf->getMimeFromFile($newUri);
-      $result = Database::getConnection()->update("file_managed")
-        ->fields([
-          "uri" => $newUri,
-          "filemime" => trim($mimetype),
-        ])
+
+      // See if there are file entities linked to this uri.
+      $files = Database::getConnection()->select("file_managed", "f")
+        ->fields("f", ["fid"])
         ->condition("uri", $oldUri, "=")
-        ->execute();
+        ->execute()
+        ->fetchAllAssoc("fid");
+
+      if ($files) {
+        // Process each file entity in turn.
+        // First update the new uri and the new mime in the managed files table.
+        $result = Database::getConnection()->update("file_managed")
+          ->fields([
+            "uri" => $newUri,
+            "filemime" => trim($mimetype),
+          ])
+          ->condition("uri", $oldUri, "=")
+          ->execute();
+        // If the uri has changed and now is an ion, need to update the bundle
+        // in all associated media entities.
+        if (pathinfo($oldUri)['extension'] != pathinfo($newUri)['extension']
+          && pathinfo($newUri)['extension'] == "svg") {
+          // There may be multiple files with this uri.
+          foreach ($files as $file) {
+            // Get the media ids which are linked to these file ids.
+            $mids = Database::getConnection()->select("media__image", "mi")
+              ->fields("mi", ["entity_id"])
+              ->condition("image_target_id", $file->fid, "=")
+              ->execute()
+              ->fetchAllAssoc("entity_id");
+            // Now update the media tables.
+            // There may be multiple media entities linked to this file entity.
+            foreach ($mids as $mid) {
+              Database::getConnection()->update("media")
+                ->fields(["bundle" => "media"])
+                ->condition("mid", $mid->entity_id, "=")
+                ->execute();
+              Database::getConnection()->update("media_field_data")
+                ->fields(["bundle" => "media"])
+                ->condition("mid", $mid->entity_id, "=")
+                ->execute();
+              Database::getConnection()->update("media__image")
+                ->fields(["bundle" => "media"])
+                ->condition("entity_id", $mid->entity_id, "=")
+                ->execute();
+              Database::getConnection()->update("media_revision__image")
+                ->fields(["bundle" => "media"])
+                ->condition("entity_id", $mid->entity_id, "=")
+                ->execute();
+            }
+          }
+        }
+      }
       if (!empty($result)) {
         // Delete the old uri as we have now linked to a new path.
         $file = \Drupal::service('file_system')->realpath($oldUri);
@@ -852,6 +899,7 @@ class MigrationFixes {
         $cnt++;
       }
     }
+
 
     // Need to flush the image/files + views caches.
     if ($cnt > 0) {
