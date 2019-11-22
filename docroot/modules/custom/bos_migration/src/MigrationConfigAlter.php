@@ -628,19 +628,14 @@ class MigrationConfigAlter {
     "paragraph__newsletter" => [
       "process" => [
         "field_description" => [
-          "plugin" => "sub_process",
+          "plugin" => "iterator",
           "source" => "field_description",
           "process" => [
-            [
+            "value" => "value",
+            "format" => [
               "plugin" => "default_value",
-              "default_value" => "",
+              "default_value" => "full_html",
             ],
-          ],
-        ],
-        "field_description/0/format" => [
-          [
-            "plugin" => "default_value",
-            "default_value" => "full_html",
           ],
         ],
       ],
