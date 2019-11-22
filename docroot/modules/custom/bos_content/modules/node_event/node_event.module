@@ -112,9 +112,35 @@ function node_event_preprocess_node__event(&$variables) {
       'detail' => 'detail-item--middle',
     ],
   ];
-  // Render the time element of the event date into a detail_item.
+
+  // Select the date to appear on the node.
   if (isset($variables["content"]["field_event_date_recur"]["#object"])) {
-    // TODO: test when multiple dates. (in twig node-event.html.twig)
+    if ($variables["content"]["field_event_date_recur"][0]["#is_recurring"]) {
+      // This is a recurring event.
+      if (!empty($variables["content"]["field_event_date_recur"][0]["#occurrences"])) {
+        // There are future occurrences scheduled.
+        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#occurrences'][0]['start_date']["#text"];
+      }
+      else {
+        // All events are in the past ...
+        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']["#text"];
+      }
+      $vars['body'] = "Repeats " . $variables["content"]["field_event_date_recur"][0]["#interpretation"];
+    }
+    else {
+      if (!empty($variables["content"]["field_event_date_recur"][0]['#date']['start_date'])) {
+        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']['start_date']['#text'];
+        if ($variables["event_date"] != $variables["content"]["field_event_date_recur"][0]['#date']['end_date']['#text']) {
+          $variables["event_date"] = preg_replace('~\, [0-9]{4}~', '', $variables["event_date"]);
+          $variables["event_date"] .= " - " . $variables["content"]["field_event_date_recur"][0]['#date']['end_date']['#text'];
+        }
+      }
+      elseif (!empty($variables["content"]["field_event_date_recur"][0]['#date']['#text'])) {
+        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']['#text'];
+      }
+    }
+
+    // Render the time element of the event date into a detail_item.
     $event_date = $variables['elements']['#node']->field_event_date_recur[0]->value;
     // All dates stored in UTC in DB.
     $event_date = strtotime($event_date . " +0000");
