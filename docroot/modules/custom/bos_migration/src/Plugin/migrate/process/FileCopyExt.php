@@ -91,9 +91,11 @@ class FileCopyExt extends FileCopy {
     // Save the newly created source.
     $value[0] = $source;
 
-    // If this is an icon, check the map and remap the destination file uri.
+    // Check the map and remap the destination file uri.
+    $destination = $this->remapIconUri($destination);
+
+    // If this is an icon, see if it is external, and if it is, step over it.
     if ($this->extractExtension($destination) == "svg") {
-      $destination = $this->remapIconUri($destination);
       if ($this->isExternalFile($destination)) {
         // This (previously internal) destination has been mapped to an
         // external file, probably an AWS or google drive.
