@@ -125,7 +125,9 @@ function node_event_preprocess_node__event(&$variables) {
         // All events are in the past ...
         $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']["#text"];
       }
-      $vars['body'] = "Repeats " . $variables["content"]["field_event_date_recur"][0]["#interpretation"];
+      if (!empty($variables["content"]["field_event_date_recur"][0]["#interpretation"])) {
+        $vars['body'] = "Repeats " . $variables["content"]["field_event_date_recur"][0]["#interpretation"];
+      }
     }
     else {
       if (!empty($variables["content"]["field_event_date_recur"][0]['#date']['start_date'])) {

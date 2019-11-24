@@ -5,6 +5,7 @@
  * The Base module file for bos_commissions module.
  */
 
+use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Url;
@@ -57,6 +58,17 @@ function bos_commissions_preprocess_paragraph(&$variables) {
         break;
     }
   }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_commissions_paragraph_commission_search_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("<i>Standard search component</i>");
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
 }
 
 /**

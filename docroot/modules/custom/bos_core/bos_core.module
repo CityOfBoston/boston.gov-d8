@@ -801,25 +801,35 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
       case 'internal_link':
         $link = $paragraph->get('field_internal_link')->getValue();
         if (!empty($link)) {
-          preg_match('~/(.*)~', $link['0']['uri'], $match);
-          $url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]);
-          $results['url'] = $url->toString();
-          if (empty($link['0']['title'])) {
-            $param = $url->getRouteParameters();
-            if (!empty($param)
-              && isset($param["node"])
-              && NULL != ($dest = Node::load($param["node"]))) {
-              $results['title'] = $dest->get("title")->value;
-            }
-            else {
-              $results['title'] = "Unknown";
-            }
+          preg_match('~^(http(s)?:)?//(.*\.)?boston\.(gov|lndo\.site)~', $link['0']['uri'], $match);
+          if (!empty($match) && $match[0] == $link['0']['uri']) {
+            $results['url'] = $link['0']['uri'];
+            $results['title'] = $link['0']['title'] ?: "Homepage";
           }
           else {
-            $results['title'] = $link['0']['title'];
+            preg_match('~/(.*)~', $link['0']['uri'], $match);
+            if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
+              $results['url'] = $url->toString();
+            }
+            if (empty($link['0']['title'])) {
+              $param = $url->getRouteParameters();
+              if (!empty($param)
+                && isset($param["node"])
+                && NULL != ($dest = Node::load($param["node"]))) {
+                $results['title'] = $dest->get("title")->value;
+              }
+              else {
+                $results['title'] = "Unknown";
+              }
+            }
+            else {
+              $results['title'] = $link['0']['title'];
+            }
+            if (isset($url)) {
+              $results['link'] = Link::fromTextAndUrl($results['title'], $url)
+                ->toString();
+            }
           }
-          $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)
-            ->toString();
         }
         break;
     }
