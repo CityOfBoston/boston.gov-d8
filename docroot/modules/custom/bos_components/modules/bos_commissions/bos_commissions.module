@@ -60,6 +60,17 @@ function bos_commissions_preprocess_paragraph(&$variables) {
 }
 
 /**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function bos_commissions_paragraph_commission_search_summary_alter(array $form_widget, array $para, array $attributes) {
+  $markup[] = Markup::create("<i>Standard search component</i>");
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
  * Extracts the string commission ID from "field_commission".
  */
 function bos_commissions_id(&$variables) {
