@@ -203,7 +203,10 @@ function _bos_public_notice_date_range(array &$variables) {
       'body' => 'detail-item__label',
     ],
   ];
-  $date_vars['body'] = $variables["elements"]["#node"]->field_public_notice_date->start_date->format("h:iA - ") . $variables["elements"]["#node"]->field_public_notice_date->end_date->format("h:iA");
+  $date_vars['body'] = $variables["elements"]["#node"]->field_public_notice_date->start_date->format("h:iA") ?: "";
+  if (!empty($variables["elements"]["#node"]->field_public_notice_date->end_date)) {
+    $date_vars['body'] .= $variables["elements"]["#node"]->field_public_notice_date->end_date->format(" - h:iA");
+  }
   $variables['field_date'] = \Drupal::theme()->render('detail_item', $date_vars);
 }
 

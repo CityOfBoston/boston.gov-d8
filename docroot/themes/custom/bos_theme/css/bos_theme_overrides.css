@@ -1036,3 +1036,23 @@ What: Replace the ribbon currently linked to https://patterns.boston.gov/images/
   top: 0px;
   width: 70px;
 }
+
+/**
+David:
+Where: CKEditor embedded images .
+What: Control default sizes.
+ */
+.field-type-text-long img,
+.field-name-body img {
+  max-width: 100%;
+  height: 100%;
+}
+
+/**
+David:
+Where: paragraph--document.twig.html.
+What: resize icon so its not cropped.
+ */
+.link-wrapper.download-link a {
+  background-size: 13px;
+}
