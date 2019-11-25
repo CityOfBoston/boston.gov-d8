@@ -166,13 +166,13 @@ class SwiftypeController extends ControllerBase {
   /**
    * Manages multi-page retrieval of search results.
    *
-   * @param array $info
+   * @param \stdClass $info
    *   Search info.
    *
    * @return array
    *   The overall number of pages.
    */
-  private function pageRange(array $info) {
+  private function pageRange(stdClass $info) {
     $start = 1;
     $end = 5;
 
