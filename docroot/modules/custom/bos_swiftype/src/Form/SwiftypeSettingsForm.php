@@ -31,6 +31,13 @@ class SwiftypeSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_swiftype.settings');
+    if ("" != ($token = substr($_ENV["bos_swiftype_auth_token"], 0, 3))) {
+      $token .= "------" . substr($_ENV["bos_swiftype_auth_token"], 0, 2);
+    }
+    else {
+      $token = "MISSING - PLEASE SET";
+      $class = "error";
+    }
     $form = [
       '#tree' => TRUE,
       'swiftype_admin' => [
@@ -40,23 +47,16 @@ class SwiftypeSettingsForm extends ConfigFormBase {
         'swiftype_key' => [
           '#type' => 'textfield',
           '#title' => t('API KEY / Token'),
-          '#description' => t('The Swiftype key (as provided by Swiftype).'),
-          '#default_value' => $config->get('swiftype_key'),
-          '#required' => TRUE,
-        ],
-        'swiftype_email' => [
-          '#type' => 'textfield',
-          '#title' => t('Email'),
-          '#description' => t('Email as registered with Swiftype.'),
-          '#default_value' => $config->get('swiftype_email'),
-          '#required' => TRUE,
-        ],
-        'swiftype_password' => [
-          '#type' => 'password',
-          '#title' => t('Password'),
-          '#description' => t('Password as registered with Swiftype.'),
-          '#default_value' => $config->get('swiftype_password'),
-          '#required' => TRUE,
+          '#disabled' => TRUE,
+          '#attributes' => [
+            "class" => [$class],
+          ],
+          '#default_value' => $token,
+          '#description' => t('The Swiftype API authentication key (as provided by Swiftype).<br>
+            <i><b>Note:</b> This value is stored in the Host Server Environment Variable: "<b>cob_swiftype_api_token</b>".<br>
+             - On local Docker builds this is set in the lando/docker file, <br>
+             - On Travis this is set in the travis config file,<br>
+             - On Acquia this is an Environment Variable loaded on the Acquia Cloud UI.</i>'),
         ],
         'swiftype_engine' => [
           '#type' => 'textfield',
@@ -79,6 +79,20 @@ class SwiftypeSettingsForm extends ConfigFormBase {
           '#default_value' => $config->get('swiftype_endpoint_path') ?: "/api/v1/",
           '#required' => TRUE,
         ],
+        'swiftype_email' => [
+          '#type' => 'textfield',
+          '#title' => t('Email'),
+          '#description' => t('[OPTIONAL] Email as registered with Swiftype.'),
+          '#default_value' => $config->get('swiftype_email'),
+          '#required' => FALSE,
+        ],
+        'swiftype_password' => [
+          '#type' => 'password',
+          '#title' => t('Password'),
+          '#description' => t('[OPTIONAL] Password as registered with Swiftype.'),
+          '#default_value' => $config->get('swiftype_password'),
+          '#required' => FALSE,
+        ],
         'swiftype_notes' => [
           '#type' => 'textarea',
           '#title' => t('Notes'),
@@ -99,7 +113,6 @@ class SwiftypeSettingsForm extends ConfigFormBase {
     $settings = $form_state->getValue('swiftype_admin');
 
     $this->config('bos_swiftype.settings')
-      ->set('swiftype_key', $settings['swiftype_key'])
       ->set('swiftype_password', $settings['swiftype_password'])
       ->set('swiftype_email', $settings['swiftype_email'])
       ->set('swiftype_engine', $settings['swiftype_engine'])
