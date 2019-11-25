@@ -21,10 +21,6 @@ $settings['entity_update_batch_size'] = 50;
 
 /* End of default.settings.php copy. */
 
-/* Default config_split, include all modules by default. */
-$config['config_split.config_split.develop']['status'] = TRUE;
-$config['config_split.config_split.production']['status'] = TRUE;
-
 /* Define and set an environment variable for prod/dev mode. */
 global $_envvar;
 $_envvar = "prod";

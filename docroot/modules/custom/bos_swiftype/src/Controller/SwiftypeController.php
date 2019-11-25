@@ -96,7 +96,7 @@ class SwiftypeController extends ControllerBase {
     }
 
     try {
-      $client = new SwiftypeClient($this->config('swiftype_email'), $this->config('swiftype_password'), $this->config('swiftype_key'), $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
+      $client = new SwiftypeClient($this->config('swiftype_email'), $this->config('swiftype_password'), $_ENV["bos_swiftype_auth_token"], $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
       $results = $client->log_click($this->config('swiftype_engine'), 'page', $params['id'], $params['query']);
     }
     catch (Exception $e) {
@@ -120,7 +120,7 @@ class SwiftypeController extends ControllerBase {
   public function searchPage() {
     $params = \Drupal::request()->query->all();
 
-    $client = new SwiftypeClient($this->config('swiftype_email'), $this->config('swiftype_password'), $this->config('swiftype_key'), $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
+    $client = new SwiftypeClient($this->config('swiftype_email'), $this->config('swiftype_password'), $_ENV["bos_swiftype_auth_token"], $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
 
     if ($params['query']) {
       if (!empty($params['facet'])) {
