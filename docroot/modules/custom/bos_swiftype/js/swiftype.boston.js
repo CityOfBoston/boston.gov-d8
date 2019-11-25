@@ -1,9 +1,10 @@
 /**
  * @file
- *
  * Manages the reset button on search.
- * TODO: make is jQuery, and make it work!
+ *
+ * TODO: make this jQuery, and make it work!
  */
+
 window.onload = function () {
   let reset_button = document.getElementById('resetForm');
 

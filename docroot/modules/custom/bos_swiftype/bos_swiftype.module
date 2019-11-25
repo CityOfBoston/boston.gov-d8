@@ -34,7 +34,6 @@ function bos_swiftype_preprocess_page__search(&$variables, $hook, $info) {
   // Make responsive to menu appearing on right by adding class mn.
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page--wa");
-
 }
 
 /**
@@ -93,7 +92,7 @@ function bos_swiftype_preprocess_bos_swiftype_search_results(&$variables) {
         "@page" => $range,
         "@q" => $variables["search_term"],
         "@facet" => http_build_query([
-          'facet' => $variables["selected_facets"]
+          'facet' => $variables["selected_facets"],
         ]),
       ]),
     ];
@@ -104,13 +103,13 @@ function bos_swiftype_preprocess_bos_swiftype_search_results(&$variables) {
 /**
  * Provides a more generic name for the funnny CT names we have.
  *
- * @param $type
+ * @param string $type
  *   The name of the content type.
  *
  * @return bool|mixed
  *   A more friendly display of the content type name.
  */
-function bos_swiftype_facet_type($type) {
+function bos_swiftype_facet_type(string $type) {
   $facets = [
     'article' => 'Articles',
     'department_profile' => 'Departments',
