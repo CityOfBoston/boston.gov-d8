@@ -3,7 +3,6 @@
 namespace Drupal\bos_swiftype\Controller;
 
 // TODO: Make this Ajax.
-
 use Drupal\bos_core\Services\BosCoreGAPost;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -167,13 +166,13 @@ class SwiftypeController extends ControllerBase {
   /**
    * Manages multi-page retrieval of search results.
    *
-   * @param $info
+   * @param array $info
    *   Search info.
    *
    * @return array
    *   The overall number of pages.
    */
-  private function pageRange($info) {
+  private function pageRange(array $info) {
     $start = 1;
     $end = 5;
 
