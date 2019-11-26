@@ -9,8 +9,8 @@ dependencies:
     - field.storage.node.field_date_range
     - field.storage.node.field_event_date_recur
     - node.type.event
-    - taxonomy.vocabulary.311_request
     - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.neighborhoods
   module:
     - better_exposed_filters
     - date_recur
@@ -84,10 +84,11 @@ display:
                 rewrite:
                   filter_rewrite_values: ''
             field_multiple_neighborhoods_target_id:
-              bef_format: default
+              bef_format: bef
               more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
                 is_secondary: false
-                placeholder_text: ''
                 rewrite:
                   filter_rewrite_values: ''
           text_input_required_format: filtered_html
@@ -453,21 +454,16 @@ display:
             identifier: field_multiple_neighborhoods_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
               site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
               developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -482,9 +478,9 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
+          type: select
           limit: true
-          vid: 311_request
+          vid: neighborhoods
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
