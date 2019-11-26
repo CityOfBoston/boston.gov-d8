@@ -29,16 +29,10 @@
   ]
 %}
 
-{% set filter_name = "" %}
+{% set filter_id = attributes['data-drupal-selector'] %}
+{% set filter_id_underscore = filter_id|replace({'-': "_"}) %}
 
-{% if legend.title['#markup'] == 'Event Type' %}
-  {% set filter_name = 'field_event_type_target_id' %}
-{% endif %}
-
-{% set filter_wrapper = 'views-widget-filter-' ~ filter_name %}
-{% set filter_inner = 'edit-' ~ filter_name|replace({'_': "-"}) %}
-
-<fieldset{{ attributes.addClass(classes).addClass(filter_wrapper) }}>
+<fieldset{{ attributes.addClass(classes).addClass('views-widget-filter-' ~ filter_id_underscore) }}>
   {%
     set legend_span_classes = [
       'fieldset-legend',
@@ -47,7 +41,7 @@
     ]
   %}
   {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
-  <label for="{{ filter_inner }}">{{ legend.title }}</label>
+  <label for="edit-{{ filter_id }}">{{ legend.title }}</label>
   {#
   <legend{{ legend.attributes }}>
     <span{{ legend_span.attributes.addClass(legend_span_classes) }}>{{ legend.title }}</span>
