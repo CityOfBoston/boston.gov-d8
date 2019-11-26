@@ -70,22 +70,16 @@ display:
               autosubmit: false
               autosubmit_exclude_textfield: false
               autosubmit_hide: false
-            field_event_dates_value:
-              bef_format: default
-              more_options:
-                is_secondary: false
-            field_event_dates_value_1:
-              bef_format: default
-              more_options:
-                is_secondary: false
             title:
               bef_format: default
               more_options:
                 is_secondary: false
                 placeholder_text: ''
             field_event_type_target_id:
-              bef_format: default
+              bef_format: bef
               more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
                 is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
@@ -93,18 +87,9 @@ display:
               bef_format: default
               more_options:
                 is_secondary: false
+                placeholder_text: ''
                 rewrite:
                   filter_rewrite_values: ''
-            field_related_departments_target_id:
-              bef_format: default
-              slider_options:
-                bef_slider_min: null
-                bef_slider_max: null
-                bef_slider_step: !!float 1
-                bef_slider_animate: ''
-                bef_slider_orientation: ''
-              more_options:
-                is_secondary: false
           text_input_required_format: filtered_html
       pager:
         type: full
@@ -447,7 +432,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
+          type: select
           limit: true
           vid: event_type
           hierarchy: false
