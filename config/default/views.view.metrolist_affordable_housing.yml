@@ -121,14 +121,29 @@ display:
           summary: ''
           description: ''
           columns:
+            field_mah_lottery_type: field_mah_lottery_type
             title: title
             field_mah_address: field_mah_address
             field_mah_zipcode: field_mah_zipcode
             field_mah_outer_location: field_mah_outer_location
             field_mah_neighborhood: field_mah_neighborhood
+            nothing: nothing
+            field_mah_household_income_limit: field_mah_household_income_limit
+            field_mah_contact: field_mah_contact
             field_mah_phone: field_mah_phone
             field_mah_email: field_mah_email
+            nothing_1: nothing_1
+            field_mah_lottery_deadline: field_mah_lottery_deadline
+            field_mah_lottery_url: field_mah_lottery_url
+            nothing_2: nothing_2
           info:
+            field_mah_lottery_type:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             title:
               sortable: false
               default_sort_order: asc
@@ -144,7 +159,7 @@ display:
               empty_column: false
               responsive: ''
             field_mah_zipcode:
-              sortable: true
+              sortable: false
               default_sort_order: asc
               align: ''
               separator: ''
@@ -164,6 +179,27 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
+            nothing:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_mah_household_income_limit:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_mah_contact:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             field_mah_phone:
               sortable: false
               default_sort_order: asc
@@ -172,6 +208,32 @@ display:
               empty_column: false
               responsive: ''
             field_mah_email:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            nothing_1:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_mah_lottery_deadline:
+              sortable: true
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_mah_lottery_url:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            nothing_2:
               sortable: false
               default_sort_order: asc
               align: ''
@@ -698,7 +760,7 @@ display:
           exposed: true
           expose:
             operator_id: tid_op
-            label: 'Has taxonomy term'
+            label: Neighborhood
             description: ''
             use_operator: false
             operator: tid_op
@@ -711,15 +773,10 @@ display:
               anonymous: '0'
               administrator: '0'
               site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
               developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -2289,7 +2346,7 @@ display:
           click_sort_column: uri
           type: link
           settings:
-            trim_length: 80
+            trim_length: null
             url_only: true
             url_plain: true
             rel: '0'
