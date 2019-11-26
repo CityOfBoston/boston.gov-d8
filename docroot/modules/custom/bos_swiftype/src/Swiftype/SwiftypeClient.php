@@ -20,7 +20,7 @@ class SwiftypeClient
   {
     $this->username      = $username;
     $this->password      = $password;
-    $this->api_key       = $api_key;
+    $this->api_key       = ($api_key ?? $_ENV["bos_swiftype_auth_token"]);
     $this->host          = $host;
     $this->api_base_path = $api_base_path;
 

@@ -497,6 +497,10 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
         $variables['breadcrumb_title'] = Html::escape($item->get($itemType)->get("name")->value);
       }
     }
+    elseif (\Drupal::request()->query->has("query") && \Drupal::request()->getPathInfo() == "/search") {
+      $variables['breadcrumb_title'] = "Search";
+    }
+
     // Turn off the trailing separator.
     $variables["cob"]['display_trailing_separator'] = FALSE;
   }
