@@ -10,6 +10,7 @@ dependencies:
     - field.storage.node.field_event_date_recur
     - node.type.event
     - taxonomy.vocabulary.311_request
+    - taxonomy.vocabulary.event_type
   module:
     - better_exposed_filters
     - date_recur
@@ -448,7 +449,7 @@ display:
           reduce_duplicates: false
           type: textfield
           limit: true
-          vid: 311_request
+          vid: event_type
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
