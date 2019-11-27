@@ -787,7 +787,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
         if (isset($link['0']['target_id'])) {
           $results['title'] = $paragraph->get("field_title")->value;
           $results['link'] = _bos_core_get_file_link($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
-          $results['url'] = _bos_core_get_file_url($link['0']['target_id'], $results['title'], ["attributes" => $attributes]); 
+          $results['url'] = _bos_core_get_file_url($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
         }
         break;
 
