@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_migration;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -1501,4 +1502,29 @@ class MigrationFixes {
         WHERE media.name <> file.filename;")->execute();
   }
 
+  /**
+   * This renames the file_managed filename back to the physical filename.
+   */
+  public static function resetFilename() {
+    printf ("Will Reset all media::document and entity::file filenames.\n");
+
+    $conn = \Drupal::database();
+    $result = $conn->query("
+      UPDATE {media__field_document} d
+        INNER JOIN {file_managed} f on d.field_document_target_id = f.fid
+          SET d.field_document_description = f.filename
+        WHERE d.field_document_description IS NULL AND d.entity_id IS NOT NULL;
+    ");
+    $result->allowRowCount = TRUE;
+    $result->execute();
+    printf ("Updated filenames for %s media documents.\n", $result->rowCount());
+
+    $result = \Drupal::database()->query("
+      UPDATE {file_managed} 
+        SET filename = substring_index(uri, '/', -1);
+    ");
+    $result->allowRowCount = TRUE;
+    $result->execute();
+    printf ("Updated filenames for %s file entities.\n", $result->rowCount());
+  }
 }
