@@ -32,6 +32,11 @@
 {% set filter_id = element['#id']  %}
 {% set filter_name = element['#name'] %}
 
+{% set no_label = false %}
+{% if filter_name == "field_multiple_neighborhoods_target_id" %}
+  {% set no_label = true %}
+{% endif %}
+
 <fieldset{{ attributes.addClass(classes).addClass('views-widget-filter-' ~ filter_name) }}>
   {%
     set legend_span_classes = [
@@ -41,7 +46,7 @@
     ]
   %}
   {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
-  <label for="{{ filter_id }}">{{ legend.title }}</label>
+  <label for="{{ filter_id }}" {% if no_label %}class="hidden"{% endif %}>{{ legend.title }}</label>
   {#
   <legend{{ legend.attributes }}>
     <span{{ legend_span.attributes.addClass(legend_span_classes) }}>{{ legend.title }}</span>
