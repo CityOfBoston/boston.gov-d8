@@ -786,7 +786,8 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
         $link = $paragraph->get('field_document')->getValue();
         if (isset($link['0']['target_id'])) {
           $results['title'] = $paragraph->get("field_title")->value;
-          $results['link'] = $results['url'] = _bos_core_get_file_link($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
+          $results['link'] = _bos_core_get_file_link($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
+          $results['url'] = _bos_core_get_file_url($link['0']['target_id'], $results['title'], ["attributes" => $attributes]); 
         }
         break;
 
@@ -835,6 +836,37 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
     }
   }
   return $results;
+}
+
+/**
+ * Creates URL to file managed by Drupal.
+ *
+ * @param mixed $fid
+ *   File ID.
+ * @param string $link_text
+ *   Link Text.
+ * @param array $attributes
+ *   Link attributes.
+ *
+ * @return \Drupal\Core\GeneratedLink|\Drupal\Core\GeneratedUrl|string
+ *   URL in a string.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _bos_core_get_file_url($fid, string $link_text = NULL, array $attributes = []) {
+  if (is_array($fid) && !empty($fid['0']['target_id'])) {
+    $fid = $fid['0']['target_id'];
+  }
+  try {
+    $uri = Drupal::entityTypeManager()->getStorage("file")->load($fid)->getFileUri();
+  }
+  catch (Error $e) {
+    // Hmmm, problem, log it and then substitute uri.
+    Drupal::messenger()->addWarning("File id (" . $fid . ") is missing. (" . $link_text . ")");
+    $uri = "#";
+  }
+  return $uri;
 }
 
 /**
