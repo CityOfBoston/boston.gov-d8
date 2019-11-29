@@ -262,8 +262,13 @@ function bos_components_paragraph_summary_alter(array $form_widget, array $para,
   elseif ($para["entity"]->hasField("field_left_column")
     || $para["entity"]->hasField("field_middle_column")
     || $para["entity"]->hasField("field_right_column")) {
-    $text = ($para["entity"]->get("field_left_column")->value ?: "") . " " . ($para["entity"]->get("field_middle_column")->value ?: "") . " " . ($para["entity"]->get("field_right_column")->value ?: "");
-    $text = strip_tags($text);
+    $texts = [];
+    foreach (["field_left_column", "field_middle_column", "field_right_column"] as $field) {
+      if ($para["entity"]->hasField($field)) {
+        $texts[] = $para["entity"]->get($field)->value;
+      }
+    }
+    $text = strip_tags(implode(" ", $texts) ?? "");
     $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, $at_settings) . "</span>");
   }
   elseif ($para["entity"]->hasField("field_sidebar_text")) {
