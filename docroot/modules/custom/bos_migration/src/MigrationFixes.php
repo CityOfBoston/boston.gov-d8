@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_migration;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
@@ -950,10 +951,10 @@ class MigrationFixes {
       $cnt = 0;
       foreach ($mimes[$media_type] as $mime => $file_extension) {
         $files = \Drupal::database()->query("
-          SELECT distinct f.fid, f.uri 
+          SELECT distinct f.fid, f.uri
             FROM file_managed f
             	LEFT JOIN media m ON f.fid = m.mid
-            WHERE f.filemime = '" . $mime . "' 
+            WHERE f.filemime = '" . $mime . "'
               AND m.mid IS NULL
               AND f.status = 1;")->fetchAll();
 
@@ -1019,7 +1020,7 @@ class MigrationFixes {
         $table = $node . "__" . $field;
         $column = $field . "_target_id";
         if (\Drupal::database()->query("
-          SELECT distinct f.entity_id 
+          SELECT distinct f.entity_id
             FROM $table f
             WHERE $column = $fid;")->fetchAll()) {
           return TRUE;
@@ -1160,7 +1161,7 @@ class MigrationFixes {
       $query_string = "SELECT  i.start start_date, i.end end_date, d.*
         FROM $source_table d
           INNER JOIN (
-            SELECT entity_id, min(field_date_value) start, max(field_date_value) end 
+            SELECT entity_id, min(field_date_value) start, max(field_date_value) end
             FROM $source_table
             GROUP BY entity_id
           ) i ON i.entity_id = d.entity_id
@@ -1317,10 +1318,10 @@ class MigrationFixes {
       $cnt = 0;
       if ($data["type"] == "node") {
         $table = $data["table"];
-        $sql = "SELECT n.vid FROM node_field_data n 
-                LEFT JOIN $table t 
-                    ON (n.nid = t.entity_id AND n.vid = t.revision_id) 
-                WHERE type = '$type' 
+        $sql = "SELECT n.vid FROM node_field_data n
+                LEFT JOIN $table t
+                    ON (n.nid = t.entity_id AND n.vid = t.revision_id)
+                WHERE type = '$type'
                     AND n.status =  1
                     AND t.revision_id is null;";
       }
@@ -1386,7 +1387,7 @@ class MigrationFixes {
    */
   public static function fixDuplicateFiles() {
     // Find where multiple entries for the same physical file.
-    $query = "SELECT min(fid) remapfid, uri, count(*) num FROM drupal.file_managed 
+    $query = "SELECT min(fid) remapfid, uri, count(*) num FROM drupal.file_managed
               where filemime = 'image/svg+xml'
               group by uri
               having num > 1;";
@@ -1432,16 +1433,16 @@ class MigrationFixes {
     if (empty($d8)) {
       $d8 = "bostond8dev";
     }
-    $query_string = "        
+    $query_string = "
       INSERT INTO $d8.redirect (
-        type, uuid, language, hash, 
+        type, uuid, language, hash,
         uid, redirect_source__path,
         redirect_source__query, redirect_redirect__uri, redirect_redirect__title,
         redirect_redirect__options, status_code, created)
-      SELECT 
+      SELECT
         'redirect', uuid(), 'und', concat('unhashed-', sha(concat(unix_timestamp(),'internal:/', d7.alias))),
-        '0', d7.alias, 
-        'N', concat('internal:/', d7.source), '', 
+        '0', d7.alias,
+        'N', concat('internal:/', d7.source), '',
         'a:0:{}', 301, unix_timestamp()
       FROM $d8.url_alias d8
         RIGHT OUTER JOIN $d7.url_alias d7 ON d8.source = concat('/', d7.source) and d8.alias = concat('/', d7.alias)
@@ -1499,6 +1500,227 @@ class MigrationFixes {
         INNER JOIN file_managed file ON img.image_target_id = file.fid
           SET media.name = file.filename
         WHERE media.name <> file.filename;")->execute();
+  }
+
+  /**
+   * Update anchors.
+   *
+   * @param bool $commit
+   *   Should changes be saved.
+   */
+  public static function fixPdfLinks($commit = FALSE) {
+    printf("Will Search and repair broken links from migration..\n");
+    $path_maps = self::$folderMappings;
+    $cnt = 0; $fnd = 0;
+    // Define the fields and tables to scan.
+    // Array table=>field.
+    $eligible = [
+      "paragraph__field_right_column" => "field_right_column_value",
+      "paragraph_revision__field_right_column" => "field_right_column_value",
+      "paragraph__field_left_column" => "field_left_column_value",
+      "paragraph_revision__field_left_column" => "field_left_column_value",
+      "paragraph__field_middle_column" => "field_middle_column_value",
+      "paragraph_revision__field_middle_column" => "field_middle_column_value",
+      "paragraph__field_description" => "field_description_value",
+      "paragraph_revision__field_description" => "field_description_value",
+      "paragraph__field_short_description" => "field_short_description_value",
+      "paragraph_revision__field_short_description" => "field_short_description_value",
+      "node__body" => "body_value",
+      "node_revision__body" => "body_value",
+      "node__field_description" => "field_description_value",
+      "node_revision__field_description" => "field_description_value",
+      "node__field_intro_text" => "field_intro_text_value",
+      "node_revision__field_intro_text" => "field_intro_text_value",
+    ];
+    // Extract the main search array into two single column arrays for use
+    // in preg_replace.
+    $search = array_keys(self::$folderMappings);
+    $replace = array_values($path_maps);
+    // Scan the fields looking for anchor tags.
+    foreach ($eligible as $table => $field) {
+      // Fetch all records.
+      $row = \Drupal::database()->select($table, "t")
+        ->fields("t", ["revision_id", $field])
+        ->execute()
+        ->fetchAll();
+      // Process all rows.
+      foreach ($row as $value) {
+        $document = new \DOMDocument('1.0', 'UTF-8');
+        $html = '<?xml encoding="UTF-8">' . $value->{$field};
+        try {
+          $document->loadHTML($html, LIBXML_NOERROR);
+          $xpath = new \DOMXPath($document);
+          $save = FALSE;
+          // Replace the path using the map.
+          foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
+            $fnd++;
+            $located = FALSE;
+            $matches = [];
+            // Extract the file path and check if it exists.
+            $href = preg_replace("~[^\p{L}\p{N} _\./:]+~u", '', urldecode($link_node->getAttribute('href')));
+            if (preg_match(self::$cobDomainREGEX . "i", $href, $matches)) {
+              $a = preg_replace(self::$cobDomainREGEX . "i", "/", $href);
+              if (@file_exists($a)) {
+                $located = TRUE;
+              }
+            }
+
+            if (!$located) {
+              // If we dont have the file in that location, then attempt to
+              // map it in ...
+              // Check if this is in the root of the public:// folder.
+              $isRoot = FALSE;
+              if (preg_match(self::$cobPublicREGEX . "i", $href, $matches)) {
+                $from_public = preg_replace(self::$cobPublicREGEX . "i", "/", $href);
+                if (strpos("/", $from_public, 1) === FALSE) {
+                  $isRoot = TRUE;
+                  $href = "//embed/" . substr(trim($from_public, "/"), 0, 1) . $from_public;
+                }
+              }
+
+              if (!$isRoot) {
+                // We should be able to engineer a non-root path for this.
+                $hreft = str_ireplace("/sites/default/files/", "//", $href);
+                // Substitute the path.
+                $href = preg_replace($search, $replace, $hreft);
+              }
+              // Build back out to an absolute Url.
+              $href = str_replace("//", "https://www.boston.gov/sites/default/files/", $href);
+
+              // Just check this link is valid, before committing.
+              if (@file_get_contents($href)) {
+                $save = TRUE;
+                $orig = urldecode($link_node->getAttribute('href'));
+                $link_node->setAttribute("href", $href);
+                printf("Fixed link from %s to %s\n", $orig, $href);
+              }
+              else {
+                $orig = pathinfo(urldecode($link_node->getAttribute('href')));
+                printf("[WARNING] %s could not be found at %s\n", $orig["basename"], $orig["dirname"]);
+                printf(" - or its map (%s)\n", str_replace(" ", "%20", $href));
+                printf(" - in %s (revision: #%s)\n\n", $table, $value->revision_id);
+              }
+            }
+          }
+          if ($save) {
+            if ($commit) {
+              $result = Html::serialize($document);
+              // Update the table.
+              if (\Drupal::database()->update($table)
+                ->fields([$field => $result])
+                ->condition("revision_id", $row->revision_id)
+                ->execute()) {
+                $cnt++;
+              }
+              printf("\n");
+            }
+            else {
+              printf(" not saved\n");
+              $cnt++;
+            }
+          }
+        }
+        catch (\Exception $e) {
+        }
+      }
+    }
+
+    printf("Found %s and Repaired %s broken links from migration.\n", $fnd, $cnt);
+
+  }
+
+  /**
+   * This renames the file_managed filename back to the physical filename.
+   */
+  public static function resetFilename() {
+    printf("Will Reset all media::document and entity::file filenames.\n");
+
+    $conn = \Drupal::database();
+    $result = $conn->query("
+      UPDATE {media__field_document} d
+        INNER JOIN {file_managed} f on d.field_document_target_id = f.fid
+          SET d.field_document_description = f.filename
+        WHERE d.field_document_description IS NULL AND d.entity_id IS NOT NULL;
+    ");
+    $result->allowRowCount = TRUE;
+    $result->execute();
+    printf("Updated filenames for %s media documents.\n", $result->rowCount());
+
+    $result = \Drupal::database()->query("
+      UPDATE {file_managed}
+        SET filename = substring_index(uri, '/', -1);
+    ");
+    $result->allowRowCount = TRUE;
+    $result->execute();
+    printf("Updated filenames for %s file entities.\n", $result->rowCount());
+  }
+
+  /**
+   * This identifies broken links in the files_managed table.
+   *
+   * @param string $type
+   *   The file type: document | image | audio | video | undefined.
+   */
+  public static function findBrokenFileEntities(string $type = 'document') {
+    printf("Will find broken %ss.\n", $type);
+    $cnt = $missing = $bad = 0;
+    $conn = \Drupal::database();
+    $rows = $conn->query("
+      SELECT * FROM {file_managed} WHERE type = '$type';
+    ")
+      ->fetchAll();
+    $tot = count($rows);
+    printf("Checking %s %ss.\n", $tot, $type);
+
+    foreach ($rows as $row) {
+      $cnt++;
+      if (($tot > 40 && (($cnt % intval($tot / 40)) == 0)) || $tot <= 40) {
+        sprintf(".");
+      }
+      $uri = $row->uri;
+      $uri = str_replace("public:/", "https://www.boston.gov/sites/default/files", $uri);
+      if (!@file_get_contents($uri, NULL, NULL, NULL, 128)) {
+        $bad++;
+        $path = pathinfo($uri);
+        printf("\nCould not find file %s on new site (path: %s) (fid: %s).\n", $path["basename"], str_replace(" ", "%20", $uri), $row->fid);
+        $uri = str_replace("public:/", "https://boston.prod.acquia-sites.com/sites/default/files", $uri);
+        if (!@file_get_contents($uri, NULL, NULL, NULL, 128)) {
+          $missing++;
+          printf("  - ! also not on old site (%s).\n", str_replace(" ", "%20", $uri));
+          $bad--;
+        }
+      }
+    }
+    sprintf("\nChecked %s of %s files.\n", $cnt, $tot);
+  }
+
+  /**
+   * Provides some diagnostics of file and media entities.
+   *
+   * @param int $duplicate_threshold
+   *   What determines a duplicate (defaults to 2 records.)
+   */
+  public static function fileInfo(int $duplicate_threshold = 2) {
+    $getData = function ($query) {
+      return \Drupal::database()->query($query)->fetchAll();
+    };
+    $plotData = function ($rows, $title) {
+      printf("%s", $title);
+      printf("===============================.\n");
+      foreach ($rows as $row) {
+        foreach ($row as $col) {
+          printf("\s", $col);
+        }
+        printf("\n");
+      }
+      printf("\n\n");
+    };
+
+    $rows = $getData("SELECT type, count(*) FROM drupal.file_managed group by type;");
+    $plotData($rows, "Summary of managed file content.\n");
+
+    $rows = $getData("SELECT filename, uri, count(*) FROM drupal.file_managed group by filename having count(*) > " . $duplicate_threshold);
+    $plotData($rows, "Summary of duplicated file content.\n");
   }
 
 }
