@@ -33,7 +33,7 @@
 {% set filter_name = element['#name'] %}
 
 {% set no_label = false %}
-{% if filter_name == "field_multiple_neighborhoods_target_id" %}
+{% if filter_name == "field_multiple_neighborhoods_target_id" or filter_name == "tid" %}
   {% set no_label = true %}
 {% endif %}
 
