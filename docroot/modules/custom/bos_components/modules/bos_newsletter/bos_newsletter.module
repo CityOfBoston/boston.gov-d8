@@ -29,7 +29,7 @@ function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
 
   // Newsletter ID.
   if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_newsletter')) {
-    if ($tid = $variables['paragraph']->get('field_newsletter')->getValue()['0']['target_id']) {
+    if (isset($variables['paragraph']->get('field_newsletter')->getValue()['0']) && $tid = $variables['paragraph']->get('field_newsletter')->getValue()['0']['target_id']) {
       $term = \Drupal::entityTypeManager()
         ->getStorage('taxonomy_term')
         ->load($tid);
