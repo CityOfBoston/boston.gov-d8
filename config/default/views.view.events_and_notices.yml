@@ -17,7 +17,6 @@ dependencies:
     - datetime_range
     - media
     - node
-    - paragraphs
     - svg_image
     - user
 _core:
@@ -641,26 +640,7 @@ display:
             value: 'There are no upcoming events available at this time.'
             format: filtered_html
           plugin_id: text
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
+      relationships: {  }
       arguments: {  }
       display_extenders: {  }
       filter_groups:
