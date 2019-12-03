@@ -55,3 +55,18 @@ function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
     $view->setShowAdminLinks(FALSE);
   }
 }
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function bos_events_and_notices_views_query_alter(&$view, &$query) {
+  $test = 'test';
+  if ($view->name == 'events_and_notices' && $view->current_display == 'upcoming') {
+    $query->orderby = array(
+      array(
+        'field' => 'CASE WHEN field_data_field_public_notice_date.field_public_notice_date_value THEN field_data_field_public_notice_date.field_public_notice_date_value WHEN field_data_field_event_date_recur.field_event_date_recur_value THEN field_data_field_event_date_recur.field_event_date_recur_value ELSE node.created END',
+        'direction' => 'ASC',
+      )
+    );
+  }
+}
