@@ -60,10 +60,17 @@ function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
  * Implements hook_views_query_alter().
  */
 function bos_events_and_notices_views_query_alter(Drupal\views\ViewExecutable $view, Drupal\views\Plugin\views\query\Sql $query) {
-  $test = 'test';
   if ($view->id() == 'events_and_notices' && $view->getDisplay()->display['id'] == 'upcoming') {
+    $sql = <<<SQL
+CASE
+  WHEN node__field_public_notice_date_field_public_notice_date_valu IS NULL THEN node__field_event_date_recur_field_event_date_recur_value ELSE node__created
+END
+SQL;
+    $query->addField(NULL, $sql, 'pub_or_event_date');
     $query->orderby[] = [
-      'field' => 'CASE WHEN field_data_field_public_notice_date.field_public_notice_date_value THEN field_data_field_public_notice_date.field_public_notice_date_value WHEN field_data_field_event_date_recur.field_event_date_recur_value THEN field_data_field_event_date_recur.field_event_date_recur_value ELSE node.created END',
+      //'field' => 'CASE WHEN field_data_field_public_notice_date.field_public_notice_date_value THEN field_data_field_public_notice_date.field_public_notice_date_value WHEN field_data_field_event_date_recur.field_event_date_recur_value THEN field_data_field_event_date_recur.field_event_date_recur_value ELSE node.created END',
+      //'field' => 'WHEN node__field_public_notice_date_field_public_notice_date_valu IS NULL THEN node__field_event_date_recur_field_event_date_recur_value ELSE node.created END',
+      'field' => 'pub_or_event_date',
       'direction' => 'ASC',
     ];
   }
