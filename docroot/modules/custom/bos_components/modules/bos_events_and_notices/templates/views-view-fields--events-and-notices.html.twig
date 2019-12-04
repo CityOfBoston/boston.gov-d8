@@ -49,10 +49,11 @@
       {% endif %}
       <div class="date-flag">
         {%- set date_recur = fields.field_event_date_recur.content|striptags|replace({"\n": "","\N": ""}) -%}
+        {%- set public_notice_date = fields.field_public_notice_date.content|striptags|replace({"\n": "","\N": ""}) -%}
         {% if date_recur %}
           {{ date_recur|date("U")|format_date('custom', 'M j') }}
         {% else %}
-          {{ fields.field_public_notice_date.content }}
+          {{ public_notice_date|date("U")|format_date('custom', 'M j') }}
         {% endif %}
       </div>
     </div>
