@@ -1516,37 +1516,39 @@ class MigrationFixes {
     // Array table=>field.
     $eligible = [
       "paragraph__field_column_description" => "field_column_description_value",
-//      "paragraph_revision__field_column_description" => "field_column_description_value",
       "paragraph__field_description" => "field_description_value",
-//      "paragraph_revision__field_description" => "field_description_value",
       "paragraph__field_right_column" => "field_right_column_value",
-//      "paragraph_revision__field_right_column" => "field_right_column_value",
       "paragraph__field_left_column" => "field_left_column_value",
-//      "paragraph_revision__field_left_column" => "field_left_column_value",
       "paragraph__field_middle_column" => "field_middle_column_value",
-//      "paragraph_revision__field_middle_column" => "field_middle_column_value",
       "paragraph__field_short_description" => "field_short_description_value",
-//      "paragraph_revision__field_short_description" => "field_short_description_value",
       "paragraph__field_intro_text" => "field_intro_text_value",
-//      "paragraph_revision__field_intro_text" => "field_intro_text_value",
       "paragraph__field_keep_in_mind" => "field_keep_in_mind_value",
-//      "paragraph_revision__field_keep_in_mind" => "field_keep_in_mind_value",
       "paragraph__field_sidebar_text" => "field_sidebar_text_value",
-//      "paragraph_revision__field_sidebar_text" => "field_sidebar_text_value",
       "paragraph__field_step_details" => "field_step_details_value",
-//      "paragraph_revision__field_step_details" => "field_step_details_value",
+    /*    "paragraph_revision__field_column_description"
+      => "field_column_description_value",
+      "paragraph_revision__field_description" => "field_description_value",
+      "paragraph_revision__field_right_column" => "field_right_column_value",
+      "paragraph_revision__field_left_column" => "field_left_column_value",
+      "paragraph_revision__field_middle_column" => "field_middle_column_value",
+      "paragraph_revision__field_short_description"
+      => "field_short_description_value",
+      "paragraph_revision__field_intro_text" => "field_intro_text_value",
+      "paragraph_revision__field_keep_in_mind" => "field_keep_in_mind_value",
+      "paragraph_revision__field_sidebar_text" => "field_sidebar_text_value",
+      "paragraph_revision__field_step_details" => "field_step_details_value",*/
       "node__body" => "body_value",
-//      "node_revision__body" => "body_value",
       "node__field_description" => "field_description_value",
-//      "node_revision__field_description" => "field_description_value",
       "node__field_did_you_know" => "field_did_you_know_value",
-//      "node_revision__field_did_you_know" => "field_did_you_know_value",
       "node__field_extra_info" => "field_extra_info_value",
-//      "node_revision__field_extra_info" => "field_extra_info_value",
       "node__field_intro_text" => "field_intro_text_value",
-//      "node_revision__field_intro_text" => "field_intro_text_value",
       "node__field_need_to_know" => "field_need_to_know_value",
-//      "node_revision__field_need_to_know" => "field_need_to_know_value",
+    /*    "node_revision__body" => "body_value",
+      "node_revision__field_description" => "field_description_value",
+      "node_revision__field_did_you_know" => "field_did_you_know_value",
+      "node_revision__field_extra_info" => "field_extra_info_value",
+      "node_revision__field_intro_text" => "field_intro_text_value",
+      "node_revision__field_need_to_know" => "field_need_to_know_value",*/
     ];
     // Extract the main search array into two single column arrays for use
     // in preg_replace.
@@ -1632,8 +1634,8 @@ class MigrationFixes {
                         $options = [
                           CURLOPT_FILE => fopen($outFileName, 'w'),
                           CURLOPT_TIMEOUT => 28800,
-                          // set this to 8 hours so we dont timeout on big files
-                          CURLOPT_URL => $url
+                          // Set to 8 hours so we dont timeout on big files.
+                          CURLOPT_URL => $url,
                         ];
                         $ch = curl_init();
                         curl_setopt_array($ch, $options);
@@ -1677,7 +1679,7 @@ class MigrationFixes {
         }
         $table_count++;
       }
-      printf ("=> Processed %s rows in %s\n", $table_count, $table);
+      printf("=> Processed %s rows in %s\n", $table_count, $table);
     }
 
     printf("Found %s and Repaired %s broken links from migration.\n", $fnd, $cnt);
