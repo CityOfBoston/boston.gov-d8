@@ -61,7 +61,7 @@ function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
  * Implements hook_views_query_alter().
  */
 function bos_events_and_notices_views_query_alter(ViewExecutable $view, Sql $query) {
-  if ($view->id() == 'events_and_notices' && $view->getDisplay()->display['id'] == 'upcoming') {
+  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'upcoming' || $view->getDisplay()->display['id'] == 'related')) {
     $sql = "CASE WHEN node__field_public_notice_date.field_public_notice_date_value IS NULL THEN node__field_event_date_recur.field_event_date_recur_value ELSE node__field_public_notice_date.field_public_notice_date_value END";
     $query->addOrderBy(NULL, $sql, 'ASC', 'pub_or_event_date');
   }
