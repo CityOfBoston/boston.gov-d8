@@ -1515,32 +1515,51 @@ class MigrationFixes {
     // Define the fields and tables to scan.
     // Array table=>field.
     $eligible = [
-      "paragraph__field_right_column" => "field_right_column_value",
-      "paragraph_revision__field_right_column" => "field_right_column_value",
-      "paragraph__field_left_column" => "field_left_column_value",
-      "paragraph_revision__field_left_column" => "field_left_column_value",
-      "paragraph__field_middle_column" => "field_middle_column_value",
-      "paragraph_revision__field_middle_column" => "field_middle_column_value",
+      "paragraph__field_column_description" => "field_column_description_value",
+//      "paragraph_revision__field_column_description" => "field_column_description_value",
       "paragraph__field_description" => "field_description_value",
-      "paragraph_revision__field_description" => "field_description_value",
+//      "paragraph_revision__field_description" => "field_description_value",
+      "paragraph__field_right_column" => "field_right_column_value",
+//      "paragraph_revision__field_right_column" => "field_right_column_value",
+      "paragraph__field_left_column" => "field_left_column_value",
+//      "paragraph_revision__field_left_column" => "field_left_column_value",
+      "paragraph__field_middle_column" => "field_middle_column_value",
+//      "paragraph_revision__field_middle_column" => "field_middle_column_value",
       "paragraph__field_short_description" => "field_short_description_value",
-      "paragraph_revision__field_short_description" => "field_short_description_value",
+//      "paragraph_revision__field_short_description" => "field_short_description_value",
+      "paragraph__field_intro_text" => "field_intro_text_value",
+//      "paragraph_revision__field_intro_text" => "field_intro_text_value",
+      "paragraph__field_keep_in_mind" => "field_keep_in_mind_value",
+//      "paragraph_revision__field_keep_in_mind" => "field_keep_in_mind_value",
+      "paragraph__field_sidebar_text" => "field_sidebar_text_value",
+//      "paragraph_revision__field_sidebar_text" => "field_sidebar_text_value",
+      "paragraph__field_step_details" => "field_step_details_value",
+//      "paragraph_revision__field_step_details" => "field_step_details_value",
       "node__body" => "body_value",
-      "node_revision__body" => "body_value",
+//      "node_revision__body" => "body_value",
       "node__field_description" => "field_description_value",
-      "node_revision__field_description" => "field_description_value",
+//      "node_revision__field_description" => "field_description_value",
+      "node__field_did_you_know" => "field_did_you_know_value",
+//      "node_revision__field_did_you_know" => "field_did_you_know_value",
+      "node__field_extra_info" => "field_extra_info_value",
+//      "node_revision__field_extra_info" => "field_extra_info_value",
       "node__field_intro_text" => "field_intro_text_value",
-      "node_revision__field_intro_text" => "field_intro_text_value",
+//      "node_revision__field_intro_text" => "field_intro_text_value",
+      "node__field_need_to_know" => "field_need_to_know_value",
+//      "node_revision__field_need_to_know" => "field_need_to_know_value",
     ];
     // Extract the main search array into two single column arrays for use
     // in preg_replace.
     $search = array_keys(self::$folderMappings);
     $replace = array_values($path_maps);
+    $publicStream = \Drupal::service('stream_wrapper_manager');
     // Scan the fields looking for anchor tags.
     foreach ($eligible as $table => $field) {
+      printf("\nProcessing $field in $table.\n");
+      $table_count = 0;
       // Fetch all records.
       $row = \Drupal::database()->select($table, "t")
-        ->fields("t", ["revision_id", $field])
+        ->fields("t", ["entity_id", "revision_id", $field])
         ->execute()
         ->fetchAll();
       // Process all rows.
@@ -1554,51 +1573,85 @@ class MigrationFixes {
           // Replace the path using the map.
           foreach ($xpath->query('//a[starts-with(@href, "/sites/default/files") or contains(@href, "boston.gov/sites/default/files")]') as $link_node) {
             $fnd++;
-            $located = FALSE;
             $matches = [];
             // Extract the file path and check if it exists.
             $href = preg_replace("~[^\p{L}\p{N} _\./:]+~u", '', urldecode($link_node->getAttribute('href')));
-            if (preg_match(self::$cobDomainREGEX . "i", $href, $matches)) {
-              $a = preg_replace(self::$cobDomainREGEX . "i", "/", $href);
-              if (@file_exists($a)) {
-                $located = TRUE;
-              }
-            }
 
-            if (!$located) {
-              // If we dont have the file in that location, then attempt to
-              // map it in ...
-              // Check if this is in the root of the public:// folder.
-              $isRoot = FALSE;
-              if (preg_match(self::$cobPublicREGEX . "i", $href, $matches)) {
-                $from_public = preg_replace(self::$cobPublicREGEX . "i", "/", $href);
-                if (strpos("/", $from_public, 1) === FALSE) {
-                  $isRoot = TRUE;
-                  $href = "//embed/" . substr(trim($from_public, "/"), 0, 1) . $from_public;
+            if (preg_match(self::$cobDomainREGEX . "i", $href, $matches)
+              || stripos($href, "/sites/default/files") === 0) {
+              // This is on our sub/domain, strip to get rel link.
+              $href_rel = preg_replace(self::$cobDomainREGEX . "i", "/", $href);
+              $public = str_ireplace("/sites/default/files/", "public://", $href_rel);
+              $fileStream = $publicStream->getViaUri($public);
+              if (!($file = $fileStream->realpath()) || !@file_exists($file)) {
+                // If we dont have a file in that location, then attempt to
+                // map it in ...
+                $exists = FALSE;
+                $href_parts = pathinfo($href_rel);
+                if ($href_parts["dirname"] == "/sites/default/files") {
+                  // This file was originally on the root of the public folder.
+                  $test = "/sites/default/files/embed/" . substr($href_parts["basename"], 0, 1) . "/" . $href_parts['basename'];
+                  if (TRUE == ($exists = file_exists($test))) {
+                    $href = $test;
+                    $save = TRUE;
+                  }
                 }
-              }
+                if (!$exists) {
+                  // We should be able to engineer a non-root path for this.
+                  $hreft = str_ireplace("/sites/default/files/", "//", $href_rel);
+                  // Substitute the path.
+                  $href = preg_replace($search, $replace, $hreft);
 
-              if (!$isRoot) {
-                // We should be able to engineer a non-root path for this.
-                $hreft = str_ireplace("/sites/default/files/", "//", $href);
-                // Substitute the path.
-                $href = preg_replace($search, $replace, $hreft);
-              }
-              // Build back out to an absolute Url.
-              $href = str_replace("//", "https://www.boston.gov/sites/default/files/", $href);
-
-              // Just check this link is valid, before committing.
-              if (@file_get_contents($href)) {
-                $save = TRUE;
-                $orig = urldecode($link_node->getAttribute('href'));
-                $link_node->setAttribute("href", $href);
-                printf("Fixed link from %s to %s\n", $orig, $href);
-              }
-              else {
-                $orig = pathinfo(urldecode($link_node->getAttribute('href')));
-                printf("[WARNING] %s could not be found at %s\n", $orig["basename"], $orig["dirname"]);
-                printf(" - or its map (%s)\n", str_replace(" ", "%20", $href));
-                printf(" - in %s (revision: #%s)\n\n", $table, $value->revision_id);
+                  // Just check this link is valid, before committing.
+                  $fileStream = $publicStream->getViaUri("public:" . $href);
+                  $orig = urldecode($link_node->getAttribute('href'));
+                  if (($file = $fileStream->realpath()) && @file_exists($file)) {
+                    // Build back out to an absolute Url.
+                    $href = str_replace("//", "https://www.boston.gov/sites/default/files/", $href);
+                    $save = TRUE;
+                    $link_node->setAttribute("href", $href);
+                    printf("Fixed link from %s to %s\n", $orig, $href);
+                  }
+                  else {
+                    // See if we can find this file on the old website.
+                    $url = "https://boston.prod.acquia-sites.com" . $href_rel;
+                    $file_headers = @get_headers($url);
+                    $orig = pathinfo($orig);
+                    if (!$file_headers || $file_headers[0] == 'HTTP/1.1 404 Not Found') {
+                      // Hmm very broken.  Report.
+                      printf("[WARNING] %s could not be found at %s\n", $orig["basename"], $orig["dirname"]);
+                      printf(" - or its map (%s)\n", str_replace(" ", "%20", $href));
+                      printf(" - in %s (id #%s - rev: #%s)\n", $table, $value->entity_id, $value->revision_id);
+                    }
+                    else {
+                      // OK so it was missed in the migration, copy now.
+                      printf("[INFO] %s could not be found at %s\n", $orig["basename"], $orig["dirname"]);
+                      printf(" - or its map (%s)\n", str_replace(" ", "%20", $href));
+                      $outFileName = str_replace("//", DRUPAL_ROOT . "/sites/default/files/", $href);;
+                      if ($commit) {
+                        $options = [
+                          CURLOPT_FILE => fopen($outFileName, 'w'),
+                          CURLOPT_TIMEOUT => 28800,
+                          // set this to 8 hours so we dont timeout on big files
+                          CURLOPT_URL => $url
+                        ];
+                        $ch = curl_init();
+                        curl_setopt_array($ch, $options);
+                        curl_exec($ch);
+                        curl_close($ch);
+                        printf(" - was found at %s and copied to %s\n", str_replace(" ", "%20", $url), $outFileName);
+                      }
+                      else {
+                        printf(" - was found at %s BUT NOT copied to %s\n", str_replace(" ", "%20", $url), $outFileName);
+                      }
+                      printf(" - in %s (id #5s - rev: #%s)\n", $table, $value->entity_id, $value->revision_id);
+                      $href = str_replace("//", "https://www.boston.gov/sites/default/files/", $href);
+                      $save = TRUE;
+                      $link_node->setAttribute("href", $href);
+                      printf(" - Fixed link from %s to %s\n", $orig, $href);
+                    }
+                  }
+                }
               }
             }
           }
@@ -1615,14 +1668,16 @@ class MigrationFixes {
               printf("\n");
             }
             else {
-              printf(" not saved\n");
+              printf(" not saved in DB\n");
               $cnt++;
             }
           }
         }
         catch (\Exception $e) {
         }
+        $table_count++;
       }
+      printf ("=> Processed %s rows in %s\n", $table_count, $table);
     }
 
     printf("Found %s and Repaired %s broken links from migration.\n", $fnd, $cnt);
