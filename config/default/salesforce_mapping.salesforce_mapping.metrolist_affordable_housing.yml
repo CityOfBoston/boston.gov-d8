@@ -13,7 +13,7 @@ async: false
 push_standalone: false
 pull_standalone: false
 pull_trigger_date: LastModifiedDate
-pull_where_clause: ''
+pull_where_clause: '(Publish_to_Metrolist__c = True OR Publish_to_Metrolist__c = true OR Publish_to_Metrolist__c = TRUE)'
 sync_triggers:
   pull_create: true
   pull_update: true
@@ -95,5 +95,5 @@ field_mappings:
 push_limit: 0
 push_retries: 3
 push_frequency: 0
-pull_frequency: 900
+pull_frequency: 0
 always_upsert: false
