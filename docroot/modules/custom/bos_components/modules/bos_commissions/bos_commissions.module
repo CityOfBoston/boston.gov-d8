@@ -104,6 +104,7 @@ function bos_commissions_query($graphql) {
       'X-API-KEY' => \Drupal::config('bos_commissions.settings')->get('graphql_api_key'),
     ],
     'body' => $request_body,
+    'timeout' => 60,
   ];
 
   try {
@@ -126,30 +127,32 @@ function bos_commissions_add_members(&$variables) {
   if ($commission_id = bos_commissions_id($variables)) {
     $query = bos_commissions_get_query('comission_members.graphql');
     $result = bos_commissions_query(str_replace('$commission_id', $commission_id, $query));
-    $members = $result->data->commission->members;
-    $date_input_format = 'Y-m-d\TH:i:s.u\Z';
-    $date_output_format = 'n/j/Y';
+    if (empty($result->errors)) {
+      $members = $result->data->commission->members;
+      $date_input_format = 'Y-m-d\TH:i:s.u\Z';
+      $date_output_format = 'n/j/Y';
 
-    foreach ($members as &$member) {
-      if ($member->appointed) {
-        $datetime = DateTime::createFromFormat($date_input_format, $member->appointed);
-        $member->appointed = format_date(
-          date_timestamp_get($datetime),
-          'custom',
-          $date_output_format
-        );
+      foreach ($members as &$member) {
+        if ($member->appointed) {
+          $datetime = DateTime::createFromFormat($date_input_format, $member->appointed);
+          $member->appointed = format_date(
+            date_timestamp_get($datetime),
+            'custom',
+            $date_output_format
+          );
+        }
+        if ($member->expires) {
+          $datetime = DateTime::createFromFormat($date_input_format, $member->expires);
+          $member->expires = format_date(
+            date_timestamp_get($datetime),
+            'custom',
+            $date_output_format
+          );
+        }
       }
-      if ($member->expires) {
-        $datetime = DateTime::createFromFormat($date_input_format, $member->expires);
-        $member->expires = format_date(
-          date_timestamp_get($datetime),
-          'custom',
-          $date_output_format
-        );
-      }
+
+      $variables['members'] = $members;
     }
-
-    $variables['members'] = $members;
   }
 }
 
