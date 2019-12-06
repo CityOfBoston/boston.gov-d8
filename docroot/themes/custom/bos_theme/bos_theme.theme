@@ -17,6 +17,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
 use Drupal\bos_core\Controllers\Login\LoginController;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements theme.api.php hook_theme().
@@ -366,18 +367,24 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Find the moderation state of the node.
   $variables['moderation_state'] = '';
   if (isset($variables['node'])) {
-
-    $variables['unpublished'] = empty($variables['node']->isPublished());
-    $variables['preview'] = !empty($variables['node']->in_preview);
-    $variables['moderation_state'] = !empty($variables['node']->isPublished());
-
-    $mod = Drupal::entityTypeManager()
-      ->getStorage("node")
-      ->loadRevision($variables['node']->getLoadedRevisionId())
-      ->get('moderation_state')
-      ->getString();
-    if (!empty($mod)) {
-      $variables['moderation_state'] = $mod;
+    if (is_numeric($variables['node'])) {
+      $variables['node'] = Node::load($variables['node']);
+      $variables['unpublished'] = FALSE;
+      $variables['preview'] = !empty($variables['node']->in_preview);
+      $variables['moderation_state'] = "revision";
+    }
+    else {
+      $variables['unpublished'] = empty($variables['node']->isPublished());
+      $variables['preview'] = !empty($variables['node']->in_preview);
+      $variables['moderation_state'] = !empty($variables['node']->isPublished());
+      $mod = Drupal::entityTypeManager()
+        ->getStorage("node")
+        ->loadRevision($variables['node']->getLoadedRevisionId())
+        ->get('moderation_state')
+        ->getString();
+      if (!empty($mod)) {
+        $variables['moderation_state'] = $mod;
+      }
     }
   }
   // Determine if a header_image is being used.
