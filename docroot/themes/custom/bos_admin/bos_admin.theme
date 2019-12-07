@@ -36,13 +36,6 @@ function bos_admin_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_entity_presave().
- */
-function bos_admin_node_presave(EntityInterface $entity) {
-
-}
-
-/**
  * Implements hook_preprocess_HOOK() for HTML document templates.
  */
 function bos_admin_preprocess_html(&$variables) {
@@ -317,7 +310,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["#attached"]["library"][] = "bos_admin/actions";
 
   // Move the metadata (update/publish) fields into advanced tab.
-  if (preg_match("/node\-.*[\-edit]?\-form*/", $form["#id"]) &&
+  if (preg_match("~node_.*[_edit]?_form*~", $form_id) &&
     (isset($form["#fieldgroups"]["group_page_meta_data"]) || isset($form["#fieldgroups"]["group_page_metadata"]))) {
     if (!empty($bundle) && (
       \Drupal::currentUser()->hasPermission("set any published on date")
@@ -333,6 +326,12 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       }
 
       $form["#attached"]["library"][] = "bos_admin/manual_date";
+    }
+    if (!\Drupal::currentUser()->hasPermission("set any published on date")
+      || !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
+      $form["field_updated_date"]["#disabled"] = TRUE;
+      $form["field_published_date"]["#disabled"] = TRUE;
+      $form["field_manual_date"]["#disabled"] = TRUE;
     }
   }
 
