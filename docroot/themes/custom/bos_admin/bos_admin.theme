@@ -39,54 +39,7 @@ function bos_admin_theme($existing, $type, $theme, $path) {
  * Implements hook_entity_presave().
  */
 function bos_admin_node_presave(EntityInterface $entity) {
-  $revId = $entity->getLoadedRevisionId();
-  if (isset($revId)) {
-    $current_entity = Drupal::entityTypeManager()->getStorage("node")->loadRevision($revId);
-    $current_state = $current_entity->get('moderation_state')->getString();
-  }
-  else {
-    $current_entity = Drupal::entityTypeManager()->getStorage("node")->info;
-    $current_state = "new";
-  }
-  $new_state = $entity->get('moderation_state')->getString();
-  $changed = $new_state != $current_state;
-  $date = new DrupalDateTime("now", "UTC");
 
-  switch ($new_state) {
-
-    case "archive":
-    case "archived":
-      break;
-
-    case "draft":
-      break;
-
-    case "needs_review":
-      break;
-
-    case "published":
-      if (!$entity->isPublished()) {
-        $entity->status->value = TRUE;
-      }
-      // If publish dates are being automatically maintained.
-      if (!$entity->field_manual_date->value) {
-        // Update field_updated_date if changing (or keeping) published.
-        if (isset($entity->field_updated_date)) {
-          $entity->field_updated_date->value = $date->format("Y-m-d\TH:i:s");
-        }
-        // Set published_date if this is the first time published.
-        if ($changed && isset($entity->field_published_date) && empty($entity->field_published_date->value)) {
-          $entity->field_published_date->value = $date->format("Y-m-d\TH:i:s");
-        }
-      }
-      break;
-  }
-  if (!empty($current_entity->field_updated_date->value) && empty($entity->field_updated_date->value)) {
-    $entity->field_updated_date->value = $current_entity->field_updated_date->value;
-  }
-  if (!empty($current_entity->field_published_date->value) && empty($entity->field_published_date->value)) {
-    $entity->field_published_date->value = $current_entity->field_published_date->value;
-  }
 }
 
 /**
