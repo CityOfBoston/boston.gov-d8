@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Database\Database;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
@@ -1345,4 +1346,66 @@ function _bos_core_sync_assets() {
   printf("---------------- ---------- ------- ---------- --------------\n");
   printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], ($cnt["Media"] + $cnt["mFound"]));
   printf("---------------- ---------- ------- ---------- --------------\n");
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function bos_core_entity_presave(EntityInterface $entity) {
+  // Manage the custom Published and Updated date fields on nodes.
+  if ($entity->getEntityTypeId() == "node"
+    && ($entity->hasField("field_updated_date") || $entity->hasField("field_published_date"))) {
+
+    // Get current revision so we can check whether its pub date is set.
+    $revId = $entity->getLoadedRevisionId();
+    if (isset($revId)) {
+      $current_entity = Drupal::entityTypeManager()
+        ->getStorage("node")
+        ->loadRevision($revId);
+    }
+    else {
+      $current_entity = Drupal::entityTypeManager()->getStorage("node")->info;
+    }
+
+    // Check the state of this revsision being saved.
+    switch ($entity->get('moderation_state')->getString()) {
+
+      case "published":
+        // Check if publish dates are being automatically maintained.
+        if ($entity->get("field_manual_date")->value === 0) {
+
+          // Update field_updated_date if changing (or keeping) published.
+          $date = new DrupalDateTime("now", "UTC");
+          $entity->set("field_updated_date", $date->format("Y-m-d\TH:i:s"));
+
+          // Set published_date if this is the first time published.
+          if (!empty($current_entity->get("field_published_date")) && empty($current_entity->get("field_published_date")->value)) {
+            $entity->set("field_published_date", $date->format("Y-m-d\TH:i:s"));
+          }
+
+        }
+        break;
+
+      case "archive":
+      case "archived":
+      case "draft":
+      case "needs_review":
+      default:
+        break;
+
+    }
+
+    // Preserve updated and published dates between revisions.
+    // Not sure why the field_xxx_date fields are coming across blank when the
+    // form is saved.  If we can stop that, then this block is not required.
+    if (!empty($current_entity->get("field_updated_date")->value)
+      && empty($entity->get("field_updated_date")->value)) {
+      $entity->set("field_updated_date", $current_entity->get("field_updated_date")->value);
+    }
+    if (!empty($current_entity->get("field_published_date")->value)
+      && empty($entity->get("field_published_date")->value)) {
+      $entity->set("field_published_date", $current_entity->get("field_published_date")->value);
+    }
+
+  }
 }
