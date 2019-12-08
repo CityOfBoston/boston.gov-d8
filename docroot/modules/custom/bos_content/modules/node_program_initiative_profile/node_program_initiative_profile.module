@@ -43,7 +43,12 @@ function node_program_initiative_profile_preprocess_page(&$variables) {
         $variables["attributes"]->setAttribute("id", "page");
         // Make responsive to menu appearing on right by adding class mn.
         $variables["attributes"]->addClass("mn");
-        $variables["attributes"]->addClass("page--fp");
+        if ($variables["cob"]["header_image"]) {
+          $variables["attributes"]->addClass("page--fp");
+        }
+        else {
+          $variables["attributes"]->addClass("page");
+        }
       }
     }
   }
