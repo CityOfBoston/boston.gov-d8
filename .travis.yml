@@ -7,6 +7,7 @@ branches:
   only:
     - develop
     - master
+    - mnl_12-9-2019
 
 php:
   - 7.3
@@ -74,6 +75,11 @@ deploy:
     script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: mnl_12-9-2019
   - provider: script
     skip_cleanup: true
     script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
