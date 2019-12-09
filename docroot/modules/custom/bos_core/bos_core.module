@@ -1398,11 +1398,11 @@ function bos_core_entity_presave(EntityInterface $entity) {
     // Preserve updated and published dates between revisions.
     // Not sure why the field_xxx_date fields are coming across blank when the
     // form is saved.  If we can stop that, then this block is not required.
-    if (!empty($current_entity->get("field_updated_date")->value)
+    if (isset($current_entity) && !empty($current_entity->get("field_updated_date")->value)
       && empty($entity->get("field_updated_date")->value)) {
       $entity->set("field_updated_date", $current_entity->get("field_updated_date")->value);
     }
-    if (!empty($current_entity->get("field_published_date")->value)
+    if (isset($current_entity) && !empty($current_entity->get("field_published_date")->value)
       && empty($entity->get("field_published_date")->value)) {
       $entity->set("field_published_date", $current_entity->get("field_published_date")->value);
     }
