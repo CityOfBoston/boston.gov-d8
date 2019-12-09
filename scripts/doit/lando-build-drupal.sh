@@ -15,10 +15,6 @@
   cd ~ &&
     composer require phing/phing:2.* --no-suggest --no-scripts -q >> ${LANDO_MOUNT}/setup/composer.log
 
-  # Capture the build info into a file to be printed at end of build process.
-  cd $LANDO_MOUNT &&
-    ~/vendor/phing/phing/bin/phing -S -f ${LANDO_MOUNT}/build.xml build:info > ${LANDO_MOUNT}/setup/uli.log
-
   # Next command hands off to Phing to complete the initial setup.
   printf "\033[1;32m[lando]\033[1;33m Now handing over to phing to build Drupal (\033[0;32mphing tasks annotated green\033[1;33m)...\033[0m\n"
   printf "\033[0;32m[Build Task] setup:docker:drupal-local\033[0m\n"
@@ -32,6 +28,9 @@
   fi
 
   # Phing commands to complete the initial setup.  Output redirect so it can be printed at the end.
+  # Capture the build info into a file to be printed at end of build process.
+  cd $LANDO_MOUNT &&
+    ./scripts/doit/branding.sh > ${LANDO_MOUNT}/setup/uli.log
   cd $LANDO_MOUNT &&
     phing -S -f ${LANDO_MOUNT}/build.xml update:user:setadminpwd >> ${LANDO_MOUNT}/setup/uli.log
   cd $LANDO_MOUNT &&
@@ -41,5 +40,4 @@
     drush pmu config_devel &&
     drush en config_devel >> ${LANDO_MOUNT}/setup/lando.log
   # Now setup the node container.
-  printf "\033[1;32m[lando]\033[1;33m  Phing has finished building Drupal.\033[0m\n"
-  printf "\033[1;32m[lando]\033[1;33m Verify linux node library/extensions in node container...\033[0m"
+  printf "\033[1;32m[lando]\033[1;33m  Phing has finished building Drupal.\033[0m\n\n"
