@@ -1,0 +1,23 @@
+uuid: 8af488ba-d3b7-4290-a44b-8d435fd2a47b
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.web_app.field_app_name
+    - paragraphs.paragraphs_type.web_app
+_core:
+  default_config_hash: q_CYfhfLjZAj3JmFd73cKU9BKb_ePIA0CF5CT_emQoY
+id: paragraph.web_app.default
+targetEntityType: paragraph
+bundle: web_app
+mode: default
+content:
+  field_app_name:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

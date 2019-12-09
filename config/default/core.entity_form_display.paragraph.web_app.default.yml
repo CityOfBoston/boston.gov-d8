@@ -1,0 +1,25 @@
+uuid: 35a81e06-a63b-49f3-a625-d0c272cc740a
+langcode: und
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.web_app.field_app_name
+    - paragraphs.paragraphs_type.web_app
+_core:
+  default_config_hash: 0ZBqzWJCbLu72UAADPRLeyvHicZbcKJtllhpwtoI1Zs
+id: paragraph.web_app.default
+targetEntityType: paragraph
+bundle: web_app
+mode: default
+content:
+  field_app_name:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
