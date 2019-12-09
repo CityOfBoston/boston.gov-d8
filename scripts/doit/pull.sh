@@ -19,6 +19,7 @@
     rm -rf /app/tmprepo/.git
     find . -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \;
     rsync -aE /app/tmprepo/ /app/ --exclude=*.md
+    cd /app
     rm -rf /app/tmprepo
 
     printf "[success] Public and private repos updated.\n"
