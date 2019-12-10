@@ -73,7 +73,6 @@ function bos_linkit_extension_rebuild() {
   module_set_weight("bos_linkit_extension", 100);
 }
 
-
 /**
  * Implements hook_module_implements_alter().
  */
@@ -320,8 +319,9 @@ function bos_linkit_extension_editor_link_dialog_submit(array &$form, FormStateI
           $file->setPermanent();
           $file->save();
         }
-//        \Drupal::service('file.usage')->add($file, 'editor', $entity->getEntityTypeId(), $entity->id());
         // Make sure this node is recorded as a "used in" value.
+        /*\Drupal::service('file.usage')->add($file, 'editor',
+        $entity->getEntityTypeId(), $entity->id());*/
       }
       return;
     }
@@ -515,6 +515,7 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
     if (!empty($fid)) {
       $file = File::load($fid);
       $file_url = file_create_url($file->getFileUri());
+      $_SESSION['embed'][$form["form_build_id"]["#value"]] = $file;
       // Transform absolute file URLs to relative file URLs: prevent problems
       // on multisite set-ups and prevent mixed content errors.
       $file_url = file_url_transform_relative($file_url);
