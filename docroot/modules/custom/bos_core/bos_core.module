@@ -1372,14 +1372,16 @@ function bos_core_entity_presave(EntityInterface $entity) {
 
       case "published":
         // Check if publish dates are being automatically maintained.
-        if ($entity->get("field_manual_date")->value === 0) {
+        if ($entity->get("field_manual_date")->value == 0) {
 
           // Update field_updated_date if changing (or keeping) published.
           $date = new DrupalDateTime("now", "UTC");
           $entity->set("field_updated_date", $date->format("Y-m-d\TH:i:s"));
 
           // Set published_date if this is the first time published.
-          if (!empty($current_entity->get("field_published_date")) && empty($current_entity->get("field_published_date")->value)) {
+          if (isset($current_entity)
+            && $current_entity->hasField("field_published_date")
+            && empty($current_entity->get("field_published_date")->value)) {
             $entity->set("field_published_date", $date->format("Y-m-d\TH:i:s"));
           }
 
