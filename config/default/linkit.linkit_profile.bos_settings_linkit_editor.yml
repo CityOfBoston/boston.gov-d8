@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - file
     - node
 id: bos_settings_linkit_editor
 label: bos_settings_linkit_editor
@@ -14,7 +15,7 @@ matchers:
     weight: 0
     settings:
       include_unpublished: false
-      metadata: 'Published Date: [node:field_published_date]'
+      metadata: 'by: [node:author] - published: [node:field_published_date]'
       bundles:
         article: article
         change: change
@@ -36,14 +37,20 @@ matchers:
       group_by_bundle: true
       substitution_type: canonical
       limit: 100
-  141e9b0b-dcd9-4bd6-bc03-0a31364a5819:
-    uuid: 141e9b0b-dcd9-4bd6-bc03-0a31364a5819
-    id: 'entity:media'
+  77400cf0-d8f8-4590-ba16-9865901d9062:
+    uuid: 77400cf0-d8f8-4590-ba16-9865901d9062
+    id: 'entity:file'
     weight: 0
     settings:
-      metadata: '[media:name] | Created by: [media:uid] on [media:created]'
+      file_extensions: 'pdf doc xls xlsx'
+      file_status: 1
+      images:
+        show_dimensions: false
+        show_thumbnail: false
+        thumbnail_image_style: null
+      substitution_type: file
+      metadata: '[file:extension]:[file:size] - by [file:owner] on [file:changed]'
       bundles:
         document: document
       group_by_bundle: true
-      substitution_type: media
-      limit: 100
+      limit: 50
