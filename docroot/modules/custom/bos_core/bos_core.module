@@ -1379,7 +1379,9 @@ function bos_core_entity_presave(EntityInterface $entity) {
           $entity->set("field_updated_date", $date->format("Y-m-d\TH:i:s"));
 
           // Set published_date if this is the first time published.
-          if (!empty($current_entity->get("field_published_date")) && empty($current_entity->get("field_published_date")->value)) {
+          if (isset($current_entity)
+            && $current_entity->hasField("field_published_date")
+            && empty($current_entity->get("field_published_date")->value)) {
             $entity->set("field_published_date", $date->format("Y-m-d\TH:i:s"));
           }
 
