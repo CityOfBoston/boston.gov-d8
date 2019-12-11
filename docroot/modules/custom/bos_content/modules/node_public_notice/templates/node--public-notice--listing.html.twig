@@ -100,7 +100,9 @@
           <li class="dl-i">
             <span class="dl-t">When</span>
             <span class="dl-d">
-              {{ elements.field_public_notice_date.0['#text'] }} - {{ elements.field_public_notice_date.0['#attributes'].datetime|date('g:iA') }}
+              {% if public_notice_date %}
+                {{ public_notice_date }}
+              {% endif %}
             </span>
           </li>
           {% if elements.field_address %}
