@@ -1401,11 +1401,13 @@ function bos_core_entity_presave(EntityInterface $entity) {
     // Not sure why the field_xxx_date fields are coming across blank when the
     // form is saved.  If we can stop that, then this block is not required.
     if (isset($current_entity)) {
-      if (!empty($current_entity->get("field_updated_date")->value)
+      if ($current_entity->hasField("field_updated_date")
+        && !empty($current_entity->get("field_updated_date")->value)
         && empty($entity->get("field_updated_date")->value)) {
         $entity->set("field_updated_date", $current_entity->get("field_updated_date")->value);
       }
-      if (!empty($current_entity->get("field_published_date")->value)
+      if ($current_entity->hasField("field_published_date")
+        && !empty($current_entity->get("field_published_date")->value)
         && empty($entity->get("field_published_date")->value)) {
         $entity->set("field_published_date", $current_entity->get("field_published_date")->value);
       }
