@@ -99,6 +99,30 @@ function node_public_notice_preprocess_node__public_notice__listing(&$variables)
   if (isset($variables["content"]["field_time"]["#items"])) {
     $variables["short_time"] = $variables["content"]["field_time"][0]["#text"];
   }
+  if (!empty($variables["content"]["field_public_notice_date"])) {
+    $start_date = "";
+    if (isset($variables["content"]["field_public_notice_date"]["#items"]->value)) {
+      $start_date = $variables["content"]["field_public_notice_date"]["#items"]->value;
+      if (is_string($start_date)) {
+        $start_date = new DateTime($start_date);
+      }
+      $stdt = $start_date->format("F d, Y g:iA");
+      $edt = "";
+    }
+    if (isset($variables["content"]["field_public_notice_date"]["#items"]->end_date)) {
+      $end_date = $variables["content"]["field_public_notice_date"]["#items"]->end_date;
+      if ($start_date->format("ymd") == $end_date->format("ymd")) {
+        if ($start_date->format("g:iA") != $end_date->format("g:iA")) {
+          $edt = $end_date->format(" - g:iA");
+        }
+      }
+      else {
+        $edt = " to " . $end_date->format("F d, Y g:iA");
+      }
+    }
+    $variables["public_notice_date"] = $stdt . $edt;
+
+  }
 
 }
 
