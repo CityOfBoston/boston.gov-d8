@@ -112,7 +112,7 @@ function node_public_notice_preprocess_node__public_notice__listing(&$variables)
     if (isset($variables["content"]["field_public_notice_date"]["#items"]->end_date)) {
       $end_date = $variables["content"]["field_public_notice_date"]["#items"]->end_date;
       if ($start_date->format("ymd") == $end_date->format("ymd")) {
-        if ($start_date->format("g:iA") != $end_date->format("g:iA")){
+        if ($start_date->format("g:iA") != $end_date->format("g:iA")) {
           $edt = $end_date->format(" - g:iA");
         }
       }
