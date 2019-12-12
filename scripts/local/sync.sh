@@ -7,10 +7,13 @@
     . "/app/hooks/common/cob_utilities.sh"
 
     printf "[info] Database will be copied from staging to local, setup for development and updated with configuration in latest branch.\n"
+
     # Download remote DB
     drush sql:sync @bostond8.test @self -y
+
     # Update database with local settings
     sync_db ""
+
     # Enable/disable modules for local dev.
     devModules ""
 

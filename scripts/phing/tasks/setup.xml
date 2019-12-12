@@ -290,7 +290,7 @@
     </if>
 
     <echo message="Using Composer to install Drupal core and the required contrib modules."
-          level="info"/>
+        level="info"/>
     <if>
       <not><isset property="env.LANDO_APP_NAME"/></not>
       <then><property name="lando.url.url" value=""/></then>
