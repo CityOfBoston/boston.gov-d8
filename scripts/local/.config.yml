@@ -20,11 +20,8 @@ build:
     # Build Type = dev or prod.
     type: dev
     config:
-      # Enter the UUID from system.site.yml if the config files in the sync folder
-      # specified do not match the UUID in the DB, or we are installing a new DB.
-      site-uuid: "452fac34-8a25-4346-b005-f85d26dd3cf9"
-      # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
-      # aquia require ./config/default:
+      # Define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia requires ./config/default:
       #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
       sync: "../config/default"
     database:
