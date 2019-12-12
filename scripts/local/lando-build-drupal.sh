@@ -30,7 +30,7 @@
   fi
 
   # Install composer - using lock file if present.
-  printout "INFO" "see ${LANDO_MOUNT}/sites/default/files/setup/composer.log for output." "(or https://${LANDO_APP_NAME}.${LANDO_DOMAIN}/sites/default/files/setup/composer.log)"
+  printout "INFO" "see ${SETUP_LOGS}/composer.log for output." "(or https://${LANDO_APP_NAME}.${LANDO_DOMAIN}/sites/default/files/setup/composer.log)"
   printout "INFO" "Executes: > composer install --prefer-dist --no-suggest --no-interaction"
   echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${SETUP_LOGS}/composer.log
   cd ${LANDO_MOUNT} &&
@@ -43,12 +43,13 @@
   clone_private_repo
 
   # Install Drupal.
-  printout "INFO" "Build is now using settings file ${local.settings.file}"
-  printout "" "" "... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
-  printout "INFO" "see ${LANDO_MOUNT}/sites/default/files/setup/drush_site_install.log for output." "(or https://${LANDO_APP_NAME}.${LANDO_DOMAIN}/sites/default/files/setup/drush_site_install.log)"
-
   echo "==== Installing Drupal ===========" > ${SETUP_LOGS}/drush_site_install.log
   if [[ "${build_local_database_source}" == "initialize" ]]; then
+
+    printout "INFO" "Build is now using settings file ${local_settings_file}"
+    printout "" "" "... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
+    printout "INFO" "see ${SETUP_LOGS}/drush_site_install.log for output." "(or https://${LANDO_APP_NAME}.${LANDO_DOMAIN}/sites/default/files/setup/drush_site_install.log)"
+
     SITE_INSTALL=" site-install ${project_profile_name} \
       --db-url=${lando_services_database_creds_database}://${lando_services_database_creds_user}:${lando_services_database_creds_password}@${build_local_database_host}:${build_local_database_port}/${lando_services_database_creds_database} \
       --site-name=${lando_name} \
@@ -59,19 +60,87 @@
       --sites-subdir=${drupal_multisite_name} \
       -vvv \
       -y"
+
     printout "INFO" "Installing Drupal with an initial database containing no content."
     echo "Executing: ${SITE_INSTALL}" >> ${SETUP_LOGS}/drush_site_install.log
-    ${drush_cmd} SITE_INSTALL >> ${SETUP_LOGS}/drush_site_install.log
+    ${drush_cmd} ${SITE_INSTALL} >> ${SETUP_LOGS}/drush_site_install.log
+
+    # If it failed then alert.
+    if [[ $? -eq 0 ]]; then
+        printout "SUCCESS" "Site is freshly installed with clean database."
+    else
+        printout "ERROR" "Fail - Site install failure" "Check ${SETUP_LOGS}/drush_site_install.log for issues."
+        exit 0
+    fi
+
+    # If the system.site.yml has a UUID specified, then use that.
+    if [[ -s ${LANDO_MOUNT}/config/default/system.site.yml ]]; then
+        # Fetch site UUID from the configs in the (newly made) database.
+        db_uuid=$(${drush_cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*")
+        # Fetch the site UUID from the configuration file.
+        yml_uuid=$(cat ${LANDO_MOUNT}/config/default/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
+
+        if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
+            # The config UUID is different to the UUID in the database.  This will cause an issue when we import the
+            # configurations, so we will change the db UUID to match the config files UUID and all should be good.
+            ${drush_cmd} cset "system.site" yml_uuid -y
+        fi
+    fi
 
   elif [[ "${build_local_database_source}" == "sync" ]]; then
+    # Grab a copy of the database from the desired(remote) acquia server.
+    if [[ -z ${build_database_drush-alias} ]]; then build_database_drush-alias="@bostond8.test"; fi
+    printout "INFO" "Copying database (and content) from ${build_database_drush-alias} into docker database container."
+
+    # Drop the local DB, and then ...
+    # ... download a backup from the remote server, and restore into the database container.
+    ${drush_cmd} sql:drop --database=default -y > ${SETUP_LOGS}/drush_db-sync.log &&
+        ${drush_cmd} sql:sync ${build_database_drush-alias} @self -y >> ${SETUP_LOGS}/drush_db-sync.log
+    if [[ $? -eq 0 ]]; then
+        printout "SUCCESS" "Site has database and content from remote environment."
+    else
+        printout "ERROR" "Fail - Database sync" "Check ${SETUP_LOGS}/drush_db-sync.log for issues."
+        exit 0
+    fi
+  fi
+
+  project_sync=${LANDO_MOUNT}/docroot/${build.local.config.sync}
+  printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
+  printout "INFO" "see ${SETUP_LOGS}/config-import.log for output." "(or https://${LANDO_APP_NAME}.${LANDO_DOMAIN}/sites/default/files/setup/config-import.log)"
+  ${drush_cmd} cim sync -y > ${SETUP_LOGS}/config-import.log
+  if [[ $? -eq 0 ]]; then
+    printout "SUCCESS" "Config from the repo has been applied to the database."
+  else
+    # Sometimes there is an issue with configuration that cannot be applied to entities with content etc.
+    # The work aound is to try a partial configuration import.
+    echo "Retry partial cim." >> ${SETUP_LOGS}/config-import.log
+    ${drush_cmd} cim sync --partial -y >> ${SETUP_LOGS}/config-import.log
+
+    if [[ $? -eq 0 ]]; then
+        printout "SUCCESS" "Config from the repo has been applied to the database."
+    else
+        echo "Retry partial cim (#2)." >> ${SETUP_LOGS}/config-import.log
+        ${drush_cmd} cim sync --partial -y >> ${SETUP_LOGS}/config-import.log
+
+        if [[ $? -eq 0 ]]; then
+            printout "SUCCESS" "Config from the repo has been applied to the database."
+        else
+            # Uh oh!
+            printout "ERROR" "Fail - Configuration import." "Check ${SETUP_LOGS}/config-import.log for issues."
+            tail -250 ${SETUP_LOGS}/config-import.log
+            exit 0
+        fi
+    fi
   fi
 
   printout "SUCCESS" "Drupal build finished"
 
-  # Next command creates a link to enable a cli alias for phing. (Assumes Phing is in the repo's composer.json/lock file)
-  if [ ! -e  /usr/local/bin/phing ]; then
-    ln -s ${LANDO_MOUNT}/vendor/phing/phing/bin/phing /usr/local/bin/ >> ${LANDO_MOUNT}/setup/lando.log
-  fi
+
+
+
+
+
+
 
   # Phing commands to complete the initial setup.  Output redirect so it can be printed at the end.
   # Capture the build info into a file to be printed at end of build process.
