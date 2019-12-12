@@ -326,7 +326,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       $form["#attached"]["library"][] = "bos_admin/manual_date";
     }
     if (!\Drupal::currentUser()->hasPermission("set any published on date")
-      || !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
+      && !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
       $form["field_updated_date"]["#disabled"] = TRUE;
       $form["field_published_date"]["#disabled"] = TRUE;
       $form["field_manual_date"]["#disabled"] = TRUE;
