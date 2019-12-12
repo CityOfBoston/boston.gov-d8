@@ -168,6 +168,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
     // Node-edit forms: Make the Revision log message required.
     $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "If changing moderation state, you must supply a relevant log note for this update.";
+    $form["revision_log"]["widget"][0]["value"]["#title"] = Markup::create("Revision log message <span style='color: red;'>*</span>");
 
     /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/content-editor-ux */
     // Create a secondary block group, and load.
@@ -326,7 +327,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       $form["#attached"]["library"][] = "bos_admin/manual_date";
     }
     if (!\Drupal::currentUser()->hasPermission("set any published on date")
-      || !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
+      && !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
       $form["field_updated_date"]["#disabled"] = TRUE;
       $form["field_published_date"]["#disabled"] = TRUE;
       $form["field_manual_date"]["#disabled"] = TRUE;
