@@ -43,10 +43,10 @@ services:
 
   appserver:
     run_as_root:
-      - /app/scripts/doit/lando-container-customize.sh
+      - /app/scripts/local/lando-container-customize.sh
 
     run:
-      - /app/scripts/doit/lando-build-drupal.sh
+      - /app/scripts/local/lando-build-drupal.sh
 
     xdebug: true
 
@@ -99,13 +99,13 @@ tooling:
     service: appserver
     description: "Drupal: Copy the remote staging DB into the local DB"
     cmd:
-      - "/app/scripts/doit/sync.sh 'test'"
+      - /app/scripts/local/sync.sh 'test'
 
   drupal-pull-repo:
     service: appserver
     description: "Drupal: Pull the latest Drupal public and private repos from Git"
     cmd:
-      - "/app/scripts/doit/pull.sh"
+      - /app/scripts/local/pull.sh
 
 events:
   post-start:
