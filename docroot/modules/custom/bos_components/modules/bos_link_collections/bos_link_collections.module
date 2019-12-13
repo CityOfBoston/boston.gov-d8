@@ -175,14 +175,6 @@ function bos_link_collections_preprocess_field(&$vars) {
         }
         break;
 
-      case 'field_description':
-        $vars["items"][0]["content"]["#text"] = str_replace([
-          "\r",
-          "\n",
-          "&#13;",
-        ], "", $vars["items"][0]["content"]["#text"]);
-        break;
-
     }
   }
 }
