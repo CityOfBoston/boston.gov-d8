@@ -136,9 +136,9 @@ function build_settings() {
     echo -e "/* End of additions. */\n" >> ${local_settings_file}
 
     # setup the private settings file
-    if [[ -n "${private_settings_file}" ]] && [[ -e ${private_settings_file} ]]; then
-        # There is a private settings file.
-    fi
+#    if [[ -n "${private_settings_file}" ]] && [[ -e ${private_settings_file} ]]; then
+#        # There is a private settings file.
+#    fi
 
     # Setup the serices.yml file
     if [[ ! -e ${services_file} ]]; then
