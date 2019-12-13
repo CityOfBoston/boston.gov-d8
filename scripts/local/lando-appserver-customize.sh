@@ -19,13 +19,13 @@
   LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
   printout "INFO" "Installing Linux packages in appserver container."
-  if [ ! -e  ${setup_logs} ]; then
-      mkdir ${setup_logs} &&
-          chown www-data:www-data ${setup_logs} &&
-          chmod 777 ${setup_logs};
-  fi
-  rm -rf ${setup_logs}/
-  printout "INFO" "Container build actions will be logged to files in ${setup_logs}" "After build file may be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
+  if [ -e  ${setup_logs} ]; then rm -rf ${setup_logs}/; fi
+  mkdir ${setup_logs} &&
+      chown www-data:www-data ${setup_logs} &&
+      chmod 777 ${setup_logs};
+
+  printout "INFO" "Container build actions will be logged to files in ${setup_logs}" \
+  printout "    " "- After build file may be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
 
   # Updates apt, creates and pipes output to setup/lando.log
 #  mv -f /etc/apt/sources.list /etc/apt/sources.list.bak
