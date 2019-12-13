@@ -20,7 +20,8 @@
 
   # Install python and pip so we can install mycli.
   # This is OPTIONAL - not all users require an extended cli on the actual container, opting instead to
-  # use tolls such as PHPStorm, MySQL Workbench or SQL Pro on the host machine.
+  # use tolls such as PHPStorm, MySQL Workbench or SQL Pro on the hoexit
+  # st machine.
   apt-get update &&
     apt-get install python-pip python-setuptools -qq > /dev/null &&
     pip install mycli > /dev/null
