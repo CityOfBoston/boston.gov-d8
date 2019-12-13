@@ -28,7 +28,7 @@ build:
       # Set source to 'initialize' to start a fresh install.
       # Otherwise set it to 'sync' to sync from the drush-alias environment.
       source: sync
-      drush-alias: "@bostond8.test"
+      drush_alias: "@bostond8.test"
       host: bostond8_database_1
       port: 3306
 
@@ -40,7 +40,7 @@ build:
         # Set source to 'initialize' to start a fresh install.
         # Otherwise set it to sync to sync from the drush-alias environment.
         source: initialize
-        drush-alias: "@bostond8.test"
+        drush_alias: "@bostond8.test"
       config:
         # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
         # aquia require ./config/default:
@@ -53,7 +53,7 @@ build:
         # Set source to 'initialize' to start a fresh install.
         # Otherwise set it to sync to sync from the drush-alias environment.
         source: initialize
-        drush-alias: "@bostond8.test"
+        drush_alias: "@bostond8.test"
       config:
         # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
         # aquia require ./config/default:
@@ -128,13 +128,13 @@ git:
   private_repo:
     repo: CityOfBoston/boston.gov-d8-private.git
     branch: develop
-    deploy-branch: develop
+    deploy_branch: develop
     # Where the repo will be cloned to.
     local_dir: ${LANDO_MOUNT}/setup/private
-    # [optional] Provide the path to a settings script (relative to the private repo root),
+    # Provide the path to a settings script (relative to the private repo root),
     # which will be copied to the main repo and then set up to be called from (i.e. extend)
     # the sites main settings.php script.
-    settings_file.rel: sites/default/settings/private.settings.php
+    settings_file: sites/default/settings/private.settings.php
 
 composer:
   bin: ${LANDO_MOUNT}/vendor/bin
@@ -160,7 +160,7 @@ testing_framework:
     # This is used for ad-hoc creation of a server via `drush rs`.
     profile: local
     # This needs to match a site entry in docroot/sites/sites.php.
-    server-url: http://127.0.0.1:8888
+    server_url: http://127.0.0.1:8888
     # If true, `drush runserver` will be used for executing tests.
     #  run-server: false
     # If true, PhantomJS GhostDriver will be launched with Behat.

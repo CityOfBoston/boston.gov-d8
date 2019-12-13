@@ -12,10 +12,10 @@
     drush sql:sync @bostond8.test @self -y
 
     # Update database with local settings
-    sync_db ""
+    sync_db "@self"
 
     # Enable/disable modules for local dev.
-    devModules ""
+    devModules "@self"
 
     # Run Additional local processes
     drush user:password admin admin
