@@ -40,10 +40,9 @@ services:
     xdebug: true
 
     overrides:
-      # For PHPStorm editors.
-      PHP_IDE_CONFIG="serverName=boston.lndo.site"
-      # For XDebug of php from the cli (e.g. Drush & Composer)
-      XDEBUG_CONFIG="remote_enable=1 remote_host=10.0.0.74 idekey=PHPSTORM"
+      environment:
+        PHP_IDE_CONFIG: "serverName=bostontest.lndo.site"
+        XDEBUG_CONFIG: "remote_enable=1 remote_host=10.0.0.74 idekey=PHPSTORM"
 
     config:
       conf: xdebug.ini
