@@ -20,11 +20,11 @@ services:
 
   database:
     type: mysql
-    portforward: 3307
+    portforward: true
     host: localhost
     run_as_root:
       - /app/scripts/local/lando-database-customize.sh
-      -
+
     creds:
       user: drupal
       password: drupal

@@ -39,11 +39,8 @@
   # Change the permissions on the log file so that non-root user can add to log.
   chmod 777 ${LANDO_MOUNT}/setup/lando.log >> ${setup_logs}/lando.log
 
-  # [Optional]  Do not need the next 2 statements on stage or production servers.
-  # Install a custom apache config file for on-demand containers -> limits the apache children to preserve memory.
-  #     (Config loaded and enabled by Phing in setup:docker:drupal-terraform)
-  cp ${LANDO_MOUNT}/scripts/phing/files/limit-apache-children.conf /etc/apache2/conf-available/ >> ${setup_logs}/lando.log
-  cp ${LANDO_MOUNT}/scripts/phing/files/boston-dev-php.ini /usr/local/etc/php/conf.d/ >> ${setup_logs}/lando.log
+  # Install a custom apache config file for on-demand containers
+  cp ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/ >> ${setup_logs}/lando.log
 
   #- ip route | awk 'NR==1 {printf $3}' | xargs echo "xdebug.remote_host=" >>/usr/local/etc/php/conf.d/boston-dev-php.ini
   service apache2 reload >> ${setup_logs}/lando.log
