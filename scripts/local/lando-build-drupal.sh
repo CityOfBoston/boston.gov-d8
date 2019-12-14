@@ -7,22 +7,22 @@
   #  and update that Database with local & current repo settings.
   ###############################################################
 
-#  printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
-#
-#  # Include the utilities file/library.
-#  . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
-#  # Include the cob_utilities file contained in Acquia hooks.
-#  . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
-#
-#  # Read in config and variables.
-#  eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
-#  eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
-#
-#  # Create script variables
-#  target_env="local"
-#  setup_logs="${LANDO_MOUNT}/setup/"
-#  project_sync=${LANDO_MOUNT}/docroot/${build_local_config_sync}
-#  LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
+  printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
+
+  # Include the utilities file/library.
+  . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
+  # Include the cob_utilities file contained in Acquia hooks.
+  . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+
+  # Read in config and variables.
+  eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
+  eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
+
+  # Create script variables
+  target_env="local"
+  setup_logs="${LANDO_MOUNT}/setup/"
+  project_sync=${LANDO_MOUNT}/docroot/${build_local_config_sync}
+  LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 #
 #  # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
 #  # The folder has been created and permissions set in lando-container-customize.sh
