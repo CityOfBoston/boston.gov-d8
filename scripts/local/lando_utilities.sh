@@ -84,7 +84,7 @@ function clone_private_repo() {
     find ${git_private_repo_local_dir}/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; &&
     rsync -aE "${git_private_repo_local_dir}/" "${LANDO_MOUNT}/" --exclude=*.md &&
     rm -rf ${git_private_repo_local_dir} &&
-    printout "SUCCESS" "Private repo merged."
+    printout "SUCCESS" "Private repo merged.\n"
 
   if [[ $? -ne 0 ]]; then
     printout "ERROR" "Failed to clone/merge private repo."

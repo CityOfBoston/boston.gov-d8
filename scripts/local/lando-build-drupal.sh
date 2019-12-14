@@ -98,7 +98,7 @@
 
   elif [[ "${build_local_database_source}" == "sync" ]]; then
     # Grab a copy of the database from the desired(remote) acquia server.
-    if [[ -z ${build_database_drush_alias} ]]; then build_database_drush_alias="@bostond8.test"; fi
+    if [[ -z ${build_database_drush_alias} ]]; then build_database_drush_alias="@bostond8.dev"; fi
     printout "INFO" "Copying database (and content) from ${build_database_drush_alias} into docker database container."
 
     # Drop the local DB, and then ...
