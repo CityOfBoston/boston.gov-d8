@@ -154,6 +154,6 @@ function build_settings() {
     rm -f "${docroot}/sites/example.settings.local.php"
     rm -f "${docroot}/sites/example.sites.php"
 
-    printout "SUCCESS" "Settings files written/updated."
+    printout "SUCCESS" "Settings files written/updated.\n"
 
 }
