@@ -35,7 +35,7 @@ services:
       - /app/scripts/local/lando-appserver-customize.sh
 
     run:
-      - /app/scripts/local/lando-build-drupal.sh
+      - /app/scripts/local/lando-build-drupal.sh -y
 
     xdebug: true
 
