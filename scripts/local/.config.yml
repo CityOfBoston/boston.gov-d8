@@ -141,7 +141,7 @@ composer:
 
 drush:
   bin: ${LANDO_MOUNT}/vendor/bin/drush
-  cmd: ${LANDO_MOUNT}/vendor/bin/drush # -r ${LANDO_MOUNT}/docroot}# -l default
+  cmd: ${LANDO_MOUNT}/vendor/bin/drush  -r ${LANDO_MOUNT}/docroot} -l default
   root: ${LANDO_MOUNT}/docroot
 
 # The testing framework is limited to the `tests` directory, and includes
