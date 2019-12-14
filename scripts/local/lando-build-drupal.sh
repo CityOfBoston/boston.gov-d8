@@ -22,7 +22,6 @@
   project_sync=${LANDO_MOUNT}/docroot/${build_local_config_sync}
   LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
-
   printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
 
   # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
