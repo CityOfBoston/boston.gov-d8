@@ -17,6 +17,7 @@ Cyan='\033[0;36m'
 LightCyan='\033[1;36m'
 LightGray='\033[0;37m'
 White='\033[1;37m'
+RedBG='\033[41;1;37m'
 NC='\033[0m'
 
 # basic parse of a yml file into a series of variables.
@@ -148,7 +149,7 @@ function build_settings() {
         echo -e "}\n\n" >> ${local_settings_file}
     fi
     # Add in config sync directory from yml.
-    echo -e "ini_set('memory_limit', '${project.php.memory_size}');\n" >> ${local_settings_file}
+    echo -e "ini_set('memory_limit', '${project_php_memory_size}');\n" >> ${local_settings_file}
     echo -e "\$config_directories[\"sync\"] = \"${build_local_config_sync}\";\n" >> ${local_settings_file}
     echo -e "\$settings[\"install_profile\"] = \"${project_profile_name}\";\n" >> ${local_settings_file}
     echo -e "/* End of additions. */\n" >> ${local_settings_file}

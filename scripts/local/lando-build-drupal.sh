@@ -262,13 +262,13 @@
                 printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
                 printout "ERROR" "Showing last 50 log messages from config_import"
                 tail -50 ${setup_logs}/config_import.log
-                printout "ERROR" "Config Import Fail." "Check ${setup_logs}/config_import.log for full printout of attempted process."
-                printout "" "" "Will continue continue build."
+                printout "ERROR" "Config Import Fail." "\n - Check ${setup_logs}/config_import.log for full printout of attempted process."
+                printout "" "" " -Will continue continue build."
                 # Capture the error and save for later display
-                echo -e "\n${Red} ==============================================================================${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${Red}| IMPORTANT: ${LightRed}The configuration import failed.                                  |${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${Red}|${LightRed}   Please check ${setup_logs}/config_import.log and fix before continuing.       ${Red}|${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${Red} ==============================================================================${NC}\n\n"  >> ${setup_logs}/uli.log
+                echo -e "\n${RedBG}  ==============================================================================${NC}\n"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}\n"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}\n"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG}  ==============================================================================${NC}\n\n"  >> ${setup_logs}/uli.log
             fi
         fi
     fi
