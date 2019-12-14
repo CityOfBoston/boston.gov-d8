@@ -19,15 +19,15 @@
   # use tolls such as PHPStorm, MySQL Workbench or SQL Pro on the hoexit
   # st machine.
   apt-get update &> /dev/null &&
-    apt-get install python-pip python-setuptools -qq &> /dev/null &&
-    pip install mycli &> /dev/null
+    apt-get install -y python-pip python-setuptools -qq &> /dev/null &&
+    pip install mycli -y &> /dev/null
 
   # Install pspg pager to work with less.
   # This is OPTIONAL - this is an extension to the mycli package, which is also optional.
-  apt-get install wget ca-certificates -qq > /dev/null &&
+  apt-get install -y wget ca-certificates -qq > /dev/null &&
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - &&
     sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main" >> /etc/apt/sources.list.d/pgdg.list' &&
     apt-get update &> /dev/null &&
-    apt-get install pspg -qq > /dev/null
+    apt-get install -y pspg -qq > /dev/null
 
   printout "SUCCESS" "Installed mycli and pspg.\n"
