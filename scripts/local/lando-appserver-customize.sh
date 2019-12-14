@@ -9,10 +9,6 @@
   # Include the utilities file/library.
   . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
 
-  # Read in config and variables.
-  eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
-  eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
-
   # Create script variables
   target_env="local"
   setup_logs="${LANDO_MOUNT}/setup"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-    printf "[info] Will pull latest code from public repo and merge in settings from private repo.\n"
+    printout "INFO" "Will pull latest code from public repo and merge in settings from private repo."
 
     # Include the utilities file/library.
     . "/app/scripts/local/lando_utilities.sh"
@@ -20,4 +20,4 @@
     # Clone the private repo and merge with the main repo.
     clone_private_repo
 
-    printf "[success] Public and private repos updated.\n"
+    printout "SUCCESS" "Public and private repos updated.\n"

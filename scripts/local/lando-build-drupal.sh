@@ -12,14 +12,10 @@
   # Include the cob_utilities file contained in Acquia hooks.
   . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
 
-  # Read in config and variables.
-  eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
-  eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
-
   # Create script variables
   target_env="local"
   setup_logs="${LANDO_MOUNT}/setup/"
-  project_sync=${LANDO_MOUNT}/docroot/${build_local_config_sync}
+  project_sync=${project_docroot}/${build_local_config_sync}
   LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
   printout "INFO" "Installing Drupal and dependencies in appserver & database containers.\n"
@@ -164,14 +160,14 @@
   drush_file=${LANDO_MOUNT}/drush/drush.yml
   rm -rf ${drush_file}
   printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
-  printf "options:\n  uri: '${lando.url.url}'\n  root: '${lando.url.localpath}'" >> ${drush_file}
+  printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'" >> ${drush_file}
   printout "SUCCESS" "File updated.\n"
 
   # Phing commands to complete the initial setup.  Output redirect so it can be printed at the end.
   # Capture the build info into a file to be printed at end of build process.
-  cd ${LANDO_MOUNT}/scripts/doit/branding.sh > ${setup_logs}/uli.log
-  printf '\033[1;33mThe ${drupal_account_name} account password is reset to: ${drupal_account_password}.\033[0m' >> ${setup_logs}/uli.log
-  ${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &>/dev/nul
+  . ${LANDO_MOUNT}/scripts/doit/branding.sh > ${setup_logs}/uli.log
+  printf '${Yellow}The ${drupal_account_name} account password is reset to: ${drupal_account_password}.${NC}\n' >> ${setup_logs}/uli.log
+  ${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null
   ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
   printout "SUCCESS" "Drupal build finished.\n"
