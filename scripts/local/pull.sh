@@ -10,13 +10,6 @@
         git fetch --all &&
         git pull --all
 
-    # clone the private repo, and copy files into main repo folder
-#    git clone git@github.com:CityOfBoston/boston.gov-d8-private.git /app/tmprepo
-#    rm -rf /app/tmprepo/.git
-#    find /app/tmprepo/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \;
-#    rsync -aE /app/tmprepo/ /app/ --exclude=*.md
-#    rm -rf /app/tmprepo
-
     # Clone the private repo and merge with the main repo.
     clone_private_repo
 

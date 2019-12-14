@@ -19,10 +19,6 @@ LightGray='\033[0;37m'
 White='\033[1;37m'
 NC='\033[0m'
 
-# Read in config and variables.
-eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
-eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
-
 # basic parse of a yml file into a series of variables.
 function parse_yaml() {
    local prefix=${2}
@@ -47,30 +43,35 @@ function load_lando_yml() {
 
 function printout () {
 
-  if [ "${1}" == "ERROR" ]; then
-    col1=${Red}
-    col2=${LightRed}
-  elif [ "${1}" == "WARNING" ]; then
-    col1=${Yellow}
-    col2=${BrownOrange}
-  elif [ "${1}" == "INFO" ] || [ "${1}" == "STATUS" ]; then
-    col1=${LightBlue}
-    col2=${Cyan}
-  else
-    col1=${LightGreen}
-    col2=${Green}
-  fi
+    if [[ -z ${quiet} ]]; then quiet="0";  fi
 
-  if [[ -n ${1} ]]; then
-    printf "$col1[${1}] "
-  fi
-  if [[ -n ${2} ]]; then
-      printf "$col2${2}$NC "
-  fi
-  if [[ -n ${3} ]]; then
-    printf "$LightGray- ${3}$NC"
-  fi
-  printf "\n"
+    if [[ "${quiet}" != "1" ]]; then
+
+        if [[ "${1}" == "ERROR" ]]; then
+            col1=${Red}
+            col2=${LightRed}
+        elif [[ "${1}" == "WARNING" ]]; then
+            col1=${Yellow}
+            col2=${BrownOrange}
+        elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
+            col1=${LightBlue}
+            col2=${Cyan}
+        else
+            col1=${LightGreen}
+            col2=${Green}
+        fi
+
+        if [[ -n ${1} ]]; then
+            printf "$col1[${1}] "
+        fi
+        if [[ -n ${2} ]]; then
+              printf "$col2${2}$NC "
+        fi
+        if [[ -n ${3} ]]; then
+            printf "$LightGray- ${3}$NC"
+        fi
+        printf "\n"
+    fi
 }
 
 function clone_private_repo() {
@@ -83,17 +84,28 @@ function clone_private_repo() {
   if [[ -e "${git_private_repo_local_dir}" ]]; then rm -rf ${git_private_repo_local_dir}; fi
 
   # Clone the repo and merge
-  git clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1 &&
+  printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
+  git clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+  if [[ $? -eq 0 ]]; then
+    printout "SUCCESS" "Private repo cloned."
     rm -rf ${git_private_repo_local_dir}/.git &&
-    find ${git_private_repo_local_dir}/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; &&
-    rsync -aE "${git_private_repo_local_dir}/" "${LANDO_MOUNT}/" --exclude=*.md &&
-    rm -rf ${git_private_repo_local_dir} &&
-    printout "SUCCESS" "Private repo merged.\n"
+        if [[ $? -eq 0 ]]; then printout "INFO" "Detached repository."; fi &&
+        find ${git_private_repo_local_dir}/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; &&
+        if [[ $? -eq 0 ]]; then printout "INFO" "Renamed and applied gitignores."; fi &&
+        rsync -aE "${git_private_repo_local_dir}/" "${LANDO_MOUNT}/" --exclude=*.md &&
+        if [[ $? -eq 0 ]]; then printout "INFO" "Merged private repo with main repo."; fi &&
+        rm -rf ${git_private_repo_local_dir} &&
+        if [[ $? -eq 0 ]]; then printout "INFO" "Tidied up remnants of private repo."; fi
 
-  if [[ $? -ne 0 ]]; then
+    if [[ $? -ne 0 ]]; then
+        printout "ERROR" "Failed to clone/merge private repo."
+        exit 1
+    fi
+  else
     printout "ERROR" "Failed to clone/merge private repo."
     exit 1
   fi
+  printout "SUCCESS" "Private repo merge complete."
 }
 
 function build_settings() {
@@ -159,5 +171,8 @@ function build_settings() {
     rm -f "${docroot}/sites/example.sites.php"
 
     printout "SUCCESS" "Settings files written/updated.\n"
-
 }
+
+# Read in config and variables.
+eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
+eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
