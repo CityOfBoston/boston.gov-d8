@@ -19,6 +19,10 @@ LightGray='\033[0;37m'
 White='\033[1;37m'
 NC='\033[0m'
 
+# Read in config and variables.
+eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
+eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
+
 # basic parse of a yml file into a series of variables.
 function parse_yaml() {
    local prefix=${2}
