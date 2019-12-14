@@ -27,8 +27,9 @@ build:
     database:
       # Set source to 'initialize' to start a fresh install.
       # Otherwise set it to 'sync' (and provide a drush-alias) to sync from the drush-alias environment.
+      # Tip: Develop environment has database in closest state to the github repo configs.
       source: sync
-      drush_alias: "@bostond8.test"
+      drush_alias: "@bostond8.dev"
       host: boston_database_1
       port: 3306
 
@@ -65,7 +66,7 @@ build:
     database:
       # none, auto, build, sync or restore
       source: sync
-      drush-alias: "@bostond8.dev"
+      drush_alias: "@bostond8.dev"
 
 deploy:
   # each element of the deploy object is a branch in the main CoB repo.
@@ -73,22 +74,22 @@ deploy:
     # Folder in Travis container where deploy files will be "built"
     dir: ${LANDO_MOUNT}/deploy
     # Name of the target branch in the Acquia repo.
-    deploy-branch: develop-deploy
+    deploy_branch: develop-deploy
     # Path to the drush command in the Travis container.
-    travis-drush-path: '${LANDO_MOUNT}/vendor/bin/drush'
+    travis_drush_path: '${LANDO_MOUNT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
-    drush-alias: "@bostond8.dev"
+    drush_alias: "@bostond8.dev"
     # Definition of files that will and wont be copied from build to deploy.
-    includes-file: ${LANDO_MOUNT}/scripts/deploy/deploy-includes.txt
-    excludes-file: ${LANDO_MOUNT}/scripts/deploy/deploy-excludes.txt
-    sanitize-file: ${LANDO_MOUNT}/scripts/deploy/deploy-sanitize-files.txt
+    includes_file: ${LANDO_MOUNT}/scripts/deploy/deploy-includes.txt
+    excludes_file: ${LANDO_MOUNT}/scripts/deploy/deploy-excludes.txt
+    sanitize_file: ${LANDO_MOUNT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
+    commit_message: "Automated commit by Travis CI for Build #${travis.id}"
     # Dry-run (for testing).
-    dry-run: false
+    dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
-    copy-db: false
-    drush-db-source: "@bostond8.stage"
+    copy_db: false
+    drush_db_source: "@bostond8.stage"
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
@@ -96,22 +97,22 @@ deploy:
     # Folder in Travis container where deploy files will be "built"
     dir: ${LANDO_MOUNT}/deploy
     # Name of the target branch in the Acquia repo.
-    deploy-branch: master-deploy
+    deploy_branch: master-deploy
     # Path to the drush command in the Travis container.
-    travis-drush-path: '${LANDO_MOUNT}/vendor/bin/drush'
+    travis_drush_path: '${LANDO_MOUNT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
-    drush-alias: "@bostond8.test"
+    drush_alias: "@bostond8.test"
     # Definition of files that will and wont be copied from build to deploy.
-    includes-file: ${LANDO_MOUNT}/scripts/deploy/deploy-includes.txt
-    excludes-file: ${LANDO_MOUNT}/scripts/deploy/deploy-excludes.txt
-    sanitize-file: ${LANDO_MOUNT}/scripts/deploy/deploy-sanitize-files.txt
+    includes_file: ${LANDO_MOUNT}/scripts/deploy/deploy-includes.txt
+    excludes_file: ${LANDO_MOUNT}/scripts/deploy/deploy-excludes.txt
+    sanitize_file: ${LANDO_MOUNT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit-message: "Automated commit by Travis CI for Build #${travis.id}"
+    commit_message: "Automated commit by Travis CI for Build #${travis.id}"
     # Dry-run (for testing).
-    dry-run: false
+    dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
-    copy-db: false
-    drush-db-source: "@bostond8.prod"
+    copy_db: false
+    drush_db_source: "@bostond8.prod"
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     remotes:
       - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
