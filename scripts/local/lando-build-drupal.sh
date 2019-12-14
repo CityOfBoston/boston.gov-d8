@@ -28,7 +28,7 @@
 
     # Create additional working variables.
     target_env="local"
-    setup_logs="${LANDO_MOUNT}/setup/"
+    setup_logs="${LANDO_MOUNT}/setup"
     project_sync=${project_docroot}/${build_local_config_sync}
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
     quiet=0
