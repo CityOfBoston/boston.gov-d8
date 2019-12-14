@@ -31,6 +31,7 @@
     setup_logs="${LANDO_MOUNT}/setup"
     project_sync=${project_docroot}/${build_local_config_sync}
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
+    timer=$(date +%s)
     quiet=0
     yes=0
     # Check for options/flags passed in.
@@ -226,7 +227,7 @@
     printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time..."
     printout "" "" "    -> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
-    ${drush_cmd} config_import sync -y &> ${setup_logs}/config_import.log
+    ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
 
     if [[ $? -eq 0 ]]; then
         printout "SUCCESS" "Config from the repo has been applied to the database.\n"
@@ -241,7 +242,7 @@
         printout "WARNING" "Will retry a partial config import."
         echo "=> Retry partial cim." >> ${setup_logs}/config_import.log
 
-        ${drush_cmd} config_import sync --partial -y &>> ${setup_logs}/config_import.log
+        ${drush_cmd} config-import sync --partial -y &>> ${setup_logs}/config_import.log
 
         if [[ $? -eq 0 ]]; then
             printout "SUCCESS" "Config from the repo has been applied to the database.\n"
@@ -249,7 +250,7 @@
             printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
             printout "WARNING" "Will retry a partial config import again."
             echo "Retry partial cim (#2)." >> ${setup_logs}/config_import.log
-            ${drush_cmd} config_import sync --partial -y &>> ${setup_logs}/config_import.log
+            ${drush_cmd} config-import sync --partial -y &>> ${setup_logs}/config_import.log
 
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
@@ -303,4 +304,5 @@
     ${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null
     ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
-    printout "SUCCESS" "Drupal build finished.\n"
+    text=$(displayTime $(($(date +%s)-timer)))
+    printout "SUCCESS" "Drupal build finished." "\nBuild took ${text}"

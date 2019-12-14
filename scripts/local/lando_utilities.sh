@@ -174,6 +174,28 @@ function build_settings() {
     printout "SUCCESS" "Settings files written/updated.\n"
 }
 
+function displayTime() {
+  elapsed=${1};
+  if (( $elapsed > 3600 )); then
+      let "hours=elapsed/3600"
+      text="hour"
+      if (( $hours > 1 )); then text="hours"; fi
+      hours="$hours $text, "
+  fi
+  if (( $elapsed > 60 )); then
+      let "minutes=(elapsed%3600)/60"
+      text="minute"
+      if (( $minutes > 1 )); then text="minutes"; fi
+      minutes="$minutes $text and "
+  fi
+  let "seconds=(elapsed%3600)%60"
+  text="second"
+  if (( $seconds > 1 )); then text="seconds"; fi
+  seconds="$seconds $text."
+
+  echo "${hours} ${minutes} ${seconds}"
+}
+
 # Read in config and variables.
 eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
 eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
