@@ -98,13 +98,13 @@
 
   elif [[ "${build_local_database_source}" == "sync" ]]; then
     # Grab a copy of the database from the desired(remote) acquia server.
-    if [[ -z ${build_database_drush-alias} ]]; then build_database_drush-alias="@bostond8.test"; fi
-    printout "INFO" "Copying database (and content) from ${build_database_drush-alias} into docker database container."
+    if [[ -z ${build_database_drush_alias} ]]; then build_database_drush_alias="@bostond8.test"; fi
+    printout "INFO" "Copying database (and content) from ${build_database_drush_alias} into docker database container."
 
     # Drop the local DB, and then ...
     # ... download a backup from the remote server, and restore into the database container.
     ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_db-sync.log &&
-        ${drush_cmd} sql:sync ${build_database_drush-alias} @self -y >> ${setup_logs}/drush_db-sync.log
+        ${drush_cmd} sql:sync ${build_database_drush_alias} @self -y >> ${setup_logs}/drush_db-sync.log
     if [[ $? -eq 0 ]]; then
         printout "SUCCESS" "Site has database and content from remote environment."
     else

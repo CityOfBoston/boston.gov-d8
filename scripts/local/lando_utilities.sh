@@ -131,8 +131,8 @@ function build_settings() {
         echo -e "}\n\n" >> ${local_settings_file}
     fi
     # Add in config sync directory from yml.
-    echo -e "$config_directories['sync'] = '${build.config.sync}';\n" >> ${local_settings_file}
-    echo -e "$settings['install_profile'] = '${project.profile.name}';\n" >> ${local_settings_file}
+    echo -e "\$config_directories['sync'] = '${build.config.sync}';\n" >> ${local_settings_file}
+    echo -e "\$settings['install_profile'] = '${project.profile.name}';\n" >> ${local_settings_file}
     echo -e "/* End of additions. */\n" >> ${local_settings_file}
 
     # setup the private settings file
