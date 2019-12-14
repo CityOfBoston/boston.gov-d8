@@ -22,7 +22,7 @@
   project_sync=${LANDO_MOUNT}/docroot/${build_local_config_sync}
   LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
-  printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
+  printout "INFO" "Installing Drupal and dependencies in appserver & database containers.\n"
 
   # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
   # The folder has been created and permissions set in lando-container-customize.sh
@@ -31,7 +31,7 @@
 
   if [ -z ${project_docroot}/core/lib/Drupal.php ]; then
     printout "WARNING" "Drupal is already installed." "This will not be a 'clean' build."
-    printout " " "" "Composer Install will still run and may update existing files."
+    printout "" "" "Composer Install will still run and may update existing files."
   fi
 
   # Install composer - using lock file if present.
@@ -42,7 +42,7 @@
     composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
     composer drupal:scaffold &>> ${setup_logs}/composer.log &&
     echo "DONE." >> ${setup_logs}/composer.log &&
-    printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries."
+    printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
 
   # Clone the private repo and merge with the main repo.
   # This function is contained in lando_utilities.sh.
@@ -76,7 +76,7 @@
 
     # If it failed then alert.
     if [[ $? -eq 0 ]]; then
-        printout "SUCCESS" "Site is freshly installed with clean database."
+        printout "SUCCESS" "Site is freshly installed with clean database.\n"
     else
         printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues."
         exit 0
@@ -106,7 +106,7 @@
     ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_db-sync.log &&
         ${drush_cmd} sql:sync ${build_database_drush_alias} @self -y >> ${setup_logs}/drush_db-sync.log
     if [[ $? -eq 0 ]]; then
-        printout "SUCCESS" "Site has database and content from remote environment."
+        printout "SUCCESS" "Site has database and content from remote environment.\n"
     else
         printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_db-sync.log for issues."
         exit 0
@@ -118,7 +118,7 @@
   printout "INFO" "see ${setup_logs}/config-import.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/config-import.log)"
   ${drush_cmd} config-import sync -y > ${setup_logs}/config-import.log
   if [[ $? -eq 0 ]]; then
-    printout "SUCCESS" "Config from the repo has been applied to the database."
+    printout "SUCCESS" "Config from the repo has been applied to the database.\n"
   else
     # Sometimes there is an issue with configuration that cannot be applied to entities with content etc.
     # The work aound is to try a partial configuration import.
@@ -130,13 +130,13 @@
     ${drush_cmd} config-import sync --partial -y >> ${setup_logs}/config-import.log
 
     if [[ $? -eq 0 ]]; then
-        printout "SUCCESS" "Config from the repo has been applied to the database."
+        printout "SUCCESS" "Config from the repo has been applied to the database.\n"
     else
         echo "Retry partial cim (#2)." >> ${setup_logs}/config-import.log
         ${drush_cmd} config-import sync --partial -y >> ${setup_logs}/config-import.log
 
         if [[ $? -eq 0 ]]; then
-            printout "SUCCESS" "Config from the repo has been applied to the database."
+            printout "SUCCESS" "Config from the repo has been applied to the database.\n"
         else
             # Uh oh!
             printout "ERROR" "Fail - Configuration import." "Check ${setup_logs}/config-import.log for issues."
@@ -154,7 +154,7 @@
   printout "INFO" "Apply database updates."
   ${drush_cmd} updb -y >> ${setup_logs}/config-import.log   &&
     ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config-import.log  &&
-    printout "SUCCESS" "Import configuration from sync folder: '${project_sync}' into database"
+    printout "SUCCESS" "Import configuration from sync folder: '${project_sync}' into database.\n"
   if [[ $? -eq 0 ]]; then
     printout "WARNING" "Post config import non-fatal issues."
   fi
@@ -165,7 +165,7 @@
   rm -rf ${drush_file}
   printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
   printf "options:\n  uri: '${lando.url.url}'\n  root: '${lando.url.localpath}'" >> ${drush_file}
-  printout "SUCCESS" "File updated"
+  printout "SUCCESS" "File updated.\n"
 
   # Phing commands to complete the initial setup.  Output redirect so it can be printed at the end.
   # Capture the build info into a file to be printed at end of build process.
@@ -174,4 +174,4 @@
   ${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &>/dev/nul
   ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
-  printout "SUCCESS" "Drupal build finished"
+  printout "SUCCESS" "Drupal build finished.\n"
