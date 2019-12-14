@@ -73,9 +73,10 @@ function clone_private_repo() {
   printout "INFO" "Clone private repo and merge with main repo."
 
   # Assign a temporary folder.
-  if [[ -z "${git_private_repo_local_dir}" ]]; then
-    git_private_repo_local_dir="${LANDO_MOUNT}/tmprepo"
-  fi
+  if [[ -z "${git_private_repo_local_dir}" ]]; then git_private_repo_local_dir="${LANDO_MOUNT}/tmprepo"; fi
+
+  # Empty the folder if it exists.
+  if [[ -e "${git_private_repo_local_dir}" ]]; then rm -rf ${git_private_repo_local_dir}; fi
 
   # Clone the repo and merge
   git clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1 &&
