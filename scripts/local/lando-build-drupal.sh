@@ -124,9 +124,8 @@
     # The work aound is to try a partial configuration import.
     printout "WARNING" "==== Config Import Errors ========"
     tail -100 ${setup_logs}/config-import.log
-    printout "       " "=================================="
+    printout "" "       =================================="
     printout "INFO" "Retry config import."
-    printout "       " "=================================="
     echo "Retry partial cim." >> ${setup_logs}/config-import.log
     ${drush_cmd} config-import sync --partial -y >> ${setup_logs}/config-import.log
 
