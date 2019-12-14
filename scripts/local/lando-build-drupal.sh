@@ -39,8 +39,8 @@
   printout "INFO" "Executes: > composer install --prefer-dist --no-suggest --no-interaction"
   echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
   cd ${LANDO_MOUNT} &&
-    composer install --no-suggest --prefer-dist --no-interaction >> ${setup_logs}/composer.log &&
-    composer drupal:scaffold >> ${setup_logs}/composer.log &&
+    composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
+    composer drupal:scaffold &>> ${setup_logs}/composer.log &&
     echo "DONE." >> ${setup_logs}/composer.log &&
     printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries."
 
