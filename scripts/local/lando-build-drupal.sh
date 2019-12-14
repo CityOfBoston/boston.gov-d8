@@ -49,8 +49,10 @@
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
     rm -f ${project_docroot}/sites/default/files/setup &&
-        ln -s ${setup_logs} ${project_docroot}/sites/default/files/setup &&
-        rm -f ${setup_logs}/uli.log
+        ln -s ${setup_logs} ${project_docroot}/sites/default/files/setup
+
+    # Capture the build info into a file to be printed at end of build process.
+    . ${LANDO_MOUNT}/scripts/doit/branding.sh > ${setup_logs}/uli.log
 
     # Check if drupal is already installed.  If it is flash up a warning.
     if [ -z ${project_docroot}/core/lib/Drupal.php ]; then
@@ -236,8 +238,8 @@
         # The work aound is to try a partial configuration import.
         printout "" "\n"
         printout "WARNING" "==== Config Import Errors ========================="
-        printout "WARNING" "Showing last 100 log messages from config_import"
-        tail -100 ${setup_logs}/config_import.log
+        printout "WARNING" "Showing last 25 log messages from config_import"
+        tail -25 ${setup_logs}/config_import.log
         printout "" "       ---------------------------------------------------\n"
         printout "WARNING" "Will retry a partial config import."
         echo "=> Retry partial cim." >> ${setup_logs}/config_import.log
@@ -258,14 +260,14 @@
                 # Uh oh!
                 printout "" "\n"
                 printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
-                printout "ERROR" "Showing last 150 log messages from config_import"
-                tail -150 ${setup_logs}/config_import.log
+                printout "ERROR" "Showing last 50 log messages from config_import"
+                tail -50 ${setup_logs}/config_import.log
                 printout "ERROR" "Config Import Fail." "Check ${setup_logs}/config_import.log for full printout of attempted process."
                 printout "" "" "Will continue continue build."
                 # Capture the error and save for later display
                 echo -e "\n${Red} ==============================================================================${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${Red}| IMPORTANT: The configuration import failed.                                  |${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${Red}|${NC} Please check ${setup_logs}/config_import.log and fix before continuing.      ${Red}|${NC}\n"  >> ${setup_logs}/uli.log
+                echo -e   "${Red}| IMPORTANT: ${LightRed}The configuration import failed.                                  |${NC}\n"  >> ${setup_logs}/uli.log
+                echo -e   "${Red}|${LightRed}   Please check ${setup_logs}/config_import.log and fix before continuing.       ${Red}|${NC}\n"  >> ${setup_logs}/uli.log
                 echo -e   "${Red} ==============================================================================${NC}\n\n"  >> ${setup_logs}/uli.log
             fi
         fi
@@ -299,8 +301,7 @@
     printout "SUCCESS" "Drush file updated.\n"
 
     # Capture the build info into a file to be printed at end of build process.
-    . ${LANDO_MOUNT}/scripts/doit/branding.sh >> ${setup_logs}/uli.log
-    printf '${Yellow}The ${drupal_account_name} account password is reset to: ${drupal_account_password}.${NC}\n' >> ${setup_logs}/uli.log
+    printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >> ${setup_logs}/uli.log
     ${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null
     ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
