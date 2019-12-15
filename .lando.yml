@@ -101,6 +101,7 @@ tooling:
 
 events:
   post-start:
-    - printf "\n\n==========================================================.\n"
-    - printf "\033[1;32m[lando]\033[0m Docker containers are now started.\n"
+    - printf "\n\n================================================================================\n"
+    - printf "\033[1;32m[SUCCESS] - Appserver and MySQL Docker containers are now started.\033[0m\n"
+    - printf "------------------------------------------------------------------------------------\n\n"
     - cat ${LANDO_MOUNT}/setup/uli.log && rm -f ${LANDO_MOUNT}/setup/uli.log

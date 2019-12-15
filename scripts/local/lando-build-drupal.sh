@@ -265,10 +265,10 @@
                 printout "ERROR" "Config Import Fail." "\n - Check ${setup_logs}/config_import.log for full printout of attempted process."
                 printout "" "" " -Will continue continue build."
                 # Capture the error and save for later display
-                echo -e "\n${RedBG}  ==============================================================================${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}\n"  >> ${setup_logs}/uli.log
-                echo -e   "${RedBG}  ==============================================================================${NC}\n\n"  >> ${setup_logs}/uli.log
+                echo -e "\n${RedBG}  ==============================================================================${NC} "  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG}  ==============================================================================${NC} \n"  >> ${setup_logs}/uli.log
             fi
         fi
     fi
@@ -288,9 +288,9 @@
     printout "SUCCESS" "Applied any pending database updates.\n"
 
     # Rebuild user access on nodes.
-    printout "INFO" "Rebuild user access on nodes."
-    ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config_import.log
-    printout "SUCCESS" "Updates run.\n"
+#    printout "INFO" "Rebuild user access on nodes."
+#    ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config_import.log
+#    printout "SUCCESS" "Updates run.\n"
 
     # Update the drush.yml file.
     printout "INFO" "Update the drush config."
