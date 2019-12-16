@@ -40,14 +40,16 @@ services:
         XDEBUG_CONFIG: "remote_enable=1 remote_host=10.0.0.74 idekey=PHPSTORM"
     config:
       conf: xdebug.ini
+    build:
+      - printf "start build\n"
+      - composer install --no-progress --no-suggest --prefer-dist > /dev/null
+      - printf "end build\n"
+
     build_as_root:
       - printf "start build_as_root\n"
       - /app/scripts/local/lando-appserver-customize.sh
       - printf "end build_as_root\n"
-    build:
-      - printf "start build\n"
-      - composer install -qq
-      - printf "end build\n"
+
     run:
       - printf "start run\n"
       - /app/scripts/local/lando-build-drupal.sh -y
