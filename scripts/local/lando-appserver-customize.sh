@@ -15,6 +15,7 @@
     setup_logs="${LANDO_MOUNT}/setup"
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
+    printf "\n"
     printout "INFO" "Installing Linux packages in appserver container."
 
     # Prepare the folder which will hold setup logs.
