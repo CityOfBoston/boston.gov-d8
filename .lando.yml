@@ -47,7 +47,7 @@ services:
 
     build:
       - printf "[LANDO] Appserver Event - build\n"
-      - composer require drush/drush:^9 --no-progress --no-suggest --prefer-dist --no-interaction &> /dev/null
+      - /bin/sh -c "composer require drush/drush:^9 --no-update --no-progress --no-suggest --prefer-dist &> /dev/null"
 
     run:
       - printf "[LANDO] Appserver Event - run\n"
