@@ -24,8 +24,8 @@
         chown www-data:www-data ${setup_logs} &&
         chmod 777 ${setup_logs};
 
-    printout "INFO" "Container build actions will be logged to files in ${setup_logs}"
-    printout "" "     - After build file may be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
+    printout "INFO" "During build, container build actions will be logged to files in ${setup_logs}"
+    printout "" "     - After build, log files can be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
 
     # Updates apt, creates and pipes output to setup/lando.log
 #   mv -f /etc/apt/sources.list /etc/apt/sources.list.bak

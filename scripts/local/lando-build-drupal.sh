@@ -226,8 +226,8 @@
     fi
 
     # Import configurations from the project repo into the database.
-    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time..."
-    printout "" "" "    -> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
+    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time ..."
+    printout "" "      " "-> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
 
@@ -278,14 +278,16 @@
     # However, there is no guarantee that those modules are entirely approproate for developers.  So this step allows us
     # to specifically enable the modules needed by developers.
     # Function 'devModules' is contained in cob_utilities.sh
+    printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
     devModules "@self"
+    printout "SUCCESS" "Development environment set.\n"
 
     # Run finalization / housekeeping tasks.
 
     # Apply any pending database updates.
-    printout "INFO" "Apply database updates."
+    printout "INFO" "Apply pending database updates etc."
     ${drush_cmd} updb -y >> ${setup_logs}/config_import.log
-    printout "SUCCESS" "Applied any pending database updates.\n"
+    printout "SUCCESS" "Done.\n"
 
     # Rebuild user access on nodes.
 #    printout "INFO" "Rebuild user access on nodes."
@@ -293,7 +295,7 @@
 #    printout "SUCCESS" "Updates run.\n"
 
     # Update the drush.yml file.
-    printout "INFO" "Update the drush config."
+    printout "INFO" "Update the drush configuration and aliases."
     drush_file=${LANDO_MOUNT}/drush/drush.yml
     rm -rf ${drush_file}
     printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
@@ -306,4 +308,4 @@
     ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
     text=$(displayTime $(($(date +%s)-timer)))
-    printout "SUCCESS" "Drupal build finished." "\nBuild took ${text}"
+    printout "SUCCESS" "Drupal build finished." "\nBuild took ${text}\n"
