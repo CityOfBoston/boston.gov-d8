@@ -13,4 +13,10 @@
     # Clone the private repo and merge with the main repo.
     clone_private_repo
 
+    # Check for options/flags passed in.
+    if [[ "${1}" != "--no-sync" ]]; then
+        ${drush_cmd} cim -y
+        ${drush_cmd} updb -y
+    fi
+
     printout "SUCCESS" "Public and private repos updated.\n"
