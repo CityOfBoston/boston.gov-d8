@@ -8,7 +8,6 @@ config:
   php: '7.3'
   webroot: docroot
   database: mysql:5.7
-  drush: 9
   xdebug: true
   drupal: false
 
@@ -42,7 +41,7 @@ services:
       conf: xdebug.ini
     build:
       - printf "start build\n"
-      - composer install --no-progress --no-suggest --prefer-dist > /dev/null
+      - composer install "drush/drush:^9" --no-progress --no-suggest --prefer-dist > /dev/null
       - printf "end build\n"
 
     build_as_root:
