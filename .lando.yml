@@ -22,7 +22,7 @@ services:
     portforward: true
     host: localhost
     run_as_root:
-      - printf "[LANDO] Database Event - run as root"
+      - printf "[LANDO] Database Event - run as root\n"
       - /app/scripts/local/lando-database-customize.sh
 
     creds:
@@ -42,15 +42,15 @@ services:
       conf: xdebug.ini
 
     build_as_root:
-      - printf "[LANDO] Appserver Event - build as root"
+      - printf "[LANDO] Appserver Event - build as root\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
-      - printf "[LANDO] Appserver Event - build"
-      - composer require drush/drush:^9 --no-progress --no-suggest --prefer-dist > /dev/null
+      - printf "[LANDO] Appserver Event - build\n"
+      - composer require drush/drush:^9 --no-progress --no-suggest --prefer-dist --no-interaction &> /dev/null
 
     run:
-      - printf "[LANDO] Appserver Event - run"
+      - printf "[LANDO] Appserver Event - run\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:
@@ -107,8 +107,8 @@ tooling:
 
 events:
   post-start:
-    - printf "[LANDO] Project Event - post-start"
-    - printf "\n\n================================================================================\n"
+    - printf "\n[LANDO] Project Event - post-start\n\n"
+    - printf "================================================================================\n"
     - printf "\033[1;32m[SUCCESS] - Appserver and MySQL Docker containers are now started.\033[0m\n"
     - printf "------------------------------------------------------------------------------------\n\n"
     - cat ${LANDO_MOUNT}/setup/uli.log && rm -f ${LANDO_MOUNT}/setup/uli.log

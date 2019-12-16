@@ -207,14 +207,14 @@
         printout "INFO" "SYNC Mode: Will copy remote DB and then import repo configs."
 
         # Ensure a remote source is defined, default to the develop environment on Acquia.
-        if [[ -z ${build_database_drush_alias} ]]; then build_database_drush_alias="@bostond8.dev"; fi
+        if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
-        printout "INFO" "Copying database (and content) from ${build_database_drush_alias} into docker database container."
+        printout "INFO" "Copying database (and content) from ${build_local_database_drush_alias} into docker database container."
 
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
         ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_site_install.log &&
-            ${drush_cmd} sql:sync ${build_database_drush_alias} @self -y >> ${setup_logs}/drush_site_install.log
+            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y >> ${setup_logs}/drush_site_install.log
 
         # See how we faired.
         if [[ $? -eq 0 ]]; then
