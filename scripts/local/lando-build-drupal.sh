@@ -265,10 +265,10 @@
                 printout "ERROR" "Config Import Fail." "\n - Check ${setup_logs}/config_import.log for full printout of attempted process."
                 printout "" "" " -Will continue continue build."
                 # Capture the error and save for later display
-                echo -e "\n${RedBG}  ==============================================================================${NC} "  >> ${setup_logs}/uli.log
+                echo -e "\n${RedBG}  ============================================================================== ${NC}"  >> ${setup_logs}/uli.log
                 echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"  >> ${setup_logs}/uli.log
                 echo -e   "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}"  >> ${setup_logs}/uli.log
-                echo -e   "${RedBG}  ==============================================================================${NC} \n"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG}  ============================================================================== ${NC}\n"  >> ${setup_logs}/uli.log
             fi
         fi
     fi
