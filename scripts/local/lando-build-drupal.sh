@@ -308,4 +308,4 @@
     ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
     text=$(displayTime $(($(date +%s)-timer)))
-    printout "SUCCESS" "Drupal build finished." "\nBuild took ${text}\n"
+    printout "SUCCESS" "Drupal build finished." "\nDrupal install/build took ${text}\n"
