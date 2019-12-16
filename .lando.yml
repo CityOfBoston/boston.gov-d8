@@ -22,7 +22,7 @@ services:
     portforward: true
     host: localhost
     run_as_root:
-      - printf "[LANDO] Database Event - run as root\n"
+      - printf "\n[LANDO] Database Event - run as root\n\n"
       - /app/scripts/local/lando-database-customize.sh
 
     creds:
@@ -42,15 +42,15 @@ services:
       conf: xdebug.ini
 
     build_as_root:
-      - printf "[LANDO] Appserver Event - build as root\n"
+      - printf "\n[LANDO] Appserver Event - build as root\n\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
-      - printf "[LANDO] Appserver Event - build\n"
+      - printf "\n[LANDO] Appserver Event - build\n\n"
       - /bin/sh -c "composer require drush/drush:^9 --no-update --no-progress --no-suggest --prefer-dist &> /dev/null"
 
     run:
-      - printf "[LANDO] Appserver Event - run\n"
+      - printf "\n[LANDO] Appserver Event - run\n\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:
