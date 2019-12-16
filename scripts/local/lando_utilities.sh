@@ -140,7 +140,7 @@ function build_settings() {
         # Copy default file.
         cp default_local_settings_file local_settings_file
     fi
-    echo -e "\n/*\n * Content added by COB.\n */\n" >> ${local_settings_file}
+    echo -e "\n/*\n * Content added by Lando build.\n */\n" >> ${local_settings_file}
     if [[ -n "${private_settings_file}" ]]; then
         # If a private settings file is defined, then make a reference to it from the local.settings.php file.
         echo -e "\n// Adds a directive to include contents of settings file in repo.\n" >> ${local_settings_file}
@@ -152,7 +152,7 @@ function build_settings() {
     echo -e "ini_set('memory_limit', '${project_php_memory_size}');\n" >> ${local_settings_file}
     echo -e "\$config_directories[\"sync\"] = \"${build_local_config_sync}\";\n" >> ${local_settings_file}
     echo -e "\$settings[\"install_profile\"] = \"${project_profile_name}\";\n" >> ${local_settings_file}
-    echo -e "/* End of additions. */\n" >> ${local_settings_file}
+    echo -e "/* End of Lando build additions. */\n" >> ${local_settings_file}
 
     # setup the private settings file
 #    if [[ -n "${private_settings_file}" ]] && [[ -e ${private_settings_file} ]]; then

@@ -22,7 +22,7 @@ services:
     type: mysql
     portforward: true
     host: localhost
-    run_as_root:
+    build_as_root:
       - /app/scripts/local/lando-database-customize.sh
 
     creds:
@@ -31,21 +31,27 @@ services:
       database: drupal
 
   appserver:
-    run_as_root:
-      - /app/scripts/local/lando-appserver-customize.sh
-
-    run:
-      - /app/scripts/local/lando-build-drupal.sh -y
-
+    type: php:7.3
+    webroot: docroot
     xdebug: true
-
     overrides:
       environment:
         PHP_IDE_CONFIG: "serverName=bostontest.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 remote_host=10.0.0.74 idekey=PHPSTORM"
-
     config:
       conf: xdebug.ini
+    build_as_root:
+      - printf "start build_as_root\n"
+      - /app/scripts/local/lando-appserver-customize.sh
+      - printf "end build_as_root\n"
+    build:
+      - printf "start build\n"
+      - composer install -qq
+      - printf "end build\n"
+    run:
+      - printf "start run\n"
+      - /app/scripts/local/lando-build-drupal.sh -y
+      - printf "end run\n"
 
 tooling:
   phpunit:
