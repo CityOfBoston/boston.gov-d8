@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Define colors
 Black='\033[0;30m'
 Red='\033[1;31m'
