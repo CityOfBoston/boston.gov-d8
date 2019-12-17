@@ -18,6 +18,7 @@ LightCyan='\033[1;36m'
 LightGray='\033[0;37m'
 White='\033[1;37m'
 RedBG='\033[41;1;37m'
+GreenBG='\033[42;30m'
 NC='\033[0m'
 
 # basic parse of a yml file into a series of variables.
