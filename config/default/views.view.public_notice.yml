@@ -197,7 +197,7 @@ display:
           value:
             min: ''
             max: ''
-            value: '-3 hours'
+            value: '-30 minutes'
             type: offset
           group: 1
           exposed: false
@@ -1190,7 +1190,7 @@ display:
           value:
             min: ''
             max: ''
-            value: '+1 hours'
+            value: '-30 minutes'
             type: offset
           group: 1
           exposed: false
@@ -1325,10 +1325,25 @@ display:
       defaults:
         filters: false
         filter_groups: false
+        sorts: false
       filter_groups:
         operator: AND
         groups:
           1: AND
+      sorts:
+        field_public_notice_date_value:
+          id: field_public_notice_date_value
+          table: node__field_public_notice_date
+          field: field_public_notice_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          plugin_id: datetime
     cache_metadata:
       max-age: -1
       contexts:
