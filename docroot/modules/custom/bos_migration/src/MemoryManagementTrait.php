@@ -115,7 +115,7 @@ trait MemoryManagementTrait {
               '@usage' => $this->formatSize($usage),
               '@limit' => $this->formatSize($this->memoryLimit),
             ]
-          ),
+          )
         );
         return TRUE;
       }
@@ -128,7 +128,7 @@ trait MemoryManagementTrait {
               '@usage' => $this->formatSize($usage),
               '@limit' => $this->formatSize($this->memoryLimit),
             ]
-          ),
+          )
         );
         return FALSE;
       }
