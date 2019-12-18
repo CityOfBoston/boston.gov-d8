@@ -53,8 +53,19 @@
 
       // Scroll to clicked anchor, allowing for page furniture.
       var scrollToAnchor = function (obj, speed) {
-        var navOffset = menusBottom() - navMenu.outerHeight(true);
-        var loc = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]').offset().top - navOffset);
+        var menuBottom = menusBottom();
+        var navMenu_outerHeight = navMenu.outerHeight(true);
+        var navOffset = menuBottom - navMenu_outerHeight;
+        var $locTag = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]'));
+
+        var $topicNav = $('.topic-nav');
+        var topicNav_height = 0;
+        if ($topicNav.length > 0 && $topicNav.hasClass('sticky')) {
+          topicNav_height = $topicNav.height() / 2;
+        }
+        var loc = $locTag.offset().top - ((topicNav_height * 2) + (topicNav_height/4));
+        console.log('loc: ', loc, ' | topicNav_height: ', topicNav_height);
+
         scrolling = true;
         $("html, body").animate({scrollTop: loc}, speed, "swing", function () {
           if (recalc) {
@@ -123,7 +134,16 @@
             var items = document.querySelectorAll('[name=' + name + ']')[0];
             var itemTop = items ? items.getBoundingClientRect().top + fromTop : 0;
 
-            if (fromTop >= (itemTop - 150)) {
+            var $topicNav = $('.topic-nav');
+            var topicNav_height = 0;
+
+            if ($topicNav.length > 0 && $topicNav.hasClass('sticky')) {
+              topicNav_height = $topicNav.height() / 2;
+            }
+            // var loc = $locTag.offset().top - ((topicNav_height * 2) + (topicNav_height/4));
+            // console.log('loc: ', loc, ' | topicNav_height: ', topicNav_height);
+
+            if (fromTop >= (itemTop - ((topicNav_height * 2) + (topicNav_height/2)))) {
               return item;
             }
           }
