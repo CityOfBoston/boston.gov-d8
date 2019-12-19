@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95bd97d2d0a00146f33c1cf86803ad05",
+    "content-hash": "0b542a613e0cf68faad23a696d9ed528",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -2617,37 +2617,6 @@
             }
         },
         {
-            "name": "drupal/coder",
-            "version": "8.2.12",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/coder.git",
-                "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f"
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "php": ">=5.4.0",
-                "squizlabs/php_codesniffer": ">=2.8.1 <3.0",
-                "symfony/yaml": ">=2.0.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=3.7 <6"
-            },
-            "type": "phpcodesniffer-standard",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Coder is a library to review Drupal code.",
-            "homepage": "https://www.drupal.org/project/coder",
-            "keywords": [
-                "code review",
-                "phpcs",
-                "standards"
-            ],
-            "time": "2017-03-18T10:28:49+00:00"
-        },
-        {
             "name": "drupal/config_filter",
             "version": "1.5.0",
             "source": {
@@ -3548,13 +3517,7 @@
                         "[web-root]/themes/README.txt": "assets/scaffold/files/themes.README.txt"
                     }
                 },
-                "patches_applied": {
-                    "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2018-05-14/2794481-60.patch",
-                    "2869592 - Disabled update module shouldn't produce a status report warning": "https://www.drupal.org/files/issues/2869592-remove-update-warning-7.patch",
-                    "2815221 - Add quickedit to the latest-revision route": "https://www.drupal.org/files/issues/2019-11-27/2815221-125.patch",
-                    "1356276 - Allow profiles to define a base/parent profile and load them in the correct order": "https://www.drupal.org/files/issues/2019-11-05/1356276-531-8.8.x-4.patch",
-                    "2914389 - Allow profiles to exclude dependencies of their parent": "https://www.drupal.org/files/issues/2018-07-09/2914389-8-do-not-test.patch"
-                }
+                "patches_applied": []
             },
             "autoload": {
                 "psr-4": {
@@ -3781,24 +3744,25 @@
         },
         {
             "name": "drupal/date_recur",
-            "version": "dev-2.x",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/date_recur.git",
-                "reference": "1da6755c1173f1bd9cd4f32f3689297b09886be1"
+                "reference": "8.x-2.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/date_recur-8.x-2.0.zip",
+                "reference": "8.x-2.0",
+                "shasum": "db4c3644135a63cdf9fda609bbe1b7aba0022649"
             },
             "require": {
-                "drupal/coder": "~8.2",
                 "drupal/core": "^8.6",
                 "php": "^7.1",
                 "rlanvin/php-rrule": "1.*"
             },
             "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "dev-master",
-                "drupal/token": "^1.5",
-                "mglaman/phpstan-drupal": "^0.11.12",
-                "phpstan/phpstan": "^0.11.19",
-                "phpstan/phpstan-deprecation-rules": "^0.11.2"
+                "drupal/token": "^1.5"
             },
             "suggest": {
                 "drupal/date_recur_interactive": "Provides an interactive recurring date widget."
@@ -3809,15 +3773,14 @@
                     "dev-2.x": "2.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-2.0+7-dev",
-                    "datestamp": "1573813384",
+                    "version": "8.x-2.0",
+                    "datestamp": "1562489586",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
                 },
                 "patches_applied": {
-                    "https://www.drupal.org/project/date_recur/issues/3015633": "https://www.drupal.org/files/issues/2019-02-14/rdate-exdate-3015633-3_0.patch",
                     "CoB patch - Add helper for exdate retreival": "patches/exdate_helper.patch",
                     "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
                 }
@@ -3844,8 +3807,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/date_recur",
                 "issues": "https://www.drupal.org/project/issues/date_recur"
-            },
-            "time": "2019-03-16T07:37:49+00:00"
+            }
         },
         {
             "name": "drupal/date_recur_modular",
@@ -12144,84 +12106,6 @@
             "time": "2019-11-20T08:26:08+00:00"
         },
         {
-            "name": "squizlabs/php_codesniffer",
-            "version": "2.9.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "2acf168de78487db620ab4bc524135a13cfe6745"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/2acf168de78487db620ab4bc524135a13cfe6745",
-                "reference": "2acf168de78487db620ab4bc524135a13cfe6745",
-                "shasum": ""
-            },
-            "require": {
-                "ext-simplexml": "*",
-                "ext-tokenizer": "*",
-                "ext-xmlwriter": "*",
-                "php": ">=5.1.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "bin": [
-                "scripts/phpcs",
-                "scripts/phpcbf"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "CodeSniffer.php",
-                    "CodeSniffer/CLI.php",
-                    "CodeSniffer/Exception.php",
-                    "CodeSniffer/File.php",
-                    "CodeSniffer/Fixer.php",
-                    "CodeSniffer/Report.php",
-                    "CodeSniffer/Reporting.php",
-                    "CodeSniffer/Sniff.php",
-                    "CodeSniffer/Tokens.php",
-                    "CodeSniffer/Reports/",
-                    "CodeSniffer/Tokenizers/",
-                    "CodeSniffer/DocGenerators/",
-                    "CodeSniffer/Standards/AbstractPatternSniff.php",
-                    "CodeSniffer/Standards/AbstractScopeSniff.php",
-                    "CodeSniffer/Standards/AbstractVariableSniff.php",
-                    "CodeSniffer/Standards/IncorrectPatternException.php",
-                    "CodeSniffer/Standards/Generic/Sniffs/",
-                    "CodeSniffer/Standards/MySource/Sniffs/",
-                    "CodeSniffer/Standards/PEAR/Sniffs/",
-                    "CodeSniffer/Standards/PSR1/Sniffs/",
-                    "CodeSniffer/Standards/PSR2/Sniffs/",
-                    "CodeSniffer/Standards/Squiz/Sniffs/",
-                    "CodeSniffer/Standards/Zend/Sniffs/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Sherwood",
-                    "role": "lead"
-                }
-            ],
-            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "http://www.squizlabs.com/php-codesniffer",
-            "keywords": [
-                "phpcs",
-                "standards"
-            ],
-            "time": "2018-11-07T22:31:41+00:00"
-        },
-        {
             "name": "stack/builder",
             "version": "v1.0.5",
             "source": {
@@ -16245,6 +16129,37 @@
             "time": "2019-10-21T16:45:58+00:00"
         },
         {
+            "name": "drupal/coder",
+            "version": "8.2.12",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/coder.git",
+                "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f"
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.0",
+                "squizlabs/php_codesniffer": ">=2.8.1 <3.0",
+                "symfony/yaml": ">=2.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": ">=3.7 <6"
+            },
+            "type": "phpcodesniffer-standard",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Coder is a library to review Drupal code.",
+            "homepage": "https://www.drupal.org/project/coder",
+            "keywords": [
+                "code review",
+                "phpcs",
+                "standards"
+            ],
+            "time": "2017-03-18T10:28:49+00:00"
+        },
+        {
             "name": "drupal/config_devel",
             "version": "1.4.0",
             "source": {
@@ -16970,7 +16885,8 @@
             "homepage": "https://www.drupal.org/project/twig_xdebug",
             "support": {
                 "source": "https://git.drupalcode.org/project/twig_xdebug"
-            }
+            },
+            "time": "2019-04-10T14:46:37+00:00"
         },
         {
             "name": "drush/drush",
@@ -18797,6 +18713,84 @@
             "time": "2015-10-13T18:44:15+00:00"
         },
         {
+            "name": "squizlabs/php_codesniffer",
+            "version": "2.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "2acf168de78487db620ab4bc524135a13cfe6745"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/2acf168de78487db620ab4bc524135a13cfe6745",
+                "reference": "2acf168de78487db620ab4bc524135a13cfe6745",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.1.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "bin": [
+                "scripts/phpcs",
+                "scripts/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "CodeSniffer.php",
+                    "CodeSniffer/CLI.php",
+                    "CodeSniffer/Exception.php",
+                    "CodeSniffer/File.php",
+                    "CodeSniffer/Fixer.php",
+                    "CodeSniffer/Report.php",
+                    "CodeSniffer/Reporting.php",
+                    "CodeSniffer/Sniff.php",
+                    "CodeSniffer/Tokens.php",
+                    "CodeSniffer/Reports/",
+                    "CodeSniffer/Tokenizers/",
+                    "CodeSniffer/DocGenerators/",
+                    "CodeSniffer/Standards/AbstractPatternSniff.php",
+                    "CodeSniffer/Standards/AbstractScopeSniff.php",
+                    "CodeSniffer/Standards/AbstractVariableSniff.php",
+                    "CodeSniffer/Standards/IncorrectPatternException.php",
+                    "CodeSniffer/Standards/Generic/Sniffs/",
+                    "CodeSniffer/Standards/MySource/Sniffs/",
+                    "CodeSniffer/Standards/PEAR/Sniffs/",
+                    "CodeSniffer/Standards/PSR1/Sniffs/",
+                    "CodeSniffer/Standards/PSR2/Sniffs/",
+                    "CodeSniffer/Standards/Squiz/Sniffs/",
+                    "CodeSniffer/Standards/Zend/Sniffs/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2018-11-07T22:31:41+00:00"
+        },
+        {
             "name": "symfony/browser-kit",
             "version": "v4.4.1",
             "source": {
@@ -18901,7 +18895,6 @@
     "stability-flags": {
         "drupal/better_exposed_filters": 15,
         "drupal/config_update": 20,
-        "drupal/date_recur": 20,
         "drupal/inline_entity_form": 10,
         "drupal/masquerade": 20,
         "drupal/paragraphs_browser": 20,
