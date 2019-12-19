@@ -17,6 +17,7 @@
         <div class="icon icon-email"></div>
     </div>
     {% for item in items %}
+
         {% if display_item_tag %}
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
@@ -30,6 +31,7 @@
         {% if display_item_tag %}
             </{{ field_item_tag|default('div') }}>
         {% endif %}
+
     {% endfor %}
 </div>
 
