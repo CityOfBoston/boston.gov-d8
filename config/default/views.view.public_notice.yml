@@ -47,8 +47,12 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: none
-        options: {  }
+        type: time
+        options:
+          results_lifespan: 0
+          results_lifespan_custom: 900
+          output_lifespan: 0
+          output_lifespan_custom: 900
       query:
         type: views_query
         options:
@@ -879,14 +883,14 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_public_notice_date__value  | date(''F j, Y'') }}'
+            text: '{{ field_public_notice_date__value|date_modify("-5 hours")|date(''F j, Y'') }} '
             make_link: false
             path: ''
             absolute: false
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -900,7 +904,7 @@ display:
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
+            strip_tags: true
             trim: false
             preserve_tags: ''
             html: false
@@ -915,13 +919,13 @@ display:
           empty: ''
           hide_empty: false
           empty_zero: false
-          hide_alter_empty: true
+          hide_alter_empty: false
           click_sort_column: value
-          type: daterange_custom
+          type: daterange_default
           settings:
-            timezone_override: ''
-            date_format: 'F j, Y'
-            separator: '-'
+            timezone_override: Pacific/Honolulu
+            format_type: date_format_normal_date
+            separator: ''
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -943,15 +947,15 @@ display:
           label: 'start time'
           exclude: false
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '{{ field_public_notice_date_1__value|date_modify("-5 hours")|date("h:ia") }}{% if  field_public_notice_date_1__end_value %} to {{ field_public_notice_date_1__end_value|date_modify("-5 hours")|date("h:ia") }}{% endif %}'
             make_link: false
             path: ''
             absolute: false
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -965,7 +969,7 @@ display:
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
+            strip_tags: true
             trim: false
             preserve_tags: ''
             html: false
@@ -982,11 +986,11 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: daterange_custom
+          type: daterange_default
           settings:
-            timezone_override: ''
-            date_format: 'h:iA'
-            separator: to
+            timezone_override: Pacific/Honolulu
+            format_type: date_format_calendar_time
+            separator: ''
           group_column: value
           group_columns: {  }
           group_rows: true
