@@ -37,38 +37,33 @@ build:
 
   travis:
     develop:
-      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
+      # none = don't alter modules enabled from configuration
       type: dev
+      suppress_output: 0
       database:
         # Set source to 'initialize' to start a fresh install.
-        # Otherwise set it to sync to sync from the drush-alias environment.
+        # Otherwise set it to 'sync' to sync from the drush-alias environment.
         source: initialize
         drush_alias: "@bostond8.dev"
       config:
-        # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
-        # aquia require ./config/default:
-        #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
-        sync: "../config/default"
+        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
+        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
+        sync: "true"
     master:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+      # none = don't alter modules enabled from configuration
       type: prod
+      suppress_output: 0
       database:
         # Set source to 'initialize' to start a fresh install.
-        # Otherwise set it to sync to sync from the drush-alias environment.
+        # Otherwise set it to 'sync' to sync from the drush-alias environment.
         source: initialize
         drush_alias: "@bostond8.test"
       config:
-        # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
-        # aquia require ./config/default:
-        #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
-        sync: "../config/default"
-
-  terraform:
-    type: prod
-    database:
-      # none, auto, build, sync or restore
-      source: sync
-      drush_alias: "@bostond8.dev"
+        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
+        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
+        sync: "true"
 
 deploy:
   # each element of the deploy object is a branch in the main CoB repo.
@@ -92,9 +87,8 @@ deploy:
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy_db: false
     drush_db_source: "@bostond8.stage"
-    # Array of user:host for (Acquia) git remotes to be used for deployment.
-    remotes:
-      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+    # user:host for (Acquia) git remote to be used for deployment.
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
   master:
     # Folder in Travis container where deploy files will be "built"
     dir: ${LANDO_MOUNT}/deploy
@@ -115,9 +109,8 @@ deploy:
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy_db: false
     drush_db_source: "@bostond8.prod"
-    # Array of user:host for (Acquia) git remotes to be used for deployment.
-    remotes:
-      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+    # user:host for (Acquia) git remote to be used for deployment.
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
 # Configuration settings for new git repository.
 git:

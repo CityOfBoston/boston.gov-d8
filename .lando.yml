@@ -99,6 +99,12 @@ tooling:
     cmd:
       - /app/scripts/local/pull.sh
 
+  validate:
+    service: appserver
+    description: "Run the Linting and PHPCS routines on the current branch."
+    cmd:
+      - /app/scripts/local/validate.sh all
+
 events:
   post-start:
     - printf "\n[LANDO] Project Event - post-start\n\n"

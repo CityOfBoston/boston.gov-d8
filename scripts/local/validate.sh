@@ -69,6 +69,13 @@ if [[ -n "$command" ]]; then
     elif [[ $command == "phpcs" ]]; then
         phpcs $args
     elif [[ $command == "all" ]]; then
+        printf "\n${BrownOrange}[info] Running code validation checks.${NC}\n\n"
         lint $args && phpcs $args
+        if [[ $? -eq 0 ]]; then
+            exit 0
+        else
+            printf "\n${Red}[fail] Checks failed.{NC}\n\n"
+            exit 1
+        fi
     fi
 fi
