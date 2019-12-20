@@ -187,7 +187,7 @@
             if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
                 # The config UUID is different to the UUID in the database, so we will change the databases UUID to
                 # match the config files UUID and all should be good.
-                ${drush_cmd} cset "system.site" yml_uuid -y
+                ${drush_cmd} cset "system.site" uuid yml_uuid -y
             fi
         fi
 
