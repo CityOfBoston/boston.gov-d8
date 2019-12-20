@@ -92,11 +92,11 @@
 
         # Clone the private repo and merge files in it with the main repo.
         # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
-        # 'clone_private_repo' function is contained in lando_utilities.sh.
+        # 'clone_private_repo' function is contained in cob_build_utilities.sh.
         clone_private_repo
 
         # Create/update settings, private settings and local settings files.
-        # 'build_settings' function is contained in lando_utilities.sh.
+        # 'build_settings' function is contained in cob_build_utilities.sh.
         build_settings
 
         text=$(displayTime $(($(date +%s)-timer)))
@@ -220,7 +220,9 @@
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_local_config_sync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
-            ${drush_cmd} config-import -y &> ${setup_logs}/config_import.log
+
+            ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
+
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
             else
@@ -228,8 +230,8 @@
                 # The work aound is to try a partial configuration import.
                 printout "" "\n"
                 printout "WARNING" "==== Config Import Errors ========================="
-                ls -la ${project_sync}/core.date*
                 printout "" "          Config import log dump (last 25 rows):"
+                cat ${setup_logs}/config_import.log
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
