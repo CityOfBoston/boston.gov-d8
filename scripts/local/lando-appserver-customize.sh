@@ -28,12 +28,8 @@
     printout "INFO" "During build, container build actions will be logged to files in ${setup_logs}"
     printout "" "     - After build, log files can be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
 
-    # Updates apt, creates and pipes output to setup/lando.log
-#   mv -f /etc/apt/sources.list /etc/apt/sources.list.bak
-#   sed -n '/jessie-updates/!p' /etc/apt/sources.list.bak > /etc/apt/sources.list
-
     # Installs linux apps and extensions into the appserver container.
-    apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> ${setup_logs}/lando.log
+    apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> /dev/null
     apt-get install -y --no-install-recommends zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron renameutils rename &>> ${setup_logs}/lando.log
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ &>> ${setup_logs}/lando.log
 
