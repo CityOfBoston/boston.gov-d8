@@ -63,11 +63,11 @@ after_success:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
