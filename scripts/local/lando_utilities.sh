@@ -90,7 +90,7 @@ function clone_private_repo() {
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
-  git clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+  git clone -b ${git_private_repo_branch} https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
   if [[ $? -eq 0 ]]; then
     printout "SUCCESS" "Private repo cloned."
     rm -rf ${git_private_repo_local_dir}/.git &&
