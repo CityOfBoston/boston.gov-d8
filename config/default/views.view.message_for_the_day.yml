@@ -16,7 +16,6 @@ description: ''
 tag: ''
 base_table: paragraphs_item_field_data
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -138,6 +137,8 @@ display:
           id: status
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           group: 1
         type:
           id: type
@@ -148,6 +149,9 @@ display:
           entity_type: paragraph
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         field_recurrence_occurrences:
           id: field_recurrence_occurrences
           table: paragraphs_item_field_data
@@ -183,6 +187,8 @@ display:
               guide_author: '0'
               landing_author: '0'
               procurement_editor: '0'
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
