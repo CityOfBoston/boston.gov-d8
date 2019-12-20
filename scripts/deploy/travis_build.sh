@@ -224,10 +224,11 @@
 
             if [[ -s ${project_sync}/system.site.yml ]]; then
                 # Fetch site UUID from the configs in the (newly made) database.
+                printout "INFO" "Updates site UUID."
                 db_uuid=$(${drush_cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*")
                 # Fetch the site UUID from the configuration file.
                 yml_uuid=$(cat ${project_sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
-
+                printout "INFO" "Updates site UUID from ${db_uuid} to ${yml_uuid}."
                 if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
                     # The config UUID is different to the UUID in the database, so we will change the databases UUID to
                     # match the config files UUID and all should be good.
