@@ -72,7 +72,7 @@
         printout "" "=========================================================================================\n"
 
         # Install PHP (and other ...) packages/modules using composer:
-        printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output supressed unless errors occur."
+        printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output suppressed unless errors occur."
         cd ${TRAVIS_BUILD_DIR} &&
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
             composer install --no-suggest --prefer-dist --no-interaction &> ${setup_logs}/composer.log &&
@@ -221,7 +221,7 @@
         if [[ "${build_local_config_sync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
 
-            ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
+            ${drush_cmd} config-import sync -y -vvv &> ${setup_logs}/config_import.log
 
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
