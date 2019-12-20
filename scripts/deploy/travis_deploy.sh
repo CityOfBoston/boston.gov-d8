@@ -51,6 +51,8 @@
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
 
+            printout "INFO" "The Build Candidate is accepted and is now the Build Artifact.\n"
+
             printout "STEP" "== Generate Deploy Candidate ======" \
                 "Use 'Deploy Artifact' in <${TRAVIS_BUILD_DIR}> to generate the 'Deploy Candidate' into ${deploy_dir}."
 

@@ -58,11 +58,6 @@
 
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] || [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
-        # Prepare the log file directory.
-        if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi
-        mkdir -p ${setup_logs} &&
-            chmod 777 ${setup_logs};
-
         if [ ! -e  /usr/local/bin/drupal ]; then
             sudo ln -s ${TRAVIS_BUILD_DIR}/vendor/drupal/console/bin/drupal /usr/local/bin/
         fi
@@ -89,7 +84,8 @@
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
         if [[ $? -ne 0 ]]; then
             echo -e "\n${RedBG}  ============================================================================== ${NC}"
-            echo -e "\n${RedBG}  =             Composer packages not downloaded.  Build aborted               = ${NC}"
+            echo -e "\n${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
+            echo -e "\n${RedBG}  =                               Build aborted                                = ${NC}"
             echo -e "\n${RedBG}  ============================================================================== ${NC}"
             printout "ERROR" ".\n"
             printout "" "==> Composer log dump:"
@@ -108,7 +104,7 @@
         build_settings
 
         text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Build Candidate created." "\nProcess took ${text}\n"
+        printout "SUCCESS" "Build Candidate created." "Process took${text}\n"
 
     fi
 
@@ -130,18 +126,17 @@
         # Load the cob_utitlities script which has some config procedures.
         . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
 
-        printout "" "\n========================================================================================="
-        printout "INFO" "Verifying/Testing the Build Candidate."
+        printout "" "========================================================================================="
+        printout "INFO" "Verifying & testing the Build Candidate."
         printout "" "=========================================================================================\n"
 
-        printout "" "==== Installing Drupal ==========="
+        printout "" "==== Installing Drupal ===========\n"
 
         # Install Drupal.
         # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
         if [[ "${build_local_database_source}" == "initialize" ]]; then
 
             printout "INFO" "INITIALIZE Mode: Will install Drupal using 'drush site-install' and then import repo configs."
-            printout "" "" "... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
 
             # Define the site-install command.
             SITE_INSTALL=" site-install ${project_profile_name} \
@@ -156,15 +151,22 @@
               -y"
 
             # Now run the site-install command.
-            printout "INFO" "Installing Drupal with an initial database containing no content."
-            ${drush_cmd} ${SITE_INSTALL}
+            ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
 
             # If site-install command failed then alert.
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Site is freshly installed with clean database.\n"
             else
-                printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues."
-                exit 0
+                printout "ERROR" "Fail - Site install failure"
+                echo -e "\n${RedBG}  ============================================================================== ${NC}"
+                echo -e "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
+                echo -e "\n${RedBG}  =                      Build verification aborted.                           = ${NC}"
+                echo -e "\n${RedBG}  ============================================================================== ${NC}"
+                printout "ERROR" ".\n"
+                printout "" "==> Site Install log dump:"
+                cat  ${setup_logs}/site_install.log
+                printout "" "=<= Dump ends."
+                exit 1
             fi
 
             # Each Drupal site has a unique site UUID.
@@ -199,15 +201,22 @@
 
             # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
             # remote server, and restore into the database container.
-            ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_site_install.log &&
-                ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y >> ${setup_logs}/drush_site_install.log
+            ${drush_cmd} sql:drop --database=default -y &> ${setup_logs}/drush_site_install.log &&
+                ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y &>> ${setup_logs}/drush_site_install.log
 
             # See how we faired.
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Site has database and content from remote environment.\n"
             else
-                printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_db-sync.log for issues."
-                exit 0
+                echo -e "\n${RedBG}  ============================================================================== ${NC}"
+                echo -e "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
+                echo -e "\n${RedBG}  =                      Build verification aborted.                           = ${NC}"
+                echo -e "\n${RedBG}  ============================================================================== ${NC}"
+                printout "ERROR" ".\n"
+                printout "" "==> Site Install log dump:"
+                cat  ${setup_logs}/site_install.log
+                printout "" "=<= Dump ends."
+                exit 1
             fi
         fi
 
@@ -215,7 +224,7 @@
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_local_config_sync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
-            ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
+            ${drush_cmd} config-import source=${project_sync} -y &> ${setup_logs}/config_import.log
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
             else
@@ -223,11 +232,10 @@
                 # The work aound is to try a partial configuration import.
                 printout "" "\n"
                 printout "WARNING" "==== Config Import Errors ========================="
-                printout "WARNING" "Showing last 25 log messages from config_import"
+                printout "" "          Config import log dump (last 25 rows):"
                 tail -25 ${setup_logs}/config_import.log
-                printout "" "       ---------------------------------------------------\n"
+                printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
-                echo "=> Retry partial cim."
 
                 ${drush_cmd} config-import sync --partial -y &> ${setup_logs}/config_import.log
 
@@ -235,8 +243,8 @@
                     printout "SUCCESS" "Config from the repo has been applied to the database.\n"
                 else
                     printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
-                    printout "WARNING" "Will retry a partial config import again."
-                    echo "Retry partial cim (#2)."
+                    printout "WARNING" "Will retry a partial config import one final time."
+
                     ${drush_cmd} config-import sync --partial -y &> ${setup_logs}/config_import.log
 
                     if [[ $? -eq 0 ]]; then
@@ -245,13 +253,14 @@
                         # Uh oh!
                         printout "" "\n"
                         printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
-                        printout "ERROR" "Showing last 50 log messages from config_import"
+                        printout "" "          Config import log dump (last 25 rows):"
                         tail -50 ${setup_logs}/config_import.log
-                        # Capture the error and save for later display
+                        printout "" "          Dump ends."
                         echo -e "\n${RedBG}  ============================================================================== ${NC}"
                         echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"
-                        echo -e   "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}"
+                        echo -e   "${RedBG} |                      Build verification aborted.                             |${NC}"
                         echo -e   "${RedBG}  ============================================================================== ${NC}\n"
+                        exit 1
                     fi
                 fi
             fi
@@ -261,11 +270,11 @@
         # Function 'devModules' & 'prodModules' are contained in <hooks/common/cob_utilities.sh>
         if [[ "${build_local_type}" != "none" ]]; then
             if [[ "${build_local_type}" == "dev" ]]; then
-                printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
+                printout "INFO" "Enable/disable appropriate development features and functionality."
                 devModules "@self"
                 printout "SUCCESS" "Development environment set.\n"
             elif [[ "${build_local_type}" == "prod" ]]; then
-                printout "INFO" "Enable/disable appropriate production features and functionality." " This may also take some time ..."
+                printout "INFO" "Enable/disable appropriate production features and functionality."
                 prodModules "@self"
                 printout "SUCCESS" "Production environment set.\n"
             fi
@@ -279,7 +288,7 @@
 
         # Update Travis console log.
         text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Build Candidate tested." "\nProcess took ${text}\n"
+        printout "SUCCESS" "Build Candidate tested." "Process took${text}\n"
 
     fi
 
