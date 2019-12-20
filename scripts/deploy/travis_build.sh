@@ -27,7 +27,7 @@
     # Include the utilities file/libraries.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
-    . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
 
     # Create additional working variables.
     timer=$(date +%s)
