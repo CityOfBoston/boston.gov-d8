@@ -17,7 +17,7 @@
 
     # Prepare the folder which will hold setup logs.
     if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi
-    mkdir ${setup_logs} &&
+    mkdir -p ${setup_logs} &&
         chmod 777 ${setup_logs};
 
     printout "SUCCESS" "Travis container is prepared with custom modules.\n"
