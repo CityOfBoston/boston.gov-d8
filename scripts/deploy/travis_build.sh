@@ -39,7 +39,7 @@
     set src="build_travis_${TRAVIS_BRANCH}_suppress_output" && quiet="${!src}"
     src="build_travis_${TRAVIS_BRANCH}_database_source" && build_local_database_source="${!src}"
     set src="build_travis_${TRAVIS_BRANCH}_database_drush_alias" && build_local_database_drush_alias="${!src}"
-    set src="build_travis_config_${TRAVIS_BRANCH}_sync" && build_local_config_sync="${!src}"
+    set src="build_travis_config_${TRAVIS_BRANCH}_sync" && build_local_config_dosync="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
@@ -218,7 +218,7 @@
 
         # Import configurations from the project repo into the database.
         # Note: Configuration will be imported from folder defined in build.local.config.sync
-        if [[ "${build_local_config_sync}" != "false" ]]; then
+        if [[ "${build_local_config_dosync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
 
             ${drush_cmd} @self config-import sync -y -vvv &> ${setup_logs}/config_import.log
