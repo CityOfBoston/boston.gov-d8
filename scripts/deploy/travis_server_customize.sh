@@ -4,6 +4,8 @@
   #  in the Travis build-server (PHP container).
   ###############################################################
 
+    . "${TRAVIS_BUILD_DIR}/scripts/local/lando_utilities.sh"
+
     printf "\n"
     printout "INFO" "Installing Linux packages in Travis container."
 
