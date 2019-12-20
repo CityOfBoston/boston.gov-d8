@@ -40,7 +40,7 @@ function parse_yaml() {
 
 # Wrapper to load the .lando.yml file
 function load_lando_yml() {
-    eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
+    eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
 }
 
 function printout () {
@@ -52,12 +52,15 @@ function printout () {
         if [[ "${1}" == "ERROR" ]]; then
             col1=${Red}
             col2=${LightRed}
-        elif [[ "${1}" == "WARNING" ]]; then
+        elif [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
             col1=${Yellow}
             col2=${BrownOrange}
         elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
             col1=${LightBlue}
             col2=${Cyan}
+        elif [[ "${1}" == "STEP" ]]; then
+            col1=${Purple}
+            col2=${LightPurple}
         else
             col1=${LightGreen}
             col2=${Green}
@@ -80,7 +83,7 @@ function clone_private_repo() {
   printout "INFO" "Clone private repo and merge with main repo."
 
   # Assign a temporary folder.
-  if [[ -z "${git_private_repo_local_dir}" ]]; then git_private_repo_local_dir="${LANDO_MOUNT}/tmprepo"; fi
+  if [[ -z "${git_private_repo_local_dir}" ]]; then git_private_repo_local_dir="${REPO_ROOT}/tmprepo"; fi
 
   # Empty the folder if it exists.
   if [[ -e "${git_private_repo_local_dir}" ]]; then rm -rf ${git_private_repo_local_dir}; fi
@@ -94,7 +97,7 @@ function clone_private_repo() {
         if [[ $? -eq 0 ]]; then printout "INFO" "Detached repository."; fi &&
         find ${git_private_repo_local_dir}/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; &&
         if [[ $? -eq 0 ]]; then printout "INFO" "Renamed and applied gitignores."; fi &&
-        rsync -aE "${git_private_repo_local_dir}/" "${LANDO_MOUNT}/" --exclude=*.md &&
+        rsync -aE "${git_private_repo_local_dir}/" "${REPO_ROOT}/" --exclude=*.md &&
         if [[ $? -eq 0 ]]; then printout "INFO" "Merged private repo with main repo."; fi &&
         rm -rf ${git_private_repo_local_dir} &&
         if [[ $? -eq 0 ]]; then printout "INFO" "Tidied up remnants of private repo."; fi
@@ -116,8 +119,8 @@ function build_settings() {
 
     if [[ -z "${project_docroot}}" ]]; then
         # Read in config and variables.
-        eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
-        eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
+        eval $(parse_yaml "${REPO_ROOT}/scripts/local/.config.yml" "")
+        eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
     fi
 
     # Set local variables
@@ -199,5 +202,6 @@ function displayTime() {
 }
 
 # Read in config and variables.
-eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
-eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
+if [[ -z ${LANDO_MOUNT} ]]; then REPO_ROOT="${LANDO_MOUNT}"; fi
+eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
+eval $(parse_yaml "${REPO_ROOT}/scripts/local/.config.yml" "")

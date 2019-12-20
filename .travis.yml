@@ -1,8 +1,6 @@
 sudo: false
 language: php
 
-env:
-
 branches:
   only:
     - develop
@@ -31,35 +29,29 @@ cache:
     - "$HOME/.drush/cache"
     - "$HOME/.nvm"
     - vendor
+    - docroot
     - node_modules
 
 notifications:
   slack:
-    secure: b2UX5FnE2/C5MDNK47EP0GZIRmfwX+18HES0Q/uSwt6t7+ogKCtIjWCp1sIPd7jqRak0VmLoM0OHy6MBjz6x+1MQMNUqPEiO1f2APgBJ48c6rzeWQKTVfrKsUvPYIA+gxQ7jq7Gn0zPYQ5/+KXkxac+NrVoH85sI0xIL2BhFgQu1W4OlLLFKT11U7zJtCi3bcYhF7/eyCcrs3+IBGGp9sldjWvaVLDqUnFjz3c5AXwxlbJ6UTq7GIdIEe5Xw/UOJS9weedhoYH2XSNzFpmqqkAGcvkFpgCeYxf12iiqkmoAq5A0CxWVXqA3vG+imabuQonpbQsGdvtFP71EV9o9DxwATwxaGhBpX+Sw4zN7v25IC6n7rcvcK2F9dtY0CAb8BpWbEbWMDXXmVvFEVAvgARQ/b+L7YOJbNbbJwJQqZkllJp0lAFluyMDwpP2Ncr177S5hR/4Z6rlj1aLK1nhbmi/tK/kSNe+bcashm7/S2KG076hN0b5TB87hsbkvHsnVJDMKXSHwKrrdJiXDAkwZbl2sBp/bbfMTXyEqrINUG4WA70WXP3lR/QJy2pldVEYIU5rRwSzZ0BJ9raF7iiXFgTn3+Yhl0U/UgcDCEKoRvutM/suCy1mQBYP+Gv1uyFNFco37doQbPeyAXNb1vjfJQtyzy8I31gIN/sK590YxLBCA=
+    on_pull_requests: true
+    if: branch = master OR branch = develop
+    rooms:
+      - secure: "spxqL9DjJS53tXkTxQxyyq/sbANHxGu+fIQGtixE8NS+9QV/A0UJAJEJY8vXAMEe18v+NTFJQRvS/STTysfpAyE/9yRFU9u1aGlZ3GZTYDvlLObYZMzpfAqENYw+Z2LQwKv7U7yhN7VHfKz6sWF5UMJ9UyCsFBSE5RuuPq5fR3FhC2RQilgu3wfWqNoCQrO3NA9WEKUeUyGcj51AH7lSWDQjZevECttezeb2SFpw3Fhyt6lgJMhYNawdgrWqLT/ewZwoO9x9AloGZFXtzAjz5psty/TmrWroiFjgqi16OYAGRpd8AWHYfhHt1N7qFBxxUGiQCtJg6ohZM7HOJvLbBd7Rc8gj0MgV6ePxtf2ByVyku6Bip1u7sfj+CqGYlnuKyHc/8rSzwEc9zQAPx6ZDDTGV+zkuBnAc+GjGxsheXiM+4QAn6liir+mglcGp/AxPeRmmQ7DIcmrDNI8dGsTaDMlBeufsU8eaMHGR2GeSnwnXT121M5fOEnE0G+m4L8y1t9J1gpo+py8GqhykJhxJHPkw8USxHRXoVVkgxOFW2AsfDBp6H43FwccfN7gHR+KPHeFq3ni4iagaBTFfmGp/CE+dpqk7E2qJte5qeppxwe94HCO1XAhWWMheZMC7Y3XK457IfWIdeB1gU2m5X1DDOE6GK5Llp7l/Wjo5cKNY8fI="
+      - secure: "vNNEgntveFOhLF9qTD1Z9SJyoNCRtnKmbRHDRnuyLo0JTpbEPZGvmPg3Lpef2EcZO+aWuOsQBz1Dx/0rspWf/BBJcZflsk8uadiE8JkV5H6ls48F3H7Ez440c4cq+F/7S3Ly3B/FyskLl64lbU+MPc/HaOv9BrZuKSc8OYR5D6vPpNWfay6ix1Nci7xyr7HUtK0/zsj9DamWb7vixj1rpvYcXNAM012bxghb6s0TAYrr4m62Ww83TvuSN2PYNr727BgCZlmWEDyNujH9nAMmIxG9T5vGiHT2srRit8jlRMzqIONr/kjobtNmThRLcYwHebvk+nf2c7D+hDr05ku3RJwNgJtOqPU2ah8NH6Ngpb82nq58b0UwFHy0XcM1hveYUxir1y7kXy0azgeP2U7G0v4yABmEPFnUjlJeMiYhwSIynobmBqeVs2gFQSisOcAwaxPjuTGEA8bIxUkv9tUHKdw+Gh9Bt12OU/owKbqSDDb9iFUf/SjutgSb1QPPO0tA4ZnUwLZyFyXfUS2duoJw4gWG8KLNbWgIdmAAx+4Srb768xOu1UF688mGVtux6C6hsQhtrp0H36hXwDoiTyKxndle+63wNB5VvrOUpaBaw9Cb73a+uA8QS5aq7hzDBuQko1E0gpE2mEgHP7//e/P/kKWH3h84OynxNH/+TmRZxXY="
 
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
-  - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
+  - ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_server_customize.sh
 
 install:
-  # In this context "install" is the phing build process because we are installing Drupal in order to test it.
-  # download all the latest modules (includes phing).
-  - composer install --no-suggest
-  - composer drupal:scaffold
-  - if [ ! -e  /usr/local/bin/drupal ]; then sudo ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
-  - if [ $TRAVIS_BRANCH == "master" ]; then export AH_SITE_ENVIRONMENT="prod"; else export AH_SITE_ENVIRONMENT="dev"; fi
-  # Make an account for drupal in MySQL (better than using root a/c).
-  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml validate:all; fi
-  - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/" -Dtravis.branch=${TRAVIS_BRANCH} setup:docker:drupal-travis
-  # Build the drupal site using Phing.
-  - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
+  - travis_wait 30 ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_build.sh
 
 script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
-  - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test; fi
+  - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh all; fi
 
 after_success:
   # Manage SSH keys for deployment to Acquia.
