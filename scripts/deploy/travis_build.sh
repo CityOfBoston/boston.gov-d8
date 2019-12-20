@@ -221,17 +221,18 @@
         if [[ "${build_local_config_sync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
 
-            ${drush_cmd} config-import sync -y -vvv &> ${setup_logs}/config_import.log
+            ${drush_cmd} @self config-import sync -y -vvv &> ${setup_logs}/config_import.log
 
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
             else
                 # If we have sync'd a remote database, some of the configs we want to import may not be able to be applied.
                 # The work aound is to try a partial configuration import.
-                printout "" "\n"
+                printf "\n"
                 printout "WARNING" "==== Config Import Errors ========================="
                 printout "" "          Config import log dump (last 25 rows):"
                 cat ${setup_logs}/config_import.log
+                cat $REPO_ROOT/docroot/sites/default/settings/settings.local.php
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
