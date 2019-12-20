@@ -188,7 +188,7 @@
                 # The config UUID is different to the UUID in the database, so we will change the databases UUID to
                 # match the config files UUID and all should be good.
                 ${drush_cmd} cset "system.site" "uuid" "${yml_uuid}" -y &> /dev/null
-                if [[ ${?} -eq 0 ]]; then
+                if [[ $? -eq 0 ]]; then
                     printout "INFO" "UUID in DB is updated to ${yml_uuid}."
                 fi
             fi
