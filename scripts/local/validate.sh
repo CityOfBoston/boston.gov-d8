@@ -61,7 +61,7 @@ command=$1
 args=${@:2}
 
 # Read in config and variables.
-. "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
+. "${LANDO_MOUNT}/scripts/cob_build_utilities.sh.sh"
 # Run a function based on the command the user supplied.
 if [[ -n "$command" ]]; then
     if [[ $command == "lint" ]]; then

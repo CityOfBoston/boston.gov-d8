@@ -5,7 +5,7 @@
   ###############################################################
 
     REPO_ROOT=${TRAVIS_BUILD_DIR}
-    . "${TRAVIS_BUILD_DIR}/scripts/local/lando_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh.sh"
 
     printf "\n"
     printout "INFO" "Installing Linux packages in Travis container."
