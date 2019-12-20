@@ -220,7 +220,7 @@
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_local_config_sync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
-            ${drush_cmd} config-import --source=${build_local_config_sync} -y &> ${setup_logs}/config_import.log
+            ${drush_cmd} config-import -y &> ${setup_logs}/config_import.log
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
             else
@@ -230,11 +230,11 @@
                 printout "WARNING" "==== Config Import Errors ========================="
                 ls -la ${project_sync}/core.date*
                 printout "" "          Config import log dump (last 25 rows):"
-                tail -25 ${setup_logs}/config_import.log
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
-                ${drush_cmd} config-import --source=${build_local_config_sync} --partial -y &> ${setup_logs}/config_import.log
+                ${drush_cmd} en config -y &>/dev/null
+                ${drush_cmd} config-import --partial -y &> ${setup_logs}/config_import.log
 
                 if [[ $? -eq 0 ]]; then
                     printout "SUCCESS" "Config from the repo has been applied to the database.\n"
@@ -242,13 +242,13 @@
                     printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
                     printout "WARNING" "Will retry a partial config import one final time."
 
-                    ${drush_cmd} config-import --source=${build_local_config_sync} --partial -y &> ${setup_logs}/config_import.log
+                    ${drush_cmd} config-import --partial -y &> ${setup_logs}/config_import.log
 
                     if [[ $? -eq 0 ]]; then
                         printout "SUCCESS" "Config from the repo has been applied to the database.\n"
                     else
                         # Uh oh!
-                        printout "" "\n"
+                        printf "\n"
                         printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
                         printout "" "          Config import log dump (last 25 rows):"
                         tail -50 ${setup_logs}/config_import.log
