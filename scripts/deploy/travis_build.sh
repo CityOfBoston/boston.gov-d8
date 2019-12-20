@@ -216,10 +216,24 @@
             fi
         fi
 
-        # Import configurations from the project repo into the database.
-        # Note: Configuration will be imported from folder defined in build.local.config.sync
-        if [[ "${build_local_config_dosync}" != "false" ]]; then
+            # Import configurations from the project repo into the database.
+            # Note: Configuration will be imported from folder defined in build.local.config.sync
+            if [[ "${build_local_config_dosync}" != "false" ]]; then
+
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
+
+            if [[ -s ${project_sync}/system.site.yml ]]; then
+                # Fetch site UUID from the configs in the (newly made) database.
+                db_uuid=$(${drush_cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*")
+                # Fetch the site UUID from the configuration file.
+                yml_uuid=$(cat ${project_sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
+
+                if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
+                    # The config UUID is different to the UUID in the database, so we will change the databases UUID to
+                    # match the config files UUID and all should be good.
+                    ${drush_cmd} cset "system.site" yml_uuid -y
+                fi
+            fi
 
             ${drush_cmd} @self config-import sync -y -vvv &> ${setup_logs}/config_import.log
 
@@ -231,8 +245,7 @@
                 printf "\n"
                 printout "WARNING" "==== Config Import Errors ========================="
                 printout "" "          Config import log dump (last 25 rows):"
-                cat ${setup_logs}/config_import.log
-                cat $REPO_ROOT/docroot/sites/default/settings/settings.local.php
+                tail -25 ${setup_logs}/config_import.log
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
