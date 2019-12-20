@@ -34,17 +34,12 @@
     yes=1
     target_env="local"
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
-    project_sync=${project_docroot}/${build_local_config_sync}
-    set src="build_travis_${TRAVIS_BRANCH}_type" &&
-        build_local_type="${!src}"
-    set src="build_travis_${TRAVIS_BRANCH}_suppress_output" &&
-        quiet="${!src}"
-    src="build_travis_${TRAVIS_BRANCH}_database_source" &&
-        build_local_database_source="${!src}"
-    set src="build_travis_${TRAVIS_BRANCH}_database_drush_alias" &&
-        build_local_database_drush_alias="${!src}"
-    set src="build_travis_config_${TRAVIS_BRANCH}_sync" &&
-        build_local_config_sync="${!src}"
+    project_sync=$(realpath ${project_docroot}/${build_local_config_sync})
+    set src="build_travis_${TRAVIS_BRANCH}_type" && build_local_type="${!src}"
+    set src="build_travis_${TRAVIS_BRANCH}_suppress_output" && quiet="${!src}"
+    src="build_travis_${TRAVIS_BRANCH}_database_source" && build_local_database_source="${!src}"
+    set src="build_travis_${TRAVIS_BRANCH}_database_drush_alias" && build_local_database_drush_alias="${!src}"
+    set src="build_travis_config_${TRAVIS_BRANCH}_sync" && build_local_config_sync="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
