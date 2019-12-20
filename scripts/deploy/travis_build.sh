@@ -79,6 +79,7 @@
         # Install PHP (and other ...) packages/modules using composer:
         printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output supressed unless errors occur."
         cd ${TRAVIS_BUILD_DIR} &&
+            chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
             composer install --no-suggest --prefer-dist --no-interaction &> ${setup_logs}/composer.log &&
             composer drupal:scaffold &>> ${setup_logs}/composer.log &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
