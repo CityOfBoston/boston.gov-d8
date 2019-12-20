@@ -7,6 +7,7 @@
   ###############################################################
 
   # Include the utilities file/library.
+  REPO_ROOT="${LANDO_MOUNT}"
   . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
 
   # Create script variables

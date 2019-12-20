@@ -202,6 +202,5 @@ function displayTime() {
 }
 
 # Read in config and variables.
-if [[ -z ${LANDO_MOUNT} ]]; then REPO_ROOT="${LANDO_MOUNT}"; fi
 eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
 eval $(parse_yaml "${REPO_ROOT}/scripts/local/.config.yml" "")
