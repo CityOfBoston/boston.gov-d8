@@ -3,7 +3,7 @@
     printout "INFO" "Will pull latest code from public repo and merge in settings from private repo."
 
     # Include the utilities file/library.
-    . "/app/scripts/local/lando_utilities.sh"
+    . "/app/scripts/cob_build_utilities.sh.sh"
 
     # Pull develop branch from git.
     cd /app/docroot &&

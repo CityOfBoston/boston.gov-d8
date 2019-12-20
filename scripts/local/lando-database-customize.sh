@@ -8,7 +8,7 @@
 
   # Include the utilities file/library.
   REPO_ROOT="${LANDO_MOUNT}"
-  . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
+  . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh.sh"
 
   # Create script variables
   target_env="local"

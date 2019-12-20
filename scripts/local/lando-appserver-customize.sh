@@ -9,7 +9,7 @@
     # Include the utilities file/library.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
-    . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
+    . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh.sh"
 
     # Create script variables
     target_env="local"
@@ -21,7 +21,7 @@
 
     # Prepare the folder which will hold setup logs.
     if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi
-    mkdir ${setup_logs} &&
+    mkdir -p ${setup_logs} &&
         chown www-data:www-data ${setup_logs} &&
         chmod 777 ${setup_logs};
 

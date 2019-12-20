@@ -27,8 +27,7 @@
     # Include the utilities file/libraries.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
-    . "${TRAVIS_BUILD_DIR}/scripts/local/lando_utilities.sh"
-    . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh.sh"
 
     # Create additional working variables.
     timer=$(date +%s)
@@ -59,6 +58,11 @@
 
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] || [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
+        # Prepare the log file directory.
+        if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi
+        mkdir -p ${setup_logs} &&
+            chmod 777 ${setup_logs};
+
         if [ ! -e  /usr/local/bin/drupal ]; then
             sudo ln -s ${TRAVIS_BUILD_DIR}/vendor/drupal/console/bin/drupal /usr/local/bin/
         fi
@@ -74,32 +78,37 @@
         mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
 
         printout "" "\n========================================================================================="
-        printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
+        printout "INFO" "Creating the Build Candidate."
         printout "" "=========================================================================================\n"
 
         # Install PHP (and other ...) packages/modules using composer:
-        printout "INFO" "Executes: > composer install --prefer-dist --no-suggest --no-interaction"
+        printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output supressed unless errors occur."
         cd ${TRAVIS_BUILD_DIR} &&
-            composer install --no-suggest --prefer-dist --no-interaction &&
-            composer drupal:scaffold &&
+            composer install --no-suggest --prefer-dist --no-interaction &> ${setup_logs}/composer.log &&
+            composer drupal:scaffold &>> ${setup_logs}/composer.log &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
         if [[ $? -ne 0 ]]; then
-            printout "ERROR" "Composer packages not downloaded.  Build aborted.\n"
+            echo -e "\n${RedBG}  ============================================================================== ${NC}"
+            echo -e "\n${RedBG}  =             Composer packages not downloaded.  Build aborted               = ${NC}"
+            echo -e "\n${RedBG}  ============================================================================== ${NC}"
+            printout "ERROR" ".\n"
+            printout "" "==> Composer log dump:"
+            cat  ${setup_logs}/composer.log
+            printout "" "=<= Dump ends."
             exit 1
         fi
 
         # Clone the private repo and merge files in it with the main repo.
         # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
         # 'clone_private_repo' function is contained in lando_utilities.sh.
-        printout "INFO" "Clone and merge private repo into main project repo."
         clone_private_repo
-        printout "SUCCESS" "Repo merged.\n"
 
         # Create/update settings, private settings and local settings files.
         # 'build_settings' function is contained in lando_utilities.sh.
-        printout "INFO" "Update settings files."
         build_settings
-        printout "SUCCESS" "Settings updated.\n"
+
+        text=$(displayTime $(($(date +%s)-timer)))
+        printout "SUCCESS" "Build Candidate created." "\nProcess took ${text}\n"
 
     fi
 
@@ -107,18 +116,28 @@
     # => If the commit message contains the text "hotfix" then this step (which takes time and does not produce
     #    anything which will later be deployed) will be skipped.
     #
-    # This block verifies the candidate (i.e. the code in the PR) will actually build, and then runs QC style tests of
-    # the code for linting and formatting standards.
+    # This block verifies the Build Artifact (i.e. the code in the PR) will actually build, and then runs QC style
+    # tests of the code for linting and formatting standards.
     #
     # ============================================================================================================
     # NOTE: When modifying this block, take care that no files that will later be deployed are created or altered.
     # ============================================================================================================
 
-    if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] && [[ ! ${isHotfix} ]]; then
+    if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] && [[ ${isHotfix} -eq 0 ]]; then
+
+        timer=$(date +%s)
+
+        # Load the cob_utitlities script which has some config procedures.
+        . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
+
+        printout "" "\n========================================================================================="
+        printout "INFO" "Verifying/Testing the Build Candidate."
+        printout "" "=========================================================================================\n"
+
+        printout "" "==== Installing Drupal ==========="
 
         # Install Drupal.
         # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
-        printout "" "==== Installing Drupal ==========="
         if [[ "${build_local_database_source}" == "initialize" ]]; then
 
             printout "INFO" "INITIALIZE Mode: Will install Drupal using 'drush site-install' and then import repo configs."
@@ -239,7 +258,7 @@
         fi
 
         # Enable and disable modules specific to developers.
-        # Function 'devModules' is contained in cob_utilities.sh
+        # Function 'devModules' & 'prodModules' are contained in <hooks/common/cob_utilities.sh>
         if [[ "${build_local_type}" != "none" ]]; then
             if [[ "${build_local_type}" == "dev" ]]; then
                 printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
@@ -258,8 +277,9 @@
         ${drush_cmd} updb -y
         printout "SUCCESS" "Done.\n"
 
+        # Update Travis console log.
+        text=$(displayTime $(($(date +%s)-timer)))
+        printout "SUCCESS" "Build Candidate tested." "\nProcess took ${text}\n"
+
     fi
 
-    # Update Travis console log.
-    text=$(displayTime $(($(date +%s)-timer)))
-    printout "SUCCESS" "Drupal build finished." "\nDrupal install/build took ${text}\n"
