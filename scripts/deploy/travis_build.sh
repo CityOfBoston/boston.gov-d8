@@ -228,6 +228,7 @@
                 # The work aound is to try a partial configuration import.
                 printout "" "\n"
                 printout "WARNING" "==== Config Import Errors ========================="
+                ls -la ${project_sync}/core.date*
                 printout "" "          Config import log dump (last 25 rows):"
                 tail -25 ${setup_logs}/config_import.log
                 printout "" "          Dump ends."
