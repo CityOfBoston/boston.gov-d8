@@ -10,6 +10,7 @@ dependencies:
   module:
     - entity_reference_revisions
     - fences
+    - smart_trim
 _core:
   default_config_hash: W2KcwFcnfnjFquI7jXjvPbBD-4Mwd7iBaVmp-93SGN0
 id: paragraph.grid_links.default
@@ -51,9 +52,20 @@ content:
   field_short_description:
     label: hidden
     weight: 0
-    type: string
+    type: smart_trim
     settings:
-      link_to_entity: false
+      trim_length: 125
+      trim_type: chars
+      trim_suffix: ...
+      wrap_class: trimmed
+      more_text: More
+      more_class: more-link
+      trim_options:
+        text: true
+        trim_zero: false
+      wrap_output: false
+      more_link: false
+      summary_handler: full
     third_party_settings:
       fences:
         fences_field_tag: none
