@@ -220,7 +220,7 @@
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_local_config_sync}" != "false" ]]; then
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
-            ${drush_cmd} config-import source=${project_sync} -y &> ${setup_logs}/config_import.log
+            ${drush_cmd} config-import --source=${build_local_config_sync} -y &> ${setup_logs}/config_import.log
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
             else
@@ -233,7 +233,7 @@
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
-                ${drush_cmd} config-import sync --partial -y &> ${setup_logs}/config_import.log
+                ${drush_cmd} config-import --source=${build_local_config_sync} --partial -y &> ${setup_logs}/config_import.log
 
                 if [[ $? -eq 0 ]]; then
                     printout "SUCCESS" "Config from the repo has been applied to the database.\n"
@@ -241,7 +241,7 @@
                     printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
                     printout "WARNING" "Will retry a partial config import one final time."
 
-                    ${drush_cmd} config-import sync --partial -y &> ${setup_logs}/config_import.log
+                    ${drush_cmd} config-import --source=${build_local_config_sync} --partial -y &> ${setup_logs}/config_import.log
 
                     if [[ $? -eq 0 ]]; then
                         printout "SUCCESS" "Config from the repo has been applied to the database.\n"
