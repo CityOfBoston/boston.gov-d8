@@ -4,13 +4,14 @@
   #  in the Travis build-server (PHP container).
   ###############################################################
 
+    REPO_ROOT=${TRAVIS_BUILD_DIR}
     . "${TRAVIS_BUILD_DIR}/scripts/local/lando_utilities.sh"
 
     printf "\n"
     printout "INFO" "Installing Linux packages in Travis container."
 
     # Installs linux apps and extensions into the appserver container.
-    sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
+    sudo apt-get install -y --no-install-recommends libgd-dev openssh-client fontconfig openssl
 
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
 

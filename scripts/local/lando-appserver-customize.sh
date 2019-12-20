@@ -8,6 +8,7 @@
 
     # Include the utilities file/library.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
+    REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/local/lando_utilities.sh"
 
     # Create script variables
