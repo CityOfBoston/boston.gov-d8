@@ -13,6 +13,7 @@
   # Create script variables
   target_env="local"
 
+  printf "ref: $(basename "$0")\n"
   printout "INFO" "Install MySQl tools (mycli and pspg) into the database container."
 
   # Install python and pip so we can install mycli.
