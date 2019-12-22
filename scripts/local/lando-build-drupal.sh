@@ -44,7 +44,7 @@
     done
 
     printf "ref: $(basename "$0")\n"
-    printf "\n${LightPurple}       ================================================================================${NC}"
+    printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Installing Drupal and dependencies."
     printf "${LightPurple}         ================================================================================${NC}\n"
 
@@ -107,7 +107,7 @@
         echo "DONE." >> ${setup_logs}/composer.log &&
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
 
-    printf "\n${LightPurple}       ================================================================================${NC}"
+    printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Building Drupal website/app."
     printf "${LightPurple}         ================================================================================${NC}\n"
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
@@ -230,6 +230,7 @@
             printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_db-sync.log for issues."
             exit 0
         fi
+
     fi
 
     # Import configurations from the project repo into the database.
