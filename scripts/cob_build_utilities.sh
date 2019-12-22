@@ -80,6 +80,8 @@ function printout () {
 }
 
 function clone_private_repo() {
+
+  printf "ref: $(basename "$0")\n"
   printout "INFO" "Clone private repo and merge with main repo."
 
   # Assign a temporary folder.
@@ -90,7 +92,16 @@ function clone_private_repo() {
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
-  git clone -b ${git_private_repo_branch} https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+  if [[ -n ${GITHUB_TOKEN} ]]; then
+    # Will enforce a token which should be passed via and ENVAR.
+    REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+  else
+    # Will rely on the user have an SSL cert which is registered with the private repo.
+    REPO_LOCATION="git@github.com:"
+  fi
+
+  git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+
   if [[ $? -eq 0 ]]; then
     printout "SUCCESS" "Private repo cloned."
     rm -rf ${git_private_repo_local_dir}/.git &&
@@ -110,6 +121,7 @@ function clone_private_repo() {
     printout "ERROR" "Failed to clone/merge private repo."
     exit 1
   fi
+
   printout "SUCCESS" "Private repo merge complete."
 }
 

@@ -43,6 +43,7 @@
         esac
     done
 
+    printf "ref: $(basename "$0")\n"
     printout "" "\n========================================================================================="
     printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
     printout "" "=========================================================================================\n"
@@ -106,6 +107,9 @@
         echo "DONE." >> ${setup_logs}/composer.log &&
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
 
+    printout "" "==== Installing Drupal ==========="
+    printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
+
     # Clone the private repo and merge files in it with the main repo.
     # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
     # 'clone_private_repo' function is contained in lando_utilities.sh.
@@ -137,9 +141,6 @@
     #               Initialize.
     #
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
-
-    printout "" "==== Installing Drupal ==========="
-    printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
