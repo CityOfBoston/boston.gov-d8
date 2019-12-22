@@ -174,11 +174,11 @@
             # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
             # be the same as that in the </config/default/system.site.yml> file.
 
-            if [[ -s ${LANDO_MOUNT}/config/default/system.site.yml ]]; then
+            if [[ -s ${TRAVIS_BUILD_DIR}/config/default/system.site.yml ]]; then
                 # Fetch site UUID from the configs in the (newly made) database.
                 db_uuid=$(${drush_cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*")
                 # Fetch the site UUID from the configuration file.
-                yml_uuid=$(cat ${LANDO_MOUNT}/config/default/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
+                yml_uuid=$(cat ${TRAVIS_BUILD_DIR}/config/default/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
 
                 if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
                     # The config UUID is different to the UUID in the database, so we will change the databases UUID to
