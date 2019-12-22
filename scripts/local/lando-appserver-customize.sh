@@ -33,7 +33,7 @@
 
     # Installs linux apps and extensions into the appserver container.
     apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> /dev/null
-    apt-get install -y --no-install-recommends zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron renameutils rename &>> ${setup_logs}/lando.log
+    apt-get install -y --no-install-recommends zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log
     docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ &>> ${setup_logs}/lando.log
 
     # Change the permissions on the log file so that non-root user can add to log.
