@@ -44,9 +44,9 @@
     done
 
     printf "ref: $(basename "$0")\n"
-    printout "" "\n========================================================================================="
-    printout "INFO" "Installing Drupal and dependencies in appserver & database containers."
-    printout "" "=========================================================================================\n"
+    printf "\n${LightPurple}       ================================================================================${NC}"
+    printout "STEP" "Installing Drupal and dependencies."
+    printf "${LightPurple}         ================================================================================${NC}\n"
 
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
@@ -107,7 +107,9 @@
         echo "DONE." >> ${setup_logs}/composer.log &&
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
 
-    printout "" "==== Installing Drupal ==========="
+    printf "\n${LightPurple}       ================================================================================${NC}"
+    printout "STEP" "Building Drupal website/app."
+    printf "${LightPurple}         ================================================================================${NC}\n"
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
@@ -313,4 +315,4 @@
     ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
     text=$(displayTime $(($(date +%s)-timer)))
-    printout "SUCCESS" "Drupal build finished." "\nDrupal install/build took ${text}\n"
+    printout "SUCCESS" "Drupal build finished." "\nDrupal install & build took ${text}\n"
