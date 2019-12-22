@@ -81,7 +81,7 @@ deploy:
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit_message: "Automated commit by Travis CI for Build \#\${travis.id}"
+    commit_message: "Automated commit by Travis CI for DEVELOP Build \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -89,6 +89,30 @@ deploy:
     drush_db_source: "@bostond8.stage"
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
+  replace-phing:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${REPO_ROOT}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy_branch: deleteme-deploy
+    # Path to the drush command in the Travis container.
+    travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush_alias: "@bostond8.test"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
+    excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
+    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit_message: "Automated commit by Travis CI for ON-DEMAND Build \#\${travis.id}"
+    # Dry-run (for testing).
+    dry_run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy_db: false
+    drush_db_source: "@bostond8.dev"
+    # user:host for (Acquia) git remote to be used for deployment.
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
   master:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
@@ -103,7 +127,7 @@ deploy:
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit_message: "Automated commit by Travis CI for Build \#\${travis.id}"
+    commit_message: "Automated commit by Travis CI for MASTER Build \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -139,26 +163,3 @@ drush:
   bin: ${REPO_ROOT}/vendor/bin/drush
   cmd: ${REPO_ROOT}/vendor/bin/drush  -r ${REPO_ROOT}/docroot -l default
   root: ${REPO_ROOT}/docroot
-
-# The testing framework is limited to the `tests` directory, and includes
-# example tests and configuration for Behat, PHPUnit, and JMeter. To prevent
-# this from being copied, remove the 'testing_framework' key.
-testing_framework:
-  reports:
-    localDir: ${REPO_ROOT}/testing/reports
-    remoteDir: testing/reports
-  behat:
-    javascript_driver: 'selenium2'
-    # @see http://docs.behat.org/en/v2.5/guides/6.cli.html#gherkin-filters
-    config: ${REPO_ROOT}/tests/behat/local.yml
-    # An array of paths with behat tests that should be executed.
-    tags: ~@hub
-    # This is used for ad-hoc creation of a server via `drush rs`.
-    profile: local
-    # This needs to match a site entry in docroot/sites/sites.php.
-    server_url: http://127.0.0.1:8888
-    # If true, `drush runserver` will be used for executing tests.
-    #  run-server: false
-    # If true, PhantomJS GhostDriver will be launched with Behat.
-    #  launch-phantom: true
-  phpunit:

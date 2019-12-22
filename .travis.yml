@@ -5,6 +5,7 @@ branches:
   only:
     - develop
     - master
+    - "replace-phing"
 
 php:
   - 7.3
@@ -66,6 +67,11 @@ deploy:
     script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: "replace-phing"
   - provider: script
     skip_cleanup: true
     script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
