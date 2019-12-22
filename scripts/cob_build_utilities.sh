@@ -50,30 +50,33 @@ function printout () {
     if [[ "${quiet}" != "1" ]]; then
 
         if [[ "${1}" == "ERROR" ]]; then
-            col1=${Red}
+            col1=${RedBG}
             col2=${LightRed}
         elif [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
             col1=${Yellow}
             col2=${BrownOrange}
+        elif [[ "${1}" == "SUCCESS" ]] || [[ "${1}" == "ALERT" ]]; then
+            col1=${GreenBG}
+            col2=${Green}
         elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
             col1=${LightBlue}
             col2=${Cyan}
         elif [[ "${1}" == "STEP" ]]; then
-            col1=${Purple}
-            col2=${LightPurple}
+            col1=${LightPurple}
+            col2=${Purple}
         else
-            col1=${LightGreen}
-            col2=${Green}
+            col1=${LightBlue}
+            col2=${White}
         fi
 
         if [[ -n ${1} ]]; then
-            printf "$col1[${1}] "
+            printf "$col1[${1}]${NC}"
         fi
         if [[ -n ${2} ]]; then
-              printf "$col2${2}$NC "
+              printf " $col2${2}$NC"
         fi
         if [[ -n ${3} ]]; then
-            printf "$LightGray- ${3}$NC"
+            printf "${LightGray} - ${3}$NC"
         fi
         printf "\n"
     fi
