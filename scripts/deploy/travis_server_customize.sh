@@ -8,6 +8,7 @@
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
 
     printf "\n"
+    printf "ref: $(basename "$0")\n"
     printout "INFO" "Installing Linux packages in Travis container."
 
     # Installs linux apps and extensions into the appserver container.

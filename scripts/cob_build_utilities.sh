@@ -49,13 +49,13 @@ function printout () {
 
     if [[ "${quiet}" != "1" ]]; then
 
-        if [[ "${1}" == "ERROR" ]]; then
+        if [[ "${1}" == "ERROR" ]] || [[ "${1}" == "FAIL" ]]; then
             col1=${RedBG}
             col2=${LightRed}
         elif [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
             col1=${Yellow}
             col2=${BrownOrange}
-        elif [[ "${1}" == "SUCCESS" ]] || [[ "${1}" == "ALERT" ]]; then
+        elif [[ "${1}" == "SUCCESS" ]]; then
             col1=${GreenBG}
             col2=${Green}
         elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then

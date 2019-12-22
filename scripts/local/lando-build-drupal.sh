@@ -46,7 +46,7 @@
     printf "ref: $(basename "$0")\n"
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Installing Drupal and dependencies."
-    printf "${LightPurple}         ================================================================================${NC}\n"
+    printf "${LightPurple}       ================================================================================${NC}\n"
 
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
@@ -109,7 +109,7 @@
 
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Building Drupal website/app."
-    printf "${LightPurple}         ================================================================================${NC}\n"
+    printf "${LightPurple}       ================================================================================${NC}\n"
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
@@ -227,7 +227,7 @@
         if [[ $? -eq 0 ]]; then
             printout "SUCCESS" "Site has database and content from remote environment.\n"
         else
-            printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_db-sync.log for issues."
+            printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues."
             exit 0
         fi
 
@@ -235,7 +235,7 @@
 
     # Import configurations from the project repo into the database.
     printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time ..."
-    printout "" "      " "-> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
+    printf "         -> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
 
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
 
