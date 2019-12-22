@@ -44,6 +44,8 @@
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
 
+    printf "ref: $(basename "$0")\n"
+
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
     #  - gather the files from the commits in the PR (this is already done by travis before this

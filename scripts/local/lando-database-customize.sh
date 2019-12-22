@@ -14,7 +14,9 @@
   target_env="local"
 
   printf "ref: $(basename "$0")\n"
-  printout "INFO" "Install MySQl tools (mycli and pspg) into the database container."
+  printf "\n${LightPurple}       ================================================================================${NC}\n"
+  printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
+  printf "${LightPurple}       ================================================================================${NC}\n"
 
   # Install python and pip so we can install mycli.
   # This is OPTIONAL - not all users require an extended cli on the actual container, opting instead to

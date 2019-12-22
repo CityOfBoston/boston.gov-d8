@@ -18,7 +18,9 @@
 
     printf "\n"
     printf "ref: $(basename "$0")\n"
-    printout "INFO" "Installing Linux packages in appserver container."
+    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printout "STEP" "Installing Linux packages in appserver container."
+    printf "${LightPurple}       ================================================================================${NC}\n"
 
     # Prepare the folder which will hold setup logs.
     if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi
