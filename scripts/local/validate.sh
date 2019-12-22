@@ -12,16 +12,22 @@ NC='\033[0m'
 
 # This function runs a syntax check on selected set of files and gives a pass/fail report.
 function lint() {
-    printf "[notice] Runing PHP linting checks for syntax errors.\n"
+    printf "INFO" "Runing PHP linting checks for syntax errors.\n"
     ${REPO_ROOT}/vendor/bin/parallel-lint \
         -e php,module,inc,install \
-        --exclude **/core \
-        --exclude docroot/modules/contrib/ \
         --no-progress \
-        ${REPO_ROOT}/docroot
+        ${REPO_ROOT}/docroot/modules/custom &&
+        ${REPO_ROOT}/vendor/bin/parallel-lint \
+            -e php,module,inc,install \
+            --no-progress \
+            ${REPO_ROOT}/docroot/themes/custom
+
 
     if [[ $? -ne 0 ]]; then
-        printf "\n ${RedBG}PHP linting errors found - see information above.${NC}\n"
+        printf "\n"
+        printf "${RedBG} ----------------------------------------------------${NC}\n"
+        printf "${RedBG} PHP linting errors found - see information above.${NC}\n"
+        printf "${RedBG} ----------------------------------------------------${NC}\n\n"
         exit 1
     fi
 
@@ -29,7 +35,7 @@ function lint() {
 
 # This function runs a PHPCodesniff across a selected set of files, and produces a report.
 function phpcs() {
-    printf "[notice] Setting PHPCS options.\n"
+    printout "INFO" "Setting PHPCS options.\n"
 
     if [[ ! -d ${REPO_ROOT}/docroot/modules/custom ]] || [[ ! -d ${REPO_ROOT}/docroot/themes/custom ]]; then
         printout "ERROR" "Build does not contain custom code folders."
@@ -40,13 +46,13 @@ function phpcs() {
     ${REPO_ROOT}vendor/bin/phpcs --config-set ignore_warnings_on_exit 1 &> /dev/null
     ${REPO_ROOT}vendor/bin/phpcs --config-set colors 1 &> /dev/null
 
-    printout "[notice]" "Running PHPCS on project files."
-    ${REPO_ROOT}vendor/bin/phpcs \
+    printout "INFO" "Running PHPCS tests on project files."
+    ${REPO_ROOT}/vendor/bin/phpcs \
         --extensions="php/php,module/php,inc/php,install/php,theme/php,js/js" \
         --ignore="*.tpl.php,*.css,*.yml,*.twig,*.md,**/dist/*.js,**/patterns/*.js" \
         --report-full="${REPO_ROOT}/setup/err.code_sniffer.txt" \
         --report="summary" \
-        --standard="${REPO_ROOT}/vendor/drupal/coder/coder_sniffer/Drupal/ruleset.xml" \
+        --standard=${REPO_ROOT}/docroot/modules/contrib/coder/coder_sniffer/Drupal/ruleset.xml \
         -n \
         ${REPO_ROOT}/docroot/modules/custom \
         ${REPO_ROOT}/docroot/themes/custom
@@ -55,8 +61,8 @@ function phpcs() {
         printout "SUCCESS" "${GreenBG}Coding standards OK.${NC}\n"
         rm -rf ${REPO_ROOT}/setup/err.code_sniffer.txt
     else
-        printout "FAIL" "${RedGB}PHPCS ERRORS FOUND${NC}\n"
-        cat /app/setup/err.code_sniffer.txt
+        printout "FAIL" "${RedBG}PHPCS ERRORS FOUND${NC}\n"
+        cat ${REPO_ROOT}/setup/err.code_sniffer.txt
         LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
         printout "NOTICE" "${Red}See results at ${LANDO_APP_URL}/sites/default/files/err.code_sniffer.txt${NC}\n"
         exit 1
@@ -86,12 +92,12 @@ if [[ -n "$command" ]]; then
         phpcs $args
     elif [[ $command == "all" ]]; then
         printf "\n"
-        printout "[info]" "Running code validation checks.\n"
+        printout "NOTICE" "Running code validation checks.\n"
         lint $args && phpcs $args
         if [[ $? -eq 0 ]]; then
             exit 0
         else
-            printf "\n${Red}[fail] Checks failed.{NC}\n\n"
+            printout "FAIL" "${Red}Checks failed.{NC}\n"
             exit 1
         fi
     fi
