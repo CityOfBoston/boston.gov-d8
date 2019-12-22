@@ -69,8 +69,8 @@ command=$1
 args=${@:2}
 
 if [[ -z $REPO_ROOT ]]; then
-    if [[ -n ${LANDO_MOUNT} ]]; then REPO_ROOT=LANDO_MOUNT
-    elif [[ -n ${TRAVIS_BUILD_DIR} ]]; then REPO_ROOT=TRAVIS_BUILD_DIR
+    if [[ -n ${LANDO_MOUNT} ]]; then REPO_ROOT="${LANDO_MOUNT}"
+    elif [[ -n ${TRAVIS_BUILD_DIR} ]]; then REPO_ROOT="${TRAVIS_BUILD_DIR}"
     else REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && cd ../../ && pwd )"
     fi
 fi
