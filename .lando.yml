@@ -35,9 +35,6 @@ services:
     webroot: docroot
     xdebug: true
     overrides:
-      services:
-        volumes:
-          - xdebug.ini://usr/local/etc/php/conf.d/php.ini
       environment:
         PHP_IDE_CONFIG: "serverName=bostontest.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
