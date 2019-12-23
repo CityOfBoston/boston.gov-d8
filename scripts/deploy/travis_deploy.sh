@@ -15,6 +15,10 @@
 #
 #############################################################################################
 
+    # The branch to watch.
+    source_branch=${1}
+    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
     # Include the utilities file/libraries.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
@@ -37,18 +41,14 @@
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
 
-    # The branch to watch.
-    source_branch=${1}
-    DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-
     printf "ref: $(basename "$0")\n"
 
     # Note that the canonical repository is watched. Commits to forked repositories
     # will not trigger deployment unless DEPLOY_PR is true.
     if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] || [[ "${DEPLOY_PR}" == "true" ]]; then
 
-        printout "INFO" "Deployments will be triggered on the '${source_branch}' branch (or on any tag)." \
-            "     - Current branch is '${TRAVIS_BRANCH}' \n     - Travis build artifact id is '${TRAVIS_BUILD_ID}'."
+        printout "INFO" "Deployments will be triggered on the '${source_branch}' branch (or on any tag)."
+        printf   "       - Current branch is '${TRAVIS_BRANCH}' \n     - Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
 
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
@@ -112,7 +112,7 @@
                     if [[ ${f:0:1} != "/" ]]; then
                         set f="${TRAVIS_BUILD_DIR}/${f}"
                         rm "$f"
-                        printf " [notice] santize: deleted <${f}>\n"
+                        printf " [notice] sanitize: deleted <${f}>\n"
                     fi
                 done
             fi
