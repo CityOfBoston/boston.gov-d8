@@ -63,8 +63,13 @@ function phpcs() {
     else
         printout "FAIL" "${RedBG}PHPCS ERRORS FOUND${NC}\n"
         cat ${REPO_ROOT}/setup/err.code_sniffer.txt
-        LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
-        printout "NOTICE" "${Red}See results at ${LANDO_APP_URL}/sites/default/files/err.code_sniffer.txt${NC}\n"
+        if [[ -n ${LANDO_APP_NAME} ]]; then
+            LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
+        else
+            LANDO_APP_URL="https://boston.lndo.site"
+        fi
+        printout "NOTICE" "${Red}See results at ${REPO_ROOT}/setup/err.code_sniffer.txt${NC}"
+        printf "         - ${LANDO_APP_URL}/sites/default/files/setup/err.code_sniffer.txt\n\n"
         exit 1
     fi
 }
