@@ -54,7 +54,7 @@ script:
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
   # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
-  - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh none; fi
+  - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh all; fi
 
 after_success:
   # Manage SSH keys for deployment to Acquia.
