@@ -25,22 +25,21 @@
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
     . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH/-/}
-    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/-/}
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
 
     # Define branch-specific variables.
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_dir" && deploy_dir="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_acquia_repo" && deploy_remote="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_branch" && deploy_branch="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_excludes_file" && deploy_excludes_file="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_includes_file" && deploy_includes_file="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && value=travis_drush="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}-drush-alias" && drush_alias="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}-commit_message" && deploy_commitMsg="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_dir" && deploy_dir="${!src}" && echo "deploy_dir: ${deploy_dir}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_acquia_repo" && deploy_remote="${!src}" && echo "deploy_remote: ${deploy_remote}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_deploy_branch" && deploy_branch="${!src}" && echo "deploy_branch: ${deploy_branch}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_excludes_file" && deploy_excludes_file="${!src}" && echo "deploy_excludes_file: ${deploy_excludes_file}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_includes_file" && deploy_includes_file="${!src}" && echo "deploy_includes_file: ${deploy_includes_file}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}" && echo "deploy_sanitize_file: ${deploy_sanitize_file}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && travis_drush="${!src}" && echo "travis_drush: ${travis_drush}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}-drush-alias" && drush_alias="${!src}" && echo "drush_alias: ${drush_alias}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}-commit_message" && deploy_commitMsg="${!src}" && echo "deploy_commitMsg: ${deploy_commitMsg}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}" && echo "deploy_copy_db: ${deploy_copy_db}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}" && echo "drush_db_source: ${drush_db_source}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}" && echo "drush_db_source: ${drush_db_source}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
 
