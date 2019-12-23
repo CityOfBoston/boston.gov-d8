@@ -68,12 +68,13 @@ build:
 deploy:
   # Each element of this deploy node is a branch in the main CoB repo.
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
+  #          If your branchname must have a space or "-", then in this file just remove them (i.e. my-branch = mybranch)
 
   develop:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
-    # Name of the target branch in the Acquia repo.
-    deploy_branch: develop-deploy
+    # Name of the target branch in the Acquia repo. Should be quoted if it contains - or _ or spaces.
+    deploy_branch: "develop-deploy"
     # Path to the drush command in the Travis container.
     travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
@@ -96,7 +97,7 @@ deploy:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo.
-    deploy_branch: deleteme-deploy
+    deploy_branch: "deleteme-deploy"
     # Path to the drush command in the Travis container.
     travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
@@ -108,7 +109,7 @@ deploy:
     # Message we want to appear in Acquia repo for the deployment commit.
     commit_message: "Automated commit by Travis CI for ON-DEMAND Build \#\${travis.id}"
     # Dry-run (for testing).
-    dry_run: false
+    dry_run: true
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy_db: false
     drush_db_source: "@bostond8.dev"
@@ -118,8 +119,8 @@ deploy:
   master:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
-    # Name of the target branch in the Acquia repo.
-    deploy_branch: master-deploy
+    # Name of the target branch in the Acquia repo. Should be quoted if it contains - or _ or spaces.
+    deploy_branch: "master-deploy"
     # Path to the drush command in the Travis container.
     travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
