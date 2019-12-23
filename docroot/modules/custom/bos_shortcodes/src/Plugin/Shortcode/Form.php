@@ -16,6 +16,11 @@ use Drupal\shortcode\Plugin\ShortcodeBase;
  */
 class Form extends ShortcodeBase {
 
+  /**
+   * Caches content to avoid unecessary querying.
+   *
+   * @var array
+   */
   private $classCache = [];
 
   /**

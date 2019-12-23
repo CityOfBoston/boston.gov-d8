@@ -20,12 +20,53 @@ class MigrationPrepareRow {
 
   use migrationModerationStateTrait;
 
+  /**
+   * The row from the migration.
+   *
+   * @var \Drupal\migrate\Row
+   */
   protected $row;
+
+  /**
+   * MigrateSourceInterface.
+   *
+   * @var \Drupal\migrate\Plugin\MigrateSourceInterface
+   */
   protected $source;
+
+  /**
+   * MigrationInterface.
+   *
+   * @var \Drupal\migrate\Plugin\MigrationInterface
+   */
   protected $migration;
+
+  /**
+   * Whether we should use a cache.
+   *
+   * @var bool
+   */
   protected $useCache;
+
+  /**
+   * The cache.
+   *
+   * @var array
+   */
   protected $cache = NULL;
+
+  /**
+   * Flag if we should remove a certain number of revisions.
+   *
+   * @var int|null
+   */
   protected $trimRevisions = NULL;
+
+  /**
+   * Flag if there is a loaded cache yet.
+   *
+   * @var bool
+   */
   protected $hasLoadedCache = FALSE;
 
   /**
