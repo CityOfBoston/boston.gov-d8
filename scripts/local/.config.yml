@@ -66,7 +66,9 @@ build:
         sync: "true"
 
 deploy:
-  # each element of the deploy object is a branch in the main CoB repo.
+  # Each element of this deploy node is a branch in the main CoB repo.
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
+
   develop:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
@@ -90,7 +92,7 @@ deploy:
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
-  replace-phing:
+  replacephing:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo.
