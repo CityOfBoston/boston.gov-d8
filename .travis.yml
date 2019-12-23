@@ -52,6 +52,7 @@ script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
+  # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
   - if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]]; then ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh none; fi
 
 after_success:
@@ -64,16 +65,16 @@ after_success:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: "replace-phing"
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master

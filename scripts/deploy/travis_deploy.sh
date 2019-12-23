@@ -18,8 +18,8 @@
     # Include the utilities file/libraries.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
-    . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
-    . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
 
     # Define branch-specific variables.
     set src="deploy_${TRAVIS_BRANCH}_dir" && deploy_dir="${!src}"
