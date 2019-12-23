@@ -2,10 +2,11 @@ sudo: false
 language: php
 
 branches:
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   only:
     - develop
     - master
-    - "replace-phing"
+    - replacephing
 
 php:
   - 7.3
@@ -63,6 +64,7 @@ after_success:
   - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
 
 deploy:
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   - provider: script
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
@@ -72,7 +74,7 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: "replace-phing"
+      branch: "replacephing"
   - provider: script
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
