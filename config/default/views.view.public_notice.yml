@@ -34,7 +34,6 @@ description: ''
 tag: ''
 base_table: node_field_data
 base_field: nid
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -53,7 +52,6 @@ display:
           results_lifespan_custom: 900
           output_lifespan: 0
           output_lifespan_custom: 900
-
       query:
         type: views_query
         options:
@@ -186,6 +184,8 @@ display:
           id: status
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           group: 1
         type:
           id: type
@@ -196,6 +196,9 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         field_public_notice_date_value:
           id: field_public_notice_date_value
           table: node__field_public_notice_date
@@ -226,6 +229,8 @@ display:
             placeholder: null
             min_placeholder: null
             max_placeholder: null
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -275,6 +280,8 @@ display:
               landing_author: '0'
               procurement_editor: '0'
             placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -326,6 +333,8 @@ display:
               landing_author: '0'
               procurement_editor: '0'
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -927,7 +936,6 @@ display:
             timezone_override: Pacific/Honolulu
             format_type: date_format_normal_date
             separator: ''
-
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1266,6 +1274,8 @@ display:
           id: status
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           group: 1
         type:
           id: type
@@ -1276,6 +1286,9 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         field_public_notice_date_value:
           id: field_public_notice_date_value
           table: node__field_public_notice_date
@@ -1318,6 +1331,8 @@ display:
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -1379,6 +1394,8 @@ display:
           id: status
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           group: 1
         type:
           id: type
@@ -1389,6 +1406,9 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         field_public_notice_date_value:
           id: field_public_notice_date_value
           table: node__field_public_notice_date
@@ -1419,6 +1439,8 @@ display:
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -1468,6 +1490,8 @@ display:
               landing_author: '0'
               procurement_editor: '0'
             placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -1513,6 +1537,8 @@ display:
               content_editor: '0'
               content_author: '0'
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
