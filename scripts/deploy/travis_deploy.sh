@@ -93,9 +93,8 @@
             printout "STEP" "Copy files from (GitHub) into <${deploy_dir}>"
             # Remove the various .gitignore files so we can use git to manage full set of the Deploy Candidate files.
             printout "INFO" "Refine Build Artifact (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
-            rm -rf ${TRAVIS_BUILD_DIR}/hooks/.gitignore
-            find ${TRAVIS_BUILD_DIR}/docroot/modules/custom/. -type f -name ".gitignore" -delete -print
-            # ls -la ${docroot}/sites/default/settings
+            rm -rf ${TRAVIS_BUILD_DIR}/hooks/.gitignore &> /dev/null
+            find ${TRAVIS_BUILD_DIR}/docroot/modules/custom/. -type f -name ".gitignore" -delete -print &> /dev/null
 
             # Move files from the Deploy Candidate into the Acquia Repo.
             printout "INFO" "Select Build Artifact files and copy to create the Deploy Candidate."
@@ -139,16 +138,27 @@
 
             else
 
-                printout "INFO" "Build Artifact"
+                printf "==================================================================================\n"
+                printout "OUTPUT" "Build Artifact"
+                printf "----------------------------------------------------------------------------------\n"
+                printout "INFO" "Repository Root:"
                 ls -la ${TRAVIS_BUILD_DIR}
+                printout "INFO" "Docroot:"
                 ls -la ${TRAVIS_BUILD_DIR}/docroot
+                printout "INFO" "Settings:"
                 ls -la ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
+                printf "==================================================================================\n\n"
 
-                echo -e "\n"
-                printout "INFO" "Build Artifact"
+                printf "==================================================================================\n"
+                printout "OUTPUT" "Deploy Candidate"
+                printf "----------------------------------------------------------------------------------\n"
+                printout "INFO" "Repository Root:"
                 ls -la ${deploy_dir}
+                printout "INFO" "Docroot:"
                 ls -la ${deploy_dir}/docroot
+                printout "INFO" "Settings:"
                 ls -la ${deploy_dir}/docroot/sites/default/settings
+                printf "==================================================================================\n"
 
             fi
 
