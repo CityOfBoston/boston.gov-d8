@@ -19,7 +19,7 @@ dependencies:
     - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
     - field.field.node.metrolist_affordable_housing.field_mah_zipcode
     - node.type.metrolist_affordable_housing
-    - workflows.workflow.unmanaged_workflow
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - datetime
@@ -97,6 +97,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
@@ -273,6 +274,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   url_redirects:
     weight: 11
