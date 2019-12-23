@@ -35,8 +35,8 @@
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_includes_file" && deploy_includes_file="${!src}" && echo "deploy_includes_file: ${deploy_includes_file}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}" && echo "deploy_sanitize_file: ${deploy_sanitize_file}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && travis_drush="${!src}" && echo "travis_drush: ${travis_drush}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}-drush-alias" && drush_alias="${!src}" && echo "drush_alias: ${drush_alias}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}-commit_message" && deploy_commitMsg="${!src}" && echo "deploy_commitMsg: ${deploy_commitMsg}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_alias" && drush_alias="${!src}" && echo "drush_alias: ${drush_alias}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_commit_message" && deploy_commitMsg="${!src}" && echo "deploy_commitMsg: ${deploy_commitMsg}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}" && echo "deploy_copy_db: ${deploy_copy_db}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}" && echo "drush_db_source: ${drush_db_source}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}" && echo "drush_db_source: ${drush_db_source}"
@@ -113,7 +113,9 @@
                 for f in $(cat ${deploy_sanitize_file}) ; do
                     if [[ ${f:0:1} != "/" ]]; then
                         set f="${TRAVIS_BUILD_DIR}/${f}"
-                        rm "$f"
+                    fi
+                    rm -f "$f"
+                    if [[ ${?} -eq 0 ]]; then
                         printf " [notice] sanitize: deleted <${f}>\n"
                     fi
                 done
@@ -134,7 +136,7 @@
                     git push ${remote_name} ${deploy_branch}
 
                 printout "SUCCESS" "Deployed ${deploy_branch} to ${remote_name}\n"
-                printout "NOTE", "Acquia pipeline and hooks will now run.\n"
+                printout "NOTE" "Acquia pipeline and hooks will now run.\n"
 
             else
 
