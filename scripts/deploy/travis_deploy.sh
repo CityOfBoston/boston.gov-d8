@@ -48,17 +48,17 @@
     if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] || [[ "${DEPLOY_PR}" == "true" ]]; then
 
         printout "INFO" "Deployments will be triggered on the '${source_branch}' branch (or on any tag)."
-        printf   "       - Current branch is '${TRAVIS_BRANCH}' \n     - Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
+        printf   "       - Current branch is '${TRAVIS_BRANCH}' \n       - Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
 
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
 
             printout "INFO" "The Build Candidate is accepted and is now the Build Artifact.\n"
 
-            printout "STEP" "== Generate Deploy Candidate ======" \
-                "Use 'Deploy Artifact' in <${TRAVIS_BUILD_DIR}> to generate the 'Deploy Candidate' into ${deploy_dir}."
+            printout "STEP" "== Generate Deploy Candidate ======"
+            printf "Use the 'Deploy Artifact' in <${TRAVIS_BUILD_DIR}> to generate the 'Deploy Candidate' into ${deploy_dir}.\n"
 
-            if [[ "${deploy_dry_run}" == "false" ]]; then
+            if [[ "${deploy_dry_run}" != "false" ]]; then
                 printout "" "\n       ============================================================================="
                 printout "WARNING" "DRY RUN - This is a test build of Deploy Candidate - it will NOT be deployed."
                 printout "" "       =============================================================================\n"
