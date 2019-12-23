@@ -24,20 +24,23 @@
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
     . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
+    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH/-/}
+    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/-/}
+    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
 
     # Define branch-specific variables.
-    set src="deploy_${TRAVIS_BRANCH}_dir" && deploy_dir="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_acquia_repo" && deploy_remote="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_branch" && deploy_branch="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_excludes_file" && deploy_excludes_file="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_includes_file" && deploy_includes_file="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_sanitize_file" && deploy_sanitize_file="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_travis_drush_path" && value=travis_drush="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}-drush-alias" && drush_alias="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}-commit_message" && deploy_commitMsg="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_copy_db" && deploy_copy_db="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_drush_db_source" && drush_db_source="${!src}"
-    set src="deploy_${TRAVIS_BRANCH}_dry_run" && deploy_dry_run="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_dir" && deploy_dir="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_acquia_repo" && deploy_remote="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_branch" && deploy_branch="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_excludes_file" && deploy_excludes_file="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_includes_file" && deploy_includes_file="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && value=travis_drush="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}-drush-alias" && drush_alias="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}-commit_message" && deploy_commitMsg="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}"
+    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
 
@@ -124,7 +127,7 @@
 
             if [[ "${deploy_dry_run}" == "false" ]]; then
 
-                printout "INFO" "Branch ${travis_branch} now ready to deploy to Acquia as ${deploy_branch}."
+                printout "INFO" "Branch ${TRAVIS_BRANCH} now ready to deploy to Acquia as ${deploy_branch}."
 
                 cd ${deploy_dir} &&
                     git add --all &&
