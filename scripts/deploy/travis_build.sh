@@ -71,7 +71,7 @@
 
         printout "" "\n========================================================================================="
         printout "INFO" "Creating the Build Candidate."
-        printout "" "=========================================================================================\n"
+        printf "=========================================================================================\n\n"
 
         # Install PHP (and other ...) packages/modules using composer:
         printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output suppressed unless errors occur."
