@@ -29,18 +29,18 @@
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
 
     # Define branch-specific variables.
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_dir" && deploy_dir="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_acquia_repo" && deploy_remote="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_branch" && deploy_branch="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_excludes_file" && deploy_excludes_file="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_includes_file" && deploy_includes_file="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && value=travis_drush="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}-drush-alias" && drush_alias="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}-commit_message" && deploy_commitMsg="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}"
-    set src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_dir" && deploy_dir="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_acquia_repo" && deploy_remote="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_branch" && deploy_branch="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_excludes_file" && deploy_excludes_file="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_includes_file" && deploy_includes_file="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && value=travis_drush="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}-drush-alias" && drush_alias="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}-commit_message" && deploy_commitMsg="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}"
+    src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
 
@@ -52,6 +52,7 @@
 
         printout "INFO" "Deployments will be triggered on the '${source_branch}' branch (or on any tag)."
         printf   "       - Current branch is '${TRAVIS_BRANCH}' \n       - Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
+        printf   "       - Checking config for '${TRAVIS_BRANCH_SANITIZED}' \n"
 
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
