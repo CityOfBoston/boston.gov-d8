@@ -109,10 +109,11 @@
             if [[ -s ${deploy_sanitize_file} ]]; then
                 # xargs -d '\n' rm < "${deploy_sanitize_file}"
                 for f in $(cat ${deploy_sanitize_file}) ; do
-                    if [[ firstchar is not / ]]; then
+                    if [[ ${f:0:1} != "/" ]]; then
                         set f="${TRAVIS_BUILD_DIR}/${f}"
+                        rm "$f"
+                        printf " [notice] santize: deleted <${f}>\n"
                     fi
-                    rm "$f"
                 done
             fi
 
