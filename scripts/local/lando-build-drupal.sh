@@ -125,6 +125,9 @@
     build_settings &> ${setup_logs}/drush_site_install.log
     printout "SUCCESS" "Settings updated.\n"
 
+    # Embed the xdebug file as php.ini.
+    ln -s /app/xdebug.ini /usr/local/etc/php/conf.d/php_cob.ini
+
     # Install Drupal.
     # For local builds, there are 2 build strategies:
     #   Initialize:     This uses drush site-install to create a new Drupal site using the core and contributed modules
