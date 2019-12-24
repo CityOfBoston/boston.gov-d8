@@ -73,3 +73,10 @@ function template_preprocess_node_metrolist(array &$variables) {
     $variables['content'][$key] = $variables['elements'][$key];
   }
 }
+
+/**
+ * Implements hook_salesforce_pull_entity_value_alter().
+ */
+function node_metorlist_salesforce_pull_entity_value_alter(&$mapping_object, &$sf_object, $mapping) {
+  $test = 'test';
+}
