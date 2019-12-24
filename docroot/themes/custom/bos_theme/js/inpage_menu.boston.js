@@ -60,11 +60,12 @@
 
         var $topicNav = $('.topic-nav');
         var topicNav_height = 0;
+
+        // If sticky nav (Desktop) is shown, recalculate the 'loc' position of the scroll-to.
         if ($topicNav.length > 0 && $topicNav.hasClass('sticky')) {
           topicNav_height = $topicNav.height() / 2;
         }
         var loc = $locTag.offset().top - ((topicNav_height * 2) + (topicNav_height / 4));
-        console.log('loc: ', loc, ' | topicNav_height: ', topicNav_height);
 
         scrolling = true;
         $("html, body").animate({scrollTop: loc}, speed, "swing", function () {
