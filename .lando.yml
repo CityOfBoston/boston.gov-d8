@@ -36,8 +36,8 @@ services:
     xdebug: true
     overrides:
       environment:
-        PHP_IDE_CONFIG: "serverName=bostontest.lndo.site"
-        XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
+        PHP_IDE_CONFIG: "serverName=boston.lndo.site"
+        XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM remote_host=host.docker.internal"
     config:
       conf: xdebug.ini
 
