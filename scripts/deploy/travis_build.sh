@@ -35,11 +35,13 @@
     target_env="local"
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
     project_sync=$(realpath ${project_docroot}/${build_local_config_sync})
-    set src="build_travis_${TRAVIS_BRANCH}_type" && build_local_type="${!src}"
-    set src="build_travis_${TRAVIS_BRANCH}_suppress_output" && quiet="${!src}"
-    src="build_travis_${TRAVIS_BRANCH}_database_source" && build_local_database_source="${!src}"
-    set src="build_travis_${TRAVIS_BRANCH}_database_drush_alias" && build_local_database_drush_alias="${!src}"
-    set src="build_travis_config_${TRAVIS_BRANCH}_sync" && build_local_config_dosync="${!src}"
+    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH/-/}
+    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
+    set src="build_travis_${TRAVIS_BRANCH_SANITIZED}_type" && build_local_type="${!src}"
+    set src="build_travis_${TRAVIS_BRANCH_SANITIZED}_suppress_output" && quiet="${!src}"
+    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_local_database_source="${!src}"
+    set src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_local_database_drush_alias="${!src}"
+    set src="build_travis_config_${TRAVIS_BRANCH_SANITIZED}_sync" && build_local_config_dosync="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
