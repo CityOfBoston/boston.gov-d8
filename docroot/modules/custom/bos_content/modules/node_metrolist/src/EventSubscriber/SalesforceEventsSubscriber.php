@@ -4,6 +4,7 @@ namespace Drupal\node_metrolist\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\salesforce\Event\SalesforceEvents;
+use Drupal\salesforce_mapping\Event\SalesforcePullEntityValueEvent;
 
 /**
  * Class SalesforceEventsSubscriber.
@@ -27,7 +28,14 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
   /**
    * Callback.
    */
-  public function fixLotteryUri($event) {
+  public function fixLotteryUri(SalesforcePullEntityValueEvent $event) {
+      $sf_data = $event->getMappedObject()->getSalesforceRecord();
+      $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
+      if (strpos($lottery_url, 'http') !== 0) {
+        $lottery_url = 'https://' . $lottery_url;
+      }
+      $event->getEntity()->field_mah_lottery_url->target_id = $lottery_url;
+      echo $lottery_url;
   }
 
 }
