@@ -39,10 +39,6 @@
     # Change the permissions on the log file so that non-root user can add to log.
     chmod 777 ${LANDO_MOUNT}/setup/lando.log &>> ${setup_logs}/lando.log
 
-    # Install a custom php config file.
-    cp ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/ &>> ${setup_logs}/lando.log
-
-    #- ip route | awk 'NR==1 {printf $3}' | xargs echo "xdebug.remote_host=" >>/usr/local/etc/php/conf.d/boston-dev-php.ini
     service apache2 reload &>> ${setup_logs}/lando.log
 
     printout "SUCCESS" "Docker container 'appserver' is built.\n"

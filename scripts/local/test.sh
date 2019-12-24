@@ -4,7 +4,7 @@
   LANDO_MOUNT=/home/david/sources/boston.gov-d8
   . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
 
-  eval $(parse_yaml "${LANDO_MOUNT}/scripts/local/.config.yml" "")
+  eval $(parse_yaml "${LANDO_MOUNT}/scripts/.config.yml" "")
   eval $(parse_yaml "${LANDO_MOUNT}/.lando.yml" "lando_")
 TRAVIS_BRANCH="replace-phi_ng"
 TRAVIS_BRANCH=${TRAVIS_BRANCH/-/}

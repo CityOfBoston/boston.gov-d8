@@ -134,7 +134,7 @@ function build_settings() {
 
     if [[ -z "${project_docroot}}" ]]; then
         # Read in config and variables.
-        eval $(parse_yaml "${REPO_ROOT}/scripts/local/.config.yml" "")
+        eval $(parse_yaml "${REPO_ROOT}/scripts/.config.yml" "")
         eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
     fi
 
@@ -216,6 +216,17 @@ function displayTime() {
   echo "${hours} ${minutes} ${seconds}"
 }
 
+function operating_system() {
+    case "$OSTYPE" in
+      solaris*) echo "SOLARIS" ;;
+      darwin*)  echo "OSX" ;;
+      linux*)   echo "LINUX" ;;
+      bsd*)     echo "BSD" ;;
+      msys*)    echo "WINDOWS" ;;
+      *)        echo "unknown" ;;
+    esac
+}
+
 if [[ -z $REPO_ROOT ]]; then
     if [[ -n ${LANDO_MOUNT} ]]; then REPO_ROOT="${LANDO_MOUNT}"
     elif [[ -n ${TRAVIS_BUILD_DIR} ]]; then REPO_ROOT="${TRAVIS_BUILD_DIR}"
@@ -225,4 +236,4 @@ fi
 
 # Read in config and variables.
 eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
-eval $(parse_yaml "${REPO_ROOT}/scripts/local/.config.yml" "")
+eval $(parse_yaml "${REPO_ROOT}/scripts/.config.yml" "")

@@ -5,7 +5,7 @@
 #  Acquia project repository.
 #
 #  This script should be executed in the `deploy` section of .travis.yml.
-#  Variables/settings are read from `deploy` node of the scripts/local/.config.yml file.
+#  Variables/settings are read from `deploy` node of the scripts/.config.yml file.
 #
 #  It requires two arguments. Example call:
 #   `scripts/deploy/travis-deploy.sh master`
