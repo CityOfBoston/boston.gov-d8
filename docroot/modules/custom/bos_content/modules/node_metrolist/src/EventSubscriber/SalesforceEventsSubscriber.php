@@ -34,11 +34,7 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
       if (strpos($lottery_url, 'http') !== 0) {
         $lottery_url = 'https://' . $lottery_url;
       }
-      //$sf_data->field('Lottery_Advertisement_Flyer__c') = $lottery_url;
-      //$event->getMappedObject()->setSalesforceRecord($sf_data);
-      //$event->getEntity()->field_mah_lottery_url->target_id = $lottery_url;
       $event->getEntity()->field_mah_lottery_url = $lottery_url;
-      echo $lottery_url;
   }
 
 }
