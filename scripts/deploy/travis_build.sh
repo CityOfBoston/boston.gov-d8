@@ -128,6 +128,9 @@
         printout "INFO" "Verifying & testing the Build Candidate."
         printout "" "=========================================================================================\n"
 
+        printout "" "==== Verify the Candidate ===========\n"
+        . ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "all" "${TRAVIS_EVENT_TYPE}"
+
         printout "" "==== Installing Drupal ===========\n"
 
         # Install Drupal.

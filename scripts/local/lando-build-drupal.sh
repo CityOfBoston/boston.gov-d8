@@ -125,8 +125,15 @@
     build_settings &> ${setup_logs}/drush_site_install.log
     printout "SUCCESS" "Settings updated.\n"
 
-    # Embed the xdebug file as php.ini.
-    ln -s /app/xdebug.ini /usr/local/etc/php/conf.d/php_cob.ini
+    # Embed the custom xdebug file as a php ini file.
+    # This .ini can be customized per environment (ac and linux) and can be addidionally changed loaclly by the user.
+    # The soft-link below links it from the app folder (mounted from the host) into the folder that php sweeps for
+    # ini files during php bootstraps.
+    # NOTE: you don't usually have to restart apache to apply changes to this file.
+    # NOTE: Changes made in the PHP ini files provided by Lando will be lost/reset when Lanod container is restarted.
+    if [[ -n "${project_host_os}" ]]; then
+        ln -s "/app/xdebug_${project_host_os}.ini" /usr/local/etc/php/conf.d/php_cob.ini
+    fi
 
     # Install Drupal.
     # For local builds, there are 2 build strategies:
