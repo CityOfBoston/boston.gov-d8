@@ -29,12 +29,18 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
    * Callback.
    */
   public function fixLotteryUri(SalesforcePullEntityValueEvent $event) {
+    // @var $sf_data \Drupal\salesforce\SObject.
     $sf_data = $event->getMappedObject()->getSalesforceRecord();
-    $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
-    if (strlen($lottery_url) > 0 && strpos($lottery_url, 'http') !== 0) {
-      $lottery_url = 'https://' . $lottery_url;
+    if ($sf_data->type() == 'Affordable_Housing__c') {
+      $sf_fields = array_keys($sf_data->fields());
+      if (in_array('Lottery_Advertisement_Flyer__c', $sf_fields)) {
+        $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
+        if (strlen($lottery_url) > 0 && strpos($lottery_url, 'http') !== 0) {
+          $lottery_url = 'https://' . $lottery_url;
+        }
+        $event->getEntity()->field_mah_lottery_url = $lottery_url;
+      }
     }
-    $event->getEntity()->field_mah_lottery_url = $lottery_url;
   }
 
 }
