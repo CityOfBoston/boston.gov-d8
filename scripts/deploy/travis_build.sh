@@ -167,26 +167,6 @@
                 exit 1
             fi
 
-            # Each Drupal site has a unique site UUID.
-            # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
-            # Drupal recognizes this and prevents the entire import.
-            # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
-            # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
-            # be the same as that in the </config/default/system.site.yml> file.
-
-            if [[ -s ${TRAVIS_BUILD_DIR}/config/default/system.site.yml ]]; then
-                # Fetch site UUID from the configs in the (newly made) database.
-                db_uuid=$(${drush_cmd} cget "system.site" uuid | grep -Eo "\s[0-9a-h\-]*")
-                # Fetch the site UUID from the configuration file.
-                yml_uuid=$(cat ${TRAVIS_BUILD_DIR}/config/default/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
-
-                if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
-                    # The config UUID is different to the UUID in the database, so we will change the databases UUID to
-                    # match the config files UUID and all should be good.
-                    ${drush_cmd} cset "system.site" yml_uuid -y
-                fi
-            fi
-
         elif [[ "${build_local_database_source}" == "sync" ]]; then
 
             # Grab a copy of the database from the desired(remote) Acquia environent.
@@ -218,12 +198,18 @@
             fi
         fi
 
-            # Import configurations from the project repo into the database.
-            # Note: Configuration will be imported from folder defined in build.local.config.sync
-            if [[ "${build_local_config_dosync}" != "false" ]]; then
+        # Import configurations from the project repo into the database.
+        # Note: Configuration will be imported from folder defined in build.local.config.sync
+        if [[ "${build_local_config_dosync}" != "false" ]]; then
 
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
 
+            # Each Drupal site has a unique site UUID.
+            # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
+            # Drupal recognizes this and prevents the entire import.
+            # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
+            # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
+            # be the same as that in the </config/default/system.site.yml> file.
             if [[ -s ${project_sync}/system.site.yml ]]; then
                 # Fetch site UUID from the configs in the (newly made) database.
                 printout "INFO" "Checks site UUID."
