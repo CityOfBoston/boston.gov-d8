@@ -63,8 +63,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       && count($variables["content"]["field_recurrence"][0]['#occurrences'])) {
 
       $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
-      $today = new \DateTime();
-      $today->modify("-5 hours");
+      $today = new \DateTime("America/New_York");
 
       // If $today is in the occurence range then show.
       if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
