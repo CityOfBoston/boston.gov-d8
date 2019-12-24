@@ -13,11 +13,11 @@ use Drupal\salesforce_mapping\Event\SalesforcePullEntityValueEvent;
  */
 class SalesforceEventsSubscriber implements EventSubscriberInterface {
 
-   /**
-     * {@inheritdoc}
-     *
-     * @return array
-     *   The event names to listen for, and the methods that should be executed.
+  /**
+   * {@inheritdoc}
+   *
+   * @return array
+   *   The event names to listen for, and the methods that should be executed.
    */
   public static function getSubscribedEvents() {
       return [
@@ -29,12 +29,12 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
    * Callback.
    */
   public function fixLotteryUri(SalesforcePullEntityValueEvent $event) {
-      $sf_data = $event->getMappedObject()->getSalesforceRecord();
-      $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
-      if (strlen($lottery_url) > 0 && strpos($lottery_url, 'http') !== 0) {
-        $lottery_url = 'https://' . $lottery_url;
-      }
-      $event->getEntity()->field_mah_lottery_url = $lottery_url;
+    $sf_data = $event->getMappedObject()->getSalesforceRecord();
+    $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
+    if (strlen($lottery_url) > 0 && strpos($lottery_url, 'http') !== 0) {
+      $lottery_url = 'https://' . $lottery_url;
+    }
+    $event->getEntity()->field_mah_lottery_url = $lottery_url;
   }
 
 }
