@@ -20,9 +20,9 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
    *   The event names to listen for, and the methods that should be executed.
    */
   public static function getSubscribedEvents() {
-      return [
-        SalesforceEvents::PULL_ENTITY_VALUE => 'fixLotteryUri',
-      ];
+    return [
+      SalesforceEvents::PULL_ENTITY_VALUE => 'fixLotteryUri',
+    ];
   }
 
   /**
