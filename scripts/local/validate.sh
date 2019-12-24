@@ -88,21 +88,30 @@ fi
 
 # Read in config and variables.
 . "${REPO_ROOT}/scripts/cob_build_utilities.sh"
+
 # Run a function based on the command the user supplied.
 if [[ -n "$command" ]]; then
 
     if [[ $command == "lint" ]]; then
         lint $args
+
     elif [[ $command == "phpcs" ]]; then
         phpcs $args
+
     elif [[ $command == "all" ]]; then
+        if [[ -n ${2} ]] && [[ "${2}" != "pull_request" ]]; then
+            printout "NOTICE" "Code validation is only performed on Pull Requests.\n"
+            exit 0
+        fi
         printf "\n"
         printout "NOTICE" "Running code validation checks.\n"
+
         lint $args && phpcs $args
+
         if [[ $? -eq 0 ]]; then
             exit 0
         else
-            printout "FAIL" "${Red}Checks failed.{NC}\n"
+            printout "FAIL" "${Red}Checks failed.${NC}\n"
             exit 1
         fi
     fi
