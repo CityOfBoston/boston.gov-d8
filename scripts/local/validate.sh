@@ -101,16 +101,13 @@ if [[ -n "$command" ]]; then
     elif [[ $command == "all" ]]; then
         if [[ -n ${2} ]] && [[ "${2}" != "pull_request" ]]; then
             printout "NOTICE" "Code validation is only performed on Pull Requests.\n"
-            exit 0
         fi
         printf "\n"
         printout "NOTICE" "Running code validation checks.\n"
 
         lint $args && phpcs $args
 
-        if [[ $? -eq 0 ]]; then
-            exit 0
-        else
+        if [[ $? -ne 0 ]]; then
             printout "FAIL" "${Red}Checks failed.${NC}\n"
             exit 1
         fi

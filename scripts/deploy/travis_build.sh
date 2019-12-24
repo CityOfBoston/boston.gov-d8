@@ -130,6 +130,9 @@
 
         printout "" "==== Verify the Candidate ===========\n"
         . ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "all" "${TRAVIS_EVENT_TYPE}"
+        if [[ ${?} -ne 0 ]]; then
+            exit 1
+        fi
 
         printout "" "==== Installing Drupal ===========\n"
 
