@@ -31,7 +31,7 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
   public function fixLotteryUri(SalesforcePullEntityValueEvent $event) {
       $sf_data = $event->getMappedObject()->getSalesforceRecord();
       $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
-      if (strpos($lottery_url, 'http') !== 0) {
+      if (strlen($lottery_url) > 0 && strpos($lottery_url, 'http') !== 0) {
         $lottery_url = 'https://' . $lottery_url;
       }
       $event->getEntity()->field_mah_lottery_url = $lottery_url;
