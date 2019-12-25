@@ -41,12 +41,13 @@
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_suppress_output" && quiet="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_local_database_source="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_local_database_drush_alias="${!src}"
-    src="build_travis_config_${TRAVIS_BRANCH_SANITIZED}_sync" && build_local_config_dosync="${!src}"
+    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_local_config_dosync="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
 
     printf "ref: $(basename "$0")\n"
+    echo "TRAVIS_BRANCH_SANITIZED = ${TRAVIS_BRANCH_SANITIZED}"
 
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
@@ -144,6 +145,7 @@
 
         # Install Drupal.
         # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
+        echo "build_local_database_source = ${build_local_database_source}"
         if [[ "${build_local_database_source}" == "initialize" ]]; then
 
             printout "INFO" "INITIALIZE Mode: Will install Drupal using 'drush site-install' and then import repo configs."
