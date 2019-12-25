@@ -35,13 +35,20 @@
     target_env="local"
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
     project_sync=$(realpath ${project_docroot}/${build_local_config_sync})
-    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH/-/}
+
+    if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]]; then
+        branch="${TRAVIS_PULL_REQUEST_BRANCH}"
+    elif [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
+        branch="${TRAVIS_BRANCH}"
+    fi
+    TRAVIS_BRANCH_SANITIZED=${branch/-/}
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_type" && build_local_type="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_suppress_output" && quiet="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_local_database_source="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_local_database_drush_alias="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_local_config_dosync="${!src}"
+
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
@@ -55,6 +62,8 @@
     #    script executes), and
     #  - add in the drupal core files, required contributed modules and dependent vendor packages, and
     #  - merge in the files from the private repo.
+
+    printout "INFO" "== ${TRAVIS_EVENT_TYPE} =====================\n"
 
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] || [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
