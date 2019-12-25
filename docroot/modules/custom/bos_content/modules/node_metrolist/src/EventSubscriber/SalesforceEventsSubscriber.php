@@ -33,8 +33,10 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
     $sf_data = $event->getMappedObject()->getSalesforceRecord();
     if ($sf_data->type() == 'Affordable_Housing__c') {
       $sf_fields = array_keys($sf_data->fields());
+      // Avoid index errors by making sure field is on record.
       if (in_array('Lottery_Advertisement_Flyer__c', $sf_fields)) {
         $lottery_url = $sf_data->field('Lottery_Advertisement_Flyer__c');
+        // Check that a URL is set and does not already have http.
         if (strlen($lottery_url) > 0 && strpos($lottery_url, 'http') !== 0) {
           $lottery_url = 'https://' . $lottery_url;
         }
