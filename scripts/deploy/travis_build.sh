@@ -56,7 +56,6 @@
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
 
     printf "ref: $(basename "$0")\n"
-    echo "TRAVIS_BRANCH_SANITIZED = ${TRAVIS_BRANCH_SANITIZED}"
 
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
@@ -65,7 +64,7 @@
     #  - add in the drupal core files, required contributed modules and dependent vendor packages, and
     #  - merge in the files from the private repo.
 
-    printout "INFO" "== ${TRAVIS_EVENT_TYPE} ====================="
+    printout "INFO" "== This is a ${TRAVIS_EVENT_TYPE} =================================================="
 
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] || [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
@@ -157,7 +156,6 @@
 
         # Install Drupal.
         # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
-        echo "build_travis_database_source = ${build_travis_database_source}"
         if [[ "${build_travis_database_source}" == "initialize" ]]; then
 
             printout "INFO" "INITIALIZE Mode: Will install Drupal using 'drush site-install' and then import repo configs."
