@@ -1,25 +1,28 @@
 #!/bin/bash
 
 # Define colors
-Black='\033[0;30m'
-DarkGray='\033[1;30m'
-Red='\033[1;31m'
-LightRed='\033[0;31m'
-Green='\033[0;32m'
-LightGreen='\033[1;32m'
-BrownOrange='\033[0;33m'
-Yellow='\033[1;33m'
-Blue='\033[0;34m'
-LightBlue='\033[1;34m'
-Purple='\033[0;35m'
-LightPurple='\033[1;35m'
-Cyan='\033[0;36m'
-LightCyan='\033[1;36m'
-LightGray='\033[0;37m'
-White='\033[1;37m'
-RedBG='\033[41;1;37m'
-GreenBG='\033[42;30m'
+
+Black='\033[30m'
+Red='\033[31m'
+Green='\033[32m'
+Yellow='\033[33m'
+Blue='\033[34m'
+Magenta='\033[35m'
+Cyan='\033[36m'
+LightGray='\033[37m'
+DarkGray='\033[90m'
+LightRed='\033[91m'
+LightGreen='\033[92m'
+LightYellow='\033[93m'
+LightBlue='\033[94m'
+LightMagenta='\033[95m'
+LightCyan='\033[96m'
+White='\033[97m'
+RedBG='\033[41;1;97m'
+GreenBG='\033[42;1;97m'
+YellowBG='\033[103;1;30m'
 NC='\033[0m'
+Bold='\033[1m'
 
 # basic parse of a yml file into a series of variables.
 function parse_yaml() {
@@ -53,20 +56,20 @@ function printout () {
             col1=${RedBG}
             col2=${LightRed}
         elif [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
-            col1=${Yellow}
-            col2=${BrownOrange}
+            col1=${YellowBG}
+            col2=${Yellow}
         elif [[ "${1}" == "SUCCESS" ]]; then
             col1=${GreenBG}
             col2=${Green}
         elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
-            col1=${LightBlue}
+            col1=${Bold}${LightBlue}
             col2=${Cyan}
         elif [[ "${1}" == "STEP" ]]; then
-            col1=${LightPurple}
-            col2=${Purple}
+            col1=${Bold}${Magenta}
+            col2=${LightMagenta}
         else
-            col1=${LightBlue}
-            col2=${White}
+            col1=${Bold}${Cyan}
+            col2=${Cyan}
         fi
 
         if [[ -n ${1} ]]; then

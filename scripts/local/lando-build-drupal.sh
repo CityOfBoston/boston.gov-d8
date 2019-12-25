@@ -49,9 +49,10 @@
     done
 
     printf "ref: $(basename "$0")\n"
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n"
+    printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Installing Drupal and dependencies."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}================================================================================${NC}\n"
 
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
@@ -112,9 +113,10 @@
         echo "DONE." >> ${setup_logs}/composer.log &&
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
 
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n"
+    printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Building Drupal website/app."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}================================================================================${NC}\n"
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
@@ -171,6 +173,8 @@
     #               Initialize.
     #
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
+
+    printout "STEP" "Create & update content database."
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
@@ -253,7 +257,7 @@
 
         # See how we faired.
         if [[ $? -eq 0 ]]; then
-            printout "SUCCESS" "Site has database and content from remote environment.\n"
+            printout "SUCCESS" "Site is installed with database and content from remote environment.\n"
         else
             printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues."
             exit 0
