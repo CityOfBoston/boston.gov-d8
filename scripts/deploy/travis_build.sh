@@ -36,6 +36,8 @@
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
     project_sync=$(realpath ${project_docroot}/${build_local_config_sync})
 
+    # Select the correct branchname to use.  If this is a PR then use the branch which is being comitted, if this is
+    # a PUSH, then use the branch being pushed to.
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]]; then
         branch="${TRAVIS_PULL_REQUEST_BRANCH}"
     elif [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
@@ -43,11 +45,11 @@
     fi
     TRAVIS_BRANCH_SANITIZED=${branch/-/}
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
-    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_type" && build_local_type="${!src}"
+    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_type" && build_travis_type="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_suppress_output" && quiet="${!src}"
-    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_local_database_source="${!src}"
-    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_local_database_drush_alias="${!src}"
-    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_local_config_dosync="${!src}"
+    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_travis_database_source="${!src}"
+    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_travis_database_drush_alias="${!src}"
+    src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_travis_config_dosync="${!src}"
 
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
@@ -63,7 +65,7 @@
     #  - add in the drupal core files, required contributed modules and dependent vendor packages, and
     #  - merge in the files from the private repo.
 
-    printout "INFO" "== ${TRAVIS_EVENT_TYPE} =====================\n"
+    printout "INFO" "== ${TRAVIS_EVENT_TYPE} ====================="
 
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] || [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
@@ -81,7 +83,8 @@
         # Make an account for drupal in MySQL (better than using root a/c).
         mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
 
-        printout "" "\n========================================================================================="
+        printf "\n"
+        printf "=========================================================================================\n"
         printout "INFO" "Creating the Build Candidate."
         printf "=========================================================================================\n\n"
 
@@ -140,11 +143,11 @@
         # Load the cob_utitlities script which has some config procedures.
         . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
 
-        printout "" "========================================================================================="
+        printf "=========================================================================================\n"
         printout "INFO" "Verifying & testing the Build Candidate."
-        printout "" "=========================================================================================\n"
+        printf "=========================================================================================\n\n"
 
-        printout "" "==== Verify the Candidate ===========\n"
+        printout "" "==== Verify the Candidate ==========="
         . ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "all" "${TRAVIS_EVENT_TYPE}"
         if [[ ${?} -ne 0 ]]; then
             exit 1
@@ -154,8 +157,8 @@
 
         # Install Drupal.
         # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
-        echo "build_local_database_source = ${build_local_database_source}"
-        if [[ "${build_local_database_source}" == "initialize" ]]; then
+        echo "build_travis_database_source = ${build_travis_database_source}"
+        if [[ "${build_travis_database_source}" == "initialize" ]]; then
 
             printout "INFO" "INITIALIZE Mode: Will install Drupal using 'drush site-install' and then import repo configs."
 
@@ -190,20 +193,20 @@
                 exit 1
             fi
 
-        elif [[ "${build_local_database_source}" == "sync" ]]; then
+        elif [[ "${build_travis_database_source}" == "sync" ]]; then
 
             # Grab a copy of the database from the desired(remote) Acquia environent.
             printout "INFO" "SYNC Mode: Will copy remote DB and then import repo configs."
 
             # Ensure a remote source is defined, default to the develop environment on Acquia.
-            if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
+            if [[ -z ${build_travis_database_drush_alias} ]]; then build_travis_database_drush_alias="@bostond8.dev"; fi
 
-            printout "INFO" "Copying database (and content) from ${build_local_database_drush_alias} into Travis build."
+            printout "INFO" "Copying database (and content) from ${build_travis_database_drush_alias} into Travis build."
 
             # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
             # remote server, and restore into the database container.
             ${drush_cmd} sql:drop --database=default -y &> ${setup_logs}/drush_site_install.log &&
-                ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y &>> ${setup_logs}/drush_site_install.log
+                ${drush_cmd} sql:sync ${build_travis_database_drush_alias} @self -y &>> ${setup_logs}/drush_site_install.log
 
             # See how we faired.
             if [[ $? -eq 0 ]]; then
@@ -223,7 +226,7 @@
 
         # Import configurations from the project repo into the database.
         # Note: Configuration will be imported from folder defined in build.local.config.sync
-        if [[ "${build_local_config_dosync}" != "false" ]]; then
+        if [[ "${build_travis_config_dosync}" != "false" ]]; then
 
             printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
 
@@ -295,12 +298,12 @@
 
         # Enable and disable modules specific to developers.
         # Function 'devModules' & 'prodModules' are contained in <hooks/common/cob_utilities.sh>
-        if [[ "${build_local_type}" != "none" ]]; then
-            if [[ "${build_local_type}" == "dev" ]]; then
+        if [[ "${build_travis_type}" != "none" ]]; then
+            if [[ "${build_travis_type}" == "dev" ]]; then
                 printout "INFO" "Enable/disable appropriate development features and functionality."
                 devModules "@self"
                 printout "SUCCESS" "Development environment set.\n"
-            elif [[ "${build_local_type}" == "prod" ]]; then
+            elif [[ "${build_travis_type}" == "prod" ]]; then
                 printout "INFO" "Enable/disable appropriate production features and functionality."
                 prodModules "@self"
                 printout "SUCCESS" "Production environment set.\n"
