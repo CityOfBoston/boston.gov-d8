@@ -1,7 +1,7 @@
 class PropertyInformation extends React.Component {
   checkHistInfo = event => {
     let contentDistricts = null;
-    if (this.props.hist_name !== "null") {
+    if (this.props.hist_name !== null) {
       contentDistricts = [
         {
           heading: "Historic Name",

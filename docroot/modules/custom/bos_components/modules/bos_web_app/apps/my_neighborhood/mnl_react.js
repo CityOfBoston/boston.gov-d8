@@ -100,6 +100,7 @@ class MNLItems extends React.Component {
       fields:
         "[node--neighborhood_lookup]=field_sam_id,field_sam_neighborhood_data,field_sam_address"
     };
+    let jsonData = "none";
     fetch(
       "jsonapi/node/neighborhood_lookup?filter" +
         paramsSamGet.value +
@@ -109,21 +110,22 @@ class MNLItems extends React.Component {
       .then(res => res.json())
       .then(
         result => {
-          //console.log(result)
-          //let results = ;
-          if (result.data[0])
+          if (result.data[0]){
+            jsonData = JSON.parse(result.data[0].attributes.field_sam_neighborhood_data);
+            let newState = { ...this.state.itemsDisplay };
+            newState.data = jsonData;
             this.setState({
               isLoading: false,
               submittedAddress: result.data[0].attributes.field_sam_address,
               submittedKeywords: false,
               itemsLookup: [],
-              itemsDisplay:
-                result.data[0].attributes.field_sam_neighborhood_data
+              itemsDisplay: newState.data
             });
-          else
+          } else {
             this.setState({
               itemsDisplay: null
             });
+          }
         },
         // Note: it's important to handle errors here
         // instead of a catch() block so that we don't swallow
@@ -151,7 +153,7 @@ class MNLItems extends React.Component {
 
   render() {
     // Set and retreieve display items
-    const regexTest = new RegExp("(<([^>]+)>)");
+    /*const regexTest = new RegExp("(<([^>]+)>)");
     let mnl_items_pre = this.state.itemsDisplay || "";
     let mnl_items = mnl_items_pre.replace(regexTest, "");
     let objCont = {};
@@ -164,7 +166,7 @@ class MNLItems extends React.Component {
         .replace(/['"]+/g, "")
         .trim();
       objCont[keyItem] = valueItem.replace(/(<([^>]+)>)/gi, "");
-    });
+    });*/
 
     // Set and retreieve lookup items
     let itemsLookupArray = this.state.itemsLookup;
@@ -209,55 +211,55 @@ class MNLItems extends React.Component {
     let mnlDisplay = this.state.submittedAddress ? (
       <div className="g">
         <Representation
-          councilor={objCont.councilor}
-          district={objCont.district}
-          councilor_image={objCont.councilor_image}
-          councilor_webpage={objCont.councilor_webpage}
-          liason_name={objCont.liason_name}
-          liason_image={objCont.liason_pic_url}
-          voting_location={objCont.vote_location2}
-          voting_address={objCont.vote_location3}
-          early_voting_dates={objCont.early_voting_dates}
-          early_voting_times={objCont.early_voting_times}
-          early_voting_address={objCont.early_voting_address}
-          early_voting_location={objCont.early_voting_location}
-          early_voting_neighborhood={objCont.early_voting_neighborhood}
-          early_voting_notes={objCont.early_voting_notes}
-          ward={objCont.ward}
-          precinct={objCont.precinct}
+          councilor={this.state.itemsDisplay.councilor}
+          district={this.state.itemsDisplay.district}
+          councilor_image={this.state.itemsDisplay.councilor_image}
+          councilor_webpage={this.state.itemsDisplay.councilor_webpage}
+          liason_name={this.state.itemsDisplay.liason_name}
+          liason_image={this.state.itemsDisplay.liason_pic_url}
+          voting_location={this.state.itemsDisplay.vote_location2}
+          voting_address={this.state.itemsDisplay.vote_location3}
+          early_voting_dates={this.state.itemsDisplay.early_voting_dates}
+          early_voting_times={this.state.itemsDisplay.early_voting_times}
+          early_voting_address={this.state.itemsDisplay.early_voting_address}
+          early_voting_location={this.state.itemsDisplay.early_voting_location}
+          early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
+          early_voting_notes={this.state.itemsDisplay.early_voting_notes}
+          ward={this.state.itemsDisplay.ward}
+          precinct={this.state.itemsDisplay.precinct}
           section={this.state.section}
           displaySection={this.displaySection}
         />
 
         <CitySpaces
-          library_branch={objCont.library_branch}
-          library_address={objCont.library_address}
-          comm_center={objCont.bcyf_center}
-          comm_address={objCont.bcyf_address}
-          comm_hours={objCont.bcyf_school_year_hours}
-          comm_summer_hours={objCont.bcyf_summer_hours}
-          park_name={objCont.park_name}
-          park_district={objCont.park_district}
-          park_ownership={objCont.park_ownership}
-          park_type={objCont.park_type}
+          library_branch={this.state.itemsDisplay.library_branch}
+          library_address={this.state.itemsDisplay.library_address}
+          comm_center={this.state.itemsDisplay.bcyf_center}
+          comm_address={this.state.itemsDisplay.bcyf_address}
+          comm_hours={this.state.itemsDisplay.bcyf_school_year_hours}
+          comm_summer_hours={this.state.itemsDisplay.bcyf_summer_hours}
+          park_name={this.state.itemsDisplay.park_name}
+          park_district={this.state.itemsDisplay.park_district}
+          park_ownership={this.state.itemsDisplay.park_ownership}
+          park_type={this.state.itemsDisplay.park_type}
           section={this.state.section}
           displaySection={this.displaySection}
         />
 
         <PropertyInformation
-          hist_name={objCont.hist_name}
-          hist_place_name={objCont.hist_place_name}
-          hist_status={objCont.hist_status}
-          hist_year={objCont.hist_year}
-          hist_use_type={objCont.hist_use_type}
+          hist_name={this.state.itemsDisplay.hist_name}
+          hist_place_name={this.state.itemsDisplay.hist_place_name}
+          hist_status={this.state.itemsDisplay.hist_status}
+          hist_year={this.state.itemsDisplay.hist_year}
+          hist_use_type={this.state.itemsDisplay.hist_use_type}
           section={this.state.section}
           displaySection={this.displaySection}
         />
 
         {this.state.season == "winter" || this.state.season == null ? (
           <WinterResources
-            snow_routes={objCont.snow_routes_full_name}
-            snow_routes_respsonsibility={objCont.snow_routes_responsibility}
+            snow_routes={this.state.itemsDisplay.snow_routes_full_name}
+            snow_routes_respsonsibility={this.state.itemsDisplay.snow_routes_responsibility}
             section={this.state.section}
             displaySection={this.displaySection}
           />
@@ -265,8 +267,8 @@ class MNLItems extends React.Component {
 
         {this.state.season == "summer" || this.state.season == null ? (
           <SummerResources
-            tot_name={objCont.tot_park_name}
-            tot_address={objCont.tot_address_text}
+            tot_name={this.state.itemsDisplay.tot_park_name}
+            tot_address={this.state.itemsDisplay.tot_address_text}
             section={this.state.section}
             displaySection={this.displaySection}
           />
