@@ -47,12 +47,19 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
         // Set the updated URL on the node.
         $event->getEntity()->field_mah_lottery_url = $lottery_url;
       }
+      // Avoid index errors by making sure field is on record.
       if (in_array('Neighborhood__c', $sf_fields)) {
+        // Target the neighborhoods vocabulary.
         $vid = 'neighborhoods';
+        // Get term data from vocabulary.
         $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+        // Get the current neighborhood coming from Salesforce.
         $sf_neighborhood = $sf_data->field('Neighborhood__c');
+        // Loop through all terms from neighborhoods vocab.
         foreach ($terms as $term) {
+          // Check if the value from Salesforce matches term in vocab.
           if ($sf_neighborhood == $term->name) {
+            // Set the ID for field_mah_neighborhood on the node.
             $event->getEntity()->field_mah_neighborhood->target_id = $term->tid;
           }
         }
