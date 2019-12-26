@@ -4,10 +4,9 @@ namespace Drupal\bos_mnl\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableJsonResponse;
-use Drupal\Core\Site\Settings;
+use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-
 
 /**
  * Bibblio class for API.
@@ -53,8 +52,8 @@ class MNLRest extends ControllerBase {
   /**
    * Update node.
    */
-  public function updateNode($nid,$dataJSON) {
-    $entity = \Drupal\node\Entity\Node::load($nid);
+  public function updateNode($nid, $dataJSON) {
+    $entity = Node::load($nid);
     $entity->set('field_sam_id', $dataJSON['sam_address']);
     $entity->set('field_sam_address', $dataJSON['full_address']);
     $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
@@ -64,8 +63,8 @@ class MNLRest extends ControllerBase {
   /**
    * Create new node.
    */
-  public function createNode($nid,$dataJSON) {
-    $node = \Drupal\node\Entity\Node::create([
+  public function createNode($nid, $dataJSON) {
+    $node = Node::create([
       'type'                        => 'neighborhood_lookup',
       'title'                       => $dataJSON['sam_address'],
       'field_sam_id'                => $dataJSON['sam_address'],
@@ -90,16 +89,18 @@ class MNLRest extends ControllerBase {
           'status' => 'error',
           'response' => 'wrong api key',
         ];
-      } else if (!$request_method == "POST") {
+
+      }
+      elseif (!$request_method == "POST") {
         $response_array = [
           'status' => 'error',
           'response' => 'no post data',
         ];
-      } else if (!$apiKey == null && $request_method == "POST") {
+
+      }
+      elseif (!$apiKey == NULL && $request_method == "POST") {
         $data = $this->request->getCurrentRequest()->getContent();
         $data = json_decode(strip_tags($data), TRUE);
-        //$data = substr($data, 1, -1);
-        //$data = htmlspecialchars($data);
 
         $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
         $nids = $query->execute();
@@ -108,28 +109,37 @@ class MNLRest extends ControllerBase {
 
         foreach ($data as $items) {
           foreach ($nids as $nid) {
-            $node = \Drupal\node\Entity\Node::load($nid); 
+            $node = Node::load($nid);
             $sam_id = $node->field_sam_id->value;
-            if ($sam_id == $items['sam_address']) { $exists = TRUE; $nodeID = $nid; }      
+            if ($sam_id == $items['sam_address']) {
+              $exists = TRUE; $nodeID = $nid;
+            }
           }
-          if($exists == TRUE) {
-            $this->updateNode($nodeID,$items);
-          } else{
-            $this->createNode($nodeID,$items);
-          } 
+
+          if ($exists == TRUE) {
+            $this->updateNode($nodeID, $items);
+          }
+          else {
+
+            $this->createNode($nodeID, $items);
+          }
+
+          $exists = FALSE;
         }
 
-         $response_array = [
-            'status' => 'procedure complete',
-            'response' => 'authorized',
-            //'data' => $data[0]['full_address']
-          ];
-        
-      } else {
+        $response_array = [
+          'status' => 'procedure complete',
+          'response' => 'authorized',
+        ];
+
+      }
+      else {
+
         $response_array = [
           'status' => 'error',
           'response' => 'unknown error',
         ];
+
       }
 
     else :
@@ -144,7 +154,6 @@ class MNLRest extends ControllerBase {
   }
 
   // End import.
-
 }
 
 // End MNLRest class.
