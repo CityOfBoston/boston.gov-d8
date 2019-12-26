@@ -47,6 +47,16 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
         // Set the updated URL on the node.
         $event->getEntity()->field_mah_lottery_url = $lottery_url;
       }
+      if (in_array('Neighborhood__c', $sf_fields)) {
+        $vid = 'neighborhoods';
+        $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+        $sf_neighborhood = $sf_data->field('Neighborhood__c');
+        foreach ($terms as $term) {
+          if ($sf_neighborhood == $term->name) {
+            $event->getEntity()->field_mah_neighborhood->target_id = $term->tid;
+          }
+        }
+      }
     }
   }
 
