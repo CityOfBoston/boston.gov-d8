@@ -4,13 +4,13 @@ bos_web_app:
     https://unpkg.com/react@16/umd/react.production.min.js: {}
     https://unpkg.com/react-dom@16/umd/react-dom.production.min.js: {}
     https://unpkg.com/babel-standalone@6.26.0/babel.min.js: {}
+    global_components/Search.js: {attributes: {type: text/babel }}
   dependencies:
     - core/drupalSettings
 
 my_neighborhood:
   version: 1.x
   js:
-    global_components/Search.js: {attributes: {type: text/babel }}
     apps/my_neighborhood/local_components/Mnl_Card.js: {attributes: {type: text/babel }}
     apps/my_neighborhood/local_components/Mnl_Section.js: {attributes: {type: text/babel }}
     apps/my_neighborhood/local_components/Representation.js: {attributes: {type: text/babel }}
