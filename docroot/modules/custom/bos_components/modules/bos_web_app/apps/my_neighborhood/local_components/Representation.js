@@ -103,7 +103,7 @@ class Representation extends React.Component {
           <MnlCard
             title={"Your City Councilor"}
             image={
-              this.props.councilor_image !== "null"
+              this.props.councilor_image !== null
                 ? this.props.councilor_image
                 : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
             }
