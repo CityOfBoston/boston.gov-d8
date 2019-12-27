@@ -16,6 +16,12 @@ services:
     type: node:10
     globals:
       gulp-cli: "latest"
+    build_as_root:
+      - printf "\n[LANDO] Node Container Event - build as root\n\n"
+      - /app/scripts/doit/lando-node-customize.sh
+    run:
+      - printf "\n[LANDO] Node Container Event - run\n\n"
+      - /app/scripts/doit/lando-build-node.sh
 
   database:
     type: mysql
