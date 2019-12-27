@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Render\Element;
-use Drupal\Core\Url;
 
 /**
  * Implements hook_theme().
@@ -40,7 +39,8 @@ function bos_featured_topics_preprocess_paragraph__featured_topics(&$variables, 
   // @var $guide \Drupal\node\Entity\Node.
   foreach ($field_topics->referencedEntities() as $guide) {
     $guide_uri = $guide->get('field_intro_image')->entity->get('image')->entity->uri->value;
-    $guide_url = Url::fromUri($guide_uri);
+    //$guide_url = Url::fromUri($guide_uri)->toString();
+    $guide_url = file_create_url($guide_uri);
     $variables['guide_url'] = $guide_url;
   }
 }
