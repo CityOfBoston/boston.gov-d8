@@ -206,26 +206,196 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
   $message = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $message) ?: "";
   $message = advanced_text_formatter_trim_text($message, $at_settings);
   $markup[] = Markup::create("<span class='body-text'>" . $message . "</span>");
-  $pattern = $para["entity"]->get("field_recurrence");
-  $patt = explode(";", $pattern->rrule);
-  foreach ($patt as $key => $value) {
-    $parts = explode("=", $value);
-    $pattern->{$parts[0]} = $parts[1];
+  if (NULL == ($pattern = $para["entity"]->field_recurrence[0]->getHelper()->getRules())) {
+    // Simplified once-only run.
+    $pattern = $para["entity"]->get("field_recurrence");
+    $patt = explode(";", $pattern->rrule);
+    foreach ($patt as $key => $value) {
+      $parts = explode("=", $value);
+      if (isset($parts[0]) && isset($parts[1])) {
+        $pattern->{$parts[0]} = $parts[1];
+      }
+      $parts = NULL;
+    }
+    $nextrun = $end = "";
+    if (!empty($pattern->value)) {
+      $from = \Drupal::service('date.formatter')
+        ->format(strtotime($pattern->value), "custom", "M d Y");
+    }
+    if (strtotime($pattern->value) < strtotime("now")) {
+      $nextrun = " *expired";
+    }
+    else {
+      $nextrun = " Next Run: $from";
+    }
+    $pattern_msg = t("<b><i>ONCE ONLY</i></b> on @from,<span style='color:blue;font-weight:bold'>@nextrun</span>",
+      [
+        "@from" => $from,
+        "@nextrun" => $nextrun ?: "",
+      ]
+    );
+
   }
-  $end = "";
-  if (!empty($pattern->UNTIL)) {
-    $end = "until " . \Drupal::service('date.formatter')
-      ->format(strtotime($pattern->UNTIL), "custom", "M d Y");
+  else {
+    $pattern = (object) $pattern[0]->getParts();
+    $exdates = explode("\n", $para["entity"]->get("field_recurrence")->rrule);
+    if (isset($exdates[1])) {
+      $exdates = " (w/exclusions)";
+    }
+    else {
+      $exdates = "";
+    }
+    // The Rule start date.
+    if (isset($pattern->DTSTART)) {
+      $from = $pattern->DTSTART->format("M d Y,");
+    }
+    // The rule end date.
+    $end = ", FOREVER";
+    if (isset($pattern->UNTIL)) {
+      $end = "until " . $pattern->UNTIL->format("M d Y");
+    }
+    elseif (isset($pattern->COUNT) && $pattern->COUNT > 0) {
+      $end = "for $pattern->COUNT";
+    }
+    // Find the next day this Rule will run.
+    $nextrun = " *expired";
+    if ($para["entity"]->get("field_enabled")->value == 1) {
+      foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
+        if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("now")) {
+          $nextrun = $occurrence->getStart()->format("M d Y");
+          break;
+        }
+      }
+    }
+
+    // Build up the repetitions string.
+    $pos = "every";
+    switch ($pattern->FREQ) {
+      case "DAILY":
+        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+          $freq = "every weekday";
+        }
+        elseif ($pattern->BYDAY == "SA,SU") {
+          $freq = "every weekend-day";
+        }
+        else {
+          $freq = "every day";
+        }
+
+        if (isset($pattern->COUNT)) {
+          $end .= " days";
+        }
+        break;
+
+      case "WEEKLY":
+        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+          $freq = "every weekday";
+        }
+        elseif ($pattern->BYDAY == "SA,SU") {
+          $freq = "every weekend-day";
+        }
+        else {
+          $freq = "every " . $pattern->BYDAY;
+        }
+
+        if (isset($pattern->COUNT)) {
+          $end .= " weeks";
+        }
+        break;
+
+      case "MONTHLY":
+        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+          $freq = "weekday";
+        }
+        elseif ($pattern->BYDAY == "SA,SU") {
+          $freq = "weekend-day";
+        }
+        else {
+          $freq = $pattern->BYDAY;
+        }
+
+        if (isset($pattern->BYSETPOS)) {
+          $pos = "";
+          if (!empty(array_intersect([1, 2, 3, 4, 5, 6], explode(",", $pattern->BYSETPOS)))) {
+            $pos = "1st,";
+          }
+          if (!empty(array_intersect([7, 8, 9, 10, 11, 12, 13], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "2nd,";
+          }
+          if (!empty(array_intersect([14, 15, 16, 17, 18, 19, 20], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "3rd,";
+          }
+          if (!empty(array_intersect([21, 22, 23, 24, 25, 26, 27], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "4th,";
+          }
+          if (!empty(array_intersect([28, 29, 30, 31], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "5th,";
+          }
+        }
+        $freq = trim($pos, ",") . " " . $freq;
+
+        if (isset($pattern->COUNT)) {
+          $end .= " months";
+        }
+        break;
+
+      case "YEARLY":
+        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+          $freq = "weekday";
+        }
+        elseif ($pattern->BYDAY == "SA,SU") {
+          $freq = "weekend-day";
+        }
+        else {
+          $freq = $pattern->BYDAY;
+        }
+
+        if (isset($pattern->BYSETPOS)) {
+          $pos = "";
+          if (!empty(array_intersect([1, 2, 3, 4, 5, 6], explode(",", $pattern->BYSETPOS)))) {
+            $pos = "1st,";
+          }
+          if (!empty(array_intersect([7, 8, 9, 10, 11, 12, 13], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "2nd,";
+          }
+          if (!empty(array_intersect([14, 15, 16, 17, 18, 19, 20], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "3rd,";
+          }
+          if (!empty(array_intersect([21, 22, 23, 24, 25, 26, 27], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "4th,";
+          }
+          if (!empty(array_intersect([28, 29, 30, 31], explode(",", $pattern->BYSETPOS)))) {
+            $pos .= "5th,";
+          }
+        }
+
+        $mth = "";
+        if (isset($pattern->BYMONTH)) {
+          foreach (explode(",", $pattern->BYMONTH) as $month) {
+            $mth .= (new DateTime("2019-03-15"))->format("M,");
+          }
+        }
+
+        $freq = trim($pos, ",") . " " . $freq . " of " . trim($mth, ",");
+
+        if (isset($pattern->COUNT)) {
+          $end = " years!";
+        }
+        break;
+
+    }
+    // Put it all together.
+    $recur = t(" @freq <b><i>@until</i></b>@exclusions - <span style='color:blue;font-weight:bold'>@nextrun</span>", [
+      "@freq" => $freq,
+      "@until" => $end,
+      "@exclusions" => $exdates,
+      "@nextrun" => "Next Run: " . $nextrun,
+    ]);
+    $pattern_msg = t("From: @from @recur", [
+      "@from" => $from,
+      "@recur" => $recur,
+    ]);
   }
-  $recur = t("every @interval @freq @until", [
-    "@interval" => $pattern->INTERVAL ?: "",
-    "@freq" => ($pattern->FREQ == "DAILY" ? "day" : "week"),
-    "@until" => $end,
-  ]);
-  $pattern_msg = t("From: @from, @recur", [
-    "@from" => \Drupal::service('date.formatter')->format(strtotime($pattern->value), "custom", "M d Y"),
-    "@recur" => $recur,
-  ]);
   $markup[] = Markup::create("<span class='info'>" . $pattern_msg . "</span>");
 
   return [
