@@ -223,15 +223,14 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
         ->format(strtotime($pattern->value), "custom", "M d Y");
     }
     if (strtotime($pattern->value) < strtotime("now")) {
-      $nextrun = " *expired";
+      $nextrun = " <span style='color:red;font-weight:bold'>*expired</span>";
     }
     else {
-      $nextrun = " Next Run: $from";
+      $nextrun = " <span style='color:blue;font-weight:bold'>Next: $from</span>";
     }
-    $pattern_msg = t("<b><i>ONCE ONLY</i></b> on @from,<span style='color:blue;font-weight:bold'>@nextrun</span>",
+    $pattern_msg = t("<b><i>ONCE ONLY</i></b> on @from - $nextrun",
       [
         "@from" => $from,
-        "@nextrun" => $nextrun ?: "",
       ]
     );
 
@@ -240,17 +239,17 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
     $pattern = (object) $pattern[0]->getParts();
     $exdates = explode("\n", $para["entity"]->get("field_recurrence")->rrule);
     if (isset($exdates[1])) {
-      $exdates = " (w/exclusions)";
+      $exdates = TRUE;
     }
     else {
-      $exdates = "";
+      $exdates = FALSE;
     }
     // The Rule start date.
     if (isset($pattern->DTSTART)) {
-      $from = $pattern->DTSTART->format("M d Y,");
+      $from = $pattern->DTSTART->format("M d Y");
     }
     // The rule end date.
-    $end = ", FOREVER";
+    $end = "FOREVER";
     if (isset($pattern->UNTIL)) {
       $end = "until " . $pattern->UNTIL->format("M d Y");
     }
@@ -260,8 +259,12 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
     // Find the next day this Rule will run.
     $nextrun = " *expired";
     if ($para["entity"]->get("field_enabled")->value == 1) {
+      $isToday = FALSE;
       foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
-        if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("now")) {
+        if (strtotime($occurrence->getStart()->format("M d Y")) == strtotime("midnight")) {
+          $isToday = TRUE;
+        }
+        if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("midnight")) {
           $nextrun = $occurrence->getStart()->format("M d Y");
           break;
         }
@@ -385,23 +388,34 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
 
     }
     // Put it all together.
-    $recur = t(" @freq <b><i>@until</i></b>@exclusions - <span style='color:blue;font-weight:bold'>@nextrun</span>", [
+    $recur = t("@freq: <b><i>@until</i></b>@exclusions - <span style='color:blue;font-weight:bold'>@nextrun</span>", [
       "@freq" => $freq,
       "@until" => $end,
-      "@exclusions" => $exdates,
-      "@nextrun" => "Next Run: " . $nextrun,
+      "@exclusions" => ($exdates ? " (w/exclusions)" : ""),
+      "@nextrun" => "Next: " . $nextrun,
     ]);
-    $pattern_msg = t("From: @from @recur", [
+    $pattern_msg = t("From: @from: @recur", [
       "@from" => $from,
       "@recur" => $recur,
     ]);
   }
   $markup[] = Markup::create("<span class='info'>" . $pattern_msg . "</span>");
 
-  return [
+  $out = [
     'attributes' => $attributes,
     'content' => $markup,
+    'id' => TRUE,
   ];
+  if ($isToday) {
+    $out['icon'] = [
+      "today" => [
+        "#markup" => "",
+        "#prefix" => "<span class=\"paragraphs-icon paragraphs-icon-today\" title=\"Message is eligible today.\">",
+        "#suffix" => "</span>",
+      ],
+    ];
+  }
+  return $out;
 }
 
 /**
