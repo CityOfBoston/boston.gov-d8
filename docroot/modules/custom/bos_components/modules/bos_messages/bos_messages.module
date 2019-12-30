@@ -223,16 +223,12 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
         ->format(strtotime($pattern->value), "custom", "M d Y");
     }
     if (strtotime($pattern->value) < strtotime("now")) {
-      $nextrun = " <span style='color:red;font-weight:bold'>*expired</span>";
+      $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
     }
     else {
       $nextrun = " <span style='color:blue;font-weight:bold'>Next: $from</span>";
     }
-    $pattern_msg = t("<b><i>ONCE ONLY</i></b> on @from - $nextrun",
-      [
-        "@from" => $from,
-      ]
-    );
+    $pattern_msg = sprintf("<b><i>ONCE ONLY</i></b> on %s - %s", $from, $nextrun);
 
   }
   else {
@@ -257,7 +253,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
       $end = "for $pattern->COUNT";
     }
     // Find the next day this Rule will run.
-    $nextrun = " *expired";
+    $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
     if ($para["entity"]->get("field_enabled")->value == 1) {
       $isToday = FALSE;
       foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
@@ -265,7 +261,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
           $isToday = TRUE;
         }
         if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("midnight")) {
-          $nextrun = $occurrence->getStart()->format("M d Y");
+          $nextrun = "<span style='color:blue;font-weight:bold'>Next: " . $occurrence->getStart()->format("M d Y") . "</span>";
           break;
         }
       }
@@ -388,16 +384,12 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
 
     }
     // Put it all together.
-    $recur = t("@freq: <b><i>@until</i></b>@exclusions - <span style='color:blue;font-weight:bold'>@nextrun</span>", [
+    $recur = t("@freq: <b><i>@until</i></b>@exclusions", [
       "@freq" => $freq,
       "@until" => $end,
       "@exclusions" => ($exdates ? " (w/exclusions)" : ""),
-      "@nextrun" => "Next: " . $nextrun,
     ]);
-    $pattern_msg = t("From: @from: @recur", [
-      "@from" => $from,
-      "@recur" => $recur,
-    ]);
+    $pattern_msg = sprintf("From: %s: %s - %s", $from, $recur, $nextrun);
   }
   $markup[] = Markup::create("<span class='info'>" . $pattern_msg . "</span>");
 
