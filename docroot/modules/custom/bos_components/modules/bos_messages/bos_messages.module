@@ -206,6 +206,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
   $message = preg_replace("/\[[a-zA-Z\:\-_\.]*\]/", "{token}", $message) ?: "";
   $message = advanced_text_formatter_trim_text($message, $at_settings);
   $markup[] = Markup::create("<span class='body-text'>" . $message . "</span>");
+  $isToday = FALSE;
   if (NULL == ($pattern = $para["entity"]->field_recurrence[0]->getHelper()->getRules())) {
     // Simplified once-only run.
     $pattern = $para["entity"]->get("field_recurrence");
@@ -224,6 +225,9 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
     }
     if (strtotime($pattern->value) < strtotime("now")) {
       $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
+    }
+    elseif (strtotime($pattern->value) == strtotime("midnight")) {
+      $isToday = TRUE;
     }
     else {
       $nextrun = " <span style='color:blue;font-weight:bold'>Next: $from</span>";
@@ -255,7 +259,6 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
     // Find the next day this Rule will run.
     $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
     if ($para["entity"]->get("field_enabled")->value == 1) {
-      $isToday = FALSE;
       foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
         if (strtotime($occurrence->getStart()->format("M d Y")) == strtotime("midnight")) {
           $isToday = TRUE;
