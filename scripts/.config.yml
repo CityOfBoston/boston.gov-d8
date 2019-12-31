@@ -1,0 +1,183 @@
+project:
+  docroot: ${REPO_ROOT}/${lando_config_webroot}
+  # host_os can be mac or linux and switchs build files. (principly xdebug settings).
+  profile:
+    name: bos_profile
+  themes:
+    - bos_theme
+  php:
+    memory_size: 1024M
+
+# Drupal Account Credentials. These are used for installing Drupal.
+drupal:
+  account:
+    name: admin
+    password: admin
+    mail: no-reply@acquia.com
+  multisite:
+    # Use 'default' as the name if there are no multisites.
+    name: default
+
+build:
+  local:
+    # Build Type = dev or prod.
+    type: dev
+    config:
+      # Define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
+      # aquia requires ./config/default:
+      #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
+      sync: "../config/default"
+    database:
+      # Set source to 'initialize' to start a fresh install.
+      # Otherwise set it to 'sync' (and provide a drush-alias) to sync from the drush-alias environment.
+      # Tip: Develop environment has database in closest state to the github repo configs.
+      source: sync
+      drush_alias: "@bostond8.dev"
+      host: boston_database_1
+      port: 3306
+
+  travis:
+    develop:
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
+      # none = don't alter modules enabled from configuration
+      type: dev
+      suppress_output: 0
+      database:
+        # Set source to 'initialize' to start a fresh install.
+        # Otherwise set it to 'sync' to sync from the drush-alias environment.
+        source: initialize
+        drush_alias: "@bostond8.dev"
+      config:
+        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
+        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
+        sync: "true"
+    replacephing:
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
+      # none = don't alter modules enabled from configuration
+      type: dev
+      suppress_output: 0
+      database:
+        # Set source to 'initialize' to start a fresh install.
+        # Otherwise set it to 'sync' to sync from the drush-alias environment.
+        source: initialize
+        drush_alias: "@bostond8.dev"
+      config:
+        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
+        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
+        sync: "true"
+    master:
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
+      # none = don't alter modules enabled from configuration
+      type: prod
+      suppress_output: 0
+      database:
+        # Set source to 'initialize' to start a fresh install.
+        # Otherwise set it to 'sync' to sync from the drush-alias environment.
+        source: initialize
+        drush_alias: "@bostond8.test"
+      config:
+        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
+        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
+        sync: "true"
+
+deploy:
+  # Each element of this deploy node is a branch in the main CoB repo.
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
+  #          If your branchname must have a space or "-", then in this file just remove them (i.e. my-branch = mybranch)
+
+  develop:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${REPO_ROOT}/deploy
+    # Name of the target branch in the Acquia repo. Should be quoted if it contains - or _ or spaces.
+    deploy_branch: "develop-deploy"
+    # Path to the drush command in the Travis container.
+    travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush_alias: "@bostond8.dev"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
+    excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
+    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit_message: "Automated commit by Travis CI for DEVELOP Build \#\${travis.id}"
+    # Dry-run (for testing).
+    dry_run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy_db: false
+    drush_db_source: "@bostond8.test"
+    # user:host for (Acquia) git remote to be used for deployment.
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
+  replacephing:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${REPO_ROOT}/deploy
+    # Name of the target branch in the Acquia repo.
+    deploy_branch: "deleteme-deploy"
+    # Path to the drush command in the Travis container.
+    travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush_alias: "@bostond8.uat"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
+    excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
+    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit_message: "Automated commit by Travis CI for ON-DEMAND Build \#\${travis.id}"
+    # Dry-run (for testing).
+    dry_run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy_db: false
+    drush_db_source: "@bostond8.dev"
+    # user:host for (Acquia) git remote to be used for deployment.
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
+  master:
+    # Folder in Travis container where deploy files will be "built"
+    dir: ${REPO_ROOT}/deploy
+    # Name of the target branch in the Acquia repo. Should be quoted if it contains - or _ or spaces.
+    deploy_branch: "master-deploy"
+    # Path to the drush command in the Travis container.
+    travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
+    # Alias for deploy target Aquia server.
+    drush_alias: "@bostond8.test"
+    # Definition of files that will and wont be copied from build to deploy.
+    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
+    excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
+    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
+    # Message we want to appear in Acquia repo for the deployment commit.
+    commit_message: "Automated commit by Travis CI for MASTER Build \#\${travis.id}"
+    # Dry-run (for testing).
+    dry_run: false
+    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
+    copy_db: false
+    drush_db_source: "@bostond8.prod"
+    # user:host for (Acquia) git remote to be used for deployment.
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+
+# Configuration settings for new git repository.
+git:
+  # [Optional] Set this node (private_repo) if there is a private repo that needs to
+  # be included as part of the build:
+  # - It is expected that the repo is hosted on GitHub.
+  # - The development machine *must* have a valid ssh key for this remote repo.
+  # - The repo can contain a settings file (e.g. private.settings.php)
+  # - The folder structure of the private repo must exactly match the folder structure
+  #   of the main repo so that files can be copied across to the correct folders.
+  private_repo:
+    repo: CityOfBoston/boston.gov-d8-private.git
+    branch: develop
+    deploy_branch: develop
+    # Where the repo will be cloned to.
+    local_dir: ${REPO_ROOT}/setup/private
+    # Provide the path to a settings script (relative to the private repo root),
+    # which will be copied to the main repo and then set up to be called from (i.e. extend)
+    # the sites main settings.php script.
+    settings_file: sites/default/settings/private.settings.php
+
+composer:
+  bin: ${REPO_ROOT}/vendor/bin
+
+drush:
+  bin: ${REPO_ROOT}/vendor/bin/drush
+  cmd: ${REPO_ROOT}/vendor/bin/drush  -r ${REPO_ROOT}/docroot -l default
+  root: ${REPO_ROOT}/docroot
