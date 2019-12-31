@@ -12,6 +12,7 @@ use Drupal\editor\Entity\Editor;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -41,6 +42,23 @@ function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInt
       "body" => "cds-d t--subinfo",
     ],
   ]);
+}
+
+/**
+ * Implements hook_views_post_execute().
+ *
+ * This de-duplicates the output from the view/query.
+ */
+function bos_messages_views_post_execute(ViewExecutable $view) {
+  if ($view->current_display == "motd") {
+    $check = [];
+    foreach ($view->result as $key => $row) {
+      if (isset($check[$row->nid])) {
+        unset($view->result[$key]);
+      }
+      $check[$row->nid] = $row->paragraphs_item_field_data_node__field_messages_id;
+    }
+  }
 }
 
 /**
