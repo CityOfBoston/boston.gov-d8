@@ -82,7 +82,7 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
         }
 
         if (!empty($result["id"])) {
-          $para_field["top"]["type"]["label"]["#markup"] .= " " . $element["entity"]->id();
+          $para_field["top"]["type"]["label"]["#markup"] .= " (" . $element["entity"]->id() . ")";
         }
 
         if (isset($result["icon"])) {
