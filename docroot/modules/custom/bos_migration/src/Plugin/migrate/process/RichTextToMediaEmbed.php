@@ -36,9 +36,32 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
   use FilesystemReorganizationTrait;
   use MediaEntityTrait;
 
-  protected static $MediaWYSIWYGTokenREGEX = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
+  /**
+   * Regex to identify the media embedded objects.
+   *
+   * @var string
+   */
+  protected static $mediaWysiwygTokenRegex = '/\[\[\{.*?"type":"media".*?\}\]\]/s';
+
+  /**
+   * Source from the $row object.
+   *
+   * @var array
+   */
   protected $source = [];
+
+  /**
+   * The row from the migration.
+   *
+   * @var \Drupal\migrate\Row
+   */
   protected $row;
+
+  /**
+   * MigrateExecutableInterface for the class.
+   *
+   * @var \Drupal\migrate\MigrateExecutableInterface
+   */
   protected $migrateExecutable;
 
   /**
@@ -314,7 +337,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
    */
   protected function replaceD7MediaEmbeds(&$value) {
     $count = 1;
-    preg_match_all(self::$MediaWYSIWYGTokenREGEX, $value, $matches);
+    preg_match_all(self::$mediaWysiwygTokenRegex, $value, $matches);
     if (!empty($matches[0])) {
       foreach ($matches[0] as $match) {
         $replacement = $this->mediaWysiwygTokenToMarkup($match);
@@ -355,7 +378,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
           $css_properties = [];
           foreach (array_map('trim', explode(";", $tag_info['attributes']['style'])) as $declaration) {
             if ($declaration != '') {
-              list($name, $value) = array_map('trim', explode(':', $declaration, 2));
+              [$name, $value] = array_map('trim', explode(':', $declaration, 2));
               $css_properties[strtolower($name)] = $value;
             }
           }
