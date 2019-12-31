@@ -52,7 +52,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
   $motd = $variables['paragraph'];
   $status_item = $motd->getParentEntity();
 
-  $variables["show_message"] = FALSE;
+  $variables["cob"]["show_message"] = FALSE;
 
   // Only do this if the parent status_item hasn't already had a message
   // processed.
@@ -70,13 +70,13 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
         $start_date = new \DateTime($date["start_date"]["#text"]);
         $end_date = new \DateTime($date["end_date"]["#text"]);
         if ($today >= $start_date && $today <= $end_date) {
-          $variables["show_message"] = TRUE;
+          $variables["cob"]["show_message"] = TRUE;
           $motd_processed[$status_item->id()] = $motd->id();
         }
       }
     }
 
-    if ($variables["show_message"]) {
+    if ($variables["cob"]["show_message"]) {
       if (isset($motd->field_link[0])) {
         $paragraph = Paragraph::load($motd->field_link[0]->target_id);
         if (NULL != $link = _bos_core_paragraph_extract_link($paragraph)) {
