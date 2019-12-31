@@ -81,6 +81,16 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
           $para_field["top"]["summary"]["#attributes"] = $result['attributes'];
         }
 
+        if (!empty($result["id"])) {
+          $para_field["top"]["type"]["label"]["#markup"] .= " (" . $element["entity"]->id() . ")";
+        }
+
+        if (isset($result["icon"])) {
+          foreach ($result["icon"] as $key => $value) {
+            $para_field["top"]["icons"]["items"]["today"] = $value;
+          }
+        }
+
       }
 
     }

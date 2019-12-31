@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_theme().
@@ -48,13 +49,22 @@ function node_status_item_preprocess_viewfield_item__field_list__status_items(&$
   if (!empty($timestamp)) {
     // See if this date falls on a special named date (i.e. a holiday or city
     // event, etc.).
-    $result = \Drupal::entityQuery('taxonomy_term')
+    $dt = new DateTime("now");
+    $dt = $dt->format("Y-m-d");
+    $query = \Drupal::entityQuery('taxonomy_term');
+    $group = $query->orConditionGroup()
+      ->condition('field_date', $dt . "T04:00:00", "=")
+      ->condition('field_date', $dt . "T05:00:00", "=")
+      ->condition('field_date', $dt, "=");
+    $result = $query
       ->condition('vid', 'holidays')
-      ->condition('field_date', $timestamp . 'T00:00:00')
+      ->condition($group)
       ->range(0, 1)
       ->execute();
     if (!empty($result)) {
-      $variables["header"]["text"] = taxonomy_term_load(key($result['name']));
+      $tid = end($result);
+      $taxonomy = Term::load($tid);
+      $variables["header"]["text"] = $taxonomy->get('name')->value;
       $variables['header']['date_attrib']->removeClass("str-t");
       $variables['header']['date_attrib']->addClass("str-st");
     }
