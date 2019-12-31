@@ -20,11 +20,39 @@ use stdClass;
  */
 class SwiftypeController extends ControllerBase {
 
-  protected $action;
+  /**
+   * Request object for swifttype class.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request|null
+   */
   protected $request;
+
+  /**
+   * Logger for swifttype class.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
   protected $log;
+
+  /**
+   * Mail object for swifttype class.
+   *
+   * @var \Drupal\Core\Mail\MailManager
+   */
   protected $mail;
+
+  /**
+   * Google Analytics object for swifttype class.
+   *
+   * @var \Drupal\bos_core\Services\BosCoreGAPost
+   */
   protected $gapost;
+
+  /**
+   * EntityTypeManager for class.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
   protected $entityTypeManager;
 
   /**
@@ -166,7 +194,7 @@ class SwiftypeController extends ControllerBase {
   /**
    * Manages multi-page retrieval of search results.
    *
-   * @param \stdClass $info
+   * @param object $info
    *   Search info.
    *
    * @return array

@@ -18,8 +18,26 @@ trait FilesystemReorganizationTrait {
    * @var string
    */
   protected static $localReferenceREGEX = '((http(s)?://)??((edit|www)\.)?boston\.gov|^(/)?sites/default/files/)';
+
+  /**
+   * Regex to define the assets domain.
+   *
+   * @var string
+   */
   protected static $assetsReferenceREGEX = '((http(s)?://)??(assets|patterns).boston\.gov)';
+
+  /**
+   * Regex to capture the city of boston subdomains.
+   *
+   * @var string
+   */
   protected static $cobDomainREGEX = '~^(http(s)?://)??(.*\.)?boston\.gov/~';
+
+  /**
+   * Regex to capture the public city of boston domains.
+   *
+   * @var string
+   */
   protected static $cobPublicREGEX = '~((http(s)?://)??((edit|www)\.)?boston\.gov/)?(/)?sites/default/files/~';
 
   /**
@@ -165,7 +183,7 @@ trait FilesystemReorganizationTrait {
     // Move public files out of root directory.
     if (strpos($uri, 'public://') !== FALSE) {
       $relative_uri = str_replace('public://', NULL, $uri);
-      // Now that we have removed he public stream wrapper, files in the root
+      // Now that we have removed the public stream wrapper, files in the root
       // directory should not contain a slash in their URI.
       $source_uri = $properties['uri'] ?: $uri;
       if (strpos($relative_uri, '/') === FALSE) {

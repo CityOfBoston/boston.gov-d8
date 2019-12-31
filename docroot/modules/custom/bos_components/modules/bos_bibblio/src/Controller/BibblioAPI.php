@@ -13,6 +13,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class BibblioAPI extends ControllerBase {
 
+  /**
+   * Current request object for this class.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
   public $request;
 
   /**
