@@ -76,7 +76,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       }
     }
 
-    if (!empty($variables["show_message"])) {
+    if ($variables["show_message"]) {
       if (isset($motd->field_link[0])) {
         $paragraph = Paragraph::load($motd->field_link[0]->target_id);
         if (NULL != $link = _bos_core_paragraph_extract_link($paragraph)) {
@@ -116,7 +116,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       }
 
       // Set the title to be the display_title.
-      $variables['title'] = $status_item->field_title->value;
+      $variables['title'] = $status_item->field_title->value . "-" . $variables['paragraph']->id();
     }
   }
 
@@ -223,11 +223,12 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
       $from = \Drupal::service('date.formatter')
         ->format(strtotime($pattern->value), "custom", "M d Y");
     }
-    if (strtotime($pattern->value) < strtotime("now")) {
+    if (strtotime($pattern->value) < strtotime("midnight")) {
       $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
     }
     elseif (strtotime($pattern->value) == strtotime("midnight")) {
       $isToday = TRUE;
+      $nextrun = " <span style='color:blue;font-weight:bold'>Showing Now</span>";
     }
     else {
       $nextrun = " <span style='color:blue;font-weight:bold'>Next: $from</span>";
