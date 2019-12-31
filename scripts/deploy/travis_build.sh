@@ -43,7 +43,7 @@
     elif [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
         branch="${TRAVIS_BRANCH}"
     fi
-    TRAVIS_BRANCH_SANITIZED=${branch/-/}
+    TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH/-/}
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_type" && build_travis_type="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_suppress_output" && quiet="${!src}"
