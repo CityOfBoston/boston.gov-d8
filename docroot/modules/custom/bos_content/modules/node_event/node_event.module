@@ -229,7 +229,10 @@ function node_event_preprocess_node__event(&$variables) {
   // Check for cancelled state.
   $node = $variables['elements']['#node'];
   if ($node->hasField("field_cancelled")) {
-    $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
+    $variables["is_cancelled"] = ($node->get("field_cancelled")->value == "1");
+  }
+  if ($node->hasField("field_cancel_event")) {
+    $variables["is_cancelled"] = ($node->get("field_cancel_event")->value == "1");
   }
 
   // Now make and render the Intro_image block.
