@@ -259,8 +259,9 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
 
     $element['exceptions'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Excluded Days'),
-      '#description' => $this->t('List of days to exclude, one per line. Ex 2012-06-09'),
+      '#attributes' => ["style" => ["display:none"]],
+      /* '#title' => $this->t('Excluded Days'),
+      '#description' => $this->t('List of days to exclude, one per line. Ex 2012-06-09'),*/
       '#states' => [
         'invisible' => [
           [':input[name="' . $nameMode . '"]' => ['value' => static::MODE_ONCE]],
