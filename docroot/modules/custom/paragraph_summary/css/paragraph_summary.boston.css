@@ -65,7 +65,7 @@
   font-weight: normal;
   color: #555;
 }
-.cob-para-enabled .paragraphs-description .summary-content::before {
+.cob-para-enabled .paragraphs-description .summary-content:first-child::before {
   content: "\2713 ";
   color: green;
   font-size: 150%;
@@ -121,4 +121,10 @@
 /* Remove the icon indicating # of children. */
 .paragraphs-badge {
   display:none;
+}
+/* Used for status items when message is showing today */
+.paragraphs-icon-today::before {
+  content: "\2794";
+  font-size: 150%;
+  color: maroon;
 }

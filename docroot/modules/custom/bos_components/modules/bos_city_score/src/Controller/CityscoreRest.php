@@ -20,11 +20,46 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class CityscoreRest extends ControllerBase {
 
+  /**
+   * Current/last API action.
+   *
+   * @var string
+   */
   protected $action;
+
+  /**
+   * The current request object for the class.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request|null
+   */
   protected $request;
+
+  /**
+   * Logger object for the class.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
   protected $log;
+
+  /**
+   * Mail object ofr the class.
+   *
+   * @var \Drupal\Core\Mail\MailManager
+   */
   protected $mail;
+
+  /**
+   * Google Analytics object for class.
+   *
+   * @var \Drupal\bos_core\Services\BosCoreGAPost
+   */
   protected $gapost;
+
+  /**
+   * EntityTypeManager object for the class.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
   protected $entityTypeManager;
 
   /**
@@ -318,7 +353,7 @@ class CityscoreRest extends ControllerBase {
                       Content is controlled by a Cityscore <b>View</b>.</p>
                       <h3>RESTful endpoints.</h3>
                       <p>API Endpoints are used so that external entities can update or retrieve the latest CityScore data.  Updating is controlled to registered users, but data retrieval is unsecured.</p>
-                      <p>The API endpoints can be accessed from <b>" . \Drupal::request()->getSchemeAndHttpHost() . "/{endpoint}</b> where <b>{endpoint}</b> is: 
+                      <p>The API endpoints can be accessed from <b>" . \Drupal::request()->getSchemeAndHttpHost() . "/{endpoint}</b> where <b>{endpoint}</b> is:
                       <ul>
                       <li><b>rest/cityscore/load</b>|<i>(secured|POST)</i> - Allows someone with a token and correctly formatted payload to update cityscore taxonomy items.<br/>
                       <span style='margin-left: 25px'>Requires a correctly formatted POST message with an <b>api-key</b> string and <b>payload</b> JSON string.<br/>
