@@ -8,6 +8,7 @@
 use Drupal\Core\Render\Element;
 use Drupal\Core\Template\Attribute;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -27,6 +28,24 @@ function node_status_item_theme() {
       'base hook' => 'viewfield_item',
     ],
   ];
+}
+
+/**
+ * Implements hook_views_post_execute().
+ *
+ * This de-duplicates nodes from the output from the view/query.
+ */
+function node_status_item_views_post_execute(ViewExecutable $view) {
+  if ($view->current_display == "motd") {
+    // An array with keys equal to the status_item node id.
+    $check = [];
+    foreach ($view->result as $key => $row) {
+      if (isset($check[$row->nid])) {
+        unset($view->result[$key]);
+      }
+      $check[$row->nid] = $row->paragraphs_item_field_data_node__field_messages_id;
+    }
+  }
 }
 
 /**
