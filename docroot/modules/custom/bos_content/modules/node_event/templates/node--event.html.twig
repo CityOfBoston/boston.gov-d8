@@ -129,11 +129,12 @@
       {{ title_suffix }}
 
       {% if is_cancelled %}
+
         <div class="supporting-text squiggle-border-bottom">Reason for cancellation:
-          {% if field_extra_info_event.und[0].safe_value %}
-            {{ field_extra_info_event.und[0].safe_value }}
-            {% else %}
-              "Please contact organizer."
+          {% if content.field_extra_info_event %}
+            {{ content.field_extra_info_event }}
+          {% else %}
+            "Please contact organizer."
           {% endif %}
         </div>
       {% else %}

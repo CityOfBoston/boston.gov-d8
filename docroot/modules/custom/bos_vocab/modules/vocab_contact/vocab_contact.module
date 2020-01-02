@@ -124,7 +124,7 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
             // Figure out which type of department we have
             // and get it's replacement.
             if ($dept_node->hasField('field_department_type')) {
-              $dept_type = $dept_node->getTranslation("und")->field_department_type;
+              $dept_type = $dept_node->getTranslation($langcode)->field_department_type;
               if (!empty($dept_type)) {
                 switch ($dept_type->value) {
                   case 'cabinet':
