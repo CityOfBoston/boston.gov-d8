@@ -72,17 +72,26 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
 
   $variables["cob"]["show_message"] = FALSE;
 
+
   // Only do this if the parent status_item hasn't already had a message
   // processed.
   if (isset($status_item) && !isset($motd_processed[$status_item->id()])) {
 
+    // If the arg is not the server date, then get the date here.
+    $today = new \DateTime("America/New_York");
+
     // Make sure the recurrences field has a value.
-    if (isset($variables["content"]["field_recurrence"][0]['#occurrences'])
-      && count($variables["content"]["field_recurrence"][0]['#occurrences'])) {
-
-      $date = $variables["content"]["field_recurrence"][0]['#occurrences'][0];
-      $today = new \DateTime("America/New_York");
-
+    $field_recurrence = $variables["content"]["field_recurrence"][0];
+    if (!$field_recurrence["#is_recurring"]) {
+      $start_date = new \DateTime($field_recurrence["#date"]["start_date"]["#text"]);
+      $end_date = new \DateTime($field_recurrence["#date"]["end_date"]["#text"]);
+      if ($today >= $start_date && $today <= $end_date) {
+        $variables["cob"]["show_message"] = TRUE;
+        $motd_processed[$status_item->id()] = $motd->id();
+      }
+    }
+    elseif (isset($field_recurrence['#occurrences']) && count($field_recurrence['#occurrences'])) {
+      $date = array_shift($field_recurrence['#occurrences']);
       // If $today is in the occurence range then show.
       if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
         $start_date = new \DateTime($date["start_date"]["#text"]);
@@ -95,8 +104,8 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
     }
 
     if ($variables["cob"]["show_message"]) {
-      if (isset($motd->field_link[0])) {
-        $paragraph = Paragraph::load($motd->field_link[0]->target_id);
+      if (!empty($motd->field_link) && $motd->field_link->count()) {
+        $paragraph = Paragraph::load($motd->field_link->target_id);
         if (NULL != $link = _bos_core_paragraph_extract_link($paragraph)) {
           $variables['card_url'] = $link['url'];
         }
