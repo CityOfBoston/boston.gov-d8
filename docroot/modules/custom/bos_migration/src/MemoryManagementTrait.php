@@ -109,7 +109,7 @@ trait MemoryManagementTrait {
       if ($pct_memory > (0.90 * $threshold)) {
         \Drupal::messenger()->addWarning(
           t(
-            'Memory usage is now @usage (@pct% of limit @limit), not enough reclaimed, starting new batch',
+            "Memory usage is now @usage (@pct% of limit @limit), not enough reclaimed, starting new batch",
             [
               '@pct' => round($pct_memory * 100),
               '@usage' => $this->formatSize($usage),

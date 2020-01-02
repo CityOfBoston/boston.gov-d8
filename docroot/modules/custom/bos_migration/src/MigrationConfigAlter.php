@@ -47,9 +47,32 @@ class MigrationConfigAlter {
    */
   public $source;
 
+  /**
+   * Flag whether files will be moved.
+   *
+   * @var string
+   */
   protected $fileMove;
+
+  /**
+   * Flag whether files will be copied.
+   *
+   * @var string
+   */
   protected $fileCopy;
+
+  /**
+   * Flag whether files will overwrite.
+   *
+   * @var string
+   */
   protected $destFileExists;
+
+  /**
+   * Flag whether files will overwrite.
+   *
+   * @var string
+   */
   protected $destFileExistsExt;
 
   /**
