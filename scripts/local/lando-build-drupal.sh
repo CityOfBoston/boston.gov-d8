@@ -140,9 +140,9 @@
     # php sweeps for ini files during php bootstraps.
     # NOTE: you should restart the container (e.g. using portainer) to implement changes.
     # NOTE: Changes made in the PHP ini files provided by Lando will be lost/reset when Lando container is restarted.
-    if [[ "${OS}" == "LINUX" ]]; then
+    if [[ "$OS" == "LINUX" ]]; then
         xdebug="${LANDO_MOUNT}/xdebug_linux.ini"
-    elif [[ "${OS}" == "OSX" ]]; then
+    elif [[ "$OS" == "OSX" ]]; then
         xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
     fi
     if [[ -n ${xdebug} ]]; then
