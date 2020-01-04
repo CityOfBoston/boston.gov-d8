@@ -64,6 +64,24 @@ class SalesforceEventsSubscriber implements EventSubscriberInterface {
           }
         }
       }
+
+      $truthy = ["True", "true", "Yes", "yes"];
+
+      $sf_lottery = $sf_data->field('Lottery__c');
+      if (!empty($sf_lottery)) {
+        $event->getEntity()->field_mah_lottery_indicator = $sf_lottery;
+        if (in_array($sf_lottery, $truthy)) {
+          $event->getEntity()->field_mah_lottery_indicator = "Yes";
+        }
+      }
+      /* print_r( $sf_data->fields());
+      if (!empty($sf_data->field('Resale__c'))) {
+      $sf_resale = $sf_data->field('Resale__c');
+      $event->getEntity()->field_mah_resale = $sf_resale;
+      if (in_array($sf_resale, $truthy)) {
+      $event->getEntity()->field_mah_resale = "Yes";
+      }
+      } */
     }
   }
 
