@@ -104,6 +104,8 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
+    /** @var \Drupal\date_recur\Plugin\Field\FieldType\DateRecurFieldItemList|\Drupal\date_recur\Plugin\Field\FieldType\DateRecurItem[] $items */
+    $elementParents = array_merge($element['#field_parents'], [$this->fieldDefinition->getName(), $delta]);
     $element['#element_validate'][] = [static::class, 'validateModularWidget'];
     $element['#after_build'][] = [static::class, 'afterBuildModularWidget'];
     $element['#theme'] = 'bos_messages_mod_recur_widget';
@@ -114,6 +116,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     $rule = $this->getRule($item);
     $parts = $rule ? $rule->getParts() : [];
     $count = $parts['COUNT'] ?? NULL;
+    $timeZone = $this->getDefaultTimeZone($item);
     $endsDate = NULL;
     try {
       $until = $parts['UNTIL'] ?? NULL;
@@ -123,14 +126,15 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
       elseif ($until instanceof \DateTimeInterface) {
         $endsDate = $until;
       }
+      if ($endsDate) {
+        // UNTIL is _usually_ in UTC, adjust it to the field time zone.
+        $endsDate->setTimezone(new \DateTimeZone($timeZone));
+      }
     }
     catch (\Exception $e) {
     }
 
     $fieldModes = $this->getFieldModes($grid);
-
-    $element['mode'] = $this->getFieldMode($item);
-    $element['mode']['#title'] = 'Display';
 
     // We are intentionally locking down recurrance periods to a single day.
     // A day is 24 hours, starting at 00:00:01 and ending at 23:59:59.
@@ -141,17 +145,25 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     $element['start'] = [
       '#type' => 'date',
       '#title' => $this->t('Start visibility date'),
-      '#default_value' => $item->start_date->format('Y-m-d'),
-      '#description' => $this->t('A message lasts for one day. To make it last longer than one day, or to make it repeat on a schedule, change the "Frequency" select list to an appropriate interval.'),
+      '#default_value' => !empty($item->start_date) ? $item->start_date->format('Y-m-d') : "",
+      '#description' => $this->t('A message is visible for one day, midnight to midnight. <br>To make it visible for morer than one day, or to make it repeat on a schedule, change the "Message frequency" select list to an appropriate interval.'),
+      // \Drupal\Core\Datetime\Element\Datetime::valueCallback tries to change
+      // the time zone to current users timezone if not set, Set the timezone
+      // here so the value doesn't change.
+      '#date_timezone' => $timeZone,
     ];
     $element['end'] = [
       '#title' => $this->t('End visibility'),
       '#type' => 'date',
-      '#default_value' => $item->end_date->format('Y-m-d'),
+      '#default_value' => !empty($item->end_date) ? $item->start_date->format('Y-m-d') : "",
+      '#date_timezone' => $timeZone,
       '#access' => FALSE,
     ];
-    $element['time_zone'] = $this->getFieldTimeZone($this->getDefaultTimeZone($item));
+    $element['time_zone'] = $this->getFieldTimeZone($timeZone);
     $element['time_zone']['#access'] = FALSE;
+
+    $element['mode'] = $this->getFieldMode($item);
+    $element['mode']['#title'] = 'Message frequency';
 
     $element['daily_frequency'] = [
       '#type' => 'radios',
@@ -215,6 +227,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     $endsModeDefault = $endsDate ? DateRecurModularWidgetOptions::ENDS_MODE_ON_DATE : ($count > 0 ? DateRecurModularWidgetOptions::ENDS_MODE_OCCURRENCES : DateRecurModularWidgetOptions::ENDS_MODE_INFINITE);
     $element['ends_mode'] = $this->getFieldEndsMode();
     $element['ends_mode']['#states'] = $this->getVisibilityStates($element, $fieldModes['ends_mode'] ?? []);
+    $element['ends_mode']['#title'] = $this->t('End visibility');
     $element['ends_mode']['#title_display'] = 'before';
     $element['ends_mode']['#default_value'] = $endsModeDefault;
     // Hide or show 'On date' / 'number of occurrences' checkboxes depending on
@@ -242,12 +255,23 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
       ];
     }
 
+    // States dont yet work on date time so put it in a container.
+    // @see https://www.drupal.org/project/drupal/issues/2419131
     $element['ends_date'] = [
+      '#type' => 'container',
+    ];
+    $element['ends_date']['ends_date'] = [
       '#type' => 'date',
       '#title' => $this->t('End before this date'),
       '#title_display' => 'visible',
-      '#description' => $this->t('No occurrences can begin after this date.'),
-      '#default_value' => $endsDate ? $endsDate->format('Y-m-d') : NULL,
+      '#description' => $this->t('No messages will show after this date.'),
+      '#default_value' => $endsDate ? $endsDate->format("Y-m-d") : NULL,
+      // Fix values tree thanks to state+container hack.
+      '#parents' => array_merge($elementParents, ['ends_date']),
+      // \Drupal\Core\Datetime\Element\Datetime::valueCallback tries to change
+      // the time zone to current users timezone if not set, Set the timezone
+      // here so the value doesn't change.
+      '#date_timezone' => $timeZone,
     ];
     $element['ends_date']['#states']['visible'] = [];
     foreach ($fieldModes['ends_date'] ?? [] as $mode) {
@@ -259,7 +283,8 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
 
     $element['exceptions'] = [
       '#type' => 'textarea',
-      '#attributes' => ["style" => ["display:none"]],
+//      '#attributes' => ["style" => ["display:none"]],
+      '#access' => FALSE,
       /* '#title' => $this->t('Excluded Days'),
       '#description' => $this->t('List of days to exclude, one per line. Ex 2012-06-09'),*/
       '#states' => [
@@ -269,6 +294,10 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
       ],
     ];
 
+/*    if (empty($item->timezone)) {
+      $z = $this->getDefaultTimeZone($item);
+      $item->set("timezone", $z);
+    }
     $helper = $item->getHelper();
     if (method_exists($helper, 'getExdates')) {
       $exdates = $helper->getExdates();
@@ -277,7 +306,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
         $exdate_parts[] = $exdate->format('Y-m-d');
       }
       $element['exceptions']['#default_value'] = implode("\n", $exdate_parts);
-    }
+    }*/
 
     return $element;
   }
@@ -310,6 +339,17 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     }
     if (($start instanceof DrupalDateTime || $end instanceof DrupalDateTime) && (!$start instanceof DrupalDateTime || !$end instanceof DrupalDateTime)) {
       $form_state->setError($element, \t('Start date and end date must be provided.'));
+    }
+
+    // Recreate datetime object with exactly the same date and time but
+    // different timezone.
+    $element["start"]["#value"] .= "T00:00:00";
+    $form_state->setValueForElement($element['start'], $element["start"]["#value"]);
+    $element["end"]["#value"] .= "T00:00:00";
+    $form_state->setValueForElement($element['end'], $element["end"]["#value"]);
+    if (isset($element["ends_date"]["#value"])) {
+      $endsDate = $form_state->getValue(array_merge($element['#parents'], ['ends_date'])) . "T00:00:00";
+      $form_state->setValueForElement($element['ends_date'], $endsDate);
     }
 
     $exceptions = $form_state->getValue(array_merge($element['#parents'], ['exceptions']));
@@ -365,15 +405,22 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     foreach ($values as $delta => $value) {
-      $start_date = $value['start'];
-      $values[$delta]['start'] = $this->buildDateBoundaries($start_date, $value['time_zone'], 'start');
-      // This looks like a mistake, but it's intentional. We're setting the end
-      // date to the same date as the start date because we only allow single
-      // day recurrance windows.
-      $values[$delta]['end'] = $this->buildDateBoundaries($start_date, $value['time_zone'], 'end');
+      if (!empty($value["start"])) {
+        $start_date = $value['start'];
+        $values[$delta]['start'] = $this->buildDateBoundaries($start_date, $value['time_zone'], 'start');
+        // This looks like a mistake, but it's intentional. We're setting the end
+        // date to the same date as the start date because we only allow single
+        // day recurrance windows.
+        $values[$delta]['end'] = $this->buildDateBoundaries($start_date, $value['time_zone'], 'end');
+      }
+      if (!empty($value["ends_date"])) {
+        $values[$delta]['ends_date'] = $this->buildDateBoundaries($value["ends_date"], $value['time_zone'], 'end');
+      }
     }
     $values = parent::massageFormValues($values, $form, $form_state);
     $dateStorageFormat = $this->fieldDefinition->getSetting('datetime_type') == DateRecurItem::DATETIME_TYPE_DATE ? DateRecurItem::DATE_STORAGE_FORMAT : DateRecurItem::DATETIME_STORAGE_FORMAT;
+    // DU: FIELD SETTINGS OVERRIDE - Force time to be saved regardless, or else timezones dont work properly.
+//    $dateStorageFormat = DateRecurItem::DATETIME_STORAGE_FORMAT;
     $dateStorageTimeZone = new \DateTimezone(DateRecurItem::STORAGE_TIMEZONE);
     $grid = $this->partGrid;
 
@@ -393,8 +440,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
       $timeZone = $value['time_zone'] ?? NULL;
       $mode = $value['mode'] ?? NULL;
       $endsMode = $value['ends_mode'] ?? NULL;
-      $endsDate = $value['ends_date'] ?? NULL;
-      $endsDate = new DrupalDateTime($endsDate);
+      $endsDate = $value['ends_date'] ?? new DrupalDateTime(NULL);
 
       // Adjust the date for storage.
       $start->setTimezone($dateStorageTimeZone);
@@ -402,7 +448,6 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
       $end->setTimezone($dateStorageTimeZone);
       $item['end_value'] = $end->format($dateStorageFormat);
       $item['timezone'] = $timeZone;
-
       $weekDays = array_values(array_filter($value['weekdays']));
       $byDayStr = implode(',', $weekDays);
 
@@ -467,7 +512,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
           $exception_parts = explode("\n", $value['exceptions']);
           foreach ($exception_parts as $exception) {
             $date = new DrupalDateTime(trim($exception));
-            $exceptions[] = $date->format('Ymd');
+            $exceptions[] = $date->format('Ymd\THis\Z');
           }
           $rrule = 'RRULE:' . $rrule . "\n" . 'EXDATE:' . implode(',', $exceptions);
         }
