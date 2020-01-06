@@ -283,7 +283,6 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
 
     $element['exceptions'] = [
       '#type' => 'textarea',
-//      '#attributes' => ["style" => ["display:none"]],
       '#access' => FALSE,
       /* '#title' => $this->t('Excluded Days'),
       '#description' => $this->t('List of days to exclude, one per line. Ex 2012-06-09'),*/
@@ -294,19 +293,19 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
       ],
     ];
 
-/*    if (empty($item->timezone)) {
-      $z = $this->getDefaultTimeZone($item);
-      $item->set("timezone", $z);
+    /* if (empty($item->timezone)) {
+    $z = $this->getDefaultTimeZone($item);
+    $item->set("timezone", $z);
     }
     $helper = $item->getHelper();
     if (method_exists($helper, 'getExdates')) {
-      $exdates = $helper->getExdates();
-      $exdate_parts = [];
-      foreach ($exdates as $exdate) {
-        $exdate_parts[] = $exdate->format('Y-m-d');
-      }
-      $element['exceptions']['#default_value'] = implode("\n", $exdate_parts);
-    }*/
+    $exdates = $helper->getExdates();
+    $exdate_parts = [];
+    foreach ($exdates as $exdate) {
+    $exdate_parts[] = $exdate->format('Y-m-d');
+    }
+    $element['exceptions']['#default_value'] = implode("\n", $exdate_parts);
+    } */
 
     return $element;
   }
@@ -419,8 +418,6 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     }
     $values = parent::massageFormValues($values, $form, $form_state);
     $dateStorageFormat = $this->fieldDefinition->getSetting('datetime_type') == DateRecurItem::DATETIME_TYPE_DATE ? DateRecurItem::DATE_STORAGE_FORMAT : DateRecurItem::DATETIME_STORAGE_FORMAT;
-    // DU: FIELD SETTINGS OVERRIDE - Force time to be saved regardless, or else timezones dont work properly.
-//    $dateStorageFormat = DateRecurItem::DATETIME_STORAGE_FORMAT;
     $dateStorageTimeZone = new \DateTimezone(DateRecurItem::STORAGE_TIMEZONE);
     $grid = $this->partGrid;
 
