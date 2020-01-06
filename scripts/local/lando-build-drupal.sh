@@ -146,12 +146,18 @@
         xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
     fi
     if [[ -n ${xdebug} ]]; then
+        if [[ -e /usr/local/etc/php/conf.d/php_cob.ini ]]; then
+            rm /usr/local/etc/php/conf.d/php_cob.ini
+        fi
         ln -s ${xdebug} /usr/local/etc/php/conf.d/php_cob.ini
         chmod 600 ${xdebug}
     fi
     # Link the local-dev php.ini file.
     # The file below is where developers should add their individual php ini customizations.  The file is not tracked
     # by git, so changes will potentially be lost when the app is rebuilt.
+    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
+        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
+    fi
     ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
     chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
