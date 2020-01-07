@@ -99,7 +99,7 @@ deploy:
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit_message: "Automated commit by Travis CI for DEVELOP Build \#\${travis.id}"
+    commit_message: "Deploying '${TRAVIS_COMMIT}' to ${TRAVIS_BUILD} from github DEVELOP branch - \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -145,7 +145,8 @@ deploy:
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
-    commit_message: "Automated commit by Travis CI for MASTER Build \#\${travis.id}"
+    # (note: can use .conf.yml variables and Travis envars - https://docs.travis-ci.com/user/environment-variables/).
+    commit_message: "Deploying '${TRAVIS_COMMIT}' to ${TRAVIS_BUILD} from github MASTER branch - \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
