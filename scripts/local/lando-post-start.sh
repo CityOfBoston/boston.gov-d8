@@ -39,3 +39,8 @@
     else
         . ${REPO_ROOT}/scripts/doit/branding.sh;
     fi
+
+    # When the container is restarted, it seems the /etc/hosts file is rewritten and custom hosts mappings are lost.
+    # Add in the correct entries.
+    printf "\n%s  host.docker.internal\n" ${LANDO_HOST_IP} >> /etc/hosts
+    printf "%s  docker.for.mac.localhost\n" ${LANDO_HOST_IP} >> /etc/hosts
