@@ -132,7 +132,7 @@
 
                 cd ${deploy_dir} &&
                     git add --all &&
-                    git commit -m '${deploy_commitMsg}' --quiet &&
+                    git commit -m "${deploy_commitMsg}" --quiet &&
                     git push ${remote_name} ${deploy_branch}
 
                 printout "SUCCESS" "Deployed ${deploy_branch} to ${remote_name}\n"
