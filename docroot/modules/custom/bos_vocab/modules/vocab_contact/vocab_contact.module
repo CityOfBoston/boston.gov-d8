@@ -94,18 +94,16 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
           // Work out the value of our token.
           if (!empty($data['node'])) {
             $node = $dept_node = $data['node'];
-            $langcode = ($node->language()->getId() ?: "und");
             // Find the contact and get the last part of it's alias.
             if ($node->hasField("field_contact")) {
-              $contact_field = $node->getTranslation($langcode)->field_contact;
+              $contact_field = $node->field_contact;
               if ($contact_field->count()) {
                 $tid = $contact_field->first()->target_id;
                 $term = Drupal::entityTypeManager()
                   ->getStorage("taxonomy_term")
                   ->load($tid);
-                $langcode = $langcode = $term->language()->getId() ?: $langcode;
                 $term_path = \Drupal::service('path.alias_manager')
-                  ->getAliasByPath('/taxonomy/term/' . $tid, $langcode);
+                  ->getAliasByPath('/taxonomy/term/' . $tid);
                 $path_array = explode('/', $term_path);
                 $term_name = array_pop($path_array);
                 // If the field_department_profile is set then this is not a
@@ -124,7 +122,7 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
             // Figure out which type of department we have
             // and get it's replacement.
             if ($dept_node->hasField('field_department_type')) {
-              $dept_type = $dept_node->getTranslation($langcode)->field_department_type;
+              $dept_type = $dept_node->field_department_type;
               if (!empty($dept_type)) {
                 switch ($dept_type->value) {
                   case 'cabinet':
