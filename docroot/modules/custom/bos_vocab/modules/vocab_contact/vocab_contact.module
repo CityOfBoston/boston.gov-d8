@@ -94,7 +94,6 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
           // Work out the value of our token.
           if (!empty($data['node'])) {
             $node = $dept_node = $data['node'];
-//            $langcode = ($node->language()->getId() ?: "und");
             // Find the contact and get the last part of it's alias.
             if ($node->hasField("field_contact")) {
               $contact_field = $node->field_contact;
@@ -103,7 +102,6 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
                 $term = Drupal::entityTypeManager()
                   ->getStorage("taxonomy_term")
                   ->load($tid);
-//                $langcode = $langcode = $term->language()->getId() ?: $langcode;
                 $term_path = \Drupal::service('path.alias_manager')
                   ->getAliasByPath('/taxonomy/term/' . $tid);
                 $path_array = explode('/', $term_path);
