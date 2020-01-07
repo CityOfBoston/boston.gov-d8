@@ -64,9 +64,23 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
   // Only do this if the parent status_item hasn't already had a message
   // processed.
   if (isset($status_item) && !isset($motd_processed[$status_item->id()])) {
-
     // If the arg is not the server date, then get the date here.
     $today = new \DateTime("America/New_York");
+    if (\Drupal::state()->get("motd_arg")) {
+      // If we have manually set date, then make any token substitutions here.
+      $today = new \DateTime(\Drupal::state()->get("motd_arg"));
+      if (substr_count($variables["content"]["field_message"][0]["#text"], "[boston:week")) {
+        $tokens = [
+          "week-ordinal:text" => "[boston:week-ordinal:text]",
+          "week-ordinal:value" => "[boston:week-ordinal:value]",
+          "week-day" => "[boston:week-day]",
+        ];
+        $ret = bos_messages_tokens("boston", $tokens, ["date" => $today->format("Y-m-d")]);
+        foreach ($ret as $find => $replace) {
+          $variables["content"]["field_message"][0]["#text"] = str_replace($find, $replace, $variables["content"]["field_message"][0]["#text"]);
+        }
+      }
+    }
 
     // Make sure the recurrences field has a value.
     if (isset($variables["content"]["field_recurrence"][0])) {
@@ -74,7 +88,10 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       if (!$field_recurrence["#is_recurring"]) {
         $start_date = new \DateTime($field_recurrence["#date"]["start_date"]["#text"]);
         $end_date = new \DateTime($field_recurrence["#date"]["end_date"]["#text"]);
-        if ($today >= $start_date && $today <= $end_date) {
+        if ($start_date == $end_date) {
+          $end_date->modify("+24 hours");
+        }
+        if ($today >= $start_date && $today < $end_date) {
           $variables["cob"]["show_message"] = TRUE;
           $motd_processed[$status_item->id()] = $motd->id();
         }
@@ -85,7 +102,10 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
         if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
           $start_date = new \DateTime($date["start_date"]["#text"]);
           $end_date = new \DateTime($date["end_date"]["#text"]);
-          if ($today >= $start_date && $today <= $end_date) {
+          if ($start_date == $end_date) {
+            $end_date->modify("+24 hours");
+          }
+          if ($today >= $start_date && $today < $end_date) {
             $variables["cob"]["show_message"] = TRUE;
             $motd_processed[$status_item->id()] = $motd->id();
           }
@@ -168,17 +188,24 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
   $replacements = [];
 
   if ($type == 'boston') {
+
+    if (isset($data["date"])) {
+      $now = new DateTime($data["date"]);
+    }
+    else {
+      $now = new DateTime();
+      $data["date"] = "today";
+    }
     // Loop through the available tokens.
     foreach ($tokens as $name => $original) {
       // Find our custom tokens by name.
       switch ($name) {
         case 'week-ordinal:value':
           // Give our token it's final value!
-          $now = new DateTime();
-          $weekday = date_format($now, "l");
-          $month = date_format($now, "F");
+          $weekday = $now->format("l");
+          $month = $now->format("F");
           foreach (["1st", "2nd", "3rd", "4th", "5th"] as $ordinal) {
-            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+            if (strtotime($data["date"]) == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
               break;
             }
           }
@@ -187,11 +214,10 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
 
         case 'week-ordinal:text':
           // Give our token it's final value!
-          $now = new DateTime();
-          $weekday = date_format($now, "l");
-          $month = date_format($now, "F");
+          $weekday = $now->format("l");
+          $month = $now->format("F");
           foreach (["first", "second", "third", "fourth", "fifth"] as $ordinal) {
-            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+            if (strtotime($data["date"]) == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
               break;
             }
           }
@@ -200,7 +226,7 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
 
         case 'week-day':
           // Give our token it's final value!
-          $replacements[$original] = date_format(new DateTime(), "l");
+          $replacements[$original] = $now->format("l");
           break;
 
       }

@@ -36,9 +36,34 @@ function node_status_item_theme() {
  * This de-duplicates nodes from the output from the view/query.
  */
 function node_status_item_views_post_execute(ViewExecutable $view) {
-  if ($view->current_display == "motd") {
+  if ($view->current_display == "motd" || $view->current_display == "motd_analysis_page") {
     // An array with keys equal to the status_item node id.
     $check = [];
+
+    if (!$view->result) {
+      // Stop if there is nothing to process.
+      return;
+    }
+
+    \Drupal::state()->delete("motd_arg");
+
+    if ($view->current_display == "motd_analysis_page") {
+      $arg = $view->exposed_data["field_recurrence_value"] ?: "now";
+      $arg = new DateTime($arg);
+      $arg = $arg->format("Y-m-d");
+    }
+    elseif ($view->current_display == "motd") {
+      $arg = $view->args[0];
+    }
+
+    if (isset($arg)) {
+      $arg_date = new DateTime("America/New_York");
+      // Only save if the date is not the default (ie. today).
+      if ($arg != $arg_date->format("Y-m-d")) {
+        \Drupal::state()->set("motd_arg", $arg);
+      }
+    }
+
     foreach ($view->result as $key => $row) {
       if (isset($check[$row->nid])) {
         unset($view->result[$key]);
