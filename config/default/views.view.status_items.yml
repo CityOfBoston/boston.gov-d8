@@ -15,6 +15,7 @@ dependencies:
     - user.role.developer
     - user.role.site_administrator
   module:
+    - better_exposed_filters
     - date_recur
     - datetime
     - node
@@ -52,7 +53,7 @@ display:
           query_comment: ''
           query_tags: {  }
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Apply
           reset_button: false
@@ -61,6 +62,8 @@ display:
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: null
       pager:
         type: none
         options:
@@ -869,6 +872,59 @@ display:
     display_options:
       display_extenders: {  }
       filters:
+        field_recurrence_value:
+          id: field_recurrence_value
+          table: date_recur__paragraph__field_recurrence
+          field: field_recurrence_value
+          relationship: field_recurrence_occurrences
+          group_type: group
+          admin_label: ''
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: now
+            type: offset
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_recurrence_value_op
+            label: 'Simulation Date'
+            description: ''
+            use_operator: false
+            operator: field_recurrence_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_recurrence_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
         type:
           id: type
           table: node_field_data
@@ -892,13 +948,15 @@ display:
           operator: '='
           value: '1'
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: ''
             label: 'Status Item Published'
             description: ''
             use_operator: false
             operator: status_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: status
             required: true
             remember: false
@@ -911,8 +969,6 @@ display:
               developer: '0'
               content_editor: '0'
               content_author: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -938,13 +994,15 @@ display:
           operator: '='
           value: '1'
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: ''
             label: 'Status Item Active'
             description: ''
             use_operator: false
             operator: field_enabled_value_1_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: field_enabled_value_1
             required: true
             remember: false
@@ -957,8 +1015,6 @@ display:
               developer: '0'
               content_editor: '0'
               content_author: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -982,13 +1038,15 @@ display:
           operator: '='
           value: '1'
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: ''
             label: 'Message Active'
             description: ''
             use_operator: false
             operator: field_enabled_value_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: field_enabled_value
             required: true
             remember: false
@@ -1001,8 +1059,6 @@ display:
               developer: '0'
               content_editor: '0'
               content_author: '0'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -1016,57 +1072,6 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: boolean
-        field_recurrence_value:
-          id: field_recurrence_value
-          table: date_recur__paragraph__field_recurrence
-          field: field_recurrence_value
-          relationship: field_recurrence_occurrences
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: now
-            type: offset
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_recurrence_value_op
-            label: 'Recurrence Rule'
-            description: ''
-            use_operator: true
-            operator: field_recurrence_value_op
-            identifier: field_recurrence_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_author: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
       defaults:
         filters: false
         filter_groups: false
@@ -1079,6 +1084,7 @@ display:
         use_ajax: false
         title: false
         sorts: false
+        exposed_form: false
       filter_groups:
         operator: AND
         groups:
@@ -1094,35 +1100,16 @@ display:
             content_author: content_author
       path: admin/motd
       style:
-        type: table
+        type: default
         options:
           grouping: {  }
           row_class: ''
           default_row_class: false
-          override: false
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
-          columns:
-            title: title
-          info:
-            title:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: '-1'
-          empty_table: false
       row:
-        type: fields
+        type: 'entity:node'
         options:
-          default_field_elements: false
-          inline: {  }
-          separator: ''
-          hide_empty: false
+          relationship: none
+          view_mode: listing_long
       fields:
         field_icon:
           id: field_icon
@@ -1572,7 +1559,7 @@ display:
           plugin_id: text
       show_admin_links: true
       use_ajax: true
-      title: 'Messages for the day: Analysis (COB Users only)'
+      title: 'Status Items Simulator'
       sorts:
         field_weight_value:
           id: field_weight_value
@@ -1586,10 +1573,10 @@ display:
           expose:
             label: ''
           plugin_id: standard
-        weight:
-          id: weight
-          table: draggableviews_structure
-          field: weight
+        delta:
+          id: delta
+          table: node__field_messages
+          field: delta
           relationship: none
           group_type: group
           admin_label: ''
@@ -1598,6 +1585,31 @@ display:
           expose:
             label: ''
           plugin_id: standard
+      exposed_form:
+        type: bef
+        options:
+          submit_button: '-'
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: false
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+          input_required: true
+          text_input_required: 'Select any filter and click on Apply to see results'
+          bef:
+            general:
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              autosubmit: true
+              autosubmit_exclude_textfield: false
+              autosubmit_hide: false
+            field_recurrence_value:
+              bef_format: default
+              more_options:
+                is_secondary: false
+          text_input_required_format: filtered_html
+      exposed_block: false
     cache_metadata:
       max-age: -1
       contexts:

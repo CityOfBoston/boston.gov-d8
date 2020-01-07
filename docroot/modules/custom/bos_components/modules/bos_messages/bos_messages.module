@@ -64,29 +64,51 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
   // Only do this if the parent status_item hasn't already had a message
   // processed.
   if (isset($status_item) && !isset($motd_processed[$status_item->id()])) {
-
     // If the arg is not the server date, then get the date here.
     $today = new \DateTime("America/New_York");
-
-    // Make sure the recurrences field has a value.
-    $field_recurrence = $variables["content"]["field_recurrence"][0];
-    if (!$field_recurrence["#is_recurring"]) {
-      $start_date = new \DateTime($field_recurrence["#date"]["start_date"]["#text"]);
-      $end_date = new \DateTime($field_recurrence["#date"]["end_date"]["#text"]);
-      if ($today >= $start_date && $today <= $end_date) {
-        $variables["cob"]["show_message"] = TRUE;
-        $motd_processed[$status_item->id()] = $motd->id();
+    if (\Drupal::state()->get("motd_arg")) {
+      // If we have manually set date, then make any token substitutions here.
+      $today = new \DateTime(\Drupal::state()->get("motd_arg"));
+      if (substr_count($variables["content"]["field_message"][0]["#text"], "[boston:week")) {
+        $tokens = [
+          "week-ordinal:text" => "[boston:week-ordinal:text]",
+          "week-ordinal:value" => "[boston:week-ordinal:value]",
+          "week-day" => "[boston:week-day]",
+        ];
+        $ret = bos_messages_tokens("boston", $tokens, ["date" => $today->format("Y-m-d")]);
+        foreach ($ret as $find => $replace) {
+          $variables["content"]["field_message"][0]["#text"] = str_replace($find, $replace, $variables["content"]["field_message"][0]["#text"]);
+        }
       }
     }
-    elseif (isset($field_recurrence['#occurrences']) && count($field_recurrence['#occurrences'])) {
-      $date = array_shift($field_recurrence['#occurrences']);
-      // If $today is in the occurence range then show.
-      if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
-        $start_date = new \DateTime($date["start_date"]["#text"]);
-        $end_date = new \DateTime($date["end_date"]["#text"]);
-        if ($today >= $start_date && $today <= $end_date) {
+
+    // Make sure the recurrences field has a value.
+    if (isset($variables["content"]["field_recurrence"][0])) {
+      $field_recurrence = $variables["content"]["field_recurrence"][0];
+      if (!$field_recurrence["#is_recurring"]) {
+        $start_date = new \DateTime($field_recurrence["#date"]["start_date"]["#text"]);
+        $end_date = new \DateTime($field_recurrence["#date"]["end_date"]["#text"]);
+        if ($start_date == $end_date) {
+          $end_date->modify("+24 hours");
+        }
+        if ($today >= $start_date && $today < $end_date) {
           $variables["cob"]["show_message"] = TRUE;
           $motd_processed[$status_item->id()] = $motd->id();
+        }
+      }
+      elseif (isset($field_recurrence['#occurrences']) && count($field_recurrence['#occurrences'])) {
+        $date = array_shift($field_recurrence['#occurrences']);
+        // If $today is in the occurence range then show.
+        if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
+          $start_date = new \DateTime($date["start_date"]["#text"]);
+          $end_date = new \DateTime($date["end_date"]["#text"]);
+          if ($start_date == $end_date) {
+            $end_date->modify("+24 hours");
+          }
+          if ($today >= $start_date && $today < $end_date) {
+            $variables["cob"]["show_message"] = TRUE;
+            $motd_processed[$status_item->id()] = $motd->id();
+          }
         }
       }
     }
@@ -166,17 +188,24 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
   $replacements = [];
 
   if ($type == 'boston') {
+
+    if (isset($data["date"])) {
+      $now = new DateTime($data["date"]);
+    }
+    else {
+      $now = new DateTime();
+      $data["date"] = "today";
+    }
     // Loop through the available tokens.
     foreach ($tokens as $name => $original) {
       // Find our custom tokens by name.
       switch ($name) {
         case 'week-ordinal:value':
           // Give our token it's final value!
-          $now = new DateTime();
-          $weekday = date_format($now, "l");
-          $month = date_format($now, "F");
+          $weekday = $now->format("l");
+          $month = $now->format("F");
           foreach (["1st", "2nd", "3rd", "4th", "5th"] as $ordinal) {
-            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+            if (strtotime($data["date"]) == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
               break;
             }
           }
@@ -185,11 +214,10 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
 
         case 'week-ordinal:text':
           // Give our token it's final value!
-          $now = new DateTime();
-          $weekday = date_format($now, "l");
-          $month = date_format($now, "F");
+          $weekday = $now->format("l");
+          $month = $now->format("F");
           foreach (["first", "second", "third", "fourth", "fifth"] as $ordinal) {
-            if (strtotime("today") == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
+            if (strtotime($data["date"]) == strtotime(sprintf("%s %s of %s", $ordinal, $weekday, $month))) {
               break;
             }
           }
@@ -198,7 +226,7 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
 
         case 'week-day':
           // Give our token it's final value!
-          $replacements[$original] = date_format(new DateTime(), "l");
+          $replacements[$original] = $now->format("l");
           break;
 
       }
@@ -223,193 +251,271 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
   $message = advanced_text_formatter_trim_text($message, $at_settings);
   $markup[] = Markup::create("<span class='body-text'>" . $message . "</span>");
   $isToday = FALSE;
-  if (NULL == ($pattern = $para["entity"]->field_recurrence[0]->getHelper()->getRules())) {
-    // Simplified once-only run.
-    $pattern = $para["entity"]->get("field_recurrence");
-    $patt = explode(";", $pattern->rrule);
-    foreach ($patt as $key => $value) {
-      $parts = explode("=", $value);
-      if (isset($parts[0]) && isset($parts[1])) {
-        $pattern->{$parts[0]} = $parts[1];
-      }
-      $parts = NULL;
-    }
-    $nextrun = $end = "";
-    if (!empty($pattern->value)) {
-      $from = \Drupal::service('date.formatter')
-        ->format(strtotime($pattern->value), "custom", "M d Y");
-    }
-    if (strtotime($pattern->value) < strtotime("midnight")) {
-      $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
-    }
-    elseif (strtotime($pattern->value) == strtotime("midnight")) {
-      $isToday = TRUE;
-      $nextrun = " <span style='color:blue;font-weight:bold'>Showing Now</span>";
-    }
-    else {
-      $nextrun = " <span style='color:blue;font-weight:bold'>Next: $from</span>";
-    }
-    $pattern_msg = sprintf("<b><i>ONCE ONLY</i></b> on %s - %s", $from, $nextrun);
-
+  if (empty($para["entity"]->field_recurrence[0])) {
+    $pattern_msg = "No recurring rules set !";
   }
   else {
-    $pattern = (object) $pattern[0]->getParts();
-    $exdates = explode("\n", $para["entity"]->get("field_recurrence")->rrule);
-    if (isset($exdates[1])) {
-      $exdates = TRUE;
+    if (NULL == ($pattern = $para["entity"]->field_recurrence[0]->getHelper()
+      ->getRules())) {
+      // Simplified once-only run.
+      $pattern = $para["entity"]->get("field_recurrence");
+      $patt = explode(";", $pattern->rrule);
+      foreach ($patt as $key => $value) {
+        $parts = explode("=", $value);
+        if (isset($parts[0]) && isset($parts[1])) {
+          $pattern->{$parts[0]} = $parts[1];
+        }
+        $parts = NULL;
+      }
+      $nextrun = $end = "";
+      if (!empty($pattern->value)) {
+        $from = \Drupal::service('date.formatter')
+          ->format(strtotime($pattern->value), "custom", "M d Y");
+      }
+      if (strtotime($pattern->value) < strtotime("midnight")) {
+        $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
+      }
+      elseif (strtotime($pattern->value) == strtotime("midnight")) {
+        $isToday = TRUE;
+        $nextrun = " <span style='color:blue;font-weight:bold'>Showing Now</span>";
+      }
+      else {
+        $nextrun = " <span style='color:blue;font-weight:bold'>Next: $from</span>";
+      }
+      $pattern_msg = sprintf("<b><i>ONCE ONLY</i></b> on %s - %s", $from, $nextrun);
+
     }
     else {
-      $exdates = FALSE;
-    }
-    // The Rule start date.
-    if (isset($pattern->DTSTART)) {
-      $from = $pattern->DTSTART->format("M d Y");
-    }
-    // The rule end date.
-    $end = "FOREVER";
-    if (isset($pattern->UNTIL)) {
-      $end = "until " . $pattern->UNTIL->format("M d Y");
-    }
-    elseif (isset($pattern->COUNT) && $pattern->COUNT > 0) {
-      $end = "for $pattern->COUNT";
-    }
-    // Find the next day this Rule will run.
-    $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
-    if ($para["entity"]->get("field_enabled")->value == 1) {
-      foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
-        if (strtotime($occurrence->getStart()->format("M d Y")) == strtotime("midnight")) {
-          $isToday = TRUE;
-        }
-        if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("midnight")) {
-          $nextrun = "<span style='color:blue;font-weight:bold'>Next: " . $occurrence->getStart()->format("M d Y") . "</span>";
-          break;
+      $pattern = (object) $pattern[0]->getParts();
+      $exdates = explode("\n", $para["entity"]->get("field_recurrence")->rrule);
+      if (isset($exdates[1])) {
+        $exdates = TRUE;
+      }
+      else {
+        $exdates = FALSE;
+      }
+      // The Rule start date.
+      if (isset($pattern->DTSTART)) {
+        $from = $pattern->DTSTART->format("M d Y");
+      }
+      // The rule end date.
+      $end = "FOREVER";
+      if (isset($pattern->UNTIL)) {
+        $end = "until " . $pattern->UNTIL->format("M d Y");
+      }
+      elseif (isset($pattern->COUNT) && $pattern->COUNT > 0) {
+        $end = "for $pattern->COUNT";
+      }
+      // Find the next day this Rule will run.
+      $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
+      if ($para["entity"]->get("field_enabled")->value == 1) {
+        foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
+          if (strtotime($occurrence->getStart()->format("M d Y")) == strtotime("midnight")) {
+            $isToday = TRUE;
+          }
+          if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("midnight")) {
+            $nextrun = "<span style='color:blue;font-weight:bold'>Next: " . $occurrence->getStart()->format("M d Y") . "</span>";
+            break;
+          }
         }
       }
-    }
 
-    // Build up the repetitions string.
-    $pos = "every";
-    switch ($pattern->FREQ) {
-      case "DAILY":
-        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
-          $freq = "every weekday";
-        }
-        elseif ($pattern->BYDAY == "SA,SU") {
-          $freq = "every weekend-day";
-        }
-        else {
+      // Build up the repetitions string.
+      $pos = "every";
+      switch ($pattern->FREQ) {
+        case "DAILY":
           $freq = "every day";
-        }
-
-        if (isset($pattern->COUNT)) {
-          $end .= " days";
-        }
-        break;
-
-      case "WEEKLY":
-        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
-          $freq = "every weekday";
-        }
-        elseif ($pattern->BYDAY == "SA,SU") {
-          $freq = "every weekend-day";
-        }
-        else {
-          $freq = "every " . $pattern->BYDAY;
-        }
-
-        if (isset($pattern->COUNT)) {
-          $end .= " weeks";
-        }
-        break;
-
-      case "MONTHLY":
-        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
-          $freq = "weekday";
-        }
-        elseif ($pattern->BYDAY == "SA,SU") {
-          $freq = "weekend-day";
-        }
-        else {
-          $freq = $pattern->BYDAY;
-        }
-
-        if (isset($pattern->BYSETPOS)) {
-          $pos = "";
-          if (!empty(array_intersect([1, 2, 3, 4, 5, 6], explode(",", $pattern->BYSETPOS)))) {
-            $pos = "1st,";
+          if (isset($pattern->BYDAY)) {
+            if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+              $freq = "every weekday";
+            }
+            elseif ($pattern->BYDAY == "SA,SU") {
+              $freq = "every weekend-day";
+            }
           }
-          if (!empty(array_intersect([7, 8, 9, 10, 11, 12, 13], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "2nd,";
-          }
-          if (!empty(array_intersect([14, 15, 16, 17, 18, 19, 20], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "3rd,";
-          }
-          if (!empty(array_intersect([21, 22, 23, 24, 25, 26, 27], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "4th,";
-          }
-          if (!empty(array_intersect([28, 29, 30, 31], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "5th,";
-          }
-        }
-        $freq = trim($pos, ",") . " " . $freq;
 
-        if (isset($pattern->COUNT)) {
-          $end .= " months";
-        }
-        break;
-
-      case "YEARLY":
-        if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
-          $freq = "weekday";
-        }
-        elseif ($pattern->BYDAY == "SA,SU") {
-          $freq = "weekend-day";
-        }
-        else {
-          $freq = $pattern->BYDAY;
-        }
-
-        if (isset($pattern->BYSETPOS)) {
-          $pos = "";
-          if (!empty(array_intersect([1, 2, 3, 4, 5, 6], explode(",", $pattern->BYSETPOS)))) {
-            $pos = "1st,";
+          if (isset($pattern->COUNT)) {
+            $end .= " days";
           }
-          if (!empty(array_intersect([7, 8, 9, 10, 11, 12, 13], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "2nd,";
-          }
-          if (!empty(array_intersect([14, 15, 16, 17, 18, 19, 20], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "3rd,";
-          }
-          if (!empty(array_intersect([21, 22, 23, 24, 25, 26, 27], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "4th,";
-          }
-          if (!empty(array_intersect([28, 29, 30, 31], explode(",", $pattern->BYSETPOS)))) {
-            $pos .= "5th,";
-          }
-        }
+          break;
 
-        $mth = "";
-        if (isset($pattern->BYMONTH)) {
-          foreach (explode(",", $pattern->BYMONTH) as $month) {
-            $mth .= (new DateTime("2019-03-15"))->format("M,");
+        case "WEEKLY":
+          if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+            $freq = "every weekday";
           }
-        }
+          elseif ($pattern->BYDAY == "SA,SU") {
+            $freq = "every weekend-day";
+          }
+          else {
+            $freq = "every " . $pattern->BYDAY;
+          }
 
-        $freq = trim($pos, ",") . " " . $freq . " of " . trim($mth, ",");
+          if (isset($pattern->COUNT)) {
+            $end .= " weeks";
+          }
+          break;
 
-        if (isset($pattern->COUNT)) {
-          $end = " years!";
-        }
-        break;
+        case "MONTHLY":
+          if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+            $freq = "weekday";
+          }
+          elseif ($pattern->BYDAY == "SA,SU") {
+            $freq = "weekend-day";
+          }
+          else {
+            $freq = $pattern->BYDAY;
+          }
 
+          if (isset($pattern->BYSETPOS)) {
+            $pos = "";
+            if (!empty(array_intersect([
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos = "1st,";
+            }
+            if (!empty(array_intersect([
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "2nd,";
+            }
+            if (!empty(array_intersect([
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "3rd,";
+            }
+            if (!empty(array_intersect([
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "4th,";
+            }
+            if (!empty(array_intersect([
+              28,
+              29,
+              30,
+              31
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "5th,";
+            }
+          }
+          $freq = trim($pos, ",") . " " . $freq;
+
+          if (isset($pattern->COUNT)) {
+            $end .= " months";
+          }
+          break;
+
+        case "YEARLY":
+          if ($pattern->BYDAY == "MO,TU,WE,TH,FR") {
+            $freq = "weekday";
+          }
+          elseif ($pattern->BYDAY == "SA,SU") {
+            $freq = "weekend-day";
+          }
+          else {
+            $freq = $pattern->BYDAY;
+          }
+
+          if (isset($pattern->BYSETPOS)) {
+            $pos = "";
+            if (!empty(array_intersect([
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos = "1st,";
+            }
+            if (!empty(array_intersect([
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "2nd,";
+            }
+            if (!empty(array_intersect([
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "3rd,";
+            }
+            if (!empty(array_intersect([
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "4th,";
+            }
+            if (!empty(array_intersect([
+              28,
+              29,
+              30,
+              31
+            ], explode(",", $pattern->BYSETPOS)))) {
+              $pos .= "5th,";
+            }
+          }
+
+          $mth = "";
+          if (isset($pattern->BYMONTH)) {
+            foreach (explode(",", $pattern->BYMONTH) as $month) {
+              $mth .= (new DateTime("2019-03-15"))->format("M,");
+            }
+          }
+
+          $freq = trim($pos, ",") . " " . $freq . " of " . trim($mth, ",");
+
+          if (isset($pattern->COUNT)) {
+            $end = " years!";
+          }
+          break;
+
+      }
+      // Put it all together.
+      $recur = t("@freq: <b><i>@until</i></b>@exclusions", [
+        "@freq" => $freq,
+        "@until" => $end,
+        "@exclusions" => ($exdates ? " (w/exclusions)" : ""),
+      ]);
+      $pattern_msg = sprintf("From: %s: %s - %s", $from, $recur, $nextrun);
     }
-    // Put it all together.
-    $recur = t("@freq: <b><i>@until</i></b>@exclusions", [
-      "@freq" => $freq,
-      "@until" => $end,
-      "@exclusions" => ($exdates ? " (w/exclusions)" : ""),
-    ]);
-    $pattern_msg = sprintf("From: %s: %s - %s", $from, $recur, $nextrun);
   }
   $markup[] = Markup::create("<span class='info'>" . $pattern_msg . "</span>");
 
