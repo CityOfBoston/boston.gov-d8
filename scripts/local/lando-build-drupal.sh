@@ -35,7 +35,12 @@
     project_sync=${project_docroot}/${build_local_config_sync}
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
-    OS=$(operating_system)
+    # Find the host OS.
+    OS=${LANDO_HOST_OS}
+    if [[ -z ${OS} ]]; then
+        # WARNING: This will return the OS of the container (i.e. LINUX).
+        OS=$(operating_system)
+    fi
 
     timer=$(date +%s)
     quiet=0
@@ -140,9 +145,9 @@
     # php sweeps for ini files during php bootstraps.
     # NOTE: you should restart the container (e.g. using portainer) to implement changes.
     # NOTE: Changes made in the PHP ini files provided by Lando will be lost/reset when Lando container is restarted.
-    if [[ "$OS" == "LINUX" ]]; then
+    if [[ "$OS" == "LINUX" ]] || [[ "$OS" == "linux" ]]; then
         xdebug="${LANDO_MOUNT}/xdebug_linux.ini"
-    elif [[ "$OS" == "OSX" ]]; then
+    elif [[ "$OS" == "OSX" ]] || [[ "$OS" == "darwin" ]]; then
         xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
     fi
     if [[ -n ${xdebug} ]]; then
