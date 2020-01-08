@@ -56,10 +56,12 @@
     fi
 
     if [[ "$OS" == "LINUX" ]] || [[ "$OS" == "linux" ]]; then
+        printout "INFO" "Host is Linux"
         xdebug="${LANDO_MOUNT}/xdebug_linux.ini"
         # Update xdebug file with correct remote_host.
-        sed -i "s/host\.docker\.internal/${LANDO_HOST_IP}/g" ${xdebug}
+        sed -i "s/host\.docker\.internal/${LANDO_HOST_IP}/g" ${xdebug} && sed -i "s/_host=[0-9\.]*/_host=$LANDO_HOST_IP/g" ${xdebug}
     elif [[ "$OS" == "OSX" ]] || [[ "$OS" == "darwin" ]]; then
+        printout "INFO" "Host is MacOSX"
         xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
     fi
 
