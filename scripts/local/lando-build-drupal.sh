@@ -35,13 +35,6 @@
     project_sync=${project_docroot}/${build_local_config_sync}
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
-    # Find the host OS.
-    OS=${LANDO_HOST_OS}
-    if [[ -z ${OS} ]]; then
-        # WARNING: This will return the OS of the container (i.e. LINUX).
-        OS=$(operating_system)
-    fi
-
     timer=$(date +%s)
     quiet=0
     yes=0
@@ -136,35 +129,6 @@
     printout "INFO" "Update settings files."
     build_settings &> ${setup_logs}/drush_site_install.log
     printout "SUCCESS" "Settings updated.\n"
-
-    # Embed the custom xdebug file as a php ini file.
-    # There are 2 customized ini's one per environment (mac and linux) -they should not be changed locally by the
-    # user but can be modified in the private repo to improve debug experience for all users.
-    # The files are initially copied out of the private repo (in the step above). Then the appropriate file is
-    # soft-linked (in step below) to link it from the app folder (i.e. mounted from the host) into the folder that
-    # php sweeps for ini files during php bootstraps.
-    # NOTE: you should restart the container (e.g. using portainer) to implement changes.
-    # NOTE: Changes made in the PHP ini files provided by Lando will be lost/reset when Lando container is restarted.
-    if [[ "$OS" == "LINUX" ]] || [[ "$OS" == "linux" ]]; then
-        xdebug="${LANDO_MOUNT}/xdebug_linux.ini"
-    elif [[ "$OS" == "OSX" ]] || [[ "$OS" == "darwin" ]]; then
-        xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
-    fi
-    if [[ -n ${xdebug} ]]; then
-        if [[ -e /usr/local/etc/php/conf.d/php_cob.ini ]]; then
-            rm /usr/local/etc/php/conf.d/php_cob.ini
-        fi
-        ln -s ${xdebug} /usr/local/etc/php/conf.d/php_cob.ini
-        chmod 600 ${xdebug}
-    fi
-    # Link the local-dev php.ini file.
-    # The file below is where developers should add their individual php ini customizations.  The file is not tracked
-    # by git, so changes will potentially be lost when the app is rebuilt.
-    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
-        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
-    fi
-    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
-    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
     # Install Drupal.
     # For local builds, there are 2 build strategies:
