@@ -146,13 +146,18 @@
             <span class="t--sans t--upper t--cb t--s100">{{ content.field_procurement }}</span>
           </li>
           <li class="dl-i">
+
             <span class="dl-t">Posted</span>
-            <span class="dl-d">{{ node.field_date_range.value|date('n/j/Y - g:ia') }}</span>
+            <span class="dl-d">{{ start_date }}</span>
           </li>
-          <li class="dl-i">
-            <span class="dl-t">Close{% if date(node.field_date_range.end_value) < date() %}d{% else %}s{% endif %}</span>
-            <span class="dl-d">{{ node.field_date_range.end_value|date('n/j/Y - g:ia') }}</span>
-          </li>
+
+          {% if end_date %}
+            <li class="dl-i">
+              <span class="dl-t">Close{% if date(node.field_date_range.end_value) < date() %}d{% else %}s{% endif %}</span>
+              <span class="dl-d">{{ end_date }}</span>
+            </li>
+          {% endif %}
+
           <li class="dl-i">
             <span class="dl-t">Type</span>
             <span class="dl-d">{{ content.field_bid_type }}</span>
