@@ -43,7 +43,7 @@ services:
     overrides:
       environment:
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
-        XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM remote_host=host.docker.internal"
+        XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM remote_host=${LANDO_HOST_IP}"
     config:
       conf: xdebug.ini
 
