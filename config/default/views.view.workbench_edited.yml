@@ -132,7 +132,7 @@ display:
           id: revision_uid
           table: node_revision
           field: revision_uid
-          relationship: none
+          relationship: vid
           group_type: group
           admin_label: ''
           label: 'Revision user'
@@ -1160,7 +1160,10 @@ display:
           admin_label: ''
           operator: in
           value:
+            city_of_boston_workflows-draft: city_of_boston_workflows-draft
             city_of_boston_workflows-published: city_of_boston_workflows-published
+            city_of_boston_workflows-needs_review: city_of_boston_workflows-needs_review
+            city_of_boston_workflows-archive: city_of_boston_workflows-archive
           group: 1
           exposed: true
           expose:
@@ -1174,7 +1177,7 @@ display:
             identifier: moderation_state
             required: false
             remember: true
-            multiple: true
+            multiple: false
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
@@ -1185,7 +1188,7 @@ display:
               content_reviewer: '0'
               content_author: '0'
               metrolist_editor: '0'
-            reduce: false
+            reduce: true
           is_grouped: false
           group_info:
             label: ''
