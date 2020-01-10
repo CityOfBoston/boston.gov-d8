@@ -22,7 +22,6 @@ function lint() {
             --no-progress \
             ${REPO_ROOT}/docroot/themes/custom
 
-
     if [[ $? -ne 0 ]]; then
         printf "\n"
         printf "${RedBG} ----------------------------------------------------${NC}\n"
