@@ -36,7 +36,6 @@
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_sanitize_file" && deploy_sanitize_file="${!src}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_travis_drush_path" && travis_drush="${!src}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_alias" && drush_alias="${!src}"
-    src="deploy_${TRAVIS_BRANCH_SANITIZED}_commit_message" && deploy_commitMsg="${!src}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_copy_db" && deploy_copy_db="${!src}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_drush_db_source" && drush_db_source="${!src}"
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}"
@@ -129,7 +128,7 @@
             if [[ "${deploy_dry_run}" == "false" ]]; then
 
                 printout "INFO" "Branch ${TRAVIS_BRANCH} now ready to deploy to Acquia as ${deploy_branch}."
-
+                deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to "
                 cd ${deploy_dir} &&
                     git add --all &&
                     git commit -m "${deploy_commitMsg}" --quiet &&

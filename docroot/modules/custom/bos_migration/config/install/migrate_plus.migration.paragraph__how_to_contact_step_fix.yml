@@ -1,4 +1,4 @@
-id: paragraph__how_to_contact_step
+id: paragraph__how_to_contact_step_fix
 label: 'How to Contact Step Paragraph'
 migration_group: bos_paragraphs
 migration_tags:
@@ -17,7 +17,9 @@ process:
   field_step_details: field_step_details
   field_operation_hours: field_operation_hours
   field_title: field_title
-  field_address: field_address
+  field_address:
+    plugin: addressfield
+    source: field_address
 destination:
   plugin: 'entity_reference_revisions:paragraph'
   default_bundle: how_to_contact_step

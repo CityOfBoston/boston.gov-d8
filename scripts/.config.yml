@@ -1,6 +1,5 @@
 project:
   docroot: ${REPO_ROOT}/${lando_config_webroot}
-  # host_os can be mac or linux and switchs build files. (principly xdebug settings).
   profile:
     name: bos_profile
   themes:
@@ -51,7 +50,7 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "true"
-    replacephing:
+    example:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
       # none = don't alter modules enabled from configuration
       type: dev
@@ -98,8 +97,6 @@ deploy:
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
-    # Message we want to appear in Acquia repo for the deployment commit.
-    commit_message: "Deploying '${TRAVIS_COMMIT}' to ${TRAVIS_BUILD} from github DEVELOP branch - \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -108,7 +105,7 @@ deploy:
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
-  replacephing:
+  example:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo.
@@ -121,8 +118,6 @@ deploy:
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
-    # Message we want to appear in Acquia repo for the deployment commit.
-    commit_message: "Automated commit by Travis CI for ON-DEMAND Build \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -144,9 +139,6 @@ deploy:
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
-    # Message we want to appear in Acquia repo for the deployment commit.
-    # (note: can use .conf.yml variables and Travis envars - https://docs.travis-ci.com/user/environment-variables/).
-    commit_message: "Deploying '${TRAVIS_COMMIT}' to ${TRAVIS_BUILD} from github MASTER branch - \#\${travis.id}"
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
