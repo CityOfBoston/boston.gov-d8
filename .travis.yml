@@ -34,11 +34,24 @@ cache:
 
 notifications:
   slack:
-    on_pull_requests: true
-    if: branch = master OR branch = develop
-    rooms:
-      - secure: "spxqL9DjJS53tXkTxQxyyq/sbANHxGu+fIQGtixE8NS+9QV/A0UJAJEJY8vXAMEe18v+NTFJQRvS/STTysfpAyE/9yRFU9u1aGlZ3GZTYDvlLObYZMzpfAqENYw+Z2LQwKv7U7yhN7VHfKz6sWF5UMJ9UyCsFBSE5RuuPq5fR3FhC2RQilgu3wfWqNoCQrO3NA9WEKUeUyGcj51AH7lSWDQjZevECttezeb2SFpw3Fhyt6lgJMhYNawdgrWqLT/ewZwoO9x9AloGZFXtzAjz5psty/TmrWroiFjgqi16OYAGRpd8AWHYfhHt1N7qFBxxUGiQCtJg6ohZM7HOJvLbBd7Rc8gj0MgV6ePxtf2ByVyku6Bip1u7sfj+CqGYlnuKyHc/8rSzwEc9zQAPx6ZDDTGV+zkuBnAc+GjGxsheXiM+4QAn6liir+mglcGp/AxPeRmmQ7DIcmrDNI8dGsTaDMlBeufsU8eaMHGR2GeSnwnXT121M5fOEnE0G+m4L8y1t9J1gpo+py8GqhykJhxJHPkw8USxHRXoVVkgxOFW2AsfDBp6H43FwccfN7gHR+KPHeFq3ni4iagaBTFfmGp/CE+dpqk7E2qJte5qeppxwe94HCO1XAhWWMheZMC7Y3XK457IfWIdeB1gU2m5X1DDOE6GK5Llp7l/Wjo5cKNY8fI="
-      - secure: "vNNEgntveFOhLF9qTD1Z9SJyoNCRtnKmbRHDRnuyLo0JTpbEPZGvmPg3Lpef2EcZO+aWuOsQBz1Dx/0rspWf/BBJcZflsk8uadiE8JkV5H6ls48F3H7Ez440c4cq+F/7S3Ly3B/FyskLl64lbU+MPc/HaOv9BrZuKSc8OYR5D6vPpNWfay6ix1Nci7xyr7HUtK0/zsj9DamWb7vixj1rpvYcXNAM012bxghb6s0TAYrr4m62Ww83TvuSN2PYNr727BgCZlmWEDyNujH9nAMmIxG9T5vGiHT2srRit8jlRMzqIONr/kjobtNmThRLcYwHebvk+nf2c7D+hDr05ku3RJwNgJtOqPU2ah8NH6Ngpb82nq58b0UwFHy0XcM1hveYUxir1y7kXy0azgeP2U7G0v4yABmEPFnUjlJeMiYhwSIynobmBqeVs2gFQSisOcAwaxPjuTGEA8bIxUkv9tUHKdw+Gh9Bt12OU/owKbqSDDb9iFUf/SjutgSb1QPPO0tA4ZnUwLZyFyXfUS2duoJw4gWG8KLNbWgIdmAAx+4Srb768xOu1UF688mGVtux6C6hsQhtrp0H36hXwDoiTyKxndle+63wNB5VvrOUpaBaw9Cb73a+uA8QS5aq7hzDBuQko1E0gpE2mEgHP7//e/P/kKWH3h84OynxNH/+TmRZxXY="
+    - if: branch = master
+      on_pull_requests: false
+      on_success: always
+      on_failure: never
+      rooms:
+        # drupal - Only when sucessfully merging to master.
+        - secure: "No3MBbF9oeNGDRQiy4ebob6Wum0YZUvSOtoeAR5lBwB8L4gQNh7kv3dHBLU80U8i0vQca45YuWBDdeXEMhDNqitUXKTRVj8SEN23PgoqhZhSvSmXBXjMm91ekHedTaFqeYVxvTPFphvYh1/y3l/Wjxf8kp6p6EiBhdP7JsWUePPEkOnVNt3QqGLypVBF4K1XHXn4Yee6dml6du247NLRhrTb+X+rJHntNFewW+5jU/6hQka3psTshtL5q3CUGAAf5pV/j7AmzzYwJ/6A162SonHG5xrE2vhV/YJUnp7Tz5IfRGG87aB8bc55KvAbsIPPxWsxXToH8HH3F+WOCqT4pwg9xh4RHigyTZN5l4kAIdpFO73LoA5BEmJwALcJPYYBsHs67e124ylmBWIeukQQg404783lwocNQrUpBgZHsPbV+t96g88Wyv9th3yEjwPdh3/7DbYkZD76hicmfpqqnmbbGddCcZmDbqbHGQIz0hOLHZrYRexJ0BLxUovoEkMqMRKuNcnwqpEr0iRJeOruzqh0N4xbfnTP1kqHaImS0kXuSRX3eNwnyYBl1NoqLUX8tsyvHPQGb511Rk5Fvk3fsiG0EKe0SHNjuT2V3BaIXiiQdS4FcZruil7JN7wEd+Ry5KcaYAfIUmCBEzBKB9EmIqNpxA9yvZJJy6kSI7Oy/2A="
+      template:
+        - ":bostongov: *NOTICE* A new deploy candidate is ready for <https://d8-stg.boston.gov|testing on stage>.\nThis build was initiated by %{author}."
+    - if: branch = master OR branch = develop
+      on_pull_requests: true
+      on_success: always
+      on_failure: always
+      rooms:
+        # digital_builds - whenevr travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - ":drupal: *DRUPAL build %{result}.*\n<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author} in %{duration}"
 
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
