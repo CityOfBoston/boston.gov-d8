@@ -264,7 +264,7 @@
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
-                ${drush_cmd} en config -y &>/dev/null
+                ${drush_cmd} en config -y >/dev/null
                 ${drush_cmd} @self config-import --partial -y &> ${setup_logs}/config_import.log
 
                 if [[ $? -eq 0 ]]; then
@@ -316,7 +316,7 @@
 
         # Update Travis console log.
         text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Build Candidate tested." "Process took${text}\n"
+        printout "SUCCESS" "Build Candidate tested." "Install & build process took${text}\n"
 
     fi
 
