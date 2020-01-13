@@ -6,4 +6,11 @@ bos_web_app:
     https://unpkg.com/babel-standalone@6.26.0/babel.min.js: {}
   dependencies:
     - core/drupalSettings
+
+permitfinder:
+  version: 1.x
+  js:
+    apps/permitfinder/compiled.js: {attributes: {type: text/babel }}
+  dependencies:
+    - core/drupalSettings
     
