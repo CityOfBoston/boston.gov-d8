@@ -3,7 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.listing
+    - core.entity_view_mode.node.teaser
     - node.type.procurement_advertisement
   module:
     - better_exposed_filters
@@ -99,8 +99,7 @@ display:
       row:
         type: 'entity:node'
         options:
-          relationship: none
-          view_mode: listing
+          view_mode: teaser
       fields:
         title:
           id: title
