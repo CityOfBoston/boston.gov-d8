@@ -50,18 +50,25 @@ content:
     region: content
   content_moderation_control:
     weight: -20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_award_date:
     type: datetime_default
     weight: 9
     region: content
     label: above
     settings:
+      timezone_override: America/New_York
       format_type: medium
-      timezone_override: ''
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
   field_awarded_by:
     type: entity_reference_entity_view
     weight: 22
@@ -121,12 +128,20 @@ content:
     third_party_settings: {  }
   field_date_range:
     weight: 12
-    label: above
+    label: hidden
     settings:
+      timezone_override: America/New_York
+      format_type: date_format_short
       separator: '-'
-      timezone_override: ''
-    third_party_settings: {  }
-    type: daterange_plain
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: daterange_default
     region: content
   field_department:
     type: string
