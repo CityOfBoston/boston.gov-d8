@@ -53,7 +53,7 @@
 
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
-    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot -l default"
+    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
 
     printf "ref: $(basename "$0")\n"
 
@@ -264,7 +264,7 @@
                 printout "" "          Dump ends."
                 printout "WARNING" "Will retry a partial config import."
 
-                ${drush_cmd} en config -y &>/dev/null
+                ${drush_cmd} en config -y >/dev/null
                 ${drush_cmd} @self config-import --partial -y &> ${setup_logs}/config_import.log
 
                 if [[ $? -eq 0 ]]; then
@@ -316,7 +316,7 @@
 
         # Update Travis console log.
         text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Build Candidate tested." "Process took${text}\n"
+        printout "SUCCESS" "Build Candidate tested." "Install & build process took${text}\n"
 
     fi
 

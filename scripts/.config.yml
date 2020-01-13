@@ -1,6 +1,5 @@
 project:
   docroot: ${REPO_ROOT}/${lando_config_webroot}
-  # host_os can be mac or linux and switchs build files. (principly xdebug settings).
   profile:
     name: bos_profile
   themes:
@@ -51,7 +50,7 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "true"
-    replacephing:
+    example:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
       # none = don't alter modules enabled from configuration
       type: dev
@@ -106,7 +105,7 @@ deploy:
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
-  replacephing:
+  example:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo.
@@ -173,5 +172,5 @@ composer:
 
 drush:
   bin: ${REPO_ROOT}/vendor/bin/drush
-  cmd: ${REPO_ROOT}/vendor/bin/drush  -r ${REPO_ROOT}/docroot -l default
+  cmd: ${REPO_ROOT}/vendor/bin/drush  -r ${REPO_ROOT}/docroot
   root: ${REPO_ROOT}/docroot
