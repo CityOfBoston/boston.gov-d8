@@ -1,0 +1,105 @@
+uuid: c52e6cec-a3b0-4996-a8c0-4d719a5d77f8
+langcode: und
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.listing
+    - field.field.node.procurement_advertisement.body
+    - field.field.node.procurement_advertisement.field_award_date
+    - field.field.node.procurement_advertisement.field_awarded_by
+    - field.field.node.procurement_advertisement.field_bid
+    - field.field.node.procurement_advertisement.field_bid_type
+    - field.field.node.procurement_advertisement.field_contact
+    - field.field.node.procurement_advertisement.field_contract_length
+    - field.field.node.procurement_advertisement.field_date_range
+    - field.field.node.procurement_advertisement.field_department
+    - field.field.node.procurement_advertisement.field_document
+    - field.field.node.procurement_advertisement.field_email
+    - field.field.node.procurement_advertisement.field_event_project_number
+    - field.field.node.procurement_advertisement.field_intro_text
+    - field.field.node.procurement_advertisement.field_ma_general_law
+    - field.field.node.procurement_advertisement.field_multi_year_contract
+    - field.field.node.procurement_advertisement.field_not_awarded
+    - field.field.node.procurement_advertisement.field_offering
+    - field.field.node.procurement_advertisement.field_phone_number
+    - field.field.node.procurement_advertisement.field_procurement
+    - field.field.node.procurement_advertisement.field_procurement_footer
+    - field.field.node.procurement_advertisement.field_related_links
+    - field.field.node.procurement_advertisement.field_unspsc
+    - field.field.node.procurement_advertisement.field_url
+    - node.type.procurement_advertisement
+  module:
+    - datetime_range
+    - fences
+    - text
+    - user
+id: node.procurement_advertisement.listing
+targetEntityType: node
+bundle: procurement_advertisement
+mode: listing
+content:
+  field_awarded_by:
+    type: entity_reference_entity_view
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      view_mode: department_listing
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_date_range:
+    weight: 1
+    label: hidden
+    settings:
+      timezone_override: America/New_York
+      format_type: date_format_short
+      separator: '-'
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: daterange_default
+    region: content
+  field_intro_text:
+    weight: 0
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+hidden:
+  body: true
+  content_moderation_control: true
+  field_award_date: true
+  field_bid: true
+  field_bid_type: true
+  field_contact: true
+  field_contract_length: true
+  field_department: true
+  field_document: true
+  field_email: true
+  field_event_project_number: true
+  field_ma_general_law: true
+  field_multi_year_contract: true
+  field_not_awarded: true
+  field_offering: true
+  field_phone_number: true
+  field_procurement: true
+  field_procurement_footer: true
+  field_related_links: true
+  field_unspsc: true
+  field_url: true
+  langcode: true
+  links: true
+  published_at: true
