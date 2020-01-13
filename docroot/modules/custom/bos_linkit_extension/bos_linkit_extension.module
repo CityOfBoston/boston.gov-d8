@@ -135,7 +135,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
     "stuff" => [
       "0" => [
         "#type" => 'details',
-        "#title" => "Internal / External Link",
+        "#title" => "Internal / External",
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 0,
@@ -148,7 +148,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
       ],
       "1" => [
         "#type" => 'details',
-        "#title" => "Email / Phone Link",
+        "#title" => "Email / Phone",
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 1,
@@ -462,15 +462,15 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
       }
 
       // Build new href element.
-      $attributes["href"] = "mailto:" . urlencode(Html::escape($email["email-frame"]["address"]));
+      $attributes["href"] = "mailto:" . Html::escape($email["email-frame"]["address"]);
       $join = "?";
       if (!empty($email["email-frame"]["subject"])) {
-        $attributes["href"] .= $join . "subject=" . urlencode(Html::escape($email["email-frame"]["subject"]));
+        $attributes["href"] .= $join . "subject=" . Html::escape($email["email-frame"]["subject"]);
         $join = "&";
       }
       if (!empty($email["email-frame"]["body"])) {
         $body = Html::escape($email["email-frame"]["body"]);
-        $attributes["href"] .= $join . "body=" . urlencode($body);
+        $attributes["href"] .= $join . "body=" . Html::escape($body);
       }
       $form_state->setValue("attributes", $attributes);
       $form_state->setValue("href_dirty_check", $attributes['href']);
