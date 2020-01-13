@@ -41,6 +41,7 @@
     src="deploy_${TRAVIS_BRANCH_SANITIZED}_dry_run" && deploy_dry_run="${!src}"
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
+    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
 
     printf "ref: $(basename "$0")\n"
 
