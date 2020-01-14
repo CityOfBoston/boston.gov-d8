@@ -82,7 +82,7 @@ class MNLRest extends ControllerBase {
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data.
       $apiKey = $this->request->getCurrentRequest()->get('api_key');
-      $token = "123abc";
+      $token = "Au47a8x38E";
       $request_method = $this->request->getCurrentRequest()->getMethod();
       if ($apiKey !== $token) {
         $response_array = [
