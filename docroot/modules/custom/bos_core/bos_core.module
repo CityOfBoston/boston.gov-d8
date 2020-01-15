@@ -493,15 +493,18 @@ function bos_core_preprocess_image_style(&$variables) {
       $variables["image"]["#height"] = "150";
     case "200_embedded_ckeditor":
     case "300_embedded_ckeditor":
+    case "400_embedded_ckeditor_default":
     case "800_embedded_ckeditor":
       $variables["ckeditor_background"] = TRUE;
       $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+      $variables["content_attributes"]["data-cob-ckeditor"][] = $variables["image"]["#height"];
       $variables["content_attributes"]["class"][] = $variables["style_name"];
+      $variables["attributes"]["class"][] = "cob-ckeditor";
+      $variables["content_attributes"]["class"][] = "cob-ckeditor-bg";
+      $variables["content_attributes"]["id"][] = $variables["style_name"];
       $style = [
-        "width: 100%",
+        "min-height: " . $variables["image"]["#height"] . "px",
         "height: " . $variables["image"]["#height"] . "px",
-        "background-size: cover",
-        "background-position: center",
         "background-image: url(" . $variables["image"]["#uri"] . ")",
       ];
       $variables["content_attributes"]["style"][] = implode(";", $style);
