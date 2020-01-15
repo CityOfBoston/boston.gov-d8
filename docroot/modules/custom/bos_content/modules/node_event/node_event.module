@@ -101,7 +101,7 @@ function node_event_preprocess_page(&$variables) {
 function node_event_preprocess_node__event(&$variables) {
 
   $ajax = FALSE;
-  if (NULL != \Drupal::request()->request->get("_drupal_ajax") || NULL != \Drupal::request()->request->get("ajax_page_state") ) {
+  if (NULL != \Drupal::request()->request->get("_drupal_ajax") || NULL != \Drupal::request()->request->get("ajax_page_state")) {
     $ajax = TRUE;
   }
 
