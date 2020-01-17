@@ -5,13 +5,15 @@
  * Provides an script_page entity type.
  */
 
+use Drupal\Core\Render\Element;
+
 /**
  * Implements hook_theme().
  */
 function node_procurement_advertisement_theme() {
   $theme['node__procurement_advertisement'] = [
     'base hook' => 'node',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
+    'render element' => 'elements',
   ];
   /*
    * $theme['field__field_intro_text__mode__full'] = [
@@ -20,101 +22,18 @@ function node_procurement_advertisement_theme() {
    * ];*/
   $theme['field__taxonomy_term__name__massachusetts_general_law'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
   $theme['taxonomy_term__massachusetts_general_law'] = [
     'base hook' => 'taxonomy_term',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
   $theme['node__person_profile__department_listing'] = [
     'base hook' => 'node',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
   $theme['node__procurement_advertisement__listing'] = [
     'base hook' => 'node',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
+    'render element' => 'elements',
   ];
   return $theme;
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_procurement_advertisement_preprocess_node__procurement_advertisement__listing(&$variables) {
-  if (NULL != ($node = $variables["node"] ?? NULL)) {
-
-    if (is_numeric($node)) {
-      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
-    }
-    if ($node->bundle() == "procurement_advertisement") {
-      $variables["start_date"] = "";
-      if (!empty($variables["content"]["field_date_range"][0])) {
-        if (!empty($variables["content"]["field_date_range"][0]["start_date"])) {
-          $variables["start_date"] = $variables["content"]["field_date_range"][0]["start_date"]["#text"];
-        }
-        else {
-          $variables["start_date"] = $variables["content"]["field_date_range"][0]["#text"];
-        }
-      }
-
-    }
-  }
-  /*
-  $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
-  $variables['dept_name'] = $term->getName();
-
-  if (isset($term) && $term->hasField('field_department_profile')) {
-    $dept_profile = $term->get('field_department_profile')->getValue();
-    if (isset($dept_profile[0]['target_id'])) {
-      $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
-      $dept_url = '/node/' . $node->id();
-      $variables['dept_url'] = $dept_url;
-      $dept_icon = $node->field_icon->target_id;
-
-      $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
-      if ($file = File::load($dept_icon)) {
-        $dept_icon_uri = $file->getFileUri();
-        if (substr($dept_icon_uri, 0, 4) != "http") {
-          $dept_icon_uri = \Drupal::request()
-              ->getScheme() . ":" . $dept_icon_uri;
-        }
-        if (@file_get_contents($dept_icon_uri)) {
-          $variables['dept_icon_uri'] = $dept_icon_uri;
-        }
-      }
-
-    }
-  }
-  if (isset($variables["content"]["field_time"]["#items"])) {
-    $variables["short_time"] = $variables["content"]["field_time"][0]["#text"];
-  }
-  if (!empty($variables["content"]["field_date_range"])) {
-    $start_date = "";
-    if (isset($variables["content"]["field_date_range"]["#items"]->value)) {
-      $start_date = $variables["content"]["field_date_range"]["#items"]->value;
-      if (is_string($start_date)) {
-        $start_date = new DateTime($start_date . "+0000");
-        $start_date->setTimezone(new DateTimeZone("America/new_york"));
-      }
-      $stdt = $start_date->format("F d, Y g:iA");
-      $edt = "";
-    }
-    if (isset($variables["content"]["field_date_range"]["#items"]->end_date)) {
-      $end_date = $variables["content"]["field_date_range"]["#items"]->end_date;
-      $end_date->setTimezone(new DateTimeZone("America/new_york"));
-      if ($start_date->format("ymd") == $end_date->format("ymd")) {
-        if ($start_date->format("g:iA") != $end_date->format("g:iA")) {
-          $edt = $end_date->format(" - g:iA");
-        }
-      }
-      else {
-        $edt = " to " . $end_date->format("F d, Y g:iA");
-      }
-    }
-    $variables["public_notice_date"] = $stdt . $edt;
-
-  }
-*/
 }
 
 /**
@@ -140,6 +59,70 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
         $variables['end_date'] = $variables["content"]["field_date_range"][0]["end_date"]["#text"];
       }
    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_procurement_advertisement_preprocess_node__procurement_advertisement__listing(&$variables) {
+
+  //return $term;
+
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+    //$variables["field_contacts"] = $variables["elements"]["field_contacts"][0]["#taxonomy_term"];
+
+    if (is_numeric($node)) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+    if ($node->bundle() == "procurement_advertisement") {
+      $variables['field_procurement'] = $variables["content"]["field_procurement"][0]["#title"];
+      $variables['field_department'] = $variables["content"]["field_department"][0]["#context"]["value"];
+      $variables['field_email'] = $variables["content"]["field_email"][0]["#context"]["value"];
+      $variables['field_phone_number'] = $variables["content"]["field_phone_number"][0]["#context"]["value"];
+      $variables['field_event_project_number'] = $variables["content"]["field_event_project_number"][0]["#context"]["value"];
+
+
+      $variables["start_date"] = "";
+      if (!empty($variables["content"]["field_date_range"][0])) {
+        if (!empty($variables["content"]["field_date_range"][0]["start_date"])) {
+          $variables["start_date"] = $variables["content"]["field_date_range"][0]["start_date"]["#text"];
+        }
+        else {
+          $variables["start_date"] = $variables["content"]["field_date_range"][0]["#text"];
+        }
+      }
+      if (!empty($variables["content"]["field_date_range"][0]["end_date"])) {
+        $variables['end_date'] = $variables["content"]["field_date_range"][0]["end_date"]["#text"];
+      }
+    }
+
+    //$term = $variables['elements']['field_contacts'][0];
+    //$variables['dept_name'] = $term->getName();
+
+    /* if (isset($term) && $term->hasField('field_department_profile')) {
+       $dept_profile = $term->get('field_department_profile')->getValue();
+       if (isset($dept_profile[0]['target_id'])) {
+         $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
+         $dept_url = '/node/' . $node->id();
+         $variables['dept_url'] = $dept_url;
+         $dept_icon = $node->field_icon->target_id;
+
+         $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
+         if ($file = File::load($dept_icon)) {
+           $dept_icon_uri = $file->getFileUri();
+           if (substr($dept_icon_uri, 0, 4) != "http") {
+             $dept_icon_uri = \Drupal::request()
+                 ->getScheme() . ":" . $dept_icon_uri;
+           }
+           if (@file_get_contents($dept_icon_uri)) {
+             $variables['dept_icon_uri'] = $dept_icon_uri;
+           }
+         }
+
+       }
+     }*/
+
   }
 }
 
@@ -183,9 +166,26 @@ function node_procurement_advertisement_field_default_field_instances_alter(&$in
 }
 
 /**
+ * Prepares variables for procurement_advertisement templates.
+ *
+ * Default template: procurement-advertisement.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the public notice information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
+ */
+function template_preprocess_procurement_advertisement(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
+  }
+}
+
+/**
  * Implements hook_preprocess_views_exposed_form().
  */
-function node_procurement_advertisement_preprocess_views_exposed_form(&$vars) {
+/*function node_procurement_advertisement_preprocess_views_exposed_form(&$vars) {
   if ($vars['form']['#id'] == 'views-exposed-form-bids-rfps-landing' || $vars['form']['#id'] == 'views-exposed-form-bids-rfps-archive') {
     $vars['widget_groups'] = [
       'search by project or bid name' => [],
@@ -204,7 +204,7 @@ function node_procurement_advertisement_preprocess_views_exposed_form(&$vars) {
       }
     }
   }
-}
+}*/
 
 /**
  * Implements hook_form_FORM_ID_alter().
