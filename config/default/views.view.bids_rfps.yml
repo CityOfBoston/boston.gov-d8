@@ -3,7 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.teaser
+    - core.entity_view_mode.node.listing
     - node.type.procurement_advertisement
   module:
     - better_exposed_filters
@@ -96,10 +96,15 @@ display:
           quantity: 9
       style:
         type: default
+        options:
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
       row:
         type: 'entity:node'
         options:
-          view_mode: teaser
+          relationship: none
+          view_mode: listing
       fields:
         title:
           id: title
@@ -187,10 +192,12 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: 'Search by Title'
+            label: 'Search by Procurement'
             description: ''
             use_operator: false
             operator: title_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: title
             required: false
             remember: false
@@ -200,18 +207,12 @@ display:
               anonymous: '0'
               administrator: '0'
               site_administrator: '0'
-              content_editor: '0'
-              content_author: '0'
-              events_editor: '0'
-              press_release_editor: '0'
-              status_alert_editor: '0'
               developer: '0'
-              guide_author: '0'
-              landing_author: '0'
-              procurement_editor: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -375,9 +376,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
-  page_1:
+  landing:
     display_plugin: page
-    id: page_1
+    id: landing
     display_title: Landing
     position: 1
     display_options:
