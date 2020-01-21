@@ -92,6 +92,10 @@
             printout "STEP" "Copy files from (GitHub) into <${deploy_dir}>"
             # Remove the various .gitignore files so we can use git to manage full set of the Deploy Candidate files.
             printout "INFO" "Refine Build Artifact (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
+
+            chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
+            chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
+
             rm -rf ${TRAVIS_BUILD_DIR}/hooks/.gitignore &> /dev/null
             find ${TRAVIS_BUILD_DIR}/docroot/modules/custom/. -type f -name ".gitignore" -delete -print &> /dev/null
 
