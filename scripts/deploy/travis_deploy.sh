@@ -95,6 +95,7 @@
             printout "INFO" "Refine Build Artifact (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
 
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
+            mkdir ${deploy_dir}/docroot/sites/default/settings
             chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
 
             rm -rf ${TRAVIS_BUILD_DIR}/hooks/.gitignore &> /dev/null
