@@ -98,10 +98,6 @@
             mkdir ${deploy_dir}/docroot/sites/default/settings
             chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
 
-            rm -rf ${TRAVIS_BUILD_DIR}/hooks/.gitignore &> /dev/null
-            rm -rf ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings/.gitignore &> /dev/null
-            find ${TRAVIS_BUILD_DIR}/docroot/modules/custom/. -type f -name ".gitignore" -delete -print &> /dev/null
-
             # Move files from the Deploy Candidate into the Acquia Repo.
             printout "INFO" "Select Build Artifact files and copy to create the Deploy Candidate."
             rsync \
@@ -111,7 +107,6 @@
                 --exclude-from=${deploy_excludes_file} \
                 --files-from=${deploy_includes_file} \
                 ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
-            ls -la ${deploy_dir}/docroot/sites/default/settings
 
             # Sanitize - remove files from file defined in deploy_sanitize_file.
             # deploy_sanitize_file is a line delimited list of wildcard files or folders.
@@ -127,6 +122,8 @@
                     fi
                 done
             fi
+            # Removes any gitignore files in contrib or custom modules.
+            find ${TRAVIS_BUILD_DIR}/docroot/modules/. -type f -name ".gitignore" -delete -print &> /dev/null
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             chmod +x ${TRAVIS_BUILD_DIR}/hooks/**/*.sh
