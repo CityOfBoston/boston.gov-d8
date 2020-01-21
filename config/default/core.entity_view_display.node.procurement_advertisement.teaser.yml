@@ -1,8 +1,9 @@
-uuid: a7175620-d032-45b0-88fa-64793df11cfc
+uuid: df08c0e4-ee46-4d2e-b8c9-1681a8bcee6c
 langcode: und
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.teaser
     - field.field.node.procurement_advertisement.body
     - field.field.node.procurement_advertisement.field_award_date
     - field.field.node.procurement_advertisement.field_awarded_by
@@ -36,10 +37,10 @@ dependencies:
     - link
     - text
     - user
-id: node.procurement_advertisement.default
+id: node.procurement_advertisement.teaser
 targetEntityType: node
 bundle: procurement_advertisement
-mode: default
+mode: teaser
 content:
   body:
     weight: 1

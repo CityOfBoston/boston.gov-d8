@@ -69,6 +69,7 @@ third_party_settings:
         - field_contact
         - field_multi_year_contract
         - field_contract_length
+        - field_contacts
       parent_name: group_procurement_advertisement
       weight: 20
       format_type: tab
@@ -107,7 +108,7 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_sidebar
-      weight: 58
+      weight: 59
       format_type: tab
       format_settings:
         id: ''
@@ -332,7 +333,7 @@ content:
     region: content
   field_related_links:
     type: link_default
-    weight: 59
+    weight: 60
     region: content
     settings:
       placeholder_url: ''
@@ -340,7 +341,7 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 57
+    weight: 58
     region: content
     settings:
       placeholder: ''
@@ -355,7 +356,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -409,7 +410,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60

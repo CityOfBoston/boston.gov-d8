@@ -995,7 +995,7 @@ div[class*=embedded-ckeditor].align-left {
 .cob-300-embedded-ckeditor {
   width: 33%;
 }
-.cob-400-embedded-ckeditor {
+.cob-400-embedded-ckeditor-default {
   width: 50%;
 }
 .cob-800-embedded-ckeditor {
@@ -1005,6 +1005,14 @@ div[class*=embedded-ckeditor].align-left {
 .cob-icon-embedded-ck-editor svg {
   width: auto;
   height: 100px;
+}
+
+.cob-ckeditor-bg {
+  width: 100%;
+  height: auto !important;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 /*
@@ -1066,4 +1074,15 @@ What: Issue #946 - sidebar images too large
 .node-program-initiative-profile .field-name-field-sidebar-text .align-center.embedded-entity {
   max-width: 70%;
   max-height: 70%;
+}
+
+/**
+Stella:
+Where: Procurement Advertisement
+When: Adding style to view-row that is suddenly wrapping divs with .n-li class
+ */
+
+.views-row:not(:last-child) {
+  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
