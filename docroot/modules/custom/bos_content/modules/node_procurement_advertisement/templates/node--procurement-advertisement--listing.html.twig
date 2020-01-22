@@ -105,17 +105,15 @@
             <li class="dl-i">
               <span class="dl-t">Contact:</span>
               <span class="dl-d">
-                <div class="addressfield-container-inline name-block">
                   <div class="name-block">
                     {{ field_department }}
                   </div>
                   <div class="name-block">
-                    {{ field_email }}
+                    <a href="mailto:{{ field_email }}">{{ field_email }}</a>
                   </div>
                   <div class="name-block">
-                    {{ field_phone_number }}
+                    <div>{{ field_phone_number }}</div>
                   </div>
-                </div>
               </span>
             </li>
           {% endif %}
