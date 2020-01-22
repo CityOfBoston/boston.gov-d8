@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\file\Entity\File;
+
 
 /**
  * Implements hook_theme().
@@ -82,7 +84,6 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
       $variables['field_phone_number'] = $variables["content"]["field_phone_number"][0]["#context"]["value"];
       $variables['field_event_project_number'] = $variables["content"]["field_event_project_number"][0]["#context"]["value"];
 
-
       $variables["start_date"] = "";
       if (!empty($variables["content"]["field_date_range"][0])) {
         if (!empty($variables["content"]["field_date_range"][0]["start_date"])) {
@@ -97,10 +98,10 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
       }
     }
 
-    //$term = $variables['elements']['field_contacts'][0];
-    //$variables['dept_name'] = $term->getName();
+    $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
+    $variables['dept_name'] = $term->getName();
 
-    /* if (isset($term) && $term->hasField('field_department_profile')) {
+      if (isset($term) && $term->hasField('field_department_profile')) {
        $dept_profile = $term->get('field_department_profile')->getValue();
        if (isset($dept_profile[0]['target_id'])) {
          $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
@@ -121,7 +122,7 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
          }
 
        }
-     }*/
+     }
 
   }
 }
