@@ -80,8 +80,8 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
     if ($node->bundle() == "procurement_advertisement") {
       $variables['field_procurement'] = $variables["content"]["field_procurement"][0]["#title"];
       $variables['field_department'] = $variables["content"]["field_department"][0]["#context"]["value"];
-      $variables['field_email'] = $variables["content"]["field_email"][0]["#context"]["value"];
-      $variables['field_phone_number'] = $variables["content"]["field_phone_number"][0]["#context"]["value"];
+      $variables['field_email'] = $variables["content"]["field_email"][0];
+      $variables['field_phone_number'] = bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]);
       $variables['field_event_project_number'] = $variables["content"]["field_event_project_number"][0]["#context"]["value"];
 
       $variables["start_date"] = "";
