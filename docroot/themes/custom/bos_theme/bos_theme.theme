@@ -1178,6 +1178,12 @@ function _bos_theme_page_watermark(array &$variables) {
       $tz = (empty($user->getTimeZone()) || $user->getTimeZone() == "UTC" ? "America/New_York" : $user->getTimeZone());
       $ed->setTimezone(new DateTimeZone($tz));
       $variables['cob']['lastdate'] = $ed->format("D M d, Y - g:ia");
+      $at_settings = [
+        'word_boundary' => TRUE,
+        'ellipsis' => TRUE,
+        'max_length' => 50,
+      ];
+      $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
 
       if ($variables['unpublished'] || $variables['preview']) {
         $variables['attributes']->addClass('node-unpublished');
