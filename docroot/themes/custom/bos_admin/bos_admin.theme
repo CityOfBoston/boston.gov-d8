@@ -302,6 +302,8 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
 
   if (!empty($form["meta"]["author"]["#markup"])) {
+    $form["meta"]["author"]["#title"] = new TranslatableMarkup("Revision Author");
+    $form["author"]["#title"] = new TranslatableMarkup("Original Author");
     $node = \Drupal::routeMatch()->getParameter('node');
     $form["meta"]["author"]["#markup"] = bos_admin_author_expand($form["meta"]["author"]["#markup"]);
     if (!empty($node)) {
