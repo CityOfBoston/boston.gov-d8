@@ -23,11 +23,6 @@ What:  Locates top of page considering the admin toolbar.
 .toolbar-fixed .nv-m {
   top: 2.15em;
 }
-.logged-in #page,
-.toolbar-fixed.toolbar-horizontal.toolbar-tray-open.logged-in #main-menu,
-.toolbar-fixed.toolbar-tray-open .logged-in .nv-m {
-  top: 8.4em;
-}
 .toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
 .toolbar-fixed.toolbar-tray-open .nv-m {
   top: 4.4em;
@@ -941,13 +936,18 @@ David:
 Where: page.html.twig
 What: Styles the watermark for D8.
  */
-.logged-in.toolbar-fixed #main-menu,
-.logged-in.toolbar-fixed .nv-m {
-  top: 6.50em;
+.logged-in.toolbar-fixed .nv-m,
+.logged-in.toolbar-fixed #main-menu {
+  top: 6.5em;
+}
+.logged-in #page,
+.logged-in.toolbar-fixed.toolbar-tray-open .nv-m,
+.logged-in.toolbar-fixed.toolbar-tray-open #main-menu {
+  top: 8.8em;
 }
 .watermark-wrapper,
 .toolbar-vertical.toolbar-tray-open .watermark-wrapper {
-  top: 2.4em;
+  top: 2.1em;
   height: 4.4em;
 }
 .toolbar-horizontal.toolbar-tray-open .watermark-wrapper {
@@ -958,7 +958,7 @@ What: Styles the watermark for D8.
   width: 100%;
   position: fixed;
   z-index: 51;
-  margin: -5px auto 0 auto;
+  margin: 0 auto 0 auto;
 }
 .watermark {
   font-family: Arial, sans-serif;
