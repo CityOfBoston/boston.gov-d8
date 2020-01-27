@@ -23,6 +23,11 @@ What:  Locates top of page considering the admin toolbar.
 .toolbar-fixed .nv-m {
   top: 2.15em;
 }
+.logged-in #page,
+.toolbar-fixed.toolbar-horizontal.toolbar-tray-open.logged-in #main-menu,
+.toolbar-fixed.toolbar-tray-open .logged-in .nv-m {
+  top: 8.4em;
+}
 .toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
 .toolbar-fixed.toolbar-tray-open .nv-m {
   top: 4.4em;
@@ -936,6 +941,19 @@ David:
 Where: page.html.twig
 What: Styles the watermark for D8.
  */
+.logged-in.toolbar-fixed #main-menu,
+.logged-in.toolbar-fixed .nv-m {
+  top: 6.50em;
+}
+.watermark-wrapper,
+.toolbar-vertical.toolbar-tray-open .watermark-wrapper {
+  top: 2.4em;
+  height: 4.4em;
+}
+.toolbar-horizontal.toolbar-tray-open .watermark-wrapper {
+  top: 4.4em;
+  height: 4.4em;
+}
 .watermark-wrapper {
   width: 100%;
   position: fixed;
@@ -943,32 +961,103 @@ What: Styles the watermark for D8.
   margin: -5px auto 0 auto;
 }
 .watermark {
-  width: fit-content;
-  font-family: serif;
-  font-size: 72px;
-  margin: 0 auto;
-  height: 74px;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  text-align: left;
+  font-weight: normal;
+  margin: auto 0;
+  overflow: hidden;
+  display: flex;
+  text-transform: none;
 }
 .watermark--needs_review {
-  color: #277abd;
-  background: linear-gradient(transparent, #f0ffff, transparent);
-  opacity: 0.75;
+  color: #fff;
+  background: #277abd;
 }
 .watermark--unpublished,
 .watermark--draft {
-  color: #ffae00;
-  background: linear-gradient(transparent, #feffbe, transparent);
-  opacity: 0.75;
+  color: #fff;
+  background: #ffae00;
+}
+.watermark--published {
+  background: #269e2c;
+  color: #fff;
 }
 .watermark--revision,
 .watermark--archive {
   color: #642b2b;
-  background: linear-gradient(transparent, #c8c0c0, transparent);
-  opacity: .9;
+  background: #c8c0c0;
 }
 .watermark .wm-text {
-  top: 6px;
+  margin: auto 0;
+  font-size: 44px;
+  text-transform: uppercase;
+}
+.watermark .wm-type {
+  font-style: italic;
+  font-weight: normal;
+}
+.watermark .wm-title {
   position: relative;
+  font-weight: normal;
+}
+.wm-lastedit,
+.wm-lasttime {
+}
+.watermark .wm-ops {
+}
+.watermark .wm-ops a {
+  margin: auto 10px;
+  font-size: 18px;
+  padding: 10px 15px;
+  display: block;
+  background: #fff;
+  opacity: 0.90;
+}
+.watermark.watermark--unpublished .wm-ops a,
+.watermark.watermark--draft .wm-ops a {
+  color: #ffae00;
+}
+.watermark.watermark--published .wm-ops a {
+  color: #269e2c;
+}
+.watermark.watermark--needs_review .wm-ops a {
+  color: #277abd;
+}
+.moderation-sidebar-toolbar-tab .toolbar-item:after {
+  display: none;
+}
+.watermark .wm-col1,
+.watermark .wm-col2,
+.watermark .wm-col3 {
+  position:relative;
+  display: flex;
+  padding-top: 5px;
+  flex-flow: column;
+  margin: auto 15px;
+}
+.watermark .wm-col2 .wm-row1 {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+.watermark .wm-col2 .wm-row2 {
+  font-size: 16px;
+}
+.watermark .wm-col2 .wm-dot {
+  margin: auto 2px;
+  vertical-align: text-top;
+}
+.watermark .wm-col2 .wm-row2 .wm-dot {
+  font-size: 19px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+.watermark .wm-col1 {
+}
+.watermark .wm-col2 {
+  flex-grow: 5;
+}
+.watermark .wm-col3 {
 }
 nav.nv-h {
   z-index: 57;
