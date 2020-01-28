@@ -292,11 +292,11 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '<'
+          operator: '>='
           value:
             min: ''
             max: ''
-            value: now
+            value: '-30 minutes'
             type: offset
           group: 1
           exposed: false
@@ -306,6 +306,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -315,8 +317,6 @@ display:
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -404,6 +404,190 @@ display:
       display_extenders: {  }
       display_description: ''
       path: views/bid-listings/archive
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            procurement_advertisement: procurement_advertisement
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: word
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: title_op
+            label: 'Search by Procurement'
+            description: ''
+            use_operator: false
+            operator: title_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: title
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: title
+          plugin_id: string
+        field_awarding_authority_target_id:
+          id: field_awarding_authority_target_id
+          table: node__field_awarding_authority
+          field: field_awarding_authority_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_awarding_authority_target_id_op
+            label: 'Awarding Authority'
+            description: ''
+            use_operator: false
+            operator: field_awarding_authority_target_id_op
+            identifier: field_awarding_authority_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              content_editor: '0'
+              content_author: '0'
+              events_editor: '0'
+              press_release_editor: '0'
+              status_alert_editor: '0'
+              developer: '0'
+              guide_author: '0'
+              landing_author: '0'
+              procurement_editor: '0'
+            reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: contact
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_date_range_value:
+          id: field_date_range_value
+          table: node__field_date_range
+          field: field_date_range_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: '-30 minutes'
+            type: offset
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+      defaults:
+        filters: false
+        filter_groups: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
