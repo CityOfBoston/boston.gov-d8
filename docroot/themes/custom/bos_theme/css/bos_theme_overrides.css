@@ -945,6 +945,14 @@ What: Styles the watermark for D8.
 .logged-in.toolbar-fixed.toolbar-tray-open #main-menu {
   top: 8.8em;
 }
+.logged-in .page--wa,
+.logged-in .page--wa .main {
+  margin-top: 0;
+}
+.logged-in .page--wa,
+.logged-in .page--wa .hero-image {
+  padding-top: 0;
+}
 .watermark-wrapper,
 .toolbar-vertical.toolbar-tray-open .watermark-wrapper {
   top: 2.1em;
@@ -1006,6 +1014,7 @@ What: Styles the watermark for D8.
 }
 .watermark .wm-ops {
 }
+.watermark .wm-forward a,
 .watermark .wm-ops a {
   margin: auto 10px;
   font-size: 18px;
@@ -1013,6 +1022,11 @@ What: Styles the watermark for D8.
   display: block;
   background: #fff;
   opacity: 0.90;
+}
+.watermark .wm-forward .status-draft-available a {
+  background: #ffae00;
+  color: #000;
+  opacity: 0.80;
 }
 .watermark.watermark--unpublished .wm-ops a,
 .watermark.watermark--draft .wm-ops a {
@@ -1058,6 +1072,7 @@ What: Styles the watermark for D8.
   flex-grow: 5;
 }
 .watermark .wm-col3 {
+  flex-flow: row;
 }
 nav.nv-h {
   z-index: 57;
