@@ -69,7 +69,6 @@ third_party_settings:
         - field_contact
         - field_multi_year_contract
         - field_contract_length
-        - field_contacts
       parent_name: group_procurement_advertisement
       weight: 20
       format_type: tab
@@ -109,13 +108,14 @@ third_party_settings:
         - field_phone_number
       parent_name: group_sidebar
       weight: 59
-      format_type: tab
+      format_type: details
       format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
         id: ''
         classes: ''
-        formatter: closed
-        description: ''
-        required_fields: true
+        open: false
       label: Contact
       region: content
     group_submissions:
