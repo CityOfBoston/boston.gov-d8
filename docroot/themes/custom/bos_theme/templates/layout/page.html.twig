@@ -67,6 +67,13 @@
         </div>
       </div>
       <div class="wm-col3">
+        {% if cob.not_latest %}
+          <span class="wm-forward">
+            <div class="status-draft-available">
+              <a href="/node/{{ cob.nid }}/latest" class="toolbar-icon toolbar-item" tabindex="-1">View Latest</a>
+            </div>
+          </span>
+        {% endif %}
         <span class="wm-ops"></span>
       </div>
     </div>
