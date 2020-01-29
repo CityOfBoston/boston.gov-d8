@@ -44,6 +44,42 @@
  * @see html.html.twig
  */
 #}
+{% if watermark_text %}
+  <mark class="watermark-wrapper">
+    <div{{ attributes_watermark}}>
+      <div class="wm-col1">
+        <span class="wm-text">{{ watermark_text }}</span>
+      </div>
+      <div class="wm-col2">
+        <div class="wm-row1">
+          <span class="wm-type">{{ cob.type }}</span>
+          <span class="wm-dot">&#10072;</span>
+          <span class="wm-title">{{ title }}</span>
+        </div>
+        <div class="wm-row2">
+          {% if cob.lastedit %}
+            <span class="wm-lastedit">{{ cob.lasteditprefix }} by {{ cob.lastedit }}</span>
+            <span class="wm-dot">&#8226;</span>
+          {% endif %}
+          {% if cob.lastdate %}
+            <span class="wm-lasttime">{{ cob.lastdate }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="wm-col3">
+        {% if cob.not_latest %}
+          <span class="wm-forward">
+            <div class="status-draft-available">
+              <a href="/node/{{ cob.nid }}/latest" class="toolbar-icon toolbar-item" tabindex="-1">View Latest</a>
+            </div>
+          </span>
+        {% endif %}
+        <span class="wm-ops"></span>
+      </div>
+    </div>
+  </mark>
+{% endif %}
+
 <input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
 
 <nav class="nv-m">
@@ -69,11 +105,6 @@
     {{ seal }}
     {{ secondary_nav }}
     {{ search }}
-    {% if watermark_text %}
-      <div class="watermark-wrapper">
-        <mark{{ attributes_watermark}}>&#8212;&#8212;[<span class="wm-text">{{ watermark_text }}</span>]&#8212;&#8212;</mark>
-      </div>
-    {% endif %}
   </header>
 
   {{ drupal_block('views_block:emergency_alerts-block_emergency_alert') }}
