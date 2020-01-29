@@ -7,7 +7,9 @@
  * @see https://drupal.org/node/1728164
  #}
 
-{{ drupal_block('system_breadcrumb_block') }}
+<div class="breadcrumb" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
 
 <article id="node-{{ node.id }}" {{ attributes }}>
   <div class="department-info-wrapper desktop-100">
