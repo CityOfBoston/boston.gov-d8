@@ -1185,6 +1185,12 @@ function _bos_theme_page_watermark(array &$variables) {
       ];
       $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
 
+      if ($node->isDefaultRevision() && !$node->isLatestRevision()) {
+        // We have a Draft or Needs-Review forward revision of this node.
+        $variables["cob"]['not_latest'] = TRUE;
+        $variables["cob"]['nid'] = $node->id();
+      }
+
       if ($variables['unpublished'] || $variables['preview']) {
         $variables['attributes']->addClass('node-unpublished');
         $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
