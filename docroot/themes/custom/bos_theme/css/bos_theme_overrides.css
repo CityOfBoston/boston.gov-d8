@@ -945,18 +945,16 @@ What: Styles the watermark for D8.
 .logged-in.toolbar-fixed.toolbar-tray-open #main-menu {
   top: 8.8em;
 }
-.logged-in .page--wa,
-.logged-in .page--wa .main {
+.logged-in #page .main {
   margin-top: 0;
 }
-.logged-in .mn,
-.logged-in .page--fp,
-.logged-in .page--wa,
-.logged-in .page--wa .hero-image {
+.logged-in #page {
   padding-top: 0;
 }
-.logged-in .mn,
-.logged-in .page--fp .hro {
+.logged-in #page .ph,
+.logged-in #page .hro,
+.logged-in #page .hero-image {
+  padding-top: 0;
   margin-top: -15px;
 }
 .watermark-wrapper,
@@ -1176,4 +1174,13 @@ What: Issue #946 - sidebar images too large
 .node-program-initiative-profile .field-name-field-sidebar-text .align-center.embedded-entity {
   max-width: 70%;
   max-height: 70%;
+}
+
+/**
+David:
+Where: All pages
+What: Cleans up the breadcrumb and main page component locations (spin-off from watermark updates).
+ */
+.breadcrumb {
+  margin-top: 3rem;
 }
