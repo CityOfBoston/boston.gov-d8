@@ -281,8 +281,8 @@
                         # Uh oh!
                         printf "\n"
                         printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
-                        printout "" "          Config import log dump (last 25 rows):"
-                        tail -50 ${setup_logs}/config_import.log
+                        printout "" "          Config import log dump (last 150 rows):"
+                        tail -150 ${setup_logs}/config_import.log
                         printout "" "          Dump ends."
                         echo -e "\n${RedBG}  ============================================================================== ${NC}"
                         echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"
