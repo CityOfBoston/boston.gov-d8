@@ -46,6 +46,7 @@
     "drupal/coder": "^3.7",
     "drupal/config_filter": "^1.0",
     "drupal/config_ignore": "^2.1",
+    "drupal/config_split": "^1.3",
     "drupal/config_update": "1.x-dev#ac36a9f8d8a2cc730edf8cc654382715ba849adc",
     "drupal/console": "^1.0.2",
     "drupal/content_access": "^1.0",
@@ -180,21 +181,21 @@
         "https://www.drupal.org/project/better_exposed_filters/issues/3019535": "https://www.drupal.org/files/issues/2019-03-20/3019535-bef_ajax_error_0.patch"
       },
       "drupal/core": {
-        "CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
+        "* CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
         "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2018-05-14/2794481-60.patch",
-        "Title is a render array - Fixes media library ajax popup.": "https://www.drupal.org/files/issues/2018-07-06/2663316-52.patch",
-        "https://www.drupal.org/project/drupal/issues/2174633": "https://www.drupal.org/files/issues/2019-10-14/2174633-351.patch",
-        "https://www.drupal.org/project/drupal/issues/2863188": "https://www.drupal.org/files/issues/2019-10-04/2863188-8.7.8.do-not-test_0.patch"
+        "* Title is a render array - Fixes media library ajax popup.": "https://www.drupal.org/files/issues/2018-07-06/2663316-52.patch",
+        "* https://www.drupal.org/project/drupal/issues/2174633": "https://www.drupal.org/files/issues/2019-10-14/2174633-351.patch",
+        "* https://www.drupal.org/project/drupal/issues/2863188": "https://www.drupal.org/files/issues/2019-10-04/2863188-8.7.8.do-not-test_0.patch"
       },
       "drupal/migrate_drupal": {
         "Fix 'Call to a member function getSetting() on null' in migrate_drupal.": "https://www.drupal.org/files/issues/2018-07-08/2984460-3.patch"
       },
       "drupal/migrate_tools": {
-        "Fix '--tag/group/limit does not accept a value' in migrate commands.": "https://www.drupal.org/files/issues/2019-01-29/migration-tools_fix-drush-options_3024399-9.patch"
+        "* Fix '--tag/group/limit does not accept a value' in migrate commands.": "https://www.drupal.org/files/issues/2019-01-29/migration-tools_fix-drush-options_3024399-9.patch"
       },
       "drupal/field_group": {
-        "CoB patch - Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
-        "CoB patch - Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
+        "* CoB patch - Patch D6 field_group_migrations with file annotations.": "patches/d6_field_group.php.patch",
+        "* CoB patch - Patch D7 field_group_migrations with file annotations.": "patches/d7_field_group.php.patch"
       },
       "drupal/password_policy": {
         "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch",
@@ -211,18 +212,18 @@
         "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
       },
       "drupal/entity_reference_revisions":{
-        "Fixes hasTranslation() on null": "https://www.drupal.org/files/issues/2018-11-26/hastranslation-on-null-3016233-2.patch"
+        "* Fixes hasTranslation() on null": "https://www.drupal.org/files/issues/2018-11-26/hastranslation-on-null-3016233-2.patch"
       },
       "drupal/imagemagick": {
-        "CoB patch to implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
-        "CoB patch - Handles data is not set error": "patches/imagemagikToolkit_001.patch",
+        "* CoB patch to implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
+        "* CoB patch - Handles data is not set error": "patches/imagemagikToolkit_001.patch",
         "CoB patch to reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
       },
       "drupal/paragraphs_edit": {
         "Lineage issue when parent not a paragraph": "https://www.drupal.org/files/issues/2019-03-22/error_on_missing_parent-2944653-13034993.patch"
       },
       "drupal/salesforce": {
-        "https://www.drupal.org/project/salesforce/issues/3045542": "https://www.drupal.org/files/issues/2019-06-05/salesforce-endpoint_verification_option-3045542-8.patch"
+        "* https://www.drupal.org/project/salesforce/issues/3045542": "https://www.drupal.org/files/issues/2019-06-05/salesforce-endpoint_verification_option-3045542-8.patch"
       },
       "drupal/simplesamlphp_auth": {
         "https://www.drupal.org/project/simplesamlphp_auth/issues/2837029": "https://www.drupal.org/files/issues/2837029-2.patch"
