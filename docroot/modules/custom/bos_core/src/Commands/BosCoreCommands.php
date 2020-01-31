@@ -4,6 +4,7 @@ namespace Drupal\bos_core\Commands;
 
 use Drush\Commands\DrushCommands;
 use Drupal\bos_core\BosCoreCssSwitcherService;
+use Drupal\bos_core\BosCoreSyncIconManifestService;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -207,6 +208,18 @@ class BosCoreCommands extends DrushCommands {
     $config->set("ga_settings", $settings)
       ->save();
     return 'SUCCESS: Google Analytics tracking for REST calls is now ' . ($enabled == TRUE ? "ON" : "OFF");
+  }
+
+  /**
+   * Process manifest.txt file and update/create file/media entities.
+   *
+   * @validate-module-enabled bos_core
+   *
+   * @command bos:import-icon-manifest
+   * @aliases biim,bos-import-icon-manifest
+   */
+  public function importIconManifest() {
+    return BosCoreSyncIconManifestService::sync();
   }
 
 }

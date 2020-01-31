@@ -37,6 +37,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_core.settings');
+    $msettings = $config->get('icon');
     $settings = $config->get('ga_settings');
 
     $endpoint = isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect";
@@ -48,6 +49,24 @@ class BosCoreSettingsForm extends ConfigFormBase {
         '#title' => 'Boston Core Settings',
         '#description' => 'Configuration for Core Boston Components.',
         '#collapsible' => FALSE,
+
+        "icon" => [
+          '#type' => 'details',
+          '#title' => 'Patterns Icon Library',
+          '#description' => 'Integration with patterns icon library.',
+          '#open' => TRUE,
+
+          "manifest" => [
+            '#type' => 'textfield',
+            '#title' => t('Manifest location'),
+            '#description' => t('The remote http location for the icon manifest.txt file.<br/>example: <i>https://patterns.boston.gov/assets/icons/manifest.txt</i>'),
+            '#default_value' => $msettings['manifest'] ?: 'https://patterns.boston.gov/assets/icons/manifest.txt',
+            '#attributes' => [
+              "placeholder" => 'https://patterns.boston.gov/assets/icons/manifest.txt',
+            ],
+            '#required' => TRUE,
+          ],
+        ],
 
         "ga_settings" => [
           '#type' => 'details',
@@ -103,14 +122,17 @@ class BosCoreSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $form_state->getValue('bos_core');
 
-    $newValues = [
+    $newValues1 = [
       'ga_tid' => $settings['ga_settings']['ga_tid'],
       'ga_cid' => $settings['ga_settings']['ga_cid'],
       'ga_enabled' => $settings['ga_settings']['ga_enabled'],
     ];
-
+    $newValues2 = [
+      'manifest' => $settings['icon']['manifest'],
+    ];
     $this->config('bos_core.settings')
-      ->set('ga_settings', $newValues)
+      ->set('ga_settings', $newValues1)
+      ->set('icon', $newValues2)
       ->save();
 
     parent::submitForm($form, $form_state);
