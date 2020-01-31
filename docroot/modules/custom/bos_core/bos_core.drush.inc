@@ -6,6 +6,7 @@
  */
 
 use Drupal\bos_core\BosCoreCssSwitcherService;
+use Drupal\bos_core\BosCoreSyncIconManifestService;
 
 /**
  * Implements hook_drush_command().
@@ -21,11 +22,17 @@ function bos_core_drush_command() {
         'ord' => "The ordinal for the server (use 'drush bcss' for list)",
       ],
     ],
+    'bos-import-icon-manifest' => [
+      'description' => 'Boston Icon Manifest Import. Load Icons in manifest.txt into media library.',
+      'aliases' => ['biim'],
+      'core' => ['8+'],
+      'drupal dependencies' => ['bos_core'],
+    ],
   ];
 }
 
 /**
- * Drush command.
+ * D7 Drush command.
  */
 function drush_bos_core_bos_css_source($ord = NULL) {
 
@@ -39,5 +46,14 @@ function drush_bos_core_bos_css_source($ord = NULL) {
   }
   $type = drush_choice($opts, dt('Boston CSS Source Switcher:\n Select server to switch to:\n\n'));
   BosCoreCssSwitcherService::switchSource($type);
+
+}
+
+/**
+ * D7 Drush command.
+ */
+function drush_bos_import_icon_manifest() {
+
+  BosCoreSyncIconManifestService::sync();
 
 }
