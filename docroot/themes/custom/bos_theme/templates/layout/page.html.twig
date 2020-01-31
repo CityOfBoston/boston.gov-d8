@@ -54,7 +54,7 @@
         <div class="wm-row1">
           <span class="wm-type">{{ cob.type }}</span>
           <span class="wm-dot">&#10072;</span>
-          <span class="wm-title">{{ title }}</span>
+          <span class="wm-title">{{ cob.title }}</span>
         </div>
         <div class="wm-row2">
           {% if cob.lastedit %}
@@ -74,7 +74,14 @@
             </div>
           </span>
         {% endif %}
-        <span class="wm-ops"></span>
+        <span class="wm-ops">
+          <div class="moderation-sidebar-toolbar-tab status-published toolbar-tab" style="">
+            <a href="/moderation-sidebar/node/{{ cob.nid }}/latest" class="use-ajax toolbar-icon toolbar-icon-moderation-sidebar moderation-label-published toolbar-item" data-dialog-type="dialog" data-dialog-renderer="off_canvas" data-label="Published" tabindex="-1" style="">Edit</a>
+            <div>
+              <nav class="toolbar-lining clearfix" role="navigation"></nav>
+            </div>
+          </div>
+        </span>
       </div>
     </div>
   </mark>

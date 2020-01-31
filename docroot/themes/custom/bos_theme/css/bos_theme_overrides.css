@@ -110,6 +110,13 @@ button.lity-close {
 .bos_theme .moderation-sidebar-actions .button--edit-draft:before {
   content: url("../images/moderation_sidebar/edit.svg");
 }
+.bos_theme .ui-dialog-position-side .ui-dialog-titlebar {
+  height: 4.3em;
+  max-height: 4.3em;
+}
+.bos_theme .ui-dialog-position-side .ui-dialog-titlebar .ui-dialog-title {
+  line-height: 1.2em;
+}
 
 .bos_theme .moderation-sidebar-actions .button--view-draft {
   background: repeating-linear-gradient(
@@ -951,11 +958,15 @@ What: Styles the watermark for D8.
 .logged-in #page {
   padding-top: 0;
 }
+.logged-in #page .hro {
+  top: -15px;
+}
 .logged-in #page .ph,
-.logged-in #page .hro,
+.logged-in #page .paragraphs-item-hero-image .hro,
+.logged-in.node-type-post #page .hro,
 .logged-in #page .hero-image {
   padding-top: 0;
-  margin-top: -15px;
+  top: 20px;
 }
 .watermark-wrapper,
 .toolbar-vertical.toolbar-tray-open .watermark-wrapper {
