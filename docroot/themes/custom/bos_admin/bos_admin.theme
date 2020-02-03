@@ -50,6 +50,10 @@ function bos_admin_preprocess_html(&$variables) {
     && \Drupal::request()->attributes->get("_route_params")["entity_type"] == "embed_button") {
     $variables['attributes']['class'][] = 'admin-content-embed-buttons';
   }
+  if (($node = \Drupal::routeMatch()->getParameter('node'))
+      && $node->hasField('moderation_state')) {
+    $variables['attributes']['class'][] = "node-" . $node->get('moderation_state')->getString();
+  }
 }
 
 /**
@@ -81,6 +85,21 @@ function bos_admin_preprocess_username(&$variables) {
       $variables["name"] = $name;
     }
     realname_user_update($variables["account"]);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_block(&$variables) {
+  if (NULL != ($arguments = $variables["content"]["#title"]->getArguments())) {
+    $at_settings = [
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'max_length' => 35,
+    ];
+    $variables['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
+    $variables["content"]["#title"] = new TranslatableMarkup("<em><b>Edit</b></em> @type | @title", $arguments);
   }
 }
 
