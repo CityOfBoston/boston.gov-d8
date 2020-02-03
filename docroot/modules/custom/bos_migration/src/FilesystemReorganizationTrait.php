@@ -741,7 +741,7 @@ trait FilesystemReorganizationTrait {
       $query->condition("ml.field_media_in_library_value", "1");
       $query->condition("m.bundle", "icon");
       $result = $query->fetchAllAssoc["name"];
-      \Drupal::state()->get("bos_core.icon_library.manifest", $result);
+      \Drupal::state()->set("bos_core.icon_library.manifest", $result);
     }
     return $result;
   }

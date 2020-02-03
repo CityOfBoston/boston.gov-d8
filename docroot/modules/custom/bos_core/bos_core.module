@@ -5,12 +5,11 @@
  * Main file for the bos_core module.
  */
 
-use Drupal\Core\Database\Database;
+use Drupal\bos_core\BosCoreSyncIconManifestService;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Link;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
-use Drupal\migrate\MigrateException;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -20,13 +19,10 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
-use Drupal\media\Entity\Media;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
-use Drupal\migrate_utilities\MigUtilTools;
-use Drupal\bos_migration\FilesystemReorganizationTrait;
 
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
@@ -631,6 +627,43 @@ function bos_core_editor_load(array $entities) {
 }
 
 /**
+ * Implements hook_cron().
+ */
+function bos_core_cron() {
+  if (Drupal::config("bos_core.settings")->get("icon.cron")) {
+
+    /** @var \Drupal\Core\Queue\QueueFactory $queue_factory */
+    $queue_factory = \Drupal::service('queue');
+    /** @var  \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $queue_factory->get('cron_manifest_processor');
+
+    // Load the manifest file.
+    try {
+      $manifest = BosCoreSyncIconManifestService::loadManifestFile();
+    }
+    catch (Exception $e) {
+      return FALSE;
+    }
+
+    // Initialize the manifest cache. See if we have a manifest cached.
+    $manifest_cache = Drupal::state()
+      ->get("bos_core.icon_library.manifest", []);
+    if (!empty(array_filter($manifest_cache))) {
+      // If using cache, then work out which rows in manifest need processing.
+      $manifest_cache = array_values($manifest_cache);
+      $manifest = array_diff($manifest, $manifest_cache);
+    }
+
+    // Load the queue with icon files from the manifest that need processing.
+    if (!empty(array_filter($manifest))) {
+      foreach ($manifest as $icon) {
+        $queue->createItem($icon);
+      }
+    }
+  }
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
@@ -1101,254 +1134,7 @@ function _bos_core_rename_multiple_button(array &$variables, string $type, array
  * @throws \Drupal\Core\Entity\EntityStorageException.
  */
 function _bos_core_sync_assets() {
-  $manifest_file = DRUPAL_ROOT . '/sites/default/files/manifest.txt';
-  if (!file_exists($manifest_file)) {
-    printf("[warning] Icon manifest file not found !.\n");
-    \Drupal::logger("migrate")->warning("Icon manifest file not found !");
-    return;
-  }
-
-  /*
-   * Functions to manage entity & database activities.
-   */
-  $updateFilename = function ($fid, $filename) {
-    // Update the filename if necessary.
-    if (NULL != ($file = File::load($fid))) {
-      if ($filename != $file->getFilename()) {
-        \Drupal::database()->update("file_managed")
-          ->condition("fid", $fid)
-          ->fields(["filename" => $filename])
-          ->execute();
-      }
-    }
-  };
-  $getMediaEntityFromFile = function ($fid) {
-    $result = \Drupal::database()->query("SELECT fd.mid, fd.thumbnail__target_id, i.image_title FROM media_field_data fd
-          inner join media__image i on fd.mid = i.entity_id
-          inner join file_managed f on i.image_target_id = f.fid
-          where f.fid = " . $fid)
-      ->fetchAll();
-    return $result;
-
-  };
-  $createMediaEntity = function ($fid, $uid, $filename, $mid = 0, $vid = 0) {
-    $media_fields = [
-      'bundle' => "icon",
-      'uid' => $uid ?? 1,
-      'status' => 1,
-      'name' => $filename,
-      'image' => [
-        'target_id' => $fid,
-      ],
-    ];
-    if ($mid != 0) {
-      // If mid provided then set mid and vid to initially be the same.
-      $media_fields["mid"] = $mid;
-      $media_fields["vid"] = $mid;
-    }
-    if ($vid != 0) {
-      // If vid provided then specify that.
-      $media_fields["vid"] = $mid;
-    }
-    $media = Media::create($media_fields);
-    $media->set("field_media_in_library", 1);
-    $media->save();
-    return $media;
-  };
-  $updateMediaLibrary = function ($mid, $in_library = TRUE) {
-    \Drupal::database()->update("media__field_media_in_library")
-      ->condition("entity_id", $mid)
-      ->fields(["field_media_in_library_value" => ($in_library ? 1 : 0)])
-      ->execute();
-  };
-  $createMigrateMap = function () {
-    $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
-      ->fetchAll();
-    if (empty($result)) {
-      \Drupal::database()->query("CREATE TABLE `migrate_map_d7_file` (
-      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
-      `sourceid1` int(11) NOT NULL,
-      `destid1` int(10) unsigned DEFAULT NULL,
-      `source_row_status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Indicates current status of the source row',
-      `rollback_action` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'Flag indicating what to do for this item on rollback',
-      `last_imported` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'UNIX timestamp of the last time this row was imported',
-      `hash` varchar(64) DEFAULT NULL COMMENT 'Hash of source row data, for detecting changes',
-      PRIMARY KEY (`source_ids_hash`),
-      KEY `source` (`sourceid1`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Mappings from source identifier value(s) to destination…';");
-    }
-  };
-  $createMigrateMessage = function () {
-    $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_message_d7_file';")
-      ->fetchAll();
-    if (empty($result)) {
-      \Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
-      `msgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-      `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
-      `level` int(10) unsigned NOT NULL DEFAULT '1',
-      `message` mediumtext NOT NULL,
-      PRIMARY KEY (`msgid`)
-      ) ENGINE=InnoDB AUTO_INCREMENT=143506 DEFAULT CHARSET=utf8mb4 COMMENT='Messages generated during a migration process';");
-    }
-  };
-  $findLastIds = function (&$last_file_fid, &$last_media_vid) {
-    // Get the starting value for the fid in files_managed. We need to make this
-    // larger than anything we are expecting to avoid having these overwritten,
-    // or these overwriting files that will be exported later.
-    // First, set to a big number.
-    $last_file_fid = $last_media_vid = 500000;
-    // Second, get the maximum observed fid for files_managed from d7.
-    $result = Database::getConnection("default", "migrate")
-      ->query("select max(fid) last_fid from file_managed")
-      ->fetchAssoc();
-    if (!empty($result)) {
-      $last_file_fid = $result["last_fid"] + 100;
-    }
-    // Second, get the maximum observed fid for files_managed from d8 and see
-    // if bigger than the number used in d7.
-    $result = Database::getConnection("default", "default")
-      ->query("select max(fid) last_fid from file_managed")
-      ->fetchAssoc();
-    if (!empty($result) && $result["last_fid"] >= $last_file_fid) {
-      $last_file_fid = $result["last_fid"] + 100;
-      $last_media_vid = $last_file_fid;
-    }
-    $result = Database::getConnection("default", "default")
-      ->query("select max(vid) last_vid from media_field_data")
-      ->fetchAssoc();
-    if (!empty($result) && $result["last_vid"] >= $last_file_fid) {
-      $last_media_vid = $result["last_vid"] + 100;
-    }
-  };
-
-  // Process the file.
-  $cnt = [
-    "Total" => 0,
-    "Imported" => 0,
-    "Media" => 0,
-    "Found" => 0,
-    "mFound" => 0,
-  ];
-  $manifest_library = [];
-  $manifest = fopen($manifest_file, "r");
-
-  // Create the migrate map and message tables if they are not already there.
-  $createMigrateMap();
-  $createMigrateMessage();
-
-  // Find the max fid in the files table and the max vid from the media table.
-  $last_fid = $last_vid = 0;
-  $findLastIds($last_fid, $last_vid);
-
-  // Process each row of the manifest file in turn.
-  while ($icon_file = fgets($manifest)) {
-    $cnt["Total"]++;
-    $multiple = FALSE;
-    $icon_file = trim($icon_file);
-    $icon_filename = MigUtilTools::cleanFilename($icon_file);
-
-    $manifest_library[$icon_filename] = $icon_file;
-
-    // Try to get the file from file_managed table.
-    $file_ids = FilesystemReorganizationTrait::getFileEntities($icon_file);
-    if (empty($file_ids)) {
-      // The file does not exist in managed_files, so create it.
-      $file = FilesystemReorganizationTrait::createFileEntity($icon_file, $last_fid++);
-      $cnt["Imported"]++;
-      // Need to create a migration id_map for this new file entity.
-      try {
-        FilesystemReorganizationTrait::createSimpleMappingEntry($file->id(), $file->id(), "d7_file");
-      }
-      catch (MigrateException $e) {
-        \Drupal::logger("migrate")->warning($e->getMessage());
-        \Drupal::messenger()->addWarning($e->getMessage());
-        continue;
-      }
-      // Now build array is if the file had been found in step above.
-      $file_ids[] = $file->id();
-    }
-
-    else {
-      // The file already exists - check and update filename if needed.
-      $file_ids = array_values($file_ids);
-      if (count($file_ids) == 1) {
-        $cnt["Found"]++;
-        $updateFilename($file_ids[0], $icon_filename);
-      }
-      else {
-        $multiple = TRUE;
-        foreach ($file_ids as $file_id) {
-          $cnt["Found"]++;
-          $updateFilename($file_id, $icon_filename);
-        }
-      }
-    }
-
-    // We should now have files in file_managed for all $file_ids.
-    // Try to find a media entity attached to each file_id.
-    if ($multiple) {
-      foreach ($file_ids as $key => $file_id) {
-        $result = $getMediaEntityFromFile($file_id);
-        if (!isset($result)) {
-          // Need to create a matching media entity for this file entity.
-          if (NULL == $file || $file->id() != $file_id) {
-            $file = File::load($file_id);
-          }
-          $media = $createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, $file->id(), $last_vid++);
-          $cnt["Media"]++;
-          // Only put the first media item into the library.
-          if ($key == 0) {
-            $updateMediaLibrary($media->id());
-          }
-          else {
-            $updateMediaLibrary($media->id(), FALSE);
-          }
-        }
-        else {
-          foreach ($result as $media_entity) {
-            if ($key == 0) {
-              $cnt["mFound"]++;
-              $updateMediaLibrary($media_entity->mid);
-            }
-            else {
-              $cnt["mFound"]++;
-              $updateMediaLibrary($media_entity->mid, FALSE);
-            }
-          }
-        }
-      }
-    }
-    else {
-      $result = $getMediaEntityFromFile($file_ids[0]);
-      if (NULL == $result) {
-        // Need to create a matching media entity for this file entity.
-        if (NULL == $file || $file->id() != $file_ids[0]) {
-          $file = File::load($file_ids[0]);
-        }
-        $media = $createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, $file->id(), $last_vid++);
-        $cnt["Media"]++;
-        $updateMediaLibrary($media->id());
-      }
-      else {
-        foreach ($result as $media_entity) {
-          $cnt["mFound"]++;
-          $updateMediaLibrary($media_entity->mid);
-        }
-      }
-    }
-
-  }
-
-  // Save this manifest for later use (e.g. migration).
-  \Drupal::state()->set("bos_core.icon_library.manifest", $manifest_library);
-
-  fclose($manifest);
-  printf("Manifest defines %d icon files.\n", $cnt["Total"]);
-  printf("---------------- ---------- ------- ---------- --------------\n");
-  printf("Group            Manifest   Files   Imported   Media Library \n");
-  printf("---------------- ---------- ------- ---------- --------------\n");
-  printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], ($cnt["Media"] + $cnt["mFound"]));
-  printf("---------------- ---------- ------- ---------- --------------\n");
+  BosCoreSyncIconManifestService::import();
 }
 
 /**

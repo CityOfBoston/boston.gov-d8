@@ -19,24 +19,25 @@ use Drupal\Core\Form\FormStateInterface;
 class BosCoreSettingsForm extends ConfigFormBase {
 
   /**
-   * Implements getFormId().
+   * {@inheritdoc}
    */
   public function getFormId() {
     return 'bos_core_admin_settings';
   }
 
   /**
-   * Implements getEditableConfigNames().
+   * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
     return ["bos_core.settings"];
   }
 
   /**
-   * Implements buildForm()
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_core.settings');
+    $msettings = $config->get('icon');
     $settings = $config->get('ga_settings');
 
     $endpoint = isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect";
@@ -48,6 +49,30 @@ class BosCoreSettingsForm extends ConfigFormBase {
         '#title' => 'Boston Core Settings',
         '#description' => 'Configuration for Core Boston Components.',
         '#collapsible' => FALSE,
+
+        "icon" => [
+          '#type' => 'details',
+          '#title' => 'Patterns Icon Library',
+          '#description' => 'Integration with patterns icon library.',
+          '#open' => TRUE,
+
+          "manifest" => [
+            '#type' => 'textfield',
+            '#title' => t('Manifest location'),
+            '#description' => t('The remote http location for the icon manifest.txt file.<br/>example: <i>https://patterns.boston.gov/assets/icons/manifest.txt</i>'),
+            '#default_value' => $msettings['manifest'] ?: 'https://patterns.boston.gov/assets/icons/manifest.txt',
+            '#attributes' => [
+              "placeholder" => 'https://patterns.boston.gov/assets/icons/manifest.txt',
+            ],
+            '#required' => TRUE,
+          ],
+          "cron" => [
+            '#type' => 'checkbox',
+            '#title' => t('Import with Cron'),
+            '#description' => t('The manifest file specified above will be imported on cron runs.<br><b>Note:</b> only updated icons will be processed.<br><b>Note:</b> Deslecting this checkbox means icons will only be imported when <span style="color: red">drush biim</span> is executed.'),
+            '#default_value' => isset($msettings['cron']) ? $msettings['cron'] : FALSE,
+          ],
+        ],
 
         "ga_settings" => [
           '#type' => 'details',
@@ -98,19 +123,23 @@ class BosCoreSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Implements submitForm().
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $form_state->getValue('bos_core');
 
-    $newValues = [
+    $newValues1 = [
       'ga_tid' => $settings['ga_settings']['ga_tid'],
       'ga_cid' => $settings['ga_settings']['ga_cid'],
       'ga_enabled' => $settings['ga_settings']['ga_enabled'],
     ];
-
+    $newValues2 = [
+      'manifest' => $settings['icon']['manifest'],
+      'cron' => $settings['icon']['cron'],
+    ];
     $this->config('bos_core.settings')
-      ->set('ga_settings', $newValues)
+      ->set('ga_settings', $newValues1)
+      ->set('icon', $newValues2)
       ->save();
 
     parent::submitForm($form, $form_state);
