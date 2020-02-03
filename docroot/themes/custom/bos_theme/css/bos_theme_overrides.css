@@ -110,6 +110,13 @@ button.lity-close {
 .bos_theme .moderation-sidebar-actions .button--edit-draft:before {
   content: url("../images/moderation_sidebar/edit.svg");
 }
+.bos_theme .ui-dialog-position-side .ui-dialog-titlebar {
+  height: 4.3em;
+  max-height: 4.3em;
+}
+.bos_theme .ui-dialog-position-side .ui-dialog-titlebar .ui-dialog-title {
+  line-height: 1.2em;
+}
 
 .bos_theme .moderation-sidebar-actions .button--view-draft {
   background: repeating-linear-gradient(
@@ -936,39 +943,143 @@ David:
 Where: page.html.twig
 What: Styles the watermark for D8.
  */
+.logged-in.toolbar-fixed .nv-m,
+.logged-in.toolbar-fixed #main-menu {
+  top: 6.5em;
+}
+.logged-in #page,
+.logged-in.toolbar-fixed.toolbar-tray-open .nv-m,
+.logged-in.toolbar-fixed.toolbar-tray-open #main-menu {
+  top: 8.8em;
+}
+.logged-in #page .main {
+  margin-top: 0;
+}
+.logged-in #page {
+  padding-top: 0;
+}
+.logged-in #page .hro {
+  top: -15px;
+}
+.logged-in #page .ph,
+.logged-in #page .paragraphs-item-hero-image .hro,
+.logged-in.node-type-post #page .hro,
+.logged-in #page .hero-image {
+  padding-top: 0;
+  top: 20px;
+}
+.watermark-wrapper,
+.toolbar-vertical.toolbar-tray-open .watermark-wrapper {
+  top: 2.1em;
+  height: 4.4em;
+}
+.toolbar-horizontal.toolbar-tray-open .watermark-wrapper {
+  top: 4.4em;
+  height: 4.4em;
+}
 .watermark-wrapper {
   width: 100%;
   position: fixed;
   z-index: 51;
-  margin: -5px auto 0 auto;
+  margin: 0 auto 0 auto;
 }
 .watermark {
-  width: fit-content;
-  font-family: serif;
-  font-size: 72px;
-  margin: 0 auto;
-  height: 74px;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  text-align: left;
+  font-weight: normal;
+  margin: auto 0;
+  overflow: hidden;
+  display: flex;
+  text-transform: none;
 }
 .watermark--needs_review {
-  color: #277abd;
-  background: linear-gradient(transparent, #f0ffff, transparent);
-  opacity: 0.75;
+  color: #fff;
+  background: #277abd;
 }
 .watermark--unpublished,
 .watermark--draft {
-  color: #ffae00;
-  background: linear-gradient(transparent, #feffbe, transparent);
-  opacity: 0.75;
+  color: #fff;
+  background: #ffae00;
+}
+.watermark--published {
+  background: #269e2c;
+  color: #fff;
 }
 .watermark--revision,
 .watermark--archive {
   color: #642b2b;
-  background: linear-gradient(transparent, #c8c0c0, transparent);
-  opacity: .9;
+  background: #c8c0c0;
 }
 .watermark .wm-text {
-  top: 6px;
+  margin: auto 0;
+  font-size: 44px;
+  text-transform: uppercase;
+}
+.watermark .wm-type {
+  font-style: italic;
+  font-weight: normal;
+}
+.watermark .wm-title {
   position: relative;
+  font-weight: normal;
+}
+.watermark .wm-forward a,
+.watermark .wm-ops a {
+  margin: auto 10px;
+  font-size: 18px;
+  padding: 10px 15px;
+  display: block;
+  background: #fff;
+  opacity: 0.90;
+}
+.watermark .wm-forward .status-draft-available a {
+  background: #ffae00;
+  color: #000;
+  opacity: 0.80;
+}
+.watermark.watermark--unpublished .wm-ops a,
+.watermark.watermark--draft .wm-ops a {
+  color: #ffae00;
+}
+.watermark.watermark--published .wm-ops a {
+  color: #269e2c;
+}
+.watermark.watermark--needs_review .wm-ops a {
+  color: #277abd;
+}
+.moderation-sidebar-toolbar-tab .toolbar-item:after {
+  display: none;
+}
+.watermark .wm-col1,
+.watermark .wm-col2,
+.watermark .wm-col3 {
+  position:relative;
+  display: flex;
+  flex-flow: column;
+  margin: auto 15px;
+}
+.watermark .wm-col2 .wm-row1 {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+.watermark .wm-col2 .wm-row2 {
+  font-size: 16px;
+}
+.watermark .wm-col2 .wm-dot {
+  margin: auto 2px;
+  vertical-align: text-top;
+}
+.watermark .wm-col2 .wm-row2 .wm-dot {
+  font-size: 19px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+.watermark .wm-col2 {
+  flex-grow: 5;
+}
+.watermark .wm-col3 {
+  flex-flow: row;
 }
 nav.nv-h {
   z-index: 57;
@@ -1077,12 +1188,10 @@ What: Issue #946 - sidebar images too large
 }
 
 /**
-Stella:
-Where: Procurement Advertisement
-When: Adding style to view-row that is suddenly wrapping divs with .n-li class
+David:
+Where: All pages
+What: Cleans up the breadcrumb and main page component locations (spin-off from watermark updates).
  */
-
-.views-row:not(:last-child) {
-  margin-bottom: 16px;
-  margin-bottom: 1rem;
+.breadcrumb {
+  margin-top: 3rem;
 }
