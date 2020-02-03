@@ -627,6 +627,43 @@ function bos_core_editor_load(array $entities) {
 }
 
 /**
+ * Implements hook_cron().
+ */
+function bos_core_cron() {
+  if (Drupal::config("bos_core.settings")->get("icon.cron")) {
+
+    /** @var \Drupal\Core\Queue\QueueFactory $queue_factory */
+    $queue_factory = \Drupal::service('queue');
+    /** @var  \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $queue_factory->get('cron_manifest_processor');
+
+    // Load the manifest file.
+    try {
+      $manifest = BosCoreSyncIconManifestService::loadManifestFile();
+    }
+    catch (Exception $e) {
+      return FALSE;
+    }
+
+    // Initialize the manifest cache. See if we have a manifest cached.
+    $manifest_cache = Drupal::state()
+      ->get("bos_core.icon_library.manifest", []);
+    if (!empty(array_filter($manifest_cache))) {
+      // If using cache, then work out which rows in manifest need processing.
+      $manifest_cache = array_values($manifest_cache);
+      $manifest = array_diff($manifest, $manifest_cache);
+    }
+
+    // Load the queue with icon files from the manifest that need processing.
+    if (!empty(array_filter($manifest))) {
+      foreach ($manifest as $icon) {
+        $queue->createItem($icon);
+      }
+    }
+  }
+}
+
+/**
  * Helper to make a page title (to pass to Google Analytics).
  *
  * @param array $view_display
@@ -1097,7 +1134,7 @@ function _bos_core_rename_multiple_button(array &$variables, string $type, array
  * @throws \Drupal\Core\Entity\EntityStorageException.
  */
 function _bos_core_sync_assets() {
-  BosCoreSyncIconManifestService::sync();
+  BosCoreSyncIconManifestService::import();
 }
 
 /**
