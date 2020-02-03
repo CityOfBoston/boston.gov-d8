@@ -25,7 +25,7 @@ class BosCoreCssSwitcherService {
    * @return bool
    *   Whether the change was sucessfully saved to the bos_theme configuration.
    */
-  public static  function switchSource(int $ord = 0) {
+  public static function switchSource(int $ord = 0) {
     if ($ord == 0) {
       return TRUE;
     }
