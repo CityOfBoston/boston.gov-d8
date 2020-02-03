@@ -19,21 +19,21 @@ use Drupal\Core\Form\FormStateInterface;
 class BosCoreSettingsForm extends ConfigFormBase {
 
   /**
-   * Implements getFormId().
+   * {@inheritdoc}
    */
   public function getFormId() {
     return 'bos_core_admin_settings';
   }
 
   /**
-   * Implements getEditableConfigNames().
+   * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
     return ["bos_core.settings"];
   }
 
   /**
-   * Implements buildForm()
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_core.settings');
@@ -65,6 +65,12 @@ class BosCoreSettingsForm extends ConfigFormBase {
               "placeholder" => 'https://patterns.boston.gov/assets/icons/manifest.txt',
             ],
             '#required' => TRUE,
+          ],
+          "cron" => [
+            '#type' => 'checkbox',
+            '#title' => t('Import with Cron'),
+            '#description' => t('The manifest file specified above will be imported on cron runs.<br><b>Note:</b> only updated icons will be processed.<br><b>Note:</b> Deslecting this checkbox means icons will only be imported when <span style="color: red">drush biim</span> is executed.'),
+            '#default_value' => isset($msettings['cron']) ? $msettings['cron'] : FALSE,
           ],
         ],
 
@@ -117,7 +123,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * Implements submitForm().
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $settings = $form_state->getValue('bos_core');
@@ -129,6 +135,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
     ];
     $newValues2 = [
       'manifest' => $settings['icon']['manifest'],
+      'cron' => $settings['icon']['cron'],
     ];
     $this->config('bos_core.settings')
       ->set('ga_settings', $newValues1)

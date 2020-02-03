@@ -54,6 +54,6 @@ function drush_bos_core_bos_css_source($ord = NULL) {
  */
 function drush_bos_import_icon_manifest() {
 
-  BosCoreSyncIconManifestService::sync();
+  BosCoreSyncIconManifestService::import();
 
 }

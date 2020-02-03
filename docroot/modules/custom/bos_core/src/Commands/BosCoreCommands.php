@@ -219,7 +219,7 @@ class BosCoreCommands extends DrushCommands {
    * @aliases biim,bos-import-icon-manifest
    */
   public function importIconManifest() {
-    return BosCoreSyncIconManifestService::sync();
+    return BosCoreSyncIconManifestService::import();
   }
 
 }
