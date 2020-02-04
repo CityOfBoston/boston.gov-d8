@@ -229,6 +229,9 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $variables['attributes']->addClass($newClass);
   if ($nid = drupal::request()->get('node')) {
     if (!is_numeric($nid)) {
+      if ($nid->hasField('moderation_state')) {
+        $variables['attributes']->addClass("node-" . $nid->get('moderation_state')->getString());
+      }
       $nid = $nid->id();
     }
     $newClass = "page-node-" . (isset($nid) ? $nid : "");

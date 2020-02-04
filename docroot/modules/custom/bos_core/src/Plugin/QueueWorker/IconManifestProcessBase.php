@@ -66,7 +66,8 @@ abstract class IconManifestProcessBase extends QueueWorkerBase implements Contai
       return TRUE;
     }
     try {
-      BosCoreSyncIconManifestService::processFileUri($data, $manifest_cache, $last);
+      BosCoreSyncIconManifestService::processFileUri($data, $last);
+      $manifest_cache[] = $data;
     }
     catch (Exception $e) {
       return FALSE;
