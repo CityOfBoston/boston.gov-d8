@@ -102,7 +102,7 @@ function bos_admin_preprocess_block(&$variables) {
       'max_length' => 35,
     ];
     $arguments['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
-    $variables["content"]["#title"] = new TranslatableMarkup("<em><b>Edit</b></em> @type | @title", $arguments);
+    $variables["content"]["#title"] = new TranslatableMarkup("<b>Edit</b> <em>@type</em> | @title", $arguments);
   }
 }
 
