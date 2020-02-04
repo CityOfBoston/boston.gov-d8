@@ -72,6 +72,7 @@ div#edit-meta-published.status-needs-review {
   background-color: #0075d1;
   color: #fff;
 }
+.bos_admin header.content-header,
 .bos_admin.node-draft .content-header,
 div[id^=edit-moderation-state-].status-draft-available,
 div#edit-meta-published.status-draft-available {
@@ -82,12 +83,14 @@ div.status-archive {
   background-color: #888888;
   color: #fff;
 }
+.bos_admin.node-published .content-header,
 div.status-published {
   background-color: #1b8000;
-  color: #333;
+  color: #fff;
 }
-
-
+#block-bos-admin-page-title {
+  max-height: 58px;
+}
 .bos_admin .block-page-title-block:before {
   content: url("/themes/custom/bos_admin/images/B_50px.png");
   margin-right: 20px;
@@ -96,6 +99,7 @@ div.status-published {
 }
 .bos_admin h1.page-title {
   line-height: 1.4em;
+  overflow: hidden;
 }
 
 /* Node revision summary page */
