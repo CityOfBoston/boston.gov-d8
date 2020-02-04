@@ -656,8 +656,15 @@ function bos_core_cron() {
 
     // Load the queue with icon files from the manifest that need processing.
     if (!empty(array_filter($manifest))) {
+      $num = count($manifest);
+      if ($num > 10) {
+        Drupal::logger("cron")->info("$num new icons will be added to site icon library.");
+      }
       foreach ($manifest as $icon) {
         $queue->createItem($icon);
+        if ($num <= 10) {
+          Drupal::logger("cron")->info("Icon '$icon' will be added to site icon library.");
+        }
       }
     }
   }
@@ -1131,7 +1138,9 @@ function _bos_core_rename_multiple_button(array &$variables, string $type, array
 /**
  * Sync assets.boston.gov into database.
  *
- * @throws \Drupal\Core\Entity\EntityStorageException.
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException .
  */
 function _bos_core_sync_assets() {
   BosCoreSyncIconManifestService::import();
