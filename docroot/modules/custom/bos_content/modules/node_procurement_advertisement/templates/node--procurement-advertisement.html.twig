@@ -97,6 +97,10 @@
   {% set bid_count = bids|length %}
 {% endfor %}
 
+<div class="breadcrumb" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
+
 <article id="node-{{ node.id }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
 
   <div class="brc-lu">
