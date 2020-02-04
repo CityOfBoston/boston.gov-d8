@@ -93,13 +93,15 @@ function bos_admin_preprocess_username(&$variables) {
  */
 function bos_admin_preprocess_block(&$variables) {
   if (isset($variables["content"]["#title"])
-    && NULL != ($arguments = $variables["content"]["#title"]->getArguments())) {
+    && !is_array($variables["content"]["#title"])
+    && NULL != ($arguments = $variables["content"]["#title"]->getArguments())
+    && !empty($arguments["@title"])) {
     $at_settings = [
       'word_boundary' => TRUE,
       'ellipsis' => TRUE,
       'max_length' => 35,
     ];
-    $variables['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
+    $arguments['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
     $variables["content"]["#title"] = new TranslatableMarkup("<em><b>Edit</b></em> @type | @title", $arguments);
   }
 }
