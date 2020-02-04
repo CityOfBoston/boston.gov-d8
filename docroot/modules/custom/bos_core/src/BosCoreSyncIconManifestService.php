@@ -104,6 +104,7 @@ class BosCoreSyncIconManifestService {
     foreach ($manifest as $icon_uri) {
       if (!empty($icon_uri)) {
         self::processFileUri($icon_uri);
+        $manifest_cache[] = $icon_uri;
       }
     }
 
@@ -127,8 +128,6 @@ class BosCoreSyncIconManifestService {
    *
    * @param string $icon_uri
    *   The file URI.
-   * @param array $manifest_cache
-   *   The manifest cache created from previous manifest processes.
    * @param array $last
    *   The max File Entity ID known.
    * @param array $cnt
@@ -140,7 +139,7 @@ class BosCoreSyncIconManifestService {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function processFileUri(string $icon_uri, array &$manifest_cache = [], array $last = [], array $cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
+  public static function processFileUri(string $icon_uri, array $last = [], array $cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
     $icon_uri = trim($icon_uri);
     if (empty($icon_uri)) {
       return;
@@ -185,10 +184,6 @@ class BosCoreSyncIconManifestService {
         break;
       }
     }
-
-    // Finally add the
-    $manifest_cache[] = $icon_uri;
-
   }
 
   /**
