@@ -23,6 +23,7 @@ What:  Locates top of page considering the admin toolbar.
 .toolbar-fixed .nv-m {
   top: 2.15em;
 }
+.logged-in.page-error.toolbar-fixed.toolbar-tray-open #main-menu,
 .toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
 .toolbar-fixed.toolbar-tray-open .nv-m {
   top: 4.4em;
@@ -105,19 +106,28 @@ button.lity-close {
 }
 
 .bos_theme .moderation-sidebar-actions .button--edit-draft {
-  background-color: #ffae00 !important;
+  background-color: #d14700 !important;
 }
 .bos_theme .moderation-sidebar-actions .button--edit-draft:before {
   content: url("../images/moderation_sidebar/edit.svg");
+}
+.bos_theme .ui-dialog-position-side .ui-dialog-titlebar {
+  height: 4.3em;
+  max-height: 4.3em;
+}
+.bos_theme .ui-dialog-position-side .ui-dialog-titlebar .ui-dialog-title {
+  line-height: 1.3em;
+  max-height: 40px;
+  overflow: hidden;
 }
 
 .bos_theme .moderation-sidebar-actions .button--view-draft {
   background: repeating-linear-gradient(
       135deg,
-      #ffae00,
-      #ffae00 10px,
-      #00B000 10px,
-      #00B000 20px
+      #d14700,
+      #d14700 10px,
+      #1b8000 10px,
+      #1b8000 20px
   ) !important;
   color: #000 !important;
 }
@@ -126,11 +136,11 @@ button.lity-close {
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--draft {
-  background-color: #ffae00 !important;
+  background-color: #d14700 !important;
 }
 
 .bos_theme .moderation-sidebar-actions .button--view-live {
-  background-color: #00B000 !important;
+  background-color: #1b8000 !important;
 }
 .bos_theme .moderation-sidebar-actions .button--view-live:before {
   content: url("../images/moderation_sidebar/review.svg");
@@ -149,27 +159,27 @@ button.lity-close {
   background-size: 50px !important;
 }
 .bos_theme .moderation-sidebar-actions input#draft_from_archived {
-  background: url("../images/moderation_sidebar/new draft.svg") #ffae00 no-repeat 6px -10px !important;
+  background: url("../images/moderation_sidebar/new draft.svg") #d14700 no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 .bos_theme .moderation-sidebar-actions input#submit_for_review {
-  background: url("../images/moderation_sidebar/review.svg") #277abd no-repeat 6px -10px !important;
+  background: url("../images/moderation_sidebar/review.svg") #0075d1 no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 .bos_theme .moderation-sidebar-actions input#reject {
-  background: url(../images/moderation_sidebar/delete.svg) #ffae00 no-repeat 6px -10px !important;
+  background: url(../images/moderation_sidebar/delete.svg) #d14700 no-repeat 6px -10px !important;
   background-size: 50px !important;
   color: maroon !important;
   font-weight: bold !important;
 }
 .bos_theme .moderation-sidebar-actions input#publish {
-  background: url("../images/moderation_sidebar/publish.svg") #00B000 no-repeat 6px -10px !important;
+  background: url("../images/moderation_sidebar/publish.svg") #1b8000 no-repeat 6px -10px !important;
   background-size: 50px !important;
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--review,
 .bos_theme .moderation-sidebar-actions .button--review {
-  background-color: #277abd !important;
+  background-color: #0075d1 !important;
 }
 .bos_theme .moderation-sidebar-actions input.button--review:before {
   /* content: url("../images/moderation_sidebar/review.svg"); */
@@ -177,31 +187,31 @@ button.lity-close {
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--archive {
-  background-color: #c5c5c5 !important;
+  background-color: #888888 !important;
 }
 
 /* Moderation status in toolbar. */
 .moderation-sidebar-toolbar-tab.status-published .toolbar-item:after {
   content: "Published + Live";
-  background-color: #269e2c;
+  background-color: #1b8000;
 }
 .moderation-sidebar-toolbar-tab.status-needs-review .toolbar-item:after {
   content: "Review Pending";
-  background-color: #277abd;
+  background-color: #0075d1;
 }
 .moderation-sidebar-toolbar-tab.status-draft .toolbar-item:after {
   content: "Latest Draft";
-  background-color: #ffae00;
+  background-color: #d14700;
 }
 /* Archive of a draft */
 .moderation-sidebar-toolbar-tab.status-archive .moderation-label-draft:after {
   content: "Archived Draft";
-  background-color: #c5c5c5;
+  background-color: #888888;
 }
 
 .toolbar-icon-moderation-sidebar.moderation-label-draft-available:after {
   content: "Live";
-  background-color: #269e2c;
+  background-color: #1b8000;
   color: #fff;
   background-image: url("../images/moderation_sidebar/edit.svg");
   background-repeat: no-repeat;
@@ -211,7 +221,7 @@ button.lity-close {
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--published {
-  background-color: #269e2c !important;
+  background-color: #1b8000 !important;
 }
 
 .moderation-sidebar-container .moderation-sidebar-revision-item {
@@ -232,7 +242,7 @@ button.lity-close {
   font-weight: bold;
   text-align: left;
   padding-bottom: .4rem !important;
-  border-bottom: 1px solid #c5c5c5 !important;
+  border-bottom: 1px solid #888888 !important;
 }
 .moderation-sidebar-container .moderation-sidebar-revision-item .revision-mod-type{
   font-weight: bold;
@@ -299,8 +309,8 @@ What: Changes style of contextual edit button on all node displays on boston_the
 .contextual-region .contextual .contextual-links a,
 .contextual-region .contextual .contextual-links {
   background-color: #ddd;
-  color: #277abd;
-  border-color: #277abd;
+  color: #0075d1;
+  border-color: #0075d1;
 }
 .contextual-region .contextual .contextual-links li {
   background-color: #ccc;
@@ -646,7 +656,7 @@ What:  Fixes the message box on the page without disrupting layout.
   /* margin: 1rem 0; */
   /* position: static; */
   /* padding: 10px 10px 10px 47px; */
-  border: 2px solid #1871bd;
+  border: 2px solid #0075d1;
   z-index: 502;
   background-color: rgba(255,255,255,.7);
 }
@@ -667,7 +677,7 @@ What:  Fixes the message box on the page without disrupting layout.
 .messages,.messages--error,.messages--status,.messages--warning {
    margin: 0;
    padding: 10px 10px 10px 47px;
-   border: 2px solid #1871bd;
+   border: 2px solid #0075d1;
    z-index: 502;
    max-width: 1200px;
 }
@@ -936,39 +946,150 @@ David:
 Where: page.html.twig
 What: Styles the watermark for D8.
  */
+.logged-in.toolbar-fixed .nv-m,
+.logged-in.toolbar-fixed #main-menu {
+  top: 6.5em;
+}
+.logged-in #page,
+.logged-in.toolbar-fixed.toolbar-tray-open .nv-m,
+.logged-in.toolbar-fixed.toolbar-tray-open #main-menu {
+  top: 8.8em;
+}
+.logged-in.page-error #page,
+.logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m,
+.logged-in.page-error .toolbar-fixed.toolbar-tray-open #main-menu {
+  top: 4.4em;
+}
+.logged-in #page .main {
+  margin-top: 0;
+}
+.logged-in #page {
+  padding-top: 0;
+}
+.logged-in #page .hro {
+  margin-top: -15px;
+}
+.logged-in #page .ph,
+/*.logged-in #page .paragraphs-item-hero-image .hro,*/
+.logged-in.node-type-post #page .hro,
+.logged-in #page .hero-image {
+  padding-top: 0;
+  top: 20px;
+}
+.watermark-wrapper,
+.toolbar-vertical.toolbar-tray-open .watermark-wrapper {
+  top: 2.1em;
+  height: 4.4em;
+}
+.toolbar-horizontal.toolbar-tray-open .watermark-wrapper {
+  top: 4.4em;
+  height: 4.4em;
+}
 .watermark-wrapper {
   width: 100%;
   position: fixed;
   z-index: 51;
-  margin: -5px auto 0 auto;
+  margin: 0 auto 0 auto;
 }
 .watermark {
-  width: fit-content;
-  font-family: serif;
-  font-size: 72px;
-  margin: 0 auto;
-  height: 74px;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  text-align: left;
+  font-weight: normal;
+  margin: auto 0;
+  overflow: hidden;
+  display: flex;
+  text-transform: none;
 }
 .watermark--needs_review {
-  color: #277abd;
-  background: linear-gradient(transparent, #f0ffff, transparent);
-  opacity: 0.75;
+  color: #fff;
+  background: #0075d1;
 }
 .watermark--unpublished,
 .watermark--draft {
-  color: #ffae00;
-  background: linear-gradient(transparent, #feffbe, transparent);
-  opacity: 0.75;
+  color: #fff;
+  background: #d14700;
+}
+.watermark--published {
+  background: #1b8000;
+  color: #fff;
 }
 .watermark--revision,
 .watermark--archive {
   color: #642b2b;
-  background: linear-gradient(transparent, #c8c0c0, transparent);
-  opacity: .9;
+  background: #c8c0c0;
 }
 .watermark .wm-text {
-  top: 6px;
+  margin: auto 0;
+  font-size: 44px;
+  text-transform: uppercase;
+}
+.watermark .wm-type {
+  font-style: italic;
+  font-weight: normal;
+}
+.watermark .wm-title {
   position: relative;
+  font-weight: normal;
+}
+.watermark .wm-forward a,
+.watermark .wm-ops a {
+  margin: auto 10px;
+  font-size: 18px;
+  padding: 10px 15px;
+  display: block;
+  background: #fff;
+  opacity: 0.90;
+}
+.watermark .wm-forward .status-draft-available a {
+  background: #d14700;
+  color: #fff;
+  opacity: 0.80;
+}
+.watermark.watermark--unpublished .wm-ops a,
+.watermark.watermark--draft .wm-ops a {
+  color: #d14700;
+}
+.watermark.watermark--published .wm-ops a {
+  color: #1b8000;
+}
+.watermark.watermark--needs_review .wm-ops a {
+  color: #0075d1;
+}
+.moderation-sidebar-toolbar-tab .toolbar-item:after {
+  display: none;
+}
+.watermark .wm-col1,
+.watermark .wm-col2,
+.watermark .wm-col3 {
+  position:relative;
+  display: flex;
+  flex-flow: column;
+  margin: auto 15px;
+}
+.watermark .wm-col2 .wm-row1 {
+  font-size: 32px;
+  margin-bottom: 5px;
+  max-height: 35px;
+  overflow: hidden;
+}
+.watermark .wm-col2 .wm-row2 {
+  font-size: 16px;
+}
+.watermark .wm-col2 .wm-dot {
+  margin: auto 2px;
+  vertical-align: text-top;
+}
+.watermark .wm-col2 .wm-row2 .wm-dot {
+  font-size: 19px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+.watermark .wm-col2 {
+  flex-grow: 5;
+}
+.watermark .wm-col3 {
+  flex-flow: row;
 }
 nav.nv-h {
   z-index: 57;
@@ -1074,4 +1195,13 @@ What: Issue #946 - sidebar images too large
 .node-program-initiative-profile .field-name-field-sidebar-text .align-center.embedded-entity {
   max-width: 70%;
   max-height: 70%;
+}
+
+/**
+David:
+Where: All pages
+What: Cleans up the breadcrumb and main page component locations (spin-off from watermark updates).
+ */
+.breadcrumb {
+  margin-top: 3rem;
 }

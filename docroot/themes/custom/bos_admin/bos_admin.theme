@@ -50,6 +50,10 @@ function bos_admin_preprocess_html(&$variables) {
     && \Drupal::request()->attributes->get("_route_params")["entity_type"] == "embed_button") {
     $variables['attributes']['class'][] = 'admin-content-embed-buttons';
   }
+  if (($node = \Drupal::routeMatch()->getParameter('node'))
+      && $node->hasField('moderation_state')) {
+    $variables['attributes']['class'][] = "node-" . $node->get('moderation_state')->getString();
+  }
 }
 
 /**
@@ -81,6 +85,24 @@ function bos_admin_preprocess_username(&$variables) {
       $variables["name"] = $name;
     }
     realname_user_update($variables["account"]);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_block(&$variables) {
+  if (isset($variables["content"]["#title"])
+    && is_object($variables["content"]["#title"])
+    && NULL != ($arguments = $variables["content"]["#title"]->getArguments())
+    && !empty($arguments["@title"])) {
+    $at_settings = [
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'max_length' => 35,
+    ];
+    $arguments['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
+    $variables["content"]["#title"] = new TranslatableMarkup("<b>Edit</b> <em>@type</em> | @title", $arguments);
   }
 }
 
@@ -302,7 +324,16 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
 
   if (!empty($form["meta"]["author"]["#markup"])) {
+    $form["meta"]["author"]["#title"] = new TranslatableMarkup("Revision Author");
+    $form["author"]["#title"] = new TranslatableMarkup("Original Author");
+    $node = \Drupal::routeMatch()->getParameter('node');
     $form["meta"]["author"]["#markup"] = bos_admin_author_expand($form["meta"]["author"]["#markup"]);
+    if (!empty($node)) {
+      $account = \Drupal::entityTypeManager()->getStorage("user")->load($node->get("revision_uid")->target_id);
+      if (isset($account)) {
+        $form["meta"]["author"]["#markup"] = bos_admin_author_expand($account->get("name")->value);
+      }
+    }
   }
 
   // Management of secondary actions menu.
