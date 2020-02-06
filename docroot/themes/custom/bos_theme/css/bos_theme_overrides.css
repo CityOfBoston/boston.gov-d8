@@ -82,6 +82,9 @@ body.page-error h1.page-title {
   border: 1px solid #2d2d2d;
   -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
 }
+.bos_theme.toolbar-tray-open.toolbar-horizontal .toolbar-tray {
+  box-shadow: -2px 1px 3px 1px rgba(0, 0, 0, 0.3333);
+}
 /* === === */
 
 .paragraphs-item-grid-of-quotes .quote-name {
@@ -1044,7 +1047,11 @@ What: Styles the watermark for D8.
 .watermark .wm-forward .status-draft-available a {
   background: #d14700;
   color: #fff;
-  opacity: 0.80;
+}
+.watermark .wm-forward .status-draft-available a.disabled {
+  background: #d14700;
+  color: #fff;
+  opacity: 0.3;
 }
 .watermark.watermark--unpublished .wm-ops a,
 .watermark.watermark--draft .wm-ops a {
@@ -1069,8 +1076,8 @@ What: Styles the watermark for D8.
 }
 .watermark .wm-col2 .wm-row1 {
   font-size: 32px;
-  margin-bottom: 5px;
-  max-height: 35px;
+  margin-bottom: 1px;
+  max-height: 1.2em;
   overflow: hidden;
 }
 .watermark .wm-col2 .wm-row2 {
