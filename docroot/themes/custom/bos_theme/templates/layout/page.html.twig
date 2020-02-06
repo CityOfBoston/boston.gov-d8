@@ -67,10 +67,14 @@
         </div>
       </div>
       <div class="wm-col3">
-        {% if cob.not_latest %}
+        {% if cob.has_draft %}
           <span class="wm-forward">
             <div class="status-draft-available">
-              <a href="/node/{{ cob.nid }}/latest" class="toolbar-icon toolbar-item" tabindex="-1">View Latest</a>
+              {% if cob.view_draft %}
+                <a href="/node/{{ cob.nid }}/latest" class="toolbar-icon toolbar-item" tabindex="-1">View Draft</a>
+              {% else %}
+                <a href="#" class="toolbar-icon toolbar-item disabled" title="A draft exists for this node, however you do not have permission to view it." tabindex="-1">Draft Exists</a>
+              {% endif %}
             </div>
           </span>
         {% endif %}
