@@ -1194,7 +1194,7 @@ function _bos_theme_page_watermark(array &$variables) {
         $variables["cob"]['has_draft'] = TRUE;
         if (NULL != ($revision_ids = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node))) {
           $last_revision = end($revision_ids);
-          if (NULL != ($node_latest = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($last_revision))){
+          if (NULL != ($node_latest = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($last_revision))) {
             $latest_mod = $node_latest->get('moderation_state')->getString();
             // Not all users have permission to view all moderation states.
             if ($user->hasPermission("moderate content from $latest_mod to draft")
