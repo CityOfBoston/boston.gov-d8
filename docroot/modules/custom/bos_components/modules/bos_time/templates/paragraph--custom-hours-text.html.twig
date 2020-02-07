@@ -34,6 +34,11 @@
   </div>
 
   <div class="detail-item__content">
+    {% if content.field_title %}
+    <div class="detail-item__label">
+      {{ content.field_title }}
+    </div>
+    {% endif %}
     <div class="detail-item__body">
       {{ content.field_custom_hours_text }}
     </div>
