@@ -11,9 +11,12 @@ class MnlCard extends React.Component {
     }
 
     let image;
+    let imgAlignMnl;
     if (this.props.image) {
       image = <img src={this.props.image} className="cdp-i p-a100" />;
-      textAlign = "center";
+      imgAlignMnl = " center-mnl";
+    } else {
+      imgAlignMnl = " left-mnl";
     }
 
     // content array
@@ -27,10 +30,10 @@ class MnlCard extends React.Component {
         );
       }
       if (value.content) {
-        content = <div className="cdp-st t--g300">{value.content}</div>;
+        content = <div className="cdp-st">{value.content}</div>;
       }
       itemsContent.push(
-        <div>
+        <div className="mnl-c-group">
           {heading}
           {content}
         </div>
@@ -38,8 +41,7 @@ class MnlCard extends React.Component {
     }
     return (
       <div
-        className="cd g--4 g--4--sl m-t500  cdp-l"
-        style={{ textAlign: textAlign }}
+        className={'cd g--4 g--4--sl m-t500  cdp-l' + imgAlignMnl}
       >
         <div className="d-b bg--cb cdp-a ta-c p-a200 t--upper t--sans t--w t--ob--h t--s100">
           {this.props.title}

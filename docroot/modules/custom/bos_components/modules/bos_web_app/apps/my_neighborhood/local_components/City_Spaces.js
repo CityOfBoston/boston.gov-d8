@@ -1,4 +1,35 @@
 class CitySpaces extends React.Component {
+  checkHistInfo = event => {
+    let contentDistricts = null;
+    if (this.props.hist_name !== null) {
+      contentDistricts = [
+        {
+          heading: "Historic Name",
+          content: this.props.hist_name
+        },
+        {
+          heading: "District",
+          content: this.props.hist_place_name
+        },
+        {
+          heading: "Year",
+          content: (this.props.hist_year == 0 || this.props.hist_year == null ? "No Year Avaialble" : this.props.hist_year)
+        }
+      ];
+    } else {
+      contentDistricts = [
+        {
+          heading: "Historic District",
+          content: <div>This address is not in a historic district.</div>
+        }
+      ];
+    }
+    contentDistricts.push({
+      heading: "Zoning District",
+      content: "No data available"
+    });
+    return contentDistricts;
+  };
   render() {
     // Content for card
     const contentLibArray = [
@@ -9,7 +40,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            More information on <a href={""}>libraries</a>
+            Learn more about the City's <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer">library system</a>
           </div>
         )
       }
@@ -20,17 +51,9 @@ class CitySpaces extends React.Component {
         content: this.props.comm_address
       },
       {
-        heading: "Hours",
-        content: this.props.comm_hours
-      },
-      {
-        heading: "Summer Hours",
-        content: this.props.comm_summer_hours
-      },
-      {
         content: (
           <div>
-            More information on <a href={""}>community centers</a>
+            Learn more about the City's <a href={"departments/boston-centers-youth-families"}>community centers</a>
           </div>
         )
       }
@@ -41,17 +64,17 @@ class CitySpaces extends React.Component {
         content: this.props.park_district
       },
       {
-        heading: "Ownership",
+        heading: "Park Ownership",
         content: this.props.park_ownership
       },
       {
-        heading: "Type",
+        heading: "Park Type",
         content: this.props.park_type
       },
       {
         content: (
           <div>
-            More information on <a href={""}>parks</a>
+            Lern more about the City's <a href={"departments/parks-and-recreation"}>parks</a>
           </div>
         )
       }
@@ -69,7 +92,7 @@ class CitySpaces extends React.Component {
         <div className="g">
           {/* Library Branch */}
           <MnlCard
-            title={"Library Branch"}
+            title={"A Library Branch Near You"}
             image_header={
               "https://patterns.boston.gov/assets/icons/experiential_icons/open_book.svg"
             }
@@ -78,7 +101,7 @@ class CitySpaces extends React.Component {
 
           {/* Community Center */}
           <MnlCard
-            title={"Community Center"}
+            title={"A Community Center Near You"}
             image_header={
               "https://patterns.boston.gov/assets/icons/experiential_icons/family_house.svg"
             }
@@ -87,14 +110,22 @@ class CitySpaces extends React.Component {
 
           {/* Park Info */}
           <MnlCard
-            title={"Park"}
+            title={"A Park Near You"}
             image_header={
               "https://patterns.boston.gov/assets/icons/experiential_icons/trees.svg"
             }
             content_array={contentPark}
           />
+          {/* Historical Info */}
+          <MnlCard
+            title={"Districts"}
+            image_header={
+              "https://patterns.boston.gov/assets/icons/experiential_icons/location.svg"
+            }
+            content_array={this.checkHistInfo()}
+          />
         </div>
-        <button
+        <button className="t--upper t--sans"
           onClick={() => {
             this.props.displaySection(null);
           }}

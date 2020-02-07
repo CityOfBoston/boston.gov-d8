@@ -2,19 +2,68 @@
 	margin-top:50px;
 	color:#fff;
 }
-
-#web-app .t--g300 {
+#web-app .mnl-c-group::after {
+	content: "";
+    padding: 1px 0;
+    margin: 5px 0 15px;
+    background-color: #D2D2D2;
+    width: 100%;
+    display: inline-block;
+}
+#web-app .mnl-c-group:last-child::after,
+#web-app .center-mnl .mnl-c-group::after {
+    display: none;
+}
+#web-app .cdp-st {
 	padding-bottom:10px;
 	line-height:24px;
 }
-
-#web-app .t--g300 div{
+#web-app .cdp-st div{
 	line-height:24px;
 }
-
-#web-app .t--g300 div.no-heading {
+#web-app .cdp-st div.no-heading {
 	padding:12px 0;
 }
+#web-app .t--upper.t--subtitle {
+	font-weight:bold;
+}
+#web-app .left-mnl {
+	text-align:left;
+}
+#web-app .center-mnl {
+	text-align:center;
+}
+
+/** styles for dynamic font-resize on search bar **/
+#web-app .resize {
+	display:block;
+	position: absolute;
+    top: -9999px;
+}
+#web-app .resize span{
+	padding-right:50px;
+}
+
+/** styles for no-hover over-ride and section cards **/
+#web-app .pointer{
+	cursor:pointer;
+} 
+#web-app .bg--cb.t--upper:hover { 
+	color:#fff;
+}
+#web-app .cdp-l:hover .cdp-st {
+    color:#58585B;
+}
+#web-app .cdp-l:hover { 
+	background-color:#f3f3f3;
+}
+#web-app .cd:hover .cd-st {
+    color:#091f2f;;
+}
+#web-app .cd:hover .cd-ic  {  
+	background-color:#288be4;
+}
+
 
 @media (max-width: 980px) {
 	#web-app div.cd{
@@ -24,3 +73,4 @@
 		margin: 0 auto 10px;
 	}
 }
+

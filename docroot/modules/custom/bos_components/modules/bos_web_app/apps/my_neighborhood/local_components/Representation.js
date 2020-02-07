@@ -7,15 +7,14 @@ class Representation extends React.Component {
         content: "City Councilor, District " + this.props.district
       },
       {
-        content: (
+        content: 
           <div>
             Learn more about{" "}
             <a href={this.props.councilor_webpage}>{this.props.councilor}</a>
-          </div>
-        )
+          </div> 
       }
     ];
-    const contentVotingArray = [
+    const contentPollingArray = [
       {
         heading: this.props.voting_location,
         content: this.props.voting_address
@@ -27,6 +26,9 @@ class Representation extends React.Component {
       {
         heading: "Precinct",
         content: this.props.precinct
+      },
+      {
+        content: <div> Find your <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer">polling location</a>.</div>
       }
     ];
     const contentLiasonArray = [
@@ -37,7 +39,7 @@ class Representation extends React.Component {
       {
         content: (
           <div>
-            Learn more about <a href={""}>{this.props.liason_name}</a>
+            Learn more about <a href={"departments/neighborhood-services"}>Neighborhood Services</a>
           </div>
         )
       }
@@ -67,23 +69,7 @@ class Representation extends React.Component {
       {
         content: (
           <div>
-            Learn more about <a href={""}>voting</a>
-          </div>
-        )
-      }
-    ];
-    const contentNewsletter = [
-      {
-        content: (
-          <div>
-            Sign up for your neighborhood{" "}
-            <a
-              href={
-                "https://newsletters.boston.gov/subscribe?category=My%20Neighborhood"
-              }
-            >
-              email newsletter
-            </a>
+            Learn more about <a href={"{news/early-voting-locations-boston-2020}"}>early voting in Boston</a>.
           </div>
         )
       }
@@ -110,41 +96,35 @@ class Representation extends React.Component {
             content_array={contentRepArray}
           />
 
-          {/* Voting Info */}
+          {/* Polling Info */}
           <MnlCard
-            title={"Your Voting Location"}
+            title={"Your Polling Information"}
             image_header={
               "https://patterns.boston.gov/assets/icons/experiential_icons/voting_ballot.svg"
             }
-            content_array={contentVotingArray}
+            content_array={contentPollingArray}
           />
 
           {/* Neighborhood Liason */}
           <MnlCard
-            title={"Your Neighborhood Liason"}
+            title={"Your Neighborhood Contact"}
             image={this.props.liason_image}
             content_array={contentLiasonArray}
           />
 
           {/* Early Voting Info */}
-          <MnlCard
-            title={"Early Voting Location"}
-            image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/voting_ballot.svg"
-            }
-            content_array={contentEarlyVotingArray}
-          />
+          {this.props.early_voting_active == true ? (
+            <MnlCard
+              title={"A Early Voting Location Near You"}
+              image_header={
+                "https://patterns.boston.gov/assets/icons/experiential_icons/voting_ballot.svg"
+              }
+              content_array={contentEarlyVotingArray}
+            />
+          ): null}
 
-          {/* Newsletter Sign Up */}
-          <MnlCard
-            title={"Newsletter Sign Up"}
-            image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/email_notification.svg"
-            }
-            content_array={contentNewsletter}
-          />
         </div>
-        <button
+        <button className="t--upper t--sans"
           onClick={() => {
             this.props.displaySection(null);
           }}

@@ -1,20 +1,35 @@
 class WinterResources extends React.Component {
   render() {
-    // Content for card
-    const contentSnowRoutes = [
+    // Content for cards
+    const contentSnowEmergencyParking = [
       {
-        content: (
-          <div className="no-heading">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
-          </div>
-        )
+        heading: "Parking Lot Name",
+        content: this.props.snow_parking_lots_name
       },
+      {
+        heading: "Parking Lot Address",
+        content: this.props.snow_parking_lots_address
+      },
+      {
+        heading: "Parking Lot Fee",
+        content: this.props.snow_parking_lots_fee
+      },
+      {
+        heading: "Parking Lot Comments",
+        content: this.props.snow_parking_lots_comments
+      }
+    ]
+    const contentSnowRoutes = [
       {
         heading: "Closest Route",
         content: this.props.snow_routes
+      },
+      {
+        content: (
+          <div className="no-heading">
+            There may be other snow routes in your area, <a href={"departments/311/snow-emergency-parking"}> check here for all snow emergency parking restrictions</a>.
+          </div>
+        )
       }
     ];
     const secDesc = "Find out where to park and prepare for snow emergencies.";
@@ -24,19 +39,27 @@ class WinterResources extends React.Component {
           <h2 className="sh-title">Winter Resources</h2>
         </div>
         <div className="supporting-text">
-          <p>{secDesc}</p>
+          <p>We will ticket and tow your car if you park on a posted snow emergency artery during a declared snow emergency. If you can't find a spot, some lots and garages offer discounted parking to vehicles with Boston resident parking stickers.</p>
         </div>
         <div className="g">
+          {/* Emergency Parking */}
+          <MnlCard
+            title={"Snow Emergency Parking"}
+            image_header={
+              "https://patterns.boston.gov/assets/icons/experiential_icons/parking.svg"
+            }
+            content_array={contentSnowEmergencyParking}
+          />
           {/* Snow Routes */}
           <MnlCard
-            title={"Snow Routes"}
+            title={"A Snow Route Near You"}
             image_header={
               "https://patterns.boston.gov/assets/icons/experiential_icons/plan.svg"
             }
             content_array={contentSnowRoutes}
           />
         </div>
-        <button
+        <button className="t--upper t--sans"
           onClick={() => {
             this.props.displaySection(null);
           }}
