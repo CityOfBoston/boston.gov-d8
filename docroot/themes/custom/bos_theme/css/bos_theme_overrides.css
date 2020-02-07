@@ -55,6 +55,11 @@ body.page-error h1.page-title {
 .error-text .h-s .sf-i-f {
   color: #091f2f;
 }
+.page-error .err-content {
+  min-height: 550px;
+  position: relative;
+  z-index: 10;
+}
 .err.err--403 {
   top: 69px;
 }
@@ -65,10 +70,13 @@ body.page-error h1.page-title {
   background-size: 102%;
   background-repeat: no-repeat;
   position: absolute;
-  top: 69px;
+  top: 20px;
   bottom: 0;
   left: 0;
   right: 0;
+  margin-top: 500px;
+  height: 400px;
+  z-index: 8;
 }
 .page-error .bos-search-form {
   padding-top: 20px;
@@ -82,6 +90,9 @@ body.page-error h1.page-title {
   border: 1px solid #2d2d2d;
   -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
 }
+.bos_theme.toolbar-tray-open.toolbar-horizontal .toolbar-tray {
+  box-shadow: -2px 1px 3px 1px rgba(0, 0, 0, 0.3333);
+}
 /* === === */
 
 .paragraphs-item-grid-of-quotes .quote-name {
@@ -94,7 +105,7 @@ button.lity-close {
   font-family: Arial,Baskerville,monospace;
 }
 
- /* Sidebar theme.  */
+/* Sidebar theme.  */
 
 .bos_theme .moderation-sidebar-actions .moderation-sidebar-link:before {
   min-width: 50px;
@@ -123,11 +134,11 @@ button.lity-close {
 
 .bos_theme .moderation-sidebar-actions .button--view-draft {
   background: repeating-linear-gradient(
-      135deg,
-      #d14700,
-      #d14700 10px,
-      #1b8000 10px,
-      #1b8000 20px
+    135deg,
+    #d14700,
+    #d14700 10px,
+    #1b8000 10px,
+    #1b8000 20px
   ) !important;
   color: #000 !important;
 }
@@ -326,11 +337,11 @@ Where: For node change.
 What: Locates the published info fields.
  */
 .node-change #published {
-    position: absolute;
-    top: 0;
-    width:  100%;
-    text-align: right;
-    font-style: italic;
+  position: absolute;
+  top: 0;
+  width:  100%;
+  text-align: right;
+  font-style: italic;
 }
 .node-change #published .created_uid {
   margin-right: 5px;
@@ -675,11 +686,11 @@ What:  Fixes the message box on the page without disrupting layout.
   background-color: rgba(255,255,255,.7);
 }
 .messages,.messages--error,.messages--status,.messages--warning {
-   margin: 0;
-   padding: 10px 10px 10px 47px;
-   border: 2px solid #0075d1;
-   z-index: 502;
-   max-width: 1200px;
+  margin: 0;
+  padding: 10px 10px 10px 47px;
+  border: 2px solid #0075d1;
+  z-index: 502;
+  max-width: 1200px;
 }
 .message--button {
   position: absolute;
@@ -889,10 +900,10 @@ What: Reset some funky CSS on featured post image.
  */
 .event-featured-item-wrapper .featured-thumb-wrapper img,
 .post-featured-item-wrapper .featured-thumb-wrapper img {
-   -webkit-transform: none;
-   transform: none;
-   top: initial;
-   left: initial;
+  -webkit-transform: none;
+  transform: none;
+  top: initial;
+  left: initial;
 }
 
 /*
@@ -970,7 +981,7 @@ What: Styles the watermark for D8.
   margin-top: -15px;
 }
 .logged-in #page .ph,
-/*.logged-in #page .paragraphs-item-hero-image .hro,*/
+  /*.logged-in #page .paragraphs-item-hero-image .hro,*/
 .logged-in.node-type-post #page .hro,
 .logged-in #page .hero-image {
   padding-top: 0;
@@ -1044,7 +1055,11 @@ What: Styles the watermark for D8.
 .watermark .wm-forward .status-draft-available a {
   background: #d14700;
   color: #fff;
-  opacity: 0.80;
+}
+.watermark .wm-forward .status-draft-available a.disabled {
+  background: #d14700;
+  color: #fff;
+  opacity: 0.3;
 }
 .watermark.watermark--unpublished .wm-ops a,
 .watermark.watermark--draft .wm-ops a {
@@ -1069,8 +1084,8 @@ What: Styles the watermark for D8.
 }
 .watermark .wm-col2 .wm-row1 {
   font-size: 32px;
-  margin-bottom: 5px;
-  max-height: 35px;
+  margin-bottom: 1px;
+  max-height: 1.2em;
   overflow: hidden;
 }
 .watermark .wm-col2 .wm-row2 {
@@ -1204,4 +1219,15 @@ What: Cleans up the breadcrumb and main page component locations (spin-off from 
  */
 .breadcrumb {
   margin-top: 3rem;
+}
+
+/**
+Stella:
+Where: Procurement Advertisement
+When: Adding style to view-row that is suddenly wrapping divs with .n-li class
+ */
+
+.views-row:not(:last-child) {
+  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
