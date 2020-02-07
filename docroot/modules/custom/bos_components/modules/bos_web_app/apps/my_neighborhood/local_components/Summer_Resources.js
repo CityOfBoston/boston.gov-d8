@@ -1,6 +1,19 @@
 class SummerResources extends React.Component {
   render() {
     // Content for card
+    const contentPools = [
+      {
+        heading: this.props.bcyf_pool_center_name,
+        content: this.props.bcyf_pool_center_address
+      },
+      {
+        content: (
+          <div>
+            Learn more about the <a href={"summer-boston"}>City in the summer</a>
+          </div>
+        )
+      }
+    ];
     const contentTotSprays = [
       {
         heading: this.props.tot_name,
@@ -9,7 +22,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about <a href={""}>tot-sprays</a>
+            Learn more about the <a href={"summer-boston"}>City in the summer</a>
           </div>
         )
       }
@@ -24,16 +37,24 @@ class SummerResources extends React.Component {
           <p>{secDesc}</p>
         </div>
         <div className="g">
+          {/* Pool info */}
+          <MnlCard
+            title={"A Pool Near You"}
+            image_header={
+              "https://assets.boston.gov/icons/experiential_icons/pool.svg"
+            }
+            content_array={contentPools}
+          />
           {/* Tot Sprays */}
           <MnlCard
-            title={"Tot Spray"}
+            title={"A Tot Spray Near You"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/tot_spray.svg"
+              "https://assets.boston.gov/icons/experiential_icons/tot_spray.svg"
             }
             content_array={contentTotSprays}
           />
         </div>
-        <button
+        <button className="t--upper t--sans"
           onClick={() => {
             this.props.displaySection(null);
           }}
@@ -57,7 +78,7 @@ class SummerResources extends React.Component {
           <MnlSection
             title={"Summer Resources"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/sun.svg"
+              "https://assets.boston.gov/icons/experiential_icons/sun.svg"
             }
             desc={secDesc}
           />

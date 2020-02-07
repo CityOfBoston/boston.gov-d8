@@ -18,11 +18,11 @@ class MnlSection extends React.Component {
 
     let desc;
     if (this.props.desc) {
-      desc = <div className="cdp-st t--g300">{this.props.desc}</div>;
+      desc = <div className="cdp-st">{this.props.desc}</div>;
     }
 
     return (
-      <div>
+      <div className="pointer">
         <div className="d-b bg--cb cdp-a ta-c p-a200 t--upper t--sans t--w t--ob--h t--s100">
           {this.props.title}
         </div>

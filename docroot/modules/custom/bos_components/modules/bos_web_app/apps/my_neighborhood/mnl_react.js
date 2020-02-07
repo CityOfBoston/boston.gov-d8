@@ -6,7 +6,8 @@ class MNLItems extends React.Component {
     this.state = {
       error: null,
       isLoading: false,
-      season: null,
+      season: configProps.season,
+      earlyVoting: configProps.earlyVoting,
       section: null,
       sam_id: null,
       itemsLookup: [],
@@ -16,6 +17,26 @@ class MNLItems extends React.Component {
       submittedKeywords: null,
       searchColor: null
     };
+  }
+
+  componentDidMount(){
+    let inputHeight = jQuery("#web-app input").height();
+    let inputWidth = jQuery("#web-app input").width();
+    jQuery(".resize").css('height', inputHeight + 'px');
+    jQuery(".resize").css('width', inputWidth + 'px');
+    jQuery("#web-app input").css('height', inputHeight + 'px');
+    //Skip and test
+    this.displayAddress('30712','22 Cheryl Parkway West Roxbury, 02136')
+  }
+
+  scaleInputText = op => {
+      jQuery(".resize").textfill({
+      maxFontPixels: 75,
+      success: function() {
+        let fontReSize = jQuery(".resize span").css('fontSize');
+        jQuery("#web-app input").css('font-size', fontReSize);
+      }
+    }) 
   }
 
   handleKeywordChange = event => {
@@ -34,6 +55,9 @@ class MNLItems extends React.Component {
       });
       this.lookupAddress();
     }
+    //let operation = event.keyCode;
+    this.scaleInputText();
+
   };
 
   handleKeywordSubmit = event => {
@@ -44,6 +68,7 @@ class MNLItems extends React.Component {
       submittedAddress: null
     });
     this.lookupAddress();
+    this.scaleInputText();
   };
 
   lookupAddress = event => {
@@ -121,6 +146,7 @@ class MNLItems extends React.Component {
               itemsLookup: [],
               itemsDisplay: newState.data
             });
+            this.scaleInputText();
           } else {
             this.setState({
               itemsDisplay: null
@@ -146,10 +172,6 @@ class MNLItems extends React.Component {
     });
   };
 
-  componentDidMount() {
-    // Test address option
-    //this.displayAddress('30712','Cheryl Ln')
-  }
 
   render() {
     // Set and retreieve display items
@@ -210,6 +232,26 @@ class MNLItems extends React.Component {
     }
     let mnlDisplay = this.state.submittedAddress ? (
       <div className="g">
+       <CitySpaces
+          library_branch={this.state.itemsDisplay.library_branch}
+          library_address={this.state.itemsDisplay.library_address}
+          comm_center={this.state.itemsDisplay.bcyf_center}
+          comm_address={this.state.itemsDisplay.bcyf_address}
+          comm_hours={this.state.itemsDisplay.bcyf_school_year_hours}
+          comm_summer_hours={this.state.itemsDisplay.bcyf_summer_hours}
+          park_name={this.state.itemsDisplay.park_name}
+          park_district={this.state.itemsDisplay.park_district}
+          park_ownership={this.state.itemsDisplay.park_ownership}
+          park_type={this.state.itemsDisplay.park_type}
+          hist_name={this.state.itemsDisplay.hist_name}
+          hist_place_name={this.state.itemsDisplay.hist_place_name}
+          hist_status={this.state.itemsDisplay.hist_status}
+          hist_year={this.state.itemsDisplay.hist_year}
+          hist_use_type={this.state.itemsDisplay.hist_use_type}
+          section={this.state.section}
+          displaySection={this.displaySection}
+        />
+
         <Representation
           councilor={this.state.itemsDisplay.councilor}
           district={this.state.itemsDisplay.district}
@@ -219,6 +261,7 @@ class MNLItems extends React.Component {
           liason_image={this.state.itemsDisplay.liason_pic_url}
           voting_location={this.state.itemsDisplay.vote_location2}
           voting_address={this.state.itemsDisplay.vote_location3}
+          early_voting_active={this.state.earlyVoting}
           early_voting_dates={this.state.itemsDisplay.early_voting_dates}
           early_voting_times={this.state.itemsDisplay.early_voting_times}
           early_voting_address={this.state.itemsDisplay.early_voting_address}
@@ -230,49 +273,34 @@ class MNLItems extends React.Component {
           section={this.state.section}
           displaySection={this.displaySection}
         />
-
-        <CitySpaces
-          library_branch={this.state.itemsDisplay.library_branch}
-          library_address={this.state.itemsDisplay.library_address}
-          comm_center={this.state.itemsDisplay.bcyf_center}
-          comm_address={this.state.itemsDisplay.bcyf_address}
-          comm_hours={this.state.itemsDisplay.bcyf_school_year_hours}
-          comm_summer_hours={this.state.itemsDisplay.bcyf_summer_hours}
-          park_name={this.state.itemsDisplay.park_name}
-          park_district={this.state.itemsDisplay.park_district}
-          park_ownership={this.state.itemsDisplay.park_ownership}
-          park_type={this.state.itemsDisplay.park_type}
-          section={this.state.section}
-          displaySection={this.displaySection}
-        />
-
-        <PropertyInformation
-          hist_name={this.state.itemsDisplay.hist_name}
-          hist_place_name={this.state.itemsDisplay.hist_place_name}
-          hist_status={this.state.itemsDisplay.hist_status}
-          hist_year={this.state.itemsDisplay.hist_year}
-          hist_use_type={this.state.itemsDisplay.hist_use_type}
-          section={this.state.section}
-          displaySection={this.displaySection}
-        />
+ 
+        {this.state.season == "summer" || this.state.season == null ? (
+          <SummerResources
+            tot_name={this.state.itemsDisplay.tot_park_name}
+            tot_address={this.state.itemsDisplay.tot_address_text}
+            bcyf_pool_center_name={this.state.itemsDisplay.bcyf_pool_center_name}
+            bcyf_pool_center_address={this.state.itemsDisplay.bcyf_pool_center_address}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
 
         {this.state.season == "winter" || this.state.season == null ? (
           <WinterResources
             snow_routes={this.state.itemsDisplay.snow_routes_full_name}
             snow_routes_respsonsibility={this.state.itemsDisplay.snow_routes_responsibility}
+            snow_parking_lots_name={this.state.itemsDisplay.snow_parking_lots_name}
+            snow_parking_lots_address={this.state.itemsDisplay.snow_parking_lots_address}
+            snow_parking_lots_fee={this.state.itemsDisplay.snow_parking_lots_fee}
+            snow_parking_lots_comments={this.state.itemsDisplay.snow_parking_lots_comments}
             section={this.state.section}
             displaySection={this.displaySection}
           />
         ) : null}
 
-        {this.state.season == "summer" || this.state.season == null ? (
-          <SummerResources
-            tot_name={this.state.itemsDisplay.tot_park_name}
-            tot_address={this.state.itemsDisplay.tot_address_text}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+        <Newsletter 
+          section={this.state.section}
+        />
       </div>
     ) : (
       ""
