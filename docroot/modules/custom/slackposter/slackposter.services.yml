@@ -1,0 +1,6 @@
+services:
+
+  logger.slackposter:
+    class: Drupal\slackposter\Logger\SlackLogger
+    tags:
+      - { name: logger }
