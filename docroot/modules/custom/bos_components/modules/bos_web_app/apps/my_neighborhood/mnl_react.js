@@ -26,7 +26,7 @@ class MNLItems extends React.Component {
     jQuery(".resize").css('width', inputWidth + 'px');
     jQuery("#web-app input").css('height', inputHeight + 'px');
     //Skip and test
-    this.displayAddress('30712','22 Cheryl Parkway West Roxbury, 02136')
+    //this.displayAddress('30712','22 Cheryl Parkway West Roxbury, 02136')
   }
 
   scaleInputText = op => {
