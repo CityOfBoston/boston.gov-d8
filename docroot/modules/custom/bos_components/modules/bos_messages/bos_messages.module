@@ -5,6 +5,7 @@
  * The Base module file for bos_messages module.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -41,6 +42,15 @@ function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInt
       "body" => "cds-d t--subinfo",
     ],
   ]);
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function bos_messages_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (isset($element["#theme"]) && $element["#theme"] == "bos_messages_mod_recur_widget") {
+    $element["ends_date"]["ends_date"]["#description"] = new TranslatableMarkup("This message will not show after the end of this day.");
+  }
 }
 
 /**
@@ -240,6 +250,7 @@ function bos_messages_tokens($type, $tokens, array $data = [], array $options = 
  * Implements hook_paragraph_HOOK_summary_alter().
  */
 function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_widget, array $para, array $attributes) {
+  static $found = FALSE;
   $attributes["class"][] = $para["entity"]->field_enabled->value ? "cob-para-enabled" : "cob-para-disabled";
   $at_settings = [
     'word_boundary' => TRUE,
@@ -276,7 +287,8 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
         $nextrun = " <span style='color:red;font-weight:bold'>expired</span>";
       }
       elseif (strtotime($pattern->value) == strtotime("midnight")) {
-        $isToday = TRUE;
+        $isToday = !$found;
+        $found = TRUE;
         $nextrun = " <span style='color:blue;font-weight:bold'>Showing Now</span>";
       }
       else {
@@ -301,7 +313,8 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
       // The rule end date.
       $end = "FOREVER";
       if (isset($pattern->UNTIL)) {
-        $end = "until " . $pattern->UNTIL->format("M d Y");
+        $pattern->UNTIL->setTimezone(new DateTimeZone("America/New_York"));
+        $end = "until EOD " . $pattern->UNTIL->format("M d Y");
       }
       elseif (isset($pattern->COUNT) && $pattern->COUNT > 0) {
         $end = "for $pattern->COUNT";
@@ -311,7 +324,9 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
       if ($para["entity"]->get("field_enabled")->value == 1) {
         foreach ($para["entity"]->field_recurrence[0]->getHelper()->generateOccurrences() as $occurrence) {
           if (strtotime($occurrence->getStart()->format("M d Y")) == strtotime("midnight")) {
-            $isToday = TRUE;
+            $isToday = !$found;
+            $found = TRUE;
+            $nextrun = "<span style='color:blue;font-weight:bold'>ENDS TODAY</span>";
           }
           if (strtotime($occurrence->getStart()->format("M d Y")) > strtotime("midnight")) {
             $nextrun = "<span style='color:blue;font-weight:bold'>Next: " . $occurrence->getStart()->format("M d Y") . "</span>";
@@ -374,7 +389,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               3,
               4,
               5,
-              6
+              6,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos = "1st,";
             }
@@ -385,7 +400,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               10,
               11,
               12,
-              13
+              13,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "2nd,";
             }
@@ -396,7 +411,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               17,
               18,
               19,
-              20
+              20,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "3rd,";
             }
@@ -407,7 +422,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               24,
               25,
               26,
-              27
+              27,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "4th,";
             }
@@ -415,7 +430,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               28,
               29,
               30,
-              31
+              31,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "5th,";
             }
@@ -446,7 +461,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               3,
               4,
               5,
-              6
+              6,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos = "1st,";
             }
@@ -457,7 +472,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               10,
               11,
               12,
-              13
+              13,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "2nd,";
             }
@@ -468,7 +483,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               17,
               18,
               19,
-              20
+              20,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "3rd,";
             }
@@ -479,7 +494,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               24,
               25,
               26,
-              27
+              27,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "4th,";
             }
@@ -487,7 +502,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
               28,
               29,
               30,
-              31
+              31,
             ], explode(",", $pattern->BYSETPOS)))) {
               $pos .= "5th,";
             }
@@ -524,11 +539,11 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
     'content' => $markup,
     'id' => TRUE,
   ];
-  if ($isToday) {
+  if ($isToday && $para["all_collapsed"]) {
     $out['icon'] = [
       "today" => [
         "#markup" => "",
-        "#prefix" => "<span class=\"paragraphs-icon paragraphs-icon-today\" title=\"Message is eligible today.\">",
+        "#prefix" => "<span class=\"paragraphs-icon paragraphs-icon-today\" title=\"Message is showing today.\">",
         "#suffix" => "</span>",
       ],
     ];
