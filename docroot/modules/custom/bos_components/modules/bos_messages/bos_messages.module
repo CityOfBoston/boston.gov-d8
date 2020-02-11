@@ -48,7 +48,7 @@ function bos_messages_form_node_status_item_edit_form_alter(&$form, FormStateInt
  * Implements hook_field_widget_form_alter().
  */
 function bos_messages_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  if ($element["#theme"] == "bos_messages_mod_recur_widget") {
+  if (isset($element["#theme"]) && $element["#theme"] == "bos_messages_mod_recur_widget") {
     $element["ends_date"]["ends_date"]["#description"] = new TranslatableMarkup("This message will not show after the end of this day.");
   }
 }
