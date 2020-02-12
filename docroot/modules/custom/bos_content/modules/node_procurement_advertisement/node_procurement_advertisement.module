@@ -104,6 +104,7 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
       $variables['field_email'] = $variables["content"]["field_email"][0];
       $variables['field_phone_number'] = bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]);
       $variables['field_not_awarded'] = $variables["content"]["field_not_awarded"][0];
+      $variables['field_event_project_number'] = $variables["content"]["field_event_project_number"][0]["#context"]["value"];
 
       $variables["start_date"] = "";
       if (!empty($variables["content"]["field_date_range"][0])) {
