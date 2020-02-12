@@ -63,35 +63,44 @@ div#edit-meta-published {
 
 div[id^=edit-moderation-state-].status-draft,
 div#edit-meta-published.status-draft {
-  background-color: #ffae00;
-  color: #333;
-}
-div[id^=edit-moderation-state-].status-needs-review,
-div#edit-meta-published.status-needs-review {
-  background-color: #277abd;
+  background-color: #d14700;
   color: #fff;
 }
+.bos_admin.node-needs_review .content-header,
+div[id^=edit-moderation-state-].status-needs-review,
+div#edit-meta-published.status-needs-review {
+  background-color: #0075d1;
+  color: #fff;
+}
+.bos_admin header.content-header,
+.bos_admin.node-draft .content-header,
 div[id^=edit-moderation-state-].status-draft-available,
 div#edit-meta-published.status-draft-available {
-  background-color: #ffae00;
+  background-color: #d14700;
 }
+.bos_admin.node-archive .content-header,
 div.status-archive {
-  background-color: #c5c5c5;
-  color: #333;
+  background-color: #888888;
+  color: #fff;
 }
+.bos_admin.node-published .content-header,
 div.status-published {
-  background-color: #269e2c;
-  color: #333;
+  background-color: #1b8000;
+  color: #fff;
 }
-
+#block-bos-admin-page-title {
+  max-height: 58px;
+}
 .bos_admin .block-page-title-block:before {
   content: url("/themes/custom/bos_admin/images/B_50px.png");
-  margin-right: 20px;
+  margin-right: 15px;
   float: left;
   margin-left: -15px;
+  margin-top: -5px;
 }
 .bos_admin h1.page-title {
   line-height: 1.4em;
+  overflow: hidden;
 }
 
 /* Node revision summary page */
@@ -252,13 +261,19 @@ body.bos_admin {
 }
 
 .bos_admin nav.is-horizontal.is-collapsible.position-container.is-horizontal-enabled ul.tabs.primary {
-  background: #ebebeb;
+  background: #777777;
   margin-left: -2.1rem;
   margin-right: -2.1rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
 
+.bos_admin .tabs.primary .tabs__tab a {
+  color: #fff;
+}
+.bos_admin .tabs.primary .tabs__tab.is-active a {
+  color: initial;
+}
 .bos_admin .is-horizontal .tabs.primary .tabs__tab:first-child.is-active {
   box-shadow: -0.5rem 0px 0 #fff;
 }
@@ -278,7 +293,7 @@ body.bos_admin {
 .bos_admin .vertical-tabs {
   border-radius: 0;
   border: 1px solid #b5b5b5;
-   background: #f2f2f0;
+  background: #f2f2f0;
 }
 
 .bos_admin .vertical-tabs__panes {
@@ -552,8 +567,8 @@ body.bos_admin {
 }
 
 .bos_admin .toolbar .toolbar-bar {
-  box-shadow: none;
   background-color: #2D2D2D;
+  box-shadow: -2px 2px 12px rgba(0,0,0,0.85);
 }
 
 .bos_admin .toolbar .toolbar-menu {
@@ -616,7 +631,6 @@ body.bos_admin {
 
 .bos_admin .toolbar .toolbar-tray-horizontal {
   border-bottom: 1px solid #333;
-  box-shadow: none;
 }
 
 .bos_admin .toolbar .toolbar-toggle-orientation {

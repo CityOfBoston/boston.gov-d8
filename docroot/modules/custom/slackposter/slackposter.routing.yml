@@ -1,0 +1,33 @@
+slackposter.admin:
+  path: '/admin/config/system/slackposter'
+  defaults:
+    _title: 'Slack Integration'
+    _form: '\Drupal\slackposter\Form\SlackSettingsForm'
+  requirements:
+    _permission: 'administer slack'
+
+slackposter.test:
+  path: '/slackposter/test/{what}'
+  defaults:
+    _title: 'Slack Integration Test'
+    _controller: '\Drupal\slackposter\Test\SlackposterTester::main'
+    what: 'default'
+  requirements:
+    _permission: 'administer slack'
+
+slackposter.opentest:
+  path: '/slackposter/opentest/{what}'
+  defaults:
+    _title: 'Slack Integration Test'
+    _controller: '\Drupal\slackposter\Test\SlackposterTester::openmain'
+    what: 'default'
+  requirements:
+    _access: 'TRUE'
+
+#slackposter.postAPI:
+#  path: '/ws/slack/post'
+#  defaults:
+#    _controller: '\Drupal\slackposter\Controller\SlackAPI::post'
+#    _title: 'Slack Poster'
+#  requirements:
+#    _permission: 'post slack'
