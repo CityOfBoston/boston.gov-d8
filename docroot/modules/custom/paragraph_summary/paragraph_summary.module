@@ -25,6 +25,17 @@ function paragraph_summary_form_alter(&$form, FormStateInterface $form_state, $f
       $fsFields = $form_state->getStorage()['field_storage']["#parents"]["#fields"];
       if (!empty($fsFields[$form_field]["paragraphs"])) {
         $elements = $fsFields[$form_field]["paragraphs"];
+        $elements['cob']['all_collapsed'] = TRUE;
+        foreach (Element::getVisibleChildren($widget) as $field_key => $field) {
+          if (is_numeric($field)) {
+            if (!empty($para_field = &$widget[$field_key])) {
+              if ($elements[$field_key]['mode'] == 'edit') {
+                $elements['cob']['all_collapsed'] = FALSE;
+                break;
+              }
+            }
+          }
+        }
         foreach (Element::getVisibleChildren($widget) as $field_key => $field) {
           if (is_numeric($field)) {
             if (!empty($para_field = &$widget[$field_key])) {
@@ -42,6 +53,7 @@ function paragraph_summary_form_alter(&$form, FormStateInterface $form_state, $f
  */
 function paragraph_summary_widget_summary(array &$para_field, array $elements, string $key) {
   $element = $elements[$key];
+  $element["all_collapsed"] = $elements['cob']['all_collapsed'];
   if (isset($element["entity"]) && $paragraph = $element["entity"]) {
 
     if ($element['mode'] == 'closed') {
