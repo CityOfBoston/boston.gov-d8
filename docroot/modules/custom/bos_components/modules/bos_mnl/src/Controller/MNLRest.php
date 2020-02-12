@@ -56,7 +56,7 @@ class MNLRest extends ControllerBase {
     $entity = Node::load($nid);
     $entity->set('field_sam_id', $dataJSON['sam_address']);
     $entity->set('field_sam_address', $dataJSON['full_address']);
-    $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
+    $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['field_sam_neighborhood_data']));
     $entity->save();
   }
 
@@ -107,31 +107,38 @@ class MNLRest extends ControllerBase {
         $exists = FALSE;
         $nodeID = NULL;
 
-        foreach ($data as $items) {
-          foreach ($nids as $nid) {
-            $node = Node::load($nid);
-            $sam_id = $node->field_sam_id->value;
-            if ($sam_id == $items['sam_address']) {
-              $exists = TRUE; $nodeID = $nid;
+        if (json_last_error() === 0) {
+          foreach ($data as $items) {
+            foreach ($nids as $nid) {
+              $node = Node::load($nid);
+              $sam_id = $node->field_sam_id->value;
+              if ($sam_id == $items['sam_address']) {
+                $exists = TRUE; $nodeID = $nid;
+              }
             }
-          }
 
-          if ($exists == TRUE) {
-            $this->updateNode($nodeID, $items);
-          }
-          else {
+            if ($exists == TRUE) {
+              $this->updateNode($nodeID, $items);
+            }
+            else {
 
-            $this->createNode($nodeID, $items);
-          }
+              $this->createNode($nodeID, $items);
+            }
 
-          $exists = FALSE;
+            $exists = FALSE;
+          }
+          $response_array = [
+            'status' => 'procedure complete',
+            'response' => 'authorized'
+          ];
         }
-
-        $response_array = [
-          'status' => 'procedure complete',
-          'response' => 'authorized',
-        ];
-
+        else {
+          $response_array = [
+            'status' => 'error',
+            'response' => 'authorized',
+            'error json' => json_last_error()
+          ];
+        }
       }
       else {
 
