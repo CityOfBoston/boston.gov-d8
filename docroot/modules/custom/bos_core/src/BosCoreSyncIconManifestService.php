@@ -104,6 +104,7 @@ class BosCoreSyncIconManifestService {
     foreach ($manifest as $icon_uri) {
       if (!empty($icon_uri)) {
         self::processFileUri($icon_uri);
+        $manifest_cache[] = $icon_uri;
       }
     }
 
@@ -127,8 +128,6 @@ class BosCoreSyncIconManifestService {
    *
    * @param string $icon_uri
    *   The file URI.
-   * @param array $manifest_cache
-   *   The manifest cache created from previous manifest processes.
    * @param array $last
    *   The max File Entity ID known.
    * @param array $cnt
@@ -140,18 +139,17 @@ class BosCoreSyncIconManifestService {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function processFileUri(string $icon_uri, array &$manifest_cache = [], array $last = [], array $cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
-    /** @var \Drupal\file\Entity\File */
-    $file = NULL;
-
-    empty($cnt) ?: $cnt["Total"]++;
+  public static function processFileUri(string $icon_uri, array $last = [], array $cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
     $icon_uri = trim($icon_uri);
+    if (empty($icon_uri)) {
+      return;
+    }
     $icon_filename = self::cleanFilenameFolder($icon_uri);
 
-    $manifest_cache[] = $icon_uri;
+    empty($cnt) ?: $cnt["Total"]++;
 
     // Try to get (or create) the file from/in the file_managed table.
-    $file_ids = self::retrieveFileEntities($icon_uri, $icon_filename, $last, $cnt, $migration_enabled);
+    $file_ids = self::retrieveFileEntities($icon_uri, $icon_filename, $file = NULL, $last, $cnt, $migration_enabled);
 
     // We should now have files in file_managed for all $file_ids.
     // Try to find a media entity attached to each file_id.
@@ -186,7 +184,6 @@ class BosCoreSyncIconManifestService {
         break;
       }
     }
-
   }
 
   /**
@@ -243,6 +240,8 @@ class BosCoreSyncIconManifestService {
    *   The URI for the icon file.
    * @param string $icon_filename
    *   The filename to assign this file.
+   * @param object $file
+   *   This will be populated if a new file is created.
    * @param array $last
    *   Array with the last known file ID and revsision.
    * @param array $cnt
@@ -257,7 +256,7 @@ class BosCoreSyncIconManifestService {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function retrieveFileEntities(string $icon_uri, string $icon_filename, array $last = [], array $cnt = [], int $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
+  public static function retrieveFileEntities(string $icon_uri, string $icon_filename, &$file, array $last = [], array $cnt = [], int $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
     // Fetch all file entities which reference this uri.
     $file_ids = BosCoreMediaEntityHelpers::getFileEntities($icon_uri);
 
