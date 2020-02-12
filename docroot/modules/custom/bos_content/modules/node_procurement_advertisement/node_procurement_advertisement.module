@@ -86,7 +86,7 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
         $dept_icon_uri = $file->getFileUri();
         if (substr($dept_icon_uri, 0, 4) != "http") {
           $dept_icon_uri = \Drupal::request()
-              ->getScheme() . ":" . $dept_icon_uri;
+            ->getScheme() . ":" . $dept_icon_uri;
         }
         if (@file_get_contents($dept_icon_uri)) {
           $variables['dept_icon_uri'] = $dept_icon_uri;
