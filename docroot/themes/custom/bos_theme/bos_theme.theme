@@ -6,6 +6,7 @@
  */
 
 use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Component\Datetime\DateTimePlus;
 use Drupal\Core\Render\Element;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Render\HtmlResponse;
@@ -228,6 +229,9 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $variables['attributes']->addClass($newClass);
   if ($nid = drupal::request()->get('node')) {
     if (!is_numeric($nid)) {
+      if ($nid->hasField('moderation_state')) {
+        $variables['attributes']->addClass("node-" . $nid->get('moderation_state')->getString());
+      }
       $nid = $nid->id();
     }
     $newClass = "page-node-" . (isset($nid) ? $nid : "");
@@ -1163,10 +1167,46 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
  *   Variables array -should have unpublished, preview and moderation_state set.
  */
 function _bos_theme_page_watermark(array &$variables) {
-
   $user = \Drupal::currentUser();
   if ($user->hasPermission("view any unpublished content")) {
     if (!empty($variables['node']) && $node = $variables['node']) {
+      $variables['#attached']['library'][] = 'bos_theme/moderation_sidebar';
+      $variables['cob']['type'] = ucwords(str_replace("_", " ", $variables["node"]->bundle()));
+      $uid = $variables["node"]->get("revision_uid")->target_id;
+      if (!empty($account = \Drupal::entityTypeManager()->getStorage("user")->load($uid))) {
+        $variables['cob']['lastedit'] = $account->realname;
+      }
+      $variables['cob']['lasteditprefix'] = "Last Edited";
+      $ed = DateTimePlus::createFromFormat("U", $variables["node"]->get("revision_timestamp")->value);
+      $tz = (empty($user->getTimeZone()) || $user->getTimeZone() == "UTC" ? "America/New_York" : $user->getTimeZone());
+      $ed->setTimezone(new DateTimeZone($tz));
+      $variables['cob']['lastdate'] = $ed->format("D M d, Y - g:ia");
+      $at_settings = [
+        'word_boundary' => TRUE,
+        'ellipsis' => TRUE,
+        'max_length' => 50,
+      ];
+      $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
+      $variables["cob"]['nid'] = $node->id();
+
+      if ($node->isDefaultRevision() && !$node->isLatestRevision()) {
+        // We have a Draft or Needs-Review forward revision of this node.
+        $variables["cob"]['has_draft'] = TRUE;
+        if (NULL != ($revision_ids = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node))) {
+          $last_revision = end($revision_ids);
+          if (NULL != ($node_latest = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($last_revision))) {
+            $latest_mod = $node_latest->get('moderation_state')->getString();
+            // Not all users have permission to view all moderation states.
+            if ($user->hasPermission("moderate content from $latest_mod to draft")
+              || $user->hasPermission("moderate content from $latest_mod to published")
+              || $user->hasPermission("moderate content from $latest_mod to archive")
+              || $user->hasPermission("moderate content from $latest_mod to needs_review")) {
+              $variables["cob"]['view_draft'] = TRUE;
+            }
+          }
+        }
+      }
+
       if ($variables['unpublished'] || $variables['preview']) {
         $variables['attributes']->addClass('node-unpublished');
         $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
@@ -1174,21 +1214,27 @@ function _bos_theme_page_watermark(array &$variables) {
         $variables['watermark_text'] = "Unpublished";
       }
       if ($variables['moderation_state']) {
-        $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
-        if (strtolower($variables['moderation_state']) != "published"
-          && strtolower($variables['moderation_state']) != "unpublished") {
-          $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
-          $variables['attributes_watermark']->addClass('watermark--' . $variables['moderation_state']);
-          $variables['attributes_watermark']->removeClass('watermark--unpublished');
+        $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
+        $variables['attributes_watermark']->addClass('watermark--' . $variables['moderation_state']);
+        $variables['attributes_watermark']->removeClass('watermark--unpublished');
 
-          switch ($variables['moderation_state']) {
-            case "needs_review":
-              $variables['watermark_text'] = "review pending";
-              break;
+        switch ($variables['moderation_state']) {
+          case "needs_review":
+            $variables['watermark_text'] = "review pending";
+            break;
 
-            default:
-              $variables['watermark_text'] = $variables['moderation_state'];
-          }
+          case "published":
+            $variables['cob']['lasteditprefix'] = "Published";
+            $variables['watermark_text'] = $variables['moderation_state'];
+            break;
+
+          case "archived":
+            $variables['cob']['lasteditprefix'] = "Archived";
+            $variables['watermark_text'] = $variables['moderation_state'];
+            break;
+
+          default:
+            $variables['watermark_text'] = $variables['moderation_state'];
         }
       }
     }

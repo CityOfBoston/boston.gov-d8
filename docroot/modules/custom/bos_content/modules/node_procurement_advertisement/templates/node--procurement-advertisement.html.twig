@@ -79,7 +79,7 @@
  #}
 
 {% set is_closed = date(node.field_date_range.end_value) < date() %}
-{% set not_awarded = node.field_not_awarded.value %}
+{% set bid_awarded = node.field_award_date.value %}
 
 {% set bids = [] %}
 {% set winner_exists = FALSE %}
@@ -96,6 +96,10 @@
   {% set bids = bids|merge([bid]) %}
   {% set bid_count = bids|length %}
 {% endfor %}
+
+<div class="breadcrumb" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
 
 <article id="node-{{ node.id }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
 
@@ -129,11 +133,11 @@
         <ul class="dl">
           <li class="dl-i">
             {% if is_closed %}
-              {% if not_awarded == FALSE %}
-                <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
+              {% if bid_awarded == FALSE %}
+                <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Not Awarded</strong></div>
               {% else %}
-                {% if not_awarded %}
-                  <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Not Awarded</strong></div>
+                {% if bid_awarded %}
+                  <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
                 {% else %}
                   <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Closed</strong></div>
                 {% endif %}
@@ -200,7 +204,7 @@
         <div class="sh sh--w">
           <h2 class="sh-title">Submissions</h2>
         </div>
-        {% if not_awarded and is_closed %}
+        {% if bid_awarded and is_closed %}
           <div class="m-t500">
             <div class="g">
               <strong class="t--upper t--sans">This Advertisement was not awarded</strong>
@@ -208,7 +212,7 @@
           </div>
         {% endif %}
         {% for bid in bids %}
-          {% if bid.winner and not_awarded == FALSE %}
+          {% if bid.winner and bid_awarded == FALSE %}
             <div class="m-t500">
               <div class="g">
                 <div class="g--2">

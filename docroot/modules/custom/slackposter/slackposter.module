@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Slackposter module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\slackposter\Controller\SlackController;
+
+/**
+ * {@inheritDoc}
+ */
+function slackposter_help($path, $arg) {
+
+  $out = '';
+  switch ($path) {
+    case "help.page.slackposter":
+      $controller = new SlackController();
+      $out = $controller->helpPage();
+      break;
+  }
+  return $out;
+
+}
+
+/**
+ * This is a callback from the slack admin form for validation.
+ *
+ * {@inheritDoc}
+ */
+function slackposter_form_slackposter_admin_settings_validate(array &$form, FormStateInterface $form_state) {
+
+  $settings = $form_state->getValue('slackposter');
+
+  if ($settings['watchdog']['watchdog.enabled'] && !$settings['watchdog']['watchdog.integration']) {
+    // Integration field is required if watchdog is enabled...
+    $form_state->setErrorByName('watchdog.integration', t('Mus  t provide a webhook if syslog capture is enabled'));
+    $form = $form_state->getCompleteForm();
+    $form['slackposter']['watchdog']['#open'] = TRUE;
+    $form['slackposter']['watchdog']['watchdog.integration']['#attributes']['class'][] = 'error';
+    $form_state->setCompleteForm($form);
+    return FALSE;
+  }
+
+}
