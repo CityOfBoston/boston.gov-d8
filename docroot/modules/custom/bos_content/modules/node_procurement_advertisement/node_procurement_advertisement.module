@@ -68,18 +68,42 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
  * Implements hook_preprocess_HOOK().
  */
 function node_procurement_advertisement_preprocess_node__procurement_advertisement__listing(&$variables) {
+  $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
+  $variables['dept_name'] = $term->getName();
 
+  if (isset($term) && $term->hasField('field_department_profile')) {
+    $dept_profile = $term->get('field_department_profile')->getValue();
+      if (isset($dept_profile[0]['target_id'])) {
+        $node = \Drupal::entityTypeManager()
+          ->getStorage('node')
+          ->load($dept_profile[0]['target_id']);
+        $dept_url = '/node/' . $node->id();
+        $variables['dept_url'] = $dept_url;
+        $dept_icon = $node->field_icon->target_id;
+
+        $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
+        if ($file = File::load($dept_icon)) {
+          $dept_icon_uri = $file->getFileUri();
+          if (substr($dept_icon_uri, 0, 4) != "http") {
+            $dept_icon_uri = \Drupal::request()
+                ->getScheme() . ":" . $dept_icon_uri;
+          }
+          if (@file_get_contents($dept_icon_uri)) {
+            $variables['dept_icon_uri'] = $dept_icon_uri;
+          }
+        }
+
+      }
+  }
   if (NULL != ($node = $variables["node"] ?? NULL)) {
 
     if (is_numeric($node)) {
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
     }
     if ($node->bundle() == "procurement_advertisement") {
-      $variables['field_procurement'] = $variables["content"]["field_procurement"][0]["#title"];
       $variables['field_department'] = $variables["content"]["field_department"][0]["#context"]["value"];
       $variables['field_email'] = $variables["content"]["field_email"][0];
       $variables['field_phone_number'] = bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]);
-      $variables['field_event_project_number'] = $variables["content"]["field_event_project_number"][0]["#context"]["value"];
       $variables['field_not_awarded'] = $variables["content"]["field_not_awarded"][0];
 
       $variables["start_date"] = "";
@@ -95,33 +119,6 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
         $variables['end_date'] = $variables["content"]["field_date_range"][0]["end_date"]["#text"];
       }
     }
-
-    $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
-    $variables['dept_name'] = $term->getName();
-
-    if (isset($term) && $term->hasField('field_department_profile')) {
-      $dept_profile = $term->get('field_department_profile')->getValue();
-      if (isset($dept_profile[0]['target_id'])) {
-        $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
-        $dept_url = '/node/' . $node->id();
-        $variables['dept_url'] = $dept_url;
-        $dept_icon = $node->field_icon->target_id;
-
-        $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
-        if ($file = File::load($dept_icon)) {
-          $dept_icon_uri = $file->getFileUri();
-          if (substr($dept_icon_uri, 0, 4) != "http") {
-            $dept_icon_uri = \Drupal::request()
-              ->getScheme() . ":" . $dept_icon_uri;
-          }
-          if (@file_get_contents($dept_icon_uri)) {
-            $variables['dept_icon_uri'] = $dept_icon_uri;
-          }
-        }
-
-      }
-    }
-
   }
 }
 
@@ -200,14 +197,8 @@ function node_procurement_advertisement_preprocess_field_multiple_value_form(arr
 }
 
 /**
- * Form validate callback.
+ * Implements hook_form_submit().
  */
-function node_procurement_advertisement_form_validate($form, $form_state) {
-  //gg.
-  // entity query.
-  //Drupal::entityQuery()->
-}
-
 function node_procurement_advertisement_form_submit($form, $form_state) {
   // This does run after the node is saved, so the procurement ID can be
   // set to the nid.
