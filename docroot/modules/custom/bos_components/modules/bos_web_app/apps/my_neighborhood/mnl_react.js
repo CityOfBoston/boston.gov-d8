@@ -42,6 +42,8 @@ class MNLItems extends React.Component {
   handleKeywordChange = event => {
     event.preventDefault();
     let inputChars = event.target.value.length;
+    let typingTimer;                
+    let doneTypingInterval = 3000;  
     this.setState({
       currentKeywords: event.target.value,
       submittedKeywords: null,
@@ -54,7 +56,8 @@ class MNLItems extends React.Component {
         submittedKeywords: true,
         submittedAddress: null
       });
-      this.lookupAddress();
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(this.lookupAddress(), doneTypingInterval);
     }
     this.scaleInputText();
   };
