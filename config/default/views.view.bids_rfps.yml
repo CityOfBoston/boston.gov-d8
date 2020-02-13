@@ -31,7 +31,7 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: tag
+        type: none
         options: {  }
       query:
         type: views_query
@@ -273,6 +273,58 @@ display:
             placeholder: ''
           is_grouped: false
           group_info:
+            label: Title
+            description: null
+            identifier: title
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          entity_type: node
+          entity_field: title
+          plugin_id: string
+        field_event_project_number_value_1:
+          id: field_event_project_number_value_1
+          table: node__field_event_project_number
+          field: field_event_project_number_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_project_number_value_1_op
+            label: 'Event/Project Number'
+            description: ''
+            use_operator: false
+            operator: field_event_project_number_value_1_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_project_number_value_1
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: 'Project Number'
+          is_grouped: false
+          group_info:
             label: ''
             description: ''
             identifier: ''
@@ -283,8 +335,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: title
           plugin_id: string
         field_date_range_value:
           id: field_date_range_value
@@ -435,6 +485,9 @@ display:
       display_extenders: {  }
       path: views/bid-listings
       display_description: ''
+      defaults:
+        filters: true
+        filter_groups: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -480,6 +533,7 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
+          group: 1
         title:
           id: title
           table: node_field_data
@@ -586,6 +640,53 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
+        field_event_project_number_value:
+          id: field_event_project_number_value
+          table: node__field_event_project_number
+          field: field_event_project_number_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: contains
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_project_number_value_op
+            label: 'Event/Project Number'
+            description: ''
+            use_operator: false
+            operator: field_event_project_number_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_project_number_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: 'Project Number'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
         field_date_range_value:
           id: field_date_range_value
           table: node__field_date_range

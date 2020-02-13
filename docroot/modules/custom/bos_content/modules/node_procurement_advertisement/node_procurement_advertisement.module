@@ -199,12 +199,13 @@ function node_procurement_advertisement_preprocess_field_multiple_value_form(arr
 /**
  * Implements hook_form_submit().
  */
-function node_procurement_advertisement_form_submit($form, $form_state) {
+function node_procurement_advertisement_form_submit($variables, $form_state) {
   // This does run after the node is saved, so the procurement ID can be
   // set to the nid.
   if (NULL != ($node = Node::load($form_state->get("nid")))) {
     if (empty($node->get("field_event_project_number")->value)) {
       $node->field_event_project_number = $node->nid->value;
+      $variables['nid'] = $node->nid->value;
       $node->save();
     }
   }
