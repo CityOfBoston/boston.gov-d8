@@ -21,7 +21,7 @@ class MNLItems extends React.Component {
 
   componentDidMount(){
     let inputHeight = jQuery("#web-app input").height();
-    let inputWidth = jQuery("#web-app input").width();
+    let inputWidth = jQuery("#web-app input").width() - 75;
     jQuery(".resize").css('height', inputHeight + 'px');
     jQuery(".resize").css('width', inputWidth + 'px');
     jQuery("#web-app input").css('height', inputHeight + 'px');
