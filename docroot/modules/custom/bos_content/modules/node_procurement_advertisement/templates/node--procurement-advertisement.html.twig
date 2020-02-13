@@ -134,7 +134,7 @@
           <li class="dl-i">
             {% if is_closed %}
               {% if bid_awarded == FALSE %}
-                <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Not Awarded</strong></div>
+                <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string"></strong></div>
               {% else %}
                 {% if bid_awarded %}
                   <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
@@ -172,7 +172,11 @@
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Project Number</div>
-            <div class="dl-d">{{ content.field_event_project_number }}</div>
+            {% if field_event_project_number == FALSE %}
+              <div class="dl-d">{{ content.field_event_project_number }}</div>
+            {% else %}
+              <div class="dl-d">{{ nid }}</div>
+            {% endif %}
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">UNSPSC</div>
