@@ -41,13 +41,14 @@ class MNLItems extends React.Component {
 
   handleKeywordChange = event => {
     event.preventDefault();
+    let inputChars = event.target.value.length;
     this.setState({
       currentKeywords: event.target.value,
       submittedKeywords: null,
       searchColor: null
     });
 
-    if (event.keyCode === 13) {
+    if (inputChars >= 5 || event.keyCode === 13) {
       this.setState({
         isLoading: true,
         submittedKeywords: true,
@@ -55,9 +56,7 @@ class MNLItems extends React.Component {
       });
       this.lookupAddress();
     }
-    //let operation = event.keyCode;
     this.scaleInputText();
-
   };
 
   handleKeywordSubmit = event => {
@@ -76,7 +75,8 @@ class MNLItems extends React.Component {
     let paramsQuery = {
       condition: "[field_sam_address][operator]=CONTAINS",
       value: "[field_sam_address][value]=" + addressQuery,
-      fields: "[node--neighborhood_lookup]=field_sam_address,field_sam_id"
+      fields: "[node--neighborhood_lookup]=field_sam_address,field_sam_id",
+      limit: "5"
     };
     fetch(
       "jsonapi/node/neighborhood_lookup?filter" +
@@ -84,7 +84,8 @@ class MNLItems extends React.Component {
         "&filter" +
         paramsQuery.value +
         "&fields" +
-        paramsQuery.fields
+        paramsQuery.fields +
+        "&page[limit]=" + paramsQuery.limit
     )
       .then(res => res.json())
       .then(
