@@ -56,7 +56,7 @@ class MNLRest extends ControllerBase {
     $entity = Node::load($nid);
     $entity->set('field_sam_id', $dataJSON['sam_address']);
     $entity->set('field_sam_address', $dataJSON['full_address']);
-    $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['field_sam_neighborhood_data']));
+    $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
     $entity->save();
   }
 
