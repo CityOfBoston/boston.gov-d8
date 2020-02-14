@@ -171,25 +171,12 @@
             <div class="dl-d">{{ content.field_awarded_by }}</div>
           </li>
           <li class="dl-i dl-i--b">
-          {% if field_event_project_number == FALSE %}
-          {% if field_bid_type == "Paper" %}
-
             <div class="dl-t">Project Number</div>
-              <div class="dl-d">P{{ content.field_event_project_number }}</div>
-            {% else %}
-              <div class="dl-d">P{{ nid }}</div>
-
-          {% endif %}
-          {% else %}
-          {% if field_bid_type == "Electronic" %}
-
-            <div class="dl-t">Project Number</div>
+            {% if field_event_project_number == FALSE %}
               <div class="dl-d">{{ content.field_event_project_number }}</div>
-          {% else %}
+            {% else %}
               <div class="dl-d">{{ nid }}</div>
-
-          {% endif %}
-          {% endif %}
+            {% endif %}
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">UNSPSC</div>
@@ -280,14 +267,14 @@
     </div>
   {% endif %}
   {% if content.field_components or content.field_ma_general_law %}
-    <div class="department-components desktop-100" {{ content_attributes }}>
-      {% if content.field_ma_general_law %}
-        {{ content.field_ma_general_law }}
+  <div class="department-components desktop-100" {{ content_attributes }}>
+    {% if content.field_ma_general_law %}
+      {{ content.field_ma_general_law }}
       </div>
-      {% endif %}
-      {% if content.field_components %}
-        {{ content.field_components }}
-      {% endif %}
+    {% endif %}
+    {% if content.field_components %}
+      {{ content.field_components }}
+    {% endif %}
     </div>
   {% endif %}
   {% if content.field_contacts %}
