@@ -170,9 +170,10 @@
             <div class="dl-t">Awarded by</div>
             <div class="dl-d">{{ content.field_awarded_by }}</div>
           </li>
+          </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Project Number</div>
-            {% if field_event_project_number == FALSE %}
+            {% if node.field_event_project_number.value is not empty %}
               <div class="dl-d">{{ content.field_event_project_number }}</div>
             {% else %}
               <div class="dl-d">{{ nid }}</div>
