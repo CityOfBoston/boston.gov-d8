@@ -171,14 +171,12 @@
             <div class="dl-d">{{ content.field_awarded_by }}</div>
           </li>
           </li>
+          {% if content.field_bid_type.0['#plain_text'] == "Electronic" %}
           <li class="dl-i dl-i--b">
             <div class="dl-t">Project Number</div>
-            {% if node.field_event_project_number.value is not empty %}
               <div class="dl-d">{{ content.field_event_project_number }}</div>
-            {% else %}
-              <div class="dl-d">{{ nid }}</div>
-            {% endif %}
           </li>
+          {% endif %}
           <li class="dl-i dl-i--b">
             <div class="dl-t">UNSPSC</div>
             <div class="dl-d">{{ content.field_unspsc }}</div>
