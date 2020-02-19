@@ -305,6 +305,9 @@ class MNLItems extends React.Component {
         <Newsletter 
           section={this.state.section}
         />
+        <Bos311 
+          section={this.state.section}
+        />
       </div>
     ) : (
       ""
