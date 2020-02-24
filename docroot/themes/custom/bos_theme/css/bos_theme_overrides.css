@@ -739,7 +739,7 @@ What: Locates placeholder text in middle of input box.
 .txt-f::-moz-placeholder { /* Firefox 19+ */
   line-height: 52px;
 }
-.txt-f:-webkit-input-placeholder { /* Internet Explorer 10-11 */
+.txt-f::-webkit-input-placeholder { /* Internet Explorer 10-11 */
   line-height: 52px;
 }
 .txt-f::-ms-input-placeholder { /* Microsoft Edge */
@@ -782,12 +782,11 @@ What: Fixes the department icon to be 100px square. (Iterators issue #39)
 */
 @media screen and  (min-width: 980px) {
   .node-type-department-profile .department-icon {
-    padding: 13px 0 0 13px;
+    padding: 13px 0 0 18px;
   }
 }
 .node-department-profile .department-icon svg {
-  height: 76px;
-  width: 76px;
+  width: 90%;
 }
 @media screen and (min-width: 980px) and (max-width: 1300px) {
   .node-type-department-profile .department-icon {
@@ -1230,4 +1229,8 @@ When: Adding style to view-row that is suddenly wrapping divs with .n-li class
 .views-row:not(:last-child) {
   margin-bottom: 16px;
   margin-bottom: 1rem;
+}
+.dl-d {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }

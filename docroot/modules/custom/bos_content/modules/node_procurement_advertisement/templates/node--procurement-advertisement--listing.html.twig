@@ -83,8 +83,8 @@
 
 <div class="g g--m0 n-li">
   <div class="g--5 n-li-b n-li-b--br">
-    {% if field_bid_type == "Electronic" %}
-      <div class="n-li-t">{{ field_event_project_number }}</div>
+    {% if content.field_event_project_number.0['#context']['value'] != nid %}
+      <div class="n-li-t">{{ content.field_event_project_number }}</div>
     {% endif %}
     <div class="n-li-t"><a href="{{ node_url }}" title="{{ title.0['#context'].value }}">{{ title.0['#context'].value }}</a></div>
     <div class="n-li-a">
