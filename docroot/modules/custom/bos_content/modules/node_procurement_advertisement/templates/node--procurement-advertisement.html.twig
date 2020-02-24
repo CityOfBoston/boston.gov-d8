@@ -80,13 +80,18 @@
 
 {% set is_closed = date(node.field_date_range.end_value) < date() %}
 {% set bid_awarded = node.field_award_date.value %}
+{% set not_awarded = node.field_not_awarded.value %}
 
 {% set bids = [] %}
 {% set winner_exists = FALSE %}
+{% set winner_awarded = 0 %}
 {% set bid_count = 0 %}
 {% for bid in node.field_bid %}
-  {% if bid.entity.field_awarded.value == 1 %}
+  {% if bid.entity.field_awarded.value >= 1 %}
     {% set winner_exists = TRUE %}
+
+    {% set winner_awarded = winner_awarded + 1 %}
+
   {% endif %}
   {% set bid = bid|merge({
     'winner': bid.entity.field_awarded.value,
@@ -95,6 +100,7 @@
   }) %}
   {% set bids = bids|merge([bid]) %}
   {% set bid_count = bids|length %}
+
 {% endfor %}
 
 <div class="breadcrumb" data-swiftype-index="false">
@@ -102,16 +108,6 @@
 </div>
 
 <article id="node-{{ node.id }}" class="{{ classes }} clearfix desktop-100"{{ attributes }}>
-
-  <div class="brc-lu">
-    {% if (content.field_updated_date["#items"]) %}
-      Last updated: {{ content.field_updated_date }}
-    {% elseif (content.field_published_date["#items"]) %}
-      Last updated: {{ content.field_published_date }}
-    {% else %}
-      Not published yet!
-    {% endif %}
-  </div>
 
   <div class="department-info-wrapper desktop-100 clearfix">
     <div class="column mobile-100 desktop-66-left">
@@ -133,14 +129,12 @@
         <ul class="dl">
           <li class="dl-i">
             {% if is_closed %}
-              {% if bid_awarded == FALSE %}
+              {% if not_awarded %}
                 <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string"></strong></div>
+              {% elseif bid_awarded %}
+                <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
               {% else %}
-                {% if bid_awarded %}
-                  <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Awarded</strong></div>
-                {% else %}
-                  <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Closed</strong></div>
-                {% endif %}
+                <div><strong class="t--sans t--upper t--err t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Closed</strong></div>
               {% endif %}
             {% else %}
               <div class="t--intro">Due: {{ node.field_date_range.end_value|date('F j, Y') }}</div>
@@ -166,12 +160,18 @@
             <span class="dl-t">Type</span>
             <span class="dl-d">{{ content.field_bid_type }}</span>
           </li>
+          {% if content.field_url.0['#context'].value %}
+          <li class="dl-i dl-i--b">
+            <div class="dl-t">Supplier Portal Link</div>
+            <div class="dl-d">{{ content.field_url.0['#context'].value }}</div>
+          </li>
+          {% endif %}
           <li class="dl-i dl-i--b">
             <div class="dl-t">Awarded by</div>
             <div class="dl-d">{{ content.field_awarded_by }}</div>
           </li>
           </li>
-          {% if content.field_bid_type.0['#plain_text'] == "Electronic" %}
+          {% if content.field_event_project_number.0['#context']['value'] != nid %}
           <li class="dl-i dl-i--b">
             <div class="dl-t">Project Number</div>
               <div class="dl-d">{{ content.field_event_project_number }}</div>
@@ -183,12 +183,9 @@
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Questions about this page? Contact:</div>
-            <div class="dl-d">
-              <div>{{ content.field_department }}</div>
-              <div>{{ content.field_address }}</div>
-              <div>{{ content.field_email }}</div>
-              <div>{{ content.field_phone_number }}</div>
-            </div>
+            <div class="dl-d">{{ content.field_department }}</div>
+            <div class="dl-d">{{ content.field_email }}</div>
+            <div class="dl-d">{{ content.field_phone_number }}</div>
           </li>
           <li class="dl-i dl-i--b">
             <div class="dl-t">Related Links</div>
@@ -207,7 +204,7 @@
         <div class="sh sh--w">
           <h2 class="sh-title">Submissions</h2>
         </div>
-        {% if bid_awarded and is_closed %}
+        {% if not_awarded and is_closed %}
           <div class="m-t500">
             <div class="g">
               <strong class="t--upper t--sans">This Advertisement was not awarded</strong>
@@ -215,7 +212,7 @@
           </div>
         {% endif %}
         {% for bid in bids %}
-          {% if bid.winner and bid_awarded == FALSE %}
+          {% if bid.winner and not_awarded == FALSE %}
             <div class="m-t500">
               <div class="g">
                 <div class="g--2">
@@ -240,7 +237,7 @@
             <label for="dr-tr1" class="dr-h">
               <div class="dr-ic"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25"><path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/></svg></div>
               {% if winner_exists %}
-                <div class="dr-t">See {{ bid_count - 1 }} other submission{% if (bid_count - 1) > 1 %}s{% endif %}</div>
+                <div class="dr-t">See {{ bid_count - winner_awarded }} other submission{% if (bid_count - 1) > 1 %}s{% endif %}</div>
               {% else %}
                 <div class="dr-t">See {{ bid_count }} submission{% if bid_count > 1 %}s{% endif %}</div>
               {% endif %}
