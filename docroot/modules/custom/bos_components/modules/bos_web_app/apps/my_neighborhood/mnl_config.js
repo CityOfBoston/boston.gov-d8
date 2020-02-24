@@ -1,5 +1,5 @@
 const configProps = {
-	//options ('winter','summer',null)
+	//options for season ('winter','summer',null)
 	season: null,
 	earlyVoting: true
 }

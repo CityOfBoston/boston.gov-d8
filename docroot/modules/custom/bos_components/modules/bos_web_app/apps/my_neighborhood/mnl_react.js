@@ -6,12 +6,14 @@ class MNLItems extends React.Component {
     this.state = {
       error: null,
       isLoading: false,
+      isLoadingRecollect: null,
       season: configProps.season,
       earlyVoting: configProps.earlyVoting,
       section: null,
       sam_id: null,
       itemsLookup: [],
       itemsDisplay: null,
+      itemsRecollect: [],
       currentKeywords: null,
       submittedAddress: null,
       submittedKeywords: null,
@@ -73,6 +75,41 @@ class MNLItems extends React.Component {
     this.scaleInputText();
   };
 
+  lookupRecollect = event => {
+    let address = {"address":this.state.submittedAddress};
+    fetch(
+      "rest/recollect",
+    {
+      method: "POST",
+      body: JSON.stringify(address),
+    })
+      .then(res => res.json())
+      .then(
+        result => {
+          if (result.response){
+            this.setState({
+              isLoadingRecollect: false,
+              itemsRecollect: result.response.next_event,
+            });
+          } else {
+            this.setState({
+              itemsRecollect: null
+            });
+          }
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        error => {
+          this.setState({
+            itemsRecollect: "error",
+            error
+          });
+        }
+      );
+
+  };
+
   lookupAddress = event => {
     let addressQuery = this.state.currentKeywords;
     let paramsQuery = {
@@ -119,6 +156,7 @@ class MNLItems extends React.Component {
   displayAddress = (sam_id, sam_address) => {
     this.setState({
       isLoading: true,
+      isLoadingRecollect: true,
       searchColor: "#288BE4",
       section: null,
       sam_id: sam_id,
@@ -150,6 +188,7 @@ class MNLItems extends React.Component {
               itemsLookup: [],
               itemsDisplay: newState.data
             });
+            this.lookupRecollect();
             this.scaleInputText();
           } else {
             this.setState({
@@ -236,6 +275,15 @@ class MNLItems extends React.Component {
     }
     let mnlDisplay = this.state.submittedAddress ? (
       <div className="g">
+      {this.state.isLoadingRecollect == false ? (
+        <CityServices
+          recollect_date={this.state.itemsRecollect.day}
+          recollect_services={this.state.itemsRecollect.flags}
+          section={this.state.section}
+          displaySection={this.displaySection}
+        />
+      ) : null}
+
        <CitySpaces
           library_branch={this.state.itemsDisplay.library_branch}
           library_address={this.state.itemsDisplay.library_address}
@@ -339,6 +387,5 @@ class MNLItems extends React.Component {
     );
   }
 }
-
 const el = document.getElementById("web-app");
 ReactDOM.render(<MNLItems />, el);

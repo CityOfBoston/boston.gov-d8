@@ -1,7 +1,15 @@
-bos_bibblio:
+bos_mnl.import:
  path: '/rest/mnl'
  defaults:
    _controller: '\Drupal\bos_mnl\Controller\MNLRest::beginImport'
+ methods: [POST]
+ requirements:
+   _access: 'TRUE'
+
+bos_mnl.recollect:
+ path: '/rest/recollect'
+ defaults:
+   _controller: '\Drupal\bos_mnl\Controller\Recollect::beginLookup'
  methods: [POST]
  requirements:
    _access: 'TRUE'
