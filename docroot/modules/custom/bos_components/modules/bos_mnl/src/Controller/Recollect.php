@@ -54,7 +54,7 @@ class Recollect extends ControllerBase {
    */
   public function getPlaceId($address_string) {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://api.us.recollect.net/v2/areas/Boston/services/waste/address-suggest?q=".$address_string);
+    curl_setopt($ch, CURLOPT_URL, "https://api.us.recollect.net/v2/areas/Boston/services/waste/address-suggest?q=" . $address_string);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
