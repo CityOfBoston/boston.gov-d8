@@ -49,7 +49,6 @@ class Recollect extends ControllerBase {
     }
   }
 
-
   /**
    * Get place_id from Recollect.
    */
@@ -111,7 +110,6 @@ class Recollect extends ControllerBase {
         'response' => 'not authorized',
       ];
     endif;
-    
 
     $response = new CacheableJsonResponse($response_array);
     return $response;
