@@ -74,7 +74,7 @@ class Recollect extends ControllerBase {
     $ch = curl_init();
     $address_formatted = preg_replace('/[[:space:]]+/', '+', $addressData);
     $place = $this->getPlaceId($address_formatted);
-    curl_setopt($ch, CURLOPT_URL,"https://api.us.recollect.net/v2/places/" . $place . "/services/waste");
+    curl_setopt($ch, CURLOPT_URL, "https://api.us.recollect.net/v2/places/" . $place . "/services/waste");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
