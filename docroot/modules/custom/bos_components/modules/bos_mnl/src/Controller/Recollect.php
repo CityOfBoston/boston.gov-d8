@@ -74,14 +74,13 @@ class Recollect extends ControllerBase {
     $ch = curl_init();
     $address_formatted = preg_replace('/[[:space:]]+/', '+', $addressData);
     $place = $this->getPlaceId($address_formatted);
-    curl_setopt($ch, CURLOPT_URL, "https://api.us.recollect.net/v2/places/".$place."/services/waste");
+    curl_setopt($ch, CURLOPT_URL,"https://api.us.recollect.net/v2/places/" . $place . "/services/waste");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
       "Content-Type: application/json",
       "Authorization: Bearer " . Settings::get('recollect_token'),
     ]);
-
     $response = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -101,9 +100,7 @@ class Recollect extends ControllerBase {
       // Get POST address data and perform API request to Recollect endpoints.
       $data = $this->request->getCurrentRequest()->getContent();
       $addressData = json_decode($data, TRUE);
-      $response_array = $this->getInfo($addressData['address']);
-      //$response_array = $this->getPlaceId($addressData['address']);
-        
+      $response_array = $this->getInfo($addressData['address']);        
     else :
       $response_array = [
         'status' => 'error',
