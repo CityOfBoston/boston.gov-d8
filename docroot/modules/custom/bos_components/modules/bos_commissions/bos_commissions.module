@@ -172,7 +172,7 @@ function bos_commissions_add_info(&$variables) {
     'contact_name' => Html::escape($info->contactName),
     'contact_phone' => Html::escape($info->contactPhone),
     'seats' => Html::escape($info->seats),
-    'stipend' => Html::escape(money_format("$%n", $info->stipend)),
+    'stipend' => Html::escape($info->stipend),
     'term' => Html::escape($info->term),
     'enabling_legislation_url' => Html::escape($info->enablingLegislation),
   ];
@@ -199,6 +199,13 @@ function bos_commissions_add_info(&$variables) {
     $variables['commission_info']['contact_phone_text'] = [
       '#markup' => "<a href='tel:{$variables['commission_info']['contact_phone']}'>{$variables['commission_info']['contact_phone']}</a>",
     ];
+  }
+
+  if ($variables['commission_info']['stipend'] == 0) {
+    $variables['commission_info']['stipend'] = "No";
+  } 
+  else {
+    $variables['commission_info']['stipend'] = "Yes";
   }
 }
 
