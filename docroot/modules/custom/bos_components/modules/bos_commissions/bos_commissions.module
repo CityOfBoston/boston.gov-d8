@@ -85,13 +85,43 @@ function bos_commissions_id(&$variables) {
 }
 
 /**
+ * Checks environment and supplies appropriate creds / values.
+ *
+ * Returns array of values.
+ */
+function bos_commissions_checkEnvCreds() {
+  if (!isset($_SERVER["AH_SITE_NAME"])) {
+    // Local env.
+    $graphqlUrl = Settings::get('graphql_endpoint');
+    $graphqlKey = Settings::get('graphql_api_key');
+  }
+  elseif (strtolower($_SERVER["AH_SITE_NAME"]) == 'dev2') {
+    // Acquia env dev2.
+    $graphqlUrl = $_ENV['graphql_endpoint'];
+    $graphqlKey = $_ENV['graphql_api_key'];
+  }
+  else {
+    // Acquia env dev,stg,prd.
+    $graphqlUrl = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
+    $graphqlKey = \Drupal::config('bos_commissions.settings')->get('graphql_api_key');
+
+  }
+  $graphqlCreds = [
+    "graphqlUrl" => $graphqlUrl,
+    "graphqlKey" => $graphqlKey
+  ];
+  return $graphqlCreds;
+}
+
+/**
  * Makes a GraphQL query to the commissions GraphQL backend.
  *
  * Returns the parsed JSON response.
  */
 function bos_commissions_query($graphql) {
   $client = \Drupal::httpClient();
-  $url = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
+  $getGraphqlCreds = bos_commissions_checkEnvCreds();
+  $url = $getGraphqlCreds['graphqlUrl'];
   $request_body = json_encode([
     'query' => $graphql,
     'variables' => NULL,
@@ -101,7 +131,7 @@ function bos_commissions_query($graphql) {
     'headers' => [
       'Content-Type' => 'application/json',
       'Content-Length' => mb_strlen($request_body),
-      'X-API-KEY' => \Drupal::config('bos_commissions.settings')->get('graphql_api_key'),
+      'X-API-KEY' => $getGraphqlCreds['graphqlKey'],
     ],
     'body' => $request_body,
     'timeout' => 60,
