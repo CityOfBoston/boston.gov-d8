@@ -100,7 +100,7 @@ class Recollect extends ControllerBase {
       // Get POST address data and perform API request to Recollect endpoints.
       $data = $this->request->getCurrentRequest()->getContent();
       $addressData = json_decode($data, TRUE);
-      $response_array = $this->getInfo($addressData['address']);        
+      $response_array = $this->getInfo($addressData['address']);     
     else :
       $response_array = [
         'status' => 'error',
