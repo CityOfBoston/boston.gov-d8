@@ -739,7 +739,7 @@ What: Locates placeholder text in middle of input box.
 .txt-f::-moz-placeholder { /* Firefox 19+ */
   line-height: 52px;
 }
-.txt-f:-webkit-input-placeholder { /* Internet Explorer 10-11 */
+.txt-f::-webkit-input-placeholder { /* Internet Explorer 10-11 */
   line-height: 52px;
 }
 .txt-f::-ms-input-placeholder { /* Microsoft Edge */
@@ -1230,4 +1230,8 @@ When: Adding style to view-row that is suddenly wrapping divs with .n-li class
 .views-row:not(:last-child) {
   margin-bottom: 16px;
   margin-bottom: 1rem;
+}
+.dl-d {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
