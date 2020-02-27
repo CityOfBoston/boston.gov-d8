@@ -92,8 +92,8 @@ function bos_commissions_id(&$variables) {
 function bos_commissions_checkEnvCreds() {
   if (!isset($_SERVER["AH_SITE_NAME"])) {
     // Local env.
-    $graphqlUrl = Settings::get('graphql_endpoint');
-    $graphqlKey = Settings::get('graphql_api_key');
+    $graphqlUrl = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
+    $graphqlKey = \Drupal::config('bos_commissions.settings')->get('graphql_api_key');
   }
   elseif (strtolower($_SERVER["AH_SITE_NAME"]) == 'dev2') {
     // Acquia env dev2.
@@ -102,9 +102,8 @@ function bos_commissions_checkEnvCreds() {
   }
   else {
     // Acquia env dev,stg,prd.
-    $graphqlUrl = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
-    $graphqlKey = \Drupal::config('bos_commissions.settings')->get('graphql_api_key');
-
+    $graphqlUrl = Settings::get('graphql_endpoint');
+    $graphqlKey = Settings::get('graphql_api_key');
   }
   $graphqlCreds = [
     "graphqlUrl" => $graphqlUrl,
