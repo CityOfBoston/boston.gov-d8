@@ -51,7 +51,7 @@ function bos_admin_preprocess_html(&$variables) {
     $variables['attributes']['class'][] = 'admin-content-embed-buttons';
   }
   if (NULL != ($node = \Drupal::routeMatch()->getParameter('node'))
-    && $node->hasField('moderation_state')) {
+    && isset($node->hasField['moderation_state'])) {
     $variables['attributes']['class'][] = "node-" . $node->get('moderation_state')->getString();
   }
 }
