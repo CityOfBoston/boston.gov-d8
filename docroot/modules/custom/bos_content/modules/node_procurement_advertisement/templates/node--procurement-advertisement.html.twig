@@ -160,10 +160,10 @@
             <span class="dl-t">Type</span>
             <span class="dl-d">{{ content.field_bid_type }}</span>
           </li>
-          {% if content.field_url.0['#context'].value %}
+          {% if node.field_url.value %}
           <li class="dl-i dl-i--b">
             <div class="dl-t">Supplier Portal Link</div>
-            <div class="dl-d">{{ content.field_url.0['#context'].value }}</div>
+            <div class="dl-d">{{ node.field_url.value }}</div>
           </li>
           {% endif %}
           <li class="dl-i dl-i--b">
