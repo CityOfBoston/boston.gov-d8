@@ -163,7 +163,11 @@
           {% if node.field_url.value %}
           <li class="dl-i dl-i--b">
             <div class="dl-t">Supplier Portal Link</div>
-            <div class="dl-d">{{ node.field_url.value }}</div>
+            <div class="dl-d">
+              <div class="external-link external-link--inline">
+                <a href="{{ node.field_url.value }}" target="_blank">{{ node.field_url.value }}</a>
+              </div>
+            </div>
           </li>
           {% endif %}
           <li class="dl-i dl-i--b">
