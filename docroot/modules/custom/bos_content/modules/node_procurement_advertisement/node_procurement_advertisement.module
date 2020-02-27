@@ -198,8 +198,16 @@ function node_procurement_advertisement_preprocess_field_multiple_value_form(arr
 /**
  * Form validate callback.
  */
-function node_procurement_advertisement_form_validate($form, $form_state) {
+function node_procurement_advertisement_form_validate($variables, $form_state) {
   // Entity query.
+  // Ensures that the date awarded is EMPTY node is checked.
+
+  $field_Date_Awarded = $form_state->getValue('field_award_date')[0]["value"];
+  if ($form_state->getValue("field_not_awarded")["value"] == 1) {
+    if (!empty($field_Date_Awarded)) {
+      $form_state->setErrorByName('field_award_date', t('Uncheck Not Awarded field to set Award Date'));
+    }
+  }
 }
 
 /**
