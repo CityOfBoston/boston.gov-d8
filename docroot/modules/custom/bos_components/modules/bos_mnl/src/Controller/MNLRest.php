@@ -54,7 +54,7 @@ class MNLRest extends ControllerBase {
    */
   public function updateNode($nid, $dataJSON) {
     $entity = Node::load($nid);
-    $entity->set('field_sam_id', $dataJSON['sam_address']);
+    $entity->set('field_sam_id', $dataJSON['sam_address_id']);
     $entity->set('field_sam_address', $dataJSON['full_address']);
     $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
     $entity->save();
@@ -66,8 +66,8 @@ class MNLRest extends ControllerBase {
   public function createNode($nid, $dataJSON) {
     $node = Node::create([
       'type'                        => 'neighborhood_lookup',
-      'title'                       => $dataJSON['sam_address'],
-      'field_sam_id'                => $dataJSON['sam_address'],
+      'title'                       => $dataJSON['sam_address_id'],
+      'field_sam_id'                => $dataJSON['sam_address_id'],
       'field_sam_address'           => $dataJSON['full_address'],
       'field_sam_neighborhood_data' => json_encode($dataJSON['data']),
     ]);
@@ -112,7 +112,7 @@ class MNLRest extends ControllerBase {
             foreach ($nids as $nid) {
               $node = Node::load($nid);
               $sam_id = $node->field_sam_id->value;
-              if ($sam_id == $items['sam_address']) {
+              if ($sam_id == $items['sam_address_id']) {
                 $exists = TRUE; $nodeID = $nid;
               }
             }
