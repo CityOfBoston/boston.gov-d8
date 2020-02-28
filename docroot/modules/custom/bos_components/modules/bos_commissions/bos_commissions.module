@@ -89,7 +89,7 @@ function bos_commissions_id(&$variables) {
  *
  * Returns array of values.
  */
-function bos_commissions_checkEnvCreds() {
+function bos_commissions_check_env_creds() {
   if (!isset($_SERVER["AH_SITE_NAME"])) {
     // Local env.
     $graphqlUrl = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
@@ -119,7 +119,7 @@ function bos_commissions_checkEnvCreds() {
  */
 function bos_commissions_query($graphql) {
   $client = \Drupal::httpClient();
-  $getGraphqlCreds = bos_commissions_checkEnvCreds();
+  $getGraphqlCreds = bos_commissions_check_env_creds();
   $url = $getGraphqlCreds['graphqlUrl'];
   $request_body = json_encode([
     'query' => $graphql,
