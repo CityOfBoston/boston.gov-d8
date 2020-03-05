@@ -28,7 +28,7 @@ class MNLItems extends React.Component {
     jQuery(".resize").css('width', inputWidth + 'px');
     jQuery("#web-app input").css('height', inputHeight + 'px');
     //Skip and test
-    this.displayAddress('1','6-10 A St Hyde Park, 02136')
+    //this.displayAddress('1','6-10 A St Hyde Park, 02136')
   }
 
   scaleInputText = op => {
@@ -217,22 +217,6 @@ class MNLItems extends React.Component {
 
 
   render() {
-    // Set and retreieve display items
-    /*const regexTest = new RegExp("(<([^>]+)>)");
-    let mnl_items_pre = this.state.itemsDisplay || "";
-    let mnl_items = mnl_items_pre.replace(regexTest, "");
-    let objCont = {};
-    let mnl_items_string = String(mnl_items).split(",");
-    const objData = mnl_items_string;
-    objData.forEach(function(item) {
-      let aItems = item.split(/:\s/);
-      let keyItem = aItems[0].replace(/['"]+/g, "").trim();
-      let valueItem = String(aItems[1])
-        .replace(/['"]+/g, "")
-        .trim();
-      objCont[keyItem] = valueItem.replace(/(<([^>]+)>)/gi, "");
-    });*/
-
     // Set and retreieve lookup items
     let itemsLookupArray = this.state.itemsLookup;
     let itemsLookupMarkup = [];
