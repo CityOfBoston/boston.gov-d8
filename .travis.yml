@@ -43,18 +43,52 @@ notifications:
         # drupal - Only when sucessfully merging to master.
         - secure: "No3MBbF9oeNGDRQiy4ebob6Wum0YZUvSOtoeAR5lBwB8L4gQNh7kv3dHBLU80U8i0vQca45YuWBDdeXEMhDNqitUXKTRVj8SEN23PgoqhZhSvSmXBXjMm91ekHedTaFqeYVxvTPFphvYh1/y3l/Wjxf8kp6p6EiBhdP7JsWUePPEkOnVNt3QqGLypVBF4K1XHXn4Yee6dml6du247NLRhrTb+X+rJHntNFewW+5jU/6hQka3psTshtL5q3CUGAAf5pV/j7AmzzYwJ/6A162SonHG5xrE2vhV/YJUnp7Tz5IfRGG87aB8bc55KvAbsIPPxWsxXToH8HH3F+WOCqT4pwg9xh4RHigyTZN5l4kAIdpFO73LoA5BEmJwALcJPYYBsHs67e124ylmBWIeukQQg404783lwocNQrUpBgZHsPbV+t96g88Wyv9th3yEjwPdh3/7DbYkZD76hicmfpqqnmbbGddCcZmDbqbHGQIz0hOLHZrYRexJ0BLxUovoEkMqMRKuNcnwqpEr0iRJeOruzqh0N4xbfnTP1kqHaImS0kXuSRX3eNwnyYBl1NoqLUX8tsyvHPQGb511Rk5Fvk3fsiG0EKe0SHNjuT2V3BaIXiiQdS4FcZruil7JN7wEd+Ry5KcaYAfIUmCBEzBKB9EmIqNpxA9yvZJJy6kSI7Oy/2A="
       template:
-        - ":bostongov: *NOTICE* A new deploy candidate is ready for <https://d8-stg.boston.gov|testing on stage>.\nThis build was initiated by %{author}."
+        - ":bostongov: *NOTICE:* A new deploy from GitHub to the Acquia <https://d8-stg.boston.gov|stage environment> has been started."
+        - "This deploy was initiated by %{author}."
+        - "_Please wait for deploy confirmation message in slack before testing_."
+    - if: branch = master
+      on_pull_requests: false
+      on_success: never
+      on_failure: always
+      rooms:
+        # drupal - Only when failed merging to master.
+        - secure: "No3MBbF9oeNGDRQiy4ebob6Wum0YZUvSOtoeAR5lBwB8L4gQNh7kv3dHBLU80U8i0vQca45YuWBDdeXEMhDNqitUXKTRVj8SEN23PgoqhZhSvSmXBXjMm91ekHedTaFqeYVxvTPFphvYh1/y3l/Wjxf8kp6p6EiBhdP7JsWUePPEkOnVNt3QqGLypVBF4K1XHXn4Yee6dml6du247NLRhrTb+X+rJHntNFewW+5jU/6hQka3psTshtL5q3CUGAAf5pV/j7AmzzYwJ/6A162SonHG5xrE2vhV/YJUnp7Tz5IfRGG87aB8bc55KvAbsIPPxWsxXToH8HH3F+WOCqT4pwg9xh4RHigyTZN5l4kAIdpFO73LoA5BEmJwALcJPYYBsHs67e124ylmBWIeukQQg404783lwocNQrUpBgZHsPbV+t96g88Wyv9th3yEjwPdh3/7DbYkZD76hicmfpqqnmbbGddCcZmDbqbHGQIz0hOLHZrYRexJ0BLxUovoEkMqMRKuNcnwqpEr0iRJeOruzqh0N4xbfnTP1kqHaImS0kXuSRX3eNwnyYBl1NoqLUX8tsyvHPQGb511Rk5Fvk3fsiG0EKe0SHNjuT2V3BaIXiiQdS4FcZruil7JN7wEd+Ry5KcaYAfIUmCBEzBKB9EmIqNpxA9yvZJJy6kSI7Oy/2A="
+      template:
+        - ":red_circle: *WARNING:* Deploy from GitHub to the Acquia <https://d8-stg.boston.gov|stage environment> *FAILED* (in Travis)."
+        - "This unsuccessful deploy attempt was initiated by %{author}."
+        - "EXPLANATION (from Travis): %{message}"
     - if: branch = master OR branch = develop
       on_pull_requests: true
       on_success: always
-      on_failure: always
+      on_failure: never
       rooms:
-        # digital_builds - whenevr travis runs on PR/Merge actions on develop and master branches.
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
         - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
       template:
-        - ":drupal: *DRUPAL %{branch} build %{result}."
+        - ":drupal: DRUPAL *%{branch}* build has %{result}."
         - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author} in %{duration}"
-        - "%{message}"
+        - "- %{message}"
+    - if: branch = master OR branch = develop
+      on_pull_requests: true
+      on_success: never
+      on_failure: always
+      rooms:
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - ":red_circle: DRUPAL *%{branch}* build has *%{result}* (in Travis build)."
+        - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author}"
+        - "EXPLANATION (from Travis): %{message}"
+    - if: branch = develop
+      on_pull_requests: false
+      on_success: always
+      on_failure: never
+      rooms:
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - "Deployment of <%{build_url}|#%{build_number}> from GitHub to Acquia <https://d8-dev.boston.gov|develop environment> has been started."
+        - "_Check the #drupal channel for the deploy completion notice._"
 
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
@@ -70,13 +104,6 @@ script:
   # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
   - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
   # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
-
-after_success:
-  # Manage SSH keys for deployment to Acquia.
-  - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
-  - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
-  - eval "$(ssh-agent -s)"
-  - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
 
 deploy:
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
