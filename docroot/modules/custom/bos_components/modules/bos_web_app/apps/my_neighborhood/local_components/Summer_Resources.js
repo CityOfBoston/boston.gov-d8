@@ -7,6 +7,14 @@ class SummerResources extends React.Component {
         content: this.props.bcyf_pool_center_address
       },
       {
+        heading: "School Year Hours",
+        content: this.props.bcyf_pool_center_hours
+      },
+      {
+        heading: "Summer Hours",
+        content: this.props.bcyf_pool_center_hours_summer
+      },
+      {
         content: (
           <div>
             Learn more about the <a href={"summer-boston"}>City in the summer</a>

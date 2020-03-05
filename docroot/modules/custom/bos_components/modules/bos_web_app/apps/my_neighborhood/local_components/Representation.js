@@ -39,41 +39,49 @@ class Representation extends React.Component {
       {
         content: (
           <div>
-            Learn more about <a href={"departments/neighborhood-services"}>Neighborhood Services</a>
+            Learn more about <a href={this.props.liason_webpage}>{this.props.liason_name}</a>
           </div>
         )
       }
     ];
-    const contentEarlyVotingArray = [
-      {
-        heading: (
-          <div>
-            <div>Starts {this.props.early_voting_dates}</div>
-            <div>{this.props.early_voting_times}</div>
-          </div>
-        ),
-        content: <div>&nbsp;</div>
-      },
-      {
-        heading: this.props.early_voting_location,
-        content: this.props.early_voting_address
-      },
-      {
-        heading: "Neighborhood",
-        content: this.props.early_voting_neighborhood
-      },
-      {
-        heading: "Notes",
-        content: this.props.early_voting_notes
-      },
-      {
-        content: (
-          <div>
-            Learn more about <a href={"{news/early-voting-locations-boston-2020}"}>early voting in Boston</a>.
-          </div>
-        )
-      }
-    ];
+    let contentEarlyVotingArray;
+    if (this.props.early_voting_dates !== null) {
+        contentEarlyVotingArray = [
+        {
+          heading: (
+            <div>
+              <div>Starts {this.props.early_voting_dates}</div>
+              <div>{this.props.early_voting_times}</div>
+            </div>
+          ),
+          content: <div>&nbsp;</div>
+        },
+        {
+          heading: this.props.early_voting_location,
+          content: this.props.early_voting_address
+        },
+        {
+          heading: "Neighborhood",
+          content: this.props.early_voting_neighborhood
+        },
+        {
+          heading: "Notes",
+          content: this.props.early_voting_notes
+        }]
+    } else {
+        contentEarlyVotingArray = [
+        {
+          heading: "",
+          content: <div>No early voting data available.</div>
+        }]
+    };
+    contentEarlyVotingArray.push({
+          content: (
+            <div>
+              Learn more about <a href={"{news/early-voting-locations-boston-2020}"}>early voting in Boston</a>.
+            </div>
+          )
+    })
     const secDesc =
       "Ward and precinct numbers, and early voting and polling locations.";
     const cardsRepresentation = (
