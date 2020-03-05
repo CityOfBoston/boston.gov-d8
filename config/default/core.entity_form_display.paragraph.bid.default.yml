@@ -6,9 +6,8 @@ dependencies:
     - field.field.paragraph.bid.field_awarded
     - field.field.paragraph.bid.field_bid_amount
     - field.field.paragraph.bid.field_company_name
+    - field.field.paragraph.bid.field_new_bid_amount
     - paragraphs.paragraphs_type.bid
-  module:
-    - content_moderation
 _core:
   default_config_hash: xVTlWp1gELDdF-oOrAXYQP3toLdg3QrhZHYmEkeNlU4
 id: paragraph.bid.default
@@ -17,26 +16,26 @@ bundle: bid
 mode: default
 content:
   field_awarded:
-    weight: 3
+    weight: 2
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
-  field_bid_amount:
-    weight: 2
-    type: number
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   field_company_name:
-    weight: 1
+    weight: 0
     type: string_textfield
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_new_bid_amount:
+    weight: 1
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
     region: content
   moderation_state:
     type: moderation_state_default
@@ -46,5 +45,6 @@ content:
     third_party_settings: {  }
 hidden:
   created: true
+  field_bid_amount: true
   status: true
   uid: true
