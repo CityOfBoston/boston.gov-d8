@@ -26,7 +26,7 @@ class CitySpaces extends React.Component {
     }
     contentDistricts.push({
       heading: "Zoning District",
-      content: "No data available"
+      content: this.props.zoning_district
     });
     return contentDistricts;
   };
@@ -35,7 +35,10 @@ class CitySpaces extends React.Component {
     const contentLibArray = [
       {
         heading: this.props.library_branch,
-        content: this.props.library_address
+        content: <div>
+                    <div>{this.props.library_address}</div>
+                    <div>Boston, MA {this.props.library_zipcode}</div>
+                  </div> 
       },
       {
         content: (

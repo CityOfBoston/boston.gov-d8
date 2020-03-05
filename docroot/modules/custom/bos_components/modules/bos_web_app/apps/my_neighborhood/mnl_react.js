@@ -28,7 +28,7 @@ class MNLItems extends React.Component {
     jQuery(".resize").css('width', inputWidth + 'px');
     jQuery("#web-app input").css('height', inputHeight + 'px');
     //Skip and test
-    //this.displayAddress('30712','22 Cheryl Parkway West Roxbury, 02136')
+    this.displayAddress('1','6-10 A St Hyde Park, 02136')
   }
 
   scaleInputText = op => {
@@ -285,34 +285,37 @@ class MNLItems extends React.Component {
       ) : null}
 
        <CitySpaces
-          library_branch={this.state.itemsDisplay.library_branch}
-          library_address={this.state.itemsDisplay.library_address}
-          comm_center={this.state.itemsDisplay.bcyf_center}
-          comm_address={this.state.itemsDisplay.bcyf_address}
-          comm_hours={this.state.itemsDisplay.bcyf_school_year_hours}
-          comm_summer_hours={this.state.itemsDisplay.bcyf_summer_hours}
-          park_name={this.state.itemsDisplay.park_name}
-          park_district={this.state.itemsDisplay.park_district}
-          park_ownership={this.state.itemsDisplay.park_ownership}
-          park_type={this.state.itemsDisplay.park_type}
-          hist_name={this.state.itemsDisplay.hist_name}
-          hist_place_name={this.state.itemsDisplay.hist_place_name}
-          hist_status={this.state.itemsDisplay.hist_status}
-          hist_year={this.state.itemsDisplay.hist_year}
-          hist_use_type={this.state.itemsDisplay.hist_use_type}
+          library_branch={this.state.itemsDisplay.public_libraries_branch}
+          library_address={this.state.itemsDisplay.public_libraries_address}
+          library_zipcode={this.state.itemsDisplay.public_libraries_zipcode}
+          comm_center={this.state.itemsDisplay.community_centers_name}
+          comm_address={this.state.itemsDisplay.community_centers_address}
+          comm_hours={this.state.itemsDisplay.community_centers_school_year_hours}
+          comm_summer_hours={this.state.itemsDisplay.community_centers_summer_hours}
+          park_name={this.state.itemsDisplay.parks_name}
+          park_district={this.state.itemsDisplay.parks_district}
+          park_ownership={this.state.itemsDisplay.parks_ownership}
+          park_type={this.state.itemsDisplay.parks_type}
+          hist_name={this.state.itemsDisplay.historic_districts_name}
+          hist_place_name={this.state.itemsDisplay.historic_districts_place_name}
+          hist_status={this.state.itemsDisplay.historic_districts_status}
+          hist_year={this.state.itemsDisplay.historic_districts_year}
+          hist_use_type={this.state.itemsDisplay.historic_districts_use_type}
+          zoning_district={this.state.itemsDisplay.zoning_districts_district}
           section={this.state.section}
           displaySection={this.displaySection}
         />
 
         <Representation
-          councilor={this.state.itemsDisplay.councilor}
-          district={this.state.itemsDisplay.district}
-          councilor_image={this.state.itemsDisplay.councilor_image}
-          councilor_webpage={this.state.itemsDisplay.councilor_webpage}
-          liason_name={this.state.itemsDisplay.liason_name}
-          liason_image={this.state.itemsDisplay.liason_pic_url}
-          voting_location={this.state.itemsDisplay.vote_location2}
-          voting_address={this.state.itemsDisplay.vote_location3}
+          councilor={this.state.itemsDisplay.city_council_councilor}
+          district={this.state.itemsDisplay.city_council_district}
+          councilor_image={this.state.itemsDisplay.city_council_image}
+          councilor_webpage={this.state.itemsDisplay.city_council_webpage}
+          liason_name={this.state.itemsDisplay.ons_liaison_name}
+          liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
+          liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
+          voting_location={this.state.itemsDisplay.polling_locations_location2}
+          voting_address={this.state.itemsDisplay.polling_locations_location3}
           early_voting_active={this.state.earlyVoting}
           early_voting_dates={this.state.itemsDisplay.early_voting_dates}
           early_voting_times={this.state.itemsDisplay.early_voting_times}
@@ -320,18 +323,20 @@ class MNLItems extends React.Component {
           early_voting_location={this.state.itemsDisplay.early_voting_location}
           early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
           early_voting_notes={this.state.itemsDisplay.early_voting_notes}
-          ward={this.state.itemsDisplay.ward}
-          precinct={this.state.itemsDisplay.precinct}
+          ward={this.state.itemsDisplay.ward_name}
+          precinct={this.state.itemsDisplay.precincts_name}
           section={this.state.section}
           displaySection={this.displaySection}
         />
  
         {this.state.season == "summer" || this.state.season == null ? (
           <SummerResources
-            tot_name={this.state.itemsDisplay.tot_park_name}
-            tot_address={this.state.itemsDisplay.tot_address_text}
-            bcyf_pool_center_name={this.state.itemsDisplay.bcyf_pool_center_name}
-            bcyf_pool_center_address={this.state.itemsDisplay.bcyf_pool_center_address}
+            tot_name={this.state.itemsDisplay.tot_sprays_name}
+            tot_address={this.state.itemsDisplay.tot_sprays_address}
+            bcyf_pool_center_name={this.state.itemsDisplay.bcyf_pool_centers_name}
+            bcyf_pool_center_address={this.state.itemsDisplay.bcyf_pool_centers_address}
+            bcyf_pool_center_hours={this.state.itemsDisplay.bcyf_pool_centers_school_year_hours}
+            bcyf_pool_center_hours_summer={this.state.itemsDisplay.bcyf_pool_centers_summer_hours}
             section={this.state.section}
             displaySection={this.displaySection}
           />
@@ -339,7 +344,7 @@ class MNLItems extends React.Component {
 
         {this.state.season == "winter" || this.state.season == null ? (
           <WinterResources
-            snow_routes={this.state.itemsDisplay.snow_routes_full_name}
+            snow_routes={this.state.itemsDisplay.snow_routes_name}
             snow_routes_respsonsibility={this.state.itemsDisplay.snow_routes_responsibility}
             snow_parking_lots_name={this.state.itemsDisplay.snow_parking_lots_name}
             snow_parking_lots_address={this.state.itemsDisplay.snow_parking_lots_address}
