@@ -65,9 +65,9 @@ notifications:
         # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
         - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
       template:
-        - ":drupal: DRUPAL *%{branch}* build has %{result} and is ready to deploy."
+        - ":drupal: DRUPAL *%{branch}* build has %{result}."
         - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author} in %{duration}"
-        - "%{message}"
+        - "- %{message}"
     - if: branch = master OR branch = develop
       on_pull_requests: true
       on_success: never
@@ -79,6 +79,16 @@ notifications:
         - ":red_circle: DRUPAL *%{branch}* build has *%{result}* (in Travis build)."
         - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author}"
         - "EXPLANATION (from Travis): %{message}"
+    - if: branch = develop
+      on_pull_requests: false
+      on_success: always
+      on_failure: never
+      rooms:
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - "Deployment of <%{build_url}|#%{build_number}> from GitHub to Acquia <https://d8-dev.boston.gov|develop environment> has been started."
+        - "_Check the #drupal channel for the deploy completion notice._"
 
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
