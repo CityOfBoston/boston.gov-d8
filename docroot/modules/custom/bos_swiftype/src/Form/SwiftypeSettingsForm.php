@@ -53,9 +53,9 @@ class SwiftypeSettingsForm extends ConfigFormBase {
           ],
           '#default_value' => $token,
           '#description' => t('The Swiftype API authentication key (as provided by Swiftype).<br>
-            <i><b>Note:</b> This value is stored in the Host Server Environment Variable: "<b>cob_swiftype_api_token</b>".<br>
-             - On local Docker builds this is set in the lando/docker file, <br>
-             - On Travis this is set in the travis config file,<br>
+            <i><b>Note:</b> This value is stored in the Host Server Environment Variable: "<b>bos_swiftype_auth_token</b>".<br>
+             - On local Docker builds this is set in the lando/docker file (<b>DO NOT COMMIT CHANGES TO THE REPO</b>), <br>
+             - On Travis this is not needed (unless automated testing is addded) but would be set as a var in the Travis UI,<br>
              - On Acquia this is an Environment Variable loaded on the Acquia Cloud UI.</i>'),
         ],
         'swiftype_engine' => [
