@@ -23,12 +23,9 @@ class MnlSection extends React.Component {
 
     return (
       <div className="pointer">
-        <div className="d-b bg--cb cdp-a ta-c p-a200 t--upper t--sans t--w t--ob--h t--s100">
-          {this.props.title}
-        </div>
         {imageHeader}
         <div className="cd-c">
-          {title}
+          <span className="h3 t--upper">{this.props.title}</span> 
           {desc}
         </div>
       </div>

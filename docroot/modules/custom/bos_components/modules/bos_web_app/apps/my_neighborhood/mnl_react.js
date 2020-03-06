@@ -298,6 +298,7 @@ class MNLItems extends React.Component {
           liason_name={this.state.itemsDisplay.ons_liaison_name}
           liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
           liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
+          liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
           voting_location={this.state.itemsDisplay.polling_locations_location2}
           voting_address={this.state.itemsDisplay.polling_locations_location3}
           early_voting_active={this.state.earlyVoting}
