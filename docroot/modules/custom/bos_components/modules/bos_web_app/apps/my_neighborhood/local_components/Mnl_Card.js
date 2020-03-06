@@ -13,7 +13,7 @@ class MnlCard extends React.Component {
     let image;
     let imgAlignMnl;
     if (this.props.image) {
-      image = <img src={this.props.image} className="cdp-i p-a100" />;
+      image = <a href={this.props.image_href}><img src={this.props.image} className="cdp-i p-a100" /></a>;
       imgAlignMnl = " center-mnl";
     } else {
       imgAlignMnl = " left-mnl";
