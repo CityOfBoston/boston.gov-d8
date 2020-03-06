@@ -61,7 +61,6 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
       if (!empty($variables["content"]["field_date_range"][0]["end_date"])) {
         $variables['end_date'] = $variables["content"]["field_date_range"][0]["end_date"]["#text"];
       }
-    //  $variables["field_awarded"] = $variables["content"]["field_bid"][0]["#paragraph"]["values"]["field_awarded"]["x-default"][0]["value"];
     }
   }
 }
