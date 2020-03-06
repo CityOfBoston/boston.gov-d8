@@ -8,6 +8,7 @@
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormState;
 
 /**
  * Implements hook_theme().
@@ -68,6 +69,7 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
  * Implements hook_preprocess_HOOK().
  */
 function node_procurement_advertisement_preprocess_node__procurement_advertisement__listing(&$variables) {
+  // Get the department icon by targeting the ID of the dept.
   $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
   $variables['dept_name'] = $term->getName();
 
@@ -198,14 +200,29 @@ function node_procurement_advertisement_preprocess_field_multiple_value_form(arr
 /**
  * Form validate callback.
  */
-function node_procurement_advertisement_form_validate($variables, $form_state) {
+function node_procurement_advertisement_form_validate(array &$form, FormState &$form_state) {
   // Entity query.
   // Ensures that the date awarded is EMPTY node is checked.
 
   $field_Date_Awarded = $form_state->getValue('field_award_date')[0]["value"];
-  if ($form_state->getValue("field_not_awarded")["value"] == 1) {
+  if ($form_state->getValue("field_not_awarded")["value"]) {
     if (!empty($field_Date_Awarded)) {
-      $form_state->setErrorByName('field_award_date', t('Uncheck Not Awarded field to set Award Date'));
+      $form_state->setErrorByName('field_award_date', t('Cannot select the Not Awarded field and set Award Date as well.'));
+    }
+  }
+
+  foreach ($form_state->getValue("field_bid") as $key => $a) {
+    if (is_numeric($key)) {
+      if (empty($a["subform"]["field_awarded"]["value"])) {
+        $a["subform"]["field_awarded"]["value"] = 0;
+      }
+      $field_bid_awarded = $a["subform"]["field_awarded"]["value"];
+      if ($field_bid_awarded == 1 && empty($field_Date_Awarded)) {
+        $form_state->setErrorByName('field_award_date', t('Bids cannot be awarded if there is no Award Date.'));
+      }
+      if ($field_bid_awarded == 1 && !empty($form_state->getValue("field_not_awarded")["value"])) {
+        $form_state->setErrorByName('field_not_awarded', t('Cannot have a bid awarded when the procurement is not awarded.'));
+      }
     }
   }
 }
