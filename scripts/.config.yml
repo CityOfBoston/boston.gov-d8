@@ -50,7 +50,7 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "true"
-    procurement:
+    bc_2_26_2020:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
       # none = don't alter modules enabled from configuration
       type: dev
@@ -105,15 +105,15 @@ deploy:
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
-  procurement:
+  bc_2_26_2020:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo.
-    deploy_branch: "procurement-deploy"
+    deploy_branch: "bc-deploy"
     # Path to the drush command in the Travis container.
     travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
-    drush_alias: "@bostond8.uat"
+    drush_alias: "@bostond8.dev"
     # Definition of files that will and wont be copied from build to deploy.
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
