@@ -9,8 +9,7 @@ class Representation extends React.Component {
       {
         content: 
           <div>
-            Learn more about{" "}
-            <a href={this.props.councilor_webpage}>{this.props.councilor}</a>
+            Learn more about <a href={"https://www.boston.gov/departments/city-council"}>Boston's City Council</a>
           </div> 
       }
     ];
@@ -34,12 +33,12 @@ class Representation extends React.Component {
     const contentLiasonArray = [
       {
         heading: this.props.liason_name,
-        content: <div>&nbsp;</div>
+        content: "Contact: " + this.props.liason_neighborhood
       },
       {
         content: (
           <div>
-            Learn more about <a href={this.props.liason_webpage}>{this.props.liason_name}</a>
+            Learn more about <a href={"departments/neighborhood-services"}>Neighborhood Services</a>
           </div>
         )
       }
@@ -101,6 +100,7 @@ class Representation extends React.Component {
                 ? this.props.councilor_image
                 : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
             }
+            image_href={this.props.councilor_webpage}
             content_array={contentRepArray}
           />
 
@@ -117,6 +117,7 @@ class Representation extends React.Component {
           <MnlCard
             title={"Your Neighborhood Contact"}
             image={this.props.liason_image}
+            image_href={this.props.liason_webpage}
             content_array={contentLiasonArray}
           />
 
