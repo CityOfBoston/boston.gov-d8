@@ -69,3 +69,25 @@ function node_procurement_advertisement_update_8001() {
     node_types_rebuild();
   }
 }
+
+/**
+ * Moves Data from old bid_amount field to New bid_amount field.
+ */
+function node_procurement_advertisement_update_8002() {
+  Drupal::database()->query("INSERT INTO `paragraph__field_new_bid_amount`
+    (`bundle`,
+    `deleted`,
+    `entity_id`,
+    `revision_id`,
+    `langcode`,
+    `delta`,
+    `field_new_bid_amount_value`)
+  SELECT `paragraph__field_bid_amount`.`bundle`,
+    `paragraph__field_bid_amount`.`deleted`,
+    `paragraph__field_bid_amount`.`entity_id`,
+    `paragraph__field_bid_amount`.`revision_id`,
+    `paragraph__field_bid_amount`.`langcode`,
+    `paragraph__field_bid_amount`.`delta`,
+    `paragraph__field_bid_amount`.`field_bid_amount_value`
+  FROM `paragraph__field_bid_amount`;")->execute();
+}
