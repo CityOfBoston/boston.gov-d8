@@ -6,7 +6,7 @@ branches:
   only:
     - develop
     - master
-    - bc_2_26_2020
+    - procurement
 
 php:
   - 7.3
@@ -121,4 +121,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: bc_2_26_2020
+      branch: procurement
