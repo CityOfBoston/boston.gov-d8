@@ -3,23 +3,42 @@ class CityServices extends React.Component {
    render() {
     // Content for Trash and Recycling Card
     let contentRecollect = [];
-    const dateProp= this.props.recollect_date;
-    const dateArray = dateProp.split('-');
-    const dateFormat = new Date(dateArray[1] + '/' + dateArray[2] + '/' + dateArray[0]);
-    const dateDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    let recollectFlags = this.props.recollect_services; 
-      Object.keys(recollectFlags).map(key => 
-          contentRecollect.push({
-            heading: "Your next "+recollectFlags[key].name+" day is:",
-            content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
-            //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
-          })
-      )
-    contentRecollect.push({
-      heading: "NOTE:",
-      content: "The trash and recycling schedule might change during holidays and weather events."
-    });
+    if(this.props.recollect_date !== null) {
+      const dateProp= this.props.recollect_date;
+      const dateArray = dateProp.split('-');
+      const dateFormat = new Date(dateArray[1] + '/' + dateArray[2] + '/' + dateArray[0]);
+      const dateDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      let recollectFlags = this.props.recollect_services; 
+        Object.keys(recollectFlags).map(key => 
+            contentRecollect.push({
+              heading: "Your next "+recollectFlags[key].name+" day is:",
+              content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
+              //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
+            })
+        )
+      contentRecollect.push({
+        heading: "NOTE:",
+        content: "The trash and recycling schedule might change during holidays and weather events."
+      });
+    } else {
+      contentRecollect.push({
+        content: (
+          <div>We're having trouble finding Trash Collection information for that address. This may be because your trash is picked up by a commercial vendor. If that’s not right or you have additional questions, please reach out to our Public Works Department at publicworks@boston.gov or 617-635-4900.</div>
+          )
+      });
+    }
+    
+    // Content for Street Sweeping
+    const contentStreetSweeping = [
+      {
+        content: (
+           <div>
+             The City cleans streets throughout the year, learn about our <a href={"departments/public-works/street-sweeping-city"}>street sweeping program</a> and find the <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer">street sweeping schedule</a> for your street.
+          </div>
+        )
+      }
+    ];
 
     // Content for Helpful Links
     const contentLinks = [
@@ -57,14 +76,22 @@ class CityServices extends React.Component {
             }
             content_array={contentRecollect}
           />
-          {/* Helpful Link info */}
+        {/* Street Sweeping */}
           <MnlCard
+            title={"Street Sweeping"}
+            image_header={
+              "https://assets.boston.gov/icons/experiential_icons/street_sweeper.svg"
+            }
+            content_array={contentStreetSweeping}
+          />
+          {/* Helpful Link info */}
+          {/*<MnlCard
             title={"Helpful Links"}
             image_header={
               "https://assets.boston.gov/icons/experiential_icons/info.svg"
             }
             content_array={contentLinks}
-          />
+          />*/}
         </div>
         <button className="t--upper t--sans"
           onClick={() => {

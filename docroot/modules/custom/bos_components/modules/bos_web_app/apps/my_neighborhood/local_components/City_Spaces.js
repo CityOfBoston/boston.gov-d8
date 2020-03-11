@@ -24,10 +24,6 @@ class CitySpaces extends React.Component {
         }
       ];
     }
-    contentDistricts.push({
-      heading: "Zoning District",
-      content: this.props.zoning_district
-    });
     return contentDistricts;
   };
   render() {
@@ -121,7 +117,7 @@ class CitySpaces extends React.Component {
           />
           {/* Historical Info */}
           <MnlCard
-            title={"Districts"}
+            title={"Historic Districts"}
             image_header={
               "https://patterns.boston.gov/assets/icons/experiential_icons/location.svg"
             }

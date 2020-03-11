@@ -1,51 +1,82 @@
 class Representation extends React.Component {
   render() {
     // Content for card
-    const contentRepArray = [
-      {
-        heading: this.props.councilor,
-        content: "City Councilor, District " + this.props.district
-      },
-      {
-        content: 
-          <div>
-            Learn more about <a href={"https://www.boston.gov/departments/city-council"}>Boston's City Council</a>
-          </div> 
-      }
-    ];
-    const contentPollingArray = [
-      {
-        heading: this.props.voting_location,
-        content: this.props.voting_address
-      },
-      {
-        heading: "Ward",
-        content: this.props.ward
-      },
-      {
-        heading: "Precinct",
-        content: this.props.precinct
-      },
-      {
-        content: <div> Find your <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer">polling location</a>.</div>
-      }
-    ];
-    const contentLiasonArray = [
-      {
-        heading: this.props.liason_name,
-        content: "Contact: " + this.props.liason_neighborhood
-      },
-      {
-        content: (
-          <div>
-            Learn more about <a href={"departments/neighborhood-services"}>Neighborhood Services</a>
-          </div>
-        )
-      }
-    ];
+    let contentRepArray;
+    if (this.props.councilor !== null) {
+      contentRepArray = [
+          {
+            heading: this.props.councilor,
+            content: "City Councilor, District " + this.props.district
+          },
+          {
+            content: 
+              <div>
+                Learn more about <a href={"departments/city-council"}>Boston's City Council</a>
+              </div> 
+          }
+      ];
+    } else {
+      contentRepArray = [
+        {
+          content: <div>We're having trouble finding City Council information for that address. Please let us know at feedback@boston.gov and check our <a href={"departments/city-council"} title={"City Councilor"}>City Council page</a> page for more information.</div>
+        }
+      ];
+    }
+    let contentLiasonArray;
+    if (this.props.liason_name !== null) {
+      contentLiasonArray = [
+        {
+          heading: this.props.liason_name,
+          content: "Contact: " + this.props.liason_neighborhood
+        },
+        {
+          content: (
+            <div>
+              Learn more about <a href={"departments/neighborhood-services"}>Neighborhood Services</a>
+            </div>
+          )
+        }
+      ];
+    } else {
+      contentLiasonArray = [
+        {
+          content: <div>We're having trouble finding Neighborhood Contact information for that address. Please let us know at feedback@boston.gov and check our <a href={"departments/neighborhood-services"} title={"Neighborhood Services"}>Neighborhood Services page</a> page for more information.</div>
+        }
+      ];
+    }
+    let contentPollingArray;
+    if (this.props.ward == null || this.props.precinct == null) {
+      contentPollingArray = [
+        {
+          content: <div>We're having trouble finding your voting information for that address. Please let us know at feedback@boston.gov and check our <a href={"voting-boston"} title={"Voting in Boston"}>Voting in Boston</a> page for more information.</div>
+        }
+      ];
+    } else {
+      contentPollingArray = [
+        /*{
+          heading: this.props.voting_location,
+          content: this.props.voting_address
+        },*/
+        {
+          heading: "Ward",
+          content: this.props.ward
+        },
+        {
+          heading: "Precinct",
+          content: this.props.precinct
+        },
+        {
+          content: <div> Find your <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer">polling location</a>.</div>
+        }
+      ];
+    }
     let contentEarlyVotingArray;
     if (this.props.early_voting_dates !== null) {
         contentEarlyVotingArray = [
+        {
+          heading: this.props.early_voting_location,
+          content: this.props.early_voting_address
+        },
         {
           heading: (
             <div>
@@ -56,17 +87,15 @@ class Representation extends React.Component {
           content: <div>&nbsp;</div>
         },
         {
-          heading: this.props.early_voting_location,
-          content: this.props.early_voting_address
-        },
-        {
           heading: "Neighborhood",
           content: this.props.early_voting_neighborhood
-        },
-        {
-          heading: "Notes",
-          content: this.props.early_voting_notes
         }]
+        if (this.props.early_voting_notes !== null) {
+          contentEarlyVotingArray.push({
+            heading: "Notes",
+            content: this.props.early_voting_notes
+          })
+        }
     } else {
         contentEarlyVotingArray = [
         {
@@ -96,11 +125,15 @@ class Representation extends React.Component {
           <MnlCard
             title={"Your City Councilor"}
             image={
-              this.props.councilor_image !== null
+              this.props.councilor_image !== null && this.props.councilor
                 ? this.props.councilor_image
                 : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
             }
-            image_href={this.props.councilor_webpage}
+            image_href={
+              this.props.councilor !== null
+                ? this.props.councilor_webpage
+                : "departments/city-council"
+            }
             content_array={contentRepArray}
           />
 
@@ -116,15 +149,23 @@ class Representation extends React.Component {
           {/* Neighborhood Liason */}
           <MnlCard
             title={"Your Neighborhood Contact"}
-            image={this.props.liason_image}
-            image_href={this.props.liason_webpage}
+            image={
+              this.props.liason_image !== null && this.props.liason_name
+                ? this.props.liason_image
+                : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
+            }
+            image_href={
+              this.props.liason_name !== null
+                ? this.props.liason_webpage
+                : "departments/neighborhood-services"
+            }
             content_array={contentLiasonArray}
           />
 
           {/* Early Voting Info */}
           {this.props.early_voting_active == true ? (
             <MnlCard
-              title={"A Early Voting Location Near You"}
+              title={"An Early Voting Location Near You"}
               image_header={
                 "https://patterns.boston.gov/assets/icons/experiential_icons/voting_ballot.svg"
               }
