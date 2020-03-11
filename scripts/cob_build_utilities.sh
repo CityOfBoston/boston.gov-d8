@@ -172,6 +172,7 @@ function build_settings() {
     fi
     # Add in config sync directory from yml.
     echo -e "ini_set('memory_limit', '${project_php_memory_size}');\n" >> ${local_settings_file}
+    echo -e "if (isset(\$_SERVER['REDIRECT_URL']) && strpos(\$_SERVER['REDIRECT_URL'], 'entity_clone') !== FALSE) {\n  ini_set('memory_limit', '3000M');\n}\n" >> ${local_settings_file}
     echo -e "\$config_directories[\"sync\"] = \"${build_local_config_sync}\";\n" >> ${local_settings_file}
     echo -e "\$settings[\"install_profile\"] = \"${project_profile_name}\";\n" >> ${local_settings_file}
     echo -e "/* End of Lando build additions. */\n" >> ${local_settings_file}
