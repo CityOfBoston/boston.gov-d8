@@ -257,16 +257,24 @@ class MNLItems extends React.Component {
         itemsLookupMarkup = "No address was found by that name.";
       }
     }
+    {/*if(this.state.isLoadingRecollect == false) {
+        let recollectDate = null;
+        let recollectServices = null;  
+    } else { 
+        let recollectDate = this.state.itemsRecollect.day;
+        let recollectServices = this.state.itemsRecollect.flags;
+    }*/}
+    let recollectDate = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.day);
+    let recollectServices = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.flags);
     let mnlDisplay = this.state.submittedAddress ? (
       <div className="g">
-      {this.state.isLoadingRecollect == false ? (
         <CityServices
-          recollect_date={this.state.itemsRecollect.day}
-          recollect_services={this.state.itemsRecollect.flags}
+          recollect_date={recollectDate}
+          recollect_services={recollectServices}
           section={this.state.section}
           displaySection={this.displaySection}
         />
-      ) : null}
+        
 
        <CitySpaces
           library_branch={this.state.itemsDisplay.public_libraries_branch}
