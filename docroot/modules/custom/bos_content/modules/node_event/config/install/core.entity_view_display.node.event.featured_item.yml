@@ -2,6 +2,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - core.date_format.date_format_boston_featured
     - core.entity_view_mode.node.featured_item
     - field.field.node.event.body
     - field.field.node.event.field_address
@@ -11,11 +12,10 @@ dependencies:
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
     - field.field.node.event.field_cost
-    - field.field.node.event.field_date_range
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
     - field.field.node.event.field_event_contact
-    - field.field.node.event.field_event_dates
+    - field.field.node.event.field_event_date_recur
     - field.field.node.event.field_event_type
     - field.field.node.event.field_extra_info_event
     - field.field.node.event.field_featured
@@ -34,7 +34,7 @@ dependencies:
     - node.type.event
   module:
     - advanced_text_formatter
-    - datetime_range
+    - date_recur
     - fences
     - link
     - user
@@ -43,23 +43,6 @@ targetEntityType: node
 bundle: event
 mode: featured_item
 content:
-  field_date_range:
-    type: daterange_default
-    weight: 2
-    region: content
-    label: hidden
-    settings:
-      timezone_override: ''
-      format_type: date_format_boston_featured
-      separator: '-'
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_details_link:
     type: link
     weight: 4
@@ -72,6 +55,28 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
+  field_event_date_recur:
+    type: date_recur_basic_formatter
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      format_type: date_format_boston_featured
+      occurrence_format_type: date_format_boston_featured
+      same_end_date_format_type: date_format_boston_featured
+      separator: '-'
+      timezone_override: America/New_York
+      interpreter: ''
+      show_next: 5
+      count_per_item: true
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: 'n'
   field_intro_text:
     type: advanced_text
     weight: 1
@@ -128,7 +133,6 @@ hidden:
   field_cost: true
   field_email: true
   field_event_contact: true
-  field_event_dates: true
   field_event_type: true
   field_extra_info_event: true
   field_featured: true

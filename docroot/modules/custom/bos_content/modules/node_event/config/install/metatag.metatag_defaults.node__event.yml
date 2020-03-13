@@ -4,11 +4,10 @@ dependencies: {  }
 id: node__event
 label: 'Content: Event'
 tags:
-  schema_event_location: 'a:4:{s:5:"@type";s:5:"Place";s:4:"name";s:34:"[boston:event:event-location-name]";s:7:"address";a:6:{s:5:"@type";s:13:"PostalAddress";s:13:"streetAddress";s:44:"[boston:event:event-location-address-street]";s:15:"addressLocality";s:46:"[boston:event:event-location-address-locality]";s:13:"addressRegion";s:44:"[boston:event:event-location-address-region]";s:10:"postalCode";s:46:"[boston:event:event-location-address-postcode]";s:14:"addressCountry";s:45:"[boston:event:event-location-address-country]";}s:7:"country";a:2:{s:5:"@type";s:7:"Country";s:4:"name";s:45:"[boston:event:event-location-address-country]";}}'
-  schema_event_id: '[current-page:url]'
-  schema_event_name: '[boston:event:event-title]'
+  schema_event_url: '[node:url]'
+  schema_event_name: '[node:title]'
   schema_event_type: Event
-  schema_event_image: 'a:4:{s:5:"@type";s:11:"ImageObject";s:20:"representativeOfPage";s:4:"True";s:3:"url";s:30:"[boston:event:event-image-url]";s:5:"width";s:4:"1200";}'
-  schema_event_start_date: '[boston:event:event-date]'
-  schema_event_url: '[current-page:url]'
-  schema_event_description: '[boston:event:event-description]'
+  schema_event_start_date: '[custom:schema_start_date]'
+  schema_event_end_date: '[custom:schema_end_date]'
+  schema_event_location: 'a:2:{s:5:"@type";s:5:"Place";s:7:"address";a:5:{s:5:"@type";s:13:"PostalAddress";s:13:"streetAddress";s:34:"[node:field_address:address_line1]";s:15:"addressLocality";s:29:"[node:field_address:locality]";s:13:"addressRegion";s:40:"[node:field_address:administrative_area]";s:10:"postalCode";s:32:"[node:field_address:postal_code]";}}'
+  schema_event_description: '[node:body]'
