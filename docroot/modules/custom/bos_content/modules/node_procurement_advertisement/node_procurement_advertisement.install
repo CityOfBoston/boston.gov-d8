@@ -74,20 +74,22 @@ function node_procurement_advertisement_update_8001() {
  * Moves Data from old bid_amount field to New bid_amount field.
  */
 function node_procurement_advertisement_update_8002() {
-  Drupal::database()->query("INSERT INTO `paragraph__field_new_bid_amount`
-    (`bundle`,
-    `deleted`,
-    `entity_id`,
-    `revision_id`,
-    `langcode`,
-    `delta`,
-    `field_new_bid_amount_value`)
-  SELECT `paragraph__field_bid_amount`.`bundle`,
-    `paragraph__field_bid_amount`.`deleted`,
-    `paragraph__field_bid_amount`.`entity_id`,
-    `paragraph__field_bid_amount`.`revision_id`,
-    `paragraph__field_bid_amount`.`langcode`,
-    `paragraph__field_bid_amount`.`delta`,
-    `paragraph__field_bid_amount`.`field_bid_amount_value`
-  FROM `paragraph__field_bid_amount`;")->execute();
+  Drupal::database()->query("INSERT INTO paragraph__field_new_bid_amount
+    (bundle,
+    deleted,
+    entity_id,
+    revision_id,
+    langcode,
+    delta,
+    field_new_bid_amount_value)
+  SELECT old.bundle,
+    old.deleted,
+    old.entity_id,
+    old.revision_id,
+    old.langcode,
+    old.delta,
+    old.field_bid_amount_value
+  FROM paragraph__field_bid_amount old
+  left JOIN paragraph__field_new_bid_amount nw on old.entity_id = nw.entity_id and old.delta = nw.delta
+  WHERE nw.entity_id is NULL;")->execute();
 }
