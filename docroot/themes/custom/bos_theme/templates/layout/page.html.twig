@@ -119,7 +119,10 @@
   </header>
 
   {{ drupal_block('views_block:emergency_alerts-block_emergency_alert') }}
-  {{ drupal_block('views_block:site_alerts-block_site_alerts') }}
+
+  {% if not cob["sa-excluded"] %}
+    {{ drupal_block('views_block:site_alerts-block_site_alerts') }}
+  {% endif %}
 
   <div class="main">
     <div class="container">
