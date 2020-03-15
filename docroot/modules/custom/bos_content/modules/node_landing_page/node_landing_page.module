@@ -54,6 +54,12 @@ function node_landing_page_preprocess_page(&$variables) {
         $variables["attributes"]->setAttribute("id", "page");
         // Make responsive to menu appearing on right by adding class mn.
         $variables["attributes"]->addClass("mn");
+        if ($variables["cob"]["header_image"] || $variables["is_front"]) {
+          $variables["attributes"]->addClass("page--fp");
+        }
+        else {
+          $variables["attributes"]->addClass("page");
+        }
       }
     }
   }
