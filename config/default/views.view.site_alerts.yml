@@ -409,6 +409,8 @@ display:
         arguments: false
         relationships: false
         cache: false
+        filters: false
+        filter_groups: false
       allow:
         items_per_page: false
       block_description: 'Site Alerts'
@@ -434,52 +436,230 @@ display:
         options:
           items_per_page: 3
           offset: 0
-      arguments:
-        field_excluded_nodes_target_id:
-          id: field_excluded_nodes_target_id
-          table: node__field_excluded_nodes
-          field: field_excluded_nodes_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          default_action: default
-          exception:
-            value: all
-            title_enable: false
-            title: All
-          title_enable: true
-          title: negate
-          default_argument_type: node
-          default_argument_options: {  }
-          default_argument_skip_url: false
-          summary_options:
-            base_path: ''
-            count: true
-            items_per_page: 25
-            override: false
-          summary:
-            sort_order: asc
-            number_of_records: 0
-            format: default_summary
-          specify_validation: false
-          validate:
-            type: none
-            fail: 'not found'
-          validate_options: {  }
-          break_phrase: false
-          not: true
-          plugin_id: numeric
+      arguments: {  }
       relationships: {  }
       display_comment: ''
       cache:
         type: tag
         options: {  }
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            site_alert: site_alert
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        field_date_range_value:
+          id: field_date_range_value
+          table: node__field_date_range
+          field: field_date_range_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: 'not empty'
+          value:
+            min: ''
+            max: ''
+            value: now
+            type: offset
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_date_range_value_1:
+          id: field_date_range_value_1
+          table: node__field_date_range
+          field: field_date_range_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<='
+          value:
+            min: ''
+            max: ''
+            value: now
+            type: date
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_date_range_end_value_1:
+          id: field_date_range_end_value_1
+          table: node__field_date_range
+          field: field_date_range_end_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '>'
+          value:
+            min: ''
+            max: ''
+            value: now
+            type: date
+          group: 3
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_date_range_end_value:
+          id: field_date_range_end_value
+          table: node__field_date_range
+          field: field_date_range_end_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: empty
+          value:
+            min: ''
+            max: ''
+            value: now
+            type: date
+          group: 3
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+          2: AND
+          3: OR
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
