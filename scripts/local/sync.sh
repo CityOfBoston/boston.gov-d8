@@ -4,12 +4,17 @@
     source_branch="current branch"
     target_env=local
 
+    if [[ -e "${drush_cmd}" ]]; then
+        drush_cmd="/app/vendor/bin/drush  -r /app/docroot"
+    fi
+
+    . "/app/scripts/cob_build_utilities.sh"
     . "/app/hooks/common/cob_utilities.sh"
 
     printout "INFO" "Database will be copied from staging to local, setup for development and updated with configuration in latest branch."
 
     # Download remote DB
-    drush sql:sync @bostond8.dev @self -y
+    ${drush_cmd} sql:sync @bostond8.prod @self -y
 
     # Update database with local settings
     sync_db "@self"
@@ -18,7 +23,7 @@
     devModules "@self"
 
     # Run Additional local processes
-    drush user:password admin admin
+    ${drush_cmd} user:password admin admin
 
-    printf "INFO" "Admin password reset to 'admin' locally."
-    printf "SUCCESS" "Database from staging copied to local.\n"
+    printout "INFO" "Admin password reset to 'admin' locally."
+    printout "SUCCESS" "Database from staging copied to local.\n"
