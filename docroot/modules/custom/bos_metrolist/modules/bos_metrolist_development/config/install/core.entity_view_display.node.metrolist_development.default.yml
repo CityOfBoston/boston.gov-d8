@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+    config:
+        - field.field.node.metrolist_development.body
+        - node.type.metrolist_development
+    module:
+        - text
+        - user
+id: node.metrolist_development.default
+targetEntityType: node
+bundle: metrolist_development
+mode: default
+content:
+    body:
+        label: hidden
+        type: text_default
+        weight: 101
+        settings: {  }
+        third_party_settings: {  }
+    links:
+        weight: 100
+hidden: {  }
