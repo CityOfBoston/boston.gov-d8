@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains bos_metrolist.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function bos_metrolist_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the bos_metrolist module.
+    case 'help.page.bos_metrolist':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('MetroList features for the City of Boston') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bos_metrolist_theme() {
+  return [
+    'bos_metrolist' => [
+      'render element' => 'children',
+    ],
+  ];
+}
