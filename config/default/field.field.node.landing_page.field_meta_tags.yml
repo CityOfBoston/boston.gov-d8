@@ -1,0 +1,25 @@
+uuid: a035c9ae-5c7f-4fe2-80be-a871ed69a1b9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_meta_tags
+    - node.type.landing_page
+  module:
+    - field_display_label
+    - metatag
+third_party_settings:
+  field_display_label:
+    display_label: Metatags
+id: node.landing_page.field_meta_tags
+field_name: field_meta_tags
+entity_type: node
+bundle: landing_page
+label: field_meta_tags
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag
