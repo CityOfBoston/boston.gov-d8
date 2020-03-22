@@ -9,7 +9,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"summer-boston"}>City in the summer</a>
+            Learn more about the <a href={"/summer-boston"}>City in the summer</a>
           </div>
         )
       }
@@ -22,7 +22,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"summer-boston"}>City in the summer</a>
+            Learn more about the <a href={"/summer-boston"}>City in the summer</a>
           </div>
         )
       }
@@ -41,7 +41,7 @@ class SummerResources extends React.Component {
           <MnlCard
             title={"A Pool Near You"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/pool.svg"
+              configProps.pathImage+"pool.svg"
             }
             content_array={contentPools}
           />
@@ -49,7 +49,7 @@ class SummerResources extends React.Component {
           <MnlCard
             title={"A Tot Spray Near You"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/tot_spray.svg"
+              configProps.pathImage+"tot_spray.svg"
             }
             content_array={contentTotSprays}
           />
@@ -65,6 +65,7 @@ class SummerResources extends React.Component {
     );
     let displaySummer;
     if (this.props.section == "summer") {
+      history.pushState(null, null, configProps.path+'?p3');
       displaySummer = cardsSummer;
     } else if (this.props.section == null) {
       displaySummer = (
@@ -78,7 +79,7 @@ class SummerResources extends React.Component {
           <MnlSection
             title={"Summer Resources"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/sun.svg"
+              configProps.pathImage+"sun.svg"
             }
             desc={secDesc}
           />

@@ -24,6 +24,13 @@ class CitySpaces extends React.Component {
         }
       ];
     }
+    contentDistricts.push({
+      content: (
+        <div>
+          Learn more about <a href={"/departments/landmarks-commission"}>the City's historic districts</a>.
+        </div>
+      )
+    }) 
     return contentDistricts;
   };
   render() {
@@ -52,7 +59,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about the City's <a href={"departments/boston-centers-youth-families"}>community centers</a>
+            Learn more about the City's <a href={"/departments/boston-centers-youth-families"}>community centers</a>
           </div>
         )
       }
@@ -73,7 +80,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Lern more about the City's <a href={"departments/parks-and-recreation"}>parks</a>
+            Lern more about the City's <a href={"/departments/parks-and-recreation"}>parks</a>
           </div>
         )
       }
@@ -93,7 +100,7 @@ class CitySpaces extends React.Component {
           <MnlCard
             title={"A Library Branch Near You"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/open_book.svg"
+              configProps.pathImage+"open_book.svg"
             }
             content_array={contentLibArray}
           />
@@ -102,7 +109,7 @@ class CitySpaces extends React.Component {
           <MnlCard
             title={"A Community Center Near You"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/family_house.svg"
+              configProps.pathImage+"family_house.svg"
             }
             content_array={contentCommCenters}
           />
@@ -111,7 +118,7 @@ class CitySpaces extends React.Component {
           <MnlCard
             title={"A Park Near You"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/trees.svg"
+              configProps.pathImage+"trees.svg"
             }
             content_array={contentPark}
           />
@@ -119,7 +126,7 @@ class CitySpaces extends React.Component {
           <MnlCard
             title={"Historic Districts"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/location.svg"
+              configProps.pathImage+"location.svg"
             }
             content_array={this.checkHistInfo()}
           />
@@ -135,6 +142,7 @@ class CitySpaces extends React.Component {
     );
     let displayCitySpaces;
     if (this.props.section == "city-spaces") {
+      history.pushState(null, null, configProps.path+'?p3');
       displayCitySpaces = cardsCitySpaces;
     } else if (this.props.section == null) {
       displayCitySpaces = (
@@ -148,7 +156,7 @@ class CitySpaces extends React.Component {
           <MnlSection
             title={"City Spaces"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/playground.svg"
+              configProps.pathImage+"playground.svg"
             }
             desc={secDesc}
           />
