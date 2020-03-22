@@ -22,12 +22,14 @@ class MnlSection extends React.Component {
     }
 
     return (
+      <div>
       <div className="pointer">
         {imageHeader}
         <div className="cd-c">
           <span className="h3 t--upper">{this.props.title}</span> 
           {desc}
         </div>
+      </div>
       </div>
     );
   }

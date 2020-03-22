@@ -27,7 +27,7 @@ class WinterResources extends React.Component {
       {
         content: (
           <div className="no-heading">
-            There may be other snow routes in your area, <a href={"departments/311/snow-emergency-parking"}> check here for all snow emergency parking restrictions</a>.
+            There may be other snow routes in your area, <a href={"/departments/311/snow-emergency-parking"}> check here for all snow emergency parking restrictions</a>.
           </div>
         )
       }
@@ -46,7 +46,7 @@ class WinterResources extends React.Component {
           <MnlCard
             title={"Snow Emergency Parking"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/parking.svg"
+              configProps.pathImage+"parking.svg"
             }
             content_array={contentSnowEmergencyParking}
           />
@@ -54,7 +54,7 @@ class WinterResources extends React.Component {
           <MnlCard
             title={"A Snow Route Near You"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/plan.svg"
+              configProps.pathImage+"plan.svg"
             }
             content_array={contentSnowRoutes}
           />
@@ -71,6 +71,7 @@ class WinterResources extends React.Component {
 
     let displayWinter;
     if (this.props.section == "winter") {
+      history.pushState(null, null, configProps.path+'?p3');
       displayWinter = cardsWinter;
     } else if (this.props.section == null) {
       displayWinter = (
@@ -84,7 +85,7 @@ class WinterResources extends React.Component {
           <MnlSection
             title={"Winter Resources"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/snow_1.svg"
+              configProps.pathImage+"snow_1.svg"
             }
             desc={secDesc}
           />

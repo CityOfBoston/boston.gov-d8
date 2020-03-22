@@ -34,7 +34,7 @@ class CityServices extends React.Component {
       {
         content: (
            <div>
-             The City cleans streets throughout the year, learn about our <a href={"departments/public-works/street-sweeping-city"}>street sweeping program</a> and find the <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer">street sweeping schedule</a> for your street.
+             The City cleans streets throughout the year, learn about our <a href={"/departments/public-works/street-sweeping-city"}>street sweeping program</a> and find the <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer">street sweeping schedule</a> for your street.
           </div>
         )
       }
@@ -46,13 +46,13 @@ class CityServices extends React.Component {
         content: (
           <div>
             <div className="no-heading">
-              <a href={"trash-and-recycling#trash-day-app"}>Your trash day information</a>
+              <a href={"/trash-and-recycling#trash-day-app"}>Your trash day information</a>
             </div>
             <div className="no-heading">
-              <a href={"departments/assessing"}>Assessing Online</a>
+              <a href={"/departments/assessing"}>Assessing Online</a>
             </div>
             <div className="no-heading">
-               <a href={"departments/public-works/street-sweeping-city"}>Street sweeping schedule</a>
+               <a href={"/departments/public-works/street-sweeping-city"}>Street sweeping schedule</a>
             </div>
           </div>
         )
@@ -72,7 +72,7 @@ class CityServices extends React.Component {
           <MnlCard
             title={"Trash and Recycling"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/trash_truck.svg"
+              configProps.pathImage+"trash_truck.svg"
             }
             content_array={contentRecollect}
           />
@@ -80,7 +80,7 @@ class CityServices extends React.Component {
           <MnlCard
             title={"Street Sweeping"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/street_sweeper.svg"
+              configProps.pathImage+"street_sweeper.svg"
             }
             content_array={contentStreetSweeping}
           />
@@ -88,7 +88,7 @@ class CityServices extends React.Component {
           {/*<MnlCard
             title={"Helpful Links"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/info.svg"
+              configProps.pathImage+"info.svg"
             }
             content_array={contentLinks}
           />*/}
@@ -104,6 +104,7 @@ class CityServices extends React.Component {
     );
     let displayCityServices;
     if (this.props.section == "city-services") {
+      history.pushState(null, null, configProps.path+'?p3');
       displayCityServices = cardsCityServices;
     } else if (this.props.section == null) {
       displayCityServices = (
@@ -117,7 +118,7 @@ class CityServices extends React.Component {
           <MnlSection
             title={"City Services"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/street_sweeper.svg"
+              configProps.pathImage+"street_sweeper.svg"
             }
             desc={secDesc}
           />

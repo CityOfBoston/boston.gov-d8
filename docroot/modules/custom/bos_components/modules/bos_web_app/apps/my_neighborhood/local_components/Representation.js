@@ -11,14 +11,14 @@ class Representation extends React.Component {
           {
             content: 
               <div>
-                Learn more about <a href={"departments/city-council"}>Boston's City Council</a>
+                Learn more about <a href={"/departments/city-council"}>Boston's City Council</a>
               </div> 
           }
       ];
     } else {
       contentRepArray = [
         {
-          content: <div>We're having trouble finding City Council information for that address. Please let us know at feedback@boston.gov and check our <a href={"departments/city-council"} title={"City Councilor"}>City Council page</a> page for more information.</div>
+          content: <div>We're having trouble finding City Council information for that address. Please let us know at feedback@boston.gov and check our <a href={"/departments/city-council"} title={"City Councilor"}>City Council page</a> page for more information.</div>
         }
       ];
     }
@@ -32,7 +32,7 @@ class Representation extends React.Component {
         {
           content: (
             <div>
-              Learn more about <a href={"departments/neighborhood-services"}>Neighborhood Services</a>
+              Learn more about <a href={"/departments/neighborhood-services"}>Neighborhood Services</a>
             </div>
           )
         }
@@ -40,7 +40,7 @@ class Representation extends React.Component {
     } else {
       contentLiasonArray = [
         {
-          content: <div>We're having trouble finding Neighborhood Contact information for that address. Please let us know at feedback@boston.gov and check our <a href={"departments/neighborhood-services"} title={"Neighborhood Services"}>Neighborhood Services page</a> page for more information.</div>
+          content: <div>We're having trouble finding Neighborhood Contact information for that address. Please let us know at feedback@boston.gov and check our <a href={"/departments/neighborhood-services"} title={"Neighborhood Services"}>Neighborhood Services page</a> page for more information.</div>
         }
       ];
     }
@@ -48,7 +48,7 @@ class Representation extends React.Component {
     if (this.props.ward == null || this.props.precinct == null) {
       contentPollingArray = [
         {
-          content: <div>We're having trouble finding your voting information for that address. Please let us know at feedback@boston.gov and check our <a href={"voting-boston"} title={"Voting in Boston"}>Voting in Boston</a> page for more information.</div>
+          content: <div>We're having trouble finding your voting information for that address. Please let us know at feedback@boston.gov and check our <a href={"/voting-boston"} title={"Voting in Boston"}>Voting in Boston</a> page for more information.</div>
         }
       ];
     } else {
@@ -74,17 +74,18 @@ class Representation extends React.Component {
     if (this.props.early_voting_dates !== null) {
         contentEarlyVotingArray = [
         {
-          heading: this.props.early_voting_location,
-          content: this.props.early_voting_address
+          heading: "Location",
+          content: <div>
+                      <div>{this.props.early_voting_location}</div>
+                      <div>{this.props.early_voting_address}</div>
+                    </div>
         },
         {
-          heading: (
-            <div>
-              <div>Starts {this.props.early_voting_dates}</div>
-              <div>{this.props.early_voting_times}</div>
-            </div>
-          ),
-          content: <div>&nbsp;</div>
+          heading: "Date/Time",
+          content: <div>
+                      <div>Starts {this.props.early_voting_dates}</div>
+                      <div>{this.props.early_voting_times}</div>
+                  </div>
         },
         {
           heading: "Neighborhood",
@@ -106,7 +107,7 @@ class Representation extends React.Component {
     contentEarlyVotingArray.push({
           content: (
             <div>
-              Learn more about <a href={"{news/early-voting-locations-boston-2020}"}>early voting in Boston</a>.
+              Learn more about <a href={"/news/early-voting-locations-boston-2020"}>early voting in Boston</a>.
             </div>
           )
     })
@@ -141,7 +142,7 @@ class Representation extends React.Component {
           <MnlCard
             title={"Your Polling Information"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/voting_ballot.svg"
+              configProps.pathImage+"voting_ballot.svg"
             }
             content_array={contentPollingArray}
           />
@@ -157,7 +158,7 @@ class Representation extends React.Component {
             image_href={
               this.props.liason_name !== null
                 ? this.props.liason_webpage
-                : "departments/neighborhood-services"
+                : "/departments/neighborhood-services"
             }
             content_array={contentLiasonArray}
           />
@@ -167,7 +168,7 @@ class Representation extends React.Component {
             <MnlCard
               title={"An Early Voting Location Near You"}
               image_header={
-                "https://patterns.boston.gov/assets/icons/experiential_icons/voting_ballot.svg"
+                configProps.pathImage+"voting_ballot.svg"
               }
               content_array={contentEarlyVotingArray}
             />
@@ -185,6 +186,7 @@ class Representation extends React.Component {
     );
     let displayReps;
     if (this.props.section == "reps") {
+      history.pushState(null, null, configProps.path+'?p3');
       displayReps = cardsRepresentation;
     } else if (this.props.section == null) {
       displayReps = (
@@ -198,7 +200,7 @@ class Representation extends React.Component {
           <MnlSection
             title={"Representation"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/conversation.svg"
+              configProps.pathImage+"conversation.svg"
             }
             desc={secDesc}
           />

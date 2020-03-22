@@ -1,6 +1,5 @@
 // Import not needed because React, ReactDOM, and local/global compontents are loaded by *.libraries.yml
-
-class MNLItems extends React.Component {
+class MNL extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,6 +20,20 @@ class MNLItems extends React.Component {
     };
   }
 
+  setDefaults = () => {
+      this.setState({
+        error: null,
+        isLoading: false,
+        isLoadingRecollect: null,
+        itemsLookup: [],
+        itemsDisplay: null,
+        itemsRecollect: [],
+        currentKeywords: "",
+        submittedAddress: null,
+        submittedKeywords: null,
+      });
+      history.pushState(null, null, path)
+  }
   componentDidMount(){
     let inputHeight = jQuery("#web-app input").height();
     let inputWidth = jQuery("#web-app input").width() - 75;
@@ -29,6 +42,15 @@ class MNLItems extends React.Component {
     jQuery("#web-app input").css('height', inputHeight + 'px');
     //Skip and test
     //this.displayAddress('1','6-10 A St Hyde Park, 02136')
+    let that = this;
+    window.addEventListener('popstate', function (event) {
+      if (that.state.submittedAddress !== null && that.state.section !== null) {
+        that.displaySection(null);
+      } 
+      else if (that.state.submittedAddress !== null && that.state.section == null ) {
+        that.setDefaults();
+      }
+    }, false);
   }
 
   scaleInputText = op => {
@@ -119,7 +141,7 @@ class MNLItems extends React.Component {
       limit: "5"
     };
     fetch(
-      "jsonapi/node/neighborhood_lookup?filter" +
+      "/jsonapi/node/neighborhood_lookup?filter" +
         paramsQuery.condition +
         "&filter" +
         paramsQuery.value +
@@ -169,7 +191,7 @@ class MNLItems extends React.Component {
     };
     let jsonData = "none";
     fetch(
-      "jsonapi/node/neighborhood_lookup?filter" +
+      "/jsonapi/node/neighborhood_lookup?filter" +
         paramsSamGet.value +
         "&fields" +
         paramsSamGet.fields
@@ -215,7 +237,6 @@ class MNLItems extends React.Component {
     });
   };
 
-
   render() {
     // Set and retreieve lookup items
     let itemsLookupArray = this.state.itemsLookup;
@@ -257,16 +278,11 @@ class MNLItems extends React.Component {
         itemsLookupMarkup = "No address was found by that name.";
       }
     }
-    {/*if(this.state.isLoadingRecollect == false) {
-        let recollectDate = null;
-        let recollectServices = null;  
-    } else { 
-        let recollectDate = this.state.itemsRecollect.day;
-        let recollectServices = this.state.itemsRecollect.flags;
-    }*/}
     let recollectDate = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.day);
     let recollectServices = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.flags);
     let mnlDisplay = this.state.submittedAddress ? (
+      <div>
+      {history.pushState({id: 'sections'}, '', configProps.path+'?p2')}
       <div className="g">
         <CityServices
           recollect_date={recollectDate}
@@ -275,7 +291,6 @@ class MNLItems extends React.Component {
           displaySection={this.displaySection}
         />
         
-
        <CitySpaces
           library_branch={this.state.itemsDisplay.public_libraries_branch}
           library_address={this.state.itemsDisplay.public_libraries_address}
@@ -355,6 +370,7 @@ class MNLItems extends React.Component {
           section={this.state.section}
         />
       </div>
+      </div>
     ) : (
       ""
     );
@@ -381,9 +397,15 @@ class MNLItems extends React.Component {
           )}
         </div>
         <div>&nbsp;</div>
+      
       </div>
     );
   }
 }
-const el = document.getElementById("web-app");
-ReactDOM.render(<MNLItems />, el);
+
+ReactDOM.render(<MNL />,
+  document.getElementById("web-app")
+);
+
+
+
