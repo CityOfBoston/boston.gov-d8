@@ -32,7 +32,7 @@ class MNL extends React.Component {
         submittedAddress: null,
         submittedKeywords: null,
       });
-      history.pushState(null, null, path)
+      history.pushState(null, null, configProps.path)
   }
   componentDidMount(){
     let inputHeight = jQuery("#web-app input").height();
