@@ -100,10 +100,10 @@
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
         if [[ $? -ne 0 ]]; then
             echo -e "\n${RedBG}  ============================================================================== ${NC}"
-            echo -e "\n${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
-            echo -e "\n${RedBG}  =                               Build aborted                                = ${NC}"
-            echo -e "\n${RedBG}  ============================================================================== ${NC}"
-            printout "ERROR" ".\n"
+            echo -e "${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
+            echo -e "${RedBG}  =                               Build aborted                                = ${NC}"
+            echo -e "${RedBG}  ============================================================================== ${NC}\n"
+            printout "ERROR" "Composer failed check output below."
             printout "" "==> Composer log dump:"
             cat  ${setup_logs}/composer.log
             printout "" "=<= Dump ends."
