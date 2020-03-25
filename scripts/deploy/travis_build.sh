@@ -97,14 +97,14 @@
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
             composer self-update &&
             composer clear-cache &&
-            composer install --no-suggest --prefer-dist --no-interaction &> ${setup_logs}/composer.log &&
+            composer install --no-suggest --prefer-dist --no-interaction -vvv &> ${setup_logs}/composer.log &&
             composer drupal:scaffold &>> ${setup_logs}/composer.log &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
         if [[ $? -ne 0 ]]; then
-            echo -e "\n${RedBG}  ============================================================================== ${NC}"
-            echo -e "${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
-            echo -e "${RedBG}  =                               Build aborted                                = ${NC}"
-            echo -e "${RedBG}  ============================================================================== ${NC}\n"
+            echo -e "\n${RedBG}  =============================================================================="
+            echo -e "  =               IMPORTANT: Composer packages not downloaded.                 ="
+            echo -e "  =                               Build aborted                                ="
+            echo -e "  ==============================================================================${NC}\n"
             printout "ERROR" "Composer failed check output below."
             printout "" "==> Composer log dump:"
             cat  ${setup_logs}/composer.log
