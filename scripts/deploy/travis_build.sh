@@ -95,15 +95,19 @@
         printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output suppressed unless errors occur."
         cd ${TRAVIS_BUILD_DIR} &&
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
-            composer install --no-suggest --prefer-dist --no-interaction &> ${setup_logs}/composer.log &&
+            composer self-update &&
+            composer clear-cache &&
+            composer config -g github-oauth.github.com "$GITHUB_TOKEN" &&
+            composer install --no-suggest --prefer-dist --no-interaction -vvv &> ${setup_logs}/composer.log &&
             composer drupal:scaffold &>> ${setup_logs}/composer.log &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
         if [[ $? -ne 0 ]]; then
-            echo -e "\n${RedBG}  ============================================================================== ${NC}"
-            echo -e "\n${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
-            echo -e "\n${RedBG}  =                               Build aborted                                = ${NC}"
-            echo -e "\n${RedBG}  ============================================================================== ${NC}"
-            printout "ERROR" ".\n"
+            echo -e "\n ${RedBG}
+  ==============================================================================\n
+  =               IMPORTANT: Composer packages not downloaded.                 =\n
+  =                               Build aborted                                =\n
+  ==============================================================================${NC}\n"
+            printout "ERROR" "Composer failed check output below."
             printout "" "==> Composer log dump:"
             cat  ${setup_logs}/composer.log
             printout "" "=<= Dump ends."
