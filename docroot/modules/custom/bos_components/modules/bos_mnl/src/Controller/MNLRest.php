@@ -129,7 +129,7 @@ class MNLRest extends ControllerBase {
             }
           }
           $response_array = [
-            'status' => $operation.' procedure complete',
+            'status' => $operation . ' procedure complete',
             'response' => 'authorized'
           ];
         }
