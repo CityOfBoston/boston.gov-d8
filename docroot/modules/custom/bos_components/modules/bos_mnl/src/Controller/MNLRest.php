@@ -118,11 +118,12 @@ class MNLRest extends ControllerBase {
             }
           }
           else {
-            // Delete all nodes of neightborhood_lookup.
+            // Delete all nodes of content type neightborhood_lookup.
             foreach ($nids as $nid) {
               $node = Node::load($nid);
               $node->delete();
             }
+
             foreach ($data as $items) {
               $this->createNode($nid, $items);
             }
@@ -141,7 +142,6 @@ class MNLRest extends ControllerBase {
         }
       }
       else {
-
         $response_array = [
           'status' => 'error',
           'response' => 'unknown error',
