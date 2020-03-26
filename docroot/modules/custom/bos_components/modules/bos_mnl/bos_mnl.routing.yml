@@ -1,7 +1,7 @@
 bos_mnl.import:
- path: '/rest/mnl'
+ path: '/rest/mnl/{operation}'
  defaults:
-   _controller: '\Drupal\bos_mnl\Controller\MNLRest::beginImport'
+   _controller: '\Drupal\bos_mnl\Controller\MNLRest::beginUpdateImport'
  methods: [POST]
  requirements:
    _access: 'TRUE'
@@ -13,3 +13,4 @@ bos_mnl.recollect:
  methods: [POST]
  requirements:
    _access: 'TRUE'
+
