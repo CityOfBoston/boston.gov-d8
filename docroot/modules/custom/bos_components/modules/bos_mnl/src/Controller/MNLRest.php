@@ -77,7 +77,7 @@ class MNLRest extends ControllerBase {
   /**
    * Begin import and parse POST data.
    */
-  public function beginImport() {
+  public function beginUpdateImport($operation) {
     $testing = TRUE;
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data.
@@ -104,31 +104,31 @@ class MNLRest extends ControllerBase {
 
         $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
         $nids = $query->execute();
-        $exists = FALSE;
-        $nodeID = NULL;
 
         if (json_last_error() === 0) {
-          foreach ($data as $items) {
-            foreach ($nids as $nid) {
-              $node = Node::load($nid);
-              $sam_id = $node->field_sam_id->value;
-              if ($sam_id == $items['sam_address_id']) {
-                $exists = TRUE; $nodeID = $nid;
+          if ($operation == "update") {
+            foreach ($data as $items) {
+              foreach ($nids as $nid) {
+                $node = Node::load($nid);
+                $sam_id = $node->field_sam_id->value;
+                if ($sam_id == $items['sam_address_id']) {
+                  $this->updateNode($nid, $items);
+                }
               }
             }
-
-            if ($exists == TRUE) {
-              $this->updateNode($nodeID, $items);
+          }
+          else {
+            // Delete all nodes of neightborhood_lookup.
+            foreach ($nids as $nid) {
+              $node = Node::load($nid);
+              $node->delete();
             }
-            else {
-
-              $this->createNode($nodeID, $items);
+            foreach ($data as $items) {
+              $this->createNode($nid, $items);
             }
-
-            $exists = FALSE;
           }
           $response_array = [
-            'status' => 'procedure complete',
+            'status' => $operation.' procedure complete',
             'response' => 'authorized'
           ];
         }

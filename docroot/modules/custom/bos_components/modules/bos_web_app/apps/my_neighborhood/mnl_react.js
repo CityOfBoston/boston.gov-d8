@@ -246,8 +246,9 @@ class MNL extends React.Component {
       if (itemsLookupArray.length > 0) {
         for (const [index, value] of itemsLookupArray.entries()) {
           resultItem = (
-            <a
+            <button
               className="cd dl-i"
+              tabIndex='0'
               style={{ cursor: "pointer" }}
               onClick={this.displayAddress.bind(
                 this,
@@ -270,7 +271,7 @@ class MNL extends React.Component {
                 </div>
                 <div style={{ clear: "both" }} />
               </li>
-            </a>
+            </button>
           );
           itemsLookupMarkup.push(resultItem);
         }
