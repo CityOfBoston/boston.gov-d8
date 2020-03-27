@@ -90,14 +90,31 @@ function node_site_alert_preprocess_page(&$variables) {
   if ($view = Views::getView("site_alerts")) {
     $view->setDisplay("block_site_alerts");
     if (isset($variables["node"]) && is_numeric($variables["node"])) {
-      $view->preExecute(["nid" => $variables["node"]]);
+      $nid = $variables["node"];
     }
     elseif (isset($variables["node"]) && $variables["node"]->hasField("nid")) {
-      $view->preExecute(["nid" => $variables["node"]->id()]);
+      $nid = $variables["node"]->id();
     }
-    if ($view->execute() && count($view->result) > 0) {
-      _bos_content_fix_attributes($variables);
-      $variables["attributes"]->addClass("sa");
+    if (isset($nid)) {
+      $view->preExecute(["nid" => $nid]);
+      $variables['cob']['sa-excluded'] = FALSE;
+      if ($view->execute() && count($view->result) > 0) {
+        foreach ($view->result as $result) {
+          if (isset($result->_entity) && $entity = $result->_entity) {
+            if (NULL != $entity->field_excluded_nodes) {
+              foreach ($entity->field_excluded_nodes as $excluded) {
+                if (isset($excluded->target_id) && $excluded->target_id == $nid) {
+                  $variables['cob']['sa-excluded'] = TRUE;
+                }
+              }
+            }
+          }
+        }
+        if (!$variables['cob']['sa-excluded']) {
+          _bos_content_fix_attributes($variables);
+          $variables["attributes"]->addClass("sa");
+        }
+      }
     }
   }
 }
