@@ -107,14 +107,20 @@ class MNLRest extends ControllerBase {
 
         if (json_last_error() === 0) {
           if ($operation == "update") {
+            $exists = NULL;
             foreach ($data as $items) {
               foreach ($nids as $nid) {
                 $node = Node::load($nid);
                 $sam_id = $node->field_sam_id->value;
                 if ($sam_id == $items['sam_address_id']) {
                   $this->updateNode($nid, $items);
+                  $exists = TRUE;
                 }
               }
+              if ($exists == FALSE) {
+                $this->createNode($nid, $items);
+              }
+              $exists = FALSE;
             }
           }
           else {
