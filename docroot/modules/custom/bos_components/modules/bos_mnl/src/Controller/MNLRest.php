@@ -99,6 +99,7 @@ class MNLRest extends ControllerBase {
 
       }
       elseif (!$apiKey == NULL && $request_method == "POST") {
+        ini_set('memory_limit', '-1');
         $data = $this->request->getCurrentRequest()->getContent();
         $data = json_decode(strip_tags($data), TRUE);
 
