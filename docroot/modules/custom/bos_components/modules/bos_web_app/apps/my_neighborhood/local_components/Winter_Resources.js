@@ -34,7 +34,7 @@ class WinterResources extends React.Component {
     ];
     const secDesc = "Find out where to park and prepare for snow emergencies.";
     const cardsWinter = (
-      <div className="b-c">
+      <div>
         <div className="sh">
           <h2 className="sh-title">Winter Resources</h2>
         </div>

@@ -29,7 +29,7 @@ class SummerResources extends React.Component {
     ];
     const secDesc = "Cooling centers, pools and tot sprays near you.";
     const cardsSummer = (
-      <div className="b-c">
+      <div>
         <div className="sh">
           <h2 className="sh-title">Summer Resources</h2>
         </div>

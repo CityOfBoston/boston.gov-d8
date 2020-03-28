@@ -114,7 +114,7 @@ class Representation extends React.Component {
     const secDesc =
       "Ward and precinct numbers, and early voting and polling locations.";
     const cardsRepresentation = (
-      <div className="b-c">
+      <div>
         <div className="sh">
           <h2 className="sh-title">Representation</h2>
         </div>
