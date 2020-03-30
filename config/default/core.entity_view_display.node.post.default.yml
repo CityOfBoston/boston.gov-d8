@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.post.field_intro_image
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
+    - field.field.node.post.field_metatags
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
@@ -20,6 +21,7 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
+    - metatag
     - text
     - user
 _core:
@@ -105,6 +107,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_metatags:
+    weight: 10
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+    region: content
   field_news_tags:
     label: above
     weight: 7
