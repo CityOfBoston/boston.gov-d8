@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.article.field_contact
     - field.field.node.article.field_intro_text
     - field.field.node.article.field_manual_date
+    - field.field.node.article.field_metatags
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_updated_date
@@ -16,6 +17,7 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
+    - metatag
     - text
     - user
 _core:
@@ -78,6 +80,13 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     type: boolean
+    region: content
+  field_metatags:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
     region: content
   field_published_date:
     label: hidden
