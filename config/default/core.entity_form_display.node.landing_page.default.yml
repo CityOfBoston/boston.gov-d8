@@ -55,7 +55,6 @@ third_party_settings:
         - field_manual_date
         - field_updated_date
         - field_published_date
-        - field_meta_tags
       parent_name: group_landing_page
       weight: 19
       format_type: tab
@@ -120,6 +119,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
   field_manual_date:
@@ -130,7 +130,7 @@ content:
     type: boolean_checkbox
     region: content
   field_meta_tags:
-    weight: 21
+    weight: 26
     settings: {  }
     third_party_settings: {  }
     type: metatag_firehose
@@ -208,6 +208,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     region: content
     third_party_settings: {  }
   url_redirects:

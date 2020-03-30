@@ -12,6 +12,7 @@ dependencies:
     - node.type.landing_page
   module:
     - entity_reference_revisions
+    - metatag
     - user
 _core:
   default_config_hash: IFVOp7I2dBZXib8hogWBXlHS0o6iPex7QDE07SOttlQ
@@ -29,11 +30,17 @@ content:
       link: ''
     third_party_settings: {  }
     region: content
+  field_meta_tags:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+    region: content
 hidden:
   content_moderation_control: true
   field_contacts: true
   field_manual_date: true
-  field_meta_tags: true
   field_published_date: true
   field_updated_date: true
   langcode: true
