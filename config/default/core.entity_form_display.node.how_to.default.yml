@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
     - field.field.node.how_to.field_manual_date
+    - field.field.node.how_to.field_metatags
     - field.field.node.how_to.field_need_to_know
     - field.field.node.how_to.field_payment_info
     - field.field.node.how_to.field_published_date
@@ -23,6 +24,7 @@ dependencies:
     - datetime
     - entity_browser
     - field_group
+    - metatag
     - paragraphs
     - path
     - publication_date
@@ -249,6 +251,12 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+    region: content
   field_need_to_know:
     weight: 0
     type: text_textarea

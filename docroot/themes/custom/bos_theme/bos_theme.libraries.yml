@@ -14,8 +14,8 @@ global-styling.default:
     - core/jquery
   css:
     theme:
-      /themes/custom/patterns/css/public.css: {  }
-      /themes/custom/patterns/css/legacy/public.css: {  }
+      /themes/custom/patterns/css/public.css: { weight: -10 }
+      /themes/custom/patterns/css/legacy/public.css: { weight: -9 }
       /themes/custom/patterns/css/ie.css: {  }
   data:
     name: 'Local from bos_theme cache'
@@ -71,7 +71,7 @@ global-styling.heroku-patterns:
   css:
     theme:
       https://cob-patterns-staging.herokuapp.com/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://cob-patterns-staging.herokuapp.com/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE } }
+      https://cob-patterns-staging.herokuapp.com/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
       https://cob-patterns-staging.herokuapp.com/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (staging)'
