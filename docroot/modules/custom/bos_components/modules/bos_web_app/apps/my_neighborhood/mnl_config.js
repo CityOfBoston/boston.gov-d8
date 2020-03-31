@@ -1,5 +1,5 @@
 const configProps = {
-	// Options for season ('winter','summer',null).
+	// Options for season ('winter','summer',null). 
 	season: null,
 
 	// Turns on / off Early Voting card in Representation section.
