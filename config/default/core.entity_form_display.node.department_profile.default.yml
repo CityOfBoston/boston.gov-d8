@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.department_profile.field_icon
     - field.field.node.department_profile.field_intro_text
     - field.field.node.department_profile.field_manual_date
+    - field.field.node.department_profile.field_metatags
     - field.field.node.department_profile.field_operation_hours
     - field.field.node.department_profile.field_phone_number
     - field.field.node.department_profile.field_published_date
@@ -26,6 +27,7 @@ dependencies:
     - datetime
     - entity_browser
     - field_group
+    - metatag
     - paragraphs
     - path
     - publication_date
@@ -226,6 +228,12 @@ content:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
+    region: content
+  field_metatags:
+    weight: 29
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
     region: content
   field_operation_hours:
     weight: 16

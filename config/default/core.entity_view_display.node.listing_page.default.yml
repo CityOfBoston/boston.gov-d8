@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.listing_page.field_header_component
     - field.field.node.listing_page.field_intro_image
     - field.field.node.listing_page.field_manual_date
+    - field.field.node.listing_page.field_metatags
     - field.field.node.listing_page.field_published_date
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
@@ -14,6 +15,7 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
+    - metatag
     - user
 _core:
   default_config_hash: DzYzcZKDxrohAOW_7PiIqqsvZIZcDiN2QetB6cuCHnU
@@ -61,6 +63,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_metatags:
+    weight: 7
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
+    region: content
   field_published_date:
     type: datetime_default
     weight: 4

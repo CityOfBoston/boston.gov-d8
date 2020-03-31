@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.listing_page.field_header_component
     - field.field.node.listing_page.field_intro_image
     - field.field.node.listing_page.field_manual_date
+    - field.field.node.listing_page.field_metatags
     - field.field.node.listing_page.field_published_date
     - field.field.node.listing_page.field_updated_date
     - node.type.listing_page
@@ -18,6 +19,7 @@ dependencies:
     - datetime
     - entity_browser
     - field_group
+    - metatag
     - paragraphs
     - path
     - publication_date
@@ -156,6 +158,12 @@ content:
     third_party_settings: {  }
     type: boolean_checkbox
     region: content
+  field_metatags:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
+    region: content
   field_published_date:
     weight: 15
     type: datetime_default
@@ -231,6 +239,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     region: content
     third_party_settings: {  }
   url_redirects:

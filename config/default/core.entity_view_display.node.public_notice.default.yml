@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
     - field.field.node.public_notice.field_manual_date
+    - field.field.node.public_notice.field_metatags
     - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_public_notice_date
@@ -31,6 +32,7 @@ dependencies:
     - datetime_range
     - entity_reference_revisions
     - fences
+    - metatag
     - options
     - text
     - user
@@ -225,6 +227,13 @@ content:
         fences_field_item_classes: 'detail-item__body--secondary link-wrapper download-link'
         fences_label_tag: div
         fences_label_classes: ''
+    region: content
+  field_metatags:
+    weight: 19
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_empty_formatter
     region: content
   field_multiple_neighborhoods:
     weight: 9
