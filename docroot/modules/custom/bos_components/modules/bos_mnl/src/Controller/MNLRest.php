@@ -5,6 +5,7 @@ namespace Drupal\bos_mnl\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -82,8 +83,12 @@ class MNLRest extends ControllerBase {
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data.
       $apiKey = $this->request->getCurrentRequest()->get('api_key');
-      $token = "Au47a8x38E";
+      $token = Settings::get('mnl_key');
       $request_method = $this->request->getCurrentRequest()->getMethod();
+      // Get Neighborhood Lookup content type.
+      $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
+      $nids = $query->execute();
+
       if ($apiKey !== $token) {
         $response_array = [
           'status' => 'error',
@@ -91,49 +96,26 @@ class MNLRest extends ControllerBase {
         ];
 
       }
-      elseif (!$request_method == "POST") {
-        $response_array = [
-          'status' => 'error',
-          'response' => 'no post data',
-        ];
-
-      }
-      elseif (!$apiKey == NULL && $request_method == "POST") {
+      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
         ini_set('memory_limit', '-1');
         $data = $this->request->getCurrentRequest()->getContent();
         $data = json_decode(strip_tags($data), TRUE);
 
-        $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
-        $nids = $query->execute();
-
         if (json_last_error() === 0) {
-          if ($operation == "update") {
-            $exists = NULL;
-            foreach ($data as $items) {
-              foreach ($nids as $nid) {
-                $node = Node::load($nid);
-                $sam_id = $node->field_sam_id->value;
-                if ($sam_id == $items['sam_address_id']) {
-                  $this->updateNode($nid, $items);
-                  $exists = TRUE;
-                }
-              }
-              if ($exists == FALSE) {
-                $this->createNode($nid, $items);
-              }
-              $exists = FALSE;
-            }
-          }
-          else {
-            // Delete all nodes of content type neightborhood_lookup.
+          $exists = NULL;
+          foreach ($data as $items) {
             foreach ($nids as $nid) {
               $node = Node::load($nid);
-              $node->delete();
+              $sam_id = $node->field_sam_id->value;
+              if ($sam_id == $items['sam_address_id']) {
+                $this->updateNode($nid, $items);
+                $exists = TRUE;
+              }
             }
-
-            foreach ($data as $items) {
+            if ($exists == FALSE) {
               $this->createNode($nid, $items);
             }
+            $exists = FALSE;
           }
           $response_array = [
             'status' => $operation . ' procedure complete',
@@ -147,6 +129,27 @@ class MNLRest extends ControllerBase {
             'error json' => json_last_error()
           ];
         }
+      }
+      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
+        ini_set('memory_limit', '-1');
+        // Delete all nodes of content type neightborhood_lookup.
+        foreach ($nids as $nid) {
+          $node = Node::load($nid);
+          $node->delete();
+        }
+
+        $dataImportPath = \Drupal::root() . '/modules/custom/bos_components/modules/bos_mnl/data/data.json';
+        $dataImportFile = file_get_contents($dataImportPath);
+        $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
+
+        foreach ($dataImportFile as $items) {
+          $this->createNode($nid, $items);
+        }
+
+        $response_array = [
+          'status' => $operation . ' procedure complete',
+          'response' => 'authorized'
+        ];
       }
       else {
         $response_array = [
