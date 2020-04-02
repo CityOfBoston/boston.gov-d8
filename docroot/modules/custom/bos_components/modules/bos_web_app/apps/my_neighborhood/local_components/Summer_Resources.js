@@ -9,7 +9,8 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"/summer-boston"}>City in the summer</a>
+            Learn more about the <a href={"/summer-boston"}>City in the summer</a>.
+            <spacefill></spacefill>
           </div>
         )
       }
@@ -22,7 +23,8 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"/summer-boston"}>City in the summer</a>
+            Learn more about the <a href={"/summer-boston"}>City in the summer</a>.
+            <spacefill></spacefill>
           </div>
         )
       }
