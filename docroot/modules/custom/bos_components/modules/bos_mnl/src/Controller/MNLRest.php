@@ -86,8 +86,9 @@ class MNLRest extends ControllerBase {
       $token = Settings::get('mnl_key');
       // Get request method.
       $request_method = $this->request->getCurrentRequest()->getMethod();
-      // Get POST data.
+      // Get POST data and decode in to JSON.
       $data = $this->request->getCurrentRequest()->getContent();
+      $data = json_decode(strip_tags($data), TRUE);
       // Get Neighborhood Lookup content type.
       $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
       $nids = $query->execute();
@@ -101,7 +102,6 @@ class MNLRest extends ControllerBase {
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
         ini_set('memory_limit', '-1');
-        $data = json_decode(strip_tags($data), TRUE);
 
         if (json_last_error() === 0) {
           $exists = NULL;
@@ -150,11 +150,16 @@ class MNLRest extends ControllerBase {
 
         $filePath = \Drupal::root() . '/sites/default/files/data_matt.json';
         $file = fopen($filePath, "w");
-        /*fwrite($file, "[");
+        fwrite($file, "[");
         foreach ($data as $items) {
-        fwrite($file, strval($items));
+          fwrite($file, json_encode($items) . ",");
         }
-        fwrite($file, "]");*/
+
+        // Removed last comma.
+        $position = fstat($file)['size'] - 1;
+        ftruncate($file, $position);
+        fseek($file, $position);
+        fwrite($file, "]");
         fwrite($file, $data);
         fclose($file);
 
