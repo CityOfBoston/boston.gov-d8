@@ -22,7 +22,7 @@ class MnlSection extends React.Component {
     }
 
     return (
-      <div>
+      <div tabIndex="0">
       <div className="pointer">
         {imageHeader}
         <div className="cd-c">

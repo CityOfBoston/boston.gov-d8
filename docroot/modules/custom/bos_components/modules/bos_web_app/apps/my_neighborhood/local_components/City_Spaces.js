@@ -80,7 +80,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Lern more about the City's <a href={"/departments/parks-and-recreation"}>parks</a>
+            Learn more about the City's <a href={"/departments/parks-and-recreation"}>parks</a>
           </div>
         )
       }

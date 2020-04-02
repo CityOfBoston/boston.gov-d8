@@ -28,6 +28,14 @@ class CityServices extends React.Component {
           )
       });
     }
+
+    contentRecollect.push({
+      content: (
+        <div>
+          Learn more about <a href={"/trash-and-recycling"}>trash and recycling</a>.
+        </div>
+      )
+    })
     
     // Content for Street Sweeping
     const contentStreetSweeping = [

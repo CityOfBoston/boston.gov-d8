@@ -84,7 +84,10 @@ class MNLRest extends ControllerBase {
       // Get POST data.
       $apiKey = $this->request->getCurrentRequest()->get('api_key');
       $token = Settings::get('mnl_key');
+      // Get request method.
       $request_method = $this->request->getCurrentRequest()->getMethod();
+      // Get POST data.
+      $data = $this->request->getCurrentRequest()->getContent();
       // Get Neighborhood Lookup content type.
       $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
       $nids = $query->execute();
@@ -98,7 +101,6 @@ class MNLRest extends ControllerBase {
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
         ini_set('memory_limit', '-1');
-        $data = $this->request->getCurrentRequest()->getContent();
         $data = json_decode(strip_tags($data), TRUE);
 
         if (json_last_error() === 0) {
@@ -133,9 +135,9 @@ class MNLRest extends ControllerBase {
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
         ini_set('memory_limit', '-1');
         // Delete all nodes of content type neightborhood_lookup.
-        foreach ($nids as $nid) {
-          $node = Node::load($nid);
-          $node->delete();
+        /*foreach ($nids as $nid) {
+        $node = Node::load($nid);
+        $node->delete();
         }
 
         $dataImportPath = \Drupal::root() . '/modules/custom/bos_components/modules/bos_mnl/data/data.json';
@@ -143,8 +145,18 @@ class MNLRest extends ControllerBase {
         $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
 
         foreach ($dataImportFile as $items) {
-          $this->createNode($nid, $items);
+        $this->createNode($nid, $items);
+        }*/
+
+        $filePath = \Drupal::root() . '/sites/default/files/data_matt.json';
+        $file = fopen($filePath, "w");
+        /*fwrite($file, "[");
+        foreach ($data as $items) {
+        fwrite($file, strval($items));
         }
+        fwrite($file, "]");*/
+        fwrite($file, $data);
+        fclose($file);
 
         $response_array = [
           'status' => $operation . ' procedure complete',

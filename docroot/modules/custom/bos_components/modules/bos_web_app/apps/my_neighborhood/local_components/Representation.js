@@ -107,7 +107,7 @@ class Representation extends React.Component {
     contentEarlyVotingArray.push({
           content: (
             <div>
-              Learn more about <a href={"/news/early-voting-locations-boston-2020"}>early voting in Boston</a>.
+              Learn more about <a href={"/departments/elections/vote-early-boston"}>early voting in Boston</a>.
             </div>
           )
     })

@@ -20,6 +20,27 @@ class MNL extends React.Component {
     };
   }
 
+  componentDidMount(){
+    let inputHeight = jQuery("#web-app input").height();
+    let inputWidth = jQuery("#web-app input").width() - 75;
+    jQuery(".resize").css('height', inputHeight + 'px');
+    jQuery(".resize").css('width', inputWidth + 'px');
+    jQuery("#web-app input").css('height', inputHeight + 'px');
+    
+    let that = this;
+    window.addEventListener('popstate', function (event) {
+      if (that.state.submittedAddress !== null && that.state.section !== null) {
+        that.displaySection(null);
+      } 
+      else if (that.state.submittedAddress !== null && that.state.section == null ) {
+        that.setDefaults();
+      }
+    }, false);
+
+    // Check for local storage SAM data;
+    this.setCheckLocalStorage();
+  }
+
   setDefaults = () => {
       this.setState({
         error: null,
@@ -34,23 +55,26 @@ class MNL extends React.Component {
       });
       history.pushState(null, null, configProps.path)
   }
-  componentDidMount(){
-    let inputHeight = jQuery("#web-app input").height();
-    let inputWidth = jQuery("#web-app input").width() - 75;
-    jQuery(".resize").css('height', inputHeight + 'px');
-    jQuery(".resize").css('width', inputWidth + 'px');
-    jQuery("#web-app input").css('height', inputHeight + 'px');
-    //Skip and test
-    //this.displayAddress('1','6-10 A St Hyde Park, 02136')
-    let that = this;
-    window.addEventListener('popstate', function (event) {
-      if (that.state.submittedAddress !== null && that.state.section !== null) {
-        that.displaySection(null);
-      } 
-      else if (that.state.submittedAddress !== null && that.state.section == null ) {
-        that.setDefaults();
+
+  setCheckLocalStorage = (sam_id, sam_address, section) => {
+    if(localStorage.getItem("sam_data")){
+      let localSAM = JSON.parse(localStorage.getItem("sam_data"));
+      this.displayAddress(localSAM[0].sam_id,localSAM[0].sam_address,localSAM[0].section);
+      if(localSAM[0].section !== null){
+        this.setState({section:localSAM[0].section});
       }
-    }, false);
+    }
+    else {
+      let samId = (sam_id ? sam_id : null);
+      let samAddress = (sam_address ? sam_address : null);
+      let cardSection = (section ? section : null);
+      let mnl = [{
+        "sam_id": samId,
+        "sam_address": samAddress,
+        "section": cardSection
+      }];
+      localStorage.setItem("sam_data", JSON.stringify(mnl));
+    }
   }
 
   scaleInputText = op => {
@@ -175,7 +199,8 @@ class MNL extends React.Component {
       );
   };
 
-  displayAddress = (sam_id, sam_address) => {
+  displayAddress = (sam_id, sam_address, section) => {
+    //let localSection = (section) ? section : null;
     this.setState({
       isLoading: true,
       isLoadingRecollect: true,
@@ -212,6 +237,8 @@ class MNL extends React.Component {
             });
             this.lookupRecollect();
             this.scaleInputText();
+            localStorage.removeItem("sam_data");
+            this.setCheckLocalStorage(this.state.sam_id,this.state.submittedAddress, section);
           } else {
             this.setState({
               itemsDisplay: null
@@ -235,6 +262,8 @@ class MNL extends React.Component {
     this.setState({
       section: display
     });
+    localStorage.removeItem("sam_data");
+    this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, display);
   };
 
   render() {
@@ -253,7 +282,8 @@ class MNL extends React.Component {
               onClick={this.displayAddress.bind(
                 this,
                 itemsLookupArray[index].attributes.field_sam_id,
-                itemsLookupArray[index].attributes.field_sam_address
+                itemsLookupArray[index].attributes.field_sam_address,
+                null
               )}
               key={index}
             >
