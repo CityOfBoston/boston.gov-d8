@@ -64,7 +64,7 @@ class MNLRest extends ControllerBase {
   /**
    * Create new node.
    */
-  public function createNode($nid, $dataJSON) {
+  public function createNode($dataJSON) {
     $node = Node::create([
       'type'                        => 'neighborhood_lookup',
       'title'                       => $dataJSON['sam_address_id'],
@@ -75,12 +75,26 @@ class MNLRest extends ControllerBase {
     $node->save();
   }
 
+   /**
+   * Import rows from local JSON file.
+   */
+  public function importNodes() {
+    $dataImportPath = \Drupal::root() . '/sites/default/files/data.json';
+    $dataImportFile = file_get_contents($dataImportPath);
+    $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
+
+    foreach ($dataImportFile as $items) {
+      $this->createNode($nid, $items);
+    }
+  }
+
   /**
    * Begin import and parse POST data.
    */
   public function beginUpdateImport($operation) {
     $testing = TRUE;
     ini_set('memory_limit', '-1');
+    ini_set("post_max_size", "1750M");
 
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data.
@@ -115,7 +129,7 @@ class MNLRest extends ControllerBase {
               }
             }
             if ($exists == FALSE) {
-              $this->createNode($nid, $items);
+              $this->createNode($items);
             }
             $exists = FALSE;
           }
@@ -133,6 +147,7 @@ class MNLRest extends ControllerBase {
         }
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
+        $filePath = \Drupal::root() . '/sites/default/files/data.json';
         // Delete all nodes of content type neightborhood_lookup.
         /*foreach ($nids as $nid) {
         $node = Node::load($nid);
@@ -145,9 +160,11 @@ class MNLRest extends ControllerBase {
 
         foreach ($dataImportFile as $items) {
         $this->createNode($nid, $items);
-        }*/
+        }
 
-        $filePath = \Drupal::root() . '/sites/default/files/data_matt.json';
+        $this->importNodes($filePath);
+        */
+
         $file = fopen($filePath, "w");
         fwrite($file, "[");
         foreach ($data as $items) {
