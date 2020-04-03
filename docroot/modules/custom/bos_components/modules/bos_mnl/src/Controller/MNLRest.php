@@ -80,6 +80,8 @@ class MNLRest extends ControllerBase {
    */
   public function beginUpdateImport($operation) {
     $testing = TRUE;
+    ini_set('memory_limit', '-1');
+
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data.
       $apiKey = $this->request->getCurrentRequest()->get('api_key');
@@ -101,8 +103,6 @@ class MNLRest extends ControllerBase {
 
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
-        ini_set('memory_limit', '-1');
-
         if (json_last_error() === 0) {
           $exists = NULL;
           foreach ($data as $items) {
@@ -133,7 +133,6 @@ class MNLRest extends ControllerBase {
         }
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
-        ini_set('memory_limit', '-1');
         // Delete all nodes of content type neightborhood_lookup.
         /*foreach ($nids as $nid) {
         $node = Node::load($nid);
