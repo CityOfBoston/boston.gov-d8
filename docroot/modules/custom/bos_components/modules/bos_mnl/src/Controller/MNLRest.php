@@ -94,7 +94,8 @@ class MNLRest extends ControllerBase {
   public function beginUpdateImport($operation) {
     $testing = TRUE;
     ini_set('memory_limit', '-1');
-    ini_set("post_max_size", "1750M");
+    ini_set("post_max_size", "2000M");
+    ini_set("upload_max_filesize", "2000M");
 
     if ($this->checkDomain() == TRUE || $testing == TRUE) :
       // Get POST data.
