@@ -75,7 +75,7 @@ class MNLRest extends ControllerBase {
     $node->save();
   }
 
-   /**
+  /**
    * Import rows from local JSON file.
    */
   public function importNodes() {
@@ -163,7 +163,7 @@ class MNLRest extends ControllerBase {
         }
 
         $this->importNodes($filePath);
-        */
+         */
 
         $file = fopen($filePath, "w");
         fwrite($file, "[");
