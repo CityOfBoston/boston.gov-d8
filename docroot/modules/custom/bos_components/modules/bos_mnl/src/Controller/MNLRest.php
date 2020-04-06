@@ -115,9 +115,6 @@ class MNLRest extends ControllerBase {
           'status' => 'error',
           'response' => 'wrong api key',
         ];
-
-      if (strpos($a, 'import') !== false) {
-
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
         if (json_last_error() === 0) {
@@ -149,7 +146,7 @@ class MNLRest extends ControllerBase {
           ];
         }
       }
-      elseif (!$apiKey == NULL && $request_method == "POST" && strpos($operation, "import") !== false) {
+      elseif (!$apiKey == NULL && $request_method == "POST" && strpos($operation, "import") !== FALSE) {
 
         if ($operation == "import-delete") {
           // Delete all nodes of content type neightborhood_lookup.
@@ -163,29 +160,6 @@ class MNLRest extends ControllerBase {
           $this->createNode($item);
         }
 
-        /*
-        $dataImportPath = \Drupal::root() . '/modules/custom/bos_components/modules/bos_mnl/data/data.json';
-        $dataImportFile = file_get_contents($dataImportPath);
-        $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
-
-        foreach ($dataImportFile as $items) {
-        $this->createNode($nid, $items);
-        }
-        $filePath = \Drupal::root() . '/sites/default/files/data.json';
-        $file = fopen($filePath, "w");
-        fwrite($file, "[");
-        foreach ($data as $items) {
-          fwrite($file, json_encode($items) . ",");
-        }
-        // Removed last comma.
-        $position = fstat($file)['size'] - 1;
-        ftruncate($file, $position);
-        fseek($file, $position);
-        fwrite($file, "]");
-        fwrite($file, $data);
-        fclose($file);
-        */
-
         $response_array = [
           'status' => $operation . ' procedure complete',
           'response' => 'authorized'
@@ -196,7 +170,6 @@ class MNLRest extends ControllerBase {
           'status' => 'error',
           'response' => 'unknown error',
         ];
-
       }
 
     else :
