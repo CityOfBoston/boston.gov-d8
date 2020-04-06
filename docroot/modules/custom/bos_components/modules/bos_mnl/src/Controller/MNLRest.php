@@ -116,6 +116,8 @@ class MNLRest extends ControllerBase {
           'response' => 'wrong api key',
         ];
 
+      if (strpos($a, 'import') !== false) {
+
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
         if (json_last_error() === 0) {
@@ -147,14 +149,21 @@ class MNLRest extends ControllerBase {
           ];
         }
       }
-      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
-        $filePath = \Drupal::root() . '/sites/default/files/data.json';
-        // Delete all nodes of content type neightborhood_lookup.
-        /*foreach ($nids as $nid) {
-        $node = Node::load($nid);
-        $node->delete();
+      elseif (!$apiKey == NULL && $request_method == "POST" && strpos($operation, "import") !== false) {
+
+        if ($operation == "import-delete") {
+          // Delete all nodes of content type neightborhood_lookup.
+          foreach ($nids as $nid) {
+            $node = Node::load($nid);
+            $node->delete();
+          }
         }
 
+        foreach ($data as $item) {
+          $this->createNode($item);
+        }
+
+        /*
         $dataImportPath = \Drupal::root() . '/modules/custom/bos_components/modules/bos_mnl/data/data.json';
         $dataImportFile = file_get_contents($dataImportPath);
         $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
@@ -162,16 +171,12 @@ class MNLRest extends ControllerBase {
         foreach ($dataImportFile as $items) {
         $this->createNode($nid, $items);
         }
-
-        $this->importNodes($filePath);
-         */
-
+        $filePath = \Drupal::root() . '/sites/default/files/data.json';
         $file = fopen($filePath, "w");
         fwrite($file, "[");
         foreach ($data as $items) {
           fwrite($file, json_encode($items) . ",");
         }
-
         // Removed last comma.
         $position = fstat($file)['size'] - 1;
         ftruncate($file, $position);
@@ -179,6 +184,7 @@ class MNLRest extends ControllerBase {
         fwrite($file, "]");
         fwrite($file, $data);
         fclose($file);
+        */
 
         $response_array = [
           'status' => $operation . ' procedure complete',
