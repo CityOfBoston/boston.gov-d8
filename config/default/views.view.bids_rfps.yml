@@ -5,10 +5,12 @@ dependencies:
   config:
     - core.entity_view_mode.node.listing
     - node.type.procurement_advertisement
+    - taxonomy.vocabulary.contact
   module:
     - better_exposed_filters
     - datetime
     - node
+    - taxonomy
     - user
 _core:
   default_config_hash: ytRCa2Q_BiyWfNaMGDIasJ8BSZldFozQa2m4aqSNUys
@@ -65,11 +67,17 @@ display:
               more_options:
                 is_secondary: false
                 placeholder_text: ''
-            field_awarding_authority_target_id:
+            field_event_project_number_value_1:
               bef_format: default
               more_options:
                 is_secondary: false
                 placeholder_text: ''
+            field_contact_target_id:
+              bef_format: bef
+              more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
+                is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
           text_input_required_format: filtered_html
@@ -426,6 +434,59 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
+        field_contact_target_id:
+          id: field_contact_target_id
+          table: node__field_contact
+          field: field_contact_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_contact_target_id_op
+            label: 'Filter by Department'
+            description: ''
+            use_operator: false
+            operator: field_contact_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_contact_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: contact
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       sorts:
         created:
           id: created
@@ -473,6 +534,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -495,6 +557,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -777,6 +840,59 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
+        field_contact_target_id:
+          id: field_contact_target_id
+          table: node__field_contact
+          field: field_contact_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_contact_target_id_op
+            label: 'Filter by Department'
+            description: ''
+            use_operator: false
+            operator: field_contact_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_contact_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: contact
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       defaults:
         filters: false
         filter_groups: false
@@ -791,6 +907,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
