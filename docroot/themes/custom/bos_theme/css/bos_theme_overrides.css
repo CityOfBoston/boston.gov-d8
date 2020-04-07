@@ -1248,3 +1248,15 @@ What: Hiding Translate button across site and devices
 .tr--visible.translate-dropdown-menu {
   display: none;
 }
+
+/**
+Stella
+Where: Listing page filters
+What: Each filter width adjustment
+ */
+
+@media (min-width: 980px) {
+  .view-metrolist-affordable-housing-page .view-filters .drawer-wrapper {
+    width: calc(33.3% - 76px);
+  }
+}
