@@ -150,10 +150,9 @@ class MNLRest extends ControllerBase {
 
         if ($operation == "import-delete") {
           // Delete all nodes of content type neightborhood_lookup.
-          foreach ($nids as $nid) {
-            $node = Node::load($nid);
-            $node->delete();
-          }
+          $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
+          $entities = $storage_handler->loadMultiple($nids);
+          $storage_handler->delete($entities);
         }
 
         foreach ($data as $item) {
