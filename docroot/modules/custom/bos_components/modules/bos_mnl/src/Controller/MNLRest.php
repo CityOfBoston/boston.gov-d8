@@ -147,14 +147,7 @@ class MNLRest extends ControllerBase {
           ];
         }
       }
-      elseif (!$apiKey == NULL && $request_method == "POST" && strpos($operation, "import") !== FALSE) {
-
-        if ($operation == "import-delete") {
-          // Delete all nodes of content type neightborhood_lookup.
-          $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
-          $entities = $storage_handler->loadMultiple($nids);
-          $storage_handler->delete($entities);
-        }
+      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
 
         foreach ($data as $item) {
           $this->createNode($item);
@@ -164,6 +157,21 @@ class MNLRest extends ControllerBase {
           'status' => $operation . ' procedure complete',
           'response' => 'authorized'
         ];
+      }
+      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import-delete") {
+
+        // Delete all nodes of content type neightborhood_lookup.
+        $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
+        foreach (array_chunk($nids, 500) as $nids_chunk) {
+          $entities = $storage_handler->loadMultiple($nids_chunk);
+          $storage_handler->delete($entities);
+        }
+
+        $response_array = [
+          'status' => $operation . ' procedure complete',
+          'response' => 'authorized'
+        ];
+
       }
       else {
         $response_array = [
