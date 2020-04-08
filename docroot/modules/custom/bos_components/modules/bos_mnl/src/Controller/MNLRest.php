@@ -149,8 +149,9 @@ class MNLRest extends ControllerBase {
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
         // Create JSON files in local directory.
-        $currentIndex = 0;
+        $current = 0;
         foreach (array_chunk($data, 100) as $items) {
+          $currentIndex = time() . $current++;
           $filePath = \Drupal::root() . '/sites/default/files/mnl/data_' . $currentIndex . '.json';
           $file = fopen($filePath, "w");
           fwrite($file, "[");
@@ -164,12 +165,10 @@ class MNLRest extends ControllerBase {
           fwrite($file, "]");
           fwrite($file, $data);
           fclose($file);
-          $currentIndex++;
         }
 
         $response_array = [
           'status' => $operation . ' procedure complete',
-          'last_index' => $currentIndex,
           'response' => 'authorized'
         ];
       }
