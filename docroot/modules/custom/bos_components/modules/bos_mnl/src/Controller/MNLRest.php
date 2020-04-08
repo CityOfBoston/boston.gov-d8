@@ -148,30 +148,30 @@ class MNLRest extends ControllerBase {
         }
       }
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
-
-        foreach ($data as $item) {
-          $this->createNode($item);
+        // Create JSON files in local directory.
+        $currentIndex = 0;
+        foreach (array_chunk($data, 100) as $items) {
+          $filePath = \Drupal::root() . '/sites/default/files/mnl/data_' . $currentIndex . '.json';
+          $file = fopen($filePath, "w");
+          fwrite($file, "[");
+          foreach ($items as $item) {
+            fwrite($file, json_encode($item) . ",");
+          }
+          // Removed last comma.
+          $position = fstat($file)['size'] - 1;
+          ftruncate($file, $position);
+          fseek($file, $position);
+          fwrite($file, "]");
+          fwrite($file, $data);
+          fclose($file);
+          $currentIndex++;
         }
 
         $response_array = [
           'status' => $operation . ' procedure complete',
+          'last_index' => $currentIndex,
           'response' => 'authorized'
         ];
-      }
-      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import-delete") {
-
-        // Delete all nodes of content type neightborhood_lookup.
-        $storage_handler = \Drupal::entityTypeManager()->getStorage("node");
-        foreach (array_chunk($nids, 500) as $nids_chunk) {
-          $entities = $storage_handler->loadMultiple($nids_chunk);
-          $storage_handler->delete($entities);
-        }
-
-        $response_array = [
-          'status' => $operation . ' procedure complete',
-          'response' => 'authorized'
-        ];
-
       }
       else {
         $response_array = [
