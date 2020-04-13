@@ -8,6 +8,11 @@ use Drupal\node\Entity\Node;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Queue\QueueInterface;
+use Drupal\Core\Queue\DatabaseQueue;
+use Drupal\Core\Queue\QueueWorkerInterface;
+use Drupal\Core\Queue\QueueWorkerManagerInterface;
 
 /**
  * Bibblio class for API.
@@ -73,19 +78,6 @@ class MNLRest extends ControllerBase {
       'field_sam_neighborhood_data' => json_encode($dataJSON['data']),
     ]);
     $node->save();
-  }
-
-  /**
-   * Import rows from local JSON file.
-   */
-  public function importNodes() {
-    $dataImportPath = \Drupal::root() . '/sites/default/files/data.json';
-    $dataImportFile = file_get_contents($dataImportPath);
-    $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
-
-    foreach ($dataImportFile as $items) {
-      $this->createNode($nid, $items);
-    }
   }
 
   /**
@@ -169,6 +161,99 @@ class MNLRest extends ControllerBase {
 
         $response_array = [
           'status' => $operation . ' procedure complete',
+          'response' => 'authorized'
+        ];
+      }
+
+      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import-queue") {
+        // Get queue.
+        $queue = \Drupal::queue('mnl_import');
+
+        /*$queueFactory = \Drupal::service('queue');
+        $queue = $queueFactory->get('mnl_import');
+        $queue->deleteQueue();*/
+
+        // Get local JSON data files for import and create Queue items.
+        $path = \Drupal::root() . '/sites/default/files/mnl/';
+        $dir = new \DirectoryIterator($path);
+        foreach ($dir as $file) {
+          if (!$file->isFile()) {
+            continue;
+          }
+          $filename = $file->getFilename();
+          $dataImportFile = file_get_contents($path . $filename);
+          $dataImportFile = json_decode(strip_tags($dataImportFile), TRUE);
+
+          foreach ($dataImportFile as $items) {
+            // Create item to queue.
+            $queue->createItem($items);
+          }
+
+        }
+
+        $queueTotal = $queue->numberOfItems();
+        $response_array = [
+          'status' => 'queue complete - ' . $queueTotal,
+          'response' => 'authorized'
+        ];
+
+      }
+
+      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "process-queue") {
+        // Get queue.
+        $queueFactory = \Drupal::service('queue');
+        $queueManager = \Drupal::service('plugin.manager.queue_worker');
+
+        $queue = $queueFactory->get('mnl_import');
+        $worker = $queueManager->createInstance('mnl_import');
+
+        while ($item = $queue->claimItem()) {
+          $worker->processItem($item->data);
+        }
+
+        $response_array = [
+          'status' => 'queue processed',
+          'response' => 'authorized'
+        ];
+      }
+
+      elseif (!$apiKey == NULL && $request_method == "POST" && strpos($operation, "delete") !== FALSE) {
+        if ($operation == 'delete-sync') {
+          $queue_name = 'mnl_delete';
+        }
+        else {
+          $queue_name = 'mnl_delete_all';
+        }
+
+        // Creates queue.
+        $queueDelete = \Drupal::queue($queue_name);
+        $queueFactory = \Drupal::service('queue');
+        $queueManager = \Drupal::service('plugin.manager.queue_worker');
+
+        foreach ($nids as $nid) {
+          $queueDelete->createItem($nid);
+        }
+
+        // Create worker for MNL Delete queue.
+        $worker = $queueManager->createInstance($queue_name);
+
+        if ($queueDelete->numberOfItems > 0) {
+          while ($item = $queueDelete->claimItem()) {
+            try {
+              $worker->processItem($item->data);
+            }
+            catch (\Exception $e) {
+              $queueDelete->releaseItem($item);
+            }
+          }
+        }
+
+        // Delete MNL delete queue.
+        $queueDeleteGet = $queueFactory->get($queue_name);
+        $queueDeleteGet->deleteQueue();
+
+        $response_array = [
+          'status' => 'delete processed ',
           'response' => 'authorized'
         ];
       }
