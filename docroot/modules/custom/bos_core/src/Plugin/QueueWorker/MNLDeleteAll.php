@@ -26,6 +26,6 @@ class MNLDeleteAll extends QueueWorkerBase {
     $node = Node::load($items);
     $sam_id = $node->field_sam_id->value;
     $node->delete();
-  } 
+  }
 
 }
