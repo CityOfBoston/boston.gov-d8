@@ -237,7 +237,7 @@ class MNLRest extends ControllerBase {
         // Create worker for MNL Delete queue.
         $worker = $queueManager->createInstance($queue_name);
 
-        if ($queueDelete->numberOfItems > 0) {
+        if ($queueDelete->numberOfItems() > 0) {
           while ($item = $queueDelete->claimItem()) {
             try {
               $worker->processItem($item->data);
