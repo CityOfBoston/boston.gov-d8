@@ -6,12 +6,10 @@
  */
 
 use Drupal\Core\Render\Element;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\GeneratedLink;
 use Drupal\Core\Url;
@@ -52,6 +50,10 @@ function bos_admin_preprocess_html(&$variables) {
     && \Drupal::request()->attributes->get("_route_params")["entity_type"] == "embed_button") {
     $variables['attributes']['class'][] = 'admin-content-embed-buttons';
   }
+  if (NULL != ($node = \Drupal::routeMatch()->getParameter('node'))
+    && isset($node->hasField['moderation_state'])) {
+    $variables['attributes']['class'][] = "node-" . $node->get('moderation_state')->getString();
+  }
 }
 
 /**
@@ -83,6 +85,24 @@ function bos_admin_preprocess_username(&$variables) {
       $variables["name"] = $name;
     }
     realname_user_update($variables["account"]);
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_admin_preprocess_block(&$variables) {
+  if (isset($variables["content"]["#title"])
+    && is_object($variables["content"]["#title"])
+    && NULL != ($arguments = $variables["content"]["#title"]->getArguments())
+    && !empty($arguments["@title"])) {
+    $at_settings = [
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'max_length' => 35,
+    ];
+    $arguments['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
+    $variables["content"]["#title"] = new TranslatableMarkup("<b>Edit</b> <em>@type</em> | @title", $arguments);
   }
 }
 
@@ -170,6 +190,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   if (isset($form_state->getBuildInfo()['base_form_id']) && $form_state->getBuildInfo()['base_form_id'] == "node_form") {
     // Node-edit forms: Make the Revision log message required.
     $form["revision_log"]["widget"][0]["value"]["#attributes"]["placeholder"] = "If changing moderation state, you must supply a relevant log note for this update.";
+    $form["revision_log"]["widget"][0]["value"]["#title"] = Markup::create("Revision log message <span style='color: red;'>*</span>");
 
     /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/content-editor-ux */
     // Create a secondary block group, and load.
@@ -284,8 +305,8 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
         && isset($form[$form_field]["widget"][0]["#base_type"])
         && $form[$form_field]["widget"][0]["#base_type"] == "textarea") {
         $type = $form["#entity_type"];
-        $classes = " " . $type . "_" . ($bundle?:"unk") . " " . $form_field;
-        _bos_admin_add_ckeditor_classes($form, [$form_field => ["body" => $classes, "html" => " " . $type . "_" . ($bundle?:"unk") . "_wrapper"]]);
+        $classes = " " . $type . "_" . ($bundle ?: "unk") . " " . $form_field;
+        _bos_admin_add_ckeditor_classes($form, [$form_field => ["body" => $classes, "html" => " " . $type . "_" . ($bundle ?: "unk") . "_wrapper"]]);
       }
     }
 
@@ -303,7 +324,16 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
   $form["moderation_state"]["widget"][0]["scheduled_transitions"]["#attributes"]['class'][] = "moderation-state";
 
   if (!empty($form["meta"]["author"]["#markup"])) {
+    $form["meta"]["author"]["#title"] = new TranslatableMarkup("Revision Author");
+    $form["author"]["#title"] = new TranslatableMarkup("Original Author");
+    $node = \Drupal::routeMatch()->getParameter('node');
     $form["meta"]["author"]["#markup"] = bos_admin_author_expand($form["meta"]["author"]["#markup"]);
+    if (!empty($node)) {
+      $account = \Drupal::entityTypeManager()->getStorage("user")->load($node->get("revision_uid")->target_id);
+      if (isset($account)) {
+        $form["meta"]["author"]["#markup"] = bos_admin_author_expand($account->get("name")->value);
+      }
+    }
   }
 
   // Management of secondary actions menu.
@@ -328,7 +358,7 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
       $form["#attached"]["library"][] = "bos_admin/manual_date";
     }
     if (!\Drupal::currentUser()->hasPermission("set any published on date")
-      || !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
+      && !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
       $form["field_updated_date"]["#disabled"] = TRUE;
       $form["field_published_date"]["#disabled"] = TRUE;
       $form["field_manual_date"]["#disabled"] = TRUE;

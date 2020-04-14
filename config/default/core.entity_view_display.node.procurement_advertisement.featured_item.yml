@@ -1,0 +1,297 @@
+uuid: 235f3939-04ce-4bb5-a695-0227963973d6
+langcode: und
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.featured_item
+    - field.field.node.procurement_advertisement.body
+    - field.field.node.procurement_advertisement.field_award_date
+    - field.field.node.procurement_advertisement.field_awarded_by
+    - field.field.node.procurement_advertisement.field_bid
+    - field.field.node.procurement_advertisement.field_bid_type
+    - field.field.node.procurement_advertisement.field_contact
+    - field.field.node.procurement_advertisement.field_contract_length
+    - field.field.node.procurement_advertisement.field_date_range
+    - field.field.node.procurement_advertisement.field_department
+    - field.field.node.procurement_advertisement.field_document
+    - field.field.node.procurement_advertisement.field_email
+    - field.field.node.procurement_advertisement.field_event_project_number
+    - field.field.node.procurement_advertisement.field_intro_text
+    - field.field.node.procurement_advertisement.field_ma_general_law
+    - field.field.node.procurement_advertisement.field_multi_year_contract
+    - field.field.node.procurement_advertisement.field_not_awarded
+    - field.field.node.procurement_advertisement.field_offering
+    - field.field.node.procurement_advertisement.field_phone_number
+    - field.field.node.procurement_advertisement.field_procurement
+    - field.field.node.procurement_advertisement.field_procurement_footer
+    - field.field.node.procurement_advertisement.field_related_links
+    - field.field.node.procurement_advertisement.field_unspsc
+    - field.field.node.procurement_advertisement.field_url
+    - node.type.procurement_advertisement
+  module:
+    - datetime
+    - datetime_range
+    - entity_reference_revisions
+    - fences
+    - file
+    - link
+    - text
+    - user
+id: node.procurement_advertisement.featured_item
+targetEntityType: node
+bundle: procurement_advertisement
+mode: featured_item
+content:
+  body:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  content_moderation_control:
+    weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_award_date:
+    type: datetime_default
+    weight: 9
+    region: content
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+  field_awarded_by:
+    type: entity_reference_entity_view
+    weight: 22
+    region: content
+    label: hidden
+    settings:
+      view_mode: department_listing
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_bid:
+    type: entity_reference_revisions_entity_view
+    weight: 8
+    region: content
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+  field_bid_type:
+    type: entity_reference_label
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_contact:
+    type: entity_reference_label
+    weight: 11
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_contract_length:
+    type: number_integer
+    weight: 17
+    region: content
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+  field_date_range:
+    weight: 12
+    label: above
+    settings:
+      timezone_override: America/New_York
+      format_type: date_format_short
+      separator: '-'
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: daterange_default
+    region: content
+  field_department:
+    type: string
+    weight: 15
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_document:
+    type: file_default
+    weight: 19
+    region: content
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+  field_email:
+    type: string
+    weight: 14
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_event_project_number:
+    type: string
+    weight: 6
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_intro_text:
+    weight: 10
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_ma_general_law:
+    type: entity_reference_entity_view
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_multi_year_contract:
+    type: boolean
+    weight: 16
+    region: content
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+  field_not_awarded:
+    type: boolean
+    weight: 23
+    region: content
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+  field_offering:
+    type: entity_reference_label
+    weight: 5
+    region: content
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+  field_phone_number:
+    type: string
+    weight: 13
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_procurement:
+    weight: 2
+    label: hidden
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: entity_reference_label
+    region: content
+  field_procurement_footer:
+    weight: 21
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_related_links:
+    type: link
+    weight: 20
+    region: content
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: '0'
+      target: '0'
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+  field_unspsc:
+    type: number_integer
+    weight: 7
+    region: content
+    label: hidden
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+  field_url:
+    type: string
+    weight: 18
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  links:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  published_at: true

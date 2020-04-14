@@ -23,7 +23,18 @@ use GuzzleHttp\Exception\TransferException;
  */
 class BosCoreGAPost {
 
+  /**
+   * Logger object for class.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
   protected $log;
+
+  /**
+   * Config object fore class.
+   *
+   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
+   */
   protected $config;
 
   /**

@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.rss
     - core.entity_view_mode.node.teaser
+    - user.role.administrator
   module:
     - node
     - user
@@ -17,7 +18,6 @@ description: 'All content promoted to the front page.'
 tag: default
 base_table: node_field_data
 base_field: nid
-core: 8.x
 display:
   default:
     display_options:
@@ -88,6 +88,8 @@ display:
               authenticated: authenticated
             required: false
             use_operator: false
+            operator_limit_selection: false
+            operator_list: {  }
           exposed: false
           field: promote
           group: 1
@@ -115,6 +117,8 @@ display:
         status:
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           field: status
           group: 1
           id: status
@@ -148,6 +152,8 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -291,6 +297,13 @@ display:
     display_options:
       path: node
       display_extenders: {  }
+      access:
+        type: role
+        options:
+          role:
+            administrator: administrator
+      defaults:
+        access: false
     display_plugin: page
     display_title: Page
     id: page_1
@@ -300,6 +313,6 @@ display:
         - 'languages:language_interface'
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       max-age: -1
       tags: {  }

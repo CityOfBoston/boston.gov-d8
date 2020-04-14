@@ -27,7 +27,18 @@ class CreateMediaEntity extends ProcessPluginBase {
   use \Drupal\bos_migration\FilesystemReorganizationTrait;
   use \Drupal\bos_migration\MediaEntityTrait;
 
+  /**
+   * The row from the migration.
+   *
+   * @var \Drupal\migrate\Row
+   */
   protected $row;
+
+  /**
+   * MigrateExecutableInterface for the class.
+   *
+   * @var \Drupal\migrate\MigrateExecutableInterface
+   */
   protected $migrateExecutable;
 
   /**

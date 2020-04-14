@@ -1,0 +1,21 @@
+uuid: ec474f51-9574-4e19-a824-930c1522f85b
+langcode: und
+status: true
+dependencies:
+  module:
+    - lightning_core
+third_party_settings:
+  lightning_core:
+    description: 'This role is able to edit metrolist nodes (imported by salesforce)'
+id: metrolist_editor
+label: 'Metrolist Editor'
+weight: -2
+is_admin: null
+permissions:
+  - 'access content'
+  - 'access content overview'
+  - 'access toolbar'
+  - 'edit any metrolist_affordable_housing content'
+  - 'edit own metrolist_affordable_housing content'
+  - 'view metrolist_affordable_housing revisions'
+  - 'view own unpublished content'

@@ -87,7 +87,12 @@ function bos_card_paragraph_card_summary_alter(array $form_widget, array $para, 
   }
   if ($para["entity"]->hasField("field_link") && count($para["entity"]->get("field_link"))) {
     $card = Paragraph::load($para["entity"]->get("field_link")->target_id);
-    $markup[] = Markup::create("<span class='info'>has " . $card->bundle() . " CTA.</span>");
+    if (isset($card)) {
+      $markup[] = Markup::create("<span class='info'>has " . $card->bundle() . " CTA.</span>");
+    }
+    else {
+      $markup[] = Markup::create("<span class='info'>has no CTA.</span>");
+    }
   }
   else {
     $markup[] = Markup::create("<span class='info'>has no CTA.</span>");

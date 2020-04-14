@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.metrolist_affordable_housing.field_mah_outer_location
     - field.field.node.metrolist_affordable_housing.field_mah_phone
     - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
+    - field.field.node.metrolist_affordable_housing.field_mah_resale
     - field.field.node.metrolist_affordable_housing.field_mah_zipcode
     - node.type.metrolist_affordable_housing
     - workflows.workflow.unmanaged_workflow
@@ -32,11 +33,7 @@ third_party_settings:
   field_group:
     group_mah:
       children:
-        - field_mah_not_active
-        - field_mah_publish_to_metrolist
-        - title
-        - body
-        - field_mah_household_income_limit
+        - group_basic_information
         - group_address_
         - group_lottery_info
       parent_name: ''
@@ -66,6 +63,7 @@ third_party_settings:
       region: content
     group_address_:
       children:
+        - field_mah_resale
         - field_mah_address
         - field_mah_neighborhood
         - field_mah_zipcode
@@ -83,6 +81,24 @@ third_party_settings:
         required_fields: true
       label: 'Address Info'
       region: content
+    group_basic_information:
+      children:
+        - field_mah_not_active
+        - field_mah_publish_to_metrolist
+        - title
+        - body
+        - field_mah_household_income_limit
+      parent_name: group_mah
+      weight: 20
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: open
+        required_fields: true
+      label: 'Basic Information'
 _core:
   default_config_hash: BsZ0GZAH2MqZ_owOb_gj92D97A4ptXJxpnHWP_NocPg
 id: node.metrolist_affordable_housing.default
@@ -91,12 +107,13 @@ bundle: metrolist_affordable_housing
 mode: default
 content:
   body:
-    weight: 3
+    weight: 24
     type: text_textarea_with_summary
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
@@ -106,7 +123,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_mah_address:
-    weight: 6
+    weight: 29
     type: string_textfield
     settings:
       size: 60
@@ -114,7 +131,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_contact:
-    weight: 10
+    weight: 33
     type: string_textfield
     settings:
       size: 60
@@ -122,7 +139,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_email:
-    weight: 12
+    weight: 35
     type: string_textfield
     settings:
       size: 60
@@ -130,7 +147,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_household_income_limit:
-    weight: 4
+    weight: 25
     type: string_textfield
     settings:
       size: 60
@@ -138,7 +155,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_lottery_deadline:
-    weight: 15
+    weight: 16
     type: datetime_default
     settings: {  }
     third_party_settings: {  }
@@ -152,7 +169,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_lottery_type:
-    weight: 13
+    weight: 14
     type: string_textfield
     settings:
       size: 60
@@ -160,7 +177,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_lottery_url:
-    weight: 14
+    weight: 15
     type: link_default
     settings:
       placeholder_url: ''
@@ -168,20 +185,20 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_neighborhood:
-    weight: 7
+    weight: 30
     type: options_buttons
     settings: {  }
     third_party_settings: {  }
     region: content
   field_mah_not_active:
-    weight: 0
+    weight: 21
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
   field_mah_outer_location:
-    weight: 9
+    weight: 32
     type: string_textfield
     settings:
       size: 60
@@ -189,7 +206,7 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_phone:
-    weight: 11
+    weight: 34
     type: string_textfield
     settings:
       size: 60
@@ -197,14 +214,22 @@ content:
     third_party_settings: {  }
     region: content
   field_mah_publish_to_metrolist:
-    weight: 1
+    weight: 22
     type: boolean_checkbox
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
+  field_mah_resale:
+    weight: 28
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_mah_zipcode:
-    weight: 8
+    weight: 31
     type: string_textfield
     settings:
       size: 60
@@ -259,7 +284,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 2
+    weight: 23
     region: content
     settings:
       size: 60
@@ -273,6 +298,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   url_redirects:
     weight: 11
