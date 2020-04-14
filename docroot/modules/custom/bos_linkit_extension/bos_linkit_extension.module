@@ -135,7 +135,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
     "stuff" => [
       "0" => [
         "#type" => 'details',
-        "#title" => "Internal / External Link",
+        "#title" => "Internal / External",
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 0,
@@ -148,7 +148,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
       ],
       "1" => [
         "#type" => 'details',
-        "#title" => "Email / Phone Link",
+        "#title" => "Email / Phone",
         "#attributes" => [
           "class" => [10 => "cob-details-wrapper"],
           "data-horiz-id" => 1,
@@ -178,7 +178,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
               '#markup' => "
                 <p>Provide initial values in the email that will be sent.<br>
                 <b>Note:</b> Most users email clients (e.g. gmail) will allow
-                 the user to change all values provided below.</p>  
+                 the user to change all values provided below.</p>
               ",
               "address" => [
                 '#type' => 'textfield',
@@ -304,8 +304,27 @@ function bos_linkit_extension_editor_link_dialog_submit(array &$form, FormStateI
   $href_dirty_check = $form_state->getValue(['href_dirty_check']);
   if (!empty($href) && $href !== $href_dirty_check) {
     // We are adding/updating a linkit link.
-    // This is handled in linkit.module so we have nothing else to do here.
-    return;
+    if ($form_state->getValue(["cob_tabs", "stuff", 2, "form", "fid"]) != "") {
+
+      $file_key = ["cob_tabs", "stuff", 2, "form"];
+
+      // Convert any uploaded files from the FID values to data-entity-uuid
+      // attributes and set data-entity-type to 'file'.
+      $fid = $form_state->getValue(array_merge($file_key, ['fid', 0]));
+
+      if (!empty($fid)) {
+        // Mark file as permenant.
+        $file = File::load($fid);
+        if (isset($file) && $file->isTemporary()) {
+          $file->setPermanent();
+          $file->save();
+        }
+        // Make sure this node is recorded as a "used in" value.
+        /*\Drupal::service('file.usage')->add($file, 'editor',
+        $entity->getEntityTypeId(), $entity->id());*/
+      }
+      return;
+    }
   }
 }
 
@@ -443,15 +462,15 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
       }
 
       // Build new href element.
-      $attributes["href"] = "mailto:" . urlencode(Html::escape($email["email-frame"]["address"]));
+      $attributes["href"] = "mailto:" . Html::escape($email["email-frame"]["address"]);
       $join = "?";
       if (!empty($email["email-frame"]["subject"])) {
-        $attributes["href"] .= $join . "subject=" . urlencode(Html::escape($email["email-frame"]["subject"]));
+        $attributes["href"] .= $join . "subject=" . Html::escape($email["email-frame"]["subject"]);
         $join = "&";
       }
       if (!empty($email["email-frame"]["body"])) {
         $body = Html::escape($email["email-frame"]["body"]);
-        $attributes["href"] .= $join . "body=" . urlencode($body);
+        $attributes["href"] .= $join . "body=" . Html::escape($body);
       }
       $form_state->setValue("attributes", $attributes);
       $form_state->setValue("href_dirty_check", $attributes['href']);
@@ -496,6 +515,7 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
     if (!empty($fid)) {
       $file = File::load($fid);
       $file_url = file_create_url($file->getFileUri());
+      $_SESSION['embed'][$form["form_build_id"]["#value"]] = $file;
       // Transform absolute file URLs to relative file URLs: prevent problems
       // on multisite set-ups and prevent mixed content errors.
       $file_url = file_url_transform_relative($file_url);

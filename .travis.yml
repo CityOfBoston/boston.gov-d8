@@ -1,13 +1,12 @@
 sudo: false
 language: php
 
-env:
-
 branches:
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   only:
     - develop
     - master
-    - mnl_12-9-2019
+    - procurement
 
 php:
   - 7.3
@@ -36,52 +35,90 @@ cache:
 
 notifications:
   slack:
-    secure: b2UX5FnE2/C5MDNK47EP0GZIRmfwX+18HES0Q/uSwt6t7+ogKCtIjWCp1sIPd7jqRak0VmLoM0OHy6MBjz6x+1MQMNUqPEiO1f2APgBJ48c6rzeWQKTVfrKsUvPYIA+gxQ7jq7Gn0zPYQ5/+KXkxac+NrVoH85sI0xIL2BhFgQu1W4OlLLFKT11U7zJtCi3bcYhF7/eyCcrs3+IBGGp9sldjWvaVLDqUnFjz3c5AXwxlbJ6UTq7GIdIEe5Xw/UOJS9weedhoYH2XSNzFpmqqkAGcvkFpgCeYxf12iiqkmoAq5A0CxWVXqA3vG+imabuQonpbQsGdvtFP71EV9o9DxwATwxaGhBpX+Sw4zN7v25IC6n7rcvcK2F9dtY0CAb8BpWbEbWMDXXmVvFEVAvgARQ/b+L7YOJbNbbJwJQqZkllJp0lAFluyMDwpP2Ncr177S5hR/4Z6rlj1aLK1nhbmi/tK/kSNe+bcashm7/S2KG076hN0b5TB87hsbkvHsnVJDMKXSHwKrrdJiXDAkwZbl2sBp/bbfMTXyEqrINUG4WA70WXP3lR/QJy2pldVEYIU5rRwSzZ0BJ9raF7iiXFgTn3+Yhl0U/UgcDCEKoRvutM/suCy1mQBYP+Gv1uyFNFco37doQbPeyAXNb1vjfJQtyzy8I31gIN/sK590YxLBCA=
+    - if: branch = master
+      on_pull_requests: false
+      on_success: always
+      on_failure: never
+      rooms:
+        # drupal - Only when sucessfully merging to master.
+        - secure: "No3MBbF9oeNGDRQiy4ebob6Wum0YZUvSOtoeAR5lBwB8L4gQNh7kv3dHBLU80U8i0vQca45YuWBDdeXEMhDNqitUXKTRVj8SEN23PgoqhZhSvSmXBXjMm91ekHedTaFqeYVxvTPFphvYh1/y3l/Wjxf8kp6p6EiBhdP7JsWUePPEkOnVNt3QqGLypVBF4K1XHXn4Yee6dml6du247NLRhrTb+X+rJHntNFewW+5jU/6hQka3psTshtL5q3CUGAAf5pV/j7AmzzYwJ/6A162SonHG5xrE2vhV/YJUnp7Tz5IfRGG87aB8bc55KvAbsIPPxWsxXToH8HH3F+WOCqT4pwg9xh4RHigyTZN5l4kAIdpFO73LoA5BEmJwALcJPYYBsHs67e124ylmBWIeukQQg404783lwocNQrUpBgZHsPbV+t96g88Wyv9th3yEjwPdh3/7DbYkZD76hicmfpqqnmbbGddCcZmDbqbHGQIz0hOLHZrYRexJ0BLxUovoEkMqMRKuNcnwqpEr0iRJeOruzqh0N4xbfnTP1kqHaImS0kXuSRX3eNwnyYBl1NoqLUX8tsyvHPQGb511Rk5Fvk3fsiG0EKe0SHNjuT2V3BaIXiiQdS4FcZruil7JN7wEd+Ry5KcaYAfIUmCBEzBKB9EmIqNpxA9yvZJJy6kSI7Oy/2A="
+      template:
+        - ":bostongov: *NOTICE:* A new deploy from GitHub to the Acquia <https://d8-stg.boston.gov|stage environment> has been started."
+        - "This deploy was initiated by %{author}."
+        - "_Please wait for deploy confirmation message in slack before testing_."
+    - if: branch = master
+      on_pull_requests: false
+      on_success: never
+      on_failure: always
+      rooms:
+        # drupal - Only when failed merging to master.
+        - secure: "No3MBbF9oeNGDRQiy4ebob6Wum0YZUvSOtoeAR5lBwB8L4gQNh7kv3dHBLU80U8i0vQca45YuWBDdeXEMhDNqitUXKTRVj8SEN23PgoqhZhSvSmXBXjMm91ekHedTaFqeYVxvTPFphvYh1/y3l/Wjxf8kp6p6EiBhdP7JsWUePPEkOnVNt3QqGLypVBF4K1XHXn4Yee6dml6du247NLRhrTb+X+rJHntNFewW+5jU/6hQka3psTshtL5q3CUGAAf5pV/j7AmzzYwJ/6A162SonHG5xrE2vhV/YJUnp7Tz5IfRGG87aB8bc55KvAbsIPPxWsxXToH8HH3F+WOCqT4pwg9xh4RHigyTZN5l4kAIdpFO73LoA5BEmJwALcJPYYBsHs67e124ylmBWIeukQQg404783lwocNQrUpBgZHsPbV+t96g88Wyv9th3yEjwPdh3/7DbYkZD76hicmfpqqnmbbGddCcZmDbqbHGQIz0hOLHZrYRexJ0BLxUovoEkMqMRKuNcnwqpEr0iRJeOruzqh0N4xbfnTP1kqHaImS0kXuSRX3eNwnyYBl1NoqLUX8tsyvHPQGb511Rk5Fvk3fsiG0EKe0SHNjuT2V3BaIXiiQdS4FcZruil7JN7wEd+Ry5KcaYAfIUmCBEzBKB9EmIqNpxA9yvZJJy6kSI7Oy/2A="
+      template:
+        - ":red_circle: *WARNING:* Deploy from GitHub to the Acquia <https://d8-stg.boston.gov|stage environment> *FAILED* (in Travis)."
+        - "This unsuccessful deploy attempt was initiated by %{author}."
+        - "EXPLANATION (from Travis): %{message}"
+    - if: branch = master OR branch = develop
+      on_pull_requests: true
+      on_success: always
+      on_failure: never
+      rooms:
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - ":drupal: DRUPAL *%{branch}* build has %{result}."
+        - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author} in %{duration}"
+        - "- %{message}"
+    - if: branch = master OR branch = develop
+      on_pull_requests: true
+      on_success: never
+      on_failure: always
+      rooms:
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - ":red_circle: DRUPAL *%{branch}* build has *%{result}* (in Travis build)."
+        - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author}"
+        - "EXPLANATION (from Travis): %{message}"
+    - if: branch = develop
+      on_pull_requests: false
+      on_success: always
+      on_failure: never
+      rooms:
+        # digital_builds - whenever travis runs on PR/Merge actions on develop and master branches.
+        - secure: "HX7tOsr8pnedT2CWJ053VWQ3gIT8E912Kh4RezdjeZM3Pk67esNQqp8pelvm3FRLGLNTmULaQ/T8RANEvm3AnlxbYClIJ/z/5TH1Mr+elZ1gFbBmpubFQSlt+qUGoILa1vHf0bmNG2L7g6dnVjNRkq+HTPnUffE/WCSpBEfATzbIMQ9xY6Wz5HP1YgQVKII01/VKXwe1/uO9cQaXCegXHaNQUj9mLAKoPqyz5oUxRQ2U2jO74TS9E+yLCout0kzvnnGlRVeEKvM4y3ZGPTgT8VvnjljS4Ftf4Xd8hV8EQAWCLUrlyjtalPiNanZkHZWAq83ATzUYteZZ4P/sjepwv0sEy8mQGMYWybeUfw+423nQnMexAgK+byA553Xn0nFvPxpawkeh8B+nkpCWjSA0wrZY6BKCukdWc9mMb3rYfWgY+yS4aOnF9esEjPMs0llxZQ8H1BYf60Soa7T5jCwSQYbUcviWdPM02OTWJrQAD8uXSXw2EoE6KOHuEJcVrw+FGPMrp3+Czx8MvzyFFddzZ7u/DWjyByvuP4LmkmVF0V2loFG9gwHAGDU+0KcKgMwrtWOzD4rYn0L+mpJCnWaokFubXa3p0v2T5ZQiP9hBnTDeZDA84nxmQATyL6ChGaQDkYTmv2qnIwNTuQJ/YacPiMiWdpCuqKunUP9v1Bm9zF0="
+      template:
+        - "Deployment of <%{build_url}|#%{build_number}> from GitHub to Acquia <https://d8-dev.boston.gov|develop environment> has been started."
+        - "_Check the #drupal channel for the deploy completion notice._"
 
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
-  - sudo apt-get install -y --no-install-recommends libgd-dev openssh-client jq fontconfig openssl
+  - ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_server_customize.sh
 
 install:
-  # In this context "install" is the phing build process because we are installing Drupal in order to test it.
-  # download all the latest modules (includes phing).
-  - composer install --no-suggest
-  - composer drupal:scaffold
-  - if [ ! -e  /usr/local/bin/drupal ]; then sudo ln -s ${LANDO_MOUNT}/vendor/drupal/console/bin/drupal /usr/local/bin/ ; fi
-  - if [ $TRAVIS_BRANCH == "master" ]; then export AH_SITE_ENVIRONMENT="prod"; else export AH_SITE_ENVIRONMENT="dev"; fi
-  # Make an account for drupal in MySQL (better than using root a/c).
-  - mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
-  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml validate:all; fi
-  - travis_wait 25 $TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml -Dgit.private_repo.user="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/" -Dtravis.branch=${TRAVIS_BRANCH} setup:docker:drupal-travis
-  # Build the drupal site using Phing.
-  - export phing="$TRAVIS_BUILD_DIR/vendor/bin/phing -f $TRAVIS_BUILD_DIR/build.xml"
+  - travis_wait 30 ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_build.sh
 
 script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
   # of monitored branches.
-  - if [ "${TRAVIS_PULL_REQUEST}" == "false" ]; then $TRAVIS_BUILD_DIR/vendor/bin/phing -f build.xml deploy:artifact:test; fi
-
-after_success:
-  # Manage SSH keys for deployment to Acquia.
-  - openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
-  - chmod 600 $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
-  - eval "$(ssh-agent -s)"
-  - ssh-add $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy
+  # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
+  - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
+  # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
 
 deploy:
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
   - provider: script
     skip_cleanup: true
-    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: mnl_12-9-2019
-  - provider: script
-    skip_cleanup: true
-    script: bash scripts/deploy/travis-deploy.sh $TRAVIS_BRANCH
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
+  - provider: script
+    skip_cleanup: true
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: procurement

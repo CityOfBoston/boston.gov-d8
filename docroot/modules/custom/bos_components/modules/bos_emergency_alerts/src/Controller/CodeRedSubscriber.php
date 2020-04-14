@@ -20,14 +20,43 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CodeRedSubscriber extends ControllerBase {
 
+  /**
+   * API endpoints for message types.
+   *
+   * @var array
+   */
   protected $uri = [
     "login" => "/api/login",
     "contact-list" => "/api/contacts",
     "contact" => "/api/contacts/{}",
   ];
+
+  /**
+   * Current request object.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request|null
+   */
   protected $request;
+
+  /**
+   * Logger object for class.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelInterface
+   */
   protected $log;
+
+  /**
+   * Mail object for class.
+   *
+   * @var \Drupal\Core\Mail\MailManager
+   */
   protected $mail;
+
+  /**
+   * Google Anaytics object for class.
+   *
+   * @var \Drupal\bos_core\Services\BosCoreGAPost
+   */
   protected $gapost;
 
   /**

@@ -1,0 +1,5 @@
+services:
+  slackposter.commands:
+    class: Drupal\slackposter\Commands\SlackposterCommands
+    tags:
+      - { name: drush.command }

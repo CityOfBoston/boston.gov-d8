@@ -99,9 +99,20 @@ function node_event_preprocess_page(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function node_event_preprocess_node__event(&$variables) {
-  _bos_theme_fix_attributes($variables);
-  if (!empty($variables['attributes'])) {
-    $variables['attributes']->addClass('desktop-100');
+
+  $ajax = FALSE;
+  if (NULL != \Drupal::request()->request->get("_drupal_ajax") || NULL != \Drupal::request()->request->get("ajax_page_state")) {
+    $ajax = TRUE;
+  }
+
+  if (!$ajax) {
+    _bos_core_fix_attributes($variables);
+    if (!empty($variables['attributes'])) {
+      $variables['attributes']->addClass('desktop-100');
+    }
+  }
+  else {
+    $variables['attributes']['style'][] = 'desktop-100';
   }
 
   $vars = [
@@ -115,30 +126,35 @@ function node_event_preprocess_node__event(&$variables) {
 
   // Select the date to appear on the node.
   if (isset($variables["content"]["field_event_date_recur"]["#object"])) {
-    if ($variables["content"]["field_event_date_recur"][0]["#is_recurring"]) {
+    $vdate = $variables["content"]["field_event_date_recur"][0];
+    if ($vdate["#is_recurring"]) {
       // This is a recurring event.
-      if (!empty($variables["content"]["field_event_date_recur"][0]["#occurrences"])) {
+      if (!empty($vdate["#occurrences"])) {
         // There are future occurrences scheduled.
-        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#occurrences'][0]['start_date']["#text"];
+        $variables["event_date"] = $vdate['#occurrences'][0]['start_date']["#text"];
       }
       else {
-        // All events are in the past ...
-        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']["#text"];
+        if (isset($vdate["#date"]['start_date'])) {
+          $variables["event_date"] = $vdate["#date"]['start_date']['#text'];
+        }
+        else {
+          $variables["event_date"] = $vdate['#date']["#text"];
+        }
       }
-      if (!empty($variables["content"]["field_event_date_recur"][0]["#interpretation"])) {
-        $vars['body'] = "Repeats " . $variables["content"]["field_event_date_recur"][0]["#interpretation"];
+      if (!empty($vdate["#interpretation"])) {
+        $vars['body'] = "Repeats " . $vdate["#interpretation"];
       }
     }
     else {
-      if (!empty($variables["content"]["field_event_date_recur"][0]['#date']['start_date'])) {
-        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']['start_date']['#text'];
-        if ($variables["event_date"] != $variables["content"]["field_event_date_recur"][0]['#date']['end_date']['#text']) {
+      if (!empty($vdate['#date']['start_date'])) {
+        $variables["event_date"] = $vdate['#date']['start_date']['#text'];
+        if ($variables["event_date"] != $vdate['#date']['end_date']['#text']) {
           $variables["event_date"] = preg_replace('~\, [0-9]{4}~', '', $variables["event_date"]);
-          $variables["event_date"] .= " - " . $variables["content"]["field_event_date_recur"][0]['#date']['end_date']['#text'];
+          $variables["event_date"] .= " - " . $vdate['#date']['end_date']['#text'];
         }
       }
-      elseif (!empty($variables["content"]["field_event_date_recur"][0]['#date']['#text'])) {
-        $variables["event_date"] = $variables["content"]["field_event_date_recur"][0]['#date']['#text'];
+      elseif (!empty($vdate['#date']['#text'])) {
+        $variables["event_date"] = $vdate['#date']['#text'];
       }
     }
 
@@ -229,7 +245,10 @@ function node_event_preprocess_node__event(&$variables) {
   // Check for cancelled state.
   $node = $variables['elements']['#node'];
   if ($node->hasField("field_cancelled")) {
-    $variables["is_cancelled"] = ($node->field_cancelled->value == "1");
+    $variables["is_cancelled"] = ($node->get("field_cancelled")->value == "1");
+  }
+  if ($node->hasField("field_cancel_event")) {
+    $variables["is_cancelled"] = ($node->get("field_cancel_event")->value == "1");
   }
 
   // Now make and render the Intro_image block.
@@ -253,8 +272,11 @@ function node_event_preprocess_node__event(&$variables) {
     ];
     $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
 
-    if (!empty($variables['attributes'])) {
+    if (!empty($variables['attributes']) && !$ajax) {
       $variables["attributes"]->addClass("with-hero");
+    }
+    elseif (!empty($variables['attributes']) && $ajax) {
+      $variables["attributes"]['style'][] = "with-hero";
     }
   }
 

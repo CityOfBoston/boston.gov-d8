@@ -77,6 +77,16 @@ function bos_components_preprocess_field(&$variables) {
             $short_title = $component->getTranslation($language)
               ->get('field_short_title')
               ->getValue();
+            if (empty($short_title)) {
+              $short_title = $component->getTranslation("en")
+                ->get('field_short_title')
+                ->getValue();
+            }
+            if (empty($short_title) && $language != "und") {
+              $short_title = $component->getTranslation("und")
+                ->get('field_short_title')
+                ->getValue();
+            }
             if (!empty($short_title)) {
               $variables['short_title'] = $short_title[0]['value'];
               $short_title_link = preg_replace('@^[0-9\s]+@', '', strtolower($short_title[0]['value']));

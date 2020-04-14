@@ -85,13 +85,42 @@ function bos_commissions_id(&$variables) {
 }
 
 /**
+ * Checks environment and supplies appropriate creds / values.
+ *
+ * Returns array of values.
+ */
+function bos_commissions_check_env_creds() {
+  if (!isset($_SERVER["AH_SITE_NAME"])) {
+    // Local env.
+    $graphqlUrl = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
+    $graphqlKey = \Drupal::config('bos_commissions.settings')->get('graphql_api_key');
+  }
+  elseif (strtolower($_SERVER["AH_SITE_NAME"]) == 'dev2') {
+    // Acquia env dev2.
+    $graphqlUrl = $_ENV['graphql_endpoint'];
+    $graphqlKey = $_ENV['graphql_api_key'];
+  }
+  else {
+    // Acquia env dev,stg,prd.
+    $graphqlUrl = Settings::get('graphql_endpoint');
+    $graphqlKey = Settings::get('graphql_api_key');
+  }
+  $graphqlCreds = [
+    "graphqlUrl" => $graphqlUrl,
+    "graphqlKey" => $graphqlKey
+  ];
+  return $graphqlCreds;
+}
+
+/**
  * Makes a GraphQL query to the commissions GraphQL backend.
  *
  * Returns the parsed JSON response.
  */
 function bos_commissions_query($graphql) {
   $client = \Drupal::httpClient();
-  $url = \Drupal::config('bos_commissions.settings')->get('graphql_endpoint');
+  $getGraphqlCreds = bos_commissions_check_env_creds();
+  $url = $getGraphqlCreds['graphqlUrl'];
   $request_body = json_encode([
     'query' => $graphql,
     'variables' => NULL,
@@ -101,7 +130,7 @@ function bos_commissions_query($graphql) {
     'headers' => [
       'Content-Type' => 'application/json',
       'Content-Length' => mb_strlen($request_body),
-      'X-API-KEY' => \Drupal::config('bos_commissions.settings')->get('graphql_api_key'),
+      'X-API-KEY' => $getGraphqlCreds['graphqlKey'],
     ],
     'body' => $request_body,
     'timeout' => 60,
@@ -172,7 +201,7 @@ function bos_commissions_add_info(&$variables) {
     'contact_name' => Html::escape($info->contactName),
     'contact_phone' => Html::escape($info->contactPhone),
     'seats' => Html::escape($info->seats),
-    'stipend' => Html::escape(money_format("$%n", $info->stipend)),
+    'stipend' => Html::escape($info->stipend),
     'term' => Html::escape($info->term),
     'enabling_legislation_url' => Html::escape($info->enablingLegislation),
   ];
@@ -199,6 +228,13 @@ function bos_commissions_add_info(&$variables) {
     $variables['commission_info']['contact_phone_text'] = [
       '#markup' => "<a href='tel:{$variables['commission_info']['contact_phone']}'>{$variables['commission_info']['contact_phone']}</a>",
     ];
+  }
+
+  if ($variables['commission_info']['stipend'] == 0) {
+    $variables['commission_info']['stipend'] = "No";
+  }
+  else {
+    $variables['commission_info']['stipend'] = "Yes";
   }
 }
 

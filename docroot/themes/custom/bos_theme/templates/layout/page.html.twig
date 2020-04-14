@@ -44,6 +44,53 @@
  * @see html.html.twig
  */
 #}
+{% if watermark_text %}
+  <mark class="watermark-wrapper">
+    <div{{ attributes_watermark}}>
+      <div class="wm-col1">
+        <span class="wm-text">{{ watermark_text }}</span>
+      </div>
+      <div class="wm-col2">
+        <div class="wm-row1">
+          <span class="wm-type">{{ cob.type }}</span>
+          <span class="wm-dot">&#10072;</span>
+          <span class="wm-title">{{ cob.title }}</span>
+        </div>
+        <div class="wm-row2">
+          {% if cob.lastedit %}
+            <span class="wm-lastedit">{{ cob.lasteditprefix }} by {{ cob.lastedit }}</span>
+            <span class="wm-dot">&#8226;</span>
+          {% endif %}
+          {% if cob.lastdate %}
+            <span class="wm-lasttime">{{ cob.lastdate }}</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="wm-col3">
+        {% if cob.has_draft %}
+          <span class="wm-forward">
+            <div class="status-draft-available">
+              {% if cob.view_draft %}
+                <a href="/node/{{ cob.nid }}/latest" class="toolbar-icon toolbar-item" tabindex="-1">View Draft</a>
+              {% else %}
+                <a href="#" class="toolbar-icon toolbar-item disabled" title="A draft exists for this node, however you do not have permission to view it." tabindex="-1">Draft Exists</a>
+              {% endif %}
+            </div>
+          </span>
+        {% endif %}
+        <span class="wm-ops">
+          <div class="moderation-sidebar-toolbar-tab status-published toolbar-tab" style="">
+            <a href="/moderation-sidebar/node/{{ cob.nid }}/latest" class="use-ajax toolbar-icon toolbar-icon-moderation-sidebar moderation-label-published toolbar-item" data-dialog-type="dialog" data-dialog-renderer="off_canvas" data-label="Published" tabindex="-1" style="">Edit</a>
+            <div>
+              <nav class="toolbar-lining clearfix" role="navigation"></nav>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </mark>
+{% endif %}
+
 <input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
 
 <nav class="nv-m">
@@ -69,15 +116,13 @@
     {{ seal }}
     {{ secondary_nav }}
     {{ search }}
-    {% if watermark_text %}
-      <div class="watermark-wrapper">
-        <mark{{ attributes_watermark}}>&#8212;&#8212;[<span class="wm-text">{{ watermark_text }}</span>]&#8212;&#8212;</mark>
-      </div>
-    {% endif %}
   </header>
 
   {{ drupal_block('views_block:emergency_alerts-block_emergency_alert') }}
-  {{ drupal_block('views_block:site_alerts-block_site_alerts') }}
+
+  {% if not cob["sa-excluded"] %}
+    {{ drupal_block('views_block:site_alerts-block_site_alerts') }}
+  {% endif %}
 
   <div class="main">
     <div class="container">

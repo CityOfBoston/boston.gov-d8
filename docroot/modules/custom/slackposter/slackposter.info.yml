@@ -1,0 +1,13 @@
+name: 'Slack Integration'
+type: module
+description: 'Enables integration between website and slack using slack webhooks.'
+package: Utilities
+core: 8.x
+version: 8.x.1.0
+configure: slackposter.admin
+dependencies:
+  - drupal:rest
+  - drupal:hal
+  - drupal:basic_auth
+  - drupal:serialization
+  - restui

@@ -50,9 +50,9 @@ content:
     region: content
   content_moderation_control:
     weight: -20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_award_date:
     type: datetime_default
     weight: 9
@@ -123,10 +123,18 @@ content:
     weight: 12
     label: above
     settings:
+      timezone_override: America/New_York
+      format_type: date_format_short
       separator: '-'
-      timezone_override: ''
-    third_party_settings: {  }
-    type: daterange_plain
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    type: daterange_default
     region: content
   field_department:
     type: string
@@ -255,9 +263,9 @@ content:
       target: '0'
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: div
         fences_field_classes: ''
-        fences_field_item_tag: none
+        fences_field_item_tag: div
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''

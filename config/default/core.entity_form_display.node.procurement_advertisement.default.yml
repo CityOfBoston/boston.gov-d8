@@ -107,14 +107,15 @@ third_party_settings:
         - field_email
         - field_phone_number
       parent_name: group_sidebar
-      weight: 58
-      format_type: tab
+      weight: 59
+      format_type: details
       format_settings:
+        description: ''
+        formatter: closed
+        required_fields: true
         id: ''
         classes: ''
-        formatter: closed
-        description: ''
-        required_fields: true
+        open: false
       label: Contact
       region: content
     group_submissions:
@@ -144,6 +145,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     type: text_textarea_with_summary
     region: content
@@ -167,6 +169,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_bid:
     type: paragraphs
@@ -195,6 +198,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
@@ -204,6 +208,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_contract_length:
     type: number
@@ -272,6 +277,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_multi_year_contract:
     type: boolean_checkbox
@@ -295,6 +301,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_phone_number:
     type: string_textfield
@@ -310,6 +317,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
@@ -319,12 +327,13 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
   field_related_links:
     type: link_default
-    weight: 59
+    weight: 60
     region: content
     settings:
       placeholder_url: ''
@@ -332,7 +341,7 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 57
+    weight: 58
     region: content
     settings:
       placeholder: ''
@@ -347,7 +356,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -401,11 +410,12 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 2
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     region: content
     third_party_settings: {  }
   url_redirects:

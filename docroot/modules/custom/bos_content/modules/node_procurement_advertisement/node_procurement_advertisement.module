@@ -5,13 +5,18 @@
  * Provides an script_page entity type.
  */
 
+use Drupal\Core\Render\Element;
+use Drupal\file\Entity\File;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormState;
+
 /**
  * Implements hook_theme().
  */
 function node_procurement_advertisement_theme() {
   $theme['node__procurement_advertisement'] = [
     'base hook' => 'node',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
+    'render element' => 'elements',
   ];
   /*
    * $theme['field__field_intro_text__mode__full'] = [
@@ -20,17 +25,102 @@ function node_procurement_advertisement_theme() {
    * ];*/
   $theme['field__taxonomy_term__name__massachusetts_general_law'] = [
     'base hook' => 'field',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
   $theme['taxonomy_term__massachusetts_general_law'] = [
     'base hook' => 'taxonomy_term',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
   ];
   $theme['node__person_profile__department_listing'] = [
     'base hook' => 'node',
-    'path' => 'modules/custom/bos_content/modules/node_procurement_advertisement/templates',
+  ];
+  $theme['node__procurement_advertisement__listing'] = [
+    'base hook' => 'node',
+    'render element' => 'elements',
   ];
   return $theme;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_procurement_advertisement_preprocess_node__procurement_advertisement(&$variables) {
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+
+    if (is_numeric($node)) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+    if ($node->bundle() == "procurement_advertisement") {
+      $variables["start_date"] = "";
+      if (!empty($variables["content"]["field_date_range"][0])) {
+        if (!empty($variables["content"]["field_date_range"][0]["start_date"])) {
+          $variables["start_date"] = $variables["content"]["field_date_range"][0]["start_date"]["#text"];
+        }
+        else {
+          $variables["start_date"] = $variables["content"]["field_date_range"][0]["#text"];
+        }
+      }
+      if (!empty($variables["content"]["field_date_range"][0]["end_date"])) {
+        $variables['end_date'] = $variables["content"]["field_date_range"][0]["end_date"]["#text"];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_procurement_advertisement_preprocess_node__procurement_advertisement__listing(&$variables) {
+  // Get the department icon by targeting the ID of the dept.
+  $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
+  $variables['dept_name'] = $term->getName();
+
+  if (isset($term) && $term->hasField('field_department_profile')) {
+    $dept_profile = $term->get('field_department_profile')->getValue();
+    if (isset($dept_profile[0]['target_id'])) {
+      $node = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->load($dept_profile[0]['target_id']);
+      $dept_url = '/node/' . $node->id();
+      $variables['dept_url'] = $dept_url;
+      $dept_icon = $node->field_icon->target_id;
+
+      $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
+      if ($file = File::load($dept_icon)) {
+        $dept_icon_uri = $file->getFileUri();
+        if (substr($dept_icon_uri, 0, 4) != "http") {
+          $dept_icon_uri = \Drupal::request()
+            ->getScheme() . ":" . $dept_icon_uri;
+        }
+        if (@file_get_contents($dept_icon_uri)) {
+          $variables['dept_icon_uri'] = $dept_icon_uri;
+        }
+      }
+    }
+  }
+  if (NULL != ($node = $variables["node"] ?? NULL)) {
+
+    if (is_numeric($node)) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+    if ($node->bundle() == "procurement_advertisement") {
+      $variables['field_department'] = $variables["content"]["field_department"][0]["#context"]["value"];
+      $variables['field_email'] = $variables["content"]["field_email"][0];
+      $variables['field_phone_number'] = bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]);
+      $variables['field_not_awarded'] = $variables["content"]["field_not_awarded"][0];
+      $variables['field_bid_type'] = $variables["content"]['field_bid_type'][0]['#title'];
+      $variables["start_date"] = "";
+      if (!empty($variables["content"]["field_date_range"][0])) {
+        if (!empty($variables["content"]["field_date_range"][0]["start_date"])) {
+          $variables["start_date"] = $variables["content"]["field_date_range"][0]["start_date"]["#text"];
+        }
+        else {
+          $variables["start_date"] = $variables["content"]["field_date_range"][0]["#text"];
+        }
+      }
+      if (!empty($variables["content"]["field_date_range"][0]["end_date"])) {
+        $variables['end_date'] = $variables["content"]["field_date_range"][0]["end_date"]["#text"];
+      }
+    }
+  }
 }
 
 /**
@@ -73,133 +163,29 @@ function node_procurement_advertisement_field_default_field_instances_alter(&$in
 }
 
 /**
- * Implements hook_preprocess_views_exposed_form().
+ * Prepares variables for procurement_advertisement templates.
+ *
+ * Default template: procurement-advertisement.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An associative array containing the public notice information
+ *     and any fields attached to the entity.
+ *   - attributes: HTML attributes for the containing element.
  */
-function node_procurement_advertisement_preprocess_views_exposed_form(&$vars) {
-  if ($vars['form']['#id'] == 'views-exposed-form-bids-rfps-landing' || $vars['form']['#id'] == 'views-exposed-form-bids-rfps-archive') {
-    $vars['widget_groups'] = [
-      'search by project or bid name' => [],
-      'search by department' => [],
-    ];
-
-    foreach ($vars['widgets'] as $id => $widget) {
-      switch ($id) {
-        case 'filter-title':
-          $vars['widget_groups']['search by project or bid name'][$id] = $widget;
-          break;
-
-        case 'filter-field_contact_target_id':
-          $vars['widget_groups']['search by department'][$id] = $widget;
-          break;
-      }
-    }
+function template_preprocess_procurement_advertisement(array &$variables) {
+  foreach (Element::children($variables['elements']) as $key) {
+    $variables['content'][$key] = $variables['elements'][$key];
   }
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function node_procurement_advertisement_form_procurement_advertisement_node_form_alter(&$form, &$form_state, $form_id) {
-  // Only show Contract Length field if Multi-year option is selected.
-  $form['field_contract_length']['#states'] = [
-    'visible' => [
-      ':input[name="field_multi_year_contract[und]"]' => ['checked' => TRUE],
-    ],
-    // TO-DO need to actually validate to make required.
-    // https://drupal.stackexchange.com/questions/14173/how-to-make-a-form-required-with-states
-    'required' => [
-      ':input[name="field_multi_year_contract[und]"]' => ['checked' => TRUE],
-    ],
-  ];
-
-  // Since Term ID might differ between environments, we'll look it up here.
-  $terms = taxonomy_get_term_by_name('Electronic', 'bid_type');
-  // Get the actual TID from the term object.
-  foreach ($terms as $term) {
-    // Assign TID to variable to be used in #state.
-    $electronic_tid = $term->tid;
-  }
-  // Only show Supplier Portal Link if the Bid Type is set to Electronic.
-  $form['field_url']['#states'] = [
-    'visible' => [
-      ':input[name="field_bid_type[und]"]' => ['value' => $electronic_tid],
-    ],
-  ];
-  $terms = taxonomy_get_term_by_name('Paper', 'bid_type');
-  // Get the actual TID from the term object.
-  foreach ($terms as $term) {
-    // Assign TID to variable to be used in #state.
-    $paper_tid = $term->tid;
-  }
-  // Only show Document field if the Bid Type is set to Paper.
-  $form['field_document']['#states'] = [
-    'visible' => [
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-  // Only show Delivery Address field if the Bid Type is set to Paper.
-  $form['field_delivery_address']['#states'] = [
-    'visible' => [
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-    'required' => [
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-  // Address 1.
-  // Remove default required validation so form saves if Paper is not selected.
-  $form['field_delivery_address']['und'][0]['street_block']['thoroughfare']['#required'] = FALSE;
-  // Add asterisk to visually show user what is required before form submission.
-  $form['field_delivery_address']['und'][0]['street_block']['thoroughfare']['#states'] = [
-    'required' => [
-      // Check that Paper is selected for Bid Type.
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-  // City.
-  // Remove default required validation so form saves if Paper is not selected.
-  $form['field_delivery_address']['und'][0]['locality_block']['locality']['#required'] = FALSE;
-  // Add asterisk to visually show user what is required before form submission.
-  $form['field_delivery_address']['und'][0]['locality_block']['locality']['#states'] = [
-    'required' => [
-      // Check that Paper is selected for Bid Type.
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-  // ZIP code.
-  // Remove default required validation so form saves if Paper is not selected.
-  $form['field_delivery_address']['und'][0]['locality_block']['postal_code']['#required'] = FALSE;
-  // Add asterisk to visually show user what is required before form submission.
-  $form['field_delivery_address']['und'][0]['locality_block']['postal_code']['#states'] = [
-    'required' => [
-      // Check that Paper is selected for Bid Type.
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-  // State.
-  // Remove default required validation so form saves if Paper is not selected.
-  $form['field_delivery_address']['und'][0]['locality_block']['administrative_area']['#required'] = FALSE;
-  // Add asterisk to visually show user what is required before form submission.
-  $form['field_delivery_address']['und'][0]['locality_block']['administrative_area']['#states'] = [
-    'required' => [
-      // Check that Paper is selected for Bid Type.
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-  // Country.
-  // Remove default required validation so form saves if Paper is not selected.
-  $form['field_delivery_address']['und'][0]['country']['#required'] = FALSE;
-  // Add asterisk to visually show user what is required before form submission.
-  $form['field_delivery_address']['und'][0]['country']['#states'] = [
-    'required' => [
-      // Check that Paper is selected for Bid Type.
-      ':input[name="field_bid_type[und]"]' => ['value' => $paper_tid],
-    ],
-  ];
-
+function node_procurement_advertisement_form_node_procurement_advertisement_edit_form_alter(&$form, &$form_state, $form_id) {
   // Add custom validation since above required states are client-side only.
-  $form['#validate'][] = 'bos_content_type_procurement_advertisement_form_validate';
-
+  $form['#validate'][] = 'node_procurement_advertisement_form_validate';
+  $form['actions']['submit']['#submit'][] = 'node_procurement_advertisement_form_submit';
 }
 
 /**
@@ -214,41 +200,44 @@ function node_procurement_advertisement_preprocess_field_multiple_value_form(arr
 /**
  * Form validate callback.
  */
-function bos_content_type_procurement_advertisement_form_validate($form, $form_state) {
-  $terms = taxonomy_get_term_by_name('Paper', 'bid_type');
-  // Get the actual TID from the term object.
-  foreach ($terms as $term) {
-    // Assign TID to variable to be checked in Bid Type.
-    $paper_tid = $term->tid;
+function node_procurement_advertisement_form_validate(array &$form, FormState &$form_state) {
+  // Entity query.
+  // Ensures that the date awarded is EMPTY node is checked.
+
+  $field_Date_Awarded = $form_state->getValue('field_award_date')[0]["value"];
+  if ($form_state->getValue("field_not_awarded")["value"]) {
+    if (!empty($field_Date_Awarded)) {
+      $form_state->setErrorByName('field_award_date', t('Cannot select the Not Awarded field and set Award Date as well.'));
+    }
   }
-  // Make sure 'Paper' is selected in Bid Type field.
-  if ($form_state['values']['field_bid_type']['und'][0]['target_id'] == $paper_tid) {
-    // Created variables for user inputted values.
-    $address_1 = $form_state['values']['field_delivery_address']['und'][0]['thoroughfare'];
-    $city = $form_state['values']['field_delivery_address']['und'][0]['locality'];
-    $state = $form_state['values']['field_delivery_address']['und'][0]['administrative_area'];
-    $zip_code = $form_state['values']['field_delivery_address']['und'][0]['postal_code'];
-    $country = $form_state['values']['field_delivery_address']['und'][0]['country'];
-    // Assign readable titles to each user inputted value.
-    $required_fields = [
-      "Address 1" => $address_1,
-      "City" => $city,
-      "State" => $state,
-      "ZIP code" => $zip_code,
-      "Country" => $country,
-    ];
-    // Create a placeholder array for all required fields without values.
-    $empty_required_fields = [];
-    foreach ($required_fields as $field_name => $field_value) {
-      if (!$field_value) {
-        // Compose error message for required fields that are missing values.
-        $empty_required_fields[] = "Please fill out the '$field_name' field when selecting 'Paper' as Bid Type";
+
+  foreach ($form_state->getValue("field_bid") as $key => $a) {
+    if (is_numeric($key)) {
+      if (empty($a["subform"]["field_awarded"]["value"])) {
+        $a["subform"]["field_awarded"]["value"] = 0;
+      }
+      $field_bid_awarded = $a["subform"]["field_awarded"]["value"];
+      if ($field_bid_awarded == 1 && empty($field_Date_Awarded)) {
+        $form_state->setErrorByName('field_award_date', t('Bids cannot be awarded if there is no Award Date.'));
+      }
+      if ($field_bid_awarded == 1 && !empty($form_state->getValue("field_not_awarded")["value"])) {
+        $form_state->setErrorByName('field_not_awarded', t('Cannot have a bid awarded when the procurement is not awarded.'));
       }
     }
-    // Make sure there are required fields missing input.
-    if (count($empty_required_fields) > 0) {
-      // Block form submission and display help text to user about empty fields.
-      form_set_error('Paper Bid Type Address Errors', theme('item_list', ['items' => $empty_required_fields]));
+  }
+}
+
+/**
+ * Implements hook_form_submit().
+ */
+function node_procurement_advertisement_form_submit($variables, $form_state) {
+  // This does run after the node is saved, so the procurement ID can be
+  // set to the nid.
+  if (NULL != ($node = Node::load($form_state->get("nid")))) {
+    if (empty($node->get("field_event_project_number")->value)) {
+      $node->field_event_project_number = $node->nid->value;
+      $variables['nid'] = $node->nid->value;
+      $node->save();
     }
   }
 }

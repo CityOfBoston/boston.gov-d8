@@ -34,8 +34,19 @@ class FileCopyExt extends FileCopy {
 
   use FilesystemReorganizationTrait;
 
-  protected $migrateExecutable;
+  /**
+   * The row from the migration.
+   *
+   * @var \Drupal\migrate\Row
+   */
   protected $row;
+
+  /**
+   * MigrateExecutableInterface for the class.
+   *
+   * @var \Drupal\migrate\MigrateExecutableInterface
+   */
+  protected $migrateExecutable;
 
   /**
    * Extend the actual copy action to squash file-not-found errors.
