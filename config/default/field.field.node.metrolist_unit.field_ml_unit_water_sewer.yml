@@ -1,0 +1,25 @@
+uuid: 1e775c62-e8e4-4e8b-be0a-4c540c942e76
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ml_unit_water_sewer
+    - node.type.metrolist_unit
+_core:
+  default_config_hash: rB8uD6vckygNkSJZp7CEIIcPNMmtt-KOs2k5GRJYCAM
+id: node.metrolist_unit.field_ml_unit_water_sewer
+field_name: field_ml_unit_water_sewer
+entity_type: node
+bundle: metrolist_unit
+label: 'Water & Sewer'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

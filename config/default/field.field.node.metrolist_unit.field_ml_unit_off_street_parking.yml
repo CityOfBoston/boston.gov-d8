@@ -1,0 +1,25 @@
+uuid: facc852b-218f-45c8-a208-7f8706ee61a7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ml_unit_off_street_parking
+    - node.type.metrolist_unit
+_core:
+  default_config_hash: ddaNAcD_bsK8lR5cM9CwutTWq2PRz-sZuiNM7DbOIk0
+id: node.metrolist_unit.field_ml_unit_off_street_parking
+field_name: field_ml_unit_off_street_parking
+entity_type: node
+bundle: metrolist_unit
+label: 'Off Street Parking'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean
