@@ -5,7 +5,10 @@
  * Contains bos_metrolist.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -31,5 +34,90 @@ function bos_metrolist_theme() {
     'bos_metrolist' => [
       'render element' => 'children',
     ],
+    'field__boolean' => [
+      'base hook' => 'field'
+    ],
+    'views_view_metrolist_drawers' => [
+      'variables' => array('view' => NULL, 'rows' => NULL),
+      'path' => drupal_get_path('module', 'bos_metrolist') . '/templates',
+    ],
   ];
 }
+
+/**
+ * Implements hook_views_pre_render().
+ * @param ViewExecutable $view
+ */
+function bos_metrolist_views_pre_render(ViewExecutable $view)
+{
+  $test = 3;
+  if (isset($view) && ($view->id() != 'test')){
+    //$view->element['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+  }
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK().
+ * @param $variables
+ */
+function bos_metrolist_preprocess_page(&$variables)
+{
+  if (isset($variables['node']) && $variables['node']->bundle() == 'metrolist_development') {
+    $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+  }
+}
+
+
+/**
+ * Implements hook_block_build_alter().
+ */
+function bos_metrolist_form_taxonomy_term_ml_income_eligibility_ami_thold_form_alter(&$form, FormStateInterface $form_state, $form_id){
+
+  foreach (Element::children($form['field_total_house_income_data']['widget']) as $key => $field){
+    $person_number = ($key + 1);
+    $person_label = ngettext(' person', ' people', $person_number);
+    $form['field_total_house_income_data']['widget'][$key]['value']['#field_suffix'] = " for <b>$person_number</b> $person_label / year";
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_metrolist_preprocess(&$variables, $hook)
+{
+  $test = $variables;
+}
+
+function bos_metrolist_preprocess_field(&$variables)
+{
+  $test = $variables;
+}
+
+function bos_metrolist_preprocess_field_boolean(&$variables)
+{
+  $test = $variables;
+}
+
+/**
+ * Implements hook_entity_view_mode_alter().
+ */
+function bos_metrolist_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\EntityInterface $entity, $context)
+{
+
+  $test = $view_mode;
+
+  //if ($entity->getType() == 'metrolist_development') {
+    //$view_mode = 'metrolist_single_unit';
+    //$view_mode = 'full';
+  //}
+
+
+}
+
+function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
+  template_preprocess_views_view_unformatted($variables);
+
+}
+
+
