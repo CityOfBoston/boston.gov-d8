@@ -1,0 +1,25 @@
+uuid: 8726d1be-5e50-42c7-81e0-eb12c516a05b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ml_share
+    - node.type.metrolist_development
+  module:
+    - social_media
+id: node.metrolist_development.field_ml_share
+field_name: field_ml_share
+entity_type: node
+bundle: metrolist_development
+label: Share
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: social_media

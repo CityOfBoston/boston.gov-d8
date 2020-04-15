@@ -1,0 +1,142 @@
+uuid: 2bdc0e23-31d5-481f-80ed-78eabcdfed28
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.metrolist_development.field_ml_address
+    - field.field.node.metrolist_development.field_ml_agent
+    - field.field.node.metrolist_development.field_ml_agent_address
+    - field.field.node.metrolist_development.field_ml_agent_email
+    - field.field.node.metrolist_development.field_ml_agent_phone
+    - field.field.node.metrolist_development.field_ml_city
+    - field.field.node.metrolist_development.field_ml_neighborhood
+    - field.field.node.metrolist_development.field_ml_num_of_ownership_units
+    - field.field.node.metrolist_development.field_ml_number_of_rental_units
+    - field.field.node.metrolist_development.field_ml_number_of_units
+    - field.field.node.metrolist_development.field_ml_region
+    - field.storage.node.field_ml_address
+    - field.storage.node.field_ml_city
+    - field.storage.node.field_ml_neighborhood
+    - field.storage.node.field_ml_region
+    - node.type.metrolist_development
+    - taxonomy.vocabulary.city
+    - taxonomy.vocabulary.ml_neighborhood
+    - taxonomy.vocabulary.region
+  module:
+    - address
+    - salesforce_pull
+_core:
+  default_config_hash: cGukYDy_wqgkJNfG1HQK9stpzNOMddAqGkLPQEB9HqU
+id: metrolist_development
+label: 'MetroList - Development'
+weight: -10
+type: salesforce_mapping
+key: ''
+async: false
+push_standalone: false
+pull_standalone: true
+pull_trigger_date: LastModifiedDate
+pull_where_clause: ''
+sync_triggers:
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Affordable_Housing__c
+drupal_entity_type: node
+drupal_bundle: metrolist_development
+field_mappings:
+  -
+    drupal_field_type: properties
+    drupal_field_value: title
+    salesforce_field: Name
+    direction: sf_drupal
+    id: 1
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.locality
+    salesforce_field: Outside_Boston_Location__c
+    direction: sf_drupal
+    id: 2
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.dependent_locality
+    salesforce_field: Neighborhood__c
+    direction: sf_drupal
+    id: 3
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.postal_code
+    salesforce_field: ZIP_Code__c
+    direction: sf_drupal
+    id: 4
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.address_line1
+    salesforce_field: Street_Address__c
+    direction: sf_drupal
+    id: 5
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_city
+    salesforce_field: Outside_Boston_Location__c
+    direction: sf_drupal
+    id: 6
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_neighborhood
+    salesforce_field: Neighborhood__c
+    direction: sf_drupal
+    id: 7
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_region
+    salesforce_field: Region__c
+    direction: sf_drupal
+    id: 8
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_agent
+    salesforce_field: Public_Contact_Name__c
+    direction: sf_drupal
+    id: 9
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_agent_address
+    salesforce_field: Public_Contact_Address__c
+    direction: sf_drupal
+    id: 10
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_agent_email
+    salesforce_field: Public_Contact_Email__c
+    direction: sf_drupal
+    id: 11
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_agent_phone
+    salesforce_field: Public_Contact_Phone__c
+    direction: sf_drupal
+    id: 12
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_number_of_units
+    salesforce_field: DU_Count__c
+    direction: sf_drupal
+    id: 13
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_num_of_ownership_units
+    salesforce_field: Number_of_Ownership_Units__c
+    direction: sf_drupal
+    id: 14
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_number_of_rental_units
+    salesforce_field: Number_of_Rental_Units__c
+    direction: sf_drupal
+    id: 15
+push_limit: 0
+push_retries: 3
+push_frequency: 0
+pull_frequency: 0
+always_upsert: false

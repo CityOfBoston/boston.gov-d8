@@ -1,0 +1,22 @@
+uuid: d90c4228-ca48-4b5b-a5c8-9840446896d3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ml_location
+    - node.type.metrolist_development
+  module:
+    - geofield
+id: node.metrolist_development.field_ml_location
+field_name: field_ml_location
+entity_type: node
+bundle: metrolist_development
+label: Location
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  backend: geofield_backend_default
+field_type: geofield

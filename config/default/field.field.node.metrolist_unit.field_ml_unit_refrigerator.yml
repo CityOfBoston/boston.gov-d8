@@ -1,0 +1,25 @@
+uuid: 553d0cf7-82b2-4a56-9cd2-317ddac106b6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ml_unit_refrigerator
+    - node.type.metrolist_unit
+_core:
+  default_config_hash: 0O3pFshSjWDLdftWqhOYSJ8NUj4IhW8e7jVeCFJy1SY
+id: node.metrolist_unit.field_ml_unit_refrigerator
+field_name: field_ml_unit_refrigerator
+entity_type: node
+bundle: metrolist_unit
+label: Refrigerator
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean
