@@ -241,7 +241,8 @@ class MNL extends React.Component {
             this.setCheckLocalStorage(this.state.sam_id,this.state.submittedAddress, section);
           } else {
             this.setState({
-              itemsDisplay: null
+              itemsDisplay: null,
+              isLoading: false
             });
           }
         },
