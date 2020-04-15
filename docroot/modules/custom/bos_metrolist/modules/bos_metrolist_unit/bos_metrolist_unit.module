@@ -9,6 +9,9 @@ use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
+ * @param $route_name
+ * @param RouteMatchInterface $route_match
+ * @return string
  */
 function bos_metrolist_unit_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
