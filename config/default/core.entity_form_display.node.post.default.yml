@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.post.field_intro_image
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
+    - field.field.node.post.field_metatags
     - field.field.node.post.field_news_tags
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
@@ -23,6 +24,7 @@ dependencies:
     - datetime
     - entity_browser
     - field_group
+    - metatag
     - paragraphs
     - path
     - publication_date
@@ -223,6 +225,12 @@ content:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
+    region: content
+  field_metatags:
+    weight: 34
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
     region: content
   field_news_tags:
     weight: 7

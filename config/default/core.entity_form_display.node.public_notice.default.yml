@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
     - field.field.node.public_notice.field_manual_date
+    - field.field.node.public_notice.field_metatags
     - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_public_notice_date
@@ -32,6 +33,7 @@ dependencies:
     - datetime
     - datetime_range
     - field_group
+    - metatag
     - paragraphs
     - path
     - publication_date
@@ -375,6 +377,12 @@ content:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
+    region: content
+  field_metatags:
+    weight: 48
+    settings: {  }
+    third_party_settings: {  }
+    type: metatag_firehose
     region: content
   field_multiple_neighborhoods:
     weight: 47
