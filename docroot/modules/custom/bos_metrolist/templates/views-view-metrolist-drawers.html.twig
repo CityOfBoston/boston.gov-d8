@@ -972,6 +972,18 @@
   </div>
 {% endset %}
 
+{% set all_units_button %}
+  <div class="b">
+    <div class="m-v400">
+      <button class="btn btn--sm btn--100"
+              style="width: 9.5rem;"
+              onclick="window.print()">
+        <div style="float: right;padding: 5px 15px 0 10px;">Show All Units</div>
+      </button>
+    </div>
+  </div>
+{% endset %}
+
 {% set icon_caret %}
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25">
     <path class="dr-i"
@@ -986,10 +998,18 @@
 {% endset %}
 
 
-<div class="" style="display: flex; max-width: 20rem; justify-content: space-between; ">
-  {{ email_button }}
-  {{ print_button }}
-</div>
+{%  if show_email_button or show_print_button %}
+  <div class="" style="display: flex; max-width: 20rem; justify-content: space-between; ">
+    {%  if show_email_button %} {{ email_button }} {% endif %}
+    {%  if show_print_button %} {{ print_button }} {% endif %}
+  </div>
+{% endif %}
+
+{%  if show_all_units_button %}
+  <div class="" style="display: flex; max-width: 30rem; justify-content: space-between; ">
+    {{ all_units_button }}
+  </div>
+{%  endif %}
 
 <div style="clear: both;">
   {% for key, row in rows %}
@@ -1009,7 +1029,7 @@
     {% endif %}
 
     <div{{ row.attributes.addClass(row_classes) }}>
-      {{ devel_breakpoint() }}
+
       <input type="checkbox" id="dr--{{ key }}" class="dr-tr a11y--h" {{ drOpenValues }}>
 
       <label for="dr--{{ key }}" class="dr-h">
