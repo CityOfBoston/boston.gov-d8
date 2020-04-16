@@ -51,6 +51,10 @@ function bos_metrolist_theme() {
 function bos_metrolist_views_pre_render(ViewExecutable $view)
 {
   $test = 3;
+
+  if ($view->current_display == 'attachment_1') {
+    $test = 4;
+  }
   if (isset($view) && ($view->id() != 'test')){
     //$view->element['#attached']['library'][] = 'bos_metrolist/metrolist_views';
   }
@@ -86,7 +90,7 @@ function bos_metrolist_form_taxonomy_term_ml_income_eligibility_ami_thold_form_a
  */
 function bos_metrolist_preprocess(&$variables, $hook)
 {
-  //$test = $variables;
+  $test = $variables;
 }
 
 function bos_metrolist_preprocess_field(&$variables)
@@ -112,6 +116,16 @@ function bos_metrolist_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\En
 
 function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
   template_preprocess_views_view_unformatted($variables);
+
+  $view = $variables['view'];
+  $rows = $variables['rows'];
+
+  $variables['show_email_button'] = $view->style_plugin->options['show_email_button'];
+  $variables['show_print_button'] = $view->style_plugin->options['show_print_button'];
+  $variables['show_all_units_button'] = $view->style_plugin->options['show_all_units_button'];
+  $variables['remove_duplicates'] = $view->style_plugin->options['remove_duplicates'];
+
+  //unset($variables['rows'][0]);
 }
 
 
