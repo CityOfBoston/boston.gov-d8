@@ -15,7 +15,7 @@ use Drupal\Core\Queue\QueueWorkerInterface;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
 
 /**
- * Bibblio class for API.
+ * MNLRest class for endpoint.
  */
 class MNLRest extends ControllerBase {
 
@@ -166,12 +166,15 @@ class MNLRest extends ControllerBase {
       }
 
       elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import-queue") {
-        // Get queue.
+        // Get and remove any exisitig MNL related queues.
         $queue = \Drupal::queue('mnl_import');
+        $queue->deleteQueue();
 
-        /*$queueFactory = \Drupal::service('queue');
-        $queue = $queueFactory->get('mnl_import');
-        $queue->deleteQueue();*/
+        $queueDelete = \Drupal::queue('mnl_delete');
+        $queueDelete->deleteQueue();
+
+        $queueNodes = \Drupal::queue('mnl_nodes');
+        $queueNodes->deleteQueue();
 
         // Get local JSON data files for import and create Queue items.
         $path = \Drupal::root() . '/sites/default/files/mnl/';
@@ -217,46 +220,6 @@ class MNLRest extends ControllerBase {
         ];
       }
 
-      elseif (!$apiKey == NULL && $request_method == "POST" && strpos($operation, "delete") !== FALSE) {
-        if ($operation == 'delete-sync') {
-          $queue_name = 'mnl_delete';
-        }
-        else {
-          $queue_name = 'mnl_delete_all';
-        }
-
-        // Creates queue.
-        $queueDelete = \Drupal::queue($queue_name);
-        $queueFactory = \Drupal::service('queue');
-        $queueManager = \Drupal::service('plugin.manager.queue_worker');
-
-        foreach ($nids as $nid) {
-          $queueDelete->createItem($nid);
-        }
-
-        // Create worker for MNL Delete queue.
-        $worker = $queueManager->createInstance($queue_name);
-
-        if ($queueDelete->numberOfItems() > 0) {
-          while ($item = $queueDelete->claimItem()) {
-            try {
-              $worker->processItem($item->data);
-            }
-            catch (\Exception $e) {
-              $queueDelete->releaseItem($item);
-            }
-          }
-        }
-
-        // Delete MNL delete queue.
-        $queueDeleteGet = $queueFactory->get($queue_name);
-        $queueDeleteGet->deleteQueue();
-
-        $response_array = [
-          'status' => 'delete processed ',
-          'response' => 'authorized'
-        ];
-      }
       else {
         $response_array = [
           'status' => 'error',
