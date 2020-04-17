@@ -20,7 +20,7 @@ class MNLProcessImport extends QueueWorkerBase {
   /**
    * Get Neighborhood Lookup content type.
    */
-  public function getNodesNl() {
+  public function getNodesNL() {
     $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
     $nids = $query->execute();
     return $nids;
@@ -30,7 +30,7 @@ class MNLProcessImport extends QueueWorkerBase {
    * Build queue for existing MNL nodes.
    */
   public function existingNodes() {
-    $nidsExisting = $this->getNodesNl();
+    $nidsExisting = $this->getNodesNL();
     $queue_nodes = \Drupal::queue('mnl_nodes');
     foreach ($nidsExisting as $nid) {
       $queue_nodes->createItem($nid);
@@ -50,6 +50,7 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function updateNode($nid, $dataJSON) {
     $entity = Node::load($nid);
+    $entity->set('field_import_date', "1");
     $entity->set('field_sam_id', $dataJSON['sam_address_id']);
     $entity->set('field_sam_address', $dataJSON['full_address']);
     $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
@@ -63,6 +64,7 @@ class MNLProcessImport extends QueueWorkerBase {
     $node = Node::create([
       'type'                        => 'neighborhood_lookup',
       'title'                       => $dataJSON['sam_address_id'],
+      'field_import_date'           => "1",
       'field_sam_id'                => $dataJSON['sam_address_id'],
       'field_sam_address'           => $dataJSON['full_address'],
       'field_sam_neighborhood_data' => json_encode($dataJSON['data']),
@@ -81,21 +83,21 @@ class MNLProcessImport extends QueueWorkerBase {
       $this->existingNodes();
     }
 
-    $nidsNL = $this->getNodesNl();
+    $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
+    $nidsNL = $query->execute();
+
     if (count($nidsNL) > 0) {
       foreach ($nidsNL as $nid) {
         $node = Node::load($nid);
         $sam_id = $node->field_sam_id->value;
         if ($sam_id == $items['sam_address_id']) {
           $this->updateNode($nid, $items);
-          $this->addDeleteQueueItem($items['sam_address_id']);
           return;
         }
       }
     }
 
     $this->createNode($items);
-    $this->addDeleteQueueItem($items['sam_address_id']);
   }
 
 }

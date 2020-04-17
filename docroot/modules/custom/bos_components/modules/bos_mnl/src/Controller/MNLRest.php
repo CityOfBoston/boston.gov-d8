@@ -170,9 +170,6 @@ class MNLRest extends ControllerBase {
         $queue = \Drupal::queue('mnl_import');
         $queue->deleteQueue();
 
-        $queueDelete = \Drupal::queue('mnl_delete');
-        $queueDelete->deleteQueue();
-
         $queueNodes = \Drupal::queue('mnl_nodes');
         $queueNodes->deleteQueue();
 

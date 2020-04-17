@@ -8,7 +8,7 @@ namespace Drupal\bos_core\Plugin\QueueWorker;
  * @QueueWorker(
  *   id = "mnl_nodes",
  *   title = @Translation("MNL remove any nodes not found on import."),
- *   cron = {"time" = 180}
+ *   cron = {"time" = 120}
  * )
  */
 class CronProcessorMNLCurrentNodes extends MNLProcessCurrentNodes {}
