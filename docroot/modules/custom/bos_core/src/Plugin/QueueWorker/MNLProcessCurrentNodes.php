@@ -19,20 +19,12 @@ class MNLProcessCurrentNodes extends QueueWorkerBase {
 
     // Load node.
     $node = Node::load($items);
-    $sam_id = $node->field_sam_id->value;
+    $import_date = $node->field_import_date->value;
 
-    // Check if node exists in MNL import queue.
-    $database = \Drupal::database();
-    $sql = "SELECT data FROM queue WHERE name = 'mnl_delete' ";
-    $result = $database->query($sql);
-    if ($result) {
-      while ($row = $result->fetchAssoc()) {
-        $getData = unserialize($row["data"]);
-        $importSamId = $getData;
-        if ($sam_id == $importSamId) {
-          return;
-        }
-      }
+    if ($import_date == "1") {
+      $node->set('field_import_date', NULL);
+      $node->save();
+      return;
     }
 
     $node->delete();

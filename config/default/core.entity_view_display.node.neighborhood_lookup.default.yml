@@ -3,6 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - field.field.node.neighborhood_lookup.field_import_date
     - field.field.node.neighborhood_lookup.field_sam_address
     - field.field.node.neighborhood_lookup.field_sam_id
     - field.field.node.neighborhood_lookup.field_sam_neighborhood_data
@@ -16,6 +17,14 @@ targetEntityType: node
 bundle: neighborhood_lookup
 mode: default
 content:
+  field_import_date:
+    weight: 106
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
   field_sam_address:
     weight: 103
     label: above
