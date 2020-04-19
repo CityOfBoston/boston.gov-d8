@@ -307,7 +307,7 @@ class MNL extends React.Component {
           itemsLookupMarkup.push(resultItem);
         }
       } else {
-        itemsLookupMarkup = "No address was found by that name.";
+        itemsLookupMarkup = <div className="supporting-text">No address was found by that name.</div>;
       }
     }
     let recollectDate = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.day);
@@ -420,7 +420,7 @@ class MNL extends React.Component {
         </div>
         <div style={{ paddingTop: "50px" }}>
           {this.state.isLoading ? (
-            <div>Loading ... </div>
+            <div className="supporting-text">Loading ... </div>
           ) : (
             <div>
               <ul className="dl">{itemsLookupMarkup}</ul>

@@ -11,7 +11,7 @@ class Representation extends React.Component {
           {
             content: 
               <div>
-                Learn more about <a href={"/departments/city-council"}>Boston's City Council</a>
+                Learn more about <a href={"/departments/city-council"}>Boston's City Council</a>.
               </div> 
           }
       ];
@@ -32,7 +32,7 @@ class Representation extends React.Component {
         {
           content: (
             <div>
-              Learn more about <a href={"/departments/neighborhood-services"}>Neighborhood Services</a>
+              Learn more about <a href={"/departments/neighborhood-services"}>Neighborhood Services</a>.
             </div>
           )
         }
@@ -122,6 +122,14 @@ class Representation extends React.Component {
           <p>{secDesc}</p>
         </div>
         <div className="g">
+          {/* Polling Info */}
+          <MnlCard
+            title={"Your Polling Information"}
+            image_header={
+              configProps.pathImage+"voting_ballot.svg"
+            }
+            content_array={contentPollingArray}
+          />
           {/* City Councilor */}
           <MnlCard
             title={"Your City Councilor"}
@@ -136,15 +144,6 @@ class Representation extends React.Component {
                 : "departments/city-council"
             }
             content_array={contentRepArray}
-          />
-
-          {/* Polling Info */}
-          <MnlCard
-            title={"Your Polling Information"}
-            image_header={
-              configProps.pathImage+"voting_ballot.svg"
-            }
-            content_array={contentPollingArray}
           />
 
           {/* Neighborhood Liason */}

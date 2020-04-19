@@ -66,7 +66,7 @@ class CityServices extends React.Component {
         )
       }
     ];
-    const secDesc = "Trash and recycling pick up.";
+    const secDesc = "Trash / recycling pick up and street sweeping.";
     const cardsCityServices = (
       <div>
         <div className="sh">

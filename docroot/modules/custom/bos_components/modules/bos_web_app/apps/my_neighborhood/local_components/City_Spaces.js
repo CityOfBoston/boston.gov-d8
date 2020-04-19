@@ -86,7 +86,7 @@ class CitySpaces extends React.Component {
       }
     ];
     const secDesc =
-      "Libraries, community centers, parks and playgrounds near you.";
+      "Libraries, community centers, historic districts, parks and playgrounds near you.";
     const cardsCitySpaces = (
       <div>
         <div className="sh">
