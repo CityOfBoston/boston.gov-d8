@@ -32,7 +32,7 @@ class WinterResources extends React.Component {
         )
       }
     ];
-    const secDesc = "Find out where to park and prepare for snow emergencies.";
+    const secDesc = "Find you where you can / can’t park and how to prepare for snow emergencies.";
     const cardsWinter = (
       <div>
         <div className="sh">

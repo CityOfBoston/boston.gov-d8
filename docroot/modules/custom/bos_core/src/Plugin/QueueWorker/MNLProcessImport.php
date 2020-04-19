@@ -27,22 +27,14 @@ class MNLProcessImport extends QueueWorkerBase {
   }
 
   /**
-   * Build queue for existing MNL nodes.
+   * Build queue for current MNL nodes to compare and delete older records.
    */
-  public function existingNodes() {
+  public function currentNodes() {
     $nidsExisting = $this->getNodesNL();
     $queue_nodes = \Drupal::queue('mnl_nodes');
     foreach ($nidsExisting as $nid) {
       $queue_nodes->createItem($nid);
     }
-  }
-
-  /**
-   * Add queue items (for use in deletion check later) of successfully imported MNL nodes.
-   */
-  public function addDeleteQueueItem($data) {
-    $queue_delete = \Drupal::queue('mnl_delete');
-    $queue_delete->createItem($data);
   }
 
   /**
@@ -73,16 +65,18 @@ class MNLProcessImport extends QueueWorkerBase {
   }
 
   /**
-   * Process each record.
+   * Check if end of mnl_import queue.
+   */
+  public function checkEndQueue() {
+    $queue = \Drupal::queue('mnl_import');
+    $end_of_queue = ($queue->numberOfItems() == 1) ? $this->currentNodes() : NULL;
+    return $end_of_queue;
+  }
+
+  /**
+   * Process each queue record.
    */
   public function processItem($items) {
-    // Check for end of import queue.
-    // If so, trigger existing MNL queue creation.
-    $queue = \Drupal::queue('mnl_import');
-    if ($queue->numberOfItems() == 1) {
-      $this->existingNodes();
-    }
-
     $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
     $nidsNL = $query->execute();
 
@@ -92,12 +86,14 @@ class MNLProcessImport extends QueueWorkerBase {
         $sam_id = $node->field_sam_id->value;
         if ($sam_id == $items['sam_address_id']) {
           $this->updateNode($nid, $items);
+          $this->checkEndQueue();
           return;
         }
       }
     }
 
     $this->createNode($items);
+    $this->checkEndQueue();
   }
 
 }
