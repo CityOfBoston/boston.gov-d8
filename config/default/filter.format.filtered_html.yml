@@ -6,6 +6,7 @@ dependencies:
     - editor
     - entity_embed
     - linkit
+    - media
     - shortcode
     - token_filter
 name: 'Filtered HTML'
@@ -20,7 +21,7 @@ filters:
     settings:
       allowed_html: '<a href hreflang target title rel name class data-entity-substitution data-entity-type data-entity-uuid> <em> <i> <strong> <b> <s> <sub> <sup> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <address> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <img src alt data-entity-type data-entity-uuid width height title> <p align class> <div align> <br> <hr> <pre> <code> <span class> <footer> <q> <section> <iframe width height frameborder scrolling src allowfullscreen> <ul> <ol> <li> <dl> <dt> <dd> <table width cellpadding cellspacing border summary class> <colgroup> <col> <picture> <source media srcset> <tr align valign rowspan> <td align valign width colspan data-label> <th align valign width> <tbody> <thead> <tfoot> <drupal-entity data-entity-type data-entity-uuid data-entity-embed-display data-entity-embed-display-settings data-align data-caption data-embed-button alt title class height width>'
       filter_html_help: true
-      filter_html_nofollow: true
+      filter_html_nofollow: false
   editor_file_reference:
     id: editor_file_reference
     provider: editor
@@ -103,3 +104,12 @@ filters:
     status: true
     weight: 0
     settings: {  }
+  media_embed:
+    id: media_embed
+    provider: media
+    status: false
+    weight: 100
+    settings:
+      default_view_mode: default
+      allowed_media_types: {  }
+      allowed_view_modes: {  }
