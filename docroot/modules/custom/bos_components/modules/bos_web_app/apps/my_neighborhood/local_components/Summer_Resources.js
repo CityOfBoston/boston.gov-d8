@@ -3,8 +3,11 @@ class SummerResources extends React.Component {
     // Content for card
     const contentPools = [
       {
-        heading: this.props.bcyf_pool_center_name,
-        content: this.props.bcyf_pool_center_address
+        heading: "Pool Location",
+        content: <div>
+                    <div>{this.props.bcyf_pool_center_name}</div>
+                    <div>{this.props.bcyf_pool_center_address}</div>
+                  </div>
       },
       {
         content: (
@@ -17,8 +20,11 @@ class SummerResources extends React.Component {
     ];
     const contentTotSprays = [
       {
-        heading: this.props.tot_name,
-        content: this.props.tot_address
+        heading: "Tot Spray Location",
+        content: <div>
+                    <div>{this.props.tot_name}</div>
+                    <div>{this.props.tot_address}</div>
+                  </div>
       },
       {
         content: (
