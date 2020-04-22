@@ -10,10 +10,6 @@ class CitySpaces extends React.Component {
         {
           heading: "District",
           content: this.props.hist_place_name
-        },
-        {
-          heading: "Year",
-          content: (this.props.hist_year == 0 || this.props.hist_year == null ? "No Year Avaialble" : this.props.hist_year)
         }
       ];
     } else {
@@ -37,8 +33,9 @@ class CitySpaces extends React.Component {
     // Content for card
     const contentLibArray = [
       {
-        heading: this.props.library_branch,
+        heading: "Branch",
         content: <div>
+                    <div>{this.props.library_branch}</div>
                     <div>{this.props.library_address}</div>
                     <div>Boston, MA {this.props.library_zipcode}</div>
                   </div> 
@@ -53,8 +50,11 @@ class CitySpaces extends React.Component {
     ];
     const contentCommCenters = [
       {
-        heading: this.props.comm_center,
-        content: this.props.comm_address
+        heading: "Location",
+        content: <div>
+                    <div>{this.props.comm_center}</div>
+                    <div>{this.props.comm_address}</div>
+                  </div>
       },
       {
         content: (
@@ -66,8 +66,11 @@ class CitySpaces extends React.Component {
     ];
     const contentPark = [
       {
-        heading: this.props.park_name,
-        content: this.props.park_district
+        heading: "Park Name",
+        content:  <div>
+                    <div>{this.props.park_name}</div>
+                    <div>{this.props.park_district}</div>
+                  </div>
       },
       {
         heading: "Park Ownership",
@@ -80,7 +83,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about the City's <a href={"/departments/parks-and-recreation"}>parks</a>
+            Learn more about <a href={"/departments/parks-and-recreation"}>parks in the city</a>.
           </div>
         )
       }
