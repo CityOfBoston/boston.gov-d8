@@ -12,13 +12,11 @@ dependencies:
     - field.field.node.metrolist_development.field_ml_agent_phone
     - field.field.node.metrolist_development.field_ml_available_units_view
     - field.field.node.metrolist_development.field_ml_city
-    - field.field.node.metrolist_development.field_ml_location
     - field.field.node.metrolist_development.field_ml_neighborhood
     - field.field.node.metrolist_development.field_ml_num_of_ownership_units
     - field.field.node.metrolist_development.field_ml_number_of_rental_units
     - field.field.node.metrolist_development.field_ml_number_of_units
     - field.field.node.metrolist_development.field_ml_region
-    - field.field.node.metrolist_development.field_ml_share
     - filter.format.plain_text
     - node.type.metrolist_development
   module:
@@ -40,7 +38,7 @@ content:
     settings:
       data_provider_settings:
         geocoder: google_geocoding_api
-      set_marker: '1'
+      set_marker: true
       title: Development
       info_text:
         value: "[geolocation_current_item:address_line1]\r\n[geolocation_current_item:locality] [geolocation_current_item:administrative_area] [geolocation_current_item:postal_code]"
@@ -89,8 +87,8 @@ content:
             location_option_id: freeogeoip
       map_provider_id: google_maps
       map_provider_settings:
-        height: '220'
-        width: '360'
+        height: 100%
+        width: 100%
         type: ROADMAP
         zoom: 16
         maxZoom: 20
@@ -318,8 +316,8 @@ content:
           google_maps_layer_transit:
             enabled: true
             weight: 0
-      use_overridden_map_settings: 0
-      common_map: '1'
+      use_overridden_map_settings: false
+      common_map: true
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -336,13 +334,11 @@ hidden:
   field_ml_agent_phone: true
   field_ml_available_units_view: true
   field_ml_city: true
-  field_ml_location: true
   field_ml_neighborhood: true
   field_ml_num_of_ownership_units: true
   field_ml_number_of_rental_units: true
   field_ml_number_of_units: true
   field_ml_region: true
-  field_ml_share: true
   langcode: true
   links: true
   published_at: true
