@@ -1,0 +1,213 @@
+uuid: 3bc9413d-93e1-4567-9a72-727919777491
+langcode: en
+status: open
+dependencies: {  }
+open: null
+close: null
+weight: 0
+uid: 1
+template: false
+archive: false
+id: metrolist_listing
+title: 'MetroList Listing'
+description: ''
+category: ''
+elements: "your_contact_information:\n  '#type': webform_wizard_page\n  '#title': Contact\n  flexbox_a:\n    '#type': webform_flexbox\n    '#align_items': center\n    contact_name:\n      '#type': textfield\n      '#title': 'Contact Name'\n      '#placeholder': 'Enter you name'\n      '#required': true\n      '#required_error': 'You name is needed to keep track of your Listing'\n      '#format_items': comma\n    contact_company:\n      '#type': textfield\n      '#title': 'Contact Company'\n      '#placeholder': 'Company name'\n      '#required': true\n      '#format_items': comma\n  flexbox_01:\n    '#type': webform_flexbox\n    '#align_items': center\n    contact_email:\n      '#type': email\n      '#title': 'Contact Email'\n      '#placeholder': paul.revere@email.com\n      '#required': true\n      '#format_items': comma\n    contact_phone:\n      '#type': textfield\n      '#title': 'Contact Phone'\n      '#input_mask': '(999) 999-9999'\n      '#required': true\n      '#format_items': comma\npublic_listing_information:\n  '#type': webform_wizard_page\n  '#title': Post\n  flexbox_02:\n    '#type': webform_flexbox\n    type_of_listing:\n      '#type': select\n      '#title': 'Type of Listing'\n      '#placeholder': Type\n      '#options':\n        'Rental - First-Come-First-Served': 'Rental - First Come, First Served'\n        'Rental - Lottery': 'Rental - Lottery'\n        'Ownership - First-Come-First-Served': 'Ownership - First Come, First Served'\n        'Ownership - Lottery': 'Ownership - Lottery'\n        'Rental Waitlist - First-Come-First-Served': 'Rental Waitlist - First Come, First Served'\n        'Rental Waitlist - Lottery': 'Rental Waitlist - Lottery'\n      '#empty_option': 'Type of Listing'\n      '#select2': true\n      '#wrapper_attributes':\n        class:\n          - sel\n      '#attributes':\n        class:\n          - sel-f\n      '#label_attributes':\n        class:\n          - sel-l\n    request_type:\n      '#type': select\n      '#title': 'Request Type'\n      '#options':\n        'New Listing': 'New Listing'\n        'Listing Update': 'Listing Update'\n      '#default_value': 'New Listing'\n      '#wrapper_attributes':\n        class:\n          - sel\n      '#attributes':\n        class:\n          - sel-f\n      '#label_attributes':\n        class:\n          - sel-l\n  flexbox_03:\n    '#type': webform_flexbox\n    number_of_affordable_units:\n      '#type': number\n      '#title': 'Number of Affordable Units'\n      '#format_items': comma\n      '#min': 0\n      '#max': 999\n    date_available_if_applicable_:\n      '#type': date\n      '#title': 'Date Available (if applicable)'\n      '#placeholder': MM/DD/YYYY\n      '#format_items': comma\n      '#datepicker': true\n      '#date_date_format': m/d/Y\n    link_for_listing:\n      '#type': textfield\n      '#title': 'Link for Listing'\n      '#placeholder': 'Enter link OR email PDF to metrolist@boston.gov'\n      '#flex': 2\n      '#format_items': comma\n  flexbox_08:\n    '#type': webform_flexbox\n    '#align_items': center\n    listing_description:\n      '#type': textarea\n      '#title': 'Listing Description'\n      '#placeholder': 'Describe the listing'\n      '#attributes':\n        style: 'width:100%;'\n      '#format_items': comma\n  flexbox_09:\n    '#type': webform_flexbox\n    '#align_items': center\n    eligibility_requirements:\n      '#type': textarea\n      '#title': 'Eligibility Requirements'\n      '#placeholder': 'Describe briefly'\n      '#attributes':\n        style: 'width:100%'\n      '#format_items': comma\n  flexbox_05:\n    '#type': webform_flexbox\n    public_contact_name:\n      '#type': textfield\n      '#title': 'Public Contact Name'\n      '#placeholder': 'Full name'\n      '#format_items': comma\n    property_management_company:\n      '#type': textfield\n      '#title': 'Property Management Company'\n      '#placeholder': 'Company name'\n      '#format_items': comma\n  flexbox_06:\n    '#type': webform_flexbox\n    public_contact_email:\n      '#type': email\n      '#title': 'Public Contact Email'\n      '#format_items': comma\n    public_contact_phone:\n      '#type': textfield\n      '#title': 'Public Contact Phone'\n      '#input_mask': '(999) 999-9999'\n      '#format_items': comma\nproperty_information:\n  '#type': webform_wizard_page\n  '#title': Property\n  flexbox_07:\n    '#type': webform_flexbox\n    property_name:\n      '#type': textfield\n      '#title': 'Property Name'\n      '#placeholder': 'Enter name of building here'\n      '#flex': 2\n      '#format_items': comma\n    building_size:\n      '#type': select\n      '#title': 'Building Size'\n      '#options':\n        1-4: 1-4\n        5-20: 5-20\n        '21 or More': '21 or More'\n        'Single Family': 'Single Family'\n      '#empty_option': 'Building Size'\n      '#wrapper_attributes':\n        class:\n          - sel\n      '#attributes':\n        class:\n          - sel-f\n  flexbox_10:\n    '#type': webform_flexbox\n    street_address:\n      '#type': textfield\n      '#title': 'Street Address'\n      '#flex': 2\n      '#format_items': comma\n    zip_code:\n      '#type': textfield\n      '#title': 'ZIP Code'\n      '#input_mask': '99999[-9999]'\n      '#format_items': comma\n  flexbox_04:\n    '#type': webform_flexbox\n    neighborhood:\n      '#type': select\n      '#title': Neighborhood\n      '#options':\n        Allston: Allston\n        'Back Bay': 'Back Bay'\n        'Bay Village': 'Bay Village'\n        outsideBoston1: 'Outside Boston'\n      '#flex': 2\n      '#wrapper_attributes':\n        class:\n          - sel\n      '#attributes':\n        class:\n          - sel-f\n    outside_boston_location:\n      '#type': select\n      '#title': 'Outside Boston Location'\n      '#options':\n        Acton: Acton\n        Amesbury: Amesbury\n        Arlington: Arlington\n      '#flex': 2\n      '#states':\n        invisible:\n          ':input[name=\"neighborhood\"]':\n            '!value': outsideBoston1\n      '#wrapper_attributes':\n        class:\n          - sel\n      '#attributes':\n        class:\n          - sel-f\nunit_information:\n  '#type': webform_wizard_page\n  '#title': Units\n  flexbox_11:\n    '#type': webform_flexbox\n    unit_info_container_2:\n      '#type': container\n      flexbox_17:\n        '#type': webform_flexbox\n        ami_label:\n          '#type': webform_markup\n          '#flex': 3\n          '#markup': '<h4>Income Eligibility Limits</h4>'\n        income_eligibility_limits_ami:\n          '#type': select\n          '#title': 'AMI %'\n          '#multiple': true\n          '#options':\n            '30% AMI': '30% AMI'\n            '80% AMI': '80% AMI'\n            '100% AMI': '100% AMI'\n          '#select2': true\n          '#flex': 2\n          '#wrapper_attributes':\n            class:\n              - sel\n          '#attributes':\n            class:\n              - sel-f\n      horizontal_rule_01:\n        '#type': webform_horizontal_rule\n      flexbox_24:\n        '#type': webform_flexbox\n        markup_08:\n          '#type': webform_markup\n          '#flex': 2\n          '#markup': '<h4>Studio</h4>'\n        number_of_affordable_units_studio:\n          '#type': number\n          '#title': 'Studio Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n        unit_price_studio:\n          '#type': textfield\n          '#title': 'Studio Price'\n          '#input_mask': '''alias'': ''currency'''\n          '#flex': 2\n          '#format_items': comma\n      flexbox_12:\n        '#type': webform_flexbox\n        one_bedroom_label:\n          '#type': webform_markup\n          '#flex': 2\n          '#markup': '<h4>One Bedroom</h4>'\n        number_of_affordable_units_1_bed:\n          '#type': number\n          '#title': '1 Bed Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n        unit_price_1_bed:\n          '#type': textfield\n          '#title': '1 Bed Price'\n          '#input_mask': '''alias'': ''currency'''\n          '#flex': 2\n          '#format_items': comma\n      flexbox_13:\n        '#type': webform_flexbox\n        markup:\n          '#type': webform_markup\n          '#flex': 2\n          '#markup': '<h4>Two Bedroom</h4>'\n        number_of_affordable_units_2_bed:\n          '#type': number\n          '#title': '2 Bed Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n        unit_price_2_bed:\n          '#type': textfield\n          '#title': '2 Bed Price'\n          '#input_mask': '''alias'': ''currency'''\n          '#flex': 2\n          '#format_items': comma\n      flexbox_14:\n        '#type': webform_flexbox\n        markup_01:\n          '#type': webform_markup\n          '#flex': 2\n          '#markup': '<h4>Three Bedroom</h4>'\n        number_of_affordable_units_3_bed:\n          '#type': number\n          '#title': '3 Bed Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n        unit_price_3_bed:\n          '#type': textfield\n          '#title': '3 Bed Price'\n          '#input_mask': '''alias'': ''currency'''\n          '#flex': 2\n          '#format_items': comma\n      flexbox_15:\n        '#type': webform_flexbox\n        markup_02:\n          '#type': webform_markup\n          '#flex': 2\n          '#markup': '<h4>Four+ Bedroom</h4>'\n        number_of_affordable_units_4_bed:\n          '#type': number\n          '#title': '4+ Bed Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n        unit_price_4_bed:\n          '#type': textfield\n          '#title': '4+ Bed Price'\n          '#input_mask': '''alias'': ''currency'''\n          '#flex': 2\n          '#format_items': comma\n      horizontal_rule:\n        '#type': webform_horizontal_rule\n      flexbox_16:\n        '#type': webform_flexbox\n        markup_03:\n          '#type': webform_markup\n          '#flex': 4\n          '#markup': '<h4>Persons with Mobility Impairments</h4>'\n        units_for_persons_with_mobility_impairments:\n          '#type': number\n          '#title': 'Mobility Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n      flexbox_18:\n        '#type': webform_flexbox\n        markup_04:\n          '#type': webform_markup\n          '#flex': 4\n          '#markup': '<h4>Persons who are Deaf or Hard of Hearing</h4>'\n        units_for_persons_who_are_deaf_or_hard_of_hearing:\n          '#type': number\n          '#title': 'Hearing Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\n      flexbox_19:\n        '#type': webform_flexbox\n        markup_05:\n          '#type': webform_markup\n          '#flex': 4\n          '#markup': '<h4>Persons with Vision Impairments</h4>'\n        units_for_persons_with_vision_impairments:\n          '#type': number\n          '#title': 'Vision Units'\n          '#format_items': comma\n          '#min': 0\n          '#max': 999\nfeature_information:\n  '#type': webform_wizard_page\n  '#title': Featurers\n  unit_info_container:\n    '#type': container\n    flexbox_20:\n      '#type': webform_flexbox\n      markup_06:\n        '#type': webform_markup\n        '#flex': 2\n        '#markup': '<h4>Security Deposit Required</h4>'\n      security_deposit_required:\n        '#type': radios\n        '#title': 'Security Deposit Required'\n        '#title_display': invisible\n        '#options':\n          'yes': 'Yes'\n          'no': 'No'\n          Unknown: Unknown\n        '#options_display': buttons\n        '#flex': 3\n        '#default_value': Unknown\n    horizontal_rule_03:\n      '#type': webform_horizontal_rule\n    flexbox_22:\n      '#type': webform_flexbox\n      utilities_included_in_rent:\n        '#type': select\n        '#title': 'Utilities Included in Rent'\n        '#multiple': true\n        '#options':\n          Gas: Gas\n          Electric: Electric\n          Water/Sewer: Water/Sewer\n          'Heat & Hot Water': 'Heat & Hot Water'\n          Internet: Internet\n          None: None\n        '#select2': true\n        '#flex': 2\n        '#wrapper_attributes':\n          class:\n            - sel\n        '#attributes':\n          class:\n            - sel-f\n      amenities_features:\n        '#type': select\n        '#title': 'Amenities & Features'\n        '#multiple': true\n        '#options':\n          Dishwasher: Dishwasher\n          Elevator: Elevator\n          'Grab bars': 'Grab bars'\n          'Laundry Hookup': 'Laundry Hookup'\n          'Laundry in Building': 'Laundry in Building'\n          'Laundry in Unit': 'Laundry in Unit'\n          'Pets Allowed': 'Pets Allowed'\n          Refrigerator: Refrigerator\n          'Smoking Allowed': 'Smoking Allowed'\n        '#select2': true\n        '#flex': 2\n        '#wrapper_attributes':\n          class:\n            - sel\n        '#attributes':\n          class:\n            - sel-f\n    horizontal_rule_04:\n      '#type': webform_horizontal_rule\n    flexbox_23:\n      '#type': webform_flexbox\n      nearby_public_transportation:\n        '#type': select\n        '#title': 'Nearby Public Transportation'\n        '#multiple': true\n        '#options':\n          Bus: Bus\n          'Commuter Rail': 'Commuter Rail'\n          Subway: Subway\n        '#select2': true\n        '#flex': 2\n        '#wrapper_attributes':\n          class:\n            - sel\n        '#attributes':\n          class:\n            - sel-f\n      available_parking:\n        '#type': select\n        '#title': 'Available Parking'\n        '#multiple': true\n        '#options':\n          Street: Street\n          Off-Street: Off-Street\n        '#select2': true\n        '#flex': 2\n        '#wrapper_attributes':\n          class:\n            - sel\n        '#attributes':\n          class:\n            - sel-f\n    horizontal_rule_02:\n      '#type': webform_horizontal_rule\n    flexbox_21:\n      '#type': webform_flexbox\n      markup_07:\n        '#type': webform_markup\n        '#flex': 2\n        '#markup': '<h4>Have the Unit(s) Been Deleaded</h4>'\n      have_the_unit_s_been_deleaded:\n        '#type': radios\n        '#title': 'Have the Unit(s) Been Deleaded'\n        '#title_display': invisible\n        '#options':\n          'yes': 'Yes'\n          'no': 'No'\n          'N/A - newer unit(s)': 'N/A - newer unit(s)'\n        '#options_display': buttons\n        '#flex': 3\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#submit__label': 'Submit for Review'\n  '#submit__attributes':\n    class:\n      - m-v600\n    style: 'float:right;'\n  '#wizard_prev__attributes':\n    class:\n      - m-v600\n  '#wizard_next__attributes':\n    class:\n      - m-v600\n    style: 'float:right;'\n  '#preview_prev__label': '< Previous Page'\n  '#preview_prev__attributes':\n    class:\n      - m-v600\n  '#preview_next__label': 'Next Page >'\n  '#preview_next__attributes':\n    class:\n      - m-v600\n    style: 'float:right;'"
+css: ''
+javascript: ''
+settings:
+  ajax: true
+  ajax_scroll_top: form
+  ajax_progress_type: fullscreen
+  ajax_effect: slide
+  ajax_speed: 500
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_admin_theme: false
+  form_title: webform
+  form_submit_once: false
+  form_exception_message: ''
+  form_open_message: ''
+  form_close_message: ''
+  form_previous_submissions: false
+  form_confidential: false
+  form_confidential_message: ''
+  form_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_reset: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  submission_label: ''
+  submission_log: false
+  submission_views: {  }
+  submission_views_replace:
+    webform_routes: {  }
+    node_routes: {  }
+  submission_user_columns: {  }
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: true
+  autofill_message: ''
+  autofill_excluded_elements:
+    type_of_listing: type_of_listing
+    request_type: request_type
+    number_of_affordable_units: number_of_affordable_units
+    date_available_if_applicable_: date_available_if_applicable_
+    link_for_listing: link_for_listing
+    listing_description: listing_description
+    eligibility_requirements: eligibility_requirements
+    property_name: property_name
+    building_size: building_size
+    street_address: street_address
+    zip_code: zip_code
+    neighborhood: neighborhood
+    outside_boston_location: outside_boston_location
+    income_eligibility_limits_ami: income_eligibility_limits_ami
+    number_of_affordable_units_1_bed: number_of_affordable_units_1_bed
+    unit_price_1_bed: unit_price_1_bed
+    number_of_affordable_units_2_bed: number_of_affordable_units_2_bed
+    unit_price_2_bed: unit_price_2_bed
+    number_of_affordable_units_3_bed: number_of_affordable_units_3_bed
+    unit_price_3_bed: unit_price_3_bed
+    number_of_affordable_units_4_bed: number_of_affordable_units_4_bed
+    unit_price_4_bed: unit_price_4_bed
+    units_for_persons_with_mobility_impairments: units_for_persons_with_mobility_impairments
+    units_for_persons_who_are_deaf_or_hard_of_hearing: units_for_persons_who_are_deaf_or_hard_of_hearing
+    units_for_persons_with_vision_impairments: units_for_persons_with_vision_impairments
+    security_deposit_required: security_deposit_required
+    utilities_included_in_rent: utilities_included_in_rent
+    amenities_features: amenities_features
+    nearby_public_transportation: nearby_public_transportation
+    available_parking: available_parking
+    have_the_unit_s_been_deleaded: have_the_unit_s_been_deleaded
+  wizard_progress_bar: true
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: true
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: false
+  wizard_confirmation_label: ''
+  wizard_track: name
+  preview: 2
+  preview_label: Review
+  preview_title: Review
+  preview_message: "<em>Please review your submission. Your submission is not complete until you press the &quot;Submit for Review&quot; button!</em>&nbsp;<br />\r\n<br />\r\n<em>By pressing the &quot;Submit for Review&quot; button, you agree not to discriminate or permit discrimination, upon the basis or race, color, religious creed, marital status, sex, age, ancestry, sexual preference, sexual orientation, military status, disability, national origin, gender identity, source of income, or the presence of children, in the rental or sale of this property.</em>"
+  preview_attributes: {  }
+  preview_excluded_elements: {  }
+  preview_exclude_empty: false
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: page
+  confirmation_title: 'Thank you for your submission.'
+  confirmation_message: 'The City is reviewing the data that you submitted for this Listing. We will contact you soon - change copy padora.'
+  confirmation_url: ''
+  confirmation_attributes: {  }
+  confirmation_back: true
+  confirmation_back_label: 'Submit another Listing'
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: false
+  confirmation_exclude_token: false
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+access:
+  create:
+    roles:
+      - anonymous
+      - authenticated
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers: {  }
+variants: {  }
