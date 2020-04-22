@@ -62,6 +62,155 @@ third_party_settings:
   field_group:
     group_features:
       children:
+        - group_detail_list_data_b
+      parent_name: group_detail_list
+      weight: 2
+      format_type: html_element
+      region: content
+      format_settings:
+        element: li
+        show_label: true
+        label_element: span
+        label_element_classes: dl-t
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: dl-i
+      label: Features
+    group_utilities_included:
+      children:
+        - group_detail_list_data_c
+      parent_name: group_detail_list
+      weight: 3
+      format_type: html_element
+      region: content
+      format_settings:
+        element: li
+        show_label: true
+        label_element: span
+        label_element_classes: dl-t
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: dl-i
+      label: 'Utilities Included'
+    group_accessibility:
+      children:
+        - group_detail_list_data_d
+      parent_name: group_detail_list
+      weight: 4
+      format_type: html_element
+      region: content
+      format_settings:
+        element: li
+        show_label: true
+        label_element: span
+        label_element_classes: dl-t
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: dl-i
+      label: Accessibility
+    group_due_at_signing:
+      children:
+        - group_detail_list_data_e
+      parent_name: group_detail_list
+      weight: 5
+      format_type: html_element
+      region: content
+      format_settings:
+        element: li
+        show_label: true
+        label_element: span
+        label_element_classes: dl-t
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: dl-i
+      label: 'Due at signing'
+    group_bathrooms:
+      children:
+        - group_detail_list_data_a
+      parent_name: group_detail_list
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        element: li
+        show_label: true
+        label_element: span
+        label_element_classes: dl-t
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: dl-i
+      label: Bathrooms
+    group_eligibility:
+      children:
+        - group_detail_list_data_f
+      parent_name: group_detail_list
+      weight: 6
+      format_type: html_element
+      region: content
+      format_settings:
+        element: li
+        show_label: true
+        label_element: span
+        label_element_classes: dl-t
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: dl-i
+      label: Eligibility
+    group_detail_list:
+      children:
+        - group_bathrooms
+        - group_features
+        - group_utilities_included
+        - group_accessibility
+        - group_due_at_signing
+        - group_eligibility
+      parent_name: ''
+      weight: 0
+      format_type: html_element
+      region: content
+      format_settings:
+        id: ''
+        classes: dl
+        element: ul
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+      label: 'Detail List'
+    group_detail_list_data_a:
+      children:
+        - field_ml_unit_num_of_bathrooms
+      parent_name: group_bathrooms
+      weight: 20
+      format_type: html_element
+      region: content
+      format_settings:
+        id: ''
+        classes: dl-d
+        element: span
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+      label: 'Detail List Data'
+    group_detail_list_data_b:
+      children:
         - field_ml_unit_refrigerator
         - field_ml_unit_gym_fitness_area
         - field_ml_unit_smoke_free
@@ -77,22 +226,22 @@ third_party_settings:
         - field_ml_unit_cats_allowed
         - field_ml_unit_bicycle_storage
         - field_ml_unit_dishwasher
-      parent_name: ''
-      weight: 1
+      parent_name: group_features
+      weight: 20
       format_type: html_element
       region: content
       format_settings:
-        element: div
-        show_label: true
-        label_element: div
-        label_element_classes: field-label
+        id: ''
+        classes: dl-d
+        element: span
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: ml-field-group-label
-      label: Features
-    group_utilities_included:
+      label: 'Detail List Data'
+    group_detail_list_data_c:
       children:
         - field_ml_unit_gas
         - field_ml_unit_heat_hot_water
@@ -100,99 +249,81 @@ third_party_settings:
         - field_ml_unit_electric
         - field_ml_unit_internet
         - field_ml_unit_cable
-      parent_name: ''
-      weight: 2
+      parent_name: group_utilities_included
+      weight: 20
       format_type: html_element
       region: content
       format_settings:
-        element: div
-        show_label: true
-        label_element: div
-        label_element_classes: field-label
+        id: ''
+        classes: dl-d
+        element: span
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: ml-field-group-label
-      label: 'Utilities Included'
-    group_accessibility:
+      label: 'Detail List Data'
+    group_detail_list_data_d:
       children:
         - field_ml_unit_wide_doorways
         - field_ml_unit_wide_hallways
         - field_ml_unit_grab_bar_handrails
-      parent_name: ''
-      weight: 3
+      parent_name: group_accessibility
+      weight: 20
       format_type: html_element
       region: content
       format_settings:
-        element: div
-        show_label: true
-        label_element: div
-        label_element_classes: field-label
+        id: ''
+        classes: dl-d
+        element: span
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: ml-field-group-label
-      label: Accessibility
-    group_due_at_signing:
+      label: 'Detail List Data'
+    group_detail_list_data_e:
       children:
         - field_ml_unit_first_month_s_rent
         - field_ml_unit_security_deposit
         - field_ml_unit_last_month_s_rent
         - field_ml_unit_broker_s_fee
-      parent_name: ''
-      weight: 4
+      parent_name: group_due_at_signing
+      weight: 20
       format_type: html_element
       region: content
       format_settings:
-        element: div
-        show_label: true
-        label_element: div
-        label_element_classes: field-label
+        id: ''
+        classes: dl-d
+        element: span
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: ml-field-group-label
-      label: 'Due at signing'
-    group_bathrooms:
-      children:
-        - field_ml_unit_num_of_bathrooms
-      parent_name: ''
-      weight: 0
-      format_type: html_element
-      region: content
-      format_settings:
-        element: div
-        show_label: true
-        label_element: div
-        label_element_classes: field-label
-        attributes: ''
-        effect: none
-        speed: fast
-        id: ''
-        classes: ml-field-group-label
-      label: Bathrooms
-    group_eligibility:
+      label: 'Detail List Data'
+    group_detail_list_data_f:
       children:
         - field_ml_incm_elgblty_ami_thold
         - field_ml_unit_min_income_thold
-      parent_name: ''
-      weight: 5
+      parent_name: group_eligibility
+      weight: 20
       format_type: html_element
       region: content
       format_settings:
-        element: div
-        show_label: true
-        label_element: div
-        label_element_classes: field-label
+        id: ''
+        classes: dl-d
+        element: span
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: ml-field-group-label
-      label: Eligibility
+      label: 'Detail List Data'
 _core:
   default_config_hash: uxZgr-Q4uUhOTa1E9gNbLs1x2RsqX7JYYgHiAUaBqqM
 id: node.metrolist_unit.teaser
@@ -202,7 +333,7 @@ mode: teaser
 content:
   field_ml_incm_elgblty_ami_thold:
     type: entity_reference_label
-    weight: 10
+    weight: 21
     region: content
     label: hidden
     settings:
@@ -217,7 +348,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_air_conditioning:
     type: metrolist_boolean_field_formatter
-    weight: 10
+    weight: 24
     region: content
     label: hidden
     settings: {  }
@@ -231,7 +362,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_bicycle_storage:
     type: metrolist_boolean_field_formatter
-    weight: 20
+    weight: 34
     region: content
     label: hidden
     settings: {  }
@@ -245,7 +376,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_broker_s_fee:
     type: metrolist_boolean_field_formatter
-    weight: 3
+    weight: 24
     region: content
     label: hidden
     settings: {  }
@@ -259,7 +390,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_cable:
     type: metrolist_boolean_field_formatter
-    weight: 5
+    weight: 26
     region: content
     label: hidden
     settings: {  }
@@ -273,7 +404,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_cats_allowed:
     type: metrolist_boolean_field_formatter
-    weight: 19
+    weight: 33
     region: content
     label: hidden
     settings: {  }
@@ -287,7 +418,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_dishwasher:
     type: metrolist_boolean_field_formatter
-    weight: 21
+    weight: 35
     region: content
     label: hidden
     settings: {  }
@@ -301,7 +432,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_dogs_allowed:
     type: metrolist_boolean_field_formatter
-    weight: 18
+    weight: 32
     region: content
     label: hidden
     settings: {  }
@@ -315,7 +446,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_electric:
     type: metrolist_boolean_field_formatter
-    weight: 3
+    weight: 24
     region: content
     label: hidden
     settings: {  }
@@ -329,7 +460,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_elevator:
     type: metrolist_boolean_field_formatter
-    weight: 15
+    weight: 29
     region: content
     label: hidden
     settings: {  }
@@ -343,7 +474,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_first_month_s_rent:
     type: metrolist_boolean_field_formatter
-    weight: 0
+    weight: 21
     region: content
     label: hidden
     settings: {  }
@@ -357,7 +488,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_garbage_disposal:
     type: metrolist_boolean_field_formatter
-    weight: 11
+    weight: 25
     region: content
     label: hidden
     settings: {  }
@@ -371,7 +502,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_gas:
     type: metrolist_boolean_field_formatter
-    weight: 0
+    weight: 21
     region: content
     label: hidden
     settings: {  }
@@ -385,7 +516,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_grab_bar_handrails:
     type: metrolist_boolean_field_formatter
-    weight: 2
+    weight: 23
     region: content
     label: hidden
     settings: {  }
@@ -399,7 +530,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_gym_fitness_area:
     type: metrolist_boolean_field_formatter
-    weight: 8
+    weight: 22
     region: content
     label: hidden
     settings: {  }
@@ -413,7 +544,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_heat_hot_water:
     type: metrolist_boolean_field_formatter
-    weight: 1
+    weight: 22
     region: content
     label: hidden
     settings: {  }
@@ -427,7 +558,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_internet:
     type: metrolist_boolean_field_formatter
-    weight: 4
+    weight: 25
     region: content
     label: hidden
     settings: {  }
@@ -441,7 +572,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_last_month_s_rent:
     type: metrolist_boolean_field_formatter
-    weight: 2
+    weight: 23
     region: content
     label: hidden
     settings: {  }
@@ -455,7 +586,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_laundry_building:
     type: metrolist_boolean_field_formatter
-    weight: 16
+    weight: 30
     region: content
     label: hidden
     settings: {  }
@@ -469,7 +600,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_laundry_in_unit:
     type: metrolist_boolean_field_formatter
-    weight: 17
+    weight: 31
     region: content
     label: hidden
     settings: {  }
@@ -483,7 +614,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_min_income_thold:
     type: number_decimal
-    weight: 11
+    weight: 22
     region: content
     label: hidden
     settings:
@@ -501,7 +632,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_num_of_bathrooms:
     type: number_integer
-    weight: 2
+    weight: 21
     region: content
     label: hidden
     settings:
@@ -517,7 +648,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_off_street_parking:
     type: metrolist_boolean_field_formatter
-    weight: 13
+    weight: 27
     region: content
     label: hidden
     settings: {  }
@@ -531,7 +662,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_refrigerator:
     type: metrolist_boolean_field_formatter
-    weight: 7
+    weight: 21
     region: content
     label: hidden
     settings: {  }
@@ -545,7 +676,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_security_deposit:
     type: metrolist_boolean_field_formatter
-    weight: 1
+    weight: 22
     region: content
     label: hidden
     settings: {  }
@@ -559,7 +690,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_smoke_free:
     type: metrolist_boolean_field_formatter
-    weight: 9
+    weight: 23
     region: content
     label: hidden
     settings: {  }
@@ -573,7 +704,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_stove:
     type: metrolist_boolean_field_formatter
-    weight: 14
+    weight: 28
     region: content
     label: hidden
     settings: {  }
@@ -587,7 +718,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_street_parking:
     type: metrolist_boolean_field_formatter
-    weight: 12
+    weight: 26
     region: content
     label: hidden
     settings: {  }
@@ -601,7 +732,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_water_sewer:
     type: metrolist_boolean_field_formatter
-    weight: 2
+    weight: 23
     region: content
     label: hidden
     settings: {  }
@@ -615,7 +746,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_wide_doorways:
     type: metrolist_boolean_field_formatter
-    weight: 0
+    weight: 21
     region: content
     label: hidden
     settings: {  }
@@ -629,7 +760,7 @@ content:
         fences_label_classes: ''
   field_ml_unit_wide_hallways:
     type: metrolist_boolean_field_formatter
-    weight: 1
+    weight: 22
     region: content
     label: hidden
     settings: {  }
