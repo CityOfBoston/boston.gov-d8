@@ -17,32 +17,32 @@ class CityServices extends React.Component {
               //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
             })
         )
-      contentRecollect.push({
-        heading: "NOTE:",
-        content: "The trash and recycling schedule might change during holidays and weather events."
-      });
     } else {
       contentRecollect.push({
         content: (
-          <div>We're having trouble finding Trash Collection information for that address. This may be because your trash is picked up by a commercial vendor. If that’s not right or you have additional questions, please reach out to our Public Works Department at publicworks@boston.gov or 617-635-4900.</div>
+          <div>
+            <div>We're having trouble finding Trash Collection information for that address. This may be because your trash is picked up by a commercial vendor.</div>
+            <div className="no-heading">If that’s not right or you have additional questions, please reach out to our <a href={"/departments/public-works"}>Public Works Department</a> at publicworks@boston.gov or 617-635-4900.</div>
+          </div>
           )
       });
     }
 
     contentRecollect.push({
-      content: (
-        <div>
-          Learn more about <a href={"/trash-and-recycling"}>trash and recycling</a>.
-        </div>
-      )
-    })
+        heading: "NOTE:",
+        content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
+      },
+      {
+        content:<div>Learn more about <a href={"/trash-and-recycling"}>trash and recycling</a>.</div>
+      });
     
     // Content for Street Sweeping
     const contentStreetSweeping = [
       {
         content: (
            <div>
-             The City cleans streets throughout the year, learn about our <a href={"/departments/public-works/street-sweeping-city"}>street sweeping program</a> and find the <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer">street sweeping schedule</a> for your street.
+              <div>The City cleans streets throughout the year.</div>
+              <div className="no-heading">Learn about our street sweeping <a href={"/departments/public-works/street-sweeping-city"}>program</a> or find the street sweeping <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer">schedule</a> for your street.</div>
           </div>
         )
       }
