@@ -23,7 +23,7 @@
 
 {% set print_button %}
   <div class="b">
-    <div class="m-v400">
+    <div class="m-t200">
       <button class="btn btn--sm btn--100"
               style="width: 9.5rem;"
               onclick="window.print()">
@@ -369,7 +369,7 @@
 
 {% set email_button %}
   <div class="b">
-    <div class="m-v400">
+    <div class="m-t200">
       <a class="btn btn--sm btn--100"
          style="width: 9.5rem;"
          href="mailto:?subject=MetroList%20Listing&amp;body=MetroList%20Listing%20Information">
@@ -999,7 +999,7 @@
 
 
 {%  if show_email_button or show_print_button %}
-  <div class="" style="display: flex; max-width: 20rem; justify-content: space-between; ">
+  <div class="m-v200" style="display: flex; max-width: 20rem; justify-content: space-between; flex-flow: row wrap;">
     {%  if show_email_button %} {{ email_button }} {% endif %}
     {%  if show_print_button %} {{ print_button }} {% endif %}
   </div>
