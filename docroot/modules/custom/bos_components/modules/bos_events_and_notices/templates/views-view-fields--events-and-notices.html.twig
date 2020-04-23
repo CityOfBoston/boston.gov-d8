@@ -33,34 +33,30 @@
 #}
 
 <div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing {{ type_class }}">
-  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
+  <a href="{{ event_link }}" class="item-link"></a>
   <div class="news-item-wrapper">
+
     <div class="thumb-wrapper float-left">
+
       {% if thumbnail %}
-        {{ fields.field_thumbnail.content }}
+        {{ thumbnail }}
       {% else %}
-        {% if fields.field_intro_image.content and not fields.field_intro_image.content|striptags == 'default' %}
-          {{ fields.field_intro_image.content }}
-        {% else %}
-          <div class="news-item-default-image">
-            <span>Image for {{ fields.title.content }}</span>
-          </div>
-        {% endif %}
+        <div class="news-item-default-image">
+          <span>Image for {{ fields.title.content }}</span>
+        </div>
       {% endif %}
+
       <div class="date-flag">
-        {%- set date_recur = fields.field_event_date_recur.content|striptags|replace({"\n": "","\N": ""}) -%}
-        {%- set public_notice_date = fields.field_public_notice_date.content|striptags|replace({"\n": "","\N": ""}) -%}
-        {% if date_recur %}
-          {{ date_recur|date("U")|format_date('custom', 'M j') }}
-        {% else %}
-          {{ public_notice_date|date("U")|format_date('custom', 'M j') }}
-        {% endif %}
+        {{ date_recur }}
       </div>
+
     </div>
+
     <div class="text-wrapper">
       <h3 class="title">
         {{ fields.title.content }}
       </h3>
     </div>
+
   </div>
 </div>
