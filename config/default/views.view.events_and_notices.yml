@@ -1023,7 +1023,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{% if field_cancel_event == "true" or field_cancelled == "true" %}<span class="red">CANCELED: </span>{% endif %}{{ title|striptags }}'
+            text: '{% if field_cancel_event == "True" or field_cancelled == "True" %}<span class="red">CANCELED: </span>{% endif %}{{ title|striptags }}'
             make_link: false
             path: ''
             absolute: false
@@ -1653,7 +1653,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{% if field_cancel_event == "true" or field_cancelled == "true" %}<span class="red">CANCELED: </span>{% endif %}{{ title|striptags }}'
+            text: '{% if field_cancel_event == "True" or field_cancelled == "True" %}<span class="red">CANCELED: </span>{% endif %}{{ title|striptags }}'
             make_link: false
             path: ''
             absolute: false
