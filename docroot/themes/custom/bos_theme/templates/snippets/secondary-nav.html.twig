@@ -24,23 +24,20 @@
             </li>
         {% endfor %}
       {#
-      David:
+      Stella:
       Where: Secondary Menu.
-      What: TEMPORARY: Removes the "translate" button from the secondary_menu by adding <tr-dd-link--hidden>.
-      Note: Doing it this way because we do want the functionality, its just the current Bing engine has been
-      discontinued and a replacement service needs to be found.  Simply hiding the button leaves the back-end
-      logic/functionality in place to be reconnected later if and when a new service is selected. #}
-      <li class="tr nv-h-l-i">
-        <div class="nv-h-l-a" id="google_translate_element" style="line-height: 2em;"></div>
-
-        <script type="text/javascript">
-          function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false}, 'google_translate_element');
-          }
-        </script>
-
-        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-      </li>
+      What: New Google Translate.
+      Note: Dropdown of languages #}
+      <li id="targetLanguage" class="nv-h-l-i translate-dropdown-menu">
+            <a href="#translate" title="Translate" class="nv-h-l-a nv-h-l-a--k--s translate-link">Translate</a>
+            <ul id="translate-dd" class="translate-dd">
+                <li><a href="#" class="notranslate translate-dd-link" data-lang="ht">Kreyòl Ayisyen</a></li>
+                <li><a href="#" class="notranslate translate-dd-link" data-lang="pt">Portugese</a></li>
+                <li><a href="#" class="notranslate translate-dd-link" data-lang="es">Español</a></li>
+                <li><a href="#" class="notranslate translate-dd-link" data-lang="vi">Tiếng Việt</a></li>
+                <li><a href="#" class="notranslate targetSource translate-dd-link " data-lang="en">English</a></li>
+            </ul>
+        </li>
         <li class="nv-h-l-i">
             <label for="s-tr" title="Search" class="nv-h-l-a nv-h-l-a--k nv-h-l-a-ic" id="searchIcon">
                 <svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 41"><title>Search</title>
