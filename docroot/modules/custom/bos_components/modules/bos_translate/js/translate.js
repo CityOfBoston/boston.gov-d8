@@ -12,7 +12,7 @@ jQuery(document).ready( function () {
   });
 });
 
-API_KEY = "AIzaSyDZW9OlLluPYdm20hCD7prFUa6C7Ek01K8"
+API_KEY = "AIzaSyAJpLVlgN7wFOiPsSPU-RrJjjqw0iq_nB4"
 
 // and replace with a translated version.
 jQuery(".translate-dd-link").click( function () {
