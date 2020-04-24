@@ -1,18 +1,21 @@
 --- a/modules/contrib/imagemagick/src/Plugin/ImageToolkit/ImagemagickToolkit.php
 +++ b/modules/contrib/imagemagick/src/Plugin/ImageToolkit/ImagemagickToolkit.php
-@@ -1236,7 +1236,14 @@
+@@ -1241,11 +1241,18 @@
      // plugin will fetch it from the file via the ::identify() method if data
      // is not already available.
-     $file_md = $this->fileMetadataManager->uri($this->getSource());
--    $data = $file_md->getMetadata(static::FILE_METADATA_PLUGIN_ID);
-+    $dothis = TRUE;
+     if (!$file_md = $this->fileMetadataManager->uri($this->getSource())) {
+       // No file, return.
+       return FALSE;
+     }
++
 +    if (\Drupal::state()->get("bos_migration.active", FALSE)) {
 +      $migration_mode = \Drupal::state()->get("bos_migration.fileOps", "copy");
-+      $dothis = ($migration_mode == "copy" || $migration_mode == "move");
++      if ($migration_mode != "copy" && $migration_mode != "move") {
++        return FALSE;
++      }
 +    }
-+    if ($dothis) {
-+      $data = $file_md->getMetadata(static::FILE_METADATA_PLUGIN_ID);
-+    }
- 
-     // No data, return.
-     if (empty($data)) {
+
+     if (!$file_md->getMetadata(static::FILE_METADATA_PLUGIN_ID)) {
+       // No data, return.
+       return FALSE;
+     }

@@ -1242,11 +1242,11 @@ Where: Top Navigation
 What: Hiding Translate button across site and devices.
 */
 
-.tr-dd-link--hidden.translate-dropdown-menu {
-  display:none;
+.translate-dropdown-menu {
+  display:block;
 }
 .tr--visible.translate-dropdown-menu {
-  display: none !important;
+  display: block !important;
 }
 
 /**
@@ -1277,4 +1277,16 @@ a.sw-skipnav:hover {
   width: auto;
   height: auto;
   overflow: visible;
+}
+
+/**
+Stella
+Where: Listing page filter
+What: Each filter width adjustment
+ */
+
+@media (min-width: 980px) {
+  .view-metrolist-affordable-housing-page .view-filters .drawer-wrapper {
+    width: calc(33.3% - 76px);
+  }
 }
