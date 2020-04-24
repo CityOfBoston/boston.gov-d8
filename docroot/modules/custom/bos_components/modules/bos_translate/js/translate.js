@@ -19,7 +19,7 @@ jQuery(".translate-dd-link").click( function () {
 
   'use strict';
   let title = jQuery( this ).attr( "data-lang" );
-  let url = "//translation.googleapis.com/language/translate/v2";
+  let url = "translation.googleapis.com/language/translate/v2";
   url += "/?key=" + API_KEY;
   url += "&target=" + title;
   url += "&q=" + encodeURIComponent(document.getElementById("page").innerHTML); // encodeURI converts strings to url-safe text
