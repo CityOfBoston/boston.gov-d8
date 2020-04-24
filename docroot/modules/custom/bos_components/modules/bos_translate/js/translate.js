@@ -6,7 +6,7 @@
 jQuery(document).ready( function () {
 
   'use strict';
-  jQuery('.translate-link').click(function(e) {
+  jQuery('.translate-link').click( function(e) {
     e.preventDefault();
     jQuery('.translate-dd').toggle('slow');
   });
@@ -15,7 +15,7 @@ jQuery(document).ready( function () {
 API_KEY = "AIzaSyAJpLVlgN7wFOiPsSPU-RrJjjqw0iq_nB4"
 
 // and replace with a translated version.
-jQuery(".translate-dd-link").click(function () {
+jQuery(".translate-dd-link").click( function () {
 
   'use strict';
   let title = jQuery( this ).attr( "data-lang" );
