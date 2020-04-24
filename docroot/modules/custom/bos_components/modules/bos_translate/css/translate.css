@@ -1,3 +1,49 @@
-header {
-	background-color: red !important;
+.translate-dropdown-menu, .tr--visible {
+  position: relative;
+  display:block;
 }
+#translate-dd.translate--visible {
+  display: block !important;
+}
+.translate-dd-link, .tr-link {
+  font-family: Montserrat,Arial,sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  display: block;
+  min-width: 45px;
+  text-align: center;
+  margin-left: 1.4em;
+  color: #1871bd;
+}
+.translate-dd {
+  display: none;
+  position: absolute;
+  margin: 3px 0 0;
+  list-style: none;
+  padding: 0;
+  background-color: #1871bd;
+  right: 0;
+  width: 250px;
+  z-index: 0;
+}
+.translate-dd li {
+  padding: 0;
+  margin: 0;
+}
+.translate-dd-link {
+  text-align: left;
+  margin-left: 0;
+  line-height: 1;
+  padding: 1em 1.4em;
+  color: #fff;
+  font-size: 12px;
+  font-size: .75rem;
+  font-range: 480px 1440px;
+}
+.translate-dd-link:link, .translate-dd-link:visited {
+  color: #fff;
+}
+.translate-dd-link--hidden, tr-dd-link--hidden {
+  display: none;
+}
+
