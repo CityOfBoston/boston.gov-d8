@@ -407,7 +407,7 @@ class MNL extends React.Component {
       ""
     );
     return (
-      <div className="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full">
+      <div className="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full mnl">
         <div>
           <Search
             handleKeywordChange={this.handleKeywordChange}
