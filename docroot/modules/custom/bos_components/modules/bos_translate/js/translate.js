@@ -12,7 +12,7 @@ jQuery(document).ready( function () {
   });
 });
 
-API_KEY = "AIzaSyAJpLVlgN7wFOiPsSPU-RrJjjqw0iq_nB4"
+API_KEY = "AIzaSyDZW9OlLluPYdm20hCD7prFUa6C7Ek01K8"
 
 // and replace with a translated version.
 jQuery(".translate-dd-link").click( function () {
@@ -22,11 +22,12 @@ jQuery(".translate-dd-link").click( function () {
   let url = "https://translation.googleapis.com/language/translate/v2";
   url += "/?key=" + API_KEY;
   url += "&target=" + title;
-  url += "&q=" + encodeURI(document.getElementById("page").innerHTML); // encodeURI converts strings to url-safe text
+  url += "&q=" + encodeURIComponent(document.getElementById("page").innerHTML); // encodeURI converts strings to url-safe text
 
   // POST to google translate api
   let request = new XMLHttpRequest();
   request.open('POST', url);
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
   // after the request is complete, extract translated text and replace in the web page
   request.onload = function () {
@@ -37,4 +38,7 @@ jQuery(".translate-dd-link").click( function () {
     }
   }
   request.send();
+
+  jQuery('.translate-dd').hide('slow');
+
 });
