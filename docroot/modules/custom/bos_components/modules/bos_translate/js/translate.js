@@ -6,7 +6,7 @@
 jQuery(document).ready( function () {
 
   'use strict';
-  jQuery('.translate-link').click( function(e) {
+  jQuery('.translate-link').click( function (e) {
     e.preventDefault();
     jQuery('.translate-dd').toggle('slow');
   });
