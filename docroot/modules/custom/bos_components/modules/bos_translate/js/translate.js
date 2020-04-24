@@ -32,6 +32,7 @@ jQuery(".translate-dd-link").click( function () {
   // after the request is complete, extract translated text and replace in the web page
   request.onload = function () {
     let data = JSON.parse(this.response);
+    console.log(data);
 
     if (request.status >= 200 && request.status < 400) {
       document.getElementById("page").innerHTML = data.data.translations[0].translatedText;
