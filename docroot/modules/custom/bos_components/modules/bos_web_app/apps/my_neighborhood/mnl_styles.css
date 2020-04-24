@@ -2,6 +2,11 @@
 	padding-top:50px;
 	min-height:500px;
 }
+#web-app .supporting-text,
+#web-app .supporting-text p{
+	padding-bottom:0;
+	margin-bottom:0;
+}
 #web-app .mnl-search button,
 #web-app .g button {
 	margin-top:50px;
@@ -73,29 +78,32 @@
 /** styles for no-hover over-ride and section cards **/
 #web-app .pointer{
 	cursor:pointer;
+	min-height:400px; 
 }
-#web-app .pointer:hover{
-	border:2px solid #eee;
+#web-app .cd-ic,
+#web-app .cd-ic:hover{
+	background-color: #288be4;
 }
 #web-app .bg--cb{
 	text-align:center;
 }
-#web-app .bg--cb.t--upper:hover { 
+#web-app .section .bg--cb.t--upper:hover { 
 	color:#fff;
 }
-#web-app .cdp-l:hover .cdp-st {
+#web-app .section.cdp-l:hover .cdp-st {
     color:#58585B;
 }
-#web-app .cdp-l:hover { 
+#web-app .section.cdp-l:hover { 
 	background-color:#f3f3f3;
 }
-#web-app .cd:hover .cd-st {
-    color:#091f2f;;
+#web-app .section.cd:hover .cd-st {
+    color:#091f2f;
 }
-#web-app .cd:hover .cd-ic {  
+#web-app .section.cd:hover .cd-ic {  
 	background-color:#288be4;
 }
-#web-app .cd.bg--y .cd-ic, #web-app .cd.bg--y:hover .cd-ic {  
+#web-app .section.cd.bg--y .cd-ic,
+#web-app .section.cd.bg--y:hover .cd-ic {  
 	background-color: #fcb61a
 }
 

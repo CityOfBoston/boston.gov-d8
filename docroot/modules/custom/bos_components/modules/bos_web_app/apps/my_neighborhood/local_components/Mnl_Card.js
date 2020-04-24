@@ -41,7 +41,7 @@ class MnlCard extends React.Component {
     }
     return (
       <div
-        className={'cd g--4 g--4--sl m-t500  cdp-l' + imgAlignMnl}
+        className={'section cd g--4 g--4--sl m-t500  cdp-l' + imgAlignMnl}
       >
         <div className="d-b bg--cb cdp-a ta-c p-a200 t--upper t--sans t--w t--ob--h t--s100">
           {this.props.title}
