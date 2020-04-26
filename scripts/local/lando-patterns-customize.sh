@@ -13,11 +13,18 @@
 
     # Create script variables
     target_env="local"
-    setup_logs="${LANDO_MOUNT}/setup"
-    LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
     printf "\n"
     printf "ref: $(basename "$0")\n"
+    if [[ "${patterns_local_repo_local_dir}" != "true" ]] && [[ "${patterns_local_repo_local_dir}" != "True" ]] && [[ "${patterns_local_repo_local_dir}" != "TRUE" ]]; then
+        printout "INFO" "Patterns library will not be deployed."
+        exit 0
+    fi
     printf "\n${LightPurple}       ================================================================================${NC}\n"
-    printout "STEP" "Installing Linux packages in node container."
+    printout "STEP" "Installing Linux packages in the patterns node container."
     printf "${LightPurple}       ================================================================================${NC}\n"
+
+    # Create a clean folder into which the repo can be cloned.
+    if [[ -d ${patterns_local_repo_local_dir} ]]; then rm -rf ${patterns_local_repo_local_dir}; fi
+    mkdir ${patterns_local_repo_local_dir}
+    chown node:node ${patterns_local_repo_local_dir}
