@@ -17,7 +17,7 @@ jQuery(document).ready( function () {
 
 function GoogleTranslateLink() {
   if (window.location.href.indexOf("translate.google.com") == -1) {
-    jQuery('.translate-dd-link').click( function() {
+    jQuery('.translate-dd-link').click( function () {
       let dataLang = jQuery(this).attr('data-lang');
       let url = "https://translate.google.com/translate?js=y&prev=_t&hl=en&ie=UTF-8&layout=1&eotf=1&sl=en&tl=" + dataLang + "&u=";
       url += escape(window.location.href);
