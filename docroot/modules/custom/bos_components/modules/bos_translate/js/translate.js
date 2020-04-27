@@ -22,4 +22,3 @@ function GoogleTranslateLink() {
     //do nothing
   }
 }
-
