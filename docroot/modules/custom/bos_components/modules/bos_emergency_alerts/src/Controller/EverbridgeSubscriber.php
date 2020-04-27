@@ -247,8 +247,6 @@ class EverbridgeSubscriber extends ControllerBase {
    *   The endpoint being POSTED to.
    * @param array $fields
    *   Fields to be posted in the message.
-   * @param array $headers
-   *   Extra non-default hedaers to add.
    * @param bool $cachebuster
    *   [optional] Appended random string to bust caching (NOT usually needed).
    *
