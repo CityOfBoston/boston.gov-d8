@@ -1,6 +1,6 @@
 /**
  * @file
- * Script to run Google translate service.
+ * Script to run Google translate service
  */
 
 jQuery(document).ready( function () {
