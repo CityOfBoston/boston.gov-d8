@@ -12,34 +12,14 @@ jQuery(document).ready( function () {
   });
 });
 
-API_KEY = "AIzaSyAJpLVlgN7wFOiPsSPU-RrJjjqw0iq_nB4"
-
-// and replace with a translated version.
-jQuery(".translate-dd-link").click( function () {
-
-  'use strict';
-  let title = jQuery( this ).attr( "data-lang" );
-  let url = "translation.googleapis.com/language/translate/v2";
-  url += "/?key=" + API_KEY;
-  url += "&target=" + title;
-  url += "&q=" + encodeURIComponent(document.getElementById("page").innerHTML); // encodeURI converts strings to url-safe text
-
-  // POST to google translate api
-  let request = new XMLHttpRequest();
-  request.open('POST', url);
-  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-  // after the request is complete, extract translated text and replace in the web page
-  request.onload = function () {
-    let data = JSON.parse(this.response);
-    console.log(data);
-
-    if (request.status >= 200 && request.status < 400) {
-      document.getElementById("page").innerHTML = data.data.translations[0].translatedText;
-    }
+function GoogleTranslateLink() {
+  if (window.location.href.indexOf("translate.google.com") == -1) {
+    var url = "https://translate.google.com/translate?js=y&prev=_t&hl=en&ie=UTF-8&layout=1&eotf=1&sl=en&tl=es&u=";
+    url += escape(window.location.href);
+    window.location.href = url;
   }
-  request.send();
+  else {
+    //do nothing
+  }
+}
 
-  jQuery('.translate-dd').hide('slow');
-
-});
