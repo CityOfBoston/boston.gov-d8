@@ -231,7 +231,7 @@ class EverbridgeSubscriber extends ControllerBase {
         $fields = array_merge($fields, $fields_address);
       }
 
-      $result = $this->post($uri, $fields);
+      $result = $this->post($uri, $fields, $everbridge_env);
     }
     else {
       $result = ["output" => "Missing Drupal Configuration.", "HTTP_CODE" => "500"];
@@ -247,6 +247,8 @@ class EverbridgeSubscriber extends ControllerBase {
    *   The endpoint being POSTED to.
    * @param array $fields
    *   Fields to be posted in the message.
+   * @param object $everbridge_env
+   *   Env variables for endpoint.
    * @param bool $cachebuster
    *   [optional] Appended random string to bust caching (NOT usually needed).
    *
@@ -255,10 +257,10 @@ class EverbridgeSubscriber extends ControllerBase {
    *
    * @throws \GuzzleHttp\Exception\GuzzleException
    */
-  private function post($uri, array $fields, $cachebuster = FALSE) {
+  private function post($uri, array $fields, object $everbridge_env, $cachebuster = FALSE) {
 
     $everbridge = $this->config("codered_settings");
-    $url = "https://api.everbridge.net/rest/contacts/454102597238915";
+    $url = "https://api.everbridge.net/rest/contacts/" . $everbridge_env->org_id;
 
     // Add a random string at end of post to bust any caches.
     if (isset($cachebuster) && $cachebuster) {
