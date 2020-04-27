@@ -10,7 +10,10 @@ var BostonEmergencyAlerts = (function () {
     first_name,
     last_name,
     call,
-    zip,
+    address,
+    city,
+    state,
+    zip_code,
     language,
     text;
 
@@ -48,7 +51,7 @@ var BostonEmergencyAlerts = (function () {
     triggerSuccess(phone_number, data.contact.phone_number);
     triggerSuccess(first_name, data.contact.first_name);
     triggerSuccess(last_name, data.contact.last_name);
-    triggerSuccess(zip, data.contact.zip);
+    triggerSuccess(zip_code, data.contact.zip);
     triggerSuccess(language, data.contact.language_name);
     triggerSuccess(call, data.contact.call ? 'Yes' : 'No');
     triggerSuccess(text, data.contact.text ? 'Yes' : 'No');
@@ -59,6 +62,21 @@ var BostonEmergencyAlerts = (function () {
     jQuery('#alert_success .t--intro').show();
   }
 
+  function validateAddress() {
+    var addressFields = {
+        "address" : address.val(),
+        "city": city.val(),
+        "state": state.val(),
+        "zip_code" : zip_code.val(),
+    };
+    var aValues = [];
+    for (let [key, value] of Object.entries(addressFields)) {
+      if(value == "") {
+        aValues.push(`${key}`);
+      }
+    }
+    return aValues;
+  }
   function validateForm() {
     var valid = true;
 
@@ -73,9 +91,13 @@ var BostonEmergencyAlerts = (function () {
       valid = false;
     }
 
-    if (first_name.val() == '' && last_name.val() == '') {
-      triggerError(first_name, "Please enter your first or last name", 'txt-f--err');
-      triggerError(last_name, "Please enter your first or last name", 'txt-f--err');
+    if (first_name.val() == '') {
+      triggerError(first_name, "Please enter your first name", 'txt-f--err');
+      valid = false;
+    }
+
+    if (last_name.val() == '') {
+      triggerError(last_name, "Please enter your last name", 'txt-f--err');
       valid = false;
     }
 
@@ -89,13 +111,20 @@ var BostonEmergencyAlerts = (function () {
       valid = false;
     }
 
+    if (validateAddress().length > 0 && validateAddress().length < 4) {
+      var aArray = validateAddress();
+      jQuery(aArray).each(function (index,value) {
+        triggerError(jQuery("#" + value), "Address field (" + value + ") must be complete", 'txt-f--err');
+      });
+      valid = false;
+    }
     return valid;
   }
 
   function resetForm() {
     jQuery('.t--err').remove();
     jQuery('.txt-l').css({color: ''});
-    jQuery('.txt-f').css({borderColor: ''});
+    jQuery('.txt-f,select').css({borderColor: ''});
   }
 
   function triggerSuccess(el, msg) {
@@ -131,7 +160,10 @@ var BostonEmergencyAlerts = (function () {
     last_name = jQuery('#last_name');
     call = jQuery('#checkbox-call');
     text = jQuery('#checkbox-text');
-    zip = jQuery('#zip_code');
+    address = jQuery('#address');
+    city = jQuery('#city');
+    state = jQuery('#state');
+    zip_code = jQuery('#zip_code');
     language = jQuery('#emergency-alerts-language');
     button = jQuery('#alert_submit');
     form.submit(handleAlertSignup)
