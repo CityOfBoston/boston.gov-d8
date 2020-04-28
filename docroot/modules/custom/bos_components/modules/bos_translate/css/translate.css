@@ -25,7 +25,6 @@
   right: 0;
   width: 250px;
   z-index: 0;
-  max-height: 300px;
   overflow: auto;
 }
 .translate-dd li {
@@ -36,17 +35,91 @@
   text-align: left;
   margin-left: 0;
   line-height: 1;
-  padding: 1em 1.4em;
+  padding: 1rem .2rem;
   color: #fff;
   font-size: 12px;
   font-size: .75rem;
   font-range: 480px 1440px;
 }
-.translate-dd-link:link, .translate-dd-link:visited {
-  color: #fff;
-}
 .translate-dd-link--hidden, tr-dd-link--hidden {
   display: none;
 }
 .translate-link svg {vertical-align: middle;}
+#overlay {
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 21000;
+  width: 100%;
+  text-align: left;
+  color: #091f2f;
+}
+#overlay #languages {
+  display: block;
+  background-color: #fff;
+  padding: 2rem 1.1rem 1.5rem;
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#overlay #languages ul {
+  padding: 0;
+  margin-right: 15px;
+}
+#overlay-background {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: .65;
+  background-color: #000;
+  z-index: 20100;
+  visibility: hidden;
+  -ms-filter: "alpha(opacity=65)";
+  filter: alpha(opacity=65);
+}
+#overlay #languages a {
+  color: #091f2f;
+  margin: 0;
+}
+#overlay #languages a:hover {
+  text-decoration: underline;
+}
+#translateMessage {
+  display: none;
+  background-color: #fff;
+  padding: 1.2rem;
+  height: 100vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#disclaimerLanguageSelect {
+  height: auto;
+  font-size: .9rem;
+}
+#translateForm label {
+  margin: 1rem 0;
+}
+.disclaimer h4 {
+  margin-bottom: 1.5rem;
+  margin-bottom: .7rem;
+}
+@media(min-width:768px) {
+  #overlay {
+    top: 10%;
+    left: 50%;
+    z-index: 21000;
+    margin-left: -300px;
+    width: 600px;
+    background-color: #1871bd;
+  }
+  #overlay #languages {
+    max-height: 80vh;
+  }
+  #translateMessage {
+    max-height: 80vh;
+  }
+}
 
