@@ -28,7 +28,7 @@
 
     printf "\n"
     printf "ref: $(basename "$0")\n"
-    if [[ "${patterns_local_repo_local_dir}" != "true" ]] && [[ "${patterns_local_repo_local_dir}" != "True" ]] && [[ "${patterns_local_repo_local_dir}" != "TRUE" ]]; then
+    if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
     fi
