@@ -125,6 +125,12 @@ tooling:
     cmd:
       - /app/scripts/local/validate.sh all
 
+  switch-patterns:
+    service: appserver
+    description: "Switch the patterns library: 2 = local, 3 = prod, 4 = stage."
+    cmd:
+      - /app/vendor/bin/drush drush bcss
+
 events:
   post-start:
     - appserver: /app/scripts/local/lando-drupal-post-start.sh
