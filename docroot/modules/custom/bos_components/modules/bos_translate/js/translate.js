@@ -145,7 +145,7 @@ translate = function(d){
       var j=document.getElementById("disclaimerLanguageSelect");
       var g=document.getElementById("translateMessage");
       if(g!=null) {
-        var h=g.getElementsByClassName("Disclaimer");
+        var h=g.getElementsByClassName("disclaimer");
         for(var e=0;
           e<h.length;
           e++) {
