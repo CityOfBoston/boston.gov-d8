@@ -24,9 +24,9 @@
           <div class="detail-item__body detail-item__body--secondary">
             <div class="addr addr--s locality-block country-US" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
               <div itemprop="streetAddress" class="addr-a street-block">
-                {{ item.content.address_line1 }}
+                {{ item.content.address_line1["#value"] }}
                 {% if item.content.address_line2 %}
-                  <br /> {{ item.content.address_line2 }}
+                  <br /> {{ item.content.address_line2["#value"] }}
                 {% endif %}
               </div>
               <div class="addr-l">
