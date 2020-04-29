@@ -139,7 +139,7 @@ class EverbridgeSubscriber extends ControllerBase {
     $everbridge = $this->config("codered_settings");
 
     if (isset($_ENV['EVERBRIDGE_SETTINGS'])) {
-      $everbridge_env = new stdClass();
+      $everbridge_env = (object)[];
       $get_vars = explode(",", $_ENV['EVERBRIDGE_SETTINGS']);
       foreach ($get_vars as $item) {
         $json = explode(":", $item);
