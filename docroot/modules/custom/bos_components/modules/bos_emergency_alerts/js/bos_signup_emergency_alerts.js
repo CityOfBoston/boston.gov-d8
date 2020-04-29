@@ -36,7 +36,7 @@ var BostonEmergencyAlerts = (function () {
           button.attr('disabled', false).html('Sign Up');
 
           if (req.responseJSON && req.responseJSON.errors) {
-            jQuery('#message').append('<div class="t--subinfo t--err m-t100">' + req.responseJSON.errors + '</div>').show();
+            jQuery('#message').append('<div class="t--subinfo t--err m-t100">' + req.responseJSON.errors.message + '</div>').show();
           }
           else {
             jQuery('#message').append('<div class="t--subinfo t--err m-t100">There was an error. Please try again or email <a href="mailto:feedback@boston.gov">feedback@boston.gov</a>.</div>').show();
