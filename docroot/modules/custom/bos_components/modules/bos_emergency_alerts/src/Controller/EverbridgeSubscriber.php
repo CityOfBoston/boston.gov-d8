@@ -145,6 +145,7 @@ class EverbridgeSubscriber extends ControllerBase {
         $json = explode(":", $item);
         $everbridge_env->{$json[0]} = $json[1];
       }
+      $everbridge_env = json_encode($everbridge_env);
     }
     else {
       $everbridge_env = '{
