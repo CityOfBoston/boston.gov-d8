@@ -103,13 +103,13 @@ class MNLRest extends ControllerBase {
       $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
       $nids = $query->execute();
 
-      if ($apiKey !== $token) {
+      if ($apiKey !== $token || $apiKey == NULL) {
         $response_array = [
           'status' => 'error',
           'response' => 'wrong api key',
         ];
       }
-      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "update") {
+      /*elseif ($request_method == "POST" && $operation == "update") {
         if (json_last_error() === 0) {
           $exists = NULL;
           foreach ($data as $items) {
@@ -138,8 +138,8 @@ class MNLRest extends ControllerBase {
             'error json' => json_last_error()
           ];
         }
-      }
-      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import") {
+      }*/
+      elseif ($request_method == "POST" && ($operation == "import" || $operation == "update")) {
         // Create JSON files in local directory.
         $current = 0;
         foreach (array_chunk($data, 100) as $items) {
@@ -165,13 +165,20 @@ class MNLRest extends ControllerBase {
         ];
       }
 
-      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "import-queue") {
+      elseif ($request_method == "POST" && ($operation == "import-queue" || $operation == "update-queue")) {
         // Get and remove any exisitig MNL related queues.
-        $queue = \Drupal::queue('mnl_import');
-        $queue->deleteQueue();
+        
+        if($operation == "import-queue") {
+          $queue = \Drupal::queue('mnl_import');
+          $queue->deleteQueue();
 
-        $queueNodes = \Drupal::queue('mnl_nodes');
-        $queueNodes->deleteQueue();
+          $queueNodes = \Drupal::queue('mnl_nodes');
+          $queueNodes->deleteQueue();
+        }
+        else {
+          $queue = \Drupal::queue('mnl_update');
+          $queue->deleteQueue();
+        }
 
         // Get local JSON data files for import and create Queue items.
         $path = \Drupal::root() . '/sites/default/files/mnl/';
@@ -188,7 +195,7 @@ class MNLRest extends ControllerBase {
             // Create item to queue.
             $queue->createItem($items);
           }
-
+          unlink($path . $filename);
         }
 
         $queueTotal = $queue->numberOfItems();
@@ -197,24 +204,6 @@ class MNLRest extends ControllerBase {
           'response' => 'authorized'
         ];
 
-      }
-
-      elseif (!$apiKey == NULL && $request_method == "POST" && $operation == "process-queue") {
-        // Get queue.
-        $queueFactory = \Drupal::service('queue');
-        $queueManager = \Drupal::service('plugin.manager.queue_worker');
-
-        $queue = $queueFactory->get('mnl_import');
-        $worker = $queueManager->createInstance('mnl_import');
-
-        while ($item = $queue->claimItem()) {
-          $worker->processItem($item->data);
-        }
-
-        $response_array = [
-          'status' => 'queue processed',
-          'response' => 'authorized'
-        ];
       }
 
       else {
