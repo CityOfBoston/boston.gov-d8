@@ -153,7 +153,8 @@ class EverbridgeSubscriber extends ControllerBase {
         "rec_type_id":487225385025537,
         "text":241901148045324,
         "phone":219910915489799,
-        "email":241901148045317
+        "email":241901148045317,
+        "language_id":487225385025538
       }';
     }
     $everbridge_env = json_decode($everbridge_env);
@@ -235,6 +236,19 @@ class EverbridgeSubscriber extends ControllerBase {
           ]
         ];
         $fields = array_merge($fields, $fields_address);
+      }
+
+      if ($payload["language"] !== "") {
+        $fields_language = [
+          "contactAttributes" => [
+            [
+              "name" => "Language",
+              "orgAttrId" => $everbridge_env->language_id,
+              "values" => [$payload["language"]]
+            ],
+          ]
+        ];
+        $fields = array_merge($fields, $fields_language);
       }
 
       $result = $this->post($uri, $fields, $everbridge_env);
