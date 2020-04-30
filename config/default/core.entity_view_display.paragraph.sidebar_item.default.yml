@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.sidebar_item.field_title
     - paragraphs.paragraphs_type.sidebar_item
   module:
+    - fences
     - text
 _core:
   default_config_hash: 85TCVguQ7DrM33BV36DnPkIAUEccjgRRZWx9UuR1FA4
@@ -20,7 +21,14 @@ content:
     weight: 1
     type: text_default
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
   field_title:
     label: hidden
@@ -28,6 +36,13 @@ content:
     type: string
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     region: content
 hidden: {  }
