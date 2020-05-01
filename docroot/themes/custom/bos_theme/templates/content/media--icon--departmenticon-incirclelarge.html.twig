@@ -2,7 +2,7 @@
 {% set media_attributes = create_attribute() %}
 {% set classes = ["di", "di--c", "di--c--l"] %}
 {# Checks for any theme setting applied on the form. #}
-{% if globals.component_theme == "b" %}
+{% if globals.paragraph.component_theme == "b" %}
   {% set classes = classes|merge(["di--c--w"]) %}
 {% endif %}
 

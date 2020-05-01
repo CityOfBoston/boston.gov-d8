@@ -679,6 +679,7 @@ function bos_theme_preprocess_image(&$variables) {
     // Load the icon.
     $icon = file_get_contents($variables['uri']);
     // If the icon is in the format //domain/file then add scheme.
+    $icon = preg_replace(['/<\?xml.*\?>/i', '/<!DOCTYPE((.|\n|\r)*?)">/i'], '', $icon);
     $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
     $variables['attributes']->removeAttribute("src");
   }
