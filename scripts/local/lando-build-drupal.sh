@@ -295,6 +295,11 @@
     # Function 'devModules' is contained in cob_utilities.sh
     printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
     devModules "@self"
+    # Set the local build to use a local patterns (if the node container has fleet running in it).
+    if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
+        drush bcss 2
+        printout "INFO" "Patterns css and js will be served from the local node container."
+    fi
     printout "SUCCESS" "Development environment set.\n"
 
     # Run finalization / housekeeping tasks.
