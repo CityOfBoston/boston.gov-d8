@@ -12,10 +12,15 @@ class CityServices extends React.Component {
       let recollectFlags = this.props.recollect_services; 
         Object.keys(recollectFlags).map(key => 
             contentRecollect.push({
-              heading: "Your next "+recollectFlags[key].name+" day is:",
-              content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
-              //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
-            })
+                heading: "Your next "+recollectFlags[key].name+" day is:",
+                content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
+                //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
+              },
+              {  
+                heading: "NOTE:",
+                content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
+              }
+            )
         )
     } else {
       contentRecollect.push({
@@ -29,11 +34,7 @@ class CityServices extends React.Component {
     }
 
     contentRecollect.push({
-        heading: "NOTE:",
-        content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
-      },
-      {
-        content:<div>Learn more about <a href={"/trash-and-recycling"}>trash and recycling</a>.</div>
+      content:<div>Learn more about <a href={"/trash-and-recycling"}>trash and recycling</a>.</div>
       });
     
     // Content for Street Sweeping
