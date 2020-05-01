@@ -1,4 +1,4 @@
-.translate-dropdown-menu, .tr--visible {
+.translate, .tr--visible {
   position: relative;
   display:block;
 }
@@ -41,7 +41,7 @@
   font-size: .75rem;
   font-range: 480px 1440px;
 }
-.translate-dd-link--hidden, tr-dd-link--hidden {
+.translate-dd-link--hidden {
   display: none;
 }
 .translate-link svg {vertical-align: middle;}
@@ -73,16 +73,14 @@
   position: fixed;
   top: 0;
   left: 0;
-  opacity: .65;
-  background-color: #000;
   z-index: 20100;
   visibility: hidden;
-  -ms-filter: "alpha(opacity=65)";
-  filter: alpha(opacity=65);
 }
-#overlay #languages a {
-  color: #1871bd;
+#languages a {
   margin: 0;
+}
+#overlay a.md-cb {
+  color: #fff;
 }
 #overlay #languages a:hover {
   text-decoration: underline;
