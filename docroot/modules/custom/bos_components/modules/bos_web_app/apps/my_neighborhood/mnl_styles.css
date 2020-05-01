@@ -83,10 +83,13 @@
 /** styles for no-hover over-ride and section cards **/
 #web-app .pointer-mnl{
 	cursor:pointer;
-	min-height:400px; 
+	min-height:400px;
+	border:2px solid #f3f3f3;
 }
-#web-app .cd-ic,
-#web-app .cd-ic:hover{
+#web-app .pointer-mnl:hover .cd-ic{
+	background-color: #fff;
+}
+#web-app .pointer-mnl:hover .cd-c{
 	background-color: #288be4;
 }
 #web-app .bg--cb{
@@ -134,7 +137,7 @@
 	}
 }
 
-
+/** for local debug **/
 .bos-messages-wrapper{
 display:none !important;
 }
