@@ -21,6 +21,11 @@ use Drupal\bos_core\Controllers\Login\LoginController;
 use Drupal\node\Entity\Node;
 
 /**
+ * Global array used to persist data during template nesting/inheritance.
+ */
+global $_bos_theme_cob;
+
+/**
  * Implements theme.api.php hook_theme().
  *
  * @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_theme/8.2.x
@@ -212,6 +217,12 @@ function bos_theme_preprocess(array &$variables, $hook) {
  *   this function to have consistent variables.
  */
 function bos_theme_preprocess_html(array &$variables, $hook) {
+
+  // Initialize the global $_bos_theme_cob variable which we can use to
+  // transfer variables from parent entities to child entites.
+  global $_bos_theme_cob;
+  $_bos_theme_cob = ["page" => [], "paragraph" => []];
+
   // Converted from drupal 7 template.php in sites/all/themes/custom/boston.
   $variables['#attached']['library'][] = "bos_theme/global-styling.always";
   $variables['#attached']['library'][] = "bos_theme/page.assets";
@@ -473,12 +484,16 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
-  if (!isset($variables["cob"]["display_breadcrumb"])) {
-    $variables["cob"]["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
-    $variables["cob"]["display_breadcrumb"] = ($variables["cob"]["display_breadcrumb"] == 'yes' || $variables["cob"]["display_breadcrumb"] == 'admin' && arg(0) == 'admin');
+  global $_bos_theme_cob;
+
+  if (!isset($_bos_theme_cob["display_breadcrumb"])) {
+    $$_bos_theme_cob["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $_bos_theme_cob["display_breadcrumb"] = ($_bos_theme_cob["display_breadcrumb"] == 'yes' || $_bos_theme_cob["display_breadcrumb"] == 'admin' && arg(0) == 'admin');
   }
-  $variables["cob"]["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
-  $variables["cob"]['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+  $_bos_theme_cob["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
+  $_bos_theme_cob['display_trailing_separator'] = theme_get_setting('boston_breadcrumb_trailing') ? TRUE : FALSE;
+
+  $variables["cob"] = $_bos_theme_cob;
 
   // Make the actual breadcrumb.
   _bos_theme_build_breadcrumb($variables);
@@ -513,7 +528,8 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
     }
 
     // Turn off the trailing separator.
-    $variables["cob"]['display_trailing_separator'] = FALSE;
+    $_bos_theme_cob['display_trailing_separator'] = FALSE;
+    $variables["cob"] = $_bos_theme_cob;
   }
 
   // Provide a navigational heading to give context for breadcrumb links to
@@ -663,6 +679,7 @@ function bos_theme_preprocess_image(&$variables) {
     // Load the icon.
     $icon = file_get_contents($variables['uri']);
     // If the icon is in the format //domain/file then add scheme.
+    $icon = preg_replace(['/<\?xml.*\?>/i', '/<!DOCTYPE((.|\n|\r)*?)">/i'], '', $icon);
     $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
     $variables['attributes']->removeAttribute("src");
   }
@@ -792,6 +809,14 @@ function bos_theme_preprocess_field(array &$variables, $hook) {
 /**
  * Implements theme_preprocess_hook().
  */
+function bos_theme_preprocess_media(array &$variables, $hook) {
+  global $_bos_theme_cob;
+  $variables["globals"] = $_bos_theme_cob;
+}
+
+/**
+ * Implements theme_preprocess_hook().
+ */
 function bos_theme_preprocess_field__field_components(array &$variables, $hook) {
   // Add a named anchor to each component (in-page navigation scrolling).
   /* @see https://boston.gitbook.io/digital-documentation/developer-guides-1/drupal/drupal-8/site-development-notes/content-type-back-end/in-page-navigation-menu. */
@@ -813,6 +838,10 @@ function bos_theme_preprocess_field__field_components(array &$variables, $hook) 
  * Implements hook_preprocess_hook().
  */
 function bos_theme_preprocess_paragraph(&$variables) {
+
+  global $_bos_theme_cob;
+  $_bos_theme_cob["paragraph"] = [];
+
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
   // @var Drupal\paragraphs\Entity\Paragraph $paragraph.
@@ -824,9 +853,16 @@ function bos_theme_preprocess_paragraph(&$variables) {
       // Add this attribute so that js can change the tooltip and menu text.
       $variables['attributes']->setAttribute("bos_context_type", ucwords(str_ireplace(["_", "-"], " ", $variables['paragraph']->bundle())));
     }
+    if ($variables['paragraph']->hasField('field_component_theme')) {
+      // Note - field_component_theme: g=grey, w=white, b=blue.
+      $_bos_theme_cob["paragraph"]["component_theme"] = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
+      $_bos_theme_cob["paragraph"]['section_header_theme'] = ($_bos_theme_cob["paragraph"]["component_theme"] == 'b' ? 'sh--w' : '');
+    }
+
   }
 
-  $variables["cob"]["is_front_page"] = \Drupal::service('path.matcher')->isFrontPage();
+  $_bos_theme_cob['paragraph']["is_front_page"] = $_bos_theme_cob["is_front_page"] = \Drupal::service('path.matcher')->isFrontPage();
+  $variables["globals"] = $_bos_theme_cob["paragraph"];
 
 }
 
