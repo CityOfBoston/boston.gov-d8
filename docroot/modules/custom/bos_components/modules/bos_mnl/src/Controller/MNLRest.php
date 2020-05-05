@@ -75,8 +75,8 @@ class MNLRest extends ControllerBase {
       $data = $this->request->getCurrentRequest()->getContent();
       $data = json_decode(strip_tags($data), TRUE);
       // Get Neighborhood Lookup content type.
-      //$query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
-      //$nids = $query->execute();
+      // $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
+      // $nids = $query->execute();
 
       if ($apiKey !== $token || $apiKey == NULL) {
         $response_array = [
@@ -88,49 +88,48 @@ class MNLRest extends ControllerBase {
         // Create JSON files in local directory.
         /*$current = 0;
         foreach (array_chunk($data, 100) as $items) {
-          $currentIndex = time() . $current++;
-          $filePath = \Drupal::root() . '/sites/default/files/mnl/data_' . $currentIndex . '.json';
-          $file = fopen($filePath, "w");
-          fwrite($file, "[");
-          foreach ($items as $item) {
-            fwrite($file, json_encode($item) . ",");
-          }
-          // Removed last comma.
-          $position = fstat($file)['size'] - 1;
-          ftruncate($file, $position);
-          fseek($file, $position);
-          fwrite($file, "]");
-          fwrite($file, $data);
-          fclose($file);
+        $currentIndex = time() . $current++;
+        $filePath = \Drupal::root() . '/sites/default/files/mnl/data_' . $currentIndex . '.json';
+        $file = fopen($filePath, "w");
+        fwrite($file, "[");
+        foreach ($items as $item) {
+        fwrite($file, json_encode($item) . ",");
+        }
+        // Removed last comma.
+        $position = fstat($file)['size'] - 1;
+        ftruncate($file, $position);
+        fseek($file, $position);
+        fwrite($file, "]");
+        fwrite($file, $data);
+        fclose($file);
         }*/
 
-        if($operation == "import") {
+        if ($operation == "import") {
           $queue = \Drupal::queue('mnl_import');
-          $queue->deleteQueue();
 
           $queueNodes = \Drupal::queue('mnl_nodes');
           $queueNodes->deleteQueue();
         }
         else {
           $queue = \Drupal::queue('mnl_update');
-          $queue->deleteQueue();
         }
 
         foreach ($data as $items) {
           // Create item to queue.
           $queue->createItem($items);
         }
+        $queueTotal = $queue->numberOfItems();
 
         $response_array = [
-          'status' => $operation . ' procedure complete',
+          'status' => $operation . ' complete - ' . $queueTotal . ' items queued',
           'response' => 'authorized'
         ];
       }
 
       elseif ($request_method == "POST" && ($operation == "import-queue" || $operation == "update-queue")) {
         // Get and remove any exisitig MNL related queues.
-        
-        if($operation == "import-queue") {
+
+        if ($operation == "import-queue") {
           $queue = \Drupal::queue('mnl_import');
           $queue->deleteQueue();
 
