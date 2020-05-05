@@ -27,7 +27,7 @@ class WinterResources extends React.Component {
       {
         content: (
           <div className="no-heading">
-            There may be other snow routes in your area, <a href={"/departments/311/snow-emergency-parking"}> check here for all snow emergency parking restrictions</a>.
+            There may be other snow routes in your area, <a href={"/departments/311/snow-emergency-parking"} className="mnl-link"> check here for all snow emergency parking restrictions</a>.
           </div>
         )
       }
@@ -75,8 +75,9 @@ class WinterResources extends React.Component {
       displayWinter = cardsWinter;
     } else if (this.props.section == null) {
       displayWinter = (
-        <div
-          className="cd g--4 g--4--sl m-t500  cdp-l"
+        <a
+          className="cd g--4 g--4--sl m-t500 cdp-l mnl-section"
+          title={"Winter Resources"}
           style={{ textAlign: "left" }}
           onClick={() => {
             this.props.displaySection("winter");
@@ -89,7 +90,7 @@ class WinterResources extends React.Component {
             }
             desc={secDesc}
           />
-        </div>
+        </a>
       );
     } else {
       displayWinter = null;

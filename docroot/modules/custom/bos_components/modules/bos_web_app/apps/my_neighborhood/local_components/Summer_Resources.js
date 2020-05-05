@@ -12,7 +12,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"/summer-boston"}>City in the summer</a>.
+            Learn more about the <a href={"/summer-boston"} className="mnl-link">City in the summer</a>.
             <spacefill></spacefill>
           </div>
         )
@@ -29,7 +29,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"/summer-boston"}>City in the summer</a>.
+            Learn more about the <a href={"/summer-boston"} className="mnl-link">City in the summer</a>.
             <spacefill></spacefill>
           </div>
         )
@@ -77,8 +77,9 @@ class SummerResources extends React.Component {
       displaySummer = cardsSummer;
     } else if (this.props.section == null) {
       displaySummer = (
-        <div
-          className="cd g--4 g--4--sl m-t500  cdp-l"
+        <a
+          className="cd g--4 g--4--sl m-t500 cdp-l mnl-section"
+          title={"Summer Resources"}
           style={{ textAlign: "left" }}
           onClick={() => {
             this.props.displaySection("summer");
@@ -91,7 +92,7 @@ class SummerResources extends React.Component {
             }
             desc={secDesc}
           />
-        </div>
+        </a>
       );
     } else {
       displaySummer = null;

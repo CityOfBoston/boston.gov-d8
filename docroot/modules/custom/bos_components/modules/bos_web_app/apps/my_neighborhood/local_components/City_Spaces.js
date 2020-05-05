@@ -23,7 +23,7 @@ class CitySpaces extends React.Component {
     contentDistricts.push({
       content: (
         <div>
-          Learn more about <a href={"/departments/landmarks-commission"}>the City's historic districts</a>.
+          Learn more about <a href={"/departments/landmarks-commission"} className="mnl-link">the City's historic districts</a>.
         </div>
       )
     }) 
@@ -43,7 +43,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about the City's <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer">library system</a>
+            Learn more about the City's <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer" className="mnl-link">library system</a>
           </div>
         )
       }
@@ -59,7 +59,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about the City's <a href={"/departments/boston-centers-youth-families"}>community centers</a>
+            Learn more about the City's <a href={"/departments/boston-centers-youth-families"} className="mnl-link">community centers</a>
           </div>
         )
       }
@@ -83,7 +83,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about <a href={"/departments/parks-and-recreation"}>parks in the city</a>.
+            Learn more about <a href={"/departments/parks-and-recreation"} className="mnl-link">parks in the city</a>.
           </div>
         )
       }
@@ -149,8 +149,9 @@ class CitySpaces extends React.Component {
       displayCitySpaces = cardsCitySpaces;
     } else if (this.props.section == null) {
       displayCitySpaces = (
-        <div
-          className="cd g--4 g--4--sl m-t500  cdp-l"
+        <a
+          className="cd g--4 g--4--sl m-t500 cdp-l mnl-section"
+          title={"City Spaces"}
           style={{ textAlign: "left" }}
           onClick={() => {
             this.props.displaySection("city-spaces");
@@ -163,7 +164,7 @@ class CitySpaces extends React.Component {
             }
             desc={secDesc}
           />
-        </div>
+        </a>
       );
     } else {
       displayCitySpaces = null;

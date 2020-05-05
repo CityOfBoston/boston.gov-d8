@@ -56,31 +56,6 @@ class MNLRest extends ControllerBase {
   }
 
   /**
-   * Update node.
-   */
-  public function updateNode($nid, $dataJSON) {
-    $entity = Node::load($nid);
-    $entity->set('field_sam_id', $dataJSON['sam_address_id']);
-    $entity->set('field_sam_address', $dataJSON['full_address']);
-    $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
-    $entity->save();
-  }
-
-  /**
-   * Create new node.
-   */
-  public function createNode($dataJSON) {
-    $node = Node::create([
-      'type'                        => 'neighborhood_lookup',
-      'title'                       => $dataJSON['sam_address_id'],
-      'field_sam_id'                => $dataJSON['sam_address_id'],
-      'field_sam_address'           => $dataJSON['full_address'],
-      'field_sam_neighborhood_data' => json_encode($dataJSON['data']),
-    ]);
-    $node->save();
-  }
-
-  /**
    * Begin import and parse POST data.
    */
   public function beginUpdateImport($operation) {
@@ -100,8 +75,8 @@ class MNLRest extends ControllerBase {
       $data = $this->request->getCurrentRequest()->getContent();
       $data = json_decode(strip_tags($data), TRUE);
       // Get Neighborhood Lookup content type.
-      $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
-      $nids = $query->execute();
+      //$query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
+      //$nids = $query->execute();
 
       if ($apiKey !== $token || $apiKey == NULL) {
         $response_array = [
@@ -109,39 +84,9 @@ class MNLRest extends ControllerBase {
           'response' => 'wrong api key',
         ];
       }
-      /*elseif ($request_method == "POST" && $operation == "update") {
-        if (json_last_error() === 0) {
-          $exists = NULL;
-          foreach ($data as $items) {
-            foreach ($nids as $nid) {
-              $node = Node::load($nid);
-              $sam_id = $node->field_sam_id->value;
-              if ($sam_id == $items['sam_address_id']) {
-                $this->updateNode($nid, $items);
-                $exists = TRUE;
-              }
-            }
-            if ($exists == FALSE) {
-              $this->createNode($items);
-            }
-            $exists = FALSE;
-          }
-          $response_array = [
-            'status' => $operation . ' procedure complete',
-            'response' => 'authorized'
-          ];
-        }
-        else {
-          $response_array = [
-            'status' => 'error',
-            'response' => 'authorized',
-            'error json' => json_last_error()
-          ];
-        }
-      }*/
       elseif ($request_method == "POST" && ($operation == "import" || $operation == "update")) {
         // Create JSON files in local directory.
-        $current = 0;
+        /*$current = 0;
         foreach (array_chunk($data, 100) as $items) {
           $currentIndex = time() . $current++;
           $filePath = \Drupal::root() . '/sites/default/files/mnl/data_' . $currentIndex . '.json';
@@ -157,6 +102,23 @@ class MNLRest extends ControllerBase {
           fwrite($file, "]");
           fwrite($file, $data);
           fclose($file);
+        }*/
+
+        if($operation == "import") {
+          $queue = \Drupal::queue('mnl_import');
+          $queue->deleteQueue();
+
+          $queueNodes = \Drupal::queue('mnl_nodes');
+          $queueNodes->deleteQueue();
+        }
+        else {
+          $queue = \Drupal::queue('mnl_update');
+          $queue->deleteQueue();
+        }
+
+        foreach ($data as $items) {
+          // Create item to queue.
+          $queue->createItem($items);
         }
 
         $response_array = [

@@ -11,14 +11,14 @@ class Representation extends React.Component {
           {
             content: 
               <div>
-                Learn more about <a href={"/departments/city-council"}>Boston's City Council</a>.
+                Learn more about <a href={"/departments/city-council"} className="mnl-link">Boston's City Council</a>.
               </div> 
           }
       ];
     } else {
       contentRepArray = [
         {
-          content: <div>We're having trouble finding City Council information for that address. Please let us know at feedback@boston.gov and check our <a href={"/departments/city-council"} title={"City Councilor"}>City Council page</a> page for more information.</div>
+          content: <div>We're having trouble finding City Council information for that address. Please let us know at feedback@boston.gov and check our <a href={"/departments/city-council"} title={"City Councilor"} className="mnl-link">City Council page</a> page for more information.</div>
         }
       ];
     }
@@ -32,7 +32,7 @@ class Representation extends React.Component {
         {
           content: (
             <div>
-              Learn more about <a href={"/departments/neighborhood-services"}>Neighborhood Services</a>.
+              Learn more about <a href={"/departments/neighborhood-services"} className="mnl-link">Neighborhood Services</a>.
             </div>
           )
         }
@@ -40,7 +40,7 @@ class Representation extends React.Component {
     } else {
       contentLiasonArray = [
         {
-          content: <div>We're having trouble finding Neighborhood Contact information for that address. Please let us know at feedback@boston.gov and check our <a href={"/departments/neighborhood-services"} title={"Neighborhood Services"}>Neighborhood Services page</a> page for more information.</div>
+          content: <div>We're having trouble finding Neighborhood Contact information for that address. Please let us know at feedback@boston.gov and check our <a href={"/departments/neighborhood-services"} title={"Neighborhood Services"} className="mnl-link">Neighborhood Services page</a> page for more information.</div>
         }
       ];
     }
@@ -48,7 +48,7 @@ class Representation extends React.Component {
     if (this.props.ward == null || this.props.precinct == null) {
       contentPollingArray = [
         {
-          content: <div>We're having trouble finding your voting information for that address. Please let us know at feedback@boston.gov and check our <a href={"/voting-boston"} title={"Voting in Boston"}>Voting in Boston</a> page for more information.</div>
+          content: <div>We're having trouble finding your voting information for that address. Please let us know at feedback@boston.gov and check our <a href={"/voting-boston"} title={"Voting in Boston"} className="mnl-link">Voting in Boston</a> page for more information.</div>
         }
       ];
     } else {
@@ -66,7 +66,7 @@ class Representation extends React.Component {
           content: this.props.precinct
         },
         {
-          content: <div> Find your <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer">polling location</a>.</div>
+          content: <div> Find your <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer" className="mnl-link">polling location</a>.</div>
         }
       ];
     }
@@ -107,7 +107,7 @@ class Representation extends React.Component {
     contentEarlyVotingArray.push({
           content: (
             <div>
-              Learn more about <a href={"/departments/elections/vote-early-boston"}>early voting in Boston</a>.
+              Learn more about <a href={"/departments/elections/vote-early-boston"} className="mnl-link">early voting in Boston</a>.
             </div>
           )
     })
@@ -189,8 +189,9 @@ class Representation extends React.Component {
       displayReps = cardsRepresentation;
     } else if (this.props.section == null) {
       displayReps = (
-        <div
-          className="cd g--4 g--4--sl m-t500  cdp-l"
+        <a
+          className="cd g--4 g--4--sl m-t500 cdp-l mnl-section"
+          title={"Representation"}
           style={{ textAlign: "left" }}
           onClick={() => {
             this.props.displaySection("reps");
@@ -203,7 +204,7 @@ class Representation extends React.Component {
             }
             desc={secDesc}
           />
-        </div>
+        </a>
       );
     } else {
       displayReps = null;
