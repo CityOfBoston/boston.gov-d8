@@ -7,7 +7,8 @@ class Bos311 extends React.Component {
       const secDesc = "Report non-emergency issues, like potholes and graffiti.";
       display311 = (
         <a
-        className="cd g--4 g--4--sl m-t500  cdp-l bg--y"
+        className="cd g--4 g--4--sl m-t500 cdp-l bg--y mnl-section mnl-link"
+        title={"Boston 311"}
         style={{ textAlign: "left" }}
         href={"/departments/bos311"}
         >

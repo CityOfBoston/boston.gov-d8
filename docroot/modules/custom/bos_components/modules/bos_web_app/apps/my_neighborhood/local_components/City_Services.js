@@ -27,14 +27,14 @@ class CityServices extends React.Component {
         content: (
           <div>
             <div>We're having trouble finding Trash Collection information for that address. This may be because your trash is picked up by a commercial vendor.</div>
-            <div className="no-heading">If that’s not right or you have additional questions, please reach out to our <a href={"/departments/public-works"}>Public Works Department</a> at publicworks@boston.gov or 617-635-4900.</div>
+            <div className="no-heading">If that’s not right or you have additional questions, please reach out to our <a href={"/departments/public-works"} className="mnl-link">Public Works Department</a> at publicworks@boston.gov or 617-635-4900.</div>
           </div>
           )
       });
     }
 
     contentRecollect.push({
-      content:<div>Learn more about <a href={"/trash-and-recycling"}>trash and recycling</a>.</div>
+      content:<div>Learn more about <a href={"/trash-and-recycling"} className="mnl-link">trash and recycling</a>.</div>
       });
     
     // Content for Street Sweeping
@@ -43,26 +43,7 @@ class CityServices extends React.Component {
         content: (
            <div>
               <div>The City cleans streets throughout the year.</div>
-              <div className="no-heading">Learn about our street sweeping <a href={"/departments/public-works/street-sweeping-city"}>program</a> or find the street sweeping <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer">schedule</a> for your street.</div>
-          </div>
-        )
-      }
-    ];
-
-    // Content for Helpful Links
-    const contentLinks = [
-      {
-        content: (
-          <div>
-            <div className="no-heading">
-              <a href={"/trash-and-recycling#trash-day-app"}>Your trash day information</a>
-            </div>
-            <div className="no-heading">
-              <a href={"/departments/assessing"}>Assessing Online</a>
-            </div>
-            <div className="no-heading">
-               <a href={"/departments/public-works/street-sweeping-city"}>Street sweeping schedule</a>
-            </div>
+              <div className="no-heading">Learn about our street sweeping <a href={"/departments/public-works/street-sweeping-city"} className="mnl-link">program</a> or find the street sweeping <a href={"https://www.cityofboston.gov/publicworks/sweeping/"} target="_blank" rel="noreferrer" className="mnl-link">schedule</a> for your street.</div>
           </div>
         )
       }
@@ -93,14 +74,6 @@ class CityServices extends React.Component {
             }
             content_array={contentStreetSweeping}
           />
-          {/* Helpful Link info */}
-          {/*<MnlCard
-            title={"Helpful Links"}
-            image_header={
-              configProps.pathImage+"info.svg"
-            }
-            content_array={contentLinks}
-          />*/}
         </div>
         <button className="t--upper t--sans"
           onClick={() => {
@@ -117,8 +90,9 @@ class CityServices extends React.Component {
       displayCityServices = cardsCityServices;
     } else if (this.props.section == null) {
       displayCityServices = (
-        <div
-          className="cd g--4 g--4--sl m-t500  cdp-l"
+        <a
+          className="cd g--4 g--4--sl m-t500 cdp-l mnl-section"
+          title={"City Services"}
           style={{ textAlign: "left" }}
           onClick={() => {
             this.props.displaySection("city-services");
@@ -131,7 +105,7 @@ class CityServices extends React.Component {
             }
             desc={secDesc}
           />
-        </div>
+        </a>
       );
     } else {
       displayCityServices = null;

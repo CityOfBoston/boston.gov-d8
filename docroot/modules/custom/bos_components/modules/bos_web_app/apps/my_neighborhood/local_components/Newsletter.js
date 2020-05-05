@@ -7,7 +7,8 @@ class Newsletter extends React.Component {
       const secDesc = "Sign up for your neighborhood email newsletter.";
       displayNL = (
         <a
-        className="cd g--4 g--4--sl m-t500  cdp-l"
+        className="cd g--4 g--4--sl m-t500 cdp-l mnl-section mnl-link"
+        title={"Newsletter Sign Up"}
         style={{ textAlign: "left" }}
         href={"https://newsletters.boston.gov/subscribe?category=My%20Neighborhood"}
         >

@@ -290,7 +290,7 @@ class MNL extends React.Component {
             >
               <li className="css-1tksw0t">
                 <div
-                  className="addr addr--s"
+                  className="mnl-address addr addr--s"
                   style={{
                     whiteSpace: "pre-line",
                     display: "inline-block",
