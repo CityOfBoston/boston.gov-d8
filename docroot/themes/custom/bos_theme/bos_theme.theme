@@ -855,8 +855,11 @@ function bos_theme_preprocess_paragraph(&$variables) {
     }
     if ($variables['paragraph']->hasField('field_component_theme')) {
       // Note - field_component_theme: g=grey, w=white, b=blue.
-      $_bos_theme_cob["paragraph"]["component_theme"] = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
-      $_bos_theme_cob["paragraph"]['section_header_theme'] = ($_bos_theme_cob["paragraph"]["component_theme"] == 'b' ? 'sh--w' : '');
+      if (!empty($variables['paragraph']->get('field_component_theme')->getValue()['0']['value'])) {
+        $theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
+        $_bos_theme_cob["paragraph"]["component_theme"] = $theme;
+        $_bos_theme_cob["paragraph"]['section_header_theme'] = ($theme == 'b' ? 'sh--w' : '');
+      }
     }
 
   }
