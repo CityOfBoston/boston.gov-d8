@@ -21,21 +21,21 @@ global-styling.default:
     name: '(not implemented) Local from bos_theme cache'
 
 global-styling.local:
-  remote: https://boston.lndo.site/patterns
+  remote: https://patterns.lndo.site
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    /patterns/scripts/all.js: {type: external, minified: true }
+    /scripts/all.js: {type: external, minified: true }
   dependencies:
   - core/jquery
   css:
     theme:
-      /patterns/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      /patterns/legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
-      /patterns/css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+      /css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      /legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      /css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (local)'
 

@@ -18,6 +18,10 @@ services:
       environment:
         PORT: "80"
         FRACTAL_PORT: "80"
+      labels:
+        traefik.0.port: "801"
+        traefik.docker.network: "landoproxyhyperion5000gandalfedition_edge"
+        traefik.0.frontend.rule: "HostRegexp:patterns.lndo.site"
     globals:
       gulp-cli: "latest"
     build_as_root:
@@ -27,13 +31,6 @@ services:
       - printf "\n[LANDO] Node Container Event - run\n\n"
       - /app/scripts/local/lando-build-patterns.sh
     command: /app/scripts/local/lando-patterns-post-start.sh
-    labels:
-      traefik.0.port: "80"
-      traefik.docker.network: "landoproxyhyperion5000gandalfedition_edge"
-      traefik.0.frontend.rule: "HostRegexp:boston.lndo.site;PathPrefixStrip:/"
-    ports:
-      - '80'
-      - '443'
 
   database:
     type: mysql
