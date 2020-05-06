@@ -17,6 +17,17 @@ drupal:
     # Use 'default' as the name if there are no multisites.
     name: default
 
+patterns:
+  local:
+    build: true
+    repo:
+      name: CityOfBoston/patterns.git
+      branch: develop
+      # Where the repo will be cloned to.
+      local_dir: ${REPO_ROOT}/patterns
+  travis:
+    build: false
+
 build:
   local:
     # Build Type = dev or prod.
