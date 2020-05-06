@@ -92,6 +92,9 @@
 {% endif %}
 
 <input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
+<div class="sw-skipnav-outerbar" tabindex="0">
+  <a href="#content" id="skipLink" class="sw-skipnav" data-swiftype-index="false" tabindex="-1" >Skip to Main Content</a>
+</div>
 
 <nav class="nv-m">
   <div class="nv-m-h">
@@ -128,6 +131,7 @@
     <div class="container">
 
       <section class="main-content" id="content" role="main">
+
         {{ page.highlighted }}
         <a href="#skip-link" class="visually-hidden--focusable" id="main-content" data-swiftype-index="false" tabindex="-1">Back to top</a>
 
