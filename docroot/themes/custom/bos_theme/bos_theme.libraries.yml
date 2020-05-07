@@ -18,25 +18,26 @@ global-styling.default:
       /themes/custom/patterns/css/legacy/public.css: { weight: -9 }
       /themes/custom/patterns/css/ie.css: {  }
   data:
-    name: 'Local from bos_theme cache'
+    name: '(not implemented) Local from bos_theme cache'
 
 global-styling.local:
-  remote: https://127.0.0.1:3030
+  remote: https://boston.lndo.site/patterns
+  version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    https://127.0.0.1:3030/scripts/all.js: {type: external, minified: true }
+    /patterns/scripts/all.js: {type: external, minified: true }
   dependencies:
   - core/jquery
   css:
     theme:
-      https://127.0.0.1:3030/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://127.0.0.1:3030/legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
-      https://127.0.0.1:3030/css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+      /patterns/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      /patterns/legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      /patterns/css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
-    name: 'Local CSS Server'
+    name: 'Patterns (local)'
 
 global-styling.patterns:
   remote: https://patterns.boston.gov
@@ -55,7 +56,7 @@ global-styling.patterns:
       https://patterns.boston.gov/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
       https://patterns.boston.gov/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
-    name: 'Patterns (fleet)'
+    name: 'Patterns (production)'
 
 global-styling.heroku-patterns:
   remote: https://cob-patterns-staging.herokuapp.com/

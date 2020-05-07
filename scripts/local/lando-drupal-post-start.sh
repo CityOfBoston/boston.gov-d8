@@ -29,9 +29,11 @@
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
     . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
 
+    printf "\n"
+    printf "ref: $(basename "$0")\n"
     printout "LANDO" "Project Event - post-start\n"
     printf "================================================================================\n"
-    printout "SUCCESS" "Appserver and MySQL Docker containers are now started."
+    printout "SUCCESS" "Docker containers are now started."
     printf "================================================================================\n\n"
 
     if [[ -e ${REPO_ROOT}/setup/uli.log ]]; then
