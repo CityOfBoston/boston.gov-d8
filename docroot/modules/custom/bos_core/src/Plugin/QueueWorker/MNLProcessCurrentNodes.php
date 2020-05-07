@@ -16,6 +16,8 @@ class MNLProcessCurrentNodes extends QueueWorkerBase {
    * Process each record.
    */
   public function processItem($items) {
+    ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "10800");
 
     // Load node.
     $node = Node::load($items);
