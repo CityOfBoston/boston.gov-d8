@@ -77,6 +77,9 @@ class MNLProcessImport extends QueueWorkerBase {
    * Process each queue record.
    */
   public function processItem($items) {
+    ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "10800");
+
     $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
     $nidsNL = $query->execute();
 
