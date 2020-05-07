@@ -46,12 +46,6 @@
     done
 
     printout "INFO" "Create the fractal server and start watch file system for updates."
-    # Make a link to the patterns public folder in the main website (served from appserver)
-    # So that fleet is available from the webserver in the appserver container. e.g. https://boston.lndo.site/patterns.
-    if [[ ! -L ${project_docroot}/patterns ]]; then
-        if [[ -e ${project_docroot}/patterns ]]; then rm -rf ${project_docroot}/patterns; fi
-        ln -s ${patterns_local_repo_local_dir}/public ${project_docroot}/patterns
-    fi
     # Fire up the watchers: Note this process will remain running until the container is stopped.
     # (and the container will stop if this process terminates for any reason)
     cd ${patterns_local_repo_local_dir} && npm run dev
