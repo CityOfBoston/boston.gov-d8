@@ -1,8 +1,9 @@
-uuid: 1550051f-f444-41ed-87b4-ef660827df73
+uuid: e854fc7f-d241-45f7-b9a0-e910587eb8f2
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.media.departmenticon_incirclelarge
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
     - media.type.image
@@ -11,22 +12,22 @@ dependencies:
     - svg_image
 _core:
   default_config_hash: VLDxfMVPTkd2xvOjFMCh3kWmaOYnd03zggFXuUXQVEY
-id: media.image.default
+id: media.image.departmenticon_incirclelarge
 targetEntityType: media
 bundle: image
-mode: default
+mode: departmenticon_incirclelarge
 content:
   image:
     type: image
     weight: 0
     label: hidden
     settings:
-      image_link: ''
+      image_style: ''
+      image_link: content
       svg_attributes:
         width: null
         height: null
-      svg_render_as_image: true
-      image_style: ''
+      svg_render_as_image: false
     third_party_settings:
       fences:
         fences_field_tag: none

@@ -56,13 +56,13 @@
 
   <div class="cd-c">
 
-    <div class="cd-t">{{ content.field_title }}</div>
+    <div class="cd-t">{{ content.field_title.0["#text"] }}</div>
 
     {% if content.field_subheader %}
-      <div class="cd-st t--upper t--subtitle">{{ content.field_subheader }}</div>
+      <div class="cd-st t--upper t--subtitle">{{ content.field_subheader.0["#text"] }}</div>
     {% endif %}
 
-    <div class="cd-d">{{ content.field_short_description }}</div>
+    <div class="cd-d">{{ content.field_short_description.0["#text"] }}</div>
 
   </div>
 
