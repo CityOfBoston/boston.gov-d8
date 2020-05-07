@@ -45,10 +45,6 @@
         sleep 10
     done
 
-    # Run an initial build to be sure everything is there.
-    printout "INFO" "Build Stuff."
-    cd ${patterns_local_repo_local_dir} && npm run preinstall && npm run fractal-build && npm run gulp-build
-
     printout "INFO" "Create the fractal server and start watch file system for updates."
     # Make a link to the patterns public folder in the main website (served from appserver)
     # So that fleet is available from the webserver in the appserver container. e.g. https://boston.lndo.site/patterns.
