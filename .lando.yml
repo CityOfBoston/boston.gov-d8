@@ -16,10 +16,10 @@ services:
     type: node:8
     overrides:
       environment:
-        PORT: "80"
-        FRACTAL_PORT: "80"
+        PORT: "3030"
+        FRACTAL_PORT: "3030"
       labels:
-        traefik.0.port: "801"
+        traefik.0.port: "3030"
         traefik.docker.network: "landoproxyhyperion5000gandalfedition_edge"
         traefik.0.frontend.rule: "HostRegexp:patterns.lndo.site"
     globals:
