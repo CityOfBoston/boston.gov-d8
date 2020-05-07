@@ -2,7 +2,7 @@ signup.endpoint:
   path: '/rest/codered/{action}'
   methods: [POST,GET]
   defaults:
-    _controller: '\Drupal\bos_emergency_alerts\Controller\CodeRedSubscriber::api'
+    _controller: '\Drupal\bos_emergency_alerts\Controller\EverbridgeSubscriber::api'
   requirements:
     _permission: 'access content'
 
