@@ -63,6 +63,7 @@
     fi
     printout "SUCCESS" "Patterns library cloned."
 
+
     # Install the patterns app.
     printout "INFO" "Building Patterns library."
     cd ${patterns_local_repo_local_dir} && npm install
@@ -70,4 +71,9 @@
         printout "ERROR" "Patterns library NOT built or installed."
         exit 1
     fi
+
+    # Run an initial build to be sure everything is there.
+    printout "INFO" "Build Stuff."
+    cd ${patterns_local_repo_local_dir} && npm run preinstall && npm run fractal-build && npm run gulp-build
+
     printout "SUCCESS" "Patterns library built."
