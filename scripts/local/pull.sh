@@ -17,10 +17,13 @@
     # Clone the private repo and merge with the main repo.
     clone_private_repo
 
+    # Clone the patterns repo and prepare build folders.
+    clone_patterns_repo
+
     # Check for options/flags passed in.
     if [[ "${1}" != "--no-sync" ]]; then
         ${drush_cmd} cim -y
         ${drush_cmd} updb -y
     fi
 
-    printout "SUCCESS" "Public and private repos updated.\n"
+    printout "SUCCESS" "Boston.gov, Patterns and Private repos updated.\n"
