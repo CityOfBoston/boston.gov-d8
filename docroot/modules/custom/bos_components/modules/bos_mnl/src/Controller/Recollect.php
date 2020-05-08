@@ -13,6 +13,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class Recollect extends ControllerBase {
 
+  /**
+   * Class var.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
   public $request;
 
   /**
