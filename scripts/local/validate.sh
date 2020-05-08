@@ -48,7 +48,7 @@ function phpcs() {
     printout "INFO" "Running PHPCS tests on project files."
     ${REPO_ROOT}/vendor/bin/phpcs \
         --extensions="php/php,module/php,inc/php,install/php,theme/php,js/js" \
-        --ignore="*.tpl.php,*.css,*.yml,*.twig,*.md,**/dist/*.js,**/patterns/*.js" \
+        --ignore="*.tpl.php,*.css,*.yml,*.twig,*.md,*.min.js,**/dist/*.js,**/patterns/*.js,**/bos_web_app/*.js" \
         --report-full="${REPO_ROOT}/setup/err.code_sniffer.txt" \
         --report="summary" \
         --standard=${REPO_ROOT}/docroot/modules/contrib/coder/coder_sniffer/Drupal/ruleset.xml \
