@@ -18,8 +18,6 @@
 #   2. Install npm dependencies in package.json
 ###############################################################
 
-    printf "ref: $(basename "$0")\n"
-
     # Include the utilities file/libraries.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
