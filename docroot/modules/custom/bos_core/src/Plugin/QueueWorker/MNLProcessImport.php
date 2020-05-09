@@ -77,11 +77,14 @@ class MNLProcessImport extends QueueWorkerBase {
    * Process each queue record.
    */
   public function processItem($items) {
-    $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
-    $nidsNL = $query->execute();
+    ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "10800");
 
-    if (count($nidsNL) > 0) {
-      foreach ($nidsNL as $nid) {
+    $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
+    $nidsNl = $query->execute();
+
+    if (count($nidsNl) > 0) {
+      foreach ($nidsNl as $nid) {
         $node = Node::load($nid);
         $sam_id = $node->field_sam_id->value;
         if ($sam_id == $items['sam_address_id']) {
