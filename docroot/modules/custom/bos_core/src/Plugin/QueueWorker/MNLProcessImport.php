@@ -20,7 +20,7 @@ class MNLProcessImport extends QueueWorkerBase {
   /**
    * Get Neighborhood Lookup content type.
    */
-  public function getNodesNl() {
+  public function getNodesNL() {
     $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
     $nids = $query->execute();
     return $nids;
@@ -30,7 +30,7 @@ class MNLProcessImport extends QueueWorkerBase {
    * Build queue for current MNL nodes to compare and delete older records.
    */
   public function currentNodes() {
-    $nidsExisting = $this->getNodesNl();
+    $nidsExisting = $this->getNodesNL();
     $queue_nodes = \Drupal::queue('mnl_nodes');
     foreach ($nidsExisting as $nid) {
       $queue_nodes->createItem($nid);
@@ -77,6 +77,9 @@ class MNLProcessImport extends QueueWorkerBase {
    * Process each queue record.
    */
   public function processItem($items) {
+    ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "10800");
+
     $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
     $nidsNL = $query->execute();
 
