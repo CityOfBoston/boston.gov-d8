@@ -3,6 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - field.field.node.neighborhood_lookup.field_import_date
     - field.field.node.neighborhood_lookup.field_sam_address
     - field.field.node.neighborhood_lookup.field_sam_id
     - field.field.node.neighborhood_lookup.field_sam_neighborhood_data
@@ -24,6 +25,14 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_import_date:
+    weight: 27
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_sam_address:
     weight: 11
     settings:
