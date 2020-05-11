@@ -11,25 +11,25 @@ config:
   xdebug: true
   drupal: false
 
+proxy:
+  patterns:
+    - patterns.lndo.site
+
 services:
   patterns:
-    type: node:8
-    depends_on:
-      - appserver
+    type: node:10
+    ssl: true
     overrides:
+      expose:
+        - "80"
+        - "443"
+      ports:
+        - "3030:80"
       environment:
-        PORT: "3030"
-        FRACTAL_PORT: "3030"
-      labels:
-        traefik.0.port: "3030"
-        traefik.docker.network: "landoproxyhyperion5000gandalfedition_edge"
-        traefik.0.frontend.rule: "HostRegexp:patterns.lndo.site"
-    networks:
-      - landoproxyhyperion5000gandalfedition_edge
-    globals:
-      gulp-cli: "latest"
+        PORT: "80"
+        FRACTAL_PORT: "80"
     build_as_root:
-      - printf "\n[LANDO] Patterns Container Event - build as root\n\n"
+      - printf "\n[LANDO] Patterns Container Event - build as root\n"
       - /app/scripts/local/lando-patterns-customize.sh
     run:
       - printf "\n[LANDO] Patterns Container Event - run\n\n"
@@ -70,7 +70,7 @@ services:
 
     run:
       - printf "\n[LANDO] Appserver Event - run\n\n"
-      - /app/scripts/local/lando-build-drupal.sh -y
+#      - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:
   phpunit:
@@ -135,7 +135,3 @@ tooling:
 events:
   post-start:
     - appserver: /app/scripts/local/lando-drupal-post-start.sh
-
-networks:
-  landoproxyhyperion5000gandalfedition_edge:
-    external: true
