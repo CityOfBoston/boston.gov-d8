@@ -155,6 +155,7 @@ function build_settings() {
     if [[ ! -e ${settings_file} ]]; then
         # Copy default file.
         cp default_settings_file settings_file
+        cp default_settings_file settings_file
     fi
 
     # Setup the local.settings.php file
