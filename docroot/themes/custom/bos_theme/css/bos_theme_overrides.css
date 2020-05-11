@@ -1255,28 +1255,22 @@ Where: Top Navigation
 What: Adding accessibility link to skip tyo main content.
  */
 
-.sw-skipnav-outerbar {
-  margin-top: -30px;
-}
-
-.sw-skipnav {
-  position: absolute;
-  top: -1000px;
-  left: -1000px;
-  height: 1px;
-  width: 1px;
+div.sw-skipnav-outerbar {
+  display: block;
+  height: 40px;
+  width: 100%;
+  background-color: #091f2f;
   text-align: left;
-  overflow: hidden;
+  margin-top: -40px;
+  padding-left: 15px;
 }
 
-a.sw-skipnav:active,
-a.sw-skipnav:focus,
-a.sw-skipnav:hover {
-  left: 0;
-  top: 0;
-  width: auto;
-  height: auto;
-  overflow: visible;
+a.sw-skipnav {
+  display: inline-block;
+  margin: auto;
+  margin-top: 0px;
+  color: #fff;
+  text-decoration: none;
 }
 
 /**
