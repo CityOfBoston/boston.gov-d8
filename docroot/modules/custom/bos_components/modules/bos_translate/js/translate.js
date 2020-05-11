@@ -29,7 +29,8 @@ let translate = function(d){
       let e=this;
       jQuery("#cob_translate, #langCloseButton").on("click", function(f) {
           f.preventDefault();
-          e.toggleLanguages()
+          e.toggleLanguages();
+          jQuery('#overlay-background').addClass('md');
         }
       );
       jQuery("#viewDisclaimer, #closeDisclaimer").on("click", function(f) {
