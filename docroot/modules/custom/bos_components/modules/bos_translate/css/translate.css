@@ -1,39 +1,17 @@
-.translate-dropdown-menu, .tr--visible {
+.translate {
   position: relative;
   display:block;
 }
-#translate-dd.translate--visible {
-  display: block !important;
+.translate--visible {
+  display: block;
 }
-.translate-dd-link, .tr-link {
+.translate-dd-link {
   font-family: Montserrat,Arial,sans-serif;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   display: block;
   min-width: 45px;
-  text-align: center;
-  margin-left: 1.4em;
-  color: #1871bd;
-}
-.translate-dd {
-  display: none;
-  position: absolute;
-  margin: 3px 0 0;
-  list-style: none;
-  padding: 0;
-  background-color: #1871bd;
-  right: 0;
-  width: 250px;
-  z-index: 0;
-  overflow: auto;
-}
-.translate-dd li {
-  padding: 0;
-  margin: 0;
-}
-.translate-dd-link {
   text-align: left;
-  margin-left: 0;
   line-height: 1;
   padding: 1rem .2rem 1rem 0;
   color: #fff;
@@ -41,11 +19,14 @@
   font-size: .75rem;
   font-range: 480px 1440px;
 }
-.translate-dd-link--hidden, tr-dd-link--hidden {
+.translate-dd li {
+  padding: 0;
+  margin: 0;
+}
+.translate-dd-link--hidden {
   display: none;
 }
-.translate-link svg {vertical-align: middle;}
-#overlay {
+.translate-overlay {
   visibility: hidden;
   position: fixed;
   top: 0;
@@ -55,7 +36,7 @@
   text-align: left;
   color: #091f2f;
 }
-#overlay #languages {
+.translate-languages {
   display: block;
   background-color: #fff;
   padding: 2rem 1.1rem 1.5rem;
@@ -63,31 +44,23 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
-#overlay #languages ul {
+.translate-dd {
   padding: 0;
   margin-right: 14px;
 }
-#overlay-background {
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  opacity: .65;
-  background-color: #000;
-  z-index: 20100;
+.translate-overlay-background {
   visibility: hidden;
-  -ms-filter: "alpha(opacity=65)";
-  filter: alpha(opacity=65);
 }
-#overlay #languages a {
-  color: #1871bd;
+.translate-languages a {
   margin: 0;
 }
-#overlay #languages a:hover {
+.translate-overlay a.md-cb {
+  color: #fff;
+}
+.translate-languages a:hover {
   text-decoration: underline;
 }
-#translateMessage {
+.translate-message {
   display: none;
   background-color: #fff;
   padding: 1.2rem;
@@ -99,15 +72,15 @@
   height: auto;
   font-size: .9rem;
 }
-#translateForm label {
+.translate-form label {
   margin: 1rem 0;
 }
-.disclaimer h4 {
+.translate-disclaimer h4 {
   margin-bottom: 1.5rem;
   margin-bottom: .7rem;
 }
 @media(min-width:768px) {
-  #overlay {
+  .translate-overlay {
     top: 10%;
     left: 50%;
     z-index: 21000;
@@ -115,10 +88,10 @@
     width: 600px;
     background-color: #1871bd;
   }
-  #overlay #languages {
+  .translate-languages {
     max-height: 80vh;
   }
-  #translateMessage {
+  .translate-message {
     max-height: 80vh;
   }
 }
