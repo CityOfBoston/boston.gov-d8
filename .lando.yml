@@ -12,16 +12,25 @@ config:
   drupal: false
 
 services:
-  node:
-    type: node:10
+  patterns:
+    type: node:8
+    overrides:
+      environment:
+        PORT: "3030"
+        FRACTAL_PORT: "3030"
+      labels:
+        traefik.0.port: "3030"
+        traefik.docker.network: "landoproxyhyperion5000gandalfedition_edge"
+        traefik.0.frontend.rule: "HostRegexp:patterns.lndo.site"
     globals:
       gulp-cli: "latest"
     build_as_root:
       - printf "\n[LANDO] Node Container Event - build as root\n\n"
-      - /app/scripts/local/lando-node-customize.sh
+      - /app/scripts/local/lando-patterns-customize.sh
     run:
       - printf "\n[LANDO] Node Container Event - run\n\n"
-      - /app/scripts/local/lando-build-node.sh
+      - /app/scripts/local/lando-build-patterns.sh
+    command: /app/scripts/local/lando-patterns-post-start.sh
 
   database:
     type: mysql
@@ -77,16 +86,18 @@ tooling:
     - drupal
 
   npm:
-    service: node
-    description: "Run npm commands in node container: lando npm <command>"
+    service: patterns
+    description: "Run npm commands in patterns:node container: lando npm <command>"
+    cmd:
+      - echo a; cd /app/patterns && npm
 
   node:
-    service: node
-    description: "Run node commands in node container: lando node <command>"
+    service: patterns
+    description: "Run node commands in patterns container: lando node <command>"
 
   gulp:
-    service: node
-    description: "Run node:gulp commands in node container: lando gulp <command>"
+    service: patterns
+    description: "Run node:gulp commands in patterns container: lando gulp <command>"
 
   mycli:
     service: database
@@ -111,6 +122,12 @@ tooling:
     cmd:
       - /app/scripts/local/validate.sh all
 
+  switch-patterns:
+    service: appserver
+    description: "Switch the patterns library: 2 = local, 3 = prod, 4 = stage."
+    cmd:
+      - /app/vendor/bin/drush drush bcss
+
 events:
   post-start:
-    - /app/scripts/local/lando-post-start.sh
+    - appserver: /app/scripts/local/lando-drupal-post-start.sh
