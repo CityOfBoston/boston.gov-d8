@@ -28,6 +28,11 @@ services:
       environment:
         PORT: "80"
         FRACTAL_PORT: "80"
+      healthcheck:
+        test: /app/scripts/local/health.sh patterns
+        interval: 30s
+        timeout: 15s
+        retries: 5
     build_as_root:
       - printf "\n[LANDO] Patterns Container Event - build as root\n"
       - /app/scripts/local/lando-patterns-customize.sh
@@ -40,6 +45,12 @@ services:
     type: mysql
     portforward: true
     host: localhost
+    overrides:
+      healthcheck:
+        test: /app/scripts/local/health.sh database
+        interval: 30s
+        timeout: 10s
+        retries: 5
     run_as_root:
       - printf "\n[LANDO] Database Event - run as root\n\n"
       - /app/scripts/local/lando-database-customize.sh
@@ -54,6 +65,11 @@ services:
     webroot: docroot
     xdebug: true
     overrides:
+      healthcheck:
+        test: /app/scripts/local/health.sh appserver
+        interval: 30s
+        timeout: 15s
+        retries: 5
       environment:
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
