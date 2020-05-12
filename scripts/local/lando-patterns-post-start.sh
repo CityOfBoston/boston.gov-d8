@@ -21,13 +21,17 @@
     REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
     . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    target_env="local"
 
     printf "\n"
-    printf "ref: $(basename "$0")\n"
+    printf "[LANDO] starts <$(basename "$0")>\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
     fi
+
+    if [[ ! -d ${patterns_local_repo_local_dir} ]]; then exit 0; fi
+
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "LANDO" "Project Event - patterns post-start\n"
     printf "${LightPurple}       ================================================================================${NC}\n"
@@ -38,7 +42,7 @@
     # Becuse the node container builds after the database and appserver containers, we have to
     # wait for those processes to complete first.  TODO: Make appserver and database dependent on the node server.
     x=0
-    while [[ ! -e  ${patterns_local_repo_local_dir}/package.json ]]; do
+    while [[ ! -e  ${patterns_local_repo_local_dir}/public/css ]]; do
         x=$((x+10))
         printf "."
         if [[ $x -gt 1800 ]];then printf "\nERR - timout in $(basename "$0")\n"; exit 1; fi
@@ -50,3 +54,4 @@
     # (and the container will stop if this process terminates for any reason)
     cd ${patterns_local_repo_local_dir} && npm run dev
 
+    printf "[LANDO] ends <$(basename "$0")>\n"
