@@ -361,7 +361,6 @@ let translate = function(d){
       e.style.display=(e.style.display=="block")?"none": "block"
     }
     , selectDisclaimerLanguage:function() {
-      let k=document.getElementById("translateForm");
       let j=document.getElementById("disclaimerLanguageSelect");
       let g=document.getElementById("translateMessage");
       if(g!=null) {
@@ -381,7 +380,6 @@ let translate = function(d){
     }
     , selectTranslateLanguage:function(e) {
       let g=document.getElementById("translateForm");
-      let f=document.getElementById("translateLanguageSelect");
       if(g!=null&&e!=null&&e.value!="") {
         g.tl.value=e.value;
         g.submit()
