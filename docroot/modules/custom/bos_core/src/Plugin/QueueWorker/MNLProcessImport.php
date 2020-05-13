@@ -141,6 +141,7 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function processItem($item) {
 
+    $item = (array) $item;
     $nids = \Drupal::entityQuery('node')
       ->condition('type', 'neighborhood_lookup')
       ->condition('field_sam_id', $item['sam_address_id'])
