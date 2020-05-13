@@ -307,6 +307,7 @@ let translate = function(d){
       }
       let h="http://translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
       let j="";
+      let i;
       j+='<div id="languages" class="translate-languages"><a class="md-cb" href="#" id="langCloseButton"></a>';
       let g=[["af", "Afrikaans"], ["sq", "Albanian"], ["am", "Amharic"], ["ar", "Arabic"], ["hy", "Armenian"], ["az", "Azerbaijani"], ["eu", "Basque"], ["be", "Belarusian"], ["bn", "Bengali"], ["bs", "Bosnian"], ["bg", "Bulgarian"], ["ca", "Catalan"], ["ceb", "Cebuano"], ["ny", "Chichewa"], ["zh-CN", "Chinese (Simplified)"], ["zh-TW", "Chinese (Traditional)"], ["co", "Corsican"], ["hr", "Croatian"], ["cs", "Czech"], ["da", "Danish"], ["nl", "Dutch"], ["eo", "Esperanto"], ["et", "Estonian"], ["tl", "Filipino"], ["fi", "Finnish"], ["fr", "French"], ["fy", "Frisian"], ["gl", "Galician"], ["ka", "Georgian"], ["de", "German"], ["el", "Greek"], ["gu", "Gujarati"], ["ht", "Haitian Creole"], ["ha", "Hausa"], ["haw", "Hawaiian"], ["iw", "Hebrew"], ["hi", "Hindi"], ["hmn", "Hmong"], ["hu", "Hungarian"], ["is", "Icelandic"], ["ig", "Igbo"], ["id", "Indonesian"], ["ga", "Irish"], ["it", "Italian"], ["ja", "Japanese"], ["jw", "Javanese"], ["kn", "Kannada"], ["kk", "Kazakh"], ["km", "Khmer"], ["ko", "Korean"], ["ku", "Kurdish (Kurmanji)"], ["ky", "Kyrgyz"], ["lo", "Lao"], ["la", "Latin"], ["lv", "Latvian"], ["lt", "Lithuanian"], ["lb", "Luxembourgish"], ["mk", "Macedonian"], ["mg", "Malagasy"], ["ms", "Malay"], ["ml", "Malayalam"], ["mt", "Maltese"], ["mi", "Maori"], ["mr", "Marathi"], ["mn", "Mongolian"], ["my", "Myanmar (Burmese)"], ["ne", "Nepali"], ["no", "Norwegian"], ["ps", "Pashto"], ["fa", "Persian"], ["pl", "Polish"], ["pt", "Portuguese"], ["pa", "Punjabi"], ["ro", "Romanian"], ["ru", "Russian"], ["sm", "Samoan"], ["gd", "Scots Gaelic"], ["sr", "Serbian"], ["st", "Sesotho"], ["sn", "Shona"], ["sd", "Sindhi"], ["si", "Sinhala"], ["sk", "Slovak"], ["sl", "Slovenian"], ["so", "Somali"], ["es", "Spanish"], ["su", "Sundanese"], ["sw", "Swahili"], ["sv", "Swedish"], ["tg", "Tajik"], ["ta", "Tamil"], ["te", "Telugu"], ["th", "Thai"], ["tr", "Turkish"], ["uk", "Ukrainian"], ["ur", "Urdu"], ["uz", "Uzbek"], ["vi", "Vietnamese"], ["cy", "Welsh"], ["xh", "Xhosa"], ["yi", "Yiddish"], ["yo", "Yoruba"], ["zu", "Zulu"]];
       j+='<div style="float:left;"><ul class="translate-dd" style="list-style:none;">';
@@ -321,21 +322,21 @@ let translate = function(d){
       j+='			<li><a href="'+h+'so" class="translateLink translate-dd-link">Somali</a></li>';
       j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link">Arabic</a></li>';
       j+="<hr>";
-      for(var i=0;
+      for(i=0;
         i<30;
         i++) {
         j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
-      for(var i=30;
+      for(i=30;
         i<66;
         i++) {
         j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
-      for(var i=66;
+      for(i=66;
         i<g.length;
         i++) {
         j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
@@ -361,7 +362,6 @@ let translate = function(d){
       e.style.display=(e.style.display=="block")?"none": "block"
     }
     , selectDisclaimerLanguage:function() {
-      let k=document.getElementById("translateForm");
       let j=document.getElementById("disclaimerLanguageSelect");
       let g=document.getElementById("translateMessage");
       if(g!=null) {
@@ -381,7 +381,6 @@ let translate = function(d){
     }
     , selectTranslateLanguage:function(e) {
       let g=document.getElementById("translateForm");
-      let f=document.getElementById("translateLanguageSelect");
       if(g!=null&&e!=null&&e.value!="") {
         g.tl.value=e.value;
         g.submit()
