@@ -4,13 +4,7 @@ namespace Drupal\bos_core\Plugin\QueueWorker;
 
 use Drupal;
 use Drupal\node\Entity\Node;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Queue\QueueInterface;
-use Drupal\Core\Queue\DatabaseQueue;
-use Drupal\Core\Queue\QueueWorkerInterface;
-use Drupal\Core\Queue\QueueWorkerManagerInterface;
 
 /**
  * Processes MNL import queue.
@@ -18,10 +12,40 @@ use Drupal\Core\Queue\QueueWorkerManagerInterface;
 class MNLProcessImport extends QueueWorkerBase {
 
   /**
+   * Cache the queue object.
+   *
+   * @var \Drupal\Core\Queue\DatabaseQueue
+   */
+  private $queue;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    ini_set('memory_limit', '-1');
+    $this->queue = \Drupal::queue($this->getPluginId());
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __destruct() {
+    // Check if queue is empty.
+    if ($this->endQueue()) {
+      // The import queue is now empty - so now queue up
+      // items that were not present in the import, and need to be deleted.
+      $this->loadGarbageNodes();
+    }
+  }
+
+  /**
    * Get Neighborhood Lookup content type.
    */
-  public function getNodesNl() {
-    $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup');
+  private function getUnwantedNodes() {
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'neighborhood_lookup')
+      ->condition('field_import_date', "1", "!=");
     $nids = $query->execute();
     return $nids;
   }
@@ -29,37 +53,73 @@ class MNLProcessImport extends QueueWorkerBase {
   /**
    * Build queue for current MNL nodes to compare and delete older records.
    */
-  public function currentNodes() {
-    $nidsExisting = $this->getNodesNl();
-    $queue_nodes = \Drupal::queue('mnl_nodes');
-    foreach ($nidsExisting as $nid) {
-      $queue_nodes->createItem($nid);
+  private function loadGarbageNodes() {
+    $queue_nodes = \Drupal::queue('mnl_cleanup');
+    if ($queue_nodes->numberOfItems() == 0) {
+      $nidsUnwanted = $this->getUnwantedNodes();
+      foreach ($nidsUnwanted as $nid) {
+        $queue_nodes->createItem($nid);
+      }
     }
   }
 
   /**
    * Update node.
+   *
+   * @param \Drupal\node\Entity\Node $node
+   *   The neighborhood lookup node.
+   * @param array $data
+   *   The import data object.
    */
-  public function updateNode($nid, $dataJSON) {
-    $entity = Node::load($nid);
-    $entity->set('field_import_date', "1");
-    $entity->set('field_sam_id', $dataJSON['sam_address_id']);
-    $entity->set('field_sam_address', $dataJSON['full_address']);
-    $entity->set('field_sam_neighborhood_data', json_encode($dataJSON['data']));
-    $entity->save();
+  private function updateNode(Node $node, array $data) {
+    $data_sam_address = $data["full_address"];
+    $node_sam_address = $node->get("field_sam_address")->value;
+    $data_sam_record = json_encode($data["data"]);
+    $node_sam_record = $node->get("field_sam_neighborhood_data")->value;
+    $nid = $node->id();
+
+    if ($data_sam_record != $node_sam_record) {
+      \Drupal::database()->update("node__field_sam_neighborhood_data")
+        ->condition("entity_id", $nid)
+        ->fields(["field_sam_neighborhood_data_value" => $data_sam_record])
+        ->execute();
+    }
+    if ($data_sam_address != $node_sam_address) {
+      \Drupal::database()->update("node__field_sam_address")
+        ->condition("entity_id", $nid)
+        ->fields(["field_sam_address_value" => $data_sam_address])
+        ->execute();
+    }
+
+    $result = \Drupal::database()->merge("node__field_import_date")
+      ->key("entity_id", $nid)
+      ->fields([
+        "bundle" => "neighborhood_lookup",
+        "deleted" => 0,
+        "revision_id" => $node->getRevisionId(),
+        "delta" => 0,
+        "field_import_date_value" => "1",
+        "langcode" => "en",
+      ])
+      ->execute();
   }
 
   /**
    * Create new node.
+   *
+   * @param array $data
+   *   The imported data to insert.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function createNode($dataJSON) {
+  private function createNode(array $data) {
     $node = Node::create([
       'type'                        => 'neighborhood_lookup',
-      'title'                       => $dataJSON['sam_address_id'],
+      'title'                       => $data['sam_address_id'],
       'field_import_date'           => "1",
-      'field_sam_id'                => $dataJSON['sam_address_id'],
-      'field_sam_address'           => $dataJSON['full_address'],
-      'field_sam_neighborhood_data' => json_encode($dataJSON['data']),
+      'field_sam_id'                => $data['sam_address_id'],
+      'field_sam_address'           => $data['full_address'],
+      'field_sam_neighborhood_data' => json_encode($data['data']),
     ]);
     $node->save();
   }
@@ -67,36 +127,49 @@ class MNLProcessImport extends QueueWorkerBase {
   /**
    * Check if end of mnl_import queue.
    */
-  public function checkEndQueue() {
-    $queue = \Drupal::queue('mnl_import');
-    $end_of_queue = ($queue->numberOfItems() == 1) ? $this->currentNodes() : NULL;
-    return $end_of_queue;
+  private function endQueue() {
+    return $this->queue->numberOfItems() == 0;
   }
 
   /**
    * Process each queue record.
+   *
+   * @param mixed $item
+   *   The item stored in the queue.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function processItem($items) {
-    ini_set('memory_limit', '-1');
-    ini_set("max_execution_time", "10800");
+  public function processItem($item) {
 
-    $query = \Drupal::entityQuery('node')->condition('type', 'neighborhood_lookup')->condition('field_sam_id', $items['sam_address_id']);
-    $nidsNl = $query->execute();
+    $nids = \Drupal::entityQuery('node')
+      ->condition('type', 'neighborhood_lookup')
+      ->condition('field_sam_id', $item['sam_address_id'])
+      ->execute();
 
-    if (count($nidsNl) > 0) {
-      foreach ($nidsNl as $nid) {
-        $node = Node::load($nid);
-        $sam_id = $node->field_sam_id->value;
-        if ($sam_id == $items['sam_address_id']) {
-          $this->updateNode($nid, $items);
-          $this->checkEndQueue();
-          return;
+    // Create variable for duplicates.
+    $handled = FALSE;
+
+    if (count($nids) > 0) {
+      foreach ($nids as $nid) {
+        if (NULL != ($node = Node::load($nid))) {
+          if (!$handled) {
+            $sam_id = $node->get("field_sam_id")->value;
+            if ($sam_id == $item['sam_address_id']) {
+              $this->updateNode($node, $item);
+              $handled = TRUE;
+            }
+          }
+          else {
+            // This is a duplicate sam_id.  Thats not possible, so remove it.
+            $node->delete();
+          }
         }
       }
     }
+    else {
+      $this->createNode($item);
+    }
 
-    $this->createNode($items);
-    $this->checkEndQueue();
   }
 
 }
