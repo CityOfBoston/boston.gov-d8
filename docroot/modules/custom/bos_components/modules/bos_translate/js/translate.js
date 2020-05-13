@@ -15,7 +15,7 @@ let translate = function(d){
   return {
     init:function() {
       this.writeLanguageList();
-      this.bindDomEvents()
+      this.bindDomEvents();
     }
     , exec:function() {
       this.writeLanguageList();
