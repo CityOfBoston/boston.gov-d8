@@ -82,8 +82,17 @@ class MNLRest extends ControllerBase {
     $request_method = $this->request->getCurrentRequest()->getMethod();
 
     // Get POST data and decode in to JSON.
-    $data = $this->request->getCurrentRequest()->getContent();
-    $data = json_decode(strip_tags($data), TRUE);
+    if ($operation != "manual") {
+      $data = $this->request->getCurrentRequest()->getContent();
+      $data = json_decode(strip_tags($data), TRUE);
+    }
+    else {
+      \Drupal::queue('mnl_import')->deleteQueue();
+      \Drupal::queue('mnl_cleanup')->deleteQueue();
+      $data = file_get_contents("/user/Downloads/data_full.json");
+      $data = json_decode($data);
+      $token = $apiKey = "123";
+    }
 
     // Test and load into queue.
     if ($apiKey !== $token || $apiKey == NULL) {
@@ -93,15 +102,31 @@ class MNLRest extends ControllerBase {
       ];
     }
 
-    elseif ($request_method == "POST" && ($operation == "import" || $operation == "update")) {
-      if ($operation == "import") {
-        \Drupal::queue('mnl_cleanup')->deleteQueue();
-        $queue = \Drupal::queue('mnl_import');
-      }
-      else {
-        $queue = \Drupal::queue('mnl_update');
-      }
+    elseif ($request_method != "POST") {
+      $response_array = [
+        'status' => 'error',
+        'response' => 'request must be POST',
+      ];
+    }
 
+    elseif ($operation == "import" || $operation == "manual") {
+      \Drupal::queue('mnl_cleanup')->deleteQueue();
+      $queue = \Drupal::queue('mnl_import');
+    }
+
+    elseif ($operation == "update") {
+      $queue = \Drupal::queue('mnl_update');
+    }
+
+    else {
+      $response_array = [
+        'status' => 'error',
+        'response' => 'unknown endpoint requested',
+      ];
+    }
+
+    // Finally.
+    if (isset($queue)) {
       foreach ($data as $items) {
         // Add item to queue.
         $queue->createItem($items);
@@ -110,13 +135,6 @@ class MNLRest extends ControllerBase {
       $response_array = [
         'status' => $operation . ' complete - ' . $queue->numberOfItems() . ' items queued',
         'response' => 'authorized'
-      ];
-    }
-
-    else {
-      $response_array = [
-        'status' => 'error',
-        'response' => 'unknown',
       ];
     }
 
