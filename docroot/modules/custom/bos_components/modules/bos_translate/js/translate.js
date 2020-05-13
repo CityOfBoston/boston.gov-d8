@@ -13,15 +13,11 @@ jQuery(document).ready( function () {
 
 let translate = function(d){
   return {
-    name:"translate", settings: {
-      container: ".translate_container", enableEventTracking: true, analyticsNs: "Translate", analyticsAction: "Translate"
-    }
-    , init:function() {
+    init:function() {
       this.writeLanguageList();
       this.bindDomEvents()
     }
     , exec:function() {
-      jQuery(this.settings.container).html(this.settings.template);
       this.writeLanguageList();
       this.bindDomEvents()
     }
