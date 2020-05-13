@@ -61,23 +61,31 @@ class MNLRest extends ControllerBase {
   }
 
   /**
-   * Begin import and parse POST data.
+   * Load the payload from the rest endpoint into the appropriate queue.
+   *
+   * @param string $operation
+   *   The operation from the endpoint call.
+   *
+   * @return \Drupal\Core\Cache\CacheableJsonResponse
+   *   A json response to send back to the caller.
    */
-  public function beginUpdateImport($operation) {
+  public function beginUpdateImport(string $operation) {
     ini_set('memory_limit', '-1');
     ini_set("max_execution_time", "10800");
     ini_set("post_max_size", "2000M");
     ini_set("upload_max_filesize", "2000M");
 
-    // Get POST data.
     $apiKey = $this->request->getCurrentRequest()->get('api_key');
     $token = Settings::get('mnl_key');
+
     // Get request method.
     $request_method = $this->request->getCurrentRequest()->getMethod();
+
     // Get POST data and decode in to JSON.
     $data = $this->request->getCurrentRequest()->getContent();
     $data = json_decode(strip_tags($data), TRUE);
 
+    // Test and load into queue.
     if ($apiKey !== $token || $apiKey == NULL) {
       $response_array = [
         'status' => 'error',
@@ -87,23 +95,20 @@ class MNLRest extends ControllerBase {
 
     elseif ($request_method == "POST" && ($operation == "import" || $operation == "update")) {
       if ($operation == "import") {
+        \Drupal::queue('mnl_cleanup')->deleteQueue();
         $queue = \Drupal::queue('mnl_import');
-
-        $queueNodes = \Drupal::queue('mnl_nodes');
-        $queueNodes->deleteQueue();
       }
       else {
         $queue = \Drupal::queue('mnl_update');
       }
 
       foreach ($data as $items) {
-        // Create item to queue.
+        // Add item to queue.
         $queue->createItem($items);
       }
-      $queueTotal = $queue->numberOfItems();
 
       $response_array = [
-        'status' => $operation . ' complete - ' . $queueTotal . ' items queued',
+        'status' => $operation . ' complete - ' . $queue->numberOfItems() . ' items queued',
         'response' => 'authorized'
       ];
     }
@@ -119,7 +124,4 @@ class MNLRest extends ControllerBase {
     return $response;
   }
 
-  // End import.
 }
-
-// End MNLRest class.
