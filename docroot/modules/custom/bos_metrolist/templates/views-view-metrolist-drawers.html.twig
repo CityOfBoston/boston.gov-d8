@@ -21,967 +21,40 @@
   <h3>{{ title }}</h3>
 {% endif %}
 
-{% set print_button %}
-  <div class="b">
-    <div class="m-t200">
-      <button class="btn btn--sm btn--100"
-              style="width: 9.5rem;"
-              onclick="window.print()">
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="10 14 200 100"
-             style="height: 26px;">
-          <defs>
-            <path id="a"
-                  d="M71.2-421h-1.5v38h142v-25.1l-.4-.4-11.4-12-.4-.5H71.2zm0 3h127.6l-1.1-.5 11.4 12-.4-1v23l1.5-1.5h-139l1.5 1.5v-35l-1.5 1.5zm-21.5-23h182v78h-182v-78z"/>
-          </defs>
-          <clipPath id="b">
-            <use xlink:href="#a" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#b)">
-            <defs>
-              <path id="c" d="M71.2-419.5h127.6l11.4 12v23h-139z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="d" d="M71.2-419.5h127.6l11.4 12v23h-139z"/>
-          </defs>
-          <defs>
-            <path id="e"
-                  d="M104.2-369.6c-8 0-14.5-6.5-14.5-14.5s6.5-14.5 14.5-14.5 14.5 6.5 14.5 14.5-6.4 14.5-14.5 14.5zm0 3c9.7 0 17.5-7.8 17.5-17.5s-7.8-17.5-17.5-17.5-17.5 7.8-17.5 17.5 7.9 17.5 17.5 17.5zm-37.5-55h75v75h-75v-75z"/>
-          </defs>
-          <clipPath id="f">
-            <use xlink:href="#e" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#f)">
-            <defs>
-              <circle id="g" cx="104.2" cy="-384.1" r="16"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="h" cx="104.2" cy="-384.1" r="16"/>
-          </defs>
-          <defs>
-            <path id="i"
-                  d="M104.2-376.6c-4.1 0-7.5-3.4-7.5-7.5s3.4-7.5 7.5-7.5 7.5 3.4 7.5 7.5-3.3 7.5-7.5 7.5zm0 3c5.8 0 10.5-4.7 10.5-10.5s-4.7-10.5-10.5-10.5-10.5 4.7-10.5 10.5 4.7 10.5 10.5 10.5zm-30.5-41h61v61h-61v-61z"/>
-          </defs>
-          <clipPath id="j">
-            <use xlink:href="#i" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#j)">
-            <defs>
-              <circle id="k" cx="104.2" cy="-384.1" r="9"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="l" cx="104.2" cy="-384.1" r="9"/>
-          </defs>
-          <defs>
-            <path id="m"
-                  d="M170.5-369.6c-8 0-14.5-6.5-14.5-14.5s6.5-14.5 14.5-14.5 14.5 6.5 14.5 14.5-6.5 14.5-14.5 14.5zm0 3c9.7 0 17.5-7.8 17.5-17.5s-7.8-17.5-17.5-17.5-17.5 7.8-17.5 17.5 7.8 17.5 17.5 17.5zm-37.5-55h75v75h-75v-75z"/>
-          </defs>
-          <clipPath id="n">
-            <use xlink:href="#m" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#n)">
-            <defs>
-              <circle id="o" cx="170.5" cy="-384.1" r="16"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="p" cx="170.5" cy="-384.1" r="16"/>
-          </defs>
-          <defs>
-            <path id="q"
-                  d="M170.7-424.4L163-440h-27.2v15.6h34.9zm-75.2 0l7.4-15.6h27.2v15.6H95.5zm-10.3 5.3L99.4-446h66.8l15.3 27.9-96.3-1z"/>
-          </defs>
-          <defs>
-            <path id="r"
-                  d="M170.5-376.6c-4.1 0-7.5-3.4-7.5-7.5s3.4-7.5 7.5-7.5 7.5 3.4 7.5 7.5-3.4 7.5-7.5 7.5zm0 3c5.8 0 10.5-4.7 10.5-10.5s-4.7-10.5-10.5-10.5-10.5 4.7-10.5 10.5 4.7 10.5 10.5 10.5zm-30.5-41h61v61h-61v-61z"/>
-          </defs>
-          <clipPath id="s">
-            <use xlink:href="#r" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#s)">
-            <defs>
-              <circle id="t" cx="170.5" cy="-384.1" r="9"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="u" cx="170.5" cy="-384.1" r="9"/>
-          </defs>
-          <defs>
-            <path id="v"
-                  d="M-204.6-451.3h-1.5v84h108v-84h-106.5zm0 3h105l-1.5-1.5v81l1.5-1.5h-105l1.5 1.5v-81l-1.5 1.5zm-21.5-23h148v124h-148v-124z"/>
-          </defs>
-          <clipPath id="w">
-            <use xlink:href="#v" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#w)">
-            <defs>
-              <path id="x" d="M-204.6-449.8h105v81h-105z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="y" d="M-204.6-449.8h105v81h-105z"/>
-          </defs>
-          <defs>
-            <path id="z"
-                  d="M-210.6-434.3h-2.2l.9-2.1 9.1-22 .4-.9h100.9l.4.9 9.1 22 .9 2.1h-119.5zm0-3h117l-1.4 2.1-9.1-22 1.4.9h-98.9l1.4-.9-9.1 22-1.3-2.1zm-22.3 23h161.5v-65h-161.5v65z"/>
-          </defs>
-          <clipPath id="A">
-            <use xlink:href="#z" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#A)">
-            <defs>
-              <path id="B" d="M-210.6-435.8h117l-9.1-22h-98.8z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="C" d="M-210.6-435.8h117l-9.1-22h-98.8z"/>
-          </defs>
-          <defs>
-            <path id="D"
-                  d="M-125.6-467.3h-1.5v19h15v-19h-13.5zm0 3h12l-1.5-1.5v16l1.5-1.5h-12l1.5 1.5v-16l-1.5 1.5zm-21.5-23h55v59h-55v-59z"/>
-          </defs>
-          <clipPath id="E">
-            <use xlink:href="#D" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#E)">
-            <defs>
-              <path id="F" d="M-125.6-465.8h12v16h-12z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="G" d="M-125.6-465.8h12v16h-12z"/>
-          </defs>
-          <defs>
-            <path id="H"
-                  d="M-191.6-401.3h-1.5v34h24v-34h-22.5zm0 3h21l-1.5-1.5v31l1.5-1.5h-21l1.5 1.5v-31l-1.5 1.5zm-21.5-23h64v74h-64v-74z"/>
-          </defs>
-          <clipPath id="I">
-            <use xlink:href="#H" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#I)">
-            <defs>
-              <path id="J" d="M-191.6-399.8h21v31h-21z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="K" d="M-191.6-399.8h21v31h-21z"/>
-          </defs>
-          <defs>
-            <path id="L"
-                  d="M-190.6-429.3h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-          </defs>
-          <clipPath id="M">
-            <use xlink:href="#L" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#M)">
-            <defs>
-              <path id="N" d="M-190.6-427.8h19v19h-19z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="O" d="M-190.6-427.8h19v19h-19z"/>
-          </defs>
-          <defs>
-            <path id="P"
-                  d="M-185.6-424.3h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-          </defs>
-          <clipPath id="Q">
-            <use xlink:href="#P" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#Q)">
-            <defs>
-              <path id="R" d="M-185.6-422.8h9v9h-9z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="S" d="M-185.6-422.8h9v9h-9z"/>
-          </defs>
-          <defs>
-            <path id="T"
-                  d="M-160.6-429.3h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-          </defs>
-          <clipPath id="U">
-            <use xlink:href="#T" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#U)">
-            <defs>
-              <path id="V" d="M-160.6-427.8h19v19h-19z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="W" d="M-160.6-427.8h19v19h-19z"/>
-          </defs>
-          <defs>
-            <path id="X"
-                  d="M-131.6-429.3h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-          </defs>
-          <clipPath id="Y">
-            <use xlink:href="#X" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#Y)">
-            <defs>
-              <path id="Z" d="M-131.6-427.8h19v19h-19z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="aa" d="M-131.6-427.8h19v19h-19z"/>
-          </defs>
-          <defs>
-            <path id="ab"
-                  d="M-160.6-401.3h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-          </defs>
-          <clipPath id="ac">
-            <use xlink:href="#ab" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#ac)">
-            <defs>
-              <path id="ad" d="M-160.6-399.8h19v19h-19z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="ae" d="M-160.6-399.8h19v19h-19z"/>
-          </defs>
-          <defs>
-            <path id="af"
-                  d="M-131.6-401.3h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-          </defs>
-          <clipPath id="ag">
-            <use xlink:href="#af" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#ag)">
-            <defs>
-              <path id="ah" d="M-131.6-399.8h19v19h-19z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="ai" d="M-131.6-399.8h19v19h-19z"/>
-          </defs>
-          <defs>
-            <path id="aj"
-                  d="M-155.6-424.3h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-          </defs>
-          <clipPath id="ak">
-            <use xlink:href="#aj" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#ak)">
-            <defs>
-              <path id="al" d="M-155.6-422.8h9v9h-9z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="am" d="M-155.6-422.8h9v9h-9z"/>
-          </defs>
-          <defs>
-            <path id="an"
-                  d="M-126.6-424.3h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-          </defs>
-          <clipPath id="ao">
-            <use xlink:href="#an" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#ao)">
-            <defs>
-              <path id="ap" d="M-126.6-422.8h9v9h-9z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="aq" d="M-126.6-422.8h9v9h-9z"/>
-          </defs>
-          <defs>
-            <path id="ar"
-                  d="M-155.6-396.3h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-          </defs>
-          <clipPath id="as">
-            <use xlink:href="#ar" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#as)">
-            <defs>
-              <path id="at" d="M-155.6-394.8h9v9h-9z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="au" d="M-155.6-394.8h9v9h-9z"/>
-          </defs>
-          <defs>
-            <path id="av"
-                  d="M-126.6-396.3h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-          </defs>
-          <clipPath id="aw">
-            <use xlink:href="#av" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aw)">
-            <defs>
-              <path id="ax" d="M-126.6-394.8h9v9h-9z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="ay" d="M-126.6-394.8h9v9h-9z"/>
-          </defs>
-          <g>
-            <path fill="#FFF" d="M112.5 42.1h77.3v64.7H89.1V58.9"/>
-            <path fill="#0C1F2E"
-                  d="M191.3 108.3H87.6V58.8c0-.8.7-1.5 1.5-1.5s1.5.7 1.5 1.5v46.4h97.7V43.6h-75.8c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5h78.8v67.7z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M184.6 102.1H94V57.9h10.9v-5.4h5.4V47h74.3z"/>
-            <path fill="#0C1F2E"
-                  d="M186.1 103.6H92.5V56.4h10.9V51h5.4v-5.6h77.3v58.2zm-90.6-3h87.6V48.5h-71.3V54h-5.4v5.4H95.5v41.2z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M87.9 37h5v5h-5z"/>
-            <path fill="#0C1F2E" d="M94.4 43.5h-8v-8h8v8zm-5-3h2v-2h-2v2z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M97.7 45.5h6.1v6.1h-6.1z"/>
-            <path fill="#0C1F2E" d="M105.2 53h-9.1v-9h9.1v9zm-6-3h3.1v-3h-3.1v3z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M82.4 29.8h2.5v2.5h-2.5z"/>
-            <path fill="#0C1F2E" d="M80.9 28.3h5.5v5.5h-5.5z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M99.7 34.5h2.5V37h-2.5z"/>
-            <path fill="#0C1F2E" d="M98.2 33h5.5v5.5h-5.5z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M89.2 49.6h2.5v2.5h-2.5z"/>
-            <path fill="#0C1F2E" d="M87.7 48.1h5.5v5.5h-5.5z"/>
-          </g>
-          <g>
-            <path fill="#FFF" d="M113 60.2h2.5v2.5H113z"/>
-            <path fill="#0C1F2E" d="M111.5 58.7h5.5v5.5h-5.5z"/>
-          </g>
-          <g>
-            <path fill="#0C1F2E"
-                  d="M163.4 43.4c-.6 0-1.1-.3-1.4-.9-1.2-1.7-13.1-12.7-21.1-20l-21.6 20.4c-.6.6-1.6.5-2.1-.1-.6-.6-.5-1.6.1-2.1l23.6-22.4 1 .9c22.5 20.4 22.8 21.6 23 22.2.2.8-.3 1.6-1.1 1.8-.1.1-.2.2-.4.2z"/>
-          </g>
-          <g>
-            <path fill="#0C1F2E"
-                  d="M144.4 24.3c-2.3 0-4.2-1.9-4.2-4.2s1.9-4.2 4.2-4.2 4.2 1.9 4.2 4.2-1.9 4.2-4.2 4.2zm0-5.5c-.7 0-1.2.6-1.2 1.2s.6 1.2 1.2 1.2 1.2-.6 1.2-1.2-.6-1.2-1.2-1.2z"/>
-          </g>
-        </svg>
-        <div style="float: right;padding: 5px 15px 0 10px;">Print</div>
-      </button>
-    </div>
-  </div>
-{% endset %}
-
-{% set email_button %}
-  <div class="b">
-    <div class="m-t200">
-      <a class="btn btn--sm btn--100"
-         style="width: 9.5rem;"
-         href="mailto:?subject=MetroList%20Listing&amp;body=MetroList%20Listing%20Information">
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="10 14 200 100"
-             style="height: 26px;">
-          <defs>
-            <path id="a"
-                  d="M-159.9-780.6c30.3 0 55 7.1 55 14.8v22l1.7-1.5c-.1 0-.2 0-.4-.1-.4-.1-.8-.1-1.3-.2-1.4-.2-2.9-.4-4.6-.6-4.9-.7-10-1.3-15.2-2-3.9-.5-7.7-.9-11.3-1.3-9.9-1-18.1-1.6-23.9-1.6-5.2 0-14.3.8-26.1 2.3-2.5.3-5.1.6-7.7 1-5.4.7-10.9 1.5-16.1 2.3-1.8.3-3.5.5-5 .8-.5.1-1 .2-1.4.2-.2 0-.4.1-.5.1l1.7 1.5v-23c.1-7.6 24.8-14.7 55.1-14.7zm0-3c-32.1 0-58 7.5-58 17.8v24.8l1.7-.3c.1 0 .2 0 .5-.1.4-.1.8-.1 1.4-.2 1.5-.2 3.1-.5 5-.8 5.2-.8 10.7-1.6 16.1-2.3 2.6-.4 5.2-.7 7.7-1 11.7-1.5 20.7-2.3 25.7-2.3 5.6 0 13.7.6 23.6 1.6 3.6.4 7.4.8 11.2 1.3 5.2.6 10.3 1.3 15.2 2 1.7.2 3.2.4 4.6.6.5.1.9.1 1.2.2.2 0 .4.1.4.1l1.7.3v-23.7c0-10.6-25.9-18-58-18zm-78-20h156v82.5h-156v-82.5z"/>
-          </defs>
-          <clipPath id="b">
-            <use xlink:href="#a" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#b)">
-            <defs>
-              <path id="c"
-                    d="M-159.9-782.1c-31.2 0-56.5 7.3-56.5 16.3v23s42.2-6.7 56.5-6.7c18 0 56.5 5.7 56.5 5.7v-22c0-9-25.3-16.3-56.5-16.3z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="d"
-                  d="M-159.9-782.1c-31.2 0-56.5 7.3-56.5 16.3v23s42.2-6.7 56.5-6.7c18 0 56.5 5.7 56.5 5.7v-22c0-9-25.3-16.3-56.5-16.3z"/>
-          </defs>
-          <defs>
-            <path id="e"
-                  d="M-159.9-758.4c30.3 0 55 7.1 55 14.8 0 7.7-24.7 14.8-55 14.8s-55-7.1-55-14.8c0-7.6 24.7-14.8 55-14.8zm0-3c-32.1 0-58 7.5-58 17.8s25.9 17.8 58 17.8 58-7.5 58-17.8-25.9-17.8-58-17.8zm-78-20h156v75.6h-156v-75.6z"/>
-          </defs>
-          <clipPath id="f">
-            <use xlink:href="#e" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#f)">
-            <defs>
-              <ellipse id="g" cx="-159.9" cy="-743.5" rx="56.5" ry="16.3"/>
-            </defs>
-          </g>
-          <defs>
-            <ellipse id="h" cx="-159.9" cy="-743.5" rx="56.5" ry="16.3"/>
-          </defs>
-          <defs>
-            <path id="i"
-                  d="M-199.9-739.2c0-5.3 18-10.4 40-10.4s40 5.2 40 10.4v7.1l1.2-1.5c-.1 0-.1 0-.3.1-.3 0-.6.1-.9.2-1 .2-2.1.3-3.4.5-3.6.6-7.3 1.1-11.1 1.7-2.9.4-5.6.8-8.3 1.1-7.2.9-13.1 1.3-17.2 1.3-3.7 0-10.3-.5-18.9-1.4-1.8-.2-3.7-.4-5.6-.6-4-.5-8-.9-11.8-1.4-1.3-.2-2.6-.3-3.6-.5-.4 0-.7-.1-1-.1h-.3l1.3 1.5v-8zm-3 0v9.1l1.3.2h.4c.3 0 .6.1 1 .1 1.1.1 2.3.3 3.7.5a11776882415803102 11776882415803102 0 0 0 36.7 3.5c4.3 0 10.3-.5 17.6-1.4 2.7-.3 5.4-.7 8.3-1.1 3.8-.5 7.6-1.1 11.2-1.7 1.3-.2 2.4-.4 3.4-.5.4-.1.7-.1.9-.2.3 0 .3 0 .3-.1l1.2-.2v-8.4c0-7.9-19.2-13.4-43-13.4s-43 5.7-43 13.6zm-20-33.4h126v66.9h-126v-66.9z"/>
-          </defs>
-          <clipPath id="j">
-            <use xlink:href="#i" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#j)">
-            <defs>
-              <path id="k"
-                    d="M-201.4-739.2v7.8s31 4.1 41.5 4.1c13.2 0 41.5-4.8 41.5-4.8v-7.1c0-6.6-18.6-11.9-41.5-11.9s-41.5 5.3-41.5 11.9z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="l"
-                  d="M-201.4-739.2v7.8s31 4.1 41.5 4.1c13.2 0 41.5-4.8 41.5-4.8v-7.1c0-6.6-18.6-11.9-41.5-11.9s-41.5 5.3-41.5 11.9z"/>
-          </defs>
-          <defs>
-            <path id="m"
-                  d="M-159.9-741.3c22 0 40 5.2 40 10.4 0 5.3-18 10.4-40 10.4s-40-5.2-40-10.4 18-10.4 40-10.4zm0-3c-23.8 0-43 5.5-43 13.4s19.2 13.4 43 13.4 43-5.5 43-13.4-19.2-13.4-43-13.4zm-63-20h126v66.9h-126v-66.9z"/>
-          </defs>
-          <clipPath id="n">
-            <use xlink:href="#m" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#n)">
-            <defs>
-              <ellipse id="o" cx="-159.9" cy="-730.9" rx="41.5" ry="11.9"/>
-            </defs>
-          </g>
-          <defs>
-            <ellipse id="p" cx="-159.9" cy="-730.9" rx="41.5" ry="11.9"/>
-          </defs>
-          <defs>
-            <path id="q"
-                  d="M-172.5-729.3c0 .4-.2.7-.4.8.1 0 .2-.1.4-.2.6-.2 1.6-.4 2.8-.6 2.6-.4 6-.6 9.8-.6s7.2.2 9.8.6c1.2.2 2.2.4 2.8.6l.4.2c-.2-.1-.4-.4-.4-.8s.2-.7.4-.8c-.1 0-.2.1-.4.2-.6.2-1.6.4-2.8.6-2.6.4-6 .6-9.8.6s-7.2-.2-9.8-.6c-1.2-.2-2.2-.4-2.8-.6l-.4-.2c.2.1.4.3.4.8zm-3 0c0 2.6 6.2 3.5 15.6 3.5 9.4 0 15.6-.9 15.6-3.5s-6.2-3.5-15.6-3.5c-9.4-.1-15.6.8-15.6 3.5zm-20-23.6h71.2v47.1h-71.2v-47.1z"/>
-          </defs>
-          <clipPath id="r">
-            <use xlink:href="#q" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#r)">
-            <defs>
-              <ellipse id="s" cx="-159.9" cy="-729.3" rx="14.1" ry="2"/>
-            </defs>
-          </g>
-          <defs>
-            <ellipse id="t" cx="-159.9" cy="-729.3" rx="14.1" ry="2"/>
-          </defs>
-          <defs>
-            <path id="u"
-                  d="M-167.1-712s-10.5 3.3-9.1 12.3c.9 5.5 5.6 8.1 5.6 13.5s-4.6 9.5-4.6 9.5 13.5-.3 14.6-9.5c1.1-9.2-6.7-11.3-8.3-15.6-1.4-4.3 1.8-10.2 1.8-10.2z"/>
-          </defs>
-          <defs>
-            <path id="v"
-                  d="M-152-708.7s-15.1 4.8-13 17.6c1.2 7.9 8 11.6 8 19.4s-6.5 13.6-6.5 13.6 19.3-.5 20.9-13.6-9.6-16.1-11.8-22.3c-2.3-6.3 2.4-14.7 2.4-14.7z"/>
-          </defs>
-          <defs>
-            <path id="w"
-                  d="M-803.5-598.5l-1.4.4.4 1.4 30.4 99.5.4 1.4 1.4-.4 60.2-18.4 1.4-.4-.4-1.4-30.4-99.5-.4-1.4-1.4.4-60.2 18.4zm.9 2.9l60.2-18.4-1.9-1 30.4 99.5 1-1.9-60.2 18.4 1.9 1-30.4-99.5-1 1.9zm-27.3-15.7l101.4-31 43 140.6-101.4 31-43-140.6z"/>
-          </defs>
-          <clipPath id="x">
-            <use xlink:href="#w" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#x)">
-            <defs>
-              <path id="y" transform="rotate(162.999 -757.698 -556.508)" d="M-789.2-608.5h63v104h-63z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="z" transform="rotate(162.999 -757.698 -556.508)" d="M-789.2-608.5h63v104h-63z"/>
-          </defs>
-          <defs>
-            <path id="A"
-                  d="M-768.2-621.5h-1.5v107h66v-107h-64.5zm0 3h63l-1.5-1.5v104l1.5-1.5h-63l1.5 1.5v-104l-1.5 1.5zm-21.5-23h106v147h-106v-147z"/>
-          </defs>
-          <clipPath id="B">
-            <use xlink:href="#A" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#B)">
-            <defs>
-              <path id="C" d="M-768.2-620h63v104h-63z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="D" d="M-768.2-620h63v104h-63z"/>
-          </defs>
-          <defs>
-            <path id="E" d="M-759.2-592h44v13h-44z"/>
-          </defs>
-          <defs>
-            <path id="F" d="M-759.2-582h44v13h-44z"/>
-          </defs>
-          <defs>
-            <path id="G" d="M-759.2-572h44v13h-44z"/>
-          </defs>
-          <defs>
-            <path id="H" d="M-759.2-562h44v14h-44z"/>
-          </defs>
-          <defs>
-            <path id="I" d="M-759.2-551h44v14h-44z"/>
-          </defs>
-          <defs>
-            <path id="J" d="M-759.2-540h44v14h-44z"/>
-          </defs>
-          <defs>
-            <path id="K" d="M-758.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="L" d="M-753.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="M" d="M-748.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="N" d="M-743.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="O" d="M-738.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="P" d="M-738.2-559h3v32h-3z"/>
-          </defs>
-          <defs>
-            <path id="Q" d="M-733.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="R" d="M-728.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="S" d="M-723.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="T" d="M-718.2-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="U" d="M-800.2-595.8l53.3 34.1-23.9 61.7"/>
-          </defs>
-          <defs>
-            <path id="V"
-                  d="M-498.5-621.5h-1.5v107h66v-107h-64.5zm0 3h63l-1.5-1.5v104l1.5-1.5h-63l1.5 1.5v-104l-1.5 1.5zm-21.5-23h106v147h-106v-147z"/>
-          </defs>
-          <clipPath id="W">
-            <use xlink:href="#V" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#W)">
-            <defs>
-              <path id="X" d="M-498.5-620h63v104h-63z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="Y" d="M-498.5-620h63v104h-63z"/>
-          </defs>
-          <defs>
-            <path id="Z" d="M-489.5-592h44v13h-44z"/>
-          </defs>
-          <defs>
-            <path id="aa" d="M-489.5-582h44v13h-44z"/>
-          </defs>
-          <defs>
-            <path id="ab" d="M-489.5-572h44v13h-44z"/>
-          </defs>
-          <defs>
-            <path id="ac" d="M-489.5-562h44v14h-44z"/>
-          </defs>
-          <defs>
-            <path id="ad" d="M-489.5-551h44v14h-44z"/>
-          </defs>
-          <defs>
-            <path id="ae" d="M-489.5-540h44v14h-44z"/>
-          </defs>
-          <defs>
-            <path id="af" d="M-488.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="ag" d="M-483.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="ah" d="M-478.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="ai" d="M-473.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="aj" d="M-468.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="ak" d="M-468.5-559h3v32h-3z"/>
-          </defs>
-          <defs>
-            <path id="al" d="M-463.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="am" d="M-458.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="an" d="M-453.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="ao" d="M-448.5-610h3v13h-3z"/>
-          </defs>
-          <defs>
-            <path id="ap"
-                  d="M-426.5-500.5c-16.3 0-29.5-13.2-29.5-29.5s13.2-29.5 29.5-29.5S-397-546.3-397-530s-13.2 29.5-29.5 29.5zm0 3c17.9 0 32.5-14.6 32.5-32.5s-14.6-32.5-32.5-32.5S-459-547.9-459-530s14.5 32.5 32.5 32.5zm-52.5-85h105v105h-105v-105z"/>
-          </defs>
-          <clipPath id="aq">
-            <use xlink:href="#ap" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aq)">
-            <defs>
-              <circle id="ar" cx="-426.5" cy="-530" r="31"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="as" cx="-426.5" cy="-530" r="31"/>
-          </defs>
-          <defs>
-            <path id="at"
-                  d="M-808-282.8h-1.2v71.5h131.7v-71.5H-808zm0 2.4h129.3l-1.2-1.2v69.1l1.2-1.2H-808l1.2 1.2v-69.1l-1.2 1.2zm-17.3-18.5h163.9v103.6h-163.9v-103.6z"/>
-          </defs>
-          <clipPath id="au">
-            <use xlink:href="#at" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#au)">
-            <defs>
-              <path id="av" d="M-808-281.6h129.3v69.1H-808z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="aw" d="M-808-281.6h129.3v69.1H-808z"/>
-          </defs>
-          <defs>
-            <path id="ax"
-                  d="M-801.6-276.4h-1.2v57.8h118.9v-57.8h-19.5l-.3.2-6.5 4.8.7-.2h-66.7l.8.3-5.9-4.8-.3-.3h-20zm0 2.4h19.4l-.8-.3 5.9 4.8.3.3h67.5l.3-.2 6.5-4.8-.7.2h17.9l-1.2-1.2v55.4l1.2-1.2h-116.5l1.2 1.2v-55.4l-1 1.2zm-17.3-18.5h151v90h-151v-90z"/>
-          </defs>
-          <clipPath id="ay">
-            <use xlink:href="#ax" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#ay)">
-            <defs>
-              <path id="az" d="M-801.6-275.2h19.5l5.9 4.8h66.7l6.5-4.8h17.9v55.4h-116.5z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="aA" d="M-801.6-275.2h19.5l5.9 4.8h66.7l6.5-4.8h17.9v55.4h-116.5z"/>
-          </defs>
-          <defs>
-            <path id="aB" d="M-773.5-276h5.6v2.4h-5.6z"/>
-          </defs>
-          <defs>
-            <path id="aC" d="M-717.2-276h5.6v2.4h-5.6z"/>
-          </defs>
-          <defs>
-            <path id="aD"
-                  d="M-152.9-38.1c-27.1 0-49-21.9-49-49s21.9-49 49-49 49 21.9 49 49-21.9 49-49 49zm0 3c28.7 0 52-23.3 52-52s-23.3-52-52-52-52 23.3-52 52 23.3 52 52 52zm-72-124h144v144h-144v-144z"/>
-          </defs>
-          <clipPath id="aE">
-            <use xlink:href="#aD" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aE)">
-            <defs>
-              <circle id="aF" cx="-152.9" cy="-87.1" r="50.5"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="aG" cx="-152.9" cy="-87.1" r="50.5"/>
-          </defs>
-          <defs>
-            <circle id="aH" cx="-152.9" cy="-87.1" r="43.5"/>
-          </defs>
-          <defs>
-            <path id="aI"
-                  d="M-750 114.3c-27.1 0-49-21.9-49-49s21.9-49 49-49 49 21.9 49 49-21.9 49-49 49zm0 3c28.7 0 52-23.3 52-52s-23.3-52-52-52-52 23.3-52 52 23.3 52 52 52zm-72-124h144v144h-144v-144z"/>
-          </defs>
-          <clipPath id="aJ">
-            <use xlink:href="#aI" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aJ)">
-            <defs>
-              <circle id="aK" cx="-750" cy="65.3" r="50.5"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="aL" cx="-750" cy="65.3" r="50.5"/>
-          </defs>
-          <defs>
-            <circle id="aM" cx="-750" cy="65.3" r="43.5"/>
-          </defs>
-          <path fill="#FFF" stroke="#0C1F2E" stroke-width="3" stroke-linecap="round" stroke-miterlimit="10"
-                d="M82 31.8h119.5v67.3H82z"/>
-          <path fill="none" stroke="#0C1F2E" stroke-width="3" stroke-linecap="round" stroke-miterlimit="10"
-                d="M201.8 99.2S172 77.5 155.7 65.5m-26.9-.3c-16.1 11.8-46.5 34-46.5 34"/>
-          <circle fill="#FFF" stroke="#0F1F2D" stroke-width="3" stroke-linecap="round" stroke-miterlimit="10" cx="187"
-                  cy="97.1" r="18.5"/>
-          <path fill="#231F20"
-                d="M197.7 97.3c0 3.8-2.1 6.2-4.9 6.2-1.5 0-2.6-.6-3-1.9l-.1-.2c-1 1.3-2.2 1.8-3.4 1.8-2.7 0-5.3-2.3-5.3-5.9 0-3.2 1.9-6 4.9-6 1.9 0 3 1.4 3 1.4v-1.1h3.5v8.4c0 .9.3 1.1.8 1.1.9 0 1.9-1.6 1.9-3.9 0-4.7-2.8-8.4-7.8-8.4-4.5 0-8.1 3.8-8.1 8.5 0 4.6 3.4 8.1 7.8 8.1 1.4 0 3.3-.5 4.7-1.6l1.3 2.2c-1.5 1.2-4 2-6 2-6 0-10.6-4.5-10.6-10.6 0-6.2 4.9-11.1 10.9-11.1 5.8.2 10.4 4.8 10.4 11zm-13 0c0 1.5.7 2.9 1.9 2.9 1.3 0 2-1.3 2-2.9 0-1.5-.7-2.7-2-2.7-1.1.1-1.9 1.3-1.9 2.7z"/>
-          <path fill="none" stroke="#0C1F2E" stroke-width="3" stroke-linecap="round" stroke-miterlimit="10"
-                d="M82 31.8l59.8 42.7 59.7-42.7"/>
-          <defs>
-            <path id="aN"
-                  d="M-749.3 281.5c-24.6 0-44.6-20-44.6-44.6s20-44.6 44.6-44.6 44.6 20 44.6 44.6-20 44.6-44.6 44.6zm0 2.7c26.1 0 47.3-21.2 47.3-47.3s-21.2-47.3-47.3-47.3c-26.1 0-47.3 21.2-47.3 47.3s21.2 47.3 47.3 47.3zm-65.5-112.8h131v131h-131v-131z"/>
-          </defs>
-          <clipPath id="aO">
-            <use xlink:href="#aN" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aO)">
-            <defs>
-              <circle id="aP" cx="-749.3" cy="236.9" r="45.9"/>
-            </defs>
-          </g>
-          <defs>
-            <circle id="aQ" cx="-749.3" cy="236.9" r="45.9"/>
-          </defs>
-          <defs>
-            <circle id="aR" cx="-749.3" cy="236.9" r="39.6"/>
-          </defs>
-          <defs>
-            <path id="aS"
-                  d="M-210.5 348.2h-1.5v84h108v-84h-106.5zm0 3h105l-1.5-1.5v81l1.5-1.5h-105l1.5 1.5v-81l-1.5 1.5zm-21.5-23h148v124h-148v-124z"/>
-          </defs>
-          <clipPath id="aT">
-            <use xlink:href="#aS" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aT)">
-            <defs>
-              <path id="aU" d="M-210.5 349.7h105v81h-105z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="aV" d="M-210.5 349.7h105v81h-105z"/>
-          </defs>
-          <defs>
-            <path id="aW"
-                  d="M-216.5 365.2h-2.2l.9-2.1 9.1-22 .4-.9h100.9l.4.9 9.1 22 .9 2.1h-119.5zm0-3h117l-1.4 2.1-9.1-22 1.4.9h-98.9l1.4-.9-9.1 22-1.3-2.1zm-22.2 23h161.5v-65h-161.5v65z"/>
-          </defs>
-          <clipPath id="aX">
-            <use xlink:href="#aW" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#aX)">
-            <defs>
-              <path id="aY" d="M-216.5 363.7h117l-9.1-22h-98.8z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="aZ" d="M-216.5 363.7h117l-9.1-22h-98.8z"/>
-          </defs>
-          <defs>
-            <path id="ba"
-                  d="M-131.5 332.2h-1.5v19h15v-19h-13.5zm0 3h12l-1.5-1.5v16l1.5-1.5h-12l1.5 1.5v-16l-1.5 1.5zm-21.5-23h55v59h-55v-59z"/>
-          </defs>
-          <clipPath id="bb">
-            <use xlink:href="#ba" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#bb)">
-            <defs>
-              <path id="bc" d="M-131.5 333.7h12v16h-12z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="bd" d="M-131.5 333.7h12v16h-12z"/>
-          </defs>
-          <defs>
-            <path id="be"
-                  d="M-197.5 398.2h-1.5v34h24v-34h-22.5zm0 3h21l-1.5-1.5v31l1.5-1.5h-21l1.5 1.5v-31l-1.5 1.5zm-21.5-23h64v74h-64v-74z"/>
-          </defs>
-          <clipPath id="bf">
-            <use xlink:href="#be" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#bf)">
-            <defs>
-              <path id="bg" d="M-197.5 399.7h21v31h-21z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="bh" d="M-197.5 399.7h21v31h-21z"/>
-          </defs>
-          <defs>
-            <path id="bi"
-                  d="M-196.5 370.2h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-          </defs>
-          <clipPath id="bj">
-            <use xlink:href="#bi" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#bj)">
-            <defs>
-              <path id="bk" d="M-196.5 371.7h19v19h-19z"/>
-            </defs>
-          </g>
-          <defs>
-            <path id="bl" d="M-196.5 371.7h19v19h-19z"/>
-          </defs>
-          <defs>
-            <path id="bm"
-                  d="M-191.5 375.2h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-          </defs>
-          <clipPath id="bn">
-            <use xlink:href="#bm" overflow="visible"/>
-          </clipPath>
-          <g clip-path="url(#bn)">
-            <defs>
-              <path id="bo" d="M-191.5 376.7h9v9h-9z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bp" d="M-191.5 376.7h9v9h-9z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bq"
-                    d="M-166.5 370.2h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-            </defs>
-            <clipPath id="br">
-              <use xlink:href="#bq" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#br)">
-              <defs>
-                <path id="bs" d="M-166.5 371.7h19v19h-19z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bt" d="M-166.5 371.7h19v19h-19z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bu"
-                    d="M-137.5 370.2h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-            </defs>
-            <clipPath id="bv">
-              <use xlink:href="#bu" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bv)">
-              <defs>
-                <path id="bw" d="M-137.5 371.7h19v19h-19z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bx" d="M-137.5 371.7h19v19h-19z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="by"
-                    d="M-166.5 398.2h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-            </defs>
-            <clipPath id="bz">
-              <use xlink:href="#by" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bz)">
-              <defs>
-                <path id="bA" d="M-166.5 399.7h19v19h-19z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bB" d="M-166.5 399.7h19v19h-19z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bC"
-                    d="M-137.5 398.2h-1.5v22h22v-22h-20.5zm0 3h19l-1.5-1.5v19l1.5-1.5h-19l1.5 1.5v-19l-1.5 1.5zm-21.5-23h62v62h-62v-62z"/>
-            </defs>
-            <clipPath id="bD">
-              <use xlink:href="#bC" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bD)">
-              <defs>
-                <path id="bE" d="M-137.5 399.7h19v19h-19z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bF" d="M-137.5 399.7h19v19h-19z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bG"
-                    d="M-161.5 375.2h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-            </defs>
-            <clipPath id="bH">
-              <use xlink:href="#bG" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bH)">
-              <defs>
-                <path id="bI" d="M-161.5 376.7h9v9h-9z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bJ" d="M-161.5 376.7h9v9h-9z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bK"
-                    d="M-132.5 375.2h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-            </defs>
-            <clipPath id="bL">
-              <use xlink:href="#bK" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bL)">
-              <defs>
-                <path id="bM" d="M-132.5 376.7h9v9h-9z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bN" d="M-132.5 376.7h9v9h-9z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bO"
-                    d="M-161.5 403.2h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-            </defs>
-            <clipPath id="bP">
-              <use xlink:href="#bO" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bP)">
-              <defs>
-                <path id="bQ" d="M-161.5 404.7h9v9h-9z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bR" d="M-161.5 404.7h9v9h-9z"/>
-            </defs>
-          </g>
-          <g>
-            <defs>
-              <path id="bS"
-                    d="M-132.5 403.2h-1.5v12h12v-12h-10.5zm0 3h9l-1.5-1.5v9l1.5-1.5h-9l1.5 1.5v-9l-1.5 1.5zm-21.5-23h52v52h-52v-52z"/>
-            </defs>
-            <clipPath id="bT">
-              <use xlink:href="#bS" overflow="visible"/>
-            </clipPath>
-            <g clip-path="url(#bT)">
-              <defs>
-                <path id="bU" d="M-132.5 404.7h9v9h-9z"/>
-              </defs>
-            </g>
-          </g>
-          <g>
-            <defs>
-              <path id="bV" d="M-132.5 404.7h9v9h-9z"/>
-            </defs>
-          </g>
-        </svg>
-        <div style="float: right;padding: 5px 15px 0 10px;">Email</div>
-      </a>
-    </div>
-  </div>
-{% endset %}
 
 {% set all_units_button %}
-  <div class="b">
-    <div class="m-v400">
-      <button class="btn btn--sm btn--100"
-              style="width: 9.5rem;"
-              onclick="window.print()">
-        <div style="float: right;padding: 5px 15px 0 10px;">Show All Units</div>
-      </button>
+
+
+    <div class="b">
+      <div class="m-t200">
+
+        <button class="btn btn--100"
+                id="show-all-units-btn"
+                style="width: 13.5rem;"
+                onclick="
+                  location.href = '#ml-more-units';
+                  this.hidden = true;
+                  document.getElementById('hide-all-units-btn').hidden = false;
+                  document.getElementById('dr-tr1').checked = true;"
+           >
+            <div style="float: right;padding: 5px 15px 0 10px;">{{ show_all_units_button_text }}</div>
+        </button>
+
+        <button class="btn btn--100"
+                id="hide-all-units-btn"
+                style="width: 13.5rem;"
+                onclick="
+                  this.hidden = true;
+                  document.getElementById('show-all-units-btn').hidden = false;
+                  document.getElementById('dr-tr1').checked = false;"
+                hidden
+        >
+          <div style="float: right;padding: 5px 15px 0 10px;">{{ hide_all_units_button_text }}</div>
+        </button>
+
+      </div>
     </div>
-  </div>
+
 {% endset %}
 
 {% set icon_caret %}
@@ -998,21 +71,22 @@
 {% endset %}
 
 
-{%  if show_email_button or show_print_button %}
-  <div class="m-v200" style="display: flex; max-width: 20rem; justify-content: space-between; flex-flow: row wrap;">
-    {%  if show_email_button %} {{ email_button }} {% endif %}
-    {%  if show_print_button %} {{ print_button }} {% endif %}
+{% if email_button or print_button or show_all_units_button %}
+  <div class="m-v200" style="display: flex; justify-content: space-between; flex-flow: row wrap;">
+    <div style="max-width: 20rem; display: flex; justify-content: space-between;flex-flow: row wrap;">
+      {{ email_button }}
+      {{ print_button }}
+    </div>
+    {% if show_all_units_button and outOfBoundsRows %} {{ all_units_button }} {% endif %}
   </div>
 {% endif %}
 
-{%  if show_all_units_button %}
-  <div class="" style="display: flex; max-width: 30rem; justify-content: space-between; ">
-    {{ all_units_button }}
-  </div>
-{%  endif %}
+
+
+
 
 <div style="clear: both;">
-  {% for key, row in rows %}
+  {% for key, row in inBoundsRows %}
     {% set row_classes = [
       default_row_class ? 'views-row',
       'dr',
@@ -1024,31 +98,116 @@
     {% set drOpen = true %}
     {% set drOpenValues = '' %}
 
-    {% if key == 0 %}
+    {% if loop.index0 == 0 %}
       {% set drOpenValues = 'checked' %}
     {% endif %}
 
     <div{{ row.attributes.addClass(row_classes) }}>
 
-      <input type="checkbox" id="dr--{{ key }}" class="dr-tr a11y--h" {{ drOpenValues }}>
+      <input type="checkbox" id="dr--{{ row.content["#row"].index }}" class="dr-tr a11y--h" {{ drOpenValues }}>
 
-      <label for="dr--{{ key }}" class="dr-h">
+      <label for="dr--{{ row.content["#row"].index }}" class="dr-h">
         <div class="dr-ic">
           {{ icon_caret }}
         </div>
         <div class="dr-t" style="display: flex; justify-content: space-between;">
-          {{ view.style_plugin.getField(loop.index0, 'nothing') }}
+          {{ view.style_plugin.getField(row.content["#row"].index, 'nothing') }}
           <div class="ml-section-title-unit-info">Unit Information</div>
         </div>
       </label>
 
       <div class="dr-c">
         <div>
-          {{ view.style_plugin.getField(loop.index0, 'rendered_entity') }}
+{#          {{ view.style_plugin.getField(row.content["#row"].index, 'rendered_entity') }}#}
+          {{ view.style_plugin.renderFields(row.content["#row"].index) }}
+          {{ view.style_plugin.rendered_fields }}
+
+          {{- row.content -}}
+{#          {{- view.result[0] -}}#}
           {{ ami_calc_button }}
         </div>
       </div>
 
     </div>
   {% endfor %}
+
 </div>
+
+
+{% if outOfBoundsRows %}
+
+
+
+  <div class="dr">
+    <div id="ml-more-units" style="visibility: hidden; position: absolute; margin-top: -2.5rem;">#</div>
+    <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
+    <div class="dr-c" style="padding: 0;">
+
+
+      <div style="clear: both;">
+
+        <div style="height: 8rem; display: flex;" class="b">
+
+          <div class="sep">
+            <div class="sep-l"></div>
+            <div class="sep-c">more</div>
+            <div class="sep-l"></div>
+          </div>
+        </div>
+
+
+        {% for key, row in outOfBoundsRows %}
+          {% set row_classes = [
+            default_row_class ? 'views-row',
+            'dr',
+            'dr--sm'
+          ] %}
+
+          {% set drAlwaysOpen = true %}
+          {% set drAlwaysOpenValues = 'checked disabled' %}
+          {% set drOpen = true %}
+          {% set drOpenValues = '' %}
+
+
+          <div{{ row.attributes.addClass(row_classes) }}>
+
+            <input type="checkbox" id="dr--{{ row.content["#row"].index }}" class="dr-tr a11y--h" {{ drOpenValues }}>
+
+            <label for="dr--{{ row.content["#row"].index }}" class="dr-h">
+              <div class="dr-ic">
+                {{ icon_caret }}
+              </div>
+              <div class="dr-t" style="display: flex; justify-content: space-between;">
+                {{ view.style_plugin.getField(row.content["#row"].index, 'nothing') }}
+                <div class="ml-section-title-unit-info">Unit Information</div>
+              </div>
+            </label>
+
+            <div class="dr-c">
+              <div>
+                {{ view.style_plugin.getField(row.content["#row"].index, 'rendered_entity') }}
+                {{ ami_calc_button }}
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+{% endif %}
+
+
+
+
+
