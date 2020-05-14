@@ -6,7 +6,12 @@ use Drupal;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
- * Processes / compares MNL current node queue with delete queue.
+ * Processes cleanup of orphaned nodes from queue.
+ *
+ * @QueueWorker(
+ *   id = "mnl_cleanup",
+ *   title = @Translation("MNL remove any nodes not found on import."),
+ * )
  */
 class MNLProcessCleanup extends QueueWorkerBase {
 
@@ -40,6 +45,13 @@ class MNLProcessCleanup extends QueueWorkerBase {
    * {@inheritdoc}
    */
   public function __destruct() {
+
+    if ($this->count == 0) {
+      \Drupal::logger("mnl import")
+        ->info("[2] Worker destroyed but no neighborhood_lookup entities were imported.");
+      return;
+    }
+
     // Check if import and delete queues are processed.
     if ($this->endQueues()) {
       \Drupal::logger("mnl import")

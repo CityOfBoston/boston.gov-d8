@@ -7,7 +7,12 @@ use Drupal\node\Entity\Node;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
- * Processes MNL import queue.
+ * Processes import of nodes from queue.
+ *
+ * @QueueWorker(
+ *   id = "mnl_import",
+ *   title = @Translation("MNL Import records / nodes."),
+ * )
  */
 class MNLProcessImport extends QueueWorkerBase {
 
@@ -29,29 +34,43 @@ class MNLProcessImport extends QueueWorkerBase {
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+
     ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "0");
+
     $this->queue = \Drupal::queue($this->getPluginId());
+
     \Drupal::logger("mnl import")
       ->info("[1] MNL Import Worker initialized.");
+
     $this->count = 0;
+
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+
   }
 
   /**
    * {@inheritdoc}
    */
   public function __destruct() {
+
+    if ($this->count == 0) {
+      \Drupal::logger("mnl import")
+        ->info("[1] Worker destroyed: no neighborhood_lookup entities were processed.");
+      return;
+    }
+
     // Check if queue is empty.
     if ($this->endQueue()) {
       // The import queue is now empty - so now queue up
       // items that were not present in the import, and need to be deleted.
       if ($this->loadGarbageNodes()) {
         \Drupal::logger("mnl import")
-          ->info("[1] Worker destroyed and MNL Import IS complete. Processed " . $this->count . " neighborhood_lookup entities.");
+          ->info("[1] Worker destroyed: MNL Import IS complete. Processed " . $this->count . " neighborhood_lookup entities.");
       }
       else {
         \Drupal::logger("mnl import")
-          ->info("[1] Worker destroyed but MNL Import NOT complete. Processed " . $this->count . " neighborhood_lookup entities.");
+          ->info("[1] Worker destroyed: MNL Import NOT complete. Processed " . $this->count . " neighborhood_lookup entities.");
       }
     }
   }
@@ -71,10 +90,16 @@ class MNLProcessImport extends QueueWorkerBase {
    * Build queue for current MNL nodes to compare and delete older records.
    */
   private function loadGarbageNodes() {
-    $queue_nodes = \Drupal::queue('mnl_cleanup');
-    if ($queue_nodes->numberOfItems() == 0) {
+
+    $cleanup = \Drupal::queue('mnl_cleanup');
+
+    if ($cleanup->numberOfItems() == 0) {
+
       \Drupal::logger("mnl import")->info("[1] MNL Import complete.");
+
+      // Find mnl entities which are to be deleted.
       $nidsUnwanted = $this->getUnwantedNodes();
+
       if (empty($nidsUnwanted)) {
         // Reset the import flag field on all current neighborood lookup nodes.
         \Drupal::logger("mnl import")
@@ -83,20 +108,28 @@ class MNLProcessImport extends QueueWorkerBase {
           ->fields(["field_import_date_value" => "0"])
           ->execute();
         \Drupal::logger("mnl import")
-          ->info("[1] Import flag reset on $result neighborhood_lookup entities.");
+          ->info("[1] Import flag was reset on $result neighborhood_lookup entities.");
       }
+
       else {
         foreach ($nidsUnwanted as $nid) {
-          $queue_nodes->createItem($nid);
+          $cleanup->createItem($nid);
         }
         \Drupal::logger("mnl import")
           ->info("[1] Found " . count($nidsUnwanted) . " old neighborhood_lookup entities for cleanup (and loaded them into cleanup queue).");
       }
     }
+
     else {
+
+      // Nothing to cleanup.
       return FALSE;
+
     }
+
+    // Something to cleanup.
     return TRUE;
+
   }
 
   /**

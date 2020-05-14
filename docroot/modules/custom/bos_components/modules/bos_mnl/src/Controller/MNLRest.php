@@ -4,15 +4,9 @@ namespace Drupal\bos_mnl\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableJsonResponse;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Queue\QueueInterface;
-use Drupal\Core\Queue\DatabaseQueue;
-use Drupal\Core\Queue\QueueWorkerInterface;
-use Drupal\Core\Queue\QueueWorkerManagerInterface;
 
 /**
  * MNLRest class for endpoint.
@@ -89,53 +83,79 @@ class MNLRest extends ControllerBase {
     else {
       \Drupal::queue('mnl_import')->deleteQueue();
       \Drupal::queue('mnl_cleanup')->deleteQueue();
-      $data = file_get_contents("/user/Downloads/data_full.json");
-      $data = json_decode($data);
-      $token = $apiKey = "123";
+      $path = \Drupal::request()->get("path");
+      $limit = \Drupal::request()->get("limit");
+      if (NULL != $path && file_exists($path)) {
+        $data = file_get_contents($path);
+        $data = json_decode($data);
+        if (NULL != $limit) {
+          foreach ($data as $key => $dataitem) {
+            $data2[$key] = $dataitem;
+            if (count($data2) == $limit) {
+              unset($data);
+              $data = $data2;
+              break;
+            }
+          }
+        }
+      }
+      else {
+        $response_array = [
+          'status' => 'error',
+          'response' => 'file not found at path',
+        ];
+      }
     }
 
     // Test and load into queue.
-    if ($apiKey !== $token || $apiKey == NULL) {
-      $response_array = [
-        'status' => 'error',
-        'response' => 'wrong api key',
-      ];
-    }
-
-    elseif ($request_method != "POST") {
-      $response_array = [
-        'status' => 'error',
-        'response' => 'request must be POST',
-      ];
-    }
-
-    elseif ($operation == "import" || $operation == "manual") {
-      \Drupal::queue('mnl_cleanup')->deleteQueue();
-      $queue = \Drupal::queue('mnl_import');
-    }
-
-    elseif ($operation == "update") {
-      $queue = \Drupal::queue('mnl_update');
-    }
-
-    else {
-      $response_array = [
-        'status' => 'error',
-        'response' => 'unknown endpoint requested',
-      ];
-    }
-
-    // Finally.
-    if (isset($queue)) {
-      foreach ($data as $items) {
-        // Add item to queue.
-        $queue->createItem($items);
+    if (isset($data)) {
+      if ($apiKey !== $token || $apiKey == NULL) {
+        $response_array = [
+          'status' => 'error',
+          'response' => 'wrong api key',
+        ];
       }
 
-      $response_array = [
-        'status' => $operation . ' complete - ' . $queue->numberOfItems() . ' items queued',
-        'response' => 'authorized'
-      ];
+      elseif ($request_method != "POST") {
+        $response_array = [
+          'status' => 'error',
+          'response' => 'request must be POST',
+        ];
+      }
+
+      elseif ($operation == "import" || $operation == "manual") {
+        \Drupal::queue('mnl_cleanup')->deleteQueue();
+        $queue = \Drupal::queue('mnl_import');
+      }
+
+      elseif ($operation == "update") {
+        $queue = \Drupal::queue('mnl_update');
+      }
+
+      else {
+        $response_array = [
+          'status' => 'error',
+          'response' => 'unknown endpoint requested',
+        ];
+      }
+
+      // Finally.
+      if (isset($queue)) {
+        foreach ($data as $items) {
+          // Add item to queue.
+          $queue->createItem($items);
+        }
+        \Drupal::logger("mnl import")
+          ->info("[0] REST $operation Import loaded "  . count($data) . " SAM records into mnl_import queue.");
+        \Drupal::logger("mnl import")
+          ->info("[0] mnl_import queue now contains "  . $queue->numberOfItems() . " SAM records to be processed.");
+
+        $response_array = [
+          'status' => $operation . ' complete - ' . count($data) . ' items queued',
+          'response' => 'authorized'
+        ];
+      }
+
     }
 
     $response = new CacheableJsonResponse($response_array);
