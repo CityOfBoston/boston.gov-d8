@@ -1,0 +1,32 @@
+uuid: 96344b19-cd11-46fd-8af4-cbe4027f1a1e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ml_share_via_email
+    - node.type.metrolist_development
+    - webform.webform.share_metrolist_listing
+  module:
+    - webform
+id: node.metrolist_development.field_ml_share_via_email
+field_name: field_ml_share_via_email
+entity_type: node
+bundle: metrolist_development
+label: 'Share via Email'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    default_data: ''
+    status: open
+    open: ''
+    close: ''
+    target_uuid: 7cd3fa69-fdac-40fd-af08-51840cc13626
+default_value_callback: ''
+settings:
+  handler: 'default:webform'
+  handler_settings:
+    target_bundles: null
+    auto_create: false
+field_type: webform
