@@ -1239,14 +1239,44 @@ What: Adding style to view-row that is suddenly wrapping divs with .n-li class
 /**
 Stella
 Where: Top Navigation
-What: Hiding Translate button across site and devices
+What: Hiding Translate button across site and devices.
 */
 
-.tr-dd-link--hidden.translate-dropdown-menu {
-  display:none;
+.translate-dropdown-menu {
+  display:block;
 }
 .tr--visible.translate-dropdown-menu {
-  display: none;
+  display: block !important;
+}
+
+/**
+Stella
+Where: Top Navigation
+What: Adding accessibility link to skip tyo main content.
+ */
+
+.sw-skipnav-outerbar {
+  margin-top: -30px;
+}
+
+.sw-skipnav {
+  position: absolute;
+  top: -1000px;
+  left: -1000px;
+  height: 1px;
+  width: 1px;
+  text-align: left;
+  overflow: hidden;
+}
+
+a.sw-skipnav:active,
+a.sw-skipnav:focus,
+a.sw-skipnav:hover {
+  left: 0;
+  top: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
 }
 
 /**
