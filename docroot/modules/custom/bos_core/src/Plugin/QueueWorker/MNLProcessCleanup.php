@@ -18,11 +18,21 @@ class MNLProcessCleanup extends QueueWorkerBase {
   private $queue;
 
   /**
+   * Keep track of how many rows processed during the workers lifetime.
+   *
+   * @var int
+   */
+  private $count;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     ini_set('memory_limit', '-1');
     $this->queue = \Drupal::queue($this->getPluginId());
+    \Drupal::logger("mnl import")
+      ->info("[2] MNL Cleanup Worker initialized.");
+    $this->count = 0;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
@@ -32,10 +42,17 @@ class MNLProcessCleanup extends QueueWorkerBase {
   public function __destruct() {
     // Check if import and delete queues are processed.
     if ($this->endQueues()) {
+      \Drupal::logger("mnl import")
+        ->info("[2] Worker destroyed and MNL Cleanup IS complete. Removed " . $this->count . " neighborhood_lookup entities.");
       // Reset the import flag field on all current neighborood lookup nodes.
-      \Drupal::database()->update("node__field_import_date")
+      $result = \Drupal::database()->update("node__field_import_date")
         ->fields(["field_import_date_value" => "0"])
         ->execute();
+      \Drupal::logger("mnl import")->info("[2] Import flag reset on $result neighborhood_lookup entities.");
+    }
+    else {
+      \Drupal::logger("mnl import")
+        ->info("[2] Worker destroyed but MNL Cleanup NOT complete. Removed " . $this->count . " neighborhood_lookup entities.");
     }
   }
 
@@ -56,6 +73,7 @@ class MNLProcessCleanup extends QueueWorkerBase {
       ->getStorage("node")
       ->load($item)
       ->delete();
+    $this->count++;
   }
 
 }
