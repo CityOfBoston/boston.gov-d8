@@ -146,9 +146,9 @@ class MNLRest extends ControllerBase {
           $queue->createItem($items);
         }
         \Drupal::logger("mnl import")
-          ->info("[0] REST $operation Import loaded "  . count($data) . " SAM records into mnl_import queue.");
+          ->info("[0] REST $operation Import loaded " . count($data) . " SAM records into mnl_import queue.");
         \Drupal::logger("mnl import")
-          ->info("[0] mnl_import queue now contains "  . $queue->numberOfItems() . " SAM records to be processed.");
+          ->info("[0] mnl_import queue now contains " . $queue->numberOfItems() . " SAM records to be processed.");
 
         $response_array = [
           'status' => $operation . ' complete - ' . count($data) . ' items queued',
