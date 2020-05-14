@@ -7,7 +7,12 @@ use Drupal\node\Entity\Node;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
- * Processes MNL update queue.
+ * Processes incremental update of nodes from queue.
+ *
+ * @QueueWorker(
+ *   id = "mnl_update",
+ *   title = @Translation("MNL Updates records / nodes."),
+ * )
  */
 class MNLProcessUpdate extends QueueWorkerBase {
 
@@ -23,6 +28,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "0");
     $this->queue = \Drupal::queue($this->getPluginId());
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
