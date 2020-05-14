@@ -61,23 +61,40 @@ class MNLRest extends ControllerBase {
   }
 
   /**
-   * Begin import and parse POST data.
+   * Load the payload from the rest endpoint into the appropriate queue.
+   *
+   * @param string $operation
+   *   The operation from the endpoint call.
+   *
+   * @return \Drupal\Core\Cache\CacheableJsonResponse
+   *   A json response to send back to the caller.
    */
-  public function beginUpdateImport($operation) {
+  public function beginUpdateImport(string $operation) {
     ini_set('memory_limit', '-1');
     ini_set("max_execution_time", "10800");
     ini_set("post_max_size", "2000M");
     ini_set("upload_max_filesize", "2000M");
 
-    // Get POST data.
     $apiKey = $this->request->getCurrentRequest()->get('api_key');
     $token = Settings::get('mnl_key');
+
     // Get request method.
     $request_method = $this->request->getCurrentRequest()->getMethod();
-    // Get POST data and decode in to JSON.
-    $data = $this->request->getCurrentRequest()->getContent();
-    $data = json_decode(strip_tags($data), TRUE);
 
+    // Get POST data and decode in to JSON.
+    if ($operation != "manual") {
+      $data = $this->request->getCurrentRequest()->getContent();
+      $data = json_decode(strip_tags($data), TRUE);
+    }
+    else {
+      \Drupal::queue('mnl_import')->deleteQueue();
+      \Drupal::queue('mnl_cleanup')->deleteQueue();
+      $data = file_get_contents("/user/Downloads/data_full.json");
+      $data = json_decode($data);
+      $token = $apiKey = "123";
+    }
+
+    // Test and load into queue.
     if ($apiKey !== $token || $apiKey == NULL) {
       $response_array = [
         'status' => 'error',
@@ -85,33 +102,39 @@ class MNLRest extends ControllerBase {
       ];
     }
 
-    elseif ($request_method == "POST" && ($operation == "import" || $operation == "update")) {
-      if ($operation == "import") {
-        $queue = \Drupal::queue('mnl_import');
-
-        $queueNodes = \Drupal::queue('mnl_nodes');
-        $queueNodes->deleteQueue();
-      }
-      else {
-        $queue = \Drupal::queue('mnl_update');
-      }
-
-      foreach ($data as $items) {
-        // Create item to queue.
-        $queue->createItem($items);
-      }
-      $queueTotal = $queue->numberOfItems();
-
+    elseif ($request_method != "POST") {
       $response_array = [
-        'status' => $operation . ' complete - ' . $queueTotal . ' items queued',
-        'response' => 'authorized'
+        'status' => 'error',
+        'response' => 'request must be POST',
       ];
+    }
+
+    elseif ($operation == "import" || $operation == "manual") {
+      \Drupal::queue('mnl_cleanup')->deleteQueue();
+      $queue = \Drupal::queue('mnl_import');
+    }
+
+    elseif ($operation == "update") {
+      $queue = \Drupal::queue('mnl_update');
     }
 
     else {
       $response_array = [
         'status' => 'error',
-        'response' => 'unknown',
+        'response' => 'unknown endpoint requested',
+      ];
+    }
+
+    // Finally.
+    if (isset($queue)) {
+      foreach ($data as $items) {
+        // Add item to queue.
+        $queue->createItem($items);
+      }
+
+      $response_array = [
+        'status' => $operation . ' complete - ' . $queue->numberOfItems() . ' items queued',
+        'response' => 'authorized'
       ];
     }
 
@@ -119,7 +142,4 @@ class MNLRest extends ControllerBase {
     return $response;
   }
 
-  // End import.
 }
-
-// End MNLRest class.
