@@ -7,6 +7,7 @@ branches:
     - develop
     - master
     - mnl_12_9_2019
+    - accessibility
 
 php:
   - 7.3
@@ -122,3 +123,8 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: mnl_12_9_2019
+  - provider: script
+    skip_cleanup: true
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: accessibility
