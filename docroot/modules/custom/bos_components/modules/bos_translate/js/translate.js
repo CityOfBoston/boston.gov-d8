@@ -379,7 +379,7 @@ let translate = function(d){
       let g=document.getElementById("translateForm");
       if(g!=null&&e!=null&&e.value!="") {
         g.tl.value=e.value;
-        g.submit();
+        g.submit()
       }
     }
   }
