@@ -8,6 +8,7 @@ namespace Drupal\bos_core\Plugin\QueueWorker;
  * @QueueWorker(
  *   id = "mnl_import",
  *   title = @Translation("MNL Import records / nodes."),
+ *   cron = {"time" = 840}
  * )
  */
 class CronProcessorMNLImport extends MNLProcessImport {}
