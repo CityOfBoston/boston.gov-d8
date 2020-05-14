@@ -11,24 +11,33 @@ config:
   xdebug: true
   drupal: false
 
+proxy:
+  patterns:
+    - patterns.lndo.site
+
 services:
   patterns:
-    type: node:8
+    type: node:10
+    ssl: true
     overrides:
+      expose:
+        - "80"
+        - "443"
+      ports:
+        - "3030:80"
       environment:
-        PORT: "3030"
-        FRACTAL_PORT: "3030"
-      labels:
-        traefik.0.port: "3030"
-        traefik.docker.network: "landoproxyhyperion5000gandalfedition_edge"
-        traefik.0.frontend.rule: "HostRegexp:patterns.lndo.site"
-    globals:
-      gulp-cli: "latest"
+        PORT: "80"
+        FRACTAL_PORT: "80"
+      healthcheck:
+        test: /app/scripts/local/health.sh patterns
+        interval: 30s
+        timeout: 15s
+        retries: 5
     build_as_root:
-      - printf "\n[LANDO] Node Container Event - build as root\n\n"
+      - printf "\n[LANDO] Patterns Container Event - build as root\n"
       - /app/scripts/local/lando-patterns-customize.sh
     run:
-      - printf "\n[LANDO] Node Container Event - run\n\n"
+      - printf "\n[LANDO] Patterns Container Event - run\n\n"
       - /app/scripts/local/lando-build-patterns.sh
     command: /app/scripts/local/lando-patterns-post-start.sh
 
@@ -36,6 +45,12 @@ services:
     type: mysql
     portforward: true
     host: localhost
+    overrides:
+      healthcheck:
+        test: /app/scripts/local/health.sh database
+        interval: 30s
+        timeout: 10s
+        retries: 5
     run_as_root:
       - printf "\n[LANDO] Database Event - run as root\n\n"
       - /app/scripts/local/lando-database-customize.sh
@@ -50,6 +65,11 @@ services:
     webroot: docroot
     xdebug: true
     overrides:
+      healthcheck:
+        test: /app/scripts/local/health.sh appserver
+        interval: 30s
+        timeout: 15s
+        retries: 5
       environment:
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
