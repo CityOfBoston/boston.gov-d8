@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.ml_income_eligibility_ami_thold.field_total_house_income_data
+    - field.field.taxonomy_term.ml_income_eligibility_ami_thold.total_house_income_data_bpda
+    - field.field.taxonomy_term.ml_income_eligibility_ami_thold.total_house_income_data_hud
     - taxonomy.vocabulary.ml_income_eligibility_ami_thold
   module:
     - text
@@ -32,3 +34,5 @@ content:
     region: content
 hidden:
   langcode: true
+  total_house_income_data_bpda: true
+  total_house_income_data_hud: true

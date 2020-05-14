@@ -4,37 +4,21 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.ml_income_eligibility_ami_thold.field_total_house_income_data
+    - field.field.taxonomy_term.ml_income_eligibility_ami_thold.total_house_income_data_bpda
+    - field.field.taxonomy_term.ml_income_eligibility_ami_thold.total_house_income_data_hud
     - taxonomy.vocabulary.ml_income_eligibility_ami_thold
-  module:
-    - path
-    - text
 id: taxonomy_term.ml_income_eligibility_ami_thold.default
 targetEntityType: taxonomy_term
 bundle: ml_income_eligibility_ami_thold
 mode: default
 content:
-  description:
-    type: text_textarea
-    weight: 2
-    region: content
-    settings:
-      placeholder: ''
-      rows: 5
-    third_party_settings: {  }
   field_total_house_income_data:
-    weight: 1
+    weight: 3
     settings:
       placeholder: Income
     third_party_settings: {  }
     type: number
     region: content
-  langcode:
-    type: language_select
-    weight: 3
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
   name:
     type: string_textfield
     weight: 0
@@ -43,17 +27,22 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 4
+  total_house_income_data_bpda:
+    type: number
+    weight: 2
     region: content
-    settings: {  }
-    third_party_settings: {  }
-  status:
-    type: boolean_checkbox
     settings:
-      display_label: true
-    weight: 5
-    region: content
+      placeholder: Income
     third_party_settings: {  }
-hidden: {  }
+  total_house_income_data_hud:
+    type: number
+    weight: 1
+    region: content
+    settings:
+      placeholder: Income
+    third_party_settings: {  }
+hidden:
+  description: true
+  langcode: true
+  path: true
+  status: true
