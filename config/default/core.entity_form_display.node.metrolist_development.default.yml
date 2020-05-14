@@ -11,24 +11,26 @@ dependencies:
     - field.field.node.metrolist_development.field_ml_agent_phone
     - field.field.node.metrolist_development.field_ml_available_units_view
     - field.field.node.metrolist_development.field_ml_city
-    - field.field.node.metrolist_development.field_ml_location
+    - field.field.node.metrolist_development.field_ml_due_at_signing
+    - field.field.node.metrolist_development.field_ml_features
     - field.field.node.metrolist_development.field_ml_neighborhood
     - field.field.node.metrolist_development.field_ml_num_of_ownership_units
     - field.field.node.metrolist_development.field_ml_number_of_rental_units
     - field.field.node.metrolist_development.field_ml_number_of_units
     - field.field.node.metrolist_development.field_ml_region
-    - field.field.node.metrolist_development.field_ml_share
+    - field.field.node.metrolist_development.field_ml_share_via_email
+    - field.field.node.metrolist_development.field_ml_units_json
+    - field.field.node.metrolist_development.field_ml_utilities_included
     - node.type.metrolist_development
   module:
     - address
     - content_moderation
-    - geofield
     - path
     - publication_date
-    - social_media
     - telephone
     - text
     - viewfield
+    - webform
 _core:
   default_config_hash: 11OM2S9RcW4ahKyEH7A4uHk0D69Ad5au26StryYzsD0
 id: node.metrolist_development.default
@@ -105,11 +107,25 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
-  field_ml_location:
-    weight: 128
-    settings: {  }
+  field_ml_due_at_signing:
+    weight: 140
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
-    type: geofield_default
+    type: entity_reference_autocomplete
+    region: content
+  field_ml_features:
+    weight: 138
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_ml_neighborhood:
     weight: 126
@@ -152,12 +168,28 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
-  field_ml_share:
-    weight: 136
+  field_ml_share_via_email:
+    weight: 137
     settings:
-      display_label: true
+      default_data: true
     third_party_settings: {  }
-    type: social_media_default
+    type: webform_entity_reference_select
+    region: content
+  field_ml_units_json:
+    weight: 136
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
+    region: content
+  field_ml_utilities_included:
+    weight: 139
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   langcode:
     type: language_select
