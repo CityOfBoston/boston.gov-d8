@@ -57,8 +57,16 @@ class MNLProcessImport extends QueueWorkerBase {
     $queue_nodes = \Drupal::queue('mnl_cleanup');
     if ($queue_nodes->numberOfItems() == 0) {
       $nidsUnwanted = $this->getUnwantedNodes();
-      foreach ($nidsUnwanted as $nid) {
-        $queue_nodes->createItem($nid);
+      if (empty($nidsUnwanted)) {
+        // Reset the import flag field on all current neighborood lookup nodes.
+        \Drupal::database()->update("node__field_import_date")
+          ->fields(["field_import_date_value" => "0"])
+          ->execute();
+      }
+      else {
+        foreach ($nidsUnwanted as $nid) {
+          $queue_nodes->createItem($nid);
+        }
       }
     }
   }
