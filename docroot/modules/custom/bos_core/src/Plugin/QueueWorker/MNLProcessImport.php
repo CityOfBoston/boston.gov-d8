@@ -19,11 +19,21 @@ class MNLProcessImport extends QueueWorkerBase {
   private $queue;
 
   /**
+   * Keep track of how many rows processed during the workers lifetime.
+   *
+   * @var int
+   */
+  private $count;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     ini_set('memory_limit', '-1');
     $this->queue = \Drupal::queue($this->getPluginId());
+    \Drupal::logger("mnl import")
+      ->info("[1] MNL Import Worker initialized.");
+    $this->count = 0;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
@@ -35,7 +45,14 @@ class MNLProcessImport extends QueueWorkerBase {
     if ($this->endQueue()) {
       // The import queue is now empty - so now queue up
       // items that were not present in the import, and need to be deleted.
-      $this->loadGarbageNodes();
+      if ($this->loadGarbageNodes()) {
+        \Drupal::logger("mnl import")
+          ->info("[1] Worker destroyed and MNL Import IS complete. Processed " . $this->count . " neighborhood_lookup entities.");
+      }
+      else {
+        \Drupal::logger("mnl import")
+          ->info("[1] Worker destroyed but MNL Import NOT complete. Processed " . $this->count . " neighborhood_lookup entities.");
+      }
     }
   }
 
@@ -45,7 +62,7 @@ class MNLProcessImport extends QueueWorkerBase {
   private function getUnwantedNodes() {
     $query = \Drupal::entityQuery('node')
       ->condition('type', 'neighborhood_lookup')
-      ->condition('field_import_date', "1", "!=");
+      ->condition('field_import_date', "0", "=");
     $nids = $query->execute();
     return $nids;
   }
@@ -56,19 +73,30 @@ class MNLProcessImport extends QueueWorkerBase {
   private function loadGarbageNodes() {
     $queue_nodes = \Drupal::queue('mnl_cleanup');
     if ($queue_nodes->numberOfItems() == 0) {
+      \Drupal::logger("mnl import")->info("[1] MNL Import complete.");
       $nidsUnwanted = $this->getUnwantedNodes();
       if (empty($nidsUnwanted)) {
         // Reset the import flag field on all current neighborood lookup nodes.
-        \Drupal::database()->update("node__field_import_date")
+        \Drupal::logger("mnl import")
+          ->info("[1] No neighborhood_lookup entities found for cleanup - Resetting import flag.");
+        $result = \Drupal::database()->update("node__field_import_date")
           ->fields(["field_import_date_value" => "0"])
           ->execute();
+        \Drupal::logger("mnl import")
+          ->info("[1] Import flag reset on $result neighborhood_lookup entities.");
       }
       else {
         foreach ($nidsUnwanted as $nid) {
           $queue_nodes->createItem($nid);
         }
+        \Drupal::logger("mnl import")
+          ->info("[1] Found " . count($nidsUnwanted) . " old neighborhood_lookup entities for cleanup (and loaded them into cleanup queue).");
       }
     }
+    else {
+      return FALSE;
+    }
+    return TRUE;
   }
 
   /**
@@ -178,6 +206,8 @@ class MNLProcessImport extends QueueWorkerBase {
     else {
       $this->createNode($item);
     }
+
+    $this->count++;
 
   }
 
