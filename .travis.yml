@@ -7,7 +7,6 @@ branches:
     - develop
     - master
     - mnl_12_9_2019
-    - accessibility
 
 php:
   - 7.3
@@ -58,7 +57,7 @@ notifications:
         - ":red_circle: *WARNING:* Deploy from GitHub to the Acquia <https://d8-stg.boston.gov|stage environment> *FAILED* (in Travis)."
         - "This unsuccessful deploy attempt was initiated by %{author}."
         - "EXPLANATION (from Travis): %{message}"
-    - if: branch = master OR branch = develop OR branch = accessibility
+    - if: branch = master OR branch = develop
       on_pull_requests: true
       on_success: always
       on_failure: never
@@ -69,7 +68,7 @@ notifications:
         - ":drupal: DRUPAL *%{branch}* build has %{result}."
         - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author} in %{duration}"
         - "- %{message}"
-    - if: branch = master OR branch = develop OR branch = accessibility
+    - if: branch = master OR branch = develop
       on_pull_requests: true
       on_success: never
       on_failure: always
@@ -80,7 +79,7 @@ notifications:
         - ":red_circle: DRUPAL *%{branch}* build has *%{result}* (in Travis build)."
         - "<%{build_url}|#%{build_number}> of branch _%{branch}_ by %{author}"
         - "EXPLANATION (from Travis): %{message}"
-    - if: branch = develop OR branch = accessibility
+    - if: branch = develop
       on_pull_requests: false
       on_success: always
       on_failure: never
@@ -123,8 +122,3 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: mnl_12_9_2019
-  - provider: script
-    skip_cleanup: true
-    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: accessibility
