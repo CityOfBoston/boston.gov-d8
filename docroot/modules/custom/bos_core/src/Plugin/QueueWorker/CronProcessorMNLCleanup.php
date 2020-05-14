@@ -8,6 +8,7 @@ namespace Drupal\bos_core\Plugin\QueueWorker;
  * @QueueWorker(
  *   id = "mnl_cleanup",
  *   title = @Translation("MNL remove any nodes not found on import."),
+ *   cron = {"time" = 840}
  * )
  */
 class CronProcessorMNLCleanup extends MNLProcessCleanup {}
