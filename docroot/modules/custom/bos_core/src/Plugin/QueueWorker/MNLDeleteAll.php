@@ -20,7 +20,7 @@ class MNLDeleteAll extends QueueWorkerBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     ini_set('memory_limit', '-1');
-    $this->queue = \Drupal::queue($this->getPluginId());
+    $this->queue = \Drupal::queue($plugin_id);
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
