@@ -3,9 +3,7 @@
 namespace Drupal\bos_core\Plugin\QueueWorker;
 
 use Drupal;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Processes tasks for example module.
@@ -18,14 +16,31 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MNLDeleteAll extends QueueWorkerBase {
 
   /**
-   * Process each record.
+   * {@inheritdoc}
    */
-  public function processItem($items) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+    ini_set('memory_limit', '-1');
+    $this->queue = \Drupal::queue($this->getPluginId());
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
 
+  /**
+   * Process each record.
+   *
+   * @param mixed $item
+   *   The item stored in the qsueue.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function processItem($item) {
     // Load and delete node.
-    $node = Node::load($items);
-    $sam_id = $node->field_sam_id->value;
-    $node->delete();
+    \Drupal::entityTypeManager()
+      ->getStorage("node")
+      ->load($item)
+      ->delete();
+
   }
 
 }
