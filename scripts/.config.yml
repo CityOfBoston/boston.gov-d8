@@ -179,7 +179,7 @@ deploy:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo.
-    deploy_branch: metrolist_ci-deploy
+    deploy_branch: "metrolist_ci-deploy"
     # Path to the drush command in the Travis container.
     travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
     # Alias for deploy target Aquia server. Ci or Uat
@@ -196,8 +196,7 @@ deploy:
     copy_db: false
     drush_db_source: "@bostond8.ci"
     # Array of user:host for (Acquia) git remotes to be used for deployment.
-    remotes:
-      - bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
+    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
   master:
     # Folder in Travis container where deploy files will be "built"
