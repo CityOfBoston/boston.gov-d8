@@ -8,6 +8,7 @@ branches:
     - master
     - procurement
     - metrolist_dev
+    - metrolist_ci
 
 php:
   - 7.3
@@ -128,3 +129,8 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: metrolist_dev
+  - provider: script
+    skip_cleanup: true
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: metrolist_ci
