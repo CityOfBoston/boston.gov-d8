@@ -42,6 +42,8 @@ build:
       # Otherwise set it to 'sync' (and provide a drush-alias) to sync from the drush-alias environment.
       # Tip: Develop environment has database in closest state to the github repo configs.
       source: sync
+      # If you wish to use mycli and pspg tools in the container, set the next line to true.
+      server_side_tools: false
       drush_alias: "@bostond8.dev"
       host: boston_database_1
       port: 3306
