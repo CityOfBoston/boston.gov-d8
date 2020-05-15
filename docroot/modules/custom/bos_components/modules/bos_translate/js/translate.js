@@ -9,6 +9,16 @@ jQuery(document).ready( function () {
 
   translate.init();
 
+  // Add notranslate class to multilingual Covid 19 pages
+  let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706];
+
+  $('#page').each(function() {
+    let $this = $(this);
+    if ($.inArray($this.data('target'), trArray) !== -1) {
+      $this.children('.main-content').addClass('notranslate');
+    }
+  });
+
 });
 
 let translate = function(d){
