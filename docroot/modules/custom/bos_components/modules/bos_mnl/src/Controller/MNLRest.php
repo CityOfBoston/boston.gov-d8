@@ -39,22 +39,6 @@ class MNLRest extends ControllerBase {
   }
 
   /**
-   * Checks allowed domains to access endpoint.
-   */
-  public function checkDomain() {
-    $allowed = [
-      'https://www.boston.gov',
-    ];
-
-    if (isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $allowed)) {
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
-  }
-
-  /**
    * Load the payload from the rest endpoint into the appropriate queue.
    *
    * @param string $operation
@@ -69,8 +53,11 @@ class MNLRest extends ControllerBase {
     ini_set("post_max_size", "2000M");
     ini_set("upload_max_filesize", "2000M");
 
+    \Drupal::logger("mnl import")
+      ->info("[0] REST $operation Import initialized.");
+
     $apiKey = $this->request->getCurrentRequest()->get('api_key');
-    $token = Settings::get('mnl_key');
+    $token = \Drupal::config("bos_mnl.settings")->get("auth_token");
 
     // Get request method.
     $request_method = $this->request->getCurrentRequest()->getMethod();
@@ -123,8 +110,11 @@ class MNLRest extends ControllerBase {
         ];
       }
 
-      elseif ($operation == "import" || $operation == "manual") {
-        \Drupal::queue('mnl_cleanup')->deleteQueue();
+      elseif ($operation == "import") {
+        $queue = \Drupal::queue('mnl_import');
+      }
+
+      elseif ($operation == "manual") {
         $queue = \Drupal::queue('mnl_import');
       }
 
