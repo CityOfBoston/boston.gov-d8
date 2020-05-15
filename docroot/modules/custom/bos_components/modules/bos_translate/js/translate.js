@@ -15,7 +15,7 @@ jQuery(document).ready( function () {
 let covidPages = function() {
   let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706];
   let $this = jQuery('#page');
-  if (jQuery.inArray(jQuerythis.data('target'), trArray) !== -1) {
+  if (jQuery.inArray($this.data('target'), trArray) !== -1) {
     $this.children('.main-content').addClass('notranslate');
   }
 }();
