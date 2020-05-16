@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_core\Plugin\QueueWorker;
+namespace Drupal\bos_mnl\Plugin\QueueWorker;
 
 use Drupal;
 use Drupal\node\Entity\Node;
@@ -92,19 +92,19 @@ class MNLProcessUpdate extends QueueWorkerBase {
       ->info("
         [1] Queue Process Results:<br>
         == Start Condition ==================<br>
-        Entities in DB at start       " . $this->stats["pre-entities"] . "<br>
-        Cache (unique SAM's) at start " . $this->stats["cache"] . "<br>
-        mnl_update queue at start     " . $this->stats["queue"] . "<br>
+        Entities in DB at start       " . number_format($this->stats["pre-entities"], 0) . "<br>
+        Cache (unique SAM's) at start " . number_format($this->stats["cache"], 0) . "<br>
+        mnl_update queue at start     " . number_format($this->stats["queue"], 0) . "<br>
         == Queue Processing =================<br>
-        New entities created          " . $this->stats["inserted"] . "<br>
-        Updated entities              " . $this->stats["updated"] . "<br>
-        Unchanged entities            " . $this->stats["unchanged"] . "<br>
-        Duplicate SAM ID's found      " . $this->stats["duplicateSAM"] . "<br>
+        New entities created          " . number_format($this->stats["inserted"], 0) . "<br>
+        Updated entities              " . number_format($this->stats["updated"], 0) . "<br>
+        Unchanged entities            " . number_format($this->stats["unchanged"], 0) . "<br>
+        Duplicate SAM ID's found      " . number_format($this->stats["duplicateSAM"], 0) . "<br>
         == Result ============================<br>
-        Entities processed            " . $this->stats["processed"] . "<br>
-        Entities in DB at end         " . $this->stats["post-entities"] . "<br>
-        Cache (unique SAM's) at end   " . count($this->cache) . "<br>
-        mnl_update queue at end       " . $this->queue->numberOfItems() . "<br>
+        Entities processed            " . number_format($this->stats["processed"], 0) . "<br>
+        Entities in DB at end         " . number_format($this->stats["post-entities"], 0) . "<br>
+        Cache (unique SAM's) at end   " . number_format(count($this->cache), 0) . "<br>
+        mnl_update queue at end       " . number_format($this->queue->numberOfItems(), 0) . "<br>
         == Runtime ===========================<br>
         processing time: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
       ");
