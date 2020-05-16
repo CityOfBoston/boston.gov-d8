@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_core\Plugin\QueueWorker;
+namespace Drupal\bos_mnl\Plugin\QueueWorker;
 
 use Drupal;
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -92,13 +92,13 @@ class MNLProcessCleanup extends QueueWorkerBase {
       ->info("
         [2] Queue Process Results:<br>
         == Start Condition ==================<br>
-        Entities in DB at start      " . $this->stats["pre-entities"] . "<br>
-        mnl_cleanup queue at start   " . $this->stats["queue"] . "<br>
+        Entities in DB at start      " . number_format($this->stats["pre-entities"], 0) . "<br>
+        mnl_cleanup queue at start   " . number_format($this->stats["queue"], 0) . "<br>
         == Queue Processing =================<br>
-        Removed entities             " . $this->stats["processed"] . "<br>
+        Removed entities             " . number_format($this->stats["processed"], 0) . "<br>
         == Result ============================<br>
-        Entities in DB at end        " . $this->stats["post-entities"] . "<br>
-        mnl_cleanup queue at end     " . $this->queue->numberOfItems() . "<br>
+        Entities in DB at end        " . number_format($this->stats["post-entities"], 0) . "<br>
+        mnl_cleanup queue at end     " . number_format($this->queue->numberOfItems(), 0) . "<br>
         == Runtime ===========================<br>
         processing time: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
       ");
