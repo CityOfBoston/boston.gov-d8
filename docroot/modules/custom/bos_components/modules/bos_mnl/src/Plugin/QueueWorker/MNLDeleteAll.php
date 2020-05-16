@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_core\Plugin\QueueWorker;
+namespace Drupal\bos_mnl\Plugin\QueueWorker;
 
 use Drupal;
 use Drupal\Core\Queue\QueueWorkerBase;
