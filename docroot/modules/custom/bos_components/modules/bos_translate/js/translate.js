@@ -8,20 +8,33 @@
 jQuery(document).ready( function () {
 
   translate.init();
+  covidPages.init();
 
 });
 
+// Add notranslate class to multilingual Covid 19 pages
+let covidPages = function() {
+  return {
+    init:function() {
+      this.multilingual();
+    }
+    , multilingual:function() {
+      let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706];
+      let $this = jQuery('#page');
+      if (jQuery.inArray($this.data('target'), trArray) !== -1) {
+        $this.find('#content').addClass('notranslate');
+      }
+    }
+  }
+}();
+
 let translate = function(d){
   return {
-    name:"translate", settings: {
-      container: ".translate_container", enableEventTracking: true, analyticsNs: "Translate", analyticsAction: "Translate"
-    }
-    , init:function() {
+    init:function() {
       this.writeLanguageList();
       this.bindDomEvents()
     }
     , exec:function() {
-      jQuery(this.settings.container).html(this.settings.template);
       this.writeLanguageList();
       this.bindDomEvents()
     }
@@ -29,7 +42,8 @@ let translate = function(d){
       let e=this;
       jQuery("#cob_translate, #langCloseButton").on("click", function(f) {
           f.preventDefault();
-          e.toggleLanguages()
+          e.toggleLanguages();
+          jQuery('#overlay-background').addClass('md');
         }
       );
       jQuery("#viewDisclaimer, #closeDisclaimer").on("click", function(f) {
@@ -55,32 +69,236 @@ let translate = function(d){
       g+='<form id="translateForm" class="translate-form"><label for="disclaimerLanguageSelect">View Disclaimer in: </label><select id="disclaimerLanguageSelect" name="disclaimerLanguageSelect" class="translate-select-disclaimer">';
       g+='<option value="English">English</option>';
       g+='<option value="Spanish">Spanish</option>';
+      g+='<option value="Haitian">Haitian Creole</option>';
+      g+='<option value="Portuguese">Portuguese</option>';
+      g+='<option value="French">French</option>';
       g+='<option value="ChineseS">Chinese - Simplified</option>';
-      g+='<option value="ChineseT">Chinese - Traditional</option></select>';
-      let h='<div id="English" class="translate-disclaimer disclaimer"><h4>Google Translate Disclaimer</h4>';
-      h+="<p>The Boston Department of Information Technology (“DoIT”) offers translations of the content through Google Translate. Because Google Translate is an external website, DoIT does not control the quality or accuracy of translated content. All DoIT content is filtered through Google Translate which may result in unexpected and unpredictable degradation of portions of text, images and the general appearance on translated pages. Google Translate may maintain unique privacy and use policies. These policies are not controlled by DoIT and are not associated with DoIT’s privacy and use policies. After selecting a translation option, users will be notified that they are leaving DoIT’s website. Users should consult the original English content on DoIT’s website if there are any questions about the translated content.</p>";
-      h+="<p>DoIT uses Google Translate to provide language translations of its content. Google Translate is a free, automated service that relies on data and technology to provide its translations. The Google Translate feature is provided for informational purposes only. Translations cannot be guaranteed as exact or without the inclusion of incorrect or inappropriate language. Google Translate is a third-party service and site users will be leaving DoIT to utilize translated content. As such, DoIT does not guarantee and does not accept responsibility for, the accuracy, reliability, or performance of this service nor the limitations provided by this service, such as the inability to translate specific files like PDFs and graphics (e.g. .jpgs, .gifs, etc.).</p>";
-      h+="<p>DoIT provides Google Translate as an online tool for its users, but DoIT does not directly endorse the website or imply that it is the only solution available to users. All site visitors may choose to use alternate tools for their translation needs. Any individuals or parties that use DoIT content in translated form, whether by Google Translate or by any other translation services, do so at their own risk. DoIT is not liable for any loss or damages arising out of, or issues related to, the use of or reliance on translated content. DoIT assumes no liability for any site visitor’s activities in connection with use of the Google Translate functionality or content.</p>";
-      h+="<p>The Google Translate service is a means by which DoIT offers translations of content and is meant solely for the convenience of non-English speaking users of the website. The translated content is provided directly and dynamically by Google; DoIT has no direct control over the translated content as it appears using this tool. Therefore, in all contexts, the English content, as directly provided by DoIT is to be held authoritative.</p></div>";
-      let j='<div id="Spanish" class="translate-disclaimer disclaimer" style="display:none;"><h4>Exención de Responsabilidad del Traductor Google</h4>';
-      j+="<p>El Departamento de Tecnología de la Información de Boston (\"DoIT\") ofrece traducciones del contenido a través de Google Translate. Debido a que Google Translate es un sitio web externo, DoIT no controla la calidad ni la precisión del contenido traducido. Todo el contenido de DoIT se filtra a través del Traductor de Google, lo que puede provocar una degradación inesperada e impredecible de partes de texto, imágenes y la apariencia general de las páginas traducidas. Google Translate puede mantener políticas únicas de privacidad y uso. Estas políticas no están controladas por DoIT y no están asociadas con las políticas de privacidad y uso de DoIT. Después de seleccionar una opción de traducción, se notificará a los usuarios que abandonan el sitio web de DoIT. Los usuarios deben consultar el contenido original en inglés en el sitio web de DoIT si hay alguna pregunta sobre el contenido traducido.</p>";
-      j+="<p>El DoIT usa el Traductor Google para proporcionar traducciones lingüísticas de su contenido. El Traductor Google es un servicio gratis y automatizado que se basa en datos y tecnología para proporcionar sus traducciones. La función del Traductor Google es proporcionada solamente para propósitos informativos. Las traducciones no pueden ser garantizadas como exactas o sin la inclusión de lenguaje incorrecto o inapropiado. El Traductor Google es un servicio de terceros y los usuarios del sitio dejarán al DoIT para utilizar el contenido traducido. Como tal, el DoIT no garantiza y no acepta responsabilidad por la exactitud, confiabilidad o desempeño de este servicio o de las limitaciones proporcionadas por este servicio, tales como la inhabilidad de traducir archivos específicos como PDF y gráficos (p.e. .jpgs, .gifs, etc.).</p>";
-      j+="<p>El DoIT proporciona el Traductor Google como una herramienta en línea para sus usuarios, pero el DoIT no endosa directamente el sitio web o implica que es la única solución disponible para los usuarios. Todos los visitantes al sitio pueden escoger usar herramientas alternativas para sus necesidades de traducción. Cualquier persona que utilice el contenido del DoIT en su forma traducida, ya sea por el Traductor Google o por cualquier otro servicio de traducción, lo hace bajo su propio riesgo. El DoIT no es responsable por ninguna pérdida o daño que surja de, o problemas relacionados con el uso o dependencia del contenido traducido. El DoIT no asume ninguna responsabilidad por las actividades de los visitantes del sitio en conexión con el uso de la funcionalidad o contenido del Traductor Google.</p>";
-      j+="<p>El servicio del Traductor Google es un medio por el cual el DoIT ofrece traducciones de contenido y está destinado solamente para la conveniencia de los usuarios del sitio web que no hablan inglés. El contenido traducido es proporcionado directa y dinámicamente por Google; el DoIT no tiene control directo sobre el contenido traducido tal y como aparece utilizando esta herramienta. Por lo tanto, en todos los contextos, el contenido en inglés, tal y como se proporciona por el DoIT será considerado como el autorizado.</p></div>";
-      let e='<div id="ChineseS" class="translate-disclaimer disclaimer" style="display:none;"><h4>Google翻译免责声明</h4>';
-      e+="<p>波士顿信息技术部（“DoIT”）通过Google翻译提供内容的翻译。由于Google翻译是外部网站，因此DoIT不能控制翻译内容的质量或准确性。所有DoIT内容均通过Google翻译过滤，这可能会导致文本，图像部分以及翻译页面的整体外观出现意外和不可预测的下降。 Google翻译可能会维护独特的隐私权和使用政策。这些政策不受DoIT的控制，并且与DoIT的隐私和使用政策无关。选择翻译选项后，将通知用户他们即将离开DoIT网站。如果对翻译后的内容有任何疑问，用户应查阅DoIT网站上的原始英语内容。</p>";
-      e+="<p>DoIT使用Google翻译为其网站内容提供语言翻译服务。Google翻译是一项免费的自动服务，其依靠相关数据和技术来提供翻译服务。提供Google翻译服务的目的仅为提供相关信息，因此DoIT无法保证翻译后的内容与原文完全相同或不包含任何不正确或不适宜的语言。Google翻译是一项第三方服务，而DoIT网站使用者将离开DoIT网站以便查阅翻译后的内容。因此，DoIT并不保证这项服务的准确性、可靠性、质量和局限性（如这项服务无法翻译PDF、图形（如jpgs、gifs等）格式的文件），也不对此负责。</p>";
-      e+="<p>Google翻译是DoIT为其网站使用者提供的一种网上工具。尽管如此，DoIT并不直接为该网站服务提供担保，也不表明使用者只能使用Google翻译提供的服务。所有DoIT网站访问者可以选择使用其它工具以满足其翻译需要。任何使用翻译后（无论是通过Google翻译还是通过其它翻译服务）的DoIT网站内容的个人或机构应自行承担风险。DoIT不对因使用或依赖翻译后的内容所造成的损失、损害或问题负责。DoIT不对任何网站访问者与使用Google翻译功能或内容相关的活动负责。</p>";
-      e+="<p>Google翻译服务是DoIT为其网站使用者提供的一种翻译工具，其唯一的目的是为英语非母语的网站使用者提供方便。Google直接提供动态的内容翻译服务，而DoIT不直接控制翻译后的内容，即使其使用该工具。因此，在各种情况下，使用者应以DoIT为其直接提供的英文内容为准。</p></div>";
-      let f='<div id="ChineseT" class="translate-disclaimer disclaimer" style="display:none;"><h4>Google翻譯免責聲明</h4>';
-      f+="<p>波士頓信息技術部（“DoIT”）通過Google翻譯提供內容的翻譯。由於Google翻譯是外部網站，因此DoIT不能控制翻譯內容的質量或準確性。所有DoIT內容均通過Google翻譯過濾，這可能會導致文本，圖像部分以及翻譯頁面的整體外觀出現意外和不可預測的下降。 Google翻譯可能會維護獨特的隱私權和使用政策。這些政策不受DoIT的控制，並且與DoIT的隱私和使用政策無關。選擇翻譯選項後，將通知用戶他們即將離開DoIT網站。如果對翻譯後的內容有任何疑問，用戶應查閱DoIT網站上的原始英語內容。</p>";
-      f+="<p>DoIT使用Google翻譯為其網站內容提供語言翻譯服務。 Google翻譯依靠相關數據和技術提供免費的自動化翻譯服務。提供Google翻譯服務的目的僅為提供相關信息，因此DoIT無法保證翻譯後的內容與原文完全相同或不包含任何不正確或不適宜的語言。 Google翻譯是一項第三方服務，且DoIT網站使用者將離開DoIT網站才能查閱翻譯後的內容。因此，DoIT並不保證這項服務的準確性、可靠性、質量或局限性（比如，這項服務無法翻譯PDF、圖形（如jpgs、gifs等）等格式的文件），也不對此負責。</p>";
-      f+="<p>Google翻譯是DoIT為其網站使用者提供的一項網上工具。儘管如此，DoIT並不直接為該網站服務提供擔保，也不表明使用者只能使用Google翻譯提供的服務。所有DoIT網站訪問者可以選擇使用其它工具以滿足其翻譯需要。任何使用翻譯後（無論是通過Google翻譯還是通過其它翻譯服務）的DoIT網站內容的個人或機構應自行承擔風險。 DoIT不對因使用或依賴翻譯後的內容所造成的損失、損害或問題負責。 DoIT不對任何網站訪問者與使用Google翻譯功能或內容相關的活動負責。</p>";
-      f+="<p>Google翻譯服務是DoIT為其網站使用者提供的一項翻譯工具，其唯一的目的是為英語非母語的網站使用者提供方便。 Google直接提供動態的內容翻譯服務，而DoIT不直接控制翻譯後的內容，即使其使用該工具。因此，在各種情況下，使用者應以DoIT為其直接提供的英文內容為準。</p></div>";
+      g+='<option value="Vietnamese">Vietnamese</option>';
+      g+='<option value="Russian">Russian</option>';
+      g+='<option value="Somali">Somali</option>';
+      g+='<option value="Arabic">Arabic</option></select>';
+      let h='<div id="English" class="translate-disclaimer disclaimer"><h4>About Translations on Boston.gov</h4>';
+      h+="<p>The City of Boston Department of Innovation and Technology (“DoIT”) offers translations of the content on Boston.gov through the Google Translate web translator (translate.google.com). Because Google Translate is an external website, DoIT does not control the quality or accuracy of translated content. This may result in inaccurate translated text, or other errors in images and the general appearance of translated pages.</p>";
+      h+="<p>However, you can report incorrect or substandard translations and contribute better translations using Google Translate.</p>";
+      h+="<ol><li>First, hover over and click on any text containing an error. A pop up box should appear.</li>";
+      h+="<li>Next, click “Contribute a better translation”.</li>";
+      h+="<li>Double click the area of the pop up that reads “Click a word for alternative translations, or double-click to edit directly.”</li>";
+      h+="<li>Make your edits directly to the text in the text box.</li>";
+      h+="<li>Finally, press Contribute to contribute your suggested edits.</li></ol>";
+      h+="<p>More information about contributing to Google Translate can be found <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>here.</a></p>";
+      h+="<p>Please note that DoIT does not control the process by which contributed translations are incorporated into the Google web translator.</p>";
+      h+="<p class='translate-d-c'>The City of Boston is committed to improving the quality and breadth of multilingual content on our website. Critical information regarding Boston’s response to the coronavirus emergency is already available in multiple languages and can be found here:</p>";
+      h+="<p class='translate-d-c'>Spanish: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      h+="<p class='translate-d-c'>Haitian Creole: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      h+="<p class='translate-d-c'>Cape Verdean: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      h+="<p class='translate-d-c'>Portuguese: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      h+="<p class='translate-d-c'>French: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      h+="<p class='translate-d-c'>Chinese: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      h+="<p class='translate-d-c'>Vietnamese: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      h+="<p class='translate-d-c'>Russian: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      h+="<p class='translate-d-c'>Somali: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      h+="<p class='translate-d-c'>Arabic: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let j='<div id="Spanish" class="translate-disclaimer disclaimer" style="display:none;"><h4>Acerca de las traducciones en Boston.gov</h4>';
+      j+="<p>El Departamento de Innovación y Tecnología de la Ciudad de Boston (”DoIT”) ofrece traducciones del contenido en Boston.gov a través del traductor web Google Translate (translate.google.com). Porque Google Translate es un sitio web externo , DoIT no controla la calidad ni la precisión del contenido traducido. Esto puede resultar en texto traducido incorrecto u otros errores en las imágenes y la apariencia general de las páginas traducidas.</p>";
+      j+="<p>Sin embargo, puede informar traducciones incorrectas o de calidad inferior y contribuir con mejores traducciones usando Google Translate.</p>";
+      j+="<ol><li>Primero, desplace el mouse y haga clic en cualquier texto que contenga un error. Debería aparecer un cuadro emergente.</li>";
+      j+="<li>A continuación, haga clic en ”Contribuir a una mejor traducción”.</li>";
+      j+="<li>Haga doble clic en el área de la ventana emergente que dic ”Haga clic en una palabra para traducciones alternativas, o haga doble clic para editar directamente.”</li>";
+      j+="<li>Realice sus ediciones directamente al texto en el cuadro de texto.</li>";
+      j+="<li>Finalmente, presione Contribuir para contribuir con las ediciones sugeridas.</li></ol>";
+      j+="<p>Puede encontrar más información sobre cómo contribuir al Traductor de Google <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'> aquí.</a></p>";
+      j+="<p>Tenga en cuenta que DoIT no controla el proceso mediante el cual las traducciones contribuidas se incorporan al traductor web de Google.</p>";
+      j+="<p class='translate-d-c'>La Ciudad de Boston se compromete a mejorar la calidad y la amplitud del contenido multilingüe en nuestro sitio web. La información crítica sobre la respuesta de Boston a la emergencia del coronavirus ya está disponible en varios idiomas y se puede encontrar aquí:</p>";
+      j+="<p class='translate-d-c'>español: <a href='https://www.boston.gov/covid-19-es'> boston.gov/covid19-es</a></p>";
+      j+="<p class='translate-d-c'>criollo haitiano: <a href='https://www.boston.gov/covid-19-hc'> boston.gov/covid19-hc</a></p>";
+      j+="<p class='translate-d-c'>caboverdiano: <a href='https://www.boston.gov/covid-19-cv'> boston.gov/covid19-cv</a></p>";
+      j+="<p class='translate-d-c'>portugués: <a href='https://www.boston.gov/covid-19-pt'> boston.gov/covid19-pt</a></p>";
+      j+="<p class='translate-d-c'>francés: <a href='https://www.boston.gov/covid-19-fr'> boston.gov/covid19-fr</a></p>";
+      j+="<p class='translate-d-c'>chino: <a href='https://www.boston.gov/covid-19-zh'> boston.gov/covid19-zh</a></p>";
+      j+="<p class='translate-d-c'>vietnamita: <a href='https://www.boston.gov/covid-19-vi'> boston.gov/covid19-vi</a></p>";
+      j+="<p class='translate-d-c'>ruso: <a href='https://www.boston.gov/covid-19-ru'> boston.gov/covid19-ru</a></p>";
+      j+="<p class='translate-d-c'>Somalí: <a href='https://www.boston.gov/covid-19-so'> boston.gov/covid19-so</a></p>";
+      j+="<p class='translate-d-c'>árabe: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div> ";
+      let e='<div id="ChineseS" class="translate-disclaimer disclaimer" style="display:none;"><h4>关于Boston.gov上的翻译</h4>';
+      e+="<p>波士顿市创新技术局（“DoIT”）通过Google翻译网络翻译器（translate.google.com）在Boston.gov上提供内容的翻译。 由于Google Translate是外部网站，因此DoIT不能控制翻译内容的质量或准确性。 这可能会导致翻译文本不正确，或图像中的其他错误以及翻译页面的整体外观。</p>";
+      e+="<p>但是，您可以报告不正确或不合格的翻译，并使用Google翻译来提供更好的翻译。</p>";
+      e+="<ol><li>首先，将鼠标悬停并单击任何包含错误的文本。应出现一个弹出框。</li>";
+      e+="<li>下一步，单击“贡献更好的翻译”。</li>";
+      e+="<li>双击弹出窗口中的区域，即“单击单词以进行其他翻译，或双击以直接编辑。”</li>";
+      e+="<li>直接对文本框中的文本进行编辑。</li>";
+      e+="<li>最后，按贡献来贡献您的建议编辑。</li></ol>";
+      e+="<p>有关对Google翻译做出贡献的更多信息，可在此处<a href='https://support.google.com/translate/answer/2534530?hl=zh_CN&ref_topic=7010955'>找到。</a></p>";
+      e+="<p>请注意，DoIT不能控制将贡献的翻译内容整合到Google网络翻译器中的过程。</p>";
+      e+="<p class='translate-d-c'>波士顿市致力于提高我们网站上多语种内容的质量和广度。有关波士顿对冠状病毒应急反应的重要信息已经以多种语言提供，可以在以下网址找到</p>";
+      e+="<p class='translate-d-c'>西班牙语：<a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      e+="<p class='translate-d-c'> Haitian Creole：<a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      e+="<p class='translate-d-c'>佛得角（Cape Verdean）：<a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      e+="<p class='translate-d-c'>葡萄牙语：<a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      e+="<p class='translate-d-c'>法语：<a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      e+="<p class='translate-d-c'>中文：<a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      e+="<p class='translate-d-c'>越南语：<a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      e+="<p class='translate-d-c'>俄语：<a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru </a></p>";
+      e+="<p class='translate-d-c'>索马里语：<a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      e+="<p class='translate-d-c'>阿拉伯语：<a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'> boss.gov/co ar</a></p></div>";
+      let f='<div id="Haitian" class="translate-disclaimer disclaimer" style="display:none;"><h4>Sou tradiksyon sou Boston.gov</h4>';
+      f+="<p>Depatman Inovasyon ak Teknoloji Vil Boston (”DoIT”) ofri tradiksyon kontni sou Boston.gov nan tradiktè entènèt Google Translate (translate.google.com). Paske Google Translate se yon sit entènèt ekstèn , DoIT pa kontwole bon jan kalite a oswa presizyon nan kontni tradui. Sa a pouvwa rezilta nan kòrèk tèks tradui, oswa lòt erè nan imaj ak aparans la an jeneral nan paj tradui.</p>";
+      f+="<p>Sepandan, ou ka rapòte tradiksyon ki pa kòrèk oswa medyòm epi kontribye pi byen tradiksyon lè l sèvi avèk Google Translate.</p>";
+      f+="<ol><li>Premyèman, monte sou epi klike sou nenpòt ki tèks ki gen yon erè. Yon bwat pòp moute ta dwe parèt.</li>";
+      f+="<li>Apre sa, klike sou ”Kontribye yon pi bon tradiksyon”.</li>";
+      f+="<li>Double klike sou zòn nan nan pòp moute a ki li ”Klike sou yon mo pou tradiksyon altènatif, oswa doub-klike sou edite dirèkteman.”</li>";
+      f+="<li>Fè edits ou dirèkteman nan tèks la nan bwat tèks la.</li>";
+      f+="<li>Finalman, peze Kontribye pou kontribiye edisyon sijere ou.</li></ol>";
+      f+="<p>Plis enfòmasyon sou kontribiye nan Google Translate ka jwenn <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>isit la.</a></p>";
+      f+="<p>Tanpri sonje ke DoIT pa kontwole pwosesis la pa ki kontribye tradiksyon yo enkòpore nan Google tradiktè wèb la.</p>";
+      f+="<p class='translate-d-c'>Vil Boston pran angajman pou amelyore kalite ak lajè kontni pale plizyè lang sou sit entènèt nou an. Enfòmasyon kritik konsènan repons Boston pou ijans coronavirus la deja disponib nan plizyè lang e ou ka jwenn li isit la:</p>";
+      f+="<p class='translate-d-c'>Panyòl: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      f+="<p class='translate-d-c'>kreyòl ayisyen: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      f+="<p class='translate-d-c'>Cape Verdean: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      f+="<p class='translate-d-c'>Pòtigè: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      f+="<p class='translate-d-c'>franse: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      f+="<p class='translate-d-c'>Chinwa: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      f+="<p class='translate-d-c'>Vyetnamyen: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      f+="<p class='translate-d-c'>Ris: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      f+="<p class='translate-d-c'>Somali: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      f+="<p class='translate-d-c'>arab: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let m='<div id="Portuguese" class="translate-disclaimer disclaimer" style="display:none;"><h4>Sobre as traduções no Boston.gov</h4>';
+      m+="<p>O Departamento de Inovação e Tecnologia da cidade de Boston (“ DoIT ”) oferece traduções do conteúdo em Boston.gov por meio do tradutor da web do Google Translate (translate.google.com). Como o Google Translate é um site externo , O DoIT não controla a qualidade ou a precisão do conteúdo traduzido. Isso pode resultar em texto traduzido impreciso ou em outros erros nas imagens e na aparência geral das páginas traduzidas.</p>";
+      m+="<p>No entanto, você pode denunciar traduções incorretas ou abaixo do padrão e contribuir com traduções melhores usando o Google Tradutor.</p>";
+      m+="<ol>";
+      m+="<li>Primeiro, passe o mouse e clique em qualquer texto que contenha um erro. Uma caixa pop-up deve aparecer.</li>";
+      m+="<li>Em seguida, clique em ”Contribua para uma tradução melhor”.</li>";
+      m+="<li>Clique duas vezes na área do pop-up que diz ”Clique em uma palavra para obter traduções alternativas ou clique duas vezes para editar diretamente.”</li>";
+      m+="<li>Faça suas edições diretamente no texto na caixa de texto.</li>";
+      m+="<li>Por fim, pressione Contribute para contribuir com as edições sugeridas.</li>";
+      m+="</ol>";
+      m+="<p>Mais informações sobre como contribuir para o Google Tradutor podem ser encontradas <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>aqui.</a></p>";
+      m+="<p>Observe que o DoIT não controla o processo pelo qual as traduções contribuídas são incorporadas ao tradutor da web do Google.</p>";
+      m+="<p class='translate-d-c'>A cidade de Boston está comprometida em melhorar a qualidade e a abrangência do conteúdo multilíngue em nosso site. Informações críticas sobre a resposta de Boston à emergência do coronavírus já estão disponíveis em vários idiomas e podem ser encontradas aqui:</p>";
+      m+="<p class='translate-d-c'>Espanhol: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      m+="<p class='translate-d-c'>Crioulo haitiano: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      m+="<p class='translate-d-c'>Cabo-verdiano: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      m+="<p class='translate-d-c'>Português: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      m+="<p class='translate-d-c'>Francês: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      m+="<p class='translate-d-c'>Chinês: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      m+="<p class='translate-d-c'>Vietnamita: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      m+="<p class='translate-d-c'>Russo: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      m+="<p class='translate-d-c'>Somália: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      m+="<p class='translate-d-c'>Árabe: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let n='<div id="French" class="translate-disclaimer disclaimer" style="display:none;"><h4>À propos des traductions sur Boston.gov</h4>';
+      n+="<p>Le Département de l'innovation et de la technologie de la ville de Boston (“DoIT“) propose des traductions du contenu de Boston.gov via le traducteur Web Google Translate (translate.google.com). Parce que Google Translate est un site Web externe , DoIT ne contrôle pas la qualité ou l'exactitude du contenu traduit. Cela peut entraîner un texte traduit inexact ou d'autres erreurs dans les images et l'apparence générale des pages traduites.</p>";
+      n+="<p>Cependant, vous pouvez signaler des traductions incorrectes ou de qualité inférieure et contribuer à de meilleures traductions à l'aide de Google Translate.</p>";
+      n+="<ol><li>Tout d'abord, survolez et cliquez sur tout texte contenant une erreur. Une fenêtre contextuelle devrait apparaître.</li>";
+      n+="<li>Ensuite, cliquez sur “Contribuer à une meilleure traduction“.</li>";
+      n+="<li>Double-cliquez sur la zone du pop-up qui se lit “Cliquez sur un mot pour des traductions alternatives, ou double-cliquez pour modifier directement.“</li>";
+      n+="<li>Apportez vos modifications directement au texte dans la zone de texte.</li>";
+      n+="<li>Enfin, appuyez sur Contribuer pour apporter vos modifications suggérées.</li></ol>";
+      n+="<p>Vous trouverez plus d'informations sur la contribution à Google Translate <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>ici.</a></p>";
+      n+="<p>Veuillez noter que DoIT ne contrôle pas le processus par lequel les traductions apportées sont incorporées dans le traducteur Web Google.</p>";
+      n+="<p class='translate-d-c'>La ville de Boston s'est engagée à améliorer la qualité et l'étendue du contenu multilingue sur notre site Web. Les informations essentielles concernant la réponse de Boston à l'urgence du coronavirus sont déjà disponibles en plusieurs langues et peuvent être trouvées ici:</p>";
+      n+="<p class='translate-d-c'>espagnol: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      n+="<p class='translate-d-c'>Créole haïtien: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      n+="<p class='translate-d-c'>Cap-Verdien: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      n+="<p class='translate-d-c'>portugais: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      n+="<p class='translate-d-c'>français: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      n+="<p class='translate-d-c'>chinois: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      n+="<p class='translate-d-c'>vietnamien: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      n+="<p class='translate-d-c'>russe: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      n+="<p class='translate-d-c'>Somalien: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      n+="<p class='translate-d-c'>arabe: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let o='<div id="Vietnamese" class="translate-disclaimer disclaimer" style="display:none;"><h4>Về bản dịch trên Boston.gov</h4>';
+      o+="<p>Sở Sáng tạo và Công nghệ Thành phố Boston (Tiếng DoIT xông) cung cấp các bản dịch nội dung trên Boston.gov thông qua trình dịch web của Google Dịch (translate.google.com). Bởi vì Google Dịch là một trang web bên ngoài , DoIT không kiểm soát chất lượng hoặc độ chính xác của nội dung dịch. Điều này có thể dẫn đến văn bản dịch không chính xác hoặc các lỗi khác trong hình ảnh và sự xuất hiện chung của các trang được dịch.</p>";
+      o+="<p>Tuy nhiên, bạn có thể báo cáo bản dịch không chính xác hoặc không đạt tiêu chuẩn và đóng góp bản dịch tốt hơn bằng Google Dịch.</p>";
+      o+="<ol><li>Đầu tiên, di chuột qua và nhấp vào bất kỳ văn bản nào có lỗi. Một hộp bật lên sẽ xuất hiện.</li>";
+      o+="<li>Tiếp theo, nhấp vào Đóng góp bản dịch tốt hơn.</li>";
+      o+="<li>Nhấp đúp vào khu vực bật lên để đọc Số lần nhấp vào một từ để dịch thay thế hoặc nhấp đúp để chỉnh sửa trực tiếp. LIÊN</li>";
+      o+="<li>Thực hiện các chỉnh sửa của bạn trực tiếp cho văn bản trong hộp văn bản.</li>";
+      o+="<li>Cuối cùng, nhấn Đóng góp để đóng góp các chỉnh sửa được đề xuất của bạn.</li></ol>";
+      o+="<p>Thông tin thêm về việc đóng góp cho Google Dịch có thể được tìm thấy <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>tại đây.</a></p>";
+      o+="<p>Xin lưu ý rằng DoIT không kiểm soát quá trình dịch thuật đóng góp được tích hợp vào trình dịch web của Google.</p>";
+      o+="<p class='translate-d-c'>hành phố Boston cam kết cải thiện chất lượng và độ rộng của nội dung đa ngôn ngữ trên trang web của chúng tôi. Thông tin quan trọng về phản ứng của Boston đối với trường hợp khẩn cấp coronavirus đã có sẵn bằng nhiều ngôn ngữ và có thể tìm thấy tại đây:</p>";
+      o+="<p class='translate-d-c'>Tiếng Tây Ban Nha: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      o+="<p class='translate-d-c'>Haiti Creole: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      o+="<p class='translate-d-c'>Cape Verdean: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      o+="<p class='translate-d-c'>Tiếng Bồ Đào Nha: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      o+="<p class='translate-d-c'>Tiếng Pháp: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      o+="<p class='translate-d-c'>Tiếng Trung: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      o+="<p class='translate-d-c'>Tiếng Việt: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      o+="<p class='translate-d-c'>Tiếng Nga: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      o+="<p class='translate-d-c'>Somali: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      o+="<p class='translate-d-c'>Tiếng Ả Rập: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let p='<div id="Russian" class="translate-disclaimer disclaimer" style="display:none;"><h4>О переводах на Boston.gov</h4>';
+      p+="<p>Департамент инноваций и технологий города Бостона (“DoIT“) предлагает переводы контента на Boston.gov через веб-переводчик Google Translate (translate.google.com). Поскольку Google Translate является внешним веб-сайтом , DoIT не контролирует качество или точность переведенного контента. Это может привести к неточному переведенному тексту или другим ошибкам в изображениях и общему виду переведенных страниц.</p>";
+      p+="<p>Однако вы можете сообщать о неправильных или некачественных переводах и вносить более качественные переводы с помощью Google Translate.</p>";
+      p+="<ol><li>Сначала наведите курсор мыши и щелкните любой текст, содержащий ошибку. Должно появиться всплывающее окно.</li>";
+      p+="<li>Далее нажмите “Внести лучший перевод“.</li>";
+      p+="<li>Дважды щелкните область всплывающего окна с надписью “Щелкните слово для альтернативных переводов или дважды щелкните, чтобы отредактировать напрямую.“</li>";
+      p+="<li>Внесите изменения непосредственно в текст в текстовом поле.</li>";
+      p+="<li>Наконец, нажмите Contribute для внесения предложенных вами изменений.</li></ol>";
+      p+="<p>Дополнительную информацию о содействии переводчику Google можно найти <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>здесь.</a></p>";
+      p+="<p>Обратите внимание, что DoIT не контролирует процесс, с помощью которого переводы, включенные в перевод, включаются в веб-переводчик Google.</p>";
+      p+="<p class='translate-d-c'>Город Бостон стремится улучшить качество и широту многоязычного контента на нашем веб-сайте. Критическая информация относительно реакции Бостона на чрезвычайную ситуацию с коронавирусом уже доступна на нескольких языках и находится здесь:</p>";
+      p+="<p class='translate-d-c'>испанский: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      p+="<p class='translate-d-c'>гаитянский креольский: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      p+="<p class='translate-d-c'>Кабо-Верде: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      p+="<p class='translate-d-c'>португальский: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      p+="<p class='translate-d-c'>Французский: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      p+="<p class='translate-d-c'>Китайский: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      p+="<p class='translate-d-c'>вьетнамский: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      p+="<p class='translate-d-c'>русский язык: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      p+="<p class='translate-d-c'>Сомали: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      p+="<p class='translate-d-c'>Арабский: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let q='<div id="Somali" class="translate-disclaimer disclaimer" style="display:none;"><h4>Ku Saabsan Tarjumida bogga Boston.gov</h4>';
+      q+="<p>Magaalada Boston Waaxda Cusbooneysiinta iyo Tiknolojiyadda (“DoIT“) waxay bixisaa tarjumaadda waxa kujira Boston.gov iyada oo loo marinayo turjubaanka websaydhka ee Google Translate (translate.google.com). , DoIT ma xukumaan tayada ama sax ahaanta waxyaabaha la tarjumay. Tani waxay ku dambayn kartaa qoraal aan sax ahayn oo la tarjumay, ama khaladaad kale oo ku saabsan sawirrada iyo muuqaalka guud ee bogagga la turjumay.</p>";
+      q+="<p>Si kastaba ha noqotee, waad soo sheegi kartaa tarjumaad qaldan ama kuwa hooseeya waxaadna gacan ka geysan kartaa tarjumaad wanaagsan adiga oo adeegsanaya Google Translate.</p>";
+      q+="<ol><li>Marka hore, dul mari oo riix qoraal kasta oo qalad ku jiro. Sanduuqa kor u kaca waa inuu muuqdaa.</li>";
+      q+="<li>Marka xigta, dhagsii “Ku tabaruc turjumaad wanaagsan“. </li>";
+      q+="<li>laba jeer guji aagga pop-ka ee akhrinaya “Guji eray u dhiganta tarjumaadaha kale, ama laba-guji si aad toos u tafatirto.“</li>";
+      q+="<li>Si toos ah ugu samee tafatirayaashaada qoraalka sanduuqa qoraalka.</li>";
+      q+="<li>Ugu dambayntii, riix tabaruc si aad ugu biiriso tifatirkaaga la soo jeediyay.</li></ol>";
+      q+="<p>Macluumaad dheeri ah oo ku saabsan ku biirinta Google Translate waxaa laga heli karaa <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>halkan.</a></p>";
+      q+="<p>Fadlan la soco in DoIT ma xakameyso howsha tarjumaadaha tabaruca ah lagu daray tarjume webka Google.</p>";
+      q+="<p class='translate-d-c'>agaalada Boston waxa ka go'an inay hagaajiso tayada iyo ballaadhka waxyaabaha ku qoran luqadaha badan luqadaha kala duwan. Macluumaad muhiim ah oo ku saabsan jawaabta Boston ee xaaladda degdegga ah ee coronavirus ayaa durba lagu heli karaa luqado badan waxaana laga heli karaa halkan:</p>";
+      q+="<p class='translate-d-c'>Isbaanish: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      q+="<p class='translate-d-c'>Haitian Creole: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      q+="<p class='translate-d-c'>Cape Verdean: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      q+="<p class='translate-d-c'>Boortaqiiska: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      q+="<p class='translate-d-c'>Faransiis: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      q+="<p class='translate-d-c'>Shiine: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      q+="<p class='translate-d-c'>Fiyatnaamiis: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      q+="<p class='translate-d-c'>Ruush: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      q+="<p class='translate-d-c'>Af-soomaali: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      q+="<p class='translate-d-c'>Carabi: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
+      let r='<div id="Arabic" class="translate-disclaimer disclaimer" style="display:none; direction: rtl;"><h4>Boston.gov حول الترجمات على</h4>';
+      r+="<p>تقدم دائرة الابتكار والتكنولوجيا في مدينة بوسطن (“DoIT“) ترجمة للمحتوى على Boston.gov من خلال مترجم الويب الخاص بترجمة Google (translate.google.com). نظرًا لأن الترجمة من Google هي موقع ويب خارجي ، فإن DoIT لا تتحكم في جودة أو دقة المحتوى المترجم. قد يؤدي هذا إلى نص مترجم غير دقيق ، أو أخطاء أخرى في الصور والمظهر العام للصفحات المترجمة.</p>";
+      r+="<p>ومع ذلك ، يمكنك الإبلاغ عن ترجمات غير صحيحة أو دون المستوى المطلوب والمساهمة في ترجمات أفضل باستخدام الترجمة من Google.</p>";
+      r+="<ol><li>أولاً ، مرر الماوس فوق أي نص يحتوي على خطأ وانقر عليه. يجب أن يظهر مربع منبثق.</li>";
+      r+="<li>بعد ذلك ، انقر فوق “المساهمة بترجمة أفضل“.</li>";
+      r+="<li>انقر نقرًا مزدوجًا فوق منطقة النافذة المنبثقة التي تقول “انقر فوق كلمة للحصول على ترجمات بديلة ، أو انقر نقرًا مزدوجًا للتعديل مباشرة“.</li>";
+      r+="<li>قم بإجراء تعديلاتك مباشرة على النص الموجود في مربع النص.</li>";
+      r+="<li>أخيرًا ، اضغط على مساهمة للمساهمة بتعديلاتك المقترحة.</li></ol>";
+      r+="<p>يمكن العثور على مزيد من المعلومات حول المساهمة في ترجمة Google <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>هنا.</a></p>";
+      r+="<p>يرجى ملاحظة أن DoIT لا تتحكم في العملية التي يتم من خلالها دمج الترجمات المساهمة في مترجم الويب من Google.</p>";
+      r+="<p class='translate-d-c'>تلتزم مدينة بوسطن بتحسين جودة واتساع المحتوى متعدد اللغات على موقعنا. المعلومات الهامة المتعلقة باستجابة بوسطن لحالة طوارئ الفيروسات التاجية متاحة بالفعل بلغات متعددة ويمكن العثور عليها هنا:</p>";
+      r+="<p class='translate-d-c'>الأسبانية: <a href='https://www.boston.gov/covid-19-es'>boston.gov/covid19-es</a></p>";
+      r+="<p class='translate-d-c'>الكريولية الهايتية: <a href='https://www.boston.gov/covid-19-hc'>boston.gov/covid19-hc</a></p>";
+      r+="<p class='translate-d-c'>الرأس الأخضر: <a href='https://www.boston.gov/covid-19-cv'>boston.gov/covid19-cv</a></p>";
+      r+="<p class='translate-d-c'>البرتغالية: <a href='https://www.boston.gov/covid-19-pt'>boston.gov/covid19-pt</a></p>";
+      r+="<p class='translate-d-c'>فرنسي: <a href='https://www.boston.gov/covid-19-fr'>boston.gov/covid19-fr</a></p>";
+      r+="<p class='translate-d-c'>صينى: <a href='https://www.boston.gov/covid-19-zh'>boston.gov/covid19-zh</a></p>";
+      r+="<p class='translate-d-c'>الفيتنامية: <a href='https://www.boston.gov/covid-19-vi'>boston.gov/covid19-vi</a></p>";
+      r+="<p class='translate-d-c'>الروسية: <a href='https://www.boston.gov/covid-19-ru'>boston.gov/covid19-ru</a></p>";
+      r+="<p class='translate-d-c'>الصومالية: <a href='https://www.boston.gov/covid-19-so'>boston.gov/covid19-so</a></p>";
+      r+="<p class='translate-d-c'>عربى: <a href='https://docs.google.com/document/d/1tiN7YntWJ1jdRGwBtvInccwy33mFxv-eUCvtVt9djb8/edit?ts=5e78df99#heading=h.7n9y1gfd74n7'>boston.gov/covid19-ar</a></p></div>";
       g+=h;
       g+=j;
       g+=e;
       g+=f;
+      g+=m;
+      g+=n;
+      g+=o;
+      g+=p;
+      g+=q;
+      g+=r;
       g+="</form>";
       return g
     }
@@ -92,32 +310,36 @@ let translate = function(d){
       }
       let h="http://translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
       let j="";
+      let i;
       j+='<div id="languages" class="translate-languages"><a class="md-cb" href="#" id="langCloseButton"></a>';
       let g=[["af", "Afrikaans"], ["sq", "Albanian"], ["am", "Amharic"], ["ar", "Arabic"], ["hy", "Armenian"], ["az", "Azerbaijani"], ["eu", "Basque"], ["be", "Belarusian"], ["bn", "Bengali"], ["bs", "Bosnian"], ["bg", "Bulgarian"], ["ca", "Catalan"], ["ceb", "Cebuano"], ["ny", "Chichewa"], ["zh-CN", "Chinese (Simplified)"], ["zh-TW", "Chinese (Traditional)"], ["co", "Corsican"], ["hr", "Croatian"], ["cs", "Czech"], ["da", "Danish"], ["nl", "Dutch"], ["eo", "Esperanto"], ["et", "Estonian"], ["tl", "Filipino"], ["fi", "Finnish"], ["fr", "French"], ["fy", "Frisian"], ["gl", "Galician"], ["ka", "Georgian"], ["de", "German"], ["el", "Greek"], ["gu", "Gujarati"], ["ht", "Haitian Creole"], ["ha", "Hausa"], ["haw", "Hawaiian"], ["iw", "Hebrew"], ["hi", "Hindi"], ["hmn", "Hmong"], ["hu", "Hungarian"], ["is", "Icelandic"], ["ig", "Igbo"], ["id", "Indonesian"], ["ga", "Irish"], ["it", "Italian"], ["ja", "Japanese"], ["jw", "Javanese"], ["kn", "Kannada"], ["kk", "Kazakh"], ["km", "Khmer"], ["ko", "Korean"], ["ku", "Kurdish (Kurmanji)"], ["ky", "Kyrgyz"], ["lo", "Lao"], ["la", "Latin"], ["lv", "Latvian"], ["lt", "Lithuanian"], ["lb", "Luxembourgish"], ["mk", "Macedonian"], ["mg", "Malagasy"], ["ms", "Malay"], ["ml", "Malayalam"], ["mt", "Maltese"], ["mi", "Maori"], ["mr", "Marathi"], ["mn", "Mongolian"], ["my", "Myanmar (Burmese)"], ["ne", "Nepali"], ["no", "Norwegian"], ["ps", "Pashto"], ["fa", "Persian"], ["pl", "Polish"], ["pt", "Portuguese"], ["pa", "Punjabi"], ["ro", "Romanian"], ["ru", "Russian"], ["sm", "Samoan"], ["gd", "Scots Gaelic"], ["sr", "Serbian"], ["st", "Sesotho"], ["sn", "Shona"], ["sd", "Sindhi"], ["si", "Sinhala"], ["sk", "Slovak"], ["sl", "Slovenian"], ["so", "Somali"], ["es", "Spanish"], ["su", "Sundanese"], ["sw", "Swahili"], ["sv", "Swedish"], ["tg", "Tajik"], ["ta", "Tamil"], ["te", "Telugu"], ["th", "Thai"], ["tr", "Turkish"], ["uk", "Ukrainian"], ["ur", "Urdu"], ["uz", "Uzbek"], ["vi", "Vietnamese"], ["cy", "Welsh"], ["xh", "Xhosa"], ["yi", "Yiddish"], ["yo", "Yoruba"], ["zu", "Zulu"]];
       j+='<div style="float:left;"><ul class="translate-dd" style="list-style:none;">';
       j+='			<li><a href="#" id="viewDisclaimer" class="translate-dd-link">View Disclaimer</a></li>';
-      j+='			<li><a href="'+h+'zh-CN" class="translateLink translate-dd-link">Chinese - Simplified</a></li>';
-      j+='			<li><a href="'+h+'fr" class="translateLink translate-dd-link">French</a></li>';
+      j+='			<li><a href="'+h+'es" class="translateLink translate-dd-link">Spanish</a></li>';
       j+='			<li><a href="'+h+'ht" class="translateLink translate-dd-link">Haitian Creole</a></li>';
       j+='			<li><a href="'+h+'pt" class="translateLink translate-dd-link">Portuguese</a></li>';
-      j+='			<li><a href="'+h+'es" class="translateLink translate-dd-link">Spanish</a></li>';
+      j+='			<li><a href="'+h+'fr" class="translateLink translate-dd-link">French</a></li>';
+      j+='			<li><a href="'+h+'zh-CN" class="translateLink translate-dd-link">Chinese - Simplified</a></li>';
       j+='			<li><a href="'+h+'vi" class="translateLink translate-dd-link">Vietnamese</a></li>';
+      j+='			<li><a href="'+h+'ru" class="translateLink translate-dd-link">Russian</a></li>';
+      j+='			<li><a href="'+h+'so" class="translateLink translate-dd-link">Somali</a></li>';
+      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link">Arabic</a></li>';
       j+="<hr>";
-      for(var i=0;
+      for(i=0;
         i<30;
         i++) {
         j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
-      for(var i=30;
+      for(i=30;
         i<66;
         i++) {
         j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
-      for(var i=66;
+      for(i=66;
         i<g.length;
         i++) {
         j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
@@ -143,7 +365,6 @@ let translate = function(d){
       e.style.display=(e.style.display=="block")?"none": "block"
     }
     , selectDisclaimerLanguage:function() {
-      let k=document.getElementById("translateForm");
       let j=document.getElementById("disclaimerLanguageSelect");
       let g=document.getElementById("translateMessage");
       if(g!=null) {
@@ -163,7 +384,6 @@ let translate = function(d){
     }
     , selectTranslateLanguage:function(e) {
       let g=document.getElementById("translateForm");
-      let f=document.getElementById("translateLanguageSelect");
       if(g!=null&&e!=null&&e.value!="") {
         g.tl.value=e.value;
         g.submit()
@@ -172,4 +392,3 @@ let translate = function(d){
   }
 }
 ();
-
