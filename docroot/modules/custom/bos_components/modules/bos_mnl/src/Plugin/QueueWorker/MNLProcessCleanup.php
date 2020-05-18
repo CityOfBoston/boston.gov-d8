@@ -88,21 +88,22 @@ class MNLProcessCleanup extends QueueWorkerBase {
     $result = $query->execute()->fetch();
     $this->stats["post-entities"] = $result->count;
 
-    \Drupal::logger("mnl import")
-      ->info("
+    $output = "
         [2] Queue Process Results:<br>
+        Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC<br>
         == Start Condition ==================<br>
-        Entities in DB at start      " . number_format($this->stats["pre-entities"], 0) . "<br>
-        mnl_cleanup queue at start   " . number_format($this->stats["queue"], 0) . "<br>
+        Entities in DB at start:      " . number_format($this->stats["pre-entities"], 0) . "<br>
+        mnl_cleanup queue at start:   " . number_format($this->stats["queue"], 0) . "<br>
         == Queue Processing =================<br>
-        Removed entities             " . number_format($this->stats["processed"], 0) . "<br>
-        == Result ============================<br>
-        Entities in DB at end        " . number_format($this->stats["post-entities"], 0) . "<br>
-        mnl_cleanup queue at end     " . number_format($this->queue->numberOfItems(), 0) . "<br>
-        == Runtime ===========================<br>
+        Removed entities:             " . number_format($this->stats["processed"], 0) . "<br>
+        == Result ===========================<br>
+        Entities in DB at end:        " . number_format($this->stats["post-entities"], 0) . "<br>
+        mnl_cleanup queue at end:     " . number_format($this->queue->numberOfItems(), 0) . "<br>
+        == Runtime ==========================<br>
         processing time: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
-      ");
-
+    ";
+    \Drupal::logger("mnl import")->info($output);
+    \Drupal::configFactory()->getEditable('bos_mnl.settings')->set('last_mnl_cleanup', $output)->save();
   }
 
   /**
