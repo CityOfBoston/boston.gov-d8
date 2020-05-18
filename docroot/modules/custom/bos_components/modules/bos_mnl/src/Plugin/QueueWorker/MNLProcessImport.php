@@ -104,29 +104,30 @@ class MNLProcessImport extends QueueWorkerBase {
 
     // Log.
     $cleanup = \Drupal::queue('mnl_cleanup');
-    \Drupal::logger("mnl import")
-      ->info("
+    $output = "
         [1] Queue Process Results:<br>
+        Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC<br>
         == Start Condition ==================<br>
-        Entities in DB at start       " . number_format($this->stats["pre-entities"], 0) . "<br>
-        Cache (unique SAM's) at start " . number_format($this->stats["cache"], 0) . "<br>
-        mnl_import queue at start     " . number_format($this->stats["queue"], 0) . "<br>
+        Entities in DB at start:       " . number_format($this->stats["pre-entities"], 0) . "<br>
+        Cache (unique SAM's) at start : " . number_format($this->stats["cache"], 0) . "<br>
+        mnl_import queue at start:     " . number_format($this->stats["queue"], 0) . "<br>
         == Queue Processing =================<br>
-        New entities created          " . number_format($this->stats["inserted"], 0) . "<br>
-        Updated entities              " . number_format($this->stats["updated"], 0) . "<br>
-        Unchanged entities            " . number_format($this->stats["unchanged"], 0) . "<br>
-        Entities sent to be cleaned   " . number_format($this->stats["cleanup"], 0) . "<br>
-        Duplicate SAM ID's found      " . number_format($this->stats["duplicateSAM"], 0) . "<br>
-        == Result ============================<br>
-        Entities processed            " . number_format($this->stats["processed"], 0) . "<br>
-        Entities in DB at end         " . number_format($this->stats["post-entities"], 0) . "<br>
-        Cache (unique SAM's) at end   " . number_format(count($this->cache), 0) . "<br>
-        mnl_import queue at end       " . number_format($this->queue->numberOfItems(), 0) . "<br>
-        mnl_cleanup queue at end      " . number_format($cleanup->numberOfItems(), 0) . "<br>
-        == Runtime ===========================<br>
+        New entities created:          " . number_format($this->stats["inserted"], 0) . "<br>
+        Updated entities:              " . number_format($this->stats["updated"], 0) . "<br>
+        Unchanged entities:            " . number_format($this->stats["unchanged"], 0) . "<br>
+        Entities sent to be cleaned:   " . number_format($this->stats["cleanup"], 0) . "<br>
+        Duplicate SAM ID's found:      " . number_format($this->stats["duplicateSAM"], 0) . "<br>
+        == Result ===========================<br>
+        Entities processed:            " . number_format($this->stats["processed"], 0) . "<br>
+        Entities in DB at end:         " . number_format($this->stats["post-entities"], 0) . "<br>
+        Cache (unique SAM's) at end:   " . number_format(count($this->cache), 0) . "<br>
+        mnl_import queue at end:       " . number_format($this->queue->numberOfItems(), 0) . "<br>
+        mnl_cleanup queue at end:      " . number_format($cleanup->numberOfItems(), 0) . "<br>
+        == Runtime ==========================<br>
         processing time: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
-      ");
-
+    ";
+    \Drupal::logger("mnl import")->info($output);
+    \Drupal::configFactory()->getEditable('bos_mnl.settings')->set('last_mnl_import', $output)->save();
   }
 
   /**
