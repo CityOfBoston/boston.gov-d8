@@ -103,8 +103,8 @@ class MNLRest extends ControllerBase {
   public function beginUpdateImport(string $operation) {
     ini_set('memory_limit', '1024M');
     ini_set("max_execution_time", "10800");
-    ini_set("post_max_size", "2000M");
-    ini_set("upload_max_filesize", "2000M");
+    ini_set("post_max_size", "2048M");
+    ini_set("upload_max_filesize", "2048M");
 
     \Drupal::logger("mnl import")
       ->info("[0] REST $operation Import initialized.");
