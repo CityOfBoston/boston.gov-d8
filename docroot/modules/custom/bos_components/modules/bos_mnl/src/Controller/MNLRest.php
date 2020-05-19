@@ -101,7 +101,7 @@ class MNLRest extends ControllerBase {
    *   A json response to send back to the caller.
    */
   public function beginUpdateImport(string $operation) {
-    ini_set('memory_limit', '1024M');
+    ini_set('memory_limit', '-1');
     ini_set("max_execution_time", "10800");
     ini_set("post_max_size", "2048M");
     ini_set("upload_max_filesize", "2048M");
