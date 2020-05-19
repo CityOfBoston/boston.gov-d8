@@ -38,8 +38,13 @@ class MetroListSerializer extends Serializer {
       foreach ($row as $fieldName => $field) {
         if ($fieldName != 'id') {
           $value = is_string($field) ? $field : $field->__toString();
-          $row[$fieldName] = $value == 'null' ? null : $field;
-          $row[$fieldName] = is_numeric($value) ? intval($value) : $field;
+
+          if ($value === 'null') {
+            $row[$fieldName] = null;
+          }else{
+            $row[$fieldName] = is_numeric($value) ? intval($value) : $field;
+          }
+
         }
       }
       $rows[] = $row;
