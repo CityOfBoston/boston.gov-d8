@@ -25,7 +25,7 @@
 {% set all_units_button %}
 
 
-    <div class="b">
+    <div class="b print-none">
       <div class="m-t200">
 
         <button class="btn btn--100"
@@ -65,15 +65,15 @@
 {% endset %}
 
 {% set ami_calc_button %}
-  <div class="ml-units-to-ami-calc">
+  <div class="ml-units-to-ami-calc print-none">
     <a href="/metrolist/ami-estimator" class="lnk lnk--">Calculate your eligibility</a>
   </div>
 {% endset %}
 
 
 {% if email_button or print_button or show_all_units_button %}
-  <div class="m-v200" style="display: flex; justify-content: space-between; flex-flow: row wrap;">
-    <div style="max-width: 20rem; display: flex; justify-content: space-between;flex-flow: row wrap;">
+  <div class="m-v200 print-none ml-action-btn-flex">
+    <div class="ml-action-btn-flex">
       {{ email_button }}
       {{ print_button }}
     </div>

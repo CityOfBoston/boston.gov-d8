@@ -196,6 +196,11 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables)
 function bos_metrolist_build_email_button($variables)
 {
   $nid = $variables['view']->argument['nid']->value[0] ?? null;
+  $development = $variables["view"]->result[0]->_relationship_entities["field_ml_development"] ?? null;
+
+  $developmentTitle = $development->label();
+  $developmentURL = $development->toUrl()->setOption('absolute', TRUE)->toString();
+
 
   $button = [];
 
@@ -229,15 +234,25 @@ function bos_metrolist_build_email_button($variables)
       'webform-dialog',
       'webform-dialog-normal',
       'btn btn--sm',
-      'm-r100'
+      'm-r100',
+      'ml-action-btn',
+      'hide-form'
     ],
-    'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
+//    'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
   ];
 
-  $button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
-    ->setRouteParameter('webform', 'share_metrolist_listing')
-    ->setRouteParameter('source_entity_type', 'node')
-    ->setRouteParameter('source_entity_id', $nid);
+
+  $button['#url'] = \Drupal\Core\Url::fromUri('mailto:')
+    ->setOption('query', [
+      'subject' => "Share Metrolist Listing - $developmentTitle",
+      'body' => "Share Metrolist Listing - $developmentTitle ( $developmentURL )",
+    ]);
+
+  // Use to link to a webform
+  //$button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
+  //  ->setRouteParameter('webform', 'share_metrolist_listing')
+  //  ->setRouteParameter('source_entity_type', 'node')
+  //  ->setRouteParameter('source_entity_id', $nid);
 
   return $button;
 }
@@ -274,8 +289,9 @@ function bos_metrolist_build_print_button($variables)
   $button['#attributes'] = [
     'class' => [
       'btn btn--sm',
+      'ml-action-btn'
     ],
-    'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
+//    'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
     'onclick' => 'window.print()',
   ];
 

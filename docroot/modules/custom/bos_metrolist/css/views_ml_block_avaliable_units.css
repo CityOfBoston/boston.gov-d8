@@ -425,3 +425,112 @@ label.js-form-type-radio {
   -webkit-appearance: none;
   -moz-appearance:none
 }
+
+.ml-action-btn {
+  width: 10rem;
+  display: flex !important;
+  align-items: center;
+  padding: 0 !important;
+  margin: 0.5rem 0.5rem 0 0!important;
+}
+
+.ml-action-btn-flex {
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
+}
+
+@media print {
+
+
+  .field-name-field-right-column > ol > li,
+  .dr {
+    page-break-inside: avoid;
+  }
+
+  /*Temp rm for dev*/
+  .brg-b,
+  .nv-h,
+  #seal,
+  #sa,
+  .watermark-wrapper {
+    display: none !important;
+  }
+
+  /*.s,*/
+  .lo-t {
+    display: block !important;
+    text-decoration: none;
+  }
+
+  .lo-t :link {
+    text-decoration: none !important;
+  }
+
+  .lo-t > a[href]:after {
+    text-decoration: underline !important;
+  }
+
+  .field-type-telephone > div > a[href]:after,
+  .field-type-email > div > a[href]:after,
+  .lo-l > a[href]:after {
+    all: unset !important;
+  }
+
+  .h, #main-menu {
+    top: 0 !important;
+  }
+
+  .ft {
+    display: none !important;
+  }
+
+  .gm-style a {
+    display: none !important;
+  }
+
+
+  .ml-units-view > header:first-of-type > article:first-of-type {
+    max-width: 30rem;
+  }
+
+  h2.sh-title {
+    font-size: 1.66667rem !important;
+  }
+  .sh {
+    border-bottom: none !important;
+  }
+
+
+  .b-c {
+    max-width: 66.66667% !important;
+    padding: 1rem !important;
+  }
+
+  .paragraphs-items-paragraphs div,
+  /*.paragraphs-items-paragraphs a,*/
+  .paragraphs-items-paragraphs p,
+  .paragraphs-items-paragraphs  {
+    /*display: none;*/
+    all: unset !important;
+  }
+
+  .paragraphs-items-paragraphs a {
+    text-decoration: none !important;
+  }
+
+  .paragraphs-items-paragraphs .field-name-field-title {
+    font-size: large !important;
+    font-weight: bold !important;
+    text-decoration: none !important;
+  }
+
+  .paragraphs-items-paragraphs .field-name-field-title:before {
+    content: ' >> ';
+  }
+
+  .paragraphs-items-paragraphs .field-name-field-title:after {
+    content: ' - ';
+  }
+
+}
