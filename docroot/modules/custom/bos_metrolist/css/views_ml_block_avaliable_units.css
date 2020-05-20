@@ -38,7 +38,7 @@
 
 .ml-section-title-unit-info {
   margin: 0 1rem 0 3rem;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   font-size: 0.75rem;
   font-weight: bold;
 }
@@ -237,7 +237,7 @@ footer > div > h2:first-of-type{
 
 .field-name-field-ml-agent-address,
 .ml-units-view > header > div {
-  line-height: 2rem;
+  line-height: 1.5rem;
 }
 
 
@@ -440,6 +440,66 @@ label.js-form-type-radio {
   flex-flow: row wrap;
 }
 
+
+
+.paragraphs-item-grid-of-cards .g .g--4--sl {
+  -webkit-box-flex: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -ms-flex-preferred-size: calc(99.9% * 3 / 12 - 1.125rem);
+  flex-basis: calc(99.9% * 3 / 12 - 1.125rem);
+  max-width: calc(99.9% * 3 / 12 - 1.125rem);
+  width: calc(99.9% * 3 / 12 - 1.125rem)
+}
+
+.paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(1n) {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
+.paragraphs-item-grid-of-cards .g .g--4--sl:last-child {
+  margin-right: 0;
+}
+
+.paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(3n) {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
+.paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(4n) {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+@media screen and (max-width: 1314px) {
+  .paragraphs-item-grid-of-cards .g .g--4--sl {
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    -ms-flex-preferred-size: calc(99.9% * 6/12 - 0.75rem);
+    flex-basis: calc(99.9% * 6/12 - 0.75rem);
+    max-width: calc(99.9% * 6/12 - 0.75rem);
+    width:calc(99.9% * 6/12 - 0.75rem);
+  }
+
+
+  .paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(1n),
+  .paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(3n) {
+    margin-right: 1.5rem;
+    margin-left: 0;
+  }
+
+  .paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(4n),
+  .paragraphs-item-grid-of-cards .g .g--4--sl:nth-child(2n) {
+    margin-right: 0;
+    margin-left: auto;
+  }
+}
+
 @media print {
 
 
@@ -504,16 +564,24 @@ label.js-form-type-radio {
 
 
   .b-c {
-    max-width: 66.66667% !important;
+    max-width: 50% !important;
+    /*width: unset !important;*/
     padding: 1rem !important;
   }
 
   .paragraphs-item-grid-of-cards div,
-  /*.paragraphs-items-paragraphs a,*/
+    /*.paragraphs-items-paragraphs a,*/
   .paragraphs-item-grid-of-cards p,
   .paragraphs-item-grid-of-cards  {
     /*display: none;*/
     all: unset !important;
+  }
+
+  .paragraphs-item-grid-of-cards .g .g--4--sl {
+    flex-basis: unset;
+    max-width: unset;
+    width: unset;
+    page-break-inside: avoid;
   }
 
   .paragraphs-item-grid-of-cards a {
