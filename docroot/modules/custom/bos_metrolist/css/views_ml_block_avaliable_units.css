@@ -73,97 +73,6 @@
   max-width: 25rem;
 }
 
-/*Tablet*/
-@media screen and (max-width: 768px) {
-  .ml-section-title-unit-info {
-    display: none;
-  }
-
-  .ml-units-view .dl-t {
-    white-space: nowrap;
-  }
-
-  .ml-units-view .dl-d {
-    clear: both;
-    margin: 0.25rem 0 0 0.5rem;
-  }
-
-  .ml-units-view > header:first-of-type > h3:first-of-type {
-    clear: both;
-  }
-
-  .ml-units-view > header:first-of-type > article:first-of-type {
-    max-width: unset;
-  }
-
-  .webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper th {
-   display: none;
-  }
-
-  .webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper td {
-    float: left;
-  }
-
-  .webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper td .webform-likert-label {
-    white-space: nowrap;
-    padding: 0 0.5rem;
-    display: block;
-    margin-top: 0.5rem;
-  }
-
-  .webform-submission-metrolist-launch-feedback-form .js-form-type-radio {
-    padding: unset !important;
-  }
-
-  .js-form-type-radio .form-radio[type=radio] {
-    padding: 1rem;
-    margin: 0.75rem;
-  }
-
-  .webform-submission-metrolist-launch-feedback-form .webform-button--submit {
-    margin-bottom: 1rem;
-  }
-
-}
-
-/*Mobile*/
-@media screen and (max-width: 450px) {
-
-  .container {
-    padding-left: 2% !important;
-    padding-right: 2% !important;
-  }
-
-  .field-name-field-ml-address .geolocation-map-wrapper{
-    margin: 0.5rem 0;
-  }
-
-  .field-name-field-ml-learn-content .field-name-field-right-column li span:first-of-type{
-    display: inline-block !important;
-  }
-
-}
-
-
-/*Mobile - Small*/
-@media screen and (max-width: 350px) {
-
-  .field-name-field-ml-address .geolocation-map-wrapper{
-    /*width: 290px;*/
-    /*height: 200px;*/
-    /*margin: 0.5rem 0;*/
-  }
-
-  .ml-units-view .dr-ic {
-    display: none;
-  }
-
-  .ml-units-view > div:first-of-type {
-    flex-flow: wrap;
-  }
-
-}
-
 .ml-unit-bedrooms {
   text-transform: uppercase;
 }
@@ -202,7 +111,7 @@
 }
 
 .ml-field-group-label {
- margin: 5px 0 15px 0;
+  margin: 5px 0 15px 0;
 }
 
 
@@ -272,7 +181,7 @@ footer > div > h2:first-of-type{
 }
 
 .ml-units-app-due {
-   padding: 0.5rem 0;
+  padding: 0.5rem 0;
 }
 
 .ml-units-agent-info {
@@ -306,31 +215,15 @@ footer > div > h2:first-of-type{
 
 
 .webform-submission-metrolist-launch-feedback-form input[type=radio] {
-  display: unset !important;
+  /*display: unset !important;*/
   line-height: 1.5rem;
-}
-
-.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper th:first-child,
-.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper td:first-child {
-  display: none;
-}
-
-.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper th {
-  line-height: 1.2rem;
-  font-size: 0.85rem;
-}
-
-.webform-submission-metrolist-launch-feedback-form .webform-flex--1 {
-  align-self: flex-start;
-}
-
-.webform-submission-metrolist-launch-feedback-form .js-form-type-webform-likert {
-  margin: 0 !important;
 }
 
 .webform-submission-metrolist-launch-feedback-form .js-form-type-radio {
   margin: 0 !important;
-  padding: 0 30%;
+  /*padding: 0 30%;*/
+  flex-direction: column;
+  flex: 1;
 }
 
 .webform-submission-metrolist-launch-feedback-form .form-item-qual-short-answer {
@@ -349,10 +242,10 @@ footer > div > h2:first-of-type{
   margin-top: unset !important;
 }
 
-
-.js-form-type-radio {
-
+.webform-options-display-one-column {
+  display: flex;
 }
+
 
 .js-form-type-radio {
   display: -webkit-box;
@@ -364,10 +257,6 @@ footer > div > h2:first-of-type{
   align-items:center
 }
 
-label.js-form-type-radio {
-  letter-spacing: normal;
-  text-transform:none
-}
 
 .js-form-type-radio:not(:last-child) {
   margin-bottom: 8px;
@@ -377,37 +266,29 @@ label.js-form-type-radio {
 
 
 .js-form-type-radio .form-radio {
-  height: 30px;
   margin: 0;
   padding: 0;
-  width:30px
+  /*width:35px;*/
+  /*height: 35px;*/
 }
 
-@media screen and (min-width: 768px) {
-  .js-form-type-radio .form-radio {
-    height: 35px;
-    width:35px
-  }
+.js-form-type-radio label.option{
+  line-height: normal;
+  text-align: center;
+  margin-top: 0.5rem;
 }
 
 .js-form-type-radio .form-radio:before {
   content: "";
   display: block;
-  height: 30px;
-  width: 30px;
+  height: 35px;
+  width: 35px;
   background-color: #fff;
   border: 3px solid #091f2f;
   box-sizing: border-box;
   border-radius: 100%;
-  position:absolute
 }
 
-@media screen and (min-width: 768px) {
-  .js-form-type-radio .form-radio:before {
-    height: 35px;
-    width:35px
-  }
-}
 
 .js-form-type-radio .form-radio:checked:before {
   background: #1871bd;
@@ -517,7 +398,121 @@ label.js-form-type-radio {
     margin-right: 0;
     margin-left: auto;
   }
+
+
+
+  .webform-options-display-one-column {
+    flex-direction: column-reverse;
+  }
+
+  .webform-submission-metrolist-launch-feedback-form .js-form-type-radio {
+    flex-direction: row;
+  }
+
+  .js-form-type-radio .form-radio {
+    margin: 0 1rem;
+    padding: 0.8rem 0.5rem;
+  }
+
+
+
 }
+
+
+
+/*Tablet*/
+@media screen and (max-width: 768px) {
+  .ml-section-title-unit-info {
+    display: none;
+  }
+
+  .ml-units-view .dl-t {
+    white-space: nowrap;
+  }
+
+  .ml-units-view .dl-d {
+    clear: both;
+    margin: 0.25rem 0 0 0.5rem;
+  }
+
+  .ml-units-view > header:first-of-type > h3:first-of-type {
+    clear: both;
+  }
+
+  .ml-units-view > header:first-of-type > article:first-of-type {
+    max-width: unset;
+  }
+
+  /*.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper th {*/
+  /* display: none;*/
+  /*}*/
+
+  /*.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper td {*/
+  /*  float: left;*/
+  /*}*/
+
+  /*.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper td .webform-likert-label {*/
+  /*  white-space: nowrap;*/
+  /*  padding: 0 0.5rem;*/
+  /*  display: block;*/
+  /*  margin-top: 0.5rem;*/
+  /*}*/
+
+  /*.webform-submission-metrolist-launch-feedback-form .js-form-type-radio {*/
+  /*  padding: unset !important;*/
+  /*}*/
+
+  /*.js-form-type-radio .form-radio[type=radio] {*/
+  /*  padding: 1rem;*/
+  /*  margin: 0.75rem;*/
+  /*}*/
+
+
+  .webform-submission-metrolist-launch-feedback-form .webform-button--submit {
+    margin-bottom: 1rem;
+  }
+
+}
+
+/*Mobile*/
+@media screen and (max-width: 450px) {
+
+  .container {
+    padding-left: 2% !important;
+    padding-right: 2% !important;
+  }
+
+  .field-name-field-ml-address .geolocation-map-wrapper{
+    margin: 0.5rem 0;
+  }
+
+  .field-name-field-ml-learn-content .field-name-field-right-column li span:first-of-type{
+    display: inline-block !important;
+  }
+
+}
+
+
+/*Mobile - Small*/
+@media screen and (max-width: 350px) {
+
+  .field-name-field-ml-address .geolocation-map-wrapper{
+    /*width: 290px;*/
+    /*height: 200px;*/
+    /*margin: 0.5rem 0;*/
+  }
+
+  .ml-units-view .dr-ic {
+    display: none;
+  }
+
+  .ml-units-view > div:first-of-type {
+    flex-flow: wrap;
+  }
+
+}
+
+
 
 @media print {
 
