@@ -90,9 +90,14 @@ function bos_metrolist_preprocess_page(&$variables)
 {
   if (isset($variables['node']) && $variables['node']->bundle() == 'metrolist_development') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+    $variables['attributes']['class'][] = 'mn';
   }
 
-  $variables['attributes']['class'][] = 'mn';
+  //@TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
+  if (isset($variables['node']) && $variables["node"]->url() == '/departments/neighborhood-development/metrolist') {
+    $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+  }
+
 }
 
 
