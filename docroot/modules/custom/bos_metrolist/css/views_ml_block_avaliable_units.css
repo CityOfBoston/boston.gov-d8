@@ -351,7 +351,7 @@ footer > div > h2:first-of-type{
 .ml-action-btn-flex {
   display: flex;
   justify-content: space-between;
-  flex-flow: row;
+  flex-flow: row wrap;
 }
 
 
@@ -400,6 +400,11 @@ footer > div > h2:first-of-type{
 
 .paragraphs-item-grid-of-cards .paragraphs-item-card .cd-c .field-name-field-short-description p:first-of-type:after {
   content: ":";
+}
+
+
+.ml-unit-entity-render-info .ml-units-to-ami-calc{
+  display: none;
 }
 
 @media screen and (max-width: 1340px) {
@@ -487,6 +492,7 @@ footer > div > h2:first-of-type{
   .ml-units-view > header:first-of-type > article:first-of-type {
     max-width: unset;
   }
+
 
   /*.webform-submission-metrolist-launch-feedback-form .webform-likert-table-wrapper th {*/
   /* display: none;*/

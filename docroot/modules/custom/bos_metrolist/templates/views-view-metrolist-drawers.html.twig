@@ -30,7 +30,7 @@
 
       <button class="btn btn--100"
               id="show-all-units-btn"
-              style="width: 13.5rem;"
+              style="padding: 0.55rem 1rem;white-space: nowrap;"
               onclick="
                   location.href = '#ml-more-units';
                   this.hidden = true;
@@ -64,11 +64,11 @@
   </svg>
 {% endset %}
 
-{% set ami_calc_button %}
-  <div class="ml-units-to-ami-calc print-none">
-    <a href="/metrolist/ami-estimator" class="lnk lnk--">Calculate your eligibility</a>
-  </div>
-{% endset %}
+{#{% set ami_calc_button %}#}
+{#  <div class="ml-units-to-ami-calc print-none">#}
+{#    <a href="/metrolist/ami-estimator" class="lnk lnk--">Calculate your eligibility</a>#}
+{#  </div>#}
+{#{% endset %}#}
 
 
 {% if email_button or print_button or show_all_units_button %}
@@ -121,12 +121,14 @@
 
           {{- row.content -}}
           {#          {{- view.result[0] -}}#}
-          <div class="dl-i" style="padding-top: 0;">
-            <span class="dl-t">&nbsp;</span>
-            <span class="dl-d">
-              {{ ami_calc_button }}
-            </span>
-          </div>
+{#          <div class="dl-i" style="padding-top: 0;">#}
+{#            <span class="dl-t">&nbsp;</span>#}
+{#            <span class="dl-d">#}
+{#              <div class="ml-units-to-ami-calc print-none">#}
+{#                <a href="/metrolist/ami-estimator" class="lnk lnk--">Calculate your eligibility</a>#}
+{#               </div>#}
+{#            </span>#}
+{#          </div>#}
         </div>
       </div>
 
@@ -191,12 +193,12 @@
                 {{ view.style_plugin.rendered_fields }}
 
                 {{- row.content -}}
-                <div class="dl-i" style="padding-top: 0;">
-                  <span class="dl-t">&nbsp;</span>
-                  <span class="dl-d">
-                    {{ ami_calc_button }}
-                  </span>
-                </div>
+{#                <div class="dl-i" style="padding-top: 0;">#}
+{#                  <span class="dl-t">&nbsp;</span>#}
+{#                  <span class="dl-d">#}
+{#                    {{ ami_calc_button }}#}
+{#                  </span>#}
+{#                </div>#}
               </div>
             </div>
 
