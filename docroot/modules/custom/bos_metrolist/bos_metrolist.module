@@ -214,7 +214,7 @@ function bos_metrolist_build_email_button($variables)
     '#tag' => 'span',
     '#value' => $variables['view']->style_plugin->options['email_button_text'],
     '#attributes' => [
-      'style' => ['display: block;', 'flex:2;'],
+      'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
       'class' => ['']
     ],
   ];
@@ -271,7 +271,7 @@ function bos_metrolist_build_print_button($variables)
     '#tag' => 'span',
     '#value' => $variables['view']->style_plugin->options['print_button_text'],
     '#attributes' => [
-      'style' => ['display: block;', 'flex:2;'],
+      'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
       'class' => ['']
     ],
   ];
