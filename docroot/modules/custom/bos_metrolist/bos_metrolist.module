@@ -322,6 +322,7 @@ function bos_metrolist_set_views_row_group(&$rowGroups = [], $bounds = [], $row)
 
   $amiValue = preg_replace('/\D/', '', $rowResult->_relationship_entities["field_ml_incm_elgblty_ami_thold"]->label());
   $amiBounds = explode('-', $bounds['ami']);
+  sort($amiBounds); //sort the ami bounds in case we are given them in the wrong order in the url filters
   $amiLow = $amiBounds[0] ?? null;
   $amiHigh = $amiBounds[1] ?? null;
 
