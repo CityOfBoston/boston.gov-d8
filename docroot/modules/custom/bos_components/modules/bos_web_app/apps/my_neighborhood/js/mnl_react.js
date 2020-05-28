@@ -438,6 +438,3 @@ class MNL extends React.Component {
 ReactDOM.render(<MNL />,
   document.getElementById("web-app")
 );
-
-
-
