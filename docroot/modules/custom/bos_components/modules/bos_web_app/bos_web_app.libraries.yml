@@ -7,28 +7,28 @@ my_neighborhood:
   version: 1.x
   js:
     #Libraries for REACT
-    https://unpkg.com/react@16/umd/react.production.min.js: {}
-    https://unpkg.com/react-dom@16/umd/react-dom.production.min.js: {}
-    https://unpkg.com/@babel/standalone/babel.min.js: {}
+    apps/my_neighborhood/libraries/react.16.13.1.min.js: {}
+    apps/my_neighborhood/libraries/react-dom.16.13.1.min.js: {}
+    apps/my_neighborhood/libraries/babel.6.26.0.min.js: {}
     #MNL REACT Components
-    apps/my_neighborhood/local_components/Search.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Mnl_Card.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Mnl_Section.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Representation.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/City_Spaces.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/City_Services.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Newsletter.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Bos311.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Winter_Resources.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/local_components/Summer_Resources.js: {attributes: {type: text/babel }}
+    apps/my_neighborhood/local_components/Search.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Mnl_Card.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Mnl_Section.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Representation.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/City_Spaces.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/City_Services.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Newsletter.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Bos311.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Winter_Resources.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    apps/my_neighborhood/local_components/Summer_Resources.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
     #MNL REACT application and config
-    apps/my_neighborhood/mnl_react.js: {attributes: {type: text/babel }}
-    apps/my_neighborhood/mnl_config.js: {attributes: {type: text/javascript }}
+    apps/my_neighborhood/js/mnl_react.min.js: {attributes: {type: text/babel}}
+    apps/my_neighborhood/js/mnl_config.min.js: {attributes: {type: text/javascript}}
     #Jquery plugin for search bar auto text scaling
-    https://jquery-textfill.github.io/js/textfill/jquery.textfill.js: {attributes: {type: text/javascript }}
+    https://jquery-textfill.github.io/js/textfill/jquery.textfill.js: {attributes: {type: text/javascript,minified: true}}
   css:
     layout:
-      apps/my_neighborhood/mnl_styles.css: {attributes: {media: screen, external: false, type: text/css}}  
+      apps/my_neighborhood/css/mnl_styles.min.css: {attributes: {media: screen, type: text/css}}
   dependencies:
     - core/drupalSettings
     
