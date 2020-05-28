@@ -55,7 +55,10 @@ function bos_metrolist_theme()
     'form_element__webform_checkbox' => [
       'base hook' => 'form',
     ],
-//    'form_element__webform_select' => [
+    'form_element__webform_select' => [
+      'base hook' => 'form',
+    ],
+//    'form_element__webform_checkboxes' => [
 //      'base hook' => 'form',
 //    ],
   ];
@@ -145,11 +148,17 @@ function bos_metrolist_preprocess_field(&$variables)
   //$test = $variables;
 }
 
-function bos_metrolist_preprocess_field_boolean(&$variables)
+function bos_metrolist_preprocess_checkboxes(&$variables)
 {
-  //$test = $variables;
+  $test = $variables;
 }
 
+function bos_metrolist_preprocess_form_element(&$variables)
+{
+//  $variables['element']['#theme'] = ['form_element__webform_checkbox', 'webform_checkbox'];
+//  $variables["theme_hook_original"] ='webform_checkbox';
+//  $test = $variables;
+}
 /**
  * Implements hook_preprocess_HOOK().
  */
