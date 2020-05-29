@@ -441,9 +441,7 @@ class MNL extends React.Component {
               <div>{mnlDisplay}</div>
             </div>
           )}
-        </div>
-        <div>&nbsp;</div>
-      
+        </div>      
       </div>
     );
   }
