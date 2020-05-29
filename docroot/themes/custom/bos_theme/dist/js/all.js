@@ -111,6 +111,18 @@
     }
   });
 
+  if ($('.drawer-trigger').length) {
+
+    // Add tabindex to drawer-triggers
+    $('.drawer-wrapper div.drawer-trigger').attr("tabindex","0");
+    $('.drawer-trigger').keydown(function (e) {
+      if (e.keyCode == 13) { // enter key
+        e.preventDefault();
+        this.click();
+      }
+    });
+  }
+
 })(jQuery, Drupal, this, this.document);
 
 (function ($, Drupal, window, document) {
@@ -1254,5 +1266,17 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
         marginTop: "-40px"
       }, 500);
     });
+
+    // Add tabindex to all Drawer hidden input checbox using label as trigger
+    $("label.dr-h").each(function(index, element){
+      $(".dr-h").attr("tabindex","0");
+
+      $(this).keydown(function (e) {
+        if (e.keyCode == 13) { //enter key
+          e.preventDefault();
+          this.click();
+        }
+      });
+    })
   });
 })(jQuery, Drupal, this, this.document);
