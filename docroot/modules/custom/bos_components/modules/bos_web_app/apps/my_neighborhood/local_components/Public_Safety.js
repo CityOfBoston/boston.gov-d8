@@ -1,4 +1,13 @@
 class PublicSafety extends React.Component {
+  textCapitalize = (s) => {
+    let str = s.split(" ");
+    for (let i = 0, x = str.length; i < x; i++) {
+        str[i] = str[i].toLowerCase();
+        str[i] = str[i][0].toUpperCase() + str[i].substr(1);
+    }
+    return str.join(" ");
+  }
+
   render() {
     // Content for cards
     const contentPolice = [
@@ -26,9 +35,9 @@ class PublicSafety extends React.Component {
       {
         heading: "Station",
         content: <div>
-                    <div>{this.props.fire_station_name}</div>
-                    <div>{this.props.fire_station_adress}</div>
-                    <div>{this.props.fire_station_neighborhood}, MA</div>
+                    <div>{this.textCapitalize(this.props.fire_station_name)}</div>
+                    <div>{this.textCapitalize(this.props.fire_station_address)}</div>
+                    <div>{this.textCapitalize(this.props.fire_station_neighborhood)}, MA</div>
                   </div>
       },
       {
