@@ -964,7 +964,7 @@ What: Styles the watermark for D8.
 .logged-in #page,
 .logged-in.toolbar-fixed.toolbar-tray-open .nv-m,
 .logged-in.toolbar-fixed.toolbar-tray-open #main-menu {
-  top: 8.8em;
+  top: 0;
 }
 .logged-in.page-error #page,
 .logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m,
@@ -976,6 +976,7 @@ What: Styles the watermark for D8.
 }
 .logged-in #page {
   padding-top: 0;
+  top: 4.4em;
 }
 .logged-in #page .hro {
   margin-top: -15px;
@@ -1252,31 +1253,29 @@ What: Hiding Translate button across site and devices.
 /**
 Stella
 Where: Top Navigation
-What: Adding accessibility link to skip tyo main content.
+What: Updating CSS for accessibility.
  */
 
-.sw-skipnav-outerbar {
-  margin-top: -30px;
-}
-
-.sw-skipnav {
-  position: absolute;
-  top: -1000px;
-  left: -1000px;
-  height: 1px;
-  width: 1px;
+div.sw-skipnav-outerbar {
+  display: block;
+  height: 40px;
+  width: 100%;
+  background-color: #091f2f;
   text-align: left;
-  overflow: hidden;
+  margin-top: -40px;
+  padding-left: 15px;
 }
 
-a.sw-skipnav:active,
-a.sw-skipnav:focus,
-a.sw-skipnav:hover {
-  left: 0;
-  top: 0;
-  width: auto;
-  height: auto;
-  overflow: visible;
+a.sw-skipnav {
+  display: inline-block;
+  margin: auto;
+  margin-top: 0px;
+  color: #fff;
+  text-decoration: none;
+}
+
+#page #main-menu.sticky {
+  position: fixed;
 }
 
 /**

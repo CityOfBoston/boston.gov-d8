@@ -217,8 +217,8 @@ class BosCoreSyncIconManifestService {
     // Get the manifest file name as set in the settings form.
     $manifest_file = Drupal::config("bos_core.settings")->get("icon.manifest");
     if (empty($manifest_file)) {
-      $manifest_file = "https://patterns.boston.gov/assets/icons/manifest.txt";
-      Drupal::config("bos_core.settings")->get("icon.manifest", $manifest_file);
+      $manifest_file = "https://assets.boston.gov/manifest/icons_manifest.txt";
+      Drupal::configFactory()->getEditable('bos_core.settings')->set('icon.manifest', $manifest_file)->save();
     }
 
     // Fetch the contents of the manifest file.
