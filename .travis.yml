@@ -6,7 +6,7 @@ branches:
   only:
     - develop
     - master
-    - mnl_12_9_2019
+    - mnl_public_safety
 
 php:
   - 7.3
@@ -121,4 +121,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: mnl_12_9_2019
+      branch: mnl_public_safety
