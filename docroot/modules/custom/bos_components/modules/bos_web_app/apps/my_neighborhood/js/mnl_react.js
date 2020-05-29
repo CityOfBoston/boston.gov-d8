@@ -368,6 +368,20 @@ class MNL extends React.Component {
           section={this.state.section}
           displaySection={this.displaySection}
         />
+
+        <PublicSafety
+          police_station_name={this.state.itemsDisplay.police_dept_police_station}
+          police_station_address={this.state.itemsDisplay.police_dept_address}
+          police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
+          police_station_zip={this.state.itemsDisplay.police_dept_zip}
+          police_district={this.state.itemsDisplay.police_district}
+          fire_station_name={this.state.itemsDisplay.fire_dept_name}
+          fire_station_address={this.state.itemsDisplay.fire_dept_address}
+          fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
+          recollect_services={recollectServices}
+          section={this.state.section}
+          displaySection={this.displaySection}
+        />
  
         {this.state.season == "summer" || this.state.season == null ? (
           <SummerResources
