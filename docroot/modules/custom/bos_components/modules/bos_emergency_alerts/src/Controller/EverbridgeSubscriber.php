@@ -401,7 +401,7 @@ class EverbridgeSubscriber extends ControllerBase {
    * @return string
    *   The string in hex format.
    */
-  private function stringtohex($string, $maxlen = 140) {
+  private function stringtohex($string, $maxlen = 50) {
     $hex = '';
 
     for ($i = 0; $i < strlen($string); $i++) {
