@@ -45,7 +45,7 @@
 
 {% for item in items %}
   {% if short_title %}
-    <a name="{{ short_title_link }}" data-text="{{ short_title }}" class="subnav-anchor"></a>
+    <a id="{{ short_title_link }}" data-text="{{ short_title }}" class="subnav-anchor"></a>
   {% endif %}
   <h2 class="sh-title">{{ item }}</h2>
 {% endfor %}
