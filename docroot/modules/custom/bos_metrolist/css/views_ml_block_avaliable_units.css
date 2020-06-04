@@ -9,13 +9,36 @@
 }
 .referenced-events-notices .pager {
   padding-top: 0;
+  display: inline-block;
 }
 .referenced-events-notices .pager__item {
   background: none;
-  margin: 0 1.625rem;
+  /*margin: 0 1.625rem;*/
   padding: 0;
+  display: inline-block;
 }
-
+.referenced-events-notices .pager__item .button {
+  background-color: #1871bd;
+  color: #fff;
+  font-family: Montserrat,Arial,sans-serif;
+  font-size: calc(14px + 2 * ((100vw - 480px) / 960));
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 16px;
+  line-height: 1rem;
+  margin: 0;
+  padding: 20px;
+  padding: 1.25rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+}
+.referenced-events-notices .pager__item .button:hover:not(:disabled) {
+  background-color: #fb4d42;
+  color: #fff;
+}
 
 .ui-widget {
   font-family: unset !important;
