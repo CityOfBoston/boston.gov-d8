@@ -111,10 +111,10 @@
     }
   });
 
+  // Add tabindex to drawer-triggers
   if ($('.drawer-trigger').length) {
-
-    // Add tabindex to drawer-triggers
-    $('.drawer-wrapper div.drawer-trigger').attr("tabindex","0");
+    $('.drawer-wrapper div.drawer-trigger').attr("tabindex","0"); //need to remove this line, but cannot find the page to test it out yet.
+    $('div.drawer-trigger').attr("tabindex","0");
     $('.drawer-trigger').keydown(function (e) {
       if (e.keyCode == 13) { // enter key
         e.preventDefault();
@@ -1278,5 +1278,18 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
         }
       });
     })
+
+    // Add tabindex to all label used as checkbox triggers
+    $(".form-checkboxes label").each(function(index, element){
+      $(this).attr("tabindex","0");
+
+      $(this).keydown(function (e) {
+        if (e.keyCode == 13) { //enter key
+          e.preventDefault();
+          this.click();
+        }
+      });
+    })
+
   });
 })(jQuery, Drupal, this, this.document);
