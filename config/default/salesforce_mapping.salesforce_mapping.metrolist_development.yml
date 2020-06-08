@@ -11,10 +11,8 @@ dependencies:
     - field.field.node.metrolist_development.field_ml_city
     - field.field.node.metrolist_development.field_ml_due_at_signing
     - field.field.node.metrolist_development.field_ml_features
+    - field.field.node.metrolist_development.field_ml_manager_email
     - field.field.node.metrolist_development.field_ml_neighborhood
-    - field.field.node.metrolist_development.field_ml_num_of_ownership_units
-    - field.field.node.metrolist_development.field_ml_number_of_rental_units
-    - field.field.node.metrolist_development.field_ml_number_of_units
     - field.field.node.metrolist_development.field_ml_region
     - field.field.node.metrolist_development.field_ml_utilities_included
     - field.storage.node.field_ml_address
@@ -44,14 +42,17 @@ type: salesforce_mapping
 key: ''
 async: false
 push_standalone: false
-pull_standalone: true
+pull_standalone: false
 pull_trigger_date: LastModifiedDate
 pull_where_clause: ''
 sync_triggers:
+  push_create: false
+  push_update: false
+  push_delete: false
   pull_create: true
   pull_update: true
   pull_delete: true
-salesforce_object_type: Affordable_Housing__c
+salesforce_object_type: Development__c
 drupal_entity_type: node
 drupal_bundle: metrolist_development
 field_mappings:
@@ -60,109 +61,97 @@ field_mappings:
     drupal_field_value: title
     salesforce_field: Name
     direction: sf_drupal
-    id: 18
-  -
-    drupal_field_type: properties_extended
-    drupal_field_value: field_ml_address.locality
-    salesforce_field: Outside_Boston_Location__c
-    direction: sf_drupal
-    id: 19
-  -
-    drupal_field_type: properties_extended
-    drupal_field_value: field_ml_address.dependent_locality
-    salesforce_field: Neighborhood__c
-    direction: sf_drupal
-    id: 20
-  -
-    drupal_field_type: properties_extended
-    drupal_field_value: field_ml_address.postal_code
-    salesforce_field: ZIP_Code__c
-    direction: sf_drupal
-    id: 21
-  -
-    drupal_field_type: properties_extended
-    drupal_field_value: field_ml_address.address_line1
-    salesforce_field: Street_Address__c
-    direction: sf_drupal
-    id: 22
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_city
-    salesforce_field: Outside_Boston_Location__c
-    direction: sf_drupal
-    id: 23
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_neighborhood
-    salesforce_field: Neighborhood__c
-    direction: sf_drupal
-    id: 24
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_region
-    salesforce_field: Region__c
-    direction: sf_drupal
-    id: 25
+    id: 0
   -
     drupal_field_type: properties
     drupal_field_value: field_ml_agent
     salesforce_field: Public_Contact_Name__c
     direction: sf_drupal
-    id: 26
+    id: 1
   -
     drupal_field_type: properties
     drupal_field_value: field_ml_agent_address
     salesforce_field: Public_Contact_Address__c
     direction: sf_drupal
-    id: 27
+    id: 2
   -
     drupal_field_type: properties
     drupal_field_value: field_ml_agent_email
     salesforce_field: Public_Contact_Email__c
     direction: sf_drupal
-    id: 28
+    id: 3
   -
     drupal_field_type: properties
     drupal_field_value: field_ml_agent_phone
     salesforce_field: Public_Contact_Phone__c
     direction: sf_drupal
-    id: 29
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_number_of_units
-    salesforce_field: DU_Count__c
-    direction: sf_drupal
-    id: 30
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_num_of_ownership_units
-    salesforce_field: Number_of_Ownership_Units__c
-    direction: sf_drupal
-    id: 31
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_number_of_rental_units
-    salesforce_field: Number_of_Rental_Units__c
-    direction: sf_drupal
-    id: 32
-  -
-    drupal_field_type: RelatedTermStrings
-    drupal_field_value: field_ml_features
-    salesforce_field: Features__c
-    direction: sf_drupal
-    id: 33
-  -
-    drupal_field_type: RelatedTermStrings
-    drupal_field_value: field_ml_utilities_included
-    salesforce_field: Utilities_Included__c
-    direction: sf_drupal
-    id: 34
+    id: 4
   -
     drupal_field_type: RelatedTermStrings
     drupal_field_value: field_ml_due_at_signing
     salesforce_field: Due_at_signing__c
     direction: sf_drupal
-    id: 35
+    id: 5
+  -
+    drupal_field_type: RelatedTermStrings
+    drupal_field_value: field_ml_features
+    salesforce_field: Features__c
+    direction: sf_drupal
+    id: 6
+  -
+    drupal_field_type: RelatedTermStrings
+    drupal_field_value: field_ml_utilities_included
+    salesforce_field: Utilities_included__c
+    direction: sf_drupal
+    id: 7
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_city
+    salesforce_field: City__c
+    direction: sf_drupal
+    id: 8
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_neighborhood
+    salesforce_field: Neighborhood__c
+    direction: sf_drupal
+    id: 9
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_region
+    salesforce_field: Region__c
+    direction: sf_drupal
+    id: 10
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.locality
+    salesforce_field: City__c
+    direction: sf_drupal
+    id: 11
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.dependent_locality
+    salesforce_field: Neighborhood__c
+    direction: sf_drupal
+    id: 12
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.postal_code
+    salesforce_field: ZIP_Code__c
+    direction: sf_drupal
+    id: 13
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_ml_address.address_line1
+    salesforce_field: Street_Address__c
+    direction: sf_drupal
+    id: 14
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_manager_email
+    salesforce_field: Listing_Contact_Email__c
+    direction: sf_drupal
+    id: 15
 push_limit: 0
 push_retries: 3
 push_frequency: 0
