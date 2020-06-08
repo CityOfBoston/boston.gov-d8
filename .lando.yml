@@ -11,22 +11,46 @@ config:
   xdebug: true
   drupal: false
 
+proxy:
+  patterns:
+    - patterns.lndo.site
+
 services:
-  node:
+  patterns:
     type: node:10
-    globals:
-      gulp-cli: "latest"
+    ssl: true
+    overrides:
+      expose:
+        - "80"
+        - "443"
+      ports:
+        - "3030:80"
+      environment:
+        PORT: "80"
+        FRACTAL_PORT: "80"
+      healthcheck:
+        test: /app/scripts/local/health.sh patterns
+        interval: 30s
+        timeout: 15s
+        retries: 5
     build_as_root:
-      - printf "\n[LANDO] Node Container Event - build as root\n\n"
-      - /app/scripts/local/lando-node-customize.sh
+      - printf "\n[LANDO] Patterns Container Event - build as root\n"
+      - /app/scripts/local/lando-patterns-customize.sh
     run:
-      - printf "\n[LANDO] Node Container Event - run\n\n"
-      - /app/scripts/local/lando-build-node.sh
+      - printf "\n[LANDO] Patterns Container Event - run\n\n"
+      - /app/scripts/local/lando-build-patterns.sh
+    command: /app/scripts/local/lando-patterns-post-start.sh
 
   database:
     type: mysql
     portforward: true
     host: localhost
+    overrides:
+      healthcheck:
+        test: /app/scripts/local/health.sh database
+        interval: 30s
+        timeout: 10s
+        retries: 5
     run_as_root:
       - printf "\n[LANDO] Database Event - run as root\n\n"
       - /app/scripts/local/lando-database-customize.sh
@@ -41,6 +65,11 @@ services:
     webroot: docroot
     xdebug: true
     overrides:
+      healthcheck:
+        test: /app/scripts/local/health.sh appserver
+        interval: 30s
+        timeout: 15s
+        retries: 5
       environment:
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
@@ -77,16 +106,18 @@ tooling:
     - drupal
 
   npm:
-    service: node
-    description: "Run npm commands in node container: lando npm <command>"
+    service: patterns
+    description: "Run npm commands in patterns:node container: lando npm <command>"
+    cmd:
+      - echo a; cd /app/patterns && npm
 
   node:
-    service: node
-    description: "Run node commands in node container: lando node <command>"
+    service: patterns
+    description: "Run node commands in patterns container: lando node <command>"
 
   gulp:
-    service: node
-    description: "Run node:gulp commands in node container: lando gulp <command>"
+    service: patterns
+    description: "Run node:gulp commands in patterns container: lando gulp <command>"
 
   mycli:
     service: database
@@ -111,6 +142,12 @@ tooling:
     cmd:
       - /app/scripts/local/validate.sh all
 
+  switch-patterns:
+    service: appserver
+    description: "Switch the patterns library: 2 = local, 3 = prod, 4 = stage."
+    cmd:
+      - /app/vendor/bin/drush drush bcss
+
 events:
   post-start:
-    - /app/scripts/local/lando-post-start.sh
+    - appserver: /app/scripts/local/lando-drupal-post-start.sh

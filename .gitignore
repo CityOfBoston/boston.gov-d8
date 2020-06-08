@@ -11,6 +11,7 @@
 # Ignore example settings and services config files
 /docroot/sites/**/example.*.php
 /docroot/sites/**/default.*.*
+/docroot/sites/**/development.services.yml
 
 # Ignore Drupal's file directory
 /docroot/sites/*/files/
@@ -73,3 +74,8 @@ err.*.*
 /**/settings/saml*
 /**/settings/salesforce*
 xdebug*.ini
+
+ # Ignore Patterns if building.
+/patterns
+/docroot/patterns
+.null*
