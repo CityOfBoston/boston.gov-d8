@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.metrolist_development.field_ml_city
     - field.field.node.metrolist_development.field_ml_due_at_signing
     - field.field.node.metrolist_development.field_ml_features
+    - field.field.node.metrolist_development.field_ml_manager_email
     - field.field.node.metrolist_development.field_ml_neighborhood
     - field.field.node.metrolist_development.field_ml_num_of_ownership_units
     - field.field.node.metrolist_development.field_ml_number_of_rental_units
@@ -126,6 +127,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: entity_reference_autocomplete
+    region: content
+  field_ml_manager_email:
+    weight: 141
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
     region: content
   field_ml_neighborhood:
     weight: 126
