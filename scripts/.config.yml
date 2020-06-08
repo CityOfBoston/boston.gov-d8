@@ -17,6 +17,17 @@ drupal:
     # Use 'default' as the name if there are no multisites.
     name: default
 
+patterns:
+  local:
+    build: true
+    repo:
+      name: CityOfBoston/patterns.git
+      branch: develop
+      # Where the repo will be cloned to.
+      local_dir: ${REPO_ROOT}/patterns
+  travis:
+    build: false
+
 build:
   local:
     # Build Type = dev or prod.
@@ -31,6 +42,8 @@ build:
       # Otherwise set it to 'sync' (and provide a drush-alias) to sync from the drush-alias environment.
       # Tip: Develop environment has database in closest state to the github repo configs.
       source: sync
+      # If you wish to use mycli and pspg tools in the container, set the next line to true.
+      server_side_tools: false
       drush_alias: "@bostond8.dev"
       host: boston_database_1
       port: 3306
@@ -46,20 +59,6 @@ build:
         # Otherwise set it to 'sync' to sync from the drush-alias environment.
         source: initialize
         drush_alias: "@bostond8.dev"
-      config:
-        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
-        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
-        sync: "true"
-    procurement:
-      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
-      # none = don't alter modules enabled from configuration
-      type: dev
-      suppress_output: 0
-      database:
-        # Set source to 'initialize' to start a fresh install.
-        # Otherwise set it to 'sync' to sync from the drush-alias environment.
-        source: initialize
-        drush_alias: "@bostond8.uat"
       config:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
@@ -132,28 +131,6 @@ deploy:
     drush_db_source: "@bostond8.test"
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-
-  procurement:
-    # Folder in Travis container where deploy files will be "built"
-    dir: ${REPO_ROOT}/deploy
-    # Name of the target branch in the Acquia repo.
-    deploy_branch: "procurement-deploy"
-    # Path to the drush command in the Travis container.
-    travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
-    # Alias for deploy target Aquia server.
-    drush_alias: "@bostond8.uat"
-    # Definition of files that will and wont be copied from build to deploy.
-    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
-    excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
-    # Dry-run (for testing).
-    dry_run: false
-    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
-    copy_db: false
-    drush_db_source: "@bostond8.dev"
-    # user:host for (Acquia) git remote to be used for deployment.
-    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-
   metrolist_dev:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
@@ -197,7 +174,6 @@ deploy:
     drush_db_source: "@bostond8.ci"
     # Array of user:host for (Acquia) git remotes to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-
   master:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy

@@ -131,6 +131,43 @@ function clone_private_repo() {
   printout "SUCCESS" "Private repo merge complete."
 }
 
+function clone_patterns_repo() {
+
+    printf "ref: $(basename "$0")\n"
+    printout "INFO" "Cloning ${patterns_local_repo_branch} branch of Patterns library."
+
+    if [[ -n ${GITHUB_TOKEN} ]]; then
+        # Will enforce a token which should be passed via and ENVAR.
+        REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+    else
+        # Will rely on the user have an SSL cert which is registered with the private repo.
+        REPO_LOCATION="git@github.com:"
+    fi
+
+    # Create a clean folder into which the repo can be cloned.
+    if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
+        mkdir ${patterns_local_repo_local_dir}
+        chown node:node ${patterns_local_repo_local_dir}
+    fi
+
+    git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100
+
+    if [[ $? != 0 ]]; then
+        printout "ERROR" "Patterns library NOT cloned or installed."
+        exit 1
+    fi
+
+    # Make the public folder that gulp and fractal will build into.
+    if [[ ! -d ${patterns_local_repo_local_dir}/public ]]; then
+        mkdir ${patterns_local_repo_local_dir}/public
+        chown node:node ${patterns_local_repo_local_dir}/public
+        chmod 755 ${patterns_local_repo_local_dir}/public
+    fi
+
+    printout "SUCCESS" "Patterns library cloned."
+
+}
+
 function build_settings() {
 
     printout "INFO" "Will update and implement settings files."
@@ -154,6 +191,7 @@ function build_settings() {
     # Setup hooks from inside settings.php
     if [[ ! -e ${settings_file} ]]; then
         # Copy default file.
+        cp default_settings_file settings_file
         cp default_settings_file settings_file
     fi
 
