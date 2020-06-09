@@ -11,11 +11,15 @@
 
 {% if content %}
 <footer class="ft">
-    <div class="ft-c">
-        <ul class="ft-ll ft-ll--r">
-            <li class="ft-ll-i"><a href="http://www.cityofboston.gov/311/" class="ft-ll-a lnk--yellow"><span class="ft-ll-311">BOS:311</span><span class="tablet--hidden"> - </span>Report an issue</a></li>
-        </ul>
-        {{ content }}
+    <div class="ft-c ft-ite">
+      {{ content }}
+      <ul class="ft-ll ft-ite-311">
+        <li class="ft-ll-i"><a href="http://www.cityofboston.gov/311/" class="ft-ll-a lnk--yellow">
+            <span class="ft-ll-311">BOS:311</span>
+            <span class="tablet--hidden"> - </span>Report an issue
+          </a>
+        </li>
+      </ul>
     </div>
 </footer>
 {% endif %}
