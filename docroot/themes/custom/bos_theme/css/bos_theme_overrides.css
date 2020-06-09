@@ -851,18 +851,44 @@ What: Improves footer responsive actions. Iterators issue #32.
     display: flex;
     flex-flow: column;
   }
-  .ft .ft-ll {
+  .ft .ft-ll:not(.ft-ite-311) {
     margin-top: -30px;
     line-height: 1.5em;
   }
-  .ft .ft-ll--r {
-    margin-top: 0px;
+  .ft-ite-311 .ft-ll-i {
+    text-align: right;
   }
-  .ft-ll-i {}
-  .ft-ll-i:first-child {
-    margin-left: 18px;
+  .ft-ite-311 .ft-ll-311 {
+    text-align: left;
   }
 }
+
+.ft-ll-a {
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 500;
+  color: #288be4;
+}
+.ft-ite-311 .ft-ll-i {
+  padding-right: 0;
+}
+
+@media screen and (max-width: 767px) {
+  .ft-c {
+    position: relative;
+  }
+  #block-footermenu {
+    order: 2;
+    margin-top: 26px;
+    padding-bottom: 15px;
+  }
+  .ft-ll.ft-ite-311 {
+    order: 1;
+    display: block;
+    position: absolute;
+  }
+}
+
 /*
 David:
 Where: node-listing-page.twig.twig
