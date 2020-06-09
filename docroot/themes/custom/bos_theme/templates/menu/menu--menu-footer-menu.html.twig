@@ -30,9 +30,9 @@
     {% import _self as menus %}
     {% if items %}
         {% if menu_level == 0 %}
-            <ul class="ft-ll"{{ attributes }}>
+            <ul class="ft-ll ft-ite-links"{{ attributes }}>
         {% else %}
-            <ul class="ft-ll"{{ attributes }}>
+            <ul class="ft-ll ft-ite-links"{{ attributes }}>
         {% endif %}
         {% for item in items %}
             <li class="ft-ll-i ft-ll-a"{{ item.attributes }}>

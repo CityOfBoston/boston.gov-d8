@@ -34,7 +34,7 @@
 
 <div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing news-item-news">
 
-  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link"></a>
+  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link" title="{{ fields.view_node.content|striptags|trim }}" aria-label="{{ fields.title.content }}"></a>
 
   <div class="news-item-wrapper ">
 
@@ -53,7 +53,7 @@
       </div>
 
       <div class="text-wrapper">
-    
+
         <h3 class="title">{{ fields.title.content }}</h3>
         <div class="department-title">{{ fields.field_contact.content }}</div>
       </div>
