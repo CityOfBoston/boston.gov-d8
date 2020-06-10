@@ -814,7 +814,13 @@ function bos_theme_preprocess_field__field_components(array &$variables, $hook) 
  */
 function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
-  $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
+  // Check for Metrolist and remove library to avoid IE11 bug.
+  $current_path = \Drupal::service('path.current')->getPath();
+  $result = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+  $is_metrolist = strpos($result, "metrolist");
+  if ($is_metrolist == FALSE) {
+    $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
+  }
   // @var Drupal\paragraphs\Entity\Paragraph $paragraph.
   $paragraph = $variables['paragraph'];
   if (!empty($paragraph)) {
