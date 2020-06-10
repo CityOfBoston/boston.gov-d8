@@ -97,6 +97,9 @@ class PublicSafety extends React.Component {
           onClick={() => {
             this.props.displaySection("public_safety");
           }}
+          onKeyUp={() => {
+            this.props.displaySection("public_safety",event);
+          }}
         >
           <MnlSection
             title={"Public Safety"}
