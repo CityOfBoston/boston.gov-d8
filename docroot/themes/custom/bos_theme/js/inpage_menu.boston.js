@@ -56,7 +56,7 @@
         var menuBottom = menusBottom();
         var navMenu_outerHeight = navMenu.outerHeight(true);
         var navOffset = menuBottom - navMenu_outerHeight;
-        var $locTag = ($('[name="' + $.attr(obj, 'href').substr(1) + '"]'));
+        var $locTag = ($('[id="' + $.attr(obj, 'href').substr(1) + '"]'));
 
         var $topicNav = $('.topic-nav');
         var topicNav_height = 0;
@@ -132,7 +132,7 @@
         var currentItems = scrollItems.filter(function (item) {
           var name = item.replace('#', '').trim();
           if (name !== "") {
-            var items = document.querySelectorAll('[name=' + name + ']')[0];
+            var items = document.querySelectorAll('[id=' + name + ']')[0];
             var itemTop = items ? items.getBoundingClientRect().top + fromTop : 0;
 
             var $topicNav = $('.topic-nav');
