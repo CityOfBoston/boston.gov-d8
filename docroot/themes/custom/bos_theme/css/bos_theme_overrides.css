@@ -994,9 +994,6 @@ What: Styles the watermark for D8.
   top: 4.4em;
 }
 .logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m { top: 4.4em;}
-.logged-in #page .main {
-  margin-top: 6em;
-}
 .logged-in #page {
   padding-top: 0;
   top: 0;
@@ -1277,8 +1274,8 @@ What: Adding boston.gov only aatribute override
 .mn {padding: 0;}
 .adminimal-admin-toolbar .brg-tr:checked~.mn .h, .brg-tr:checked~.mn .h, .nv-s {left: 0;}
 @media (min-width: 1280px) {
-  .adminimal-admin-toolbar .b-c--nbp {
-    padding: 3.125rem 0;
+  .adminimal-admin-toolbar .node-emergency-alert .b-c--nbp {
+    padding-top: 3rem;
   }
 }
 
@@ -1308,6 +1305,10 @@ a.sw-skipnav {
 
 #page #main-menu.sticky {
   position: fixed;
+}
+
+.brg-tr:checked~.mn #main-menu.sticky.h {
+  left: 300px
 }
 
 /**
