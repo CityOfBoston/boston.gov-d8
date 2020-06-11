@@ -135,7 +135,7 @@ class MNL extends React.Component {
           if (result.response){
             this.setState({
               isLoadingRecollect: false,
-              itemsRecollect: result.response.next_event,
+              itemsRecollect: result.response.events[0],
             });
           } else {
             this.setState({
