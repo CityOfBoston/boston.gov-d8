@@ -156,6 +156,9 @@ class CitySpaces extends React.Component {
           onClick={() => {
             this.props.displaySection("city-spaces");
           }}
+          onKeyUp={() => {
+            this.props.displaySection("city-spaces",event);
+          }}
         >
           <MnlSection
             title={"City Spaces"}
