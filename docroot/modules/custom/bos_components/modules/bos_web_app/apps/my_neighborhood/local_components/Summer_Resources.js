@@ -84,6 +84,9 @@ class SummerResources extends React.Component {
           onClick={() => {
             this.props.displaySection("summer");
           }}
+          onKeyUp={() => {
+            this.props.displaySection("summer",event);
+          }}
         >
           <MnlSection
             title={"Summer Resources"}
