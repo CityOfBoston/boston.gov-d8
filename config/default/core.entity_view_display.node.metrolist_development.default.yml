@@ -19,7 +19,6 @@ dependencies:
     - field.field.node.metrolist_development.field_ml_number_of_rental_units
     - field.field.node.metrolist_development.field_ml_number_of_units
     - field.field.node.metrolist_development.field_ml_region
-    - field.field.node.metrolist_development.field_ml_share_via_email
     - field.field.node.metrolist_development.field_ml_units_json
     - field.field.node.metrolist_development.field_ml_utilities_included
     - node.type.metrolist_development
@@ -59,24 +58,6 @@ content:
     third_party_settings: {  }
     type: basic_string
     region: content
-  field_ml_share_via_email:
-    type: webform_entity_reference_link
-    weight: 1
-    region: content
-    label: hidden
-    settings:
-      label: 'Go to [webform:title] webform'
-      dialog: normal
-      attributes:
-        style: 'display:none;'
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: ''
-        fences_label_tag: div
-        fences_label_classes: ''
 hidden:
   body: true
   field_ml_address: true
