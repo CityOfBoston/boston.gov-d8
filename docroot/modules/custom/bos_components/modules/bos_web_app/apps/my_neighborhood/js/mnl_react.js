@@ -135,7 +135,7 @@ class MNL extends React.Component {
           if (result.response){
             this.setState({
               isLoadingRecollect: false,
-              itemsRecollect: result.response.next_event,
+              itemsRecollect: result.response.events[0],
             });
           } else {
             this.setState({
@@ -259,12 +259,14 @@ class MNL extends React.Component {
       );
   };
 
-  displaySection = display => {
-    this.setState({
-      section: display
-    });
-    localStorage.removeItem("sam_data");
-    this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, display);
+  displaySection = (display,event) => {
+    if(event && event.keyCode === 13 || event == null){
+      this.setState({
+        section: display
+      });
+      localStorage.removeItem("sam_data");
+      this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, display);
+    }
   };
 
   render() {
