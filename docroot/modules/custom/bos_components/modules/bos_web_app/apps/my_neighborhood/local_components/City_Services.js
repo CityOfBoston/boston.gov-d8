@@ -10,18 +10,19 @@ class CityServices extends React.Component {
       const dateDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
       const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
       let recollectFlags = this.props.recollect_services; 
-        Object.keys(recollectFlags).map(key => 
+        Object.keys(recollectFlags).map(function(key,index){
+          if (recollectFlags[key].name == "Trash" || recollectFlags[key].name == "Recycling" ) {
             contentRecollect.push({
-                heading: "Your next "+recollectFlags[key].name+" day is:",
-                content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
-                //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
-              },
-              {  
-                heading: "NOTE:",
-                content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
-              }
-            )
-        )
+              heading: "Your next "+recollectFlags[key].name+" day is:",
+              content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
+              //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
+            })
+          }
+        })
+      contentRecollect.push({  
+        heading: "NOTE:",
+        content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
+      });
     } else {
       contentRecollect.push({
         content: (
@@ -96,6 +97,9 @@ class CityServices extends React.Component {
           style={{ textAlign: "left" }}
           onClick={() => {
             this.props.displaySection("city-services");
+          }}
+          onKeyUp={() => {
+            this.props.displaySection("city-services",event);
           }}
         >
           <MnlSection
