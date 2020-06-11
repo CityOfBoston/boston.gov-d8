@@ -19,7 +19,6 @@ dependencies:
     - field.field.node.metrolist_development.field_ml_number_of_rental_units
     - field.field.node.metrolist_development.field_ml_number_of_units
     - field.field.node.metrolist_development.field_ml_region
-    - field.field.node.metrolist_development.field_ml_share_via_email
     - field.field.node.metrolist_development.field_ml_units_json
     - field.field.node.metrolist_development.field_ml_utilities_included
     - node.type.metrolist_development
@@ -176,13 +175,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: entity_reference_autocomplete
-    region: content
-  field_ml_share_via_email:
-    weight: 137
-    settings:
-      default_data: true
-    third_party_settings: {  }
-    type: webform_entity_reference_select
     region: content
   field_ml_units_json:
     weight: 136
