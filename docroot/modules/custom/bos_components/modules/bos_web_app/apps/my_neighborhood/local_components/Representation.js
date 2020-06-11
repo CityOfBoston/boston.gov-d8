@@ -196,6 +196,9 @@ class Representation extends React.Component {
           onClick={() => {
             this.props.displaySection("reps");
           }}
+          onKeyUp={() => {
+            this.props.displaySection("reps",event);
+          }}
         >
           <MnlSection
             title={"Representation"}
