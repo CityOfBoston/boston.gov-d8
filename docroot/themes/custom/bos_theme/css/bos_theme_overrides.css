@@ -1275,7 +1275,12 @@ What: Adding boston.gov only aatribute override
 
 .brg-tr, .h {position: relative; }
 .mn {padding: 0;}
-.adminimal-admin-toolbar .brg-tr:checked~.mn .h, .nv-s {left: 0;}
+.adminimal-admin-toolbar .brg-tr:checked~.mn .h, .brg-tr:checked~.mn .h, .nv-s {left: 0;}
+@media (min-width: 1280px) {
+  .adminimal-admin-toolbar .b-c--nbp {
+    padding: 3.125rem 0;
+  }
+}
 
 /**
 Stella
