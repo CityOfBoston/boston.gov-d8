@@ -37,7 +37,7 @@ dependencies:
     - webform.webform.metrolist_launch_feedback
   content:
     - 'paragraph:grid_of_cards:2e010d52-f59e-4671-ac92-5a9307ca7118'
-    - 'taxonomy_term:availability_status:94471835-a7e8-4d18-b357-5f594bcec38e'
+    - 'taxonomy_term:availability_status:937cdb93-285a-424a-a811-079e3cff201e'
   module:
     - address
     - bos_metrolist
@@ -292,22 +292,6 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:core.entity_view_display.node.department_profile.card'
-        - 'config:core.entity_view_display.node.department_profile.default'
-        - 'config:core.entity_view_display.node.department_profile.popup_icon'
-        - 'config:core.entity_view_display.node.emergency_alert.default'
-        - 'config:core.entity_view_display.node.listing_page.default'
-        - 'config:core.entity_view_display.node.metrolist_development.contact'
-        - 'config:core.entity_view_display.node.metrolist_development.default'
-        - 'config:core.entity_view_display.node.metrolist_development.map'
-        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
-        - 'config:core.entity_view_display.node.person_profile.default'
-        - 'config:core.entity_view_display.node.person_profile.listing'
-        - 'config:core.entity_view_display.node.post.default'
-        - 'config:core.entity_view_display.node.post.featured_item'
-        - 'config:core.entity_view_display.node.status_item.default'
-        - 'config:core.entity_view_display.node.status_item.listing_long'
-        - 'config:core.entity_view_display.node.topic_page.default'
         - 'config:core.entity_view_display.node.article.article'
         - 'config:core.entity_view_display.node.article.calendar_listing'
         - 'config:core.entity_view_display.node.article.contact'
@@ -326,7 +310,9 @@ display:
         - 'config:core.entity_view_display.node.change.teaser'
         - 'config:core.entity_view_display.node.department_profile.article'
         - 'config:core.entity_view_display.node.department_profile.calendar_listing'
+        - 'config:core.entity_view_display.node.department_profile.card'
         - 'config:core.entity_view_display.node.department_profile.contact'
+        - 'config:core.entity_view_display.node.department_profile.default'
         - 'config:core.entity_view_display.node.department_profile.department_listing'
         - 'config:core.entity_view_display.node.department_profile.featured_item'
         - 'config:core.entity_view_display.node.department_profile.featured_topics'
@@ -334,9 +320,11 @@ display:
         - 'config:core.entity_view_display.node.department_profile.listing'
         - 'config:core.entity_view_display.node.department_profile.listing_long'
         - 'config:core.entity_view_display.node.department_profile.poll_stub'
+        - 'config:core.entity_view_display.node.department_profile.popup_icon'
         - 'config:core.entity_view_display.node.department_profile.published_by'
         - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
+        - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.event.default'
         - 'config:core.entity_view_display.node.event.featured_item'
@@ -369,6 +357,7 @@ display:
         - 'config:core.entity_view_display.node.listing_page.article'
         - 'config:core.entity_view_display.node.listing_page.calendar_listing'
         - 'config:core.entity_view_display.node.listing_page.contact'
+        - 'config:core.entity_view_display.node.listing_page.default'
         - 'config:core.entity_view_display.node.listing_page.department_listing'
         - 'config:core.entity_view_display.node.listing_page.featured_item'
         - 'config:core.entity_view_display.node.listing_page.featured_topics'
@@ -380,15 +369,23 @@ display:
         - 'config:core.entity_view_display.node.listing_page.topics_list'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
         - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
+        - 'config:core.entity_view_display.node.person_profile.default'
         - 'config:core.entity_view_display.node.person_profile.department_listing'
         - 'config:core.entity_view_display.node.person_profile.embed'
         - 'config:core.entity_view_display.node.person_profile.featured_item'
         - 'config:core.entity_view_display.node.person_profile.featured_topics'
+        - 'config:core.entity_view_display.node.person_profile.listing'
         - 'config:core.entity_view_display.node.person_profile.listing_long'
         - 'config:core.entity_view_display.node.person_profile.poll_stub'
         - 'config:core.entity_view_display.node.person_profile.popup_icon'
@@ -398,6 +395,8 @@ display:
         - 'config:core.entity_view_display.node.place_profile.default'
         - 'config:core.entity_view_display.node.place_profile.listing'
         - 'config:core.entity_view_display.node.place_profile.teaser'
+        - 'config:core.entity_view_display.node.post.default'
+        - 'config:core.entity_view_display.node.post.featured_item'
         - 'config:core.entity_view_display.node.post.listing'
         - 'config:core.entity_view_display.node.post.listing_short'
         - 'config:core.entity_view_display.node.post.rss'
@@ -417,9 +416,12 @@ display:
         - 'config:core.entity_view_display.node.site_alert.default'
         - 'config:core.entity_view_display.node.site_alert.embed'
         - 'config:core.entity_view_display.node.site_alert.teaser'
+        - 'config:core.entity_view_display.node.status_item.default'
         - 'config:core.entity_view_display.node.status_item.listing'
+        - 'config:core.entity_view_display.node.status_item.listing_long'
         - 'config:core.entity_view_display.node.status_item.teaser'
         - 'config:core.entity_view_display.node.tabbed_content.default'
+        - 'config:core.entity_view_display.node.topic_page.default'
         - 'config:core.entity_view_display.node.topic_page.featured_topics'
         - 'config:core.entity_view_display.node.topic_page.listing'
         - 'config:core.entity_view_display.node.topic_page.listing_long'
@@ -2088,6 +2090,8 @@ display:
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
         - 'config:core.entity_view_display.node.metrolist_unit.default'
         - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
@@ -5950,7 +5954,7 @@ display:
           admin_label: ''
           operator: or
           value:
-            33296: 33296
+            33266: 33266
           group: 1
           exposed: false
           expose:
@@ -6182,6 +6186,8 @@ display:
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
         - 'config:core.entity_view_display.node.metrolist_unit.default'
         - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
@@ -6750,6 +6756,8 @@ display:
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
         - 'config:core.entity_view_display.node.metrolist_unit.default'
         - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
@@ -7579,6 +7587,8 @@ display:
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
         - 'config:core.entity_view_display.node.metrolist_unit.default'
         - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
@@ -10472,7 +10482,7 @@ display:
           admin_label: ''
           operator: or
           value:
-            33296: 33296
+            33266: 33266
           group: 1
           exposed: false
           expose:
@@ -11739,7 +11749,7 @@ display:
           admin_label: ''
           operator: or
           value:
-            - '33296'
+            - '33266'
           group: 1
           exposed: false
           expose:
@@ -12644,7 +12654,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: 1
-          empty: ''
+          empty: 'null'
           hide_empty: 0
           empty_zero: 0
           hide_alter_empty: 1
@@ -12708,7 +12718,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: 1
-          empty: ''
+          empty: 'null'
           hide_empty: 0
           empty_zero: 0
           hide_alter_empty: 1
@@ -12729,7 +12739,7 @@ display:
           plugin_id: field
       display_description: ''
       style:
-        type: serializer
+        type: metrolist_serializer
         options:
           formats:
             json: json
@@ -12764,3 +12774,4 @@ display:
         - 'config:field.storage.node.field_ml_unit_type'
         - 'config:field.storage.node.field_ml_unit_user_guide_type'
         - 'config:field.storage.node.field_ml_units_json'
+
