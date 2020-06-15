@@ -5,6 +5,9 @@
  * Contains bos_metrolist.module.
  */
 
+use Drupal\webform\Plugin\WebformHandlerInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -16,8 +19,7 @@ use Drupal\webform\Entity\WebformSubmission;
 /**
  * Implements hook_help().
  */
-function bos_metrolist_help($route_name, RouteMatchInterface $route_match)
-{
+function bos_metrolist_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     // Main module help for the bos_metrolist module.
     case 'help.page.bos_metrolist':
@@ -33,8 +35,7 @@ function bos_metrolist_help($route_name, RouteMatchInterface $route_match)
 /**
  * Implements hook_theme().
  */
-function bos_metrolist_theme()
-{
+function bos_metrolist_theme() {
   return [
     'bos_metrolist' => [
       'render element' => 'children',
@@ -46,7 +47,7 @@ function bos_metrolist_theme()
       'base hook' => 'views'
     ],
     'views_view_metrolist_drawers' => [
-      'variables' => array('view' => NULL, 'rows' => NULL),
+      'variables' => ['view' => NULL, 'rows' => NULL],
       'path' => drupal_get_path('module', 'bos_metrolist') . '/templates',
     ],
     'paragraph__embed_view' => [
@@ -57,73 +58,46 @@ function bos_metrolist_theme()
     ],
     'form_element__webform_select' => [
       'base hook' => 'form',
-    ],
-//    'form_element__webform_checkboxes' => [
-//      'base hook' => 'form',
-//    ],
+    ]
   ];
 }
 
 /**
- * Implements hook_views_pre_render().
- * @param ViewExecutable $view
- */
-function bos_metrolist_views_pre_render(ViewExecutable $view)
-{
-//  $test = 3;
-//
-//  if ($view->current_display == 'attachment_1') {
-//    $test = 4;
-//  }
-//  if (isset($view) && ($view->id() != 'metrolist_ami')) {
-//    //$view->element['#attached']['library'][] = 'bos_metrolist/metrolist_views';
-//  }
-}
-
-/**
- * Implements hook_views_post_execute().
- * @param ViewExecutable $view
- */
-function bos_metrolist_views_post_execute(ViewExecutable $view)
-{
-//  if (isset($view) && ($view->id() != 'metrolist_ami')) {
-//    $view->element['#attached']['library'][] = 'bos_metrolist/metrolist_views';
-//  }
-}
-
-/**
  * Implements hook_preprocess_HOOK().
- * @param $variables
+ *
+ * @param array $variables
+ *   Render variables.
  */
-function bos_metrolist_preprocess_page(&$variables)
-{
+function bos_metrolist_preprocess_page(array &$variables) {
   if (isset($variables['node']) && $variables['node']->bundle() == 'metrolist_development') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
     $variables['attributes']['class'][] = 'mn';
   }
 
-  //@TODO: Find a better way to attach this class to the Webform MetroList Listing Page
+  // @TODO: Find a better way to attach this class to the Webform MetroList Listing Page
   if ($variables["page"]["#title"] == "MetroList Listing") {
     $variables['attributes']['class'][] = 'mn';
   }
 
-  //@TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
+  // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
   if (isset($variables['node']) && $variables["node"]->url() == '/metrolist') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
   }
 
 }
 
-
 /**
  * Implements hook_block_build_alter().
  */
-function bos_metrolist_form_taxonomy_term_ml_income_eligibility_ami_thold_form_alter(&$form, FormStateInterface $form_state, $form_id)
-{
+function bos_metrolist_form_taxonomy_term_ml_income_eligibility_ami_thold_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  $incomeFields = ['field_total_house_income_data', 'total_house_income_data_bpda', 'total_house_income_data_hud'];
+  $incomeFields = [
+      'field_total_house_income_data',
+      'total_house_income_data_bpda',
+      'total_house_income_data_hud'
+    ];
 
-  foreach ($incomeFields as $incomeField){
+  foreach ($incomeFields as $incomeField) {
     if (isset($form[$incomeField])) {
       foreach (Element::children($form[$incomeField]['widget']) as $key => $field) {
         $person_number = ($key + 1);
@@ -136,51 +110,9 @@ function bos_metrolist_form_taxonomy_term_ml_income_eligibility_ami_thold_form_a
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_hook()
  */
-function bos_metrolist_preprocess(&$variables, $hook)
-{
-  $test = $variables;
-}
-
-function bos_metrolist_preprocess_field(&$variables)
-{
-  //$test = $variables;
-}
-
-function bos_metrolist_preprocess_checkboxes(&$variables)
-{
-  $test = $variables;
-}
-
-function bos_metrolist_preprocess_form_element(&$variables)
-{
-//  $variables['element']['#theme'] = ['form_element__webform_checkbox', 'webform_checkbox'];
-//  $variables["theme_hook_original"] ='webform_checkbox';
-//  $test = $variables;
-}
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_metrolist_preprocess_views_view_field(&$variables)
-{
-//  $view = $variables['view'];
-//  $field = $variables['field'];
-}
-
-/**
- * Implements hook_entity_view_mode_alter().
- */
-function bos_metrolist_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\EntityInterface $entity, $context)
-{
-
-  //$test = $view_mode;
-
-
-}
-
-function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables)
-{
+function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
   template_preprocess_views_view_unformatted($variables);
 
   $view = $variables['view'];
@@ -192,11 +124,13 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables)
   $variables['show_all_units_button_text'] = $options['show_all_units_button_text'];
   $variables['hide_all_units_button_text'] = $options['hide_all_units_button_text'];
 
-
-  // Set the bounds via Query params
-  $bounds['beds'] = $view->getRequest()->get('bedrooms') ?? null;// 1+2+3
-  $bounds['ami'] = $view->getRequest()->get('ami') ?? null;// 30-120
-  $bounds['type'] = $view->getRequest()->get('type') ?? null;// rent / own
+  // Set the bounds via Query params.
+  // 1+2+3.
+  $bounds['beds'] = $view->getRequest()->get('bedrooms') ?? NULL;
+  // 30-120
+  $bounds['ami'] = $view->getRequest()->get('ami') ?? NULL;
+  // Rent / own.
+  $bounds['type'] = $view->getRequest()->get('type') ?? NULL;
 
   $rowGroups = [
     'inBounds' => [],
@@ -212,20 +146,20 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables)
 
   $variables['rows'] = $variables['inBoundsRows'];
 
-  $variables['email_button'] = $options['show_email_button'] ? bos_metrolist_build_email_button($variables) : null;
-  $variables['print_button'] = $options['show_print_button'] ? bos_metrolist_build_print_button($variables) : null;
-
+  $variables['email_button'] = $options['show_email_button'] ? bos_metrolist_build_email_button($variables) : NULL;
+  $variables['print_button'] = $options['show_print_button'] ? bos_metrolist_build_print_button($variables) : NULL;
 
 }
 
-function bos_metrolist_build_email_button($variables)
-{
-  $nid = $variables['view']->argument['nid']->value[0] ?? null;
-  $development = $variables["view"]->result[0]->_relationship_entities["field_ml_development"] ?? null;
+/**
+ * Build the email button.
+ */
+function bos_metrolist_build_email_button($variables) {
+  $nid = $variables['view']->argument['nid']->value[0] ?? NULL;
+  $development = $variables["view"]->result[0]->_relationship_entities["field_ml_development"] ?? NULL;
 
   $developmentTitle = $development->label();
   $developmentURL = $development->toUrl()->setOption('absolute', TRUE)->toString();
-
 
   $button = [];
 
@@ -244,7 +178,13 @@ function bos_metrolist_build_email_button($variables)
     '#tag' => 'img',
     '#attributes' => [
       'src' => 'https://assets.boston.gov/icons/experiential_icons/email.svg',
-      'style' => ['max-height: 42px;', 'margin: 0;', 'padding: 0;', 'display: block;', 'flex:1'],
+      'style' => [
+          'max-height: 42px;',
+          'margin: 0;',
+          'padding: 0;',
+          'display: block;',
+          'flex:1'
+      ],
       'class' => ['']
     ],
     'title' => $title,
@@ -263,27 +203,28 @@ function bos_metrolist_build_email_button($variables)
       'ml-action-btn',
       'hide-form'
     ],
-//    'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
+    // 'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
   ];
 
-
-  $button['#url'] = \Drupal\Core\Url::fromUri('mailto:')
+  $button['#url'] = Url::fromUri('mailto:')
     ->setOption('query', [
       'subject' => "Share Metrolist Listing - $developmentTitle",
       'body' => "Share Metrolist Listing - $developmentTitle ( $developmentURL )",
     ]);
 
   // Use to link to a webform
-  //$button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
-  //  ->setRouteParameter('webform', 'share_metrolist_listing')
-  //  ->setRouteParameter('source_entity_type', 'node')
-  //  ->setRouteParameter('source_entity_id', $nid);
+  // $button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
+  // ->setRouteParameter('webform', 'share_metrolist_listing')
+  // ->setRouteParameter('source_entity_type', 'node')
+  // ->setRouteParameter('source_entity_id', $nid);.
 
   return $button;
 }
 
-function bos_metrolist_build_print_button($variables)
-{
+/**
+ * Build print button.
+ */
+function bos_metrolist_build_print_button($variables) {
   $button = [];
 
   $title = [
@@ -301,7 +242,13 @@ function bos_metrolist_build_print_button($variables)
     '#tag' => 'img',
     '#attributes' => [
       'src' => 'https://assets.boston.gov/icons/experiential_icons/printer.svg',
-      'style' => ['max-height: 42px;', 'margin: 0;', 'padding: 0;', 'display: block;', 'flex:1'],
+      'style' => [
+          'max-height: 42px;',
+          'margin: 0;',
+          'padding: 0;',
+          'display: block;',
+          'flex:1'
+      ],
       'class' => ['']
     ],
     'title' => $title,
@@ -316,61 +263,69 @@ function bos_metrolist_build_print_button($variables)
       'btn btn--sm',
       'ml-action-btn'
     ],
-//    'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
+    // 'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
     'onclick' => 'window.print()',
   ];
 
-  $button['#url'] = \Drupal\Core\Url::fromUri('internal:#print');
+  $button['#url'] = Url::fromUri('internal:#print');
 
   return $button;
 }
 
-function bos_metrolist_set_views_row_group(&$rowGroups = [], $bounds = [], $row)
-{
-  $rowResult = $row['content']['#row'] ?? null;
-  $index = $rowResult->index ?? null;
+/**
+ * Split all rows into two groups.
+ */
+function bos_metrolist_set_views_row_group(&$rowGroups = [], $bounds = [], $row = []) {
+  $rowResult = $row['content']['#row'] ?? NULL;
+  $index = $rowResult->index ?? NULL;
 
-  $type = (strtolower($bounds['type']) == 'sale') ? 'own' : strtolower($bounds['type']); // Let value of 'sale' map to 'own' for the JsApp filter values
+  // Let value of 'sale' map to 'own' for the JsApp filter values.
+  $type = (strtolower($bounds['type']) == 'sale') ? 'own' : strtolower($bounds['type']);
   $type = strtolower($rowResult->_relationship_entities["field_ml_unit_occupancy_type"]->label()) == $type ? TRUE : FALSE;
-
 
   $amiValue = preg_replace('/\D/', '', $rowResult->_relationship_entities["field_ml_incm_elgblty_ami_thold"]->label());
   $amiBounds = explode('-', $bounds['ami']);
-  sort($amiBounds); //sort the ami bounds in case we are given them in the wrong order in the url filters
-  $amiLow = $amiBounds[0] ?? null;
-  $amiHigh = $amiBounds[1] ?? null;
+  // Sort the ami bounds in case we are given them in the wrong order in the url filters.
+  sort($amiBounds);
+  $amiLow = $amiBounds[0] ?? NULL;
+  $amiHigh = $amiBounds[1] ?? NULL;
 
   $ami = ($amiValue >= $amiLow && $amiValue <= $amiHigh) ? TRUE : FALSE;
-
 
   $bedsBounds = explode(' ', $bounds['beds']);
   $beds = in_array($rowResult->node__field_ml_unit_num_of_bedrooms_field_ml_unit_num_of_bed, $bedsBounds);
 
-
   if (!is_null($bounds['beds']) && !$beds) {
     $rowGroups['outOfBounds'][$index] = $row;
     return;
-  } elseif (!is_null($bounds['ami']) && !$ami) {
+  }
+  elseif (!is_null($bounds['ami']) && !$ami) {
     $rowGroups['outOfBounds'][$index] = $row;
     return;
-  } elseif (!is_null($bounds['type']) && !$type) {
+  }
+  elseif (!is_null($bounds['type']) && !$type) {
     $rowGroups['outOfBounds'][$index] = $row;
     return;
-  } else {
+  }
+  else {
     $rowGroups['inBounds'][$index] = $row;
     return;
   }
 
 }
 
-function bos_metrolist_create_listing_submission ($email = 'John.Smith@example.com') {
+/**
+ * Create a new Metrolist Listing form after requested via the email form.
+ */
+function bos_metrolist_create_listing_submission($email = 'John.Smith@example.com') {
 
   $webform_id = 'metrolist_listing';
   $webform = Webform::load($webform_id);
-// Create webform submission.
+  // Create webform submission.
   $values = [
     'webform_id' => $webform->id(),
-    'in_draft' => TRUE, //@TODO: not sure we need this... need to test
+  // @TODO: not sure we need this... need to test
+    'in_draft' => TRUE,
     'data' => [
       'contact_email' => $email,
     ],
@@ -383,28 +338,27 @@ function bos_metrolist_create_listing_submission ($email = 'John.Smith@example.c
   return $webform_submission;
 }
 
-
-
 /**
  * Implements hook_webform_handler_invoke_alter().
  */
-function bos_metrolist_webform_handler_invoke_alter(\Drupal\webform\Plugin\WebformHandlerInterface $handler, $method_name, array &$args)
-{
+function bos_metrolist_webform_handler_invoke_alter(WebformHandlerInterface $handler, $method_name, array &$args) {
   if ($method_name == 'pre_save') {
     $test = 2;
-    //$args[1]->data["hidden_subject"] = $args[1]->data["hidden_subject"] . "-ALTERD";
+    // $args[1]->data["hidden_subject"] = $args[1]->data["hidden_subject"] . "-ALTERD";
   }
 }
 
 /**
  * Implements hook_form_alter().
  */
-function bos_metrolist_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
-{
+function bos_metrolist_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $test = $form_state->getValues();
 }
 
-function bos_metrolist_webform_submission_presave (WebformSubmission $webform_submission) {
+/**
+ * Used to inject to Listing form token into the email from the email entry form.
+ */
+function bos_metrolist_webform_submission_presave(WebformSubmission $webform_submission) {
   if ($webform_submission->getWebform()->id() == 'metrolist_listing_entry_form') {
     $email = $webform_submission->getElementData('email');
     $token = bos_metrolist_create_listing_submission($email)->getToken();

@@ -12,7 +12,6 @@ use Drupal\salesforce_mapping\Entity\SalesforceMappingInterface;
 use Drupal\salesforce\Exception as SalesforceException;
 use Drupal\taxonomy\Entity\Term;
 
-
 /**
  * Adapter for entity Reference and fields.
  *
@@ -21,15 +20,12 @@ use Drupal\taxonomy\Entity\Term;
  *   label = @Translation("Related Term Strings (multilist)")
  * )
  */
-class RelatedTermStrings extends RelatedTermString
-{
-
+class RelatedTermStrings extends RelatedTermString {
 
   /**
    * {@inheritdoc}
    */
-  public function value(EntityInterface $entity, SalesforceMappingInterface $mapping)
-  {
+  public function value(EntityInterface $entity, SalesforceMappingInterface $mapping) {
     $field_name = $this->config('drupal_field_value');
     $instances = $this->entityFieldManager->getFieldDefinitions(
       $entity->getEntityTypeId(),
@@ -54,8 +50,7 @@ class RelatedTermStrings extends RelatedTermString
   /**
    * {@inheritdoc}
    */
-  public function pullValue(SObject $sf_object, EntityInterface $entity, SalesforceMappingInterface $mapping)
-  {
+  public function pullValue(SObject $sf_object, EntityInterface $entity, SalesforceMappingInterface $mapping) {
 
     if (!$this->pull() || empty($this->config('salesforce_field'))) {
       throw new SalesforceException('No data to pull. Salesforce field mapping is not defined.');
@@ -76,8 +71,7 @@ class RelatedTermStrings extends RelatedTermString
     // Get the appropriate vocab from the field settings.
     $vocabs = $instance->getSetting('handler_settings')['target_bundles'];
 
-
-    //Logic and looping of values goes here
+    // Logic and looping of values goes here.
     $sf_values = explode(';', $value);
     $term_ids = [];
 
@@ -88,7 +82,7 @@ class RelatedTermStrings extends RelatedTermString
       $query->condition('vid', $vocabs, 'IN');
       $query->condition('name', $sf_value);
       $tids = $query->execute();
-      $term_id = null;
+      $term_id = NULL;
 
       if (!empty($tids)) {
         $term_id = reset($tids);
@@ -111,6 +105,5 @@ class RelatedTermStrings extends RelatedTermString
 
     return $term_ids;
   }
-
 
 }
