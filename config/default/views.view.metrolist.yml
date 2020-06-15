@@ -292,6 +292,11 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
+        - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
         - 'config:core.entity_view_display.node.article.article'
         - 'config:core.entity_view_display.node.article.calendar_listing'
         - 'config:core.entity_view_display.node.article.contact'
@@ -369,12 +374,7 @@ display:
         - 'config:core.entity_view_display.node.listing_page.topics_list'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
-        - 'config:core.entity_view_display.node.metrolist_development.contact'
-        - 'config:core.entity_view_display.node.metrolist_development.default'
-        - 'config:core.entity_view_display.node.metrolist_development.map'
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
-        - 'config:core.entity_view_display.node.metrolist_unit.default'
-        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
         - 'config:core.entity_view_display.node.neighborhood_lookup.default'
         - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
@@ -3921,7 +3921,7 @@ display:
           exclude: true
           alter:
             alter_text: true
-            text: "{% set ami = field_ml_incm_elgblty_ami_thold|trim|replace({' AMI': ''}) %}\r\n{% set incomeRestricted = field_ml_unit_income_restricted|trim|lower %}\r\n\r\n{% if incomeRestricted == 'yes' %}\r\n    <div class=\"ml-unit-ami\">AMI {{ ami }}</div>\r\n{% else %}\r\n    <div class=\"ml-unit-ami\">Market price</div>\r\n{% endif %}"
+            text: "{% set ami = field_ml_incm_elgblty_ami_thold|trim|replace({' AMI': ''}) %}\r\n{% set incomeRestricted = field_ml_unit_income_restricted|trim|lower %}\r\n\r\n{% if incomeRestricted == 'yes' %}\r\n    <div class=\"ml-unit-ami\">{{ ami }} AMI</div>\r\n{% else %}\r\n    <div class=\"ml-unit-ami\">Market price</div>\r\n{% endif %}"
             make_link: false
             path: ''
             absolute: false
@@ -12654,7 +12654,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: 1
-          empty: 'null'
+          empty: ''
           hide_empty: 0
           empty_zero: 0
           hide_alter_empty: 1
@@ -12718,7 +12718,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: 1
-          empty: 'null'
+          empty: ''
           hide_empty: 0
           empty_zero: 0
           hide_alter_empty: 1
