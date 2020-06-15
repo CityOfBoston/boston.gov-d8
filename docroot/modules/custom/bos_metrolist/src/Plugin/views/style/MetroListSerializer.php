@@ -18,7 +18,6 @@ use Drupal\rest\Plugin\views\style\Serializer;
  */
 class MetroListSerializer extends Serializer {
 
-
   /**
    * {@inheritdoc}
    */
@@ -40,8 +39,9 @@ class MetroListSerializer extends Serializer {
           $value = is_string($field) ? $field : $field->__toString();
 
           if ($value === 'null') {
-            $row[$fieldName] = null;
-          }else{
+            $row[$fieldName] = NULL;
+          }
+          else {
             $row[$fieldName] = is_numeric($value) ? intval($value) : $field;
           }
 

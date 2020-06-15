@@ -24,7 +24,7 @@ class TermAMIThreshold extends Entity {
   /**
    * The taxonomy term storage.
    *
-   * @var TermStorageInterface
+   * @var \Drupal\taxonomy\TermStorageInterface
    */
   protected $termStorage;
 
@@ -68,18 +68,18 @@ class TermAMIThreshold extends Entity {
     if ($this->options['transform']) {
       $argument = str_replace('-', ' ', $argument);
     }
-    //$terms = $this->termStorage->loadByProperties(['name' => $argument]);
-    //$min_ami = reset($terms) ?? null;
+    // $terms = $this->termStorage->loadByProperties(['name' => $argument]);
+    // $min_ami = reset($terms) ?? null;
 
-    $terms = $this->termStorage->loadTree('ml_income_eligibility_ami_thold', 0, null, TRUE);
+    $terms = $this->termStorage->loadTree('ml_income_eligibility_ami_thold', 0, NULL, TRUE);
 
     if (!$terms) {
       // Returned empty array no terms with the name.
       return FALSE;
     }
-    //elseif ($min_ami = reset($terms)){
+    // Elseif ($min_ami = reset($terms)){
 
-    //}
+    // }
 
     // Not knowing which term will be used if more than one is returned check
     // each one.

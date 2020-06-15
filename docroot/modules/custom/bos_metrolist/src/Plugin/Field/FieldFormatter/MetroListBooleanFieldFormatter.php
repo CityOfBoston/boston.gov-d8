@@ -69,7 +69,7 @@ class MetroListBooleanFieldFormatter extends FormatterBase {
   /**
    * Generate the output appropriate for one field item.
    *
-   * @param FieldItemInterface $item
+   * @param \Drupal\Core\Field\FieldItemInterface $item
    *   One field item.
    *
    * @return string
