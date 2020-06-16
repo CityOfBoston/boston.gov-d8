@@ -71,7 +71,7 @@ var BostonEmergencyAlerts = (function () {
     };
     var aValues = [];
     for (let [key, value] of Object.entries(addressFields)) {
-      if(value == "") {
+      if (value == "") {
         aValues.push(`${key}`);
       }
     }
