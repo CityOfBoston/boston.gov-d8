@@ -69,18 +69,18 @@ function bos_metrolist_theme() {
  *   Render variables.
  */
 function bos_metrolist_preprocess_page(array &$variables) {
-  if (isset($variables['node']) && $variables['node']->bundle() == 'metrolist_development') {
+  if (isset($variables['node']) && !is_string($variables['node'])  && $variables['node']->bundle() == 'metrolist_development') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
     $variables['attributes']['class'][] = 'mn';
   }
 
   // @TODO: Find a better way to attach this class to the Webform MetroList Listing Page
-  if ($variables["page"]["#title"] == "MetroList Listing") {
+  if (isset($variables["page"]["#title"]) && $variables["page"]["#title"] == "MetroList Listing") {
     $variables['attributes']['class'][] = 'mn';
   }
 
   // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
-  if (isset($variables['node']) && $variables["node"]->url() == '/metrolist') {
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->url() == '/metrolist') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
   }
 
