@@ -1,0 +1,264 @@
+uuid: f385dc12-067d-431f-86be-9c5924f96022
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.metrolist_development.body
+    - field.field.node.metrolist_development.field_ml_address
+    - field.field.node.metrolist_development.field_ml_agent
+    - field.field.node.metrolist_development.field_ml_agent_address
+    - field.field.node.metrolist_development.field_ml_agent_email
+    - field.field.node.metrolist_development.field_ml_agent_phone
+    - field.field.node.metrolist_development.field_ml_available_units_view
+    - field.field.node.metrolist_development.field_ml_city
+    - field.field.node.metrolist_development.field_ml_due_at_signing
+    - field.field.node.metrolist_development.field_ml_features
+    - field.field.node.metrolist_development.field_ml_manager_email
+    - field.field.node.metrolist_development.field_ml_neighborhood
+    - field.field.node.metrolist_development.field_ml_num_of_ownership_units
+    - field.field.node.metrolist_development.field_ml_number_of_rental_units
+    - field.field.node.metrolist_development.field_ml_number_of_units
+    - field.field.node.metrolist_development.field_ml_region
+    - field.field.node.metrolist_development.field_ml_units_json
+    - field.field.node.metrolist_development.field_ml_utilities_included
+    - node.type.metrolist_development
+  module:
+    - address
+    - content_moderation
+    - path
+    - publication_date
+    - telephone
+    - text
+    - viewfield
+    - webform
+_core:
+  default_config_hash: 11OM2S9RcW4ahKyEH7A4uHk0D69Ad5au26StryYzsD0
+id: node.metrolist_development.default
+targetEntityType: node
+bundle: metrolist_development
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 31
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+    region: content
+  created:
+    type: datetime_timestamp
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_ml_address:
+    weight: 122
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_ml_agent:
+    weight: 129
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_ml_agent_address:
+    weight: 130
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_ml_agent_email:
+    weight: 131
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+    region: content
+  field_ml_agent_phone:
+    weight: 132
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+    region: content
+  field_ml_available_units_view:
+    weight: 123
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
+    region: content
+  field_ml_city:
+    weight: 125
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_ml_due_at_signing:
+    weight: 140
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_ml_features:
+    weight: 138
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_ml_manager_email:
+    weight: 141
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
+    region: content
+  field_ml_neighborhood:
+    weight: 126
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_ml_num_of_ownership_units:
+    weight: 135
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_ml_number_of_rental_units:
+    weight: 133
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_ml_number_of_units:
+    weight: 134
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_ml_region:
+    weight: 127
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_ml_units_json:
+    weight: 136
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
+    region: content
+  field_ml_utilities_included:
+    weight: 139
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 15
+    third_party_settings: {  }
+    region: content
+  published_at:
+    type: publication_date_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 16
+    third_party_settings: {  }
+    region: content
+  title:
+    type: string_textfield
+    weight: -5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  uid:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      match_limit: 10
+    third_party_settings: {  }
+    region: content
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }
