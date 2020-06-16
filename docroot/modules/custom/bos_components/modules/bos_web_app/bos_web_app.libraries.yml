@@ -2,7 +2,14 @@ bos_web_app:
   version: 1.x
   dependencies:
     - core/drupalSettings
-
+metrolist:
+  version: 1.x
+  js:
+    apps/metrolist/index.bundle.js: {attributes: {type: text/javascript }}
+    apps/metrolist/1.index.bundle.js: {attributes: {type: text/javascript}}
+    apps/metrolist/2.index.bundle.js: {attributes: {type: text/javascript}}
+  dependencies:
+    - core/drupalSettings
 my_neighborhood:
   version: 1.x
   js:
