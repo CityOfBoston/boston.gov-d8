@@ -162,7 +162,8 @@ class MNL extends React.Component {
       condition: "[field_sam_address][operator]=CONTAINS",
       value: "[field_sam_address][value]=" + addressQuery,
       fields: "[node--neighborhood_lookup]=field_sam_address,field_sam_id",
-      limit: "5"
+      limit: "10",
+      sort: "field_sam_address"
     };
     fetch(
       "/jsonapi/node/neighborhood_lookup?filter" +
@@ -171,7 +172,11 @@ class MNL extends React.Component {
         paramsQuery.value +
         "&fields" +
         paramsQuery.fields +
-        "&page[limit]=" + paramsQuery.limit
+        "&page[limit]=" + 
+        paramsQuery.limit +
+        "&sort=" +
+        paramsQuery.sort
+        
     )
       .then(res => res.json())
       .then(
