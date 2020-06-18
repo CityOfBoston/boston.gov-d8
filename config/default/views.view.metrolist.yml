@@ -292,11 +292,11 @@ display:
       tags:
         - 'config:core.entity_view_display.node.article.default'
         - 'config:core.entity_view_display.node.article.teaser'
+        - 'config:core.entity_view_display.node.department_profile.default'
+        - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.event.default'
-        - 'config:core.entity_view_display.node.listing_page.default'
         - 'config:core.entity_view_display.node.post.default'
         - 'config:core.entity_view_display.node.post.teaser'
-        - 'config:core.entity_view_display.node.public_notice.default'
         - 'config:core.entity_view_display.node.article.article'
         - 'config:core.entity_view_display.node.article.calendar_listing'
         - 'config:core.entity_view_display.node.article.contact'
@@ -315,7 +315,6 @@ display:
         - 'config:core.entity_view_display.node.department_profile.calendar_listing'
         - 'config:core.entity_view_display.node.department_profile.card'
         - 'config:core.entity_view_display.node.department_profile.contact'
-        - 'config:core.entity_view_display.node.department_profile.default'
         - 'config:core.entity_view_display.node.department_profile.department_listing'
         - 'config:core.entity_view_display.node.department_profile.featured_item'
         - 'config:core.entity_view_display.node.department_profile.featured_topics'
@@ -325,7 +324,6 @@ display:
         - 'config:core.entity_view_display.node.department_profile.poll_stub'
         - 'config:core.entity_view_display.node.department_profile.popup_icon'
         - 'config:core.entity_view_display.node.department_profile.published_by'
-        - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
@@ -359,6 +357,7 @@ display:
         - 'config:core.entity_view_display.node.listing_page.article'
         - 'config:core.entity_view_display.node.listing_page.calendar_listing'
         - 'config:core.entity_view_display.node.listing_page.contact'
+        - 'config:core.entity_view_display.node.listing_page.default'
         - 'config:core.entity_view_display.node.listing_page.department_listing'
         - 'config:core.entity_view_display.node.listing_page.featured_item'
         - 'config:core.entity_view_display.node.listing_page.featured_topics'
@@ -406,6 +405,7 @@ display:
         - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
         - 'config:core.entity_view_display.node.program_initiative_profile.default'
         - 'config:core.entity_view_display.node.program_initiative_profile.listing'
+        - 'config:core.entity_view_display.node.public_notice.default'
         - 'config:core.entity_view_display.node.public_notice.featured_item'
         - 'config:core.entity_view_display.node.public_notice.listing'
         - 'config:core.entity_view_display.node.public_notice.teaser'
@@ -8034,7 +8034,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: 1
-          empty: ''
+          empty: 'null'
           hide_empty: 0
           empty_zero: 0
           hide_alter_empty: 1
@@ -8086,3 +8086,4 @@ display:
         - 'config:field.storage.node.field_ml_unit_type'
         - 'config:field.storage.node.field_ml_unit_user_guide_type'
         - 'config:field.storage.node.field_ml_units_json'
+
