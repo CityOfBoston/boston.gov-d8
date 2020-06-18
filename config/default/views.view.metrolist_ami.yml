@@ -1,0 +1,4474 @@
+uuid: f158fe80-0864-41ed-928f-d7ec134c77f6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_total_house_income_data
+    - field.storage.taxonomy_term.total_house_income_data_bpda
+    - field.storage.taxonomy_term.total_house_income_data_hud
+    - taxonomy.vocabulary.ml_income_eligibility_ami_thold
+  module:
+    - bos_metrolist
+    - rest
+    - serialization
+    - taxonomy
+    - user
+id: metrolist_ami
+label: 'MetroList: AMI'
+module: views
+description: ''
+tag: ''
+base_table: taxonomy_term_field_data
+base_field: tid
+display:
+  default:
+    display_plugin: default
+    id: default
+    display_title: Master
+    position: 0
+    display_options:
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_comment: ''
+          query_tags: {  }
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        type: mini
+        options:
+          items_per_page: 10
+          offset: 0
+          id: 0
+          total_pages: null
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          tags:
+            previous: ‹‹
+            next: ››
+      style:
+        type: serializer
+      row:
+        type: fields
+        options:
+          inline: {  }
+          separator: ''
+          hide_empty: false
+          default_field_elements: true
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        field_total_house_income_data:
+          id: field_total_house_income_data
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_unformatted
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 6
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        delta:
+          id: delta
+          table: taxonomy_term__field_total_house_income_data
+          field: delta
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{% set delta = delta + 1 %} {{ delta }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          format_plural_string: !!binary MQNAY291bnQ=
+          prefix: ''
+          suffix: ''
+          plugin_id: numeric
+      filters:
+        status:
+          value: '1'
+          table: taxonomy_term_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: taxonomy_term
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          value:
+            ml_income_eligibility_ami_thold: ml_income_eligibility_ami_thold
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+      sorts: {  }
+      header: {  }
+      footer: {  }
+      empty: {  }
+      relationships: {  }
+      arguments: {  }
+      display_extenders: {  }
+      group_by: true
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - request_format
+        - url.query_args
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.field_total_house_income_data'
+  ami_table_bpda:
+    display_plugin: block
+    id: ami_table_bpda
+    display_title: 'AMI Table - BPDA'
+    position: 3
+    display_options:
+      display_extenders: {  }
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: 'ami-{{name}}'
+          default_row_class: false
+          override: false
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            name: name
+            total_house_income_data_bpda: total_house_income_data_bpda
+            total_house_income_data_bpda_1: total_house_income_data_bpda_1
+            total_house_income_data_bpda_2: total_house_income_data_bpda_2
+            total_house_income_data_bpda_3: total_house_income_data_bpda_3
+            total_house_income_data_bpda_4: total_house_income_data_bpda_4
+            total_house_income_data_bpda_5: total_house_income_data_bpda_5
+            name_1: name_1
+          info:
+            name:
+              sortable: false
+              default_sort_order: asc
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_bpda:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_bpda_1:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_bpda_2:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_bpda_3:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_bpda_4:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_bpda_5:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            name_1:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
+          empty_table: false
+      defaults:
+        style: false
+        row: false
+        group_by: false
+        fields: false
+        pager: false
+        sorts: false
+        title: false
+        css_class: false
+        header: false
+        footer: false
+        filters: false
+        filter_groups: false
+      row:
+        type: fields
+        options:
+          inline: {  }
+          separator: ''
+          hide_empty: false
+          default_field_elements: true
+      group_by: true
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '*AMI%'
+          exclude: false
+          alter:
+            alter_text: true
+            text: "{%  set ami_percent = name__value|replace({' AMI': ''}) %}\r\n{% if ami_percent == '100%' %}**{% endif %}\r\n{{ ami_percent }}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        total_house_income_data_bpda:
+          id: total_house_income_data_bpda
+          table: taxonomy_term__total_house_income_data_bpda
+          field: total_house_income_data_bpda
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '1 person'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_bpda_1:
+          id: total_house_income_data_bpda_1
+          table: taxonomy_term__total_house_income_data_bpda
+          field: total_house_income_data_bpda
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '2 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_bpda_2:
+          id: total_house_income_data_bpda_2
+          table: taxonomy_term__total_house_income_data_bpda
+          field: total_house_income_data_bpda
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '3 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 2
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_bpda_3:
+          id: total_house_income_data_bpda_3
+          table: taxonomy_term__total_house_income_data_bpda
+          field: total_house_income_data_bpda
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '4 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 3
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_bpda_4:
+          id: total_house_income_data_bpda_4
+          table: taxonomy_term__total_house_income_data_bpda
+          field: total_house_income_data_bpda
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '5 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 4
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_bpda_5:
+          id: total_house_income_data_bpda_5
+          table: taxonomy_term__total_house_income_data_bpda
+          field: total_house_income_data_bpda
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '6 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 5
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        name_1:
+          id: name_1
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: 'AMI Percent'
+          label: ''
+          exclude: true
+          alter:
+            alter_text: true
+            text: "{%  set ami_percent = name_1__value |replace({' AMI': '', '%': ''})|striptags|trim %}\r\n{{ ami_percent }}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        changed:
+          id: changed
+          table: taxonomy_term_field_data
+          field: changed
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Updated
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: timestamp
+          settings:
+            date_format: date_format_boston_short
+            custom_date_format: ''
+            timezone: ''
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: taxonomy_term
+          entity_field: changed
+          plugin_id: field
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+      title: 'Total household income (maximum)'
+      display_description: ''
+      css_class: ''
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: 'Section Title'
+          empty: false
+          tokenize: false
+          content:
+            value: "<div class=\"sh\">\r\n  <h2 class=\"sh-title\">Area Median Income tables</h2>\r\n</div>"
+            format: full_html
+          plugin_id: text
+        area_1:
+          id: area_1
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Description
+          empty: false
+          tokenize: true
+          content:
+            value: "{%  set updated_date = changed |striptags|trim %}\r\n\r\n<span class=\"supporting-text\">The Boston Planning & Development Agency (BPDA) area median income table (updated {{ updated_date }}). View the full <a href=\"http://www.bostonplans.org/housing/income,-asset,-and-price-limits\"  target=”_blank”>BPDA data set here</a>.</span>"
+            format: filtered_html
+          plugin_id: text
+        area_2:
+          id: area_2
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: 'Table Title'
+          empty: false
+          tokenize: false
+          content:
+            value: '<div class=''table-title''><i>Total household income (maximum)</i></div>'
+            format: full_html
+          plugin_id: text
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Notes
+          empty: false
+          tokenize: false
+          content:
+            value: '<span><i>*Area median income percentage (AMI%)</I><br /><i>**Boston area median income (average household income) 2019.</i></span>'
+            format: filtered_html
+          plugin_id: text
+      filters:
+        status:
+          value: '1'
+          table: taxonomy_term_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: taxonomy_term
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          value:
+            ml_income_eligibility_ami_thold: ml_income_eligibility_ami_thold
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        delta:
+          id: delta
+          table: taxonomy_term__total_house_income_data_bpda
+          field: delta
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: 'not empty'
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: numeric
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.total_house_income_data_bpda'
+  ami_table_hud:
+    display_plugin: block
+    id: ami_table_hud
+    display_title: 'AMI Table - HUD'
+    position: 2
+    display_options:
+      display_extenders: {  }
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: 'ami-{{name}}'
+          default_row_class: false
+          override: false
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            name: name
+            total_house_income_data_hud: total_house_income_data_hud
+            total_house_income_data_hud_1: total_house_income_data_hud_1
+            total_house_income_data_hud_2: total_house_income_data_hud_2
+            total_house_income_data_hud_3: total_house_income_data_hud_3
+            total_house_income_data_hud_4: total_house_income_data_hud_4
+            total_house_income_data_hud_5: total_house_income_data_hud_5
+          info:
+            name:
+              sortable: false
+              default_sort_order: asc
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_1:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_2:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_3:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_4:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_5:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
+          empty_table: false
+      defaults:
+        style: false
+        row: false
+        group_by: false
+        fields: false
+        pager: false
+        sorts: false
+        title: false
+        header: false
+        footer: false
+        filters: false
+        filter_groups: false
+      row:
+        type: fields
+        options:
+          inline: {  }
+          separator: ''
+          hide_empty: false
+          default_field_elements: true
+      group_by: true
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '*AMI%'
+          exclude: false
+          alter:
+            alter_text: true
+            text: "{%  set ami_percent = name__value|replace({' AMI': ''}) %}\r\n{% if ami_percent == '100%' %}**{% endif %}\r\n{{ ami_percent }}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        total_house_income_data_hud:
+          id: total_house_income_data_hud
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '1 person'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_1:
+          id: total_house_income_data_hud_1
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '2 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_2:
+          id: total_house_income_data_hud_2
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '3 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 2
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_3:
+          id: total_house_income_data_hud_3
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '4 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 3
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_4:
+          id: total_house_income_data_hud_4
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '5 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 4
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_5:
+          id: total_house_income_data_hud_5
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '6 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 5
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+      title: 'Total household income (maximum)'
+      display_description: ''
+      header:
+        area_1:
+          id: area_1
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Description
+          empty: false
+          tokenize: true
+          content:
+            value: '<span class="supporting-text">The United States Department of Housing and Urban Development (HUD) area median income table for the Boston area (updated 10/01/19). View the full <a href="https://www.boston.gov/sites/default/files/embed/h/hud_rent_income_limits.pdf"  target=”_blank”>HUD data set here</a>.</span>'
+            format: full_html
+          plugin_id: text
+        area_2:
+          id: area_2
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: 'Table Title'
+          empty: false
+          tokenize: false
+          content:
+            value: '<div class=''table-title''><i>Total household income (maximum)</i></div>'
+            format: full_html
+          plugin_id: text
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Notes
+          empty: false
+          tokenize: false
+          content:
+            value: '<span><i>*Area median income percentage (AMI%)</I><br /><i>**Boston area median income (average household income) 2019.</i></span>'
+            format: full_html
+          plugin_id: text
+      filters:
+        status:
+          value: '1'
+          table: taxonomy_term_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: taxonomy_term
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          value:
+            ml_income_eligibility_ami_thold: ml_income_eligibility_ami_thold
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        delta:
+          id: delta
+          table: taxonomy_term__total_house_income_data_hud
+          field: delta
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: 'not empty'
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: numeric
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.total_house_income_data_hud'
+  block_1:
+    display_plugin: block
+    id: block_1
+    display_title: Block
+    position: 4
+    display_options:
+      display_extenders: {  }
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          override: false
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            name: name
+            field_total_house_income_data: field_total_house_income_data
+            field_total_house_income_data_1: field_total_house_income_data_1
+            field_total_house_income_data_2: field_total_house_income_data_2
+            field_total_house_income_data_3: field_total_house_income_data_3
+            field_total_house_income_data_4: field_total_house_income_data_4
+            field_total_house_income_data_5: field_total_house_income_data_5
+          info:
+            name:
+              sortable: false
+              default_sort_order: asc
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_total_house_income_data:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_total_house_income_data_1:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_total_house_income_data_2:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_total_house_income_data_3:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_total_house_income_data_4:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_total_house_income_data_5:
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
+          empty_table: false
+      defaults:
+        style: false
+        row: false
+        group_by: false
+        fields: false
+        pager: false
+        sorts: false
+        title: false
+      row:
+        type: fields
+        options:
+          inline: {  }
+          separator: ''
+          hide_empty: false
+          default_field_elements: true
+      group_by: false
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: AMI%
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ name__value | replace({'' AMI'': ''''}) }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        field_total_house_income_data:
+          id: field_total_house_income_data
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '1 person'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_1:
+          id: field_total_house_income_data_1
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '2 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_2:
+          id: field_total_house_income_data_2
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '3 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 2
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_3:
+          id: field_total_house_income_data_3
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '4 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 3
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_4:
+          id: field_total_house_income_data_4
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '5 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 4
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_5:
+          id: field_total_house_income_data_5
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '6 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 5
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+      title: 'Total household income (maximum)'
+      enabled: false
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.field_total_house_income_data'
+  block_2:
+    display_plugin: block
+    id: block_2
+    display_title: 'AMI Table - HUD (dynamic)'
+    position: 2
+    display_options:
+      display_extenders: {  }
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: 'ami-{{name}}'
+          default_row_class: false
+          override: false
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            name: name
+            total_house_income_data_hud: total_house_income_data_hud
+            total_house_income_data_hud_1: total_house_income_data_hud_1
+            total_house_income_data_hud_2: total_house_income_data_hud_2
+            total_house_income_data_hud_3: total_house_income_data_hud_3
+            total_house_income_data_hud_4: total_house_income_data_hud_4
+            total_house_income_data_hud_5: total_house_income_data_hud_5
+          info:
+            name:
+              sortable: false
+              default_sort_order: asc
+              align: views-align-center
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_1:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_2:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_3:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_4:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            total_house_income_data_hud_5:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
+          empty_table: false
+      defaults:
+        style: false
+        row: false
+        group_by: false
+        fields: false
+        pager: false
+        sorts: false
+        title: false
+        header: false
+        footer: false
+      row:
+        type: fields
+        options:
+          inline: {  }
+          separator: ''
+          hide_empty: false
+          default_field_elements: true
+      group_by: false
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '*AMI%'
+          exclude: false
+          alter:
+            alter_text: true
+            text: "{%  set ami_percent = name__value|replace({' AMI': ''}) %}\r\n{% if ami_percent == '100%' %}**{% endif %}\r\n{{ ami_percent }}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        total_house_income_data_hud:
+          id: total_house_income_data_hud
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '1 person'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_1:
+          id: total_house_income_data_hud_1
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '2 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_2:
+          id: total_house_income_data_hud_2
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '3 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 2
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_3:
+          id: total_house_income_data_hud_3
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '4 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 3
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_4:
+          id: total_house_income_data_hud_4
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '5 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 4
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_5:
+          id: total_house_income_data_hud_5
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '6 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 5
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+      title: 'Total household income (maximum)'
+      display_description: ''
+      header:
+        area_1:
+          id: area_1
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Description
+          empty: false
+          tokenize: true
+          content:
+            value: "{%  set updated_date = changed |striptags|trim %}\r\n\r\n<span class=\"supporting-text\">The United States Department of Housing and Urban Development (HUD) area median income table for the Boston area (updated {{ updated_date }}):</span>"
+            format: full_html
+          plugin_id: text
+        area_2:
+          id: area_2
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: 'Table Title'
+          empty: false
+          tokenize: false
+          content:
+            value: '<div class=''table-title''><i>Total household income (maximum)</i></div>'
+            format: full_html
+          plugin_id: text
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Notes
+          empty: false
+          tokenize: false
+          content:
+            value: '<span><i>*Area median income percentage (AMI%)</I><br /><i>**Boston area median income (average household income) 2019.</i></span>'
+            format: full_html
+          plugin_id: text
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.total_house_income_data_hud'
+  ml_ami_hud_base:
+    display_plugin: rest_export
+    id: ml_ami_hud_base
+    display_title: 'API: AMI HUD Base'
+    position: 1
+    display_options:
+      display_extenders: {  }
+      style:
+        type: metrolist_serializer
+        options:
+          formats:
+            json: json
+      defaults:
+        style: false
+        row: false
+        group_by: false
+        fields: false
+        pager: false
+        sorts: false
+        title: false
+        header: false
+        footer: false
+        filters: false
+        filter_groups: false
+      row:
+        type: data_field
+        options:
+          field_options:
+            name:
+              alias: ami
+              raw_output: false
+            total_house_income_data_hud:
+              alias: '1'
+              raw_output: false
+            total_house_income_data_hud_1:
+              alias: '2'
+              raw_output: false
+            total_house_income_data_hud_2:
+              alias: '3'
+              raw_output: false
+            total_house_income_data_hud_3:
+              alias: '4'
+              raw_output: false
+            total_house_income_data_hud_4:
+              alias: '5'
+              raw_output: false
+            total_house_income_data_hud_5:
+              alias: '6'
+              raw_output: false
+      group_by: false
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '*AMI%'
+          exclude: false
+          alter:
+            alter_text: true
+            text: "{%  set ami_percent = name__value|replace({'% AMI':''}) %}\r\n{{ ami_percent }}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        total_house_income_data_hud:
+          id: total_house_income_data_hud
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '1 person'
+          exclude: false
+          alter:
+            alter_text: false
+            text: '{{ total_house_income_data_hud|int }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_1:
+          id: total_house_income_data_hud_1
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '2 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_2:
+          id: total_house_income_data_hud_2
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '3 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 2
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_3:
+          id: total_house_income_data_hud_3
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '4 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 3
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_4:
+          id: total_house_income_data_hud_4
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '5 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 4
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        total_house_income_data_hud_5:
+          id: total_house_income_data_hud_5
+          table: taxonomy_term__total_house_income_data_hud
+          field: total_house_income_data_hud
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '6 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 5
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+      title: 'Total household income (maximum)'
+      display_description: ''
+      header:
+        area_1:
+          id: area_1
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Description
+          empty: false
+          tokenize: true
+          content:
+            value: "{%  set updated_date = changed |striptags|trim %}\r\n\r\n<span class=\"supporting-text\">The United States Department of Housing and Urban Development (HUD) area median income table for the Boston area (updated {{ updated_date }}):</span>"
+            format: full_html
+          plugin_id: text
+        area_2:
+          id: area_2
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: 'Table Title'
+          empty: false
+          tokenize: false
+          content:
+            value: '<div class=''table-title''><i>Total household income (maximum)</i></div>'
+            format: full_html
+          plugin_id: text
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: Notes
+          empty: false
+          tokenize: false
+          content:
+            value: '<span><i>*Area median income percentage (AMI%)</I><br /><i>**Boston area median income (average household income) 2019.</i></span>'
+            format: full_html
+          plugin_id: text
+      path: metrolist/api/v1/ami/hud/base
+      filters:
+        status:
+          value: '1'
+          table: taxonomy_term_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: taxonomy_term
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          value:
+            ml_income_eligibility_ami_thold: ml_income_eligibility_ami_thold
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: 'Show 100% only as Base'
+          operator: '='
+          value: '100% AMI'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: string
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - request_format
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.total_house_income_data_hud'
+  rest_export_1:
+    display_plugin: rest_export
+    id: rest_export_1
+    display_title: 'REST export'
+    position: 5
+    display_options:
+      display_extenders: {  }
+      path: metro/api/v1/ami
+      pager:
+        type: none
+        options:
+          offset: 0
+      style:
+        type: serializer
+        options:
+          grouping: {  }
+          uses_fields: false
+          formats: {  }
+      row:
+        type: data_field
+        options:
+          field_options:
+            name:
+              alias: AMIPercent
+              raw_output: false
+            field_total_house_income_data:
+              alias: maxIncome
+              raw_output: false
+            delta:
+              alias: people
+              raw_output: false
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ name__value | replace({''% AMI'': ''''}) }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        field_total_house_income_data:
+          id: field_total_house_income_data
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 6
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        delta:
+          id: delta
+          table: taxonomy_term__field_total_house_income_data
+          field: delta
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{% set delta = delta + 1 %} {{ delta }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          set_precision: false
+          precision: 0
+          decimal: .
+          separator: ''
+          format_plural: false
+          format_plural_string: !!binary MQNAY291bnQ=
+          prefix: ''
+          suffix: ''
+          plugin_id: numeric
+      defaults:
+        fields: false
+        group_by: false
+      group_by: true
+      enabled: false
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - request_format
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.field_total_house_income_data'
+  rest_export_2:
+    display_plugin: rest_export
+    id: rest_export_2
+    display_title: 'REST export 2'
+    position: 6
+    display_options:
+      display_extenders: {  }
+      style:
+        type: serializer
+        options:
+          formats: {  }
+      defaults:
+        style: false
+        row: false
+        group_by: false
+        fields: false
+        pager: false
+        sorts: false
+        title: false
+      row:
+        type: data_field
+        options:
+          field_options:
+            name:
+              alias: ami
+              raw_output: false
+            field_total_house_income_data:
+              alias: people_1
+              raw_output: false
+            field_total_house_income_data_1:
+              alias: people_2
+              raw_output: false
+            field_total_house_income_data_2:
+              alias: people_3
+              raw_output: false
+            field_total_house_income_data_3:
+              alias: people_4
+              raw_output: false
+            field_total_house_income_data_4:
+              alias: people_5
+              raw_output: false
+            field_total_house_income_data_5:
+              alias: people_6
+              raw_output: false
+      group_by: false
+      fields:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: AMI
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ name__value | replace({''% AMI'': ''''}) }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          convert_spaces: false
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: term_name
+        field_total_house_income_data:
+          id: field_total_house_income_data
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '1 person'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_1:
+          id: field_total_house_income_data_1
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '2 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 1
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_2:
+          id: field_total_house_income_data_2
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '3 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 2
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_3:
+          id: field_total_house_income_data_3
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '4 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 3
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_4:
+          id: field_total_house_income_data_4
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '5 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 4
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_total_house_income_data_5:
+          id: field_total_house_income_data_5
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: '6 people'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_decimal
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+            decimal_separator: .
+            scale: 0
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 1
+          delta_offset: 5
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        weight:
+          id: weight
+          table: taxonomy_term_field_data
+          field: weight
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: taxonomy_term
+          entity_field: weight
+          plugin_id: standard
+      title: 'Total household income (maximum)'
+      path: metro/api/v1/ami2
+      enabled: false
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - request_format
+        - user.permissions
+      tags:
+        - 'config:field.storage.taxonomy_term.field_total_house_income_data'
