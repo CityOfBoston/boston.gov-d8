@@ -23,7 +23,6 @@ dependencies:
     - node
     - svg_image
     - user
-    - views_infinite_scroll
 _core:
   default_config_hash: bYQSPj_mviXKy0oTsR0_psiB3eBxBWTgt5-DGjPqoYQ
 id: events_and_notices
@@ -655,28 +654,47 @@ display:
         - 'config:field.storage.node.field_intro_image'
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
-  referenced:
+  referenced_nosort:
     display_plugin: block
-    id: referenced
+    id: referenced_nosort
     display_title: Referenced
-    position: 1
+    position: 2
     display_options:
       display_extenders: {  }
       display_description: ''
       title: Referenced
       defaults:
         title: false
+        relationships: false
         arguments: false
         filters: false
         filter_groups: false
-        pager: false
-        use_ajax: false
-        css_class: false
         fields: false
         sorts: false
-        exposed_form: false
-        group_by: false
-        header: false
+        pager: false
+        css_class: false
+        use_ajax: false
+        query: false
+      relationships:
+        field_related:
+          id: field_related
+          table: node__field_related
+          field: field_related
+          relationship: none
+          group_type: group
+          admin_label: 'field_related: Content'
+          required: false
+          plugin_id: standard
+        field_event_date_recur_occurrences:
+          id: field_event_date_recur_occurrences
+          table: node_field_data
+          field: field_event_date_recur_occurrences
+          relationship: none
+          group_type: group
+          admin_label: 'Occurrences of Event Date'
+          required: false
+          entity_type: node
+          plugin_id: standard
       arguments:
         field_related_target_id:
           id: field_related_target_id
@@ -745,6 +763,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -753,8 +773,6 @@ display:
               authenticated: authenticated
             reduce: false
             argument: null
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -781,27 +799,27 @@ display:
           value:
             min: ''
             max: ''
-            value: '-90 days'
+            value: '-30 minutes'
             type: offset
           group: 2
           exposed: false
           expose:
-            operator_id: field_public_notice_date_value_op
-            label: 'Date (field_public_notice_date)'
-            description: null
+            operator_id: ''
+            label: ''
+            description: ''
             use_operator: false
-            operator: field_public_notice_date_value_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_public_notice_date_value
+            operator: ''
+            identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: null
-            min_placeholder: null
-            max_placeholder: null
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -815,8 +833,8 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
-        field_event_date_recur_value:
-          id: field_event_date_recur_value
+        field_event_date_recur_value_2:
+          id: field_event_date_recur_value_2
           table: node__field_event_date_recur
           field: field_event_date_recur_value
           relationship: none
@@ -826,9 +844,99 @@ display:
           value:
             min: ''
             max: ''
-            value: '-90 days'
-            type: offset
+            value: '-5 years'
+            type: date
           group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_public_notice_date_value_1:
+          id: field_public_notice_date_value_1
+          table: node__field_public_notice_date
+          field: field_public_notice_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: '-30 minutes'
+            type: offset
+          group: 3
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_event_date_recur_value_1:
+          id: field_event_date_recur_value_1
+          table: date_recur__node__field_event_date_recur
+          field: field_event_date_recur_value
+          relationship: field_event_date_recur_occurrences
+          group_type: group
+          admin_label: ''
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: '-30 minutes'
+            type: offset
+          group: 3
           exposed: false
           expose:
             operator_id: ''
@@ -865,30 +973,138 @@ display:
         groups:
           1: AND
           2: OR
-      pager:
-        type: infinite_scroll
-        options:
-          items_per_page: 4
-          offset: 0
-          id: 0
-          total_pages: null
-          tags:
-            previous: '‹ Previous'
-            next: 'Next ›'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          views_infinite_scroll:
-            button_text: 'Show @next_page_count more of the @total upcoming Events'
-            automatically_load_content: false
-      use_ajax: true
-      css_class: referenced-events-notices
+          3: OR
       fields:
+        field_cancel_event:
+          id: field_cancel_event
+          table: node__field_cancel_event
+          field: field_cancel_event
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: boolean
+          settings:
+            format: true-false
+            format_custom_true: ''
+            format_custom_false: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_cancelled:
+          id: field_cancelled
+          table: node__field_cancelled
+          field: field_cancelled
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: boolean
+          settings:
+            format: true-false
+            format_custom_true: ''
+            format_custom_false: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -899,8 +1115,8 @@ display:
           label: ''
           exclude: false
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '{% if field_cancel_event == "True" or field_cancelled == "True" %}<span class="red">CANCELED: </span>{% endif %}{{ title|striptags }}'
             make_link: false
             path: ''
             absolute: false
@@ -938,9 +1154,31 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: advanced_text
           settings:
-            link_to_entity: false
+            trim_length: '150'
+            ellipsis: 1
+            word_boundary: 1
+            use_summary: 0
+            token_replace: 0
+            filter: drupal
+            format: full_html
+            allowed_html:
+              - a
+              - b
+              - br
+              - dd
+              - dl
+              - dt
+              - em
+              - i
+              - li
+              - ol
+              - p
+              - strong
+              - u
+              - ul
+            autop: 0
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1011,7 +1249,7 @@ display:
             svg_attributes:
               width: null
               height: null
-          group_column: entity_id
+          group_column: ''
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -1128,7 +1366,7 @@ display:
           settings:
             image_style: card_grid_2w_horizonal_1x
             image_link: ''
-          group_column: entity_id
+          group_column: ''
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -1146,7 +1384,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: 'Date:'
           exclude: false
           alter:
             alter_text: true
@@ -1190,10 +1428,10 @@ display:
           click_sort_column: value
           type: daterange_default
           settings:
-            timezone_override: ''
+            timezone_override: America/New_York
             format_type: date_format_boston_featured
             separator: '-'
-          group_column: entity_id
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -1211,7 +1449,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: 'Event Date:'
           exclude: false
           alter:
             alter_text: true
@@ -1259,11 +1497,11 @@ display:
             occurrence_format_type: date_format_boston_featured
             same_end_date_format_type: date_format_boston_featured
             separator: '-'
-            timezone_override: ''
-            interpreter: ''
+            timezone_override: America/New_York
+            interpreter: default_interpreter
             show_next: 5
             count_per_item: true
-          group_column: entity_id
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -1274,29 +1512,85 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_event_date_recur_value:
+          id: field_event_date_recur_value
+          table: date_recur__node__field_event_date_recur
+          field: field_event_date_recur_value
+          relationship: field_event_date_recur_occurrences
+          group_type: group
+          admin_label: ''
+          label: 'Occurrence: '
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          date_format: date_format_boston_featured
+          custom_date_format: ''
+          timezone: America/New_York
+          plugin_id: date_recur_date
       sorts: {  }
-      exposed_form:
-        type: basic
+      pager:
+        type: some
         options:
-          submit_button: Apply
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: false
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      group_by: false
-      header: {  }
+          items_per_page: 4
+          offset: 0
+      css_class: referenced-events-notices
+      use_ajax: true
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+          distinct: true
+          replica: false
+          query_comment: ''
+          query_tags: null
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - url.query_args
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_cancel_event'
+        - 'config:field.storage.node.field_cancelled'
         - 'config:field.storage.node.field_event_date_recur'
         - 'config:field.storage.node.field_intro_image'
         - 'config:field.storage.node.field_public_notice_date'
