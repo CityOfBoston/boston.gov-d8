@@ -23,11 +23,11 @@ What:  Locates top of page considering the admin toolbar.
 .toolbar-fixed .nv-m {
   top: 2.15em;
 }
-.logged-in.page-error.toolbar-fixed.toolbar-tray-open #main-menu,
 .toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
 .toolbar-fixed.toolbar-tray-open .nv-m {
   top: 4.4em;
 }
+.logged-in.page-error.toolbar-fixed.toolbar-tray-open #main-menu {top: 0;}
 .toolbar-toggle-orientation {
   visibility: hidden;
   display: none;
@@ -1259,8 +1259,8 @@ What: Adding style to view-row that is suddenly wrapping divs with .n-li class
 
 /**
 Stella
-Where: Top Navigation
-What: Adding boston.gov only aatribute override
+Where: Top Navigation.
+What: Adding boston.gov only aatribute override.
 */
 
 .translate-dropdown-menu {
@@ -1281,8 +1281,8 @@ What: Adding boston.gov only aatribute override
 
 /**
 Stella
-Where: Top Navigation
-What: Updating CSS for accessibility.
+Where: Menu Navigation.
+What: Updating CSS for accessibility and.
  */
 
 div.sw-skipnav-outerbar {
@@ -1303,12 +1303,17 @@ a.sw-skipnav {
   text-decoration: none;
 }
 
-#page #main-menu.sticky {
-  position: fixed;
-}
+#page #main-menu.sticky {position: fixed;}
+.brg-tr:checked ~ .mn #main-menu.sticky.h {left: 300px;}
 
-.brg-tr:checked~.mn #main-menu.sticky.h {
-  left: 300px
+.logged-in.toolbar-fixed #page #main-menu.sticky {top: 6.5em;}
+.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #page #main-menu.sticky {top: 8.8em;}
+.logged-in.toolbar-fixed #main-menu.sticky {top:4.3em;}
+
+@media screen and (max-width: 480px) {
+  .brg-tr:checked ~ .mn #main-menu.sticky.h {
+    left: 256px;
+  }
 }
 
 /**
