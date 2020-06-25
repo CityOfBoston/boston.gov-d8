@@ -132,7 +132,7 @@ class MNL extends React.Component {
       .then(res => res.json())
       .then(
         result => {
-          if (result.response){
+          if (result.response && result.response.events.length > 0){
             this.setState({
               isLoadingRecollect: false,
               itemsRecollect: result.response.events[0],
@@ -317,8 +317,13 @@ class MNL extends React.Component {
         itemsLookupMarkup = <div className="supporting-text">No address was found by that name.</div>;
       }
     }
-    let recollectDate = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.day);
-    let recollectServices = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect.flags);
+    let recollectEvents = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect);
+    let recollectDate = null;
+    let recollectServices = null;
+    if(recollectEvents !== null && this.state.isLoadingRecollect !== true){
+      recollectDate = this.state.itemsRecollect.day;
+      recollectServices = this.state.itemsRecollect.flags
+    }
     let mnlDisplay = this.state.submittedAddress ? (
       <div>
       {history.pushState({id: 'sections'}, '', configProps.path+'?p2')}
