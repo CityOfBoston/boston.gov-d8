@@ -83,3 +83,6 @@
     fi
     ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
     chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
+
+    # Restart apache to get those files loaded.
+    service apache2 stop && service apache2 start
