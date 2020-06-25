@@ -27,7 +27,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
-    . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
 
     # Create additional working variables.
     target_env="local"
@@ -292,7 +292,7 @@
     # Whichever build method employed, the modules in <config/default/core.extensions.yml> will have been enabled.
     # However, there is no guarantee that those modules are entirely approproate for developers.  So this step allows us
     # to specifically enable the modules needed by developers.
-    # Function 'devModules' is contained in cob_utilities.sh
+    # Function 'devModules' is contained in /scripts/deploy/cob_utilities.sh
     printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
     devModules "@self"
     # Set the local build to use a local patterns (if the node container has fleet running in it).
