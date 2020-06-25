@@ -30,7 +30,7 @@
         exit 0
     fi
 
-    if [[ ! -d ${patterns_local_repo_local_dir} ]]; then exit 0; fi
+    if [[ ! -d ${patterns_local_repo_local_dir} ]]; then printf "No folder ${patterns_local_repo_local_dir}\n"; tail -f /dev/null ; exit 0; fi
 
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "LANDO" "Project Event - patterns post-start\n"
