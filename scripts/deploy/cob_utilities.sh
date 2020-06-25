@@ -589,8 +589,10 @@ slackPost() {
 devModules() {
     printf " [action] Enable DEVELOPMENT-ONLY modules.\n"
 
+    ALIAS="${1}"
+
     if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${1}"; fi
+    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${ALIAS}"; fi
     DRUSH_OPT="-y"
     if [ "${target_env}" == "local" ]; then
         DRUSH_OPT="-y --quiet --no-interaction"

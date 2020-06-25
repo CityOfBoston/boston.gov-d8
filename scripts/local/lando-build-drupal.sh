@@ -124,6 +124,16 @@
     clone_private_repo &> ${setup_logs}/drush_site_install.log
     printout "SUCCESS" "Repo merged.\n"
 
+    # Update the drush.yml file.
+    printout "INFO" "Update the drush configuration and aliases."
+    drush_file=${LANDO_MOUNT}/drush/drush.yml
+    drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
+    rm -rf ${drush_file}
+    printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
+    printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'\n\n" >> ${drush_file}
+    cat ${drush_cob} >> ${drush_file}
+    printout "SUCCESS" "Drush file updated.\n"
+
     # Create/update settings, private settings and local settings files.
     # 'build_settings' function is contained in lando_utilities.sh.
     printout "INFO" "Update settings files."
@@ -228,7 +238,7 @@
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
         ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_site_install.log &&
-            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y --structure-tables-list=node__field_sam_neighborhood_data,node_revision__field_sam_neighborhood_data >> ${setup_logs}/drush_site_install.log
+            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y --skip-tables-key=common --structure-tables-key=common >> ${setup_logs}/drush_site_install.log
 
         # See how we faired.
         if [[ $? -eq 0 ]]; then
@@ -242,7 +252,7 @@
 
     # Import configurations from the project repo into the database.
     printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time ..."
-    printf "         -> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
+    printf "         -> follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
 
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
 
@@ -313,14 +323,6 @@
 #    printout "INFO" "Rebuild user access on nodes."
 #    ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config_import.log
 #    printout "SUCCESS" "Updates run.\n"
-
-    # Update the drush.yml file.
-    printout "INFO" "Update the drush configuration and aliases."
-    drush_file=${LANDO_MOUNT}/drush/drush.yml
-    rm -rf ${drush_file}
-    printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
-    printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'" >> ${drush_file}
-    printout "SUCCESS" "Drush file updated.\n"
 
     # Capture the build info into a file to be printed at end of build process.
     printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >> ${setup_logs}/uli.log
