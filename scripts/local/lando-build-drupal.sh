@@ -228,7 +228,7 @@
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
         ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_site_install.log &&
-            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y >> ${setup_logs}/drush_site_install.log
+            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y --structure-tables-list=node__field_sam_neighborhood_data,node_revision__field_sam_neighborhood_data >> ${setup_logs}/drush_site_install.log
 
         # See how we faired.
         if [[ $? -eq 0 ]]; then
