@@ -14,7 +14,7 @@
     printout "INFO" "Database will be copied from staging to local, setup for development and updated with configuration in latest branch."
 
     # Download remote DB
-    ${drush_cmd} sql:sync @bostond8.prod @self -y
+    ${drush_cmd} sql:sync @bostond8.prod @self -y --structure-tables-list=node__field_sam_neighborhood_data,node_revision__field_sam_neighborhood_data
 
     # Update database with local settings
     sync_db "@self"
