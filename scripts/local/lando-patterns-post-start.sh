@@ -20,7 +20,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
-    . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
     target_env="local"
 
     printf "\n"

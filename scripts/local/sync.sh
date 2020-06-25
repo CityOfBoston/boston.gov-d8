@@ -9,7 +9,7 @@
     fi
 
     . "/app/scripts/cob_build_utilities.sh"
-    . "/app/hooks/common/cob_utilities.sh"
+    . "/app/scripts/deploy/cob_utilities.sh"
 
     printout "INFO" "Database will be copied from staging to local, setup for development and updated with configuration in latest branch."
 
