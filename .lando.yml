@@ -43,17 +43,18 @@ services:
 
   database:
     type: mysql
+    app_mount: false
     portforward: true
     host: localhost
     overrides:
       healthcheck:
-        test: /app/scripts/local/health.sh database
+        test: /helpers/health.sh database
         interval: 30s
         timeout: 10s
         retries: 5
     run_as_root:
       - printf "\n[LANDO] Database Event - run as root\n\n"
-      - /app/scripts/local/lando-database-customize.sh
+      - /helpers/lando-database-customize.sh
 
     creds:
       user: drupal
@@ -128,7 +129,7 @@ tooling:
     service: appserver
     description: "Drupal: Copy the remote staging DB into the local DB"
     cmd:
-      - /app/scripts/local/sync.sh 'test'
+      - /app/scripts/local/sync.sh 'dev'
 
   drupal-pull-repo:
     service: appserver
