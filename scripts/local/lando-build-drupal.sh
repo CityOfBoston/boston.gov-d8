@@ -234,11 +234,12 @@
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
         printout "INFO" "Copying database (and content) from ${build_local_database_drush_alias} into docker database container."
+        printf   "         This will take some time ...\n"
 
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
-        ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_site_install.log &&
-            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y --skip-tables-key=common --structure-tables-key=common >> ${setup_logs}/drush_site_install.log
+        ${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
+            ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >> ${setup_logs}/drush_site_install.log
 
         # See how we faired.
         if [[ $? -eq 0 ]]; then
@@ -251,7 +252,12 @@
     fi
 
     # Import configurations from the project repo into the database.
-    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time ..."
+    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
+    if [[ "${build_local_database_source}" == "sync" ]]; then
+        printf "        Depending on how different the DB source is to the config files, this may also take some time ...\n"
+    elif [[ "${build_local_database_source}" == "initialize" ]]; then
+        printf "        This is importing all of the site configs so it will take some time ...\n"
+    fi
     printf "         -> follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
 
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
