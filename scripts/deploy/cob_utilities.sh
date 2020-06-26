@@ -238,7 +238,7 @@ cleanup_tables() {
     # This function removes a series of tables from a database.
     SITE="${1}"
     DBTARGET="${2}"
-    ALIAS="@$SITE.@$DBTARGET"
+    ALIAS="@$SITE.$DBTARGET"
 
     if [[ -d /app/docroot ]]; then
         cd /app/docroot
