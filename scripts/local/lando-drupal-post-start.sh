@@ -27,7 +27,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
-    . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
 
     printf "\n"
     printf "ref: $(basename "$0")\n"
@@ -83,3 +83,6 @@
     fi
     ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
     chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
+
+    # Restart apache to get those files loaded.
+    service apache2 stop && service apache2 start
