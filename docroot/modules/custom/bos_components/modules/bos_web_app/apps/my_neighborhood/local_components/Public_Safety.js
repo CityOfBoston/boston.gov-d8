@@ -1,17 +1,4 @@
 class PublicSafety extends React.Component {
-  textCapitalize = (s) => {
-    
-    if(s){
-      let str = s.split(" ");
-      for (let i = 0, x = str.length; i < x; i++) {
-          str[i] = str[i].toLowerCase();
-          str[i] = str[i][0].toUpperCase() + str[i].substr(1);
-      }
-      return str.join(" ");
-    }else {
-      return "";
-    }
-  }
 
   render() {
     // Content for cards
@@ -40,9 +27,9 @@ class PublicSafety extends React.Component {
       {
         heading: "Station",
         content: <div>
-                    <div>{this.textCapitalize(this.props.fire_station_name)}</div>
-                    <div>{this.textCapitalize(this.props.fire_station_address)}</div>
-                    <div>{(this.props.fire_station_neighborhood !== null ? this.textCapitalize(this.props.fire_station_neighborhood) + ", MA"  : "" )}</div>
+                    <div>{this.props.fire_station_name}</div>
+                    <div>{this.props.fire_station_address}</div>
+                    <div>{(this.props.fire_station_neighborhood !== null ? this.props.fire_station_neighborhood + ", MA"  : "" )}</div>
                   </div>
       },
       {
