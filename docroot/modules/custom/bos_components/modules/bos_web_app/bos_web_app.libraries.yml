@@ -3,7 +3,7 @@ bos_web_app:
   dependencies:
     - core/drupalSettings
 metrolist:
-  version: 2.x
+  version: 2.1
   js:
     apps/metrolist/index.bundle.js: {attributes: {type: text/javascript }}
     apps/metrolist/1.index.bundle.js: {attributes: {type: text/javascript}}
@@ -11,13 +11,13 @@ metrolist:
   dependencies:
     - core/drupalSettings
 my_neighborhood:
-  version: 1.0.2
+  version: 1.0.4
   js:
     #Libraries for REACT
     apps/my_neighborhood/libraries/react.16.13.1.min.js: {}
     apps/my_neighborhood/libraries/react-dom.16.13.1.min.js: {}
     apps/my_neighborhood/libraries/babel.7.10.1.min.js: {}
-    #MNL REACT Components 
+    #MNL REACT Components
     #Important - Must load before application and config.
     #apps/my_neighborhood/local_components/Search.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
     #apps/my_neighborhood/local_components/Mnl_Card.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
@@ -41,4 +41,4 @@ my_neighborhood:
       apps/my_neighborhood/css/mnl_styles.min.css: {attributes: {media: screen, type: text/css}}
   dependencies:
     - core/drupalSettings
-    
+
