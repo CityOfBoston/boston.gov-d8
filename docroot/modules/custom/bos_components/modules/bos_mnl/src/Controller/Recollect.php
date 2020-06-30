@@ -82,7 +82,7 @@ class Recollect extends ControllerBase {
     date_default_timezone_set("America/New_York");
     $now = time();
     $future = date("Y-m-d", strtotime('+1 month', $now));
-    $today = date("Y-m-d", $now); 
+    $today = date("Y-m-d", $now);
     curl_setopt($ch, CURLOPT_URL, "https://api.us.recollect.net/v2/places/" . $place . "/services/waste/events?after=" . $today . "&before=" . $future);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_HEADER, FALSE);
