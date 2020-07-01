@@ -19,7 +19,7 @@
     # Download remote DB
     printf "       To speed up the import and reduce the local DB size, selected tables are truncated/omitted.\n"
     printf "       Refer to /app/drush/drush.yml for lists of tables managed by the drush sql:sync command.\n"
-    $SOURCE="@bostond8.${source_env}"
+    SOURCE="@bostond8.${source_env}"
     ${drush_cmd} -y sql:drop --database=default &&
         ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${SOURCE} @self
 
