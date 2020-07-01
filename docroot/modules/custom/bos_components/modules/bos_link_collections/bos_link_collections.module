@@ -25,6 +25,9 @@ function bos_link_collections_theme() {
   $theme['paragraph__group_of_links_mini_grid'] = [
     'base hook' => 'paragraph',
   ];
+  $theme['paragraph__group_of_links_quick_links'] = [
+    'base hook' => 'paragraph',
+  ];
   $theme['paragraph__gol_list_links'] = [
     'base hook' => 'paragraph',
   ];
@@ -56,6 +59,9 @@ function bos_link_collections_theme() {
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['field__paragraph__group_of_links_mini_grid'] = [
+    'base hook' => 'field',
+  ];
+  $theme['field__paragraph__group_of_links_quick_links'] = [
     'base hook' => 'field',
   ];
   $theme['field__paragraph__field_link__group_of_links_grid'] = [
