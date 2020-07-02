@@ -20,7 +20,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
-    . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
     target_env="local"
 
     printf "\n"
@@ -41,11 +41,7 @@
     printout "INFO" "Wait for files."
     # Becuse the node container builds after the database and appserver containers, we have to
     # wait for those processes to complete first.  TODO: Make appserver and database dependent on the node server.
-    x=0
     while [[ ! -e  ${patterns_local_repo_local_dir}/public/css ]]; do
-        x=$((x+10))
-        printf "."
-        if [[ $x -gt 1800 ]];then printf "\nERR - timout in $(basename "$0")\n"; exit 1; fi
         sleep 10
     done
 

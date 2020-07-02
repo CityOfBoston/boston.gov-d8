@@ -23,10 +23,29 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<div class="container content entity entity-paragraphs-item paragraphs-item-text component-sectionS">
-    <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
-		 <div id="web-app">
-		 	<div class="supporting-text">Loading ...</div>
-		 </div>
-	</div>
+<div {{ attributes }}>
+
+  <div class="content">
+
+    <div class="sh cl">
+
+      {{ title_suffix }}
+
+      {{ content.field_component_title }}
+
+      {% if content.field_short_title['#items'].getValue() %}
+        {{ content.field_short_title }}
+      {% endif %}
+
+      {% if content.field_contact['#items'].getValue() %}
+        {{ content.field_contact }}
+      {% endif %}
+
+    </div>
+
+    <div class="links-grid-field-grid-links links-grid-field-mini-grid-links mobile-100 clearfix">
+      {{ content.field_links }}
+    </div>
+
+  </div>
 </div>
