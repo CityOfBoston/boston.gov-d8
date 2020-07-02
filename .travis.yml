@@ -6,7 +6,7 @@ branches:
   only:
     - develop
     - master
-    - recaptcha_v3
+    - bos_quick_links
 
 php:
   - 7.3
@@ -121,4 +121,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: recaptcha_v3
+      branch: bos_quick_links
