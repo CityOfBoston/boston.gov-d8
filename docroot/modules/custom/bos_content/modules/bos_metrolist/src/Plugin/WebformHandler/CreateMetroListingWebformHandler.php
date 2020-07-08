@@ -130,28 +130,55 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
   }
 
 
+
+
+  public function addAccount($developmentData)
+  {
+
+    $fieldData = [
+      'Name' => $developmentData['contact_company'],
+      'Business_Legal_Name__c' => $developmentData['contact_company'],
+      'Type' => 'Property Manager',
+      'Division__c' => 'DND',
+      'RecordTypeId' => '012C0000000I0hCIAS', //@TODO: hardcoded to SFID for Account Record Type: "Vendor"
+    ];
+
+
+    try {
+      return $this->client()->objectUpsert('Account', 'Business_Legal_Name__c', $developmentData['contact_company'], $fieldData)->__toString();
+    } catch (Exception $exception) {
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+      return false;
+    }
+  }
+
+
   /**
    * @param $developmentName
    * @param $developmentData
    * @param $contactId
+   * @param $accountId
    * @return bool
    */
-  public function addDevelopment($developmentName, $developmentData, $contactId)
+  public function addDevelopment($developmentName, $developmentData, $contactId, $accountId)
   {
 
     $fieldData = [
       'Name' => $developmentName,
-      'Region__c' => $developmentData['region'] ?? '',
+      'Region__c' => !empty($developmentData['region']) ? $developmentData['region'] : 'Boston',
       'Street_Address__c' => $developmentData['street_address'] ?? '',
-      'City__c' => $developmentData['city'] ?? '',
+      'City__c' => !empty($developmentData['city']) ? $developmentData['city'] : 'Boston',
       'ZIP_Code__c' => $developmentData['zip_code'] ?? '',
       'Wheelchair_Access__c' => empty($developmentData['wheelchair_accessible']) ? false : true,
       'Listing_Contact_Company__c' => $developmentData['contact_company'] ?? null,
     ];
 
-
     if (isset($contactId)) {
       $fieldData['Listing_Contact__c'] = $contactId;
+    }
+
+    if (isset($accountId)) {
+      $fieldData['Management_Company__c'] = $accountId;
     }
 
     if (isset($developmentData['neighborhood'])) {
@@ -224,10 +251,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
           'Availability_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
           'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
           'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',
-          'Rent_Type__c' => 'Fixed $',
+          'Rent_Type__c' => 'Fixed $', //@TODO: Need to add this to the Listing Form somehow for "% of Income"
           'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] . '% AMI' : 'N/A',
-          'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double)$unitGroup['bedrooms'] : '0.0',
-          'Rent_or_Sale_Price__c' => isset($unitGroup['price']) ? (double)filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : '0.0',
+          'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double)$unitGroup['bedrooms'] : 0.0,
+          'Rent_or_Sale_Price__c' => isset($unitGroup['price']) ? (double)filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
           'ADA_V__c' => empty($unitGroup['ada_v']) ? false : true,
           'ADA_H__c' => empty($unitGroup['ada_h']) ? false : true,
           'ADA_M__c' => empty($unitGroup['ada_m']) ? false : true,
@@ -235,11 +262,11 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
         ];
 
         if (isset($unitGroup['bathrooms'])) {
-          $fieldData['Number_of_Bedrooms__c'] = (double)$unitGroup['bedrooms'];
+          $fieldData['Number_of_Bathrooms__c'] = isset($unitGroup['bathrooms']) ? (double)$unitGroup['bathrooms'] : 0.0;
         }
 
         if (isset($unitGroup['minimum_income_threshold'])) {
-          $fieldData['Minimum_Income_Threshold__c'] = !empty($unitGroup['minimum_income_threshold']) ? (double)filter_var($developmentData['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : null;
+          $fieldData['Minimum_Income_Threshold__c'] = !empty($unitGroup['minimum_income_threshold']) ? (double)filter_var($unitGroup['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
         }
 
         if (isset($developmentData['posted_to_metrolist_date'])) {
@@ -296,12 +323,15 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
         $fieldData['contact_address']
       );
 
+//      $accountId = $this->addAccount($fieldData);
 
+//      if ($contactId && $accountId) {
       if ($contactId) {
-        $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId);
+//          $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId, $accountId);
+          $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId, null);
 
         if ($developmentId) {
-          $this->addUnits($fieldData, $developmentId);
+            $this->addUnits($fieldData, $developmentId);
         }
       }
     }
