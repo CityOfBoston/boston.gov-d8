@@ -22,6 +22,12 @@
     printout "STEP" "Installing Linux packages in appserver container."
     printf "${LightPurple}       ================================================================================${NC}\n"
 
+    # Copy the 2 scrpts that the database server needs from the scripts folder into the .lando scripts folder.
+    # This means the scripts will be loaded into the /helpers folder on all containers.
+    # This means we can exclude the /app folder from mounting into the database giving it a performance boost.
+    cp "${LANDO_MOUNT}/scripts/local/health.sh" /helpers/health.sh
+    cp "${LANDO_MOUNT}/scripts/local/lando-database-customize.sh" /helpers/lando-database-customize.sh
+
     # Prepare the folder which will hold setup logs.
     if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi
     mkdir -p ${setup_logs} &&

@@ -8,7 +8,7 @@
  *   hide($content['field_example']) to temporarily suppress the printing of a
  *   given element.
  * - $classes: String of classes that can be used to style contextually through
- *   CSS. It can be manipulated through the variable $classes_array from
+ *   CSS, It can be manipulated through the variable $classes_array from
  *   preprocess functions. By default the following classes are available, where
  *   the parts enclosed by {} are replaced by the appropriate values:
  *   - entity
@@ -34,7 +34,7 @@
   {% endif %}
   <div>
     {% if content.field_newsletter %}
-      <form action="https://contactform.boston.gov/subscriptions?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
+      <form id="newsletter_upaknee" action="https://contactform.boston.gov/subscriptions?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
         <div class="fs">
           <div class="fs-c">
             <div class="txt">
