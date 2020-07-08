@@ -13,21 +13,26 @@ class WinterResources extends React.Component {
       {
         heading: "Parking Lot Fee",
         content: this.props.snow_parking_lots_fee
-      },
-      {
-        heading: "Parking Lot Comments",
-        content: this.props.snow_parking_lots_comments
       }
     ]
+    const parking_comments = this.props.snow_parking_lots_comments;
+    if(this.props.snow_parking_lots_comments !== null && parking_comments.trim() !== ""){
+      contentSnowEmergencyParking.push({
+        heading: "Parking Lot Comments",
+        content: this.props.snow_parking_lots_comments
+      });
+    }
     const contentSnowRoutes = [
       {
         heading: "Closest Route",
         content: this.props.snow_routes
       },
       {
+        heading: "NOTE:",
         content: (
-          <div className="no-heading">
-            There may be other snow routes in your area, <a href={"/departments/311/snow-emergency-parking"} className="mnl-link"> check here for all snow emergency parking restrictions</a>.
+          <div>
+            <div>During a declared snow emergency, we will ticket and tow your car if you park on a snow route.</div>
+            <div className="no-heading">There may be other snow routes in your area, <a href={"/departments/311/snow-emergency-parking"} className="mnl-link"> check here for all snow emergency parking restrictions.</a></div>
           </div>
         )
       }
