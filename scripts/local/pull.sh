@@ -6,7 +6,7 @@
         drush_cmd="/app/vendor/bin/drush  -r /app/docroot"
     fi
     . "/app/scripts/cob_build_utilities.sh"
-    . "/app/hooks/common/cob_utilities.sh"
+    . "/app/scripts/deploy/cob_utilities.sh"
 
     target_env="local"
 

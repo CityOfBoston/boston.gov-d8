@@ -27,7 +27,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${LANDO_MOUNT}"
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
-    . "${LANDO_MOUNT}/hooks/common/cob_utilities.sh"
+    . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
 
     # Create additional working variables.
     target_env="local"
@@ -123,6 +123,16 @@
     printout "INFO" "Clone and merge private repo into main project repo."
     clone_private_repo &> ${setup_logs}/drush_site_install.log
     printout "SUCCESS" "Repo merged.\n"
+
+    # Update the drush.yml file.
+    printout "INFO" "Update the drush configuration and aliases."
+    drush_file=${LANDO_MOUNT}/drush/drush.yml
+    drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
+    rm -rf ${drush_file}
+    printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
+    printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'\n\n" >> ${drush_file}
+    cat ${drush_cob} >> ${drush_file}
+    printout "SUCCESS" "Drush file updated.\n"
 
     # Create/update settings, private settings and local settings files.
     # 'build_settings' function is contained in lando_utilities.sh.
@@ -224,11 +234,12 @@
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
         printout "INFO" "Copying database (and content) from ${build_local_database_drush_alias} into docker database container."
+        printf   "         This will take some time ...\n"
 
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
-        ${drush_cmd} sql:drop --database=default -y > ${setup_logs}/drush_site_install.log &&
-            ${drush_cmd} sql:sync ${build_local_database_drush_alias} @self -y >> ${setup_logs}/drush_site_install.log
+        ${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
+            ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >> ${setup_logs}/drush_site_install.log
 
         # See how we faired.
         if [[ $? -eq 0 ]]; then
@@ -241,8 +252,13 @@
     fi
 
     # Import configurations from the project repo into the database.
-    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database" "This may take some time ..."
-    printf "         -> follow along at ${setup_logs}/config_import.log (or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
+    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
+    if [[ "${build_local_database_source}" == "sync" ]]; then
+        printf "        Depending on how different the DB source is to the config files, this may also take some time ...\n"
+    elif [[ "${build_local_database_source}" == "initialize" ]]; then
+        printf "        This is importing all of the site configs so it will take some time ...\n"
+    fi
+    printf "         -> follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
 
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
 
@@ -292,7 +308,7 @@
     # Whichever build method employed, the modules in <config/default/core.extensions.yml> will have been enabled.
     # However, there is no guarantee that those modules are entirely approproate for developers.  So this step allows us
     # to specifically enable the modules needed by developers.
-    # Function 'devModules' is contained in cob_utilities.sh
+    # Function 'devModules' is contained in /scripts/deploy/cob_utilities.sh
     printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
     devModules "@self"
     # Set the local build to use a local patterns (if the node container has fleet running in it).
@@ -313,14 +329,6 @@
 #    printout "INFO" "Rebuild user access on nodes."
 #    ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config_import.log
 #    printout "SUCCESS" "Updates run.\n"
-
-    # Update the drush.yml file.
-    printout "INFO" "Update the drush configuration and aliases."
-    drush_file=${LANDO_MOUNT}/drush/drush.yml
-    rm -rf ${drush_file}
-    printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
-    printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'" >> ${drush_file}
-    printout "SUCCESS" "Drush file updated.\n"
 
     # Capture the build info into a file to be printed at end of build process.
     printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >> ${setup_logs}/uli.log
