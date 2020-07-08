@@ -124,7 +124,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     try {
       return $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData)->__toString();
     } catch (Exception $exception) {
-      \Drupal::logger('my_module')->error($exception->getMessage());
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
       return false;
     }
   }
@@ -192,7 +192,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     try {
       return $this->client()->objectUpsert('Development__c', 'Name', $developmentName, $fieldData)->__toString();
     } catch (Exception $exception) {
-      \Drupal::logger('my_module')->error($exception->getMessage());
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
       return false;
     }
   }
@@ -266,7 +266,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
         try {
           $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
         } catch (Exception $exception) {
-          \Drupal::logger('my_module')->error($exception->getMessage());
+          \Drupal::logger('bos_metrolist')->error($exception->getMessage());
           return false;
         }
 
