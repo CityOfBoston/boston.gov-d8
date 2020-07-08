@@ -144,7 +144,7 @@
         timer=$(date +%s)
 
         # Load the cob_utitlities script which has some config procedures.
-        . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
+        . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
 
         printf "=========================================================================================\n"
         printout "INFO" "Verifying & testing the Build Candidate."
@@ -208,7 +208,7 @@
             # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
             # remote server, and restore into the database container.
             ${drush_cmd} sql:drop --database=default -y &> ${setup_logs}/drush_site_install.log &&
-                ${drush_cmd} sql:sync ${build_travis_database_drush_alias} @self -y &>> ${setup_logs}/drush_site_install.log
+                ${drush_cmd} sql:sync ${build_travis_database_drush_alias} @self -y --skip-tables-key=common --structure-tables-key=common &>> ${setup_logs}/drush_site_install.log
 
             # See how we faired.
             if [[ $? -eq 0 ]]; then
@@ -299,7 +299,7 @@
         fi
 
         # Enable and disable modules specific to developers.
-        # Function 'devModules' & 'prodModules' are contained in <hooks/common/cob_utilities.sh>
+        # Function 'devModules' & 'prodModules' are contained in <scripts/deploy/cob_utilities.sh>
         if [[ "${build_travis_type}" != "none" ]]; then
             if [[ "${build_travis_type}" == "dev" ]]; then
                 printout "INFO" "Enable/disable appropriate development features and functionality."

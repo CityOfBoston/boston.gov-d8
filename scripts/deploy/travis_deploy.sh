@@ -23,7 +23,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
-    . "${TRAVIS_BUILD_DIR}/hooks/common/cob_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH/-/}
     TRAVIS_BRANCH_SANITIZED=${TRAVIS_BRANCH_SANITIZED/ /}
 
