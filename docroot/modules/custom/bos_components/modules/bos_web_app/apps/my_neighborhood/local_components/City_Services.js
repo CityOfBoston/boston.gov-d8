@@ -3,22 +3,27 @@ class CityServices extends React.Component {
    render() {
     // Content for Trash and Recycling Card
     let contentRecollect = [];
-    if(this.props.recollect_date !== null) {
-      const dateProp= this.props.recollect_date;
-      const dateArray = dateProp.split('-');
-      const dateFormat = new Date(dateArray[1] + '/' + dateArray[2] + '/' + dateArray[0]);
-      const dateDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-      let recollectFlags = this.props.recollect_services; 
-        Object.keys(recollectFlags).map(function(key,index){
-          if (recollectFlags[key].name == "Trash" || recollectFlags[key].name == "Recycling" ) {
-            contentRecollect.push({
-              heading: "Your next "+recollectFlags[key].name+" day is:",
-              content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
-              //content: dateFormatted.getDay() +', '+ dateFormatted.getMonth() +', '+ dateFormatted.getDate()
-            })
-          }
-        })
+    let recollectData = this.props.recollect_events;
+    let found = null;
+    if(recollectData !== null) {
+      Object.keys(recollectData).map(function(key,index){
+        if(found !== true){
+          Object.keys(recollectData[key].flags).map(function(key_flag,index_flag){
+            if (recollectData[key].flags[key_flag].name == "Trash" || recollectData[key].flags[key_flag].name == "Recycling" ) {
+              const dateProp = recollectData[key].day;
+              const dateArray = dateProp.split('-');
+              const dateFormat = new Date(dateArray[1] + '/' + dateArray[2] + '/' + dateArray[0]);
+              const dateDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+              const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"]; 
+              contentRecollect.push({
+                heading: "Your next "+ recollectData[key].flags[key_flag].name +" day is:",
+                content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
+              })
+              found  = true;
+            }
+          })
+        }
+      })
       contentRecollect.push({  
         heading: "NOTE:",
         content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
