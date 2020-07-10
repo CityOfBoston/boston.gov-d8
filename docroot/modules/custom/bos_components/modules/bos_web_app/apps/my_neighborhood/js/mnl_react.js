@@ -135,7 +135,7 @@ class MNL extends React.Component {
           if (result.response && result.response.events.length > 0){
             this.setState({
               isLoadingRecollect: false,
-              itemsRecollect: result.response.events[0],
+              itemsRecollect: result.response.events,
             });
           } else {
             this.setState({
@@ -318,19 +318,16 @@ class MNL extends React.Component {
       }
     }
     let recollectEvents = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect);
-    let recollectDate = null;
-    let recollectServices = null;
+    /*let recollectData = null;
     if(recollectEvents !== null && this.state.isLoadingRecollect !== true){
-      recollectDate = this.state.itemsRecollect.day;
-      recollectServices = this.state.itemsRecollect.flags
-    }
+      recollectData = this.state.itemsRecollect;
+    }*/
     let mnlDisplay = this.state.submittedAddress ? (
       <div>
       {history.pushState({id: 'sections'}, '', configProps.path+'?p2')}
       <div className="g">
         <CityServices
-          recollect_date={recollectDate}
-          recollect_services={recollectServices}
+          recollect_events={recollectEvents}
           section={this.state.section}
           displaySection={this.displaySection}
         />
@@ -390,7 +387,6 @@ class MNL extends React.Component {
           fire_station_name={this.state.itemsDisplay.fire_dept_name}
           fire_station_address={this.state.itemsDisplay.fire_dept_address}
           fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
-          recollect_services={recollectServices}
           section={this.state.section}
           displaySection={this.displaySection}
         />
