@@ -1,9 +1,9 @@
 const configProps = {
 	// Options for season ('winter','summer',null). 
-	season: null,
+	season: 'summer',
 
 	// Turns on / off Early Voting card in Representation section.
-	earlyVoting: true,
+	earlyVoting: false,
 
 	// Sets URL path for browser history functionality in REACT application.
 	path: window.location.pathname,

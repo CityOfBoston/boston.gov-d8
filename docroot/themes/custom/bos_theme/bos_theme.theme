@@ -847,7 +847,7 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $current_path = \Drupal::service('path.current')->getPath();
   $result = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
   $is_metrolist = strpos($result, "metrolist");
-  if ($is_metrolist == FALSE) {
+  if ($is_metrolist === FALSE) {
     $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
   }
   // @var Drupal\paragraphs\Entity\Paragraph $paragraph.
