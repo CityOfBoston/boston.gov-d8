@@ -65743,9 +65743,9 @@ __webpack_require__.r(__webpack_exports__);
 // resources are updated in the background.
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
-var isLocalhost = Boolean(globalThis.location.hostname === 'localhost' // [::1] is the IPv6 localhost address.
-|| globalThis.location.hostname === '[::1]' // 127.0.0.0/8 are considered localhost for IPv4.
-|| globalThis.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
+var isLocalhost = Boolean(window.location.hostname === 'localhost' // [::1] is the IPv6 localhost address.
+|| window.location.hostname === '[::1]' // 127.0.0.0/8 are considered localhost for IPv4.
+|| window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/));
 function register(config) {
   if (false) { var publicUrl; }
 }
@@ -65802,7 +65802,7 @@ function checkValidServiceWorker(swUrl, config) {
       // No service worker found. Probably a different app. Reload the page.
       navigator.serviceWorker.ready.then(function (registration) {
         registration.unregister().then(function () {
-          globalThis.location.reload();
+          window.location.reload();
         });
       });
     } else {
