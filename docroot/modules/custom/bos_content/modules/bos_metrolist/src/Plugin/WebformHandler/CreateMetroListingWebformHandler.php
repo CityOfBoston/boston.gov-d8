@@ -293,7 +293,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
             'ADA_V__c' => empty($unitGroup['ada_v']) ? false : true,
             'ADA_H__c' => empty($unitGroup['ada_h']) ? false : true,
             'ADA_M__c' => empty($unitGroup['ada_m']) ? false : true,
-            'Waitlist_Open__c' => empty($developmentData['waitlist_open']) ? false : true,
+            'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? false : true,
           ];
 
           if (isset($unitGroup['bathrooms'])) {
