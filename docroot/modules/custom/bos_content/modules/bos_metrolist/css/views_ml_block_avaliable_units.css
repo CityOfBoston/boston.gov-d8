@@ -382,8 +382,12 @@ footer > div > h2:first-of-type{
   display: flex !important;
   align-items: center;
   justify-content: center;
-  padding: 0 2.5rem !important;
-  margin: 0.5rem 0.5rem 0 0!important;
+  padding: 0 1.5rem;
+  /*margin: 0.5rem 0.5rem 0 0!important;*/
+}
+
+.ml-action-btn img:hover{
+  filter: grayscale(1) invert(1);
 }
 
 .ml-action-btn-flex {
@@ -444,6 +448,55 @@ footer > div > h2:first-of-type{
 .ml-unit-entity-render-info .ml-units-to-ami-calc{
   display: none;
 }
+
+
+
+.ui-dialog button.ui-dialog-titlebar-close {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  color: #fff;
+}
+
+.ui-dialog button.ui-dialog-titlebar-close::before {
+  content: "\00D7";
+  position: absolute;
+  font-size: 45px;
+  font-size: 2.8125rem;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  transform: translateY(-50%) translateX(-50%);
+}
+
+
+.ui-dialog button.ui-dialog-titlebar-close::after {
+  background-color: #fb4d42;
+  position: absolute;
+  color: #fff;
+  content: " ";
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
+
+.ui-dialog div.ui-widget-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: #288be4;
+  background-color: rgba(40,139,228,.75);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+
+
 
 @media screen and (max-width: 1340px) {
   .webform-options-display-one-column {
