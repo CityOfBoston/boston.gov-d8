@@ -10,14 +10,15 @@ metrolist:
     apps/metrolist/2.index.bundle.js: {attributes: {type: text/javascript}}
   dependencies:
     - core/drupalSettings
-    
+
 my_neighborhood:
-  version: 1.0.6
+  version: 1.0.7
   js:
     #Libraries for REACT
     apps/my_neighborhood/libraries/react.16.13.1.min.js: {}
     apps/my_neighborhood/libraries/react-dom.16.13.1.min.js: {}
-    apps/my_neighborhood/libraries/babel_standalone_6.25.0.min.js: {}
+    apps/my_neighborhood/libraries/babel.7.10.1.min.js: {}
+    #apps/my_neighborhood/libraries/babel_standalone_6.25.0.min.js: {}
     #MNL REACT Components
     #Important - Must load before application and config.
     #apps/my_neighborhood/local_components/Search.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
