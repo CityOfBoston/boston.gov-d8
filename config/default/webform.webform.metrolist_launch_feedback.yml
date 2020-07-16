@@ -12,63 +12,8 @@ id: metrolist_launch_feedback
 title: 'MetroList: Launch Feedback'
 description: ''
 category: ''
-elements: |
-  '#attributes':
-    class:
-      - print-none
-  processed_text:
-    '#type': processed_text
-    '#wrapper_attributes':
-      style: 'margin: 3rem 0 0 0;'
-    '#admin_title': Title
-    '#text': |
-      <div class="sh">
-        <h2 class="sh-title">Tell us what you think!</h2>
-      </div>
-      
-    '#format': full_html
-  flexbox:
-    '#type': webform_flexbox
-    '#align_items': center
-    content:
-      '#type': container
-      descriptive_text:
-        '#type': processed_text
-        '#text': |
-          <p class="supporting-text"><span><span><span><span><span><span>This Metrolist website is new, which means we’d like to hear what you think as we continue to refine, iterate, and improve the experience.</span></span></span></span></span></span></p>
-          
-        '#format': filtered_html
-    form:
-      '#type': container
-      '#flex': 2
-      customer_effort_score_radios:
-        '#type': radios
-        '#title': 'Customer Effort Score'
-        '#description': '<p class="supporting-text">How do you agree with the following statement: &quot;Metrolist made it easy for me to find affordable housing&quot;?</p>'
-        '#title_display': invisible
-        '#description_display': before
-        '#options': likert_comparison_metrolist_1_7
-        '#required': true
-      qual_short_answer:
-        '#type': textarea
-        '#title': 'Qual Short Answer'
-        '#title_display': invisible
-        '#size': 100
-        '#rows': 2
-        '#placeholder': 'Please tell us why you feel that way...'
-        '#required': true
-        '#required_error': 'Please tell us why you feel that way...'
-        '#format_items': comma
-      actions:
-        '#type': webform_actions
-        '#title': 'Submit button(s)'
-        '#submit__label': 'Send Feedback'
-        '#submit__attributes':
-          style: 'text-transform: uppercase; float:right;'
-css: |
-  .webform-submission-form #edit-customer-effort-score-radios--wrapper .description {
-    text-align: center;
-  }
+elements: "'#attributes':\n  class:\n    - print-none\nprocessed_text:\n  '#type': processed_text\n  '#wrapper_attributes':\n    style: 'margin: 3rem 0 0 0;'\n  '#admin_title': Title\n  '#text': |\n    <div class=\"sh\">\n      <h2 class=\"sh-title\">Tell us what you think!</h2>\n    </div>\n    \n  '#format': full_html\nflexbox:\n  '#type': webform_flexbox\n  '#align_items': center\n  content:\n    '#type': container\n    descriptive_text:\n      '#type': processed_text\n      '#text': |\n        <p class=\"supporting-text\"><span><span><span><span><span><span>This Metrolist website is new, which means we’d like to hear what you think as we continue to refine, iterate, and improve the experience.</span></span></span></span></span></span></p>\n        \n      '#format': filtered_html\n  form:\n    '#type': container\n    '#flex': 2\n    customer_effort_score_radios:\n      '#type': radios\n      '#title': 'Customer Effort Score'\n      '#description': '<p class=\"supporting-text\">How do you agree with the following statement: &quot;Metrolist made it easy for me to find affordable housing&quot;?</p>'\n      '#title_display': invisible\n      '#description_display': before\n      '#options': likert_comparison_metrolist_1_7\n      '#required': true\n    qual_short_answer:\n      '#type': textarea\n      '#title': 'Qual Short Answer'\n      '#title_display': invisible\n      '#size': 100\n      '#rows': 2\n      '#placeholder': 'Please tell us why you feel that way...'\n      '#required': true\n      '#required_error': 'Please tell us why you feel that way...'\n      '#format_items': comma\n    actions:\n      '#type': webform_actions\n      '#title': 'Submit button(s)'\n      '#submit__label': 'Send Feedback'\n      '#submit__attributes':\n        style: 'text-transform: uppercase; float:right;'\n"
+css: ".webform-submission-form #edit-customer-effort-score-radios--wrapper .description {\n  text-align: center;\n}\n"
 javascript: ''
 settings:
   ajax: true
@@ -79,7 +24,7 @@ settings:
   page: true
   page_submit_path: ''
   page_confirm_path: ''
-  page_admin_theme: false
+  page_theme_name: ''
   form_title: source_entity_webform
   form_submit_once: true
   form_exception_message: ''
@@ -109,6 +54,11 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
   submission_label: ''
   submission_log: false
   submission_views: {  }
@@ -134,11 +84,17 @@ settings:
   wizard_progress_percentage: false
   wizard_progress_link: false
   wizard_progress_states: false
+  wizard_auto_forward: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
   wizard_track: ''
+  wizard_prev_button_label: ''
+  wizard_next_button_label: ''
+  wizard_toggle: false
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
@@ -156,16 +112,7 @@ settings:
   draft_pending_multiple_message: ''
   confirmation_type: inline
   confirmation_title: ''
-  confirmation_message: |
-    <div class="m-v400 p-v300">
-    <div class="sh m-v300">
-    <h2 class="sh-title">Tell us what you think!</h2>
-    </div>
-    
-    <div class="m-v400 p-v300">
-    <p class="supporting-text">Thank you for your feedback. Your opinion will help us continue to improve the site!</p>
-    </div>
-    </div>
+  confirmation_message: "<div class=\"m-v400 p-v300\">\n<div class=\"sh m-v300\">\n<h2 class=\"sh-title\">Tell us what you think!</h2>\n</div>\n\n<div class=\"m-v400 p-v300\">\n<p class=\"supporting-text\">Thank you for your feedback. Your opinion will help us continue to improve the site!</p>\n</div>\n</div>\n"
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: false
@@ -193,11 +140,6 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
-  share: false
-  share_node: false
-  share_theme_name: ''
-  share_title: true
-  share_page_body_attributes: {  }
 access:
   create:
     roles:
@@ -256,9 +198,9 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: 'alex.dora@boston.gov, amy.wipfler@boston.gov'
+      to_mail: 'amy.wipfler@boston.gov, dana.smith@boston.gov'
       to_options: {  }
-      cc_mail: ''
+      cc_mail: alex.dora@boston.gov
       cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
@@ -283,3 +225,4 @@ handlers:
       theme_name: ''
       parameters: {  }
 variants: {  }
+
