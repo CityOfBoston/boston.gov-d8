@@ -149,12 +149,13 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
   $variables['email_button'] = $options['show_email_button'] ? bos_metrolist_build_email_button($variables) : NULL;
   $variables['print_button'] = $options['show_print_button'] ? bos_metrolist_build_print_button($variables) : NULL;
 
-  $options['show_share_buttons'] = TRUE; //@TODO: Change out to a config.
+  // @TODO: Change out to a config.
+  $options['show_share_buttons'] = TRUE;
   $variables['share_button_facebook'] = $options['show_share_buttons'] ? bos_metrolist_build_share_button($variables, 'facebook') : NULL;
   $variables['share_button_twitter'] = $options['show_share_buttons'] ? bos_metrolist_build_share_button($variables, 'twitter') : NULL;
-  //$variables['share_button_instagram'] = $options['show_share_buttons'] ? bos_metrolist_build_share_button($variables, 'instagram') : NULL;
+  // $variables['share_button_instagram'] = $options['show_share_buttons'] ? bos_metrolist_build_share_button($variables, 'instagram') : NULL;
 
-  //$variables['report_unavailable_button'] = bos_metrolist_build_unavailable_button($variables);
+  $variables['report_unavailable_button'] = bos_metrolist_build_unavailable_button($variables);
 
 }
 
@@ -173,7 +174,7 @@ function bos_metrolist_build_email_button($variables) {
   $title = [
     '#type' => 'html_tag',
     '#tag' => 'span',
-//    '#value' => $variables['view']->style_plugin->options['email_button_text'],
+  // '#value' => $variables['view']->style_plugin->options['email_button_text'],
     '#value' => '',
     '#attributes' => [
       'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
@@ -235,7 +236,7 @@ function bos_metrolist_build_print_button($variables) {
   $title = [
     '#type' => 'html_tag',
     '#tag' => 'span',
-//    '#value' => $variables['view']->style_plugin->options['print_button_text'],
+  // '#value' => $variables['view']->style_plugin->options['print_button_text'],
     '#value' => '',
     '#attributes' => [
       'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
@@ -279,12 +280,20 @@ function bos_metrolist_build_print_button($variables) {
   return $button;
 }
 
+/**
+ * Build share buttons.
+ *
+ * @param array $variables
+ *   Vars.
+ * @param string $provider
+ *   Social provider (facebook, twitter)
+ *
+ * @return array
+ *   Button render array
+ */
+function bos_metrolist_build_share_button(array $variables, $provider = '') {
 
-
-function bos_metrolist_build_share_button($variables, $provider = '') {
-
-
-  //@todo: Change out to a yml config or field configs
+  // @todo: Change out to a yml config or field configs
   $socials = [
     'facebook' => [
       'label' => 'Facebook',
@@ -304,7 +313,6 @@ function bos_metrolist_build_share_button($variables, $provider = '') {
     ],
   ];
 
-
   $nid = $variables['view']->argument['nid']->value[0] ?? NULL;
   $development = $variables["view"]->result[0]->_relationship_entities["field_ml_development"] ?? NULL;
 
@@ -316,8 +324,8 @@ function bos_metrolist_build_share_button($variables, $provider = '') {
   $title = [
     '#type' => 'html_tag',
     '#tag' => 'span',
-//    '#value' => $variables['view']->style_plugin->options['email_button_text'],
-//    '#value' => $socials[$provider]['label'],
+  // '#value' => $variables['view']->style_plugin->options['email_button_text'],
+  // '#value' => $socials[$provider]['label'],
     '#value' => '',
     '#attributes' => [
       'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
@@ -369,27 +377,35 @@ function bos_metrolist_build_share_button($variables, $provider = '') {
 
   if ($provider == 'twitter') {
     $button['#url']->setOption('query', [
-//      'subject' => "Share Metrolist Listing - $developmentTitle",
-//      'body' => "Share Metrolist Listing - $developmentTitle ( $developmentURL )",
-//      'url' => \Drupal::token()->replace("[current-page:url]", ['node' => $development], ['clear' => TRUE]),
+    // 'subject' => "Share Metrolist Listing - $developmentTitle",
+    // 'body' => "Share Metrolist Listing - $developmentTitle ( $developmentURL )",
+    // 'url' => \Drupal::token()->replace("[current-page:url]", ['node' => $development], ['clear' => TRUE]),
       'url' => $developmentURL,
-//      'text' => \Drupal::token()->replace("New listing on Boston Metrolist: [current-page:title]", ['node' => $development], ['clear' => TRUE]),
+    // 'text' => \Drupal::token()->replace("New listing on Boston Metrolist: [current-page:title]", ['node' => $development], ['clear' => TRUE]),
       'text' => "New listing on Boston Metrolist: $developmentTitle",
       'hashtags' => $socials[$provider]['hashtags'],
     ]);
   }
 
   // Use to link to a webform
-//   $button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
-//   ->setRouteParameter('webform', 'ml_listing_unavailable_form')
-//   ->setRouteParameter('source_entity_type', 'node')
-//   ->setRouteParameter('source_entity_id', $nid);
+  // $button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
+  // ->setRouteParameter('webform', 'ml_listing_unavailable_form')
+  // ->setRouteParameter('source_entity_type', 'node')
+  // ->setRouteParameter('source_entity_id', $nid);.
 
   return $button;
 }
 
-
-function bos_metrolist_build_unavailable_button($variables) {
+/**
+ * Build unavailable button.
+ *
+ * @param array $variables
+ *   Vars.
+ *
+ * @return array
+ *   Button render array
+ */
+function bos_metrolist_build_unavailable_button(array $variables) {
 
   $nid = $variables['view']->argument['nid']->value[0] ?? NULL;
   $development = $variables["view"]->result[0]->_relationship_entities["field_ml_development"] ?? NULL;
@@ -437,28 +453,23 @@ function bos_metrolist_build_unavailable_button($variables) {
     'class' => [
       'webform-dialog',
       'webform-dialog-narrow',
-//      'btn btn--sm',
-//      'm-r100',
+  // 'btn btn--sm',
+  // 'm-r100',
       'ml-action-btn',
       'hide-form'
     ],
-    'title' => t("Report Unit as Unavailable"),
+    'title' => t("Report Home Unavailable"),
     // 'style' => ['width: 10rem;', 'display: flex;', 'align-items: center;', 'padding: 0;'],
   ];
 
-
-  // Use to link to a webform
-   $button['#url'] = \Drupal\Core\Url::fromRoute('entity.webform.canonical')
-   ->setRouteParameter('webform', 'ml_listing_unavailable_form')
-   ->setRouteParameter('source_entity_type', 'node')
-   ->setRouteParameter('source_entity_id', $nid);
+  // Use to link to a webform.
+  $button['#url'] = Url::fromRoute('entity.webform.canonical')
+    ->setRouteParameter('webform', 'ml_listing_unavailable_form')
+    ->setRouteParameter('source_entity_type', 'node')
+    ->setRouteParameter('source_entity_id', $nid);
 
   return $button;
 }
-
-
-
-
 
 /**
  * Split all rows into two groups.
