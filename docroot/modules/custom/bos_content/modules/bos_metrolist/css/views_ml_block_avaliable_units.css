@@ -449,40 +449,105 @@ footer > div > h2:first-of-type{
   display: none;
 }
 
+.ui-dialog .ui-dialog-content {
 
 
-.ui-dialog button.ui-dialog-titlebar-close {
-  position: absolute;
-  width: 45px;
-  height: 45px;
-  padding: 0;
-  color: #fff;
 }
 
-.ui-dialog button.ui-dialog-titlebar-close::before {
-  content: "\00D7";
-  position: absolute;
-  font-size: 45px;
-  font-size: 2.8125rem;
-  z-index: 2;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translateY(-50%) translateX(-50%);
-  transform: translateY(-50%) translateX(-50%);
+.ui-dialog .ui-dialog-titlebar {
+  background: unset;
+  border: unset;
 }
 
+.ui-dialog .ui-dialog-titlebar .ui-dialog-title {
+  display: none;
+}
 
-.ui-dialog button.ui-dialog-titlebar-close::after {
+.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
   background-color: #fb4d42;
+  width: 60px;
+  height: 60px;
+  color: #FFFFFF !important;
+  border-radius: unset;
+  /*margin: -0.65rem -0.55rem 0 0;*/
   position: absolute;
+  right: -0.25rem;
+  top: 0.3rem;
+  z-index: 110;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+  border: unset;
+}
+
+.ui-dialog .ui-dialog-buttonset .webform-button--submit {
+  background-color: #1871bd;
   color: #fff;
-  content: " ";
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  font-family: Montserrat,Arial,sans-serif !important;
+  font-size: calc(14px + 2 * ((100vw - 480px) / 960));
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 16px;
+  line-height: 1rem;
+  margin: 0;
+  padding: 20px 64px;
+  padding: 1.25rem 4rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: unset;
+}
+
+.ml-action-report-btn {
+  margin: -4rem 0 0 -2rem;
+  float: left;
+  width: 22rem;
+  position: absolute;
   z-index: 1;
 }
+
+.ml-action-report-btn img{
+  max-height: 60px;
+}
+
+.ml-action-report-btn span{
+  margin-left: -1rem;
+}
+
+/*.ui-dialog button.ui-dialog-titlebar-close {*/
+/*  position: absolute;*/
+/*  width: 45px;*/
+/*  height: 45px;*/
+/*  padding: 0;*/
+/*  color: #fff;*/
+/*}*/
+
+/*.ui-dialog button.ui-dialog-titlebar-close::before {*/
+/*  content: "\00D7";*/
+/*  position: absolute;*/
+/*  font-size: 45px;*/
+/*  font-size: 2.8125rem;*/
+/*  z-index: 2;*/
+/*  top: 50%;*/
+/*  left: 50%;*/
+/*  -webkit-transform: translateY(-50%) translateX(-50%);*/
+/*  transform: translateY(-50%) translateX(-50%);*/
+/*}*/
+
+
+/*.ui-dialog button.ui-dialog-titlebar-close::after {*/
+/*  background-color: #fb4d42;*/
+/*  position: absolute;*/
+/*  color: #fff;*/
+/*  content: " ";*/
+/*  top: 0;*/
+/*  left: 0;*/
+/*  bottom: 0;*/
+/*  right: 0;*/
+/*  z-index: 1;*/
+/*}*/
 
 
 .ui-dialog div.ui-widget-overlay {
