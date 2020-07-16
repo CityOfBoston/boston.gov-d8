@@ -175,7 +175,13 @@ class MNL extends React.Component {
         "&page[limit]=" + 
         paramsQuery.limit +
         "&sort=" +
-        paramsQuery.sort
+        paramsQuery.sort,
+        {
+          "mode": "no-cors",
+          "headers": {
+            "Content-Type": "application/json",
+          },
+        },
         
     )
       .then(res => res.json())
@@ -224,7 +230,13 @@ class MNL extends React.Component {
       "/jsonapi/node/neighborhood_lookup?filter" +
         paramsSamGet.value +
         "&fields" +
-        paramsSamGet.fields
+        paramsSamGet.fields,
+        {
+          "mode": "no-cors",
+          "headers": {
+            "Content-Type": "application/json",
+          },
+        },
     )
       .then(res => res.json())
       .then(
