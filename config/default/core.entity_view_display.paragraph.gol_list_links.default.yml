@@ -1,4 +1,4 @@
-uuid: 1915d3ab-0a12-4096-87e2-152e29ade2fc
+uuid: 3dde3cb4-56e2-439b-8ce7-40866862f1a8
 langcode: en
 status: true
 dependencies:
@@ -7,9 +7,11 @@ dependencies:
     - field.field.paragraph.gol_list_links.field_link
     - paragraphs.paragraphs_type.gol_list_links
   module:
+    - advanced_text_formatter
     - entity_reference_revisions
     - fences
-    - smart_trim
+_core:
+  default_config_hash: Hydlf3mWqj7R_XtMBW1tu5mJfpszfDDaWniWFV1ipcc
 id: paragraph.gol_list_links.default
 targetEntityType: paragraph
 bundle: gol_list_links
@@ -19,18 +21,19 @@ content:
     weight: 1
     label: hidden
     settings:
-      trim_length: 125
-      trim_type: chars
-      trim_suffix: ...
-      wrap_class: trimmed
-      more_text: More
-      more_class: more-link
-      trim_options:
-        text: true
-        trim_zero: false
-      wrap_output: false
-      more_link: false
-      summary_handler: full
+      trim_length: '125'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: php
+      format: plain_text
+      allowed_html:
+        - b
+        - em
+        - i
+        - strong
+      use_summary: 0
+      token_replace: 0
+      autop: 0
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -39,7 +42,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: smart_trim
+    type: advanced_text
     region: content
   field_link:
     label: hidden

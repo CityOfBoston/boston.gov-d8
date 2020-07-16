@@ -1,4 +1,4 @@
-uuid: 7791f865-0b20-4f5e-bf9e-af3ab8635891
+uuid: ed5af59e-d59e-4c3b-9a13-77016fc35a5b
 langcode: en
 status: false
 dependencies:
@@ -6,13 +6,14 @@ dependencies:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
     - field.field.paragraph.group_of_links_list.field_component_title
     - field.field.paragraph.group_of_links_list.field_contact
+    - field.field.paragraph.group_of_links_list.field_description
     - field.field.paragraph.group_of_links_list.field_link
     - field.field.paragraph.group_of_links_list.field_list_links
     - field.field.paragraph.group_of_links_list.field_short_title
     - field.field.paragraph.group_of_links_list.field_subheader
     - paragraphs.paragraphs_type.group_of_links_list
 _core:
-  default_config_hash: Lb5xAOJltX7jHJbEiHxdKkbR4EfBg9lhRnEOpnDpdbo
+  default_config_hash: pBmElQFqdIu7ATrkVH8snphpFdE0FDkUwDxUgmCNKVM
 id: paragraph.group_of_links_list.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: group_of_links_list
@@ -21,6 +22,7 @@ content: {  }
 hidden:
   field_component_title: true
   field_contact: true
+  field_description: true
   field_link: true
   field_list_links: true
   field_short_title: true

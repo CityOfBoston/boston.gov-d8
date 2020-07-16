@@ -23,29 +23,39 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<div {{ attributes }}>
+<div class="dr-ql b b--fw b--b">
 
-  <div class="content">
+  <input type="checkbox" id="dr-ql-tr1" class="dr-ql-tr a11y--h" checked>
 
-    <div class="sh cl">
+  <label for="dr-ql-tr1" class="dr-ql-h">
 
-      {{ title_suffix }}
+    <div class="dr-ql-ic">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 8.5 18 25">
+        <path class="dr-ql-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z" />
+      </svg>
+    </div>
 
-      {{ content.field_component_title }}
+    <div class="dr-ql-str">
 
-      {% if content.field_short_title['#items'].getValue() %}
-        {{ content.field_short_title }}
-      {% endif %}
+      <div class="dr-ql-str-c">
 
-      {% if content.field_contact['#items'].getValue() %}
-        {{ content.field_contact }}
-      {% endif %}
+        <div class="dr-ql-str-t">
+          {{ content.contextual_links }}
+          {{ content.field_component_title }}
+          {% if content.field_short_title %}
+            {{ content.field_short_title }}
+          {% endif %}
+        </div>
+
+      </div>
 
     </div>
 
-    <div class="links-grid-field-grid-links links-grid-field-mini-grid-links mobile-100 clearfix">
+  </label>
+
+  <div class="dr-ql-c">
+    <div class="g">
       {{ content.field_links }}
     </div>
-
   </div>
 </div>

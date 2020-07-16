@@ -1,15 +1,19 @@
-uuid: 6c27e9f3-62b2-4b15-aa9c-b178a8040c25
+uuid: a0b10c72-cbe5-4e08-84e1-6a50dcf54487
 langcode: en
 status: false
 dependencies:
   config:
     - core.entity_view_mode.paragraph.ribbon_link
+    - field.field.paragraph.gol_list_links.field_description
     - field.field.paragraph.gol_list_links.field_link
     - paragraphs.paragraphs_type.gol_list_links
+_core:
+  default_config_hash: RfLIdAZEj_uy8xCrdSudTyjI2GBuABf_d-UyMSFz7lU
 id: paragraph.gol_list_links.ribbon_link
 targetEntityType: paragraph
 bundle: gol_list_links
 mode: ribbon_link
 content: {  }
 hidden:
+  field_description: true
   field_link: true

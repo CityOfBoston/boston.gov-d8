@@ -1,15 +1,19 @@
-uuid: 99771759-b269-4cde-a46c-45e648c861ef
+uuid: 7f62e0b0-7bb9-4035-9636-95aa0dbe33d1
 langcode: en
 status: false
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.gol_list_links.field_description
     - field.field.paragraph.gol_list_links.field_link
     - paragraphs.paragraphs_type.gol_list_links
+_core:
+  default_config_hash: 4alWtDP-MjRPO43zXbkK18Is372VAAkl-KZNqBE3laI
 id: paragraph.gol_list_links.paragraphs_editor_preview
 targetEntityType: paragraph
 bundle: gol_list_links
 mode: paragraphs_editor_preview
 content: {  }
 hidden:
+  field_description: true
   field_link: true

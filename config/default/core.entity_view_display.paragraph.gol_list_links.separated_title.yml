@@ -1,15 +1,19 @@
-uuid: 71f3fae1-ca21-4789-8774-589804f74153
+uuid: 07c31315-a441-4ddc-a5e6-f565cf4aada6
 langcode: en
 status: false
 dependencies:
   config:
     - core.entity_view_mode.paragraph.separated_title
+    - field.field.paragraph.gol_list_links.field_description
     - field.field.paragraph.gol_list_links.field_link
     - paragraphs.paragraphs_type.gol_list_links
+_core:
+  default_config_hash: 2vS00usjwPXPU7P1Qp1m0PZvprW1FgPV08gwnri5-E8
 id: paragraph.gol_list_links.separated_title
 targetEntityType: paragraph
 bundle: gol_list_links
 mode: separated_title
 content: {  }
 hidden:
+  field_description: true
   field_link: true

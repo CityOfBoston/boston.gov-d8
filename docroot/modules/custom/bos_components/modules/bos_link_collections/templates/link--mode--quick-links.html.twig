@@ -43,10 +43,8 @@
  * @ingroup themeable
 #}
 
-{% for item in items %}
-  <div class="field-grid-links clearfix desktop-3-col clearfix tablet-2-col">
-    <div class="grid-link">
-      {{ item.content }}
-    </div>
+<div class="g--6 m-b300">
+  <div {{attributes.addClass('quick-link')}}>
+    <a href="{{ url }}" title="{{ title }}" class="dr-ql-lwa dr-ql-lwa--w">{{ title }}</a>
   </div>
-{% endfor %}
+</div>
