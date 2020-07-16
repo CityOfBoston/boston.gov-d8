@@ -400,7 +400,7 @@ sync_db() {
         printf " [action] Reset password for the admin account to random string.\n"
         # Create a new random password.
         NEWPASSWORD="$(openssl rand -hex 10)"
-        ${drush_cmd} ${ALIAS} user:password -y admin --password="${NEWPASSORD}"
+        ${drush_cmd} ${ALIAS} user:password -y admin "${NEWPASSORD}"
 
     fi
 
@@ -558,9 +558,11 @@ setEnvColor() {
 
 # Post a message to slack.
 slackPost() {
-    if [[ -e ${slackposter_webhook} ]]; then
+    if [[ -z "${slackErrors}" ]]; then slackErrors=""; fi
+
+    if [[ -z ${slackposter_webhook} ]]; then
         printf "The 'slackposter_webhook' environment variable is not set in Acquia ${target_env} environment. No post to slack.\n"
-    else
+    elif [[ -n ${site} ]] && [[ -n ${target_env} ]] && [[ -n ${source_branch} ]]; then
         title=":acquia_cloud: DRUPAL ${site} deploy to ${target_env}."
         body="The latest release of ${source_branch} branch is now available for testing on the ${target_env} environment."
         if [[ "${target_env}" == "dev" ]]; then
@@ -582,8 +584,10 @@ slackPost() {
             status="danger"
             body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
         fi
+        echo "csets"
         ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
             ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
+        printf "${drush_cmd} slackposter:post \"${title}\" \"${body}\" \"#drupal\" \"Acquia Cloud\" \"${status}\"\n"
         ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
     fi
 }
