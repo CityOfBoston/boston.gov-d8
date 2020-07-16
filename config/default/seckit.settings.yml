@@ -13,6 +13,12 @@ seckit_xss:
     connect-src: ''
     report-uri: /report-csp-violation
     policy-uri: ''
+    vendor-prefix:
+      x: false
+      webkit: false
+    upgrade-req: false
+    style-src: ''
+    frame-ancestors: ''
   x_xss:
     seckit_x_xss_option_disable: Disabled
     seckit_x_xss_option_0: '0'
@@ -27,8 +33,8 @@ seckit_csrf:
 seckit_clickjacking:
   js_css_noscript: false
   noscript_message: 'Sorry, you need to enable JavaScript to visit this website.'
-  x_frame: '1'
-  x_frame_allow_from: ''
+  x_frame: '3'
+  x_frame_allow_from: 'https://translate.googleusercontent.com'
 seckit_ssl:
   hsts: false
   hsts_subdomains: false
@@ -38,5 +44,16 @@ seckit_various:
   from_origin: false
   from_origin_destination: same
   disable_autocomplete: false
+  referrer_policy: false
+  referrer_policy_policy: ''
 _core:
   default_config_hash: 1QSPl6Lx4K-hAcSOsRUFyntOnghLfpsDzjY6tbhnAVY
+seckit_ct:
+  expect_ct: false
+  max_age: null
+  report_uri: ''
+  enforce: false
+seckit_fp:
+  feature_policy: false
+  feature_policy_policy: ''
+
