@@ -1,0 +1,74 @@
+uuid: 8849a1dc-cf53-4417-aced-a9d16f3dc7ad
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.group_of_links_quick_links.field_component_title
+    - field.field.paragraph.group_of_links_quick_links.field_contact
+    - field.field.paragraph.group_of_links_quick_links.field_links
+    - field.field.paragraph.group_of_links_quick_links.field_short_title
+    - paragraphs.paragraphs_type.group_of_links_quick_links
+  module:
+    - paragraphs
+_core:
+  default_config_hash: ATf1wbP0ew9jeAQNR75FlJUECS5DMcVoQlhiEz7FQ74
+id: paragraph.group_of_links_quick_links.default
+targetEntityType: paragraph
+bundle: group_of_links_quick_links
+mode: default
+content:
+  field_component_title:
+    weight: 1
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  field_contact:
+    weight: 3
+    type: entity_reference_autocomplete
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      match_limit: 10
+    third_party_settings: {  }
+    region: content
+  field_links:
+    weight: 5
+    type: paragraphs
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        duplicate: duplicate
+        collapse_edit_all: collapse_edit_all
+        add_above: '0'
+    third_party_settings: {  }
+    region: content
+  field_short_title:
+    weight: 2
+    type: string_textfield
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
+  uid: true
