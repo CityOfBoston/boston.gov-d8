@@ -400,7 +400,7 @@ sync_db() {
         printf " [action] Reset password for the admin account to random string.\n"
         # Create a new random password.
         NEWPASSWORD="$(openssl rand -hex 10)"
-        ${drush_cmd} ${ALIAS} user:password admin "${NEWPASSORD}" -y
+        ${drush_cmd} ${ALIAS} user:password -y admin --password="${NEWPASSORD}"
 
     fi
 
@@ -413,6 +413,8 @@ sync_db() {
         ${drush_cmd} ${ALIAS} bcss 3
     elif [ "${target_env}" == "local" ]; then
         ${drush_cmd} ${ALIAS} bcss 2
+    else
+        ${drush_cmd} ${ALIAS} bcss 3
     fi
 
 }
@@ -580,8 +582,8 @@ slackPost() {
             status="danger"
             body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
         fi
-        ${drush_cmd} cset -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
-            ${drush_cmd} cset -y "slackposter.settings" "channels.default" "drupal"
+        ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
+            ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
         ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
     fi
 }
