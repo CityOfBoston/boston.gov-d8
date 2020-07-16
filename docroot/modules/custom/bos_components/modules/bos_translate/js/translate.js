@@ -309,7 +309,7 @@ let translate = function(d){
         let k=l.substring(1, (l.length-1));
         l=k
       }
-      let h="http://translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
+      let h="//translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
       let j="";
       let i;
       j+='<div id="languages" class="translate-languages"><a class="md-cb" href="#" id="langCloseButton"></a>';
