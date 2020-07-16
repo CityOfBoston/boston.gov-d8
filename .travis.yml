@@ -6,7 +6,7 @@ branches:
   only:
     - develop
     - master
-    - bos_quick_links
+    - quick_links_2
 
 php:
   - 7.3
@@ -121,4 +121,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: bos_quick_links
+      branch: quick_links_2
