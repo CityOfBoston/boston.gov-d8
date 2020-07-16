@@ -103,7 +103,7 @@ script:
   # of monitored branches..
   # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
   - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
-  # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
+  # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only.
 
 deploy:
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.

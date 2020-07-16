@@ -584,10 +584,8 @@ slackPost() {
             status="danger"
             body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
         fi
-        echo "csets"
         ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
             ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
-        printf "${drush_cmd} slackposter:post \"${title}\" \"${body}\" \"#drupal\" \"Acquia Cloud\" \"${status}\"\n"
         ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
     fi
 }
