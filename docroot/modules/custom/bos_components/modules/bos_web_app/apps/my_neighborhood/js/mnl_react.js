@@ -177,9 +177,11 @@ class MNL extends React.Component {
         "&sort=" +
         paramsQuery.sort,
         {
-          "mode": "no-cors",
+          "mode": "cors",
           "headers": {
             "Content-Type": "application/json",
+            // Needed for CORS google translate
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
           },
         },
         
