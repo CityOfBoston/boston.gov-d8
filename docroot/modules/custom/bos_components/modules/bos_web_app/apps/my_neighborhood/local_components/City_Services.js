@@ -54,6 +54,7 @@ class CityServices extends React.Component {
         )
       }
     ];
+    const configCards = configProps.sections.city_services.cards;
     const secDesc = "Trash / recycling pick up and street sweeping.";
     const cardsCityServices = (
       <div>
@@ -65,21 +66,25 @@ class CityServices extends React.Component {
         </div>
         <div className="g">
           {/* Trash and recycling info */}
-          <MnlCard
-            title={"Trash and Recycling"}
-            image_header={
-              configProps.pathImage+"trash_truck.svg"
-            }
-            content_array={contentRecollect}
-          />
-        {/* Street Sweeping */}
-          <MnlCard
-            title={"Street Sweeping"}
-            image_header={
-              configProps.pathImage+"street_sweeper.svg"
-            }
-            content_array={contentStreetSweeping}
-          />
+          {(configCards.trash_and_recycling.display) ? (
+            <MnlCard
+              title={"Trash and Recycling"}
+              image_header={
+                configProps.globals.pathImage+"trash_truck.svg"
+              }
+              content_array={contentRecollect}
+            />
+          ) : null}
+          {/* Street Sweeping */}
+          {(configCards.street_sweeping.display) ? (
+            <MnlCard
+              title={"Street Sweeping"}
+              image_header={
+                configProps.globals.pathImage+"street_sweeper.svg"
+              }
+              content_array={contentStreetSweeping}
+            />
+          ) : null}
         </div>
         <button className="t--upper t--sans"
           onClick={() => {
@@ -92,7 +97,7 @@ class CityServices extends React.Component {
     );
     let displayCityServices;
     if (this.props.section == "city-services") {
-      history.pushState(null, null, configProps.path+'?p3');
+      history.pushState(null, null, configProps.globals.path+'?p3');
       displayCityServices = cardsCityServices;
     } else if (this.props.section == null) {
       displayCityServices = (
@@ -110,7 +115,7 @@ class CityServices extends React.Component {
           <MnlSection
             title={"City Services"}
             image_header={
-              configProps.pathImage+"street_sweeper.svg"
+              configProps.globals.pathImage+"street_sweeper.svg"
             }
             desc={secDesc}
           />

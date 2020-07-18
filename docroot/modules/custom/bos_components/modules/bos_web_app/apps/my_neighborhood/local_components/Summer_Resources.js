@@ -12,7 +12,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Learn more about the <a href={"/summer-boston"} className="mnl-link">City in the summer</a>.
+            For more information about pool hours during COVID-19, please visit the <a href={"/departments/boston-centers-youth-families"} className="mnl-link">BCYF page</a>.
             <spacefill></spacefill>
           </div>
         )
@@ -20,7 +20,7 @@ class SummerResources extends React.Component {
     ];
     const contentTotSprays = [
       {
-        heading: "Tot Spray Location",
+        heading: "Splash Pad Location",
         content: <div>
                     <div>{this.props.tot_name}</div>
                     <div>{this.props.tot_address}</div>
@@ -35,7 +35,8 @@ class SummerResources extends React.Component {
         )
       }
     ];
-    const secDesc = "Cooling centers, pools and tot sprays near you.";
+    const configCards = configProps.sections.summer.cards;
+    const secDesc = "Cooling centers, pools and splash pads near you.";
     const cardsSummer = (
       <div>
         <div className="sh">
@@ -46,21 +47,27 @@ class SummerResources extends React.Component {
         </div>
         <div className="g">
           {/* Pool info */}
-          <MnlCard
-            title={"A Pool Near You"}
-            image_header={
-              configProps.pathImage+"pool.svg"
-            }
-            content_array={contentPools}
-          />
-          {/* Tot Sprays */}
-          <MnlCard
-            title={"A Tot Spray Near You"}
-            image_header={
-              configProps.pathImage+"tot_spray.svg"
-            }
-            content_array={contentTotSprays}
-          />
+          {(configCards.pool.display) ? (
+            <MnlCard
+              title={"A Pool Near You"}
+              image_header={
+                configProps.globals.pathImage+"pool.svg"
+              }
+              content_array={contentPools}
+            />
+          ) : null}
+
+          {/* Splash Pads */}
+          {(configCards.splash_pad.display) ? (
+            <MnlCard
+              title={"A Splash Pad Near You"}
+              image_header={
+                configProps.globals.pathImage+"tot_spray.svg"
+              }
+              content_array={contentTotSprays}
+            />
+          ) : null}
+
         </div>
         <button className="t--upper t--sans"
           onClick={() => {
@@ -73,7 +80,7 @@ class SummerResources extends React.Component {
     );
     let displaySummer;
     if (this.props.section == "summer") {
-      history.pushState(null, null, configProps.path+'?p3');
+      history.pushState(null, null, configProps.globals.path+'?p3');
       displaySummer = cardsSummer;
     } else if (this.props.section == null) {
       displaySummer = (
@@ -91,7 +98,7 @@ class SummerResources extends React.Component {
           <MnlSection
             title={"Summer Resources"}
             image_header={
-              configProps.pathImage+"sun.svg"
+              configProps.globals.pathImage+"sun.svg"
             }
             desc={secDesc}
           />

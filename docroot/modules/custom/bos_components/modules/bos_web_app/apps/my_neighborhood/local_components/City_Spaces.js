@@ -43,7 +43,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about the City's <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer" className="mnl-link">library system</a>
+            To learn more about the city's library system and library hours during COVID-19, visit <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer" className="mnl-link">bpl.org</a>.
           </div>
         )
       }
@@ -88,6 +88,7 @@ class CitySpaces extends React.Component {
         )
       }
     ];
+    const configCards = configProps.sections.city_spaces.cards;
     const secDesc =
       "Libraries, community centers, historic districts, parks and playgrounds near you.";
     const cardsCitySpaces = (
@@ -100,39 +101,49 @@ class CitySpaces extends React.Component {
         </div>
         <div className="g">
           {/* Library Branch */}
-          <MnlCard
-            title={"A Library Branch Near You"}
-            image_header={
-              configProps.pathImage+"open_book.svg"
-            }
-            content_array={contentLibArray}
-          />
+          {(configCards.library.display) ? (
+            <MnlCard
+              title={"A Library Branch Near You"}
+              image_header={
+                configProps.globals.pathImage+"open_book.svg"
+              }
+              content_array={contentLibArray}
+            />
+          ) : null}
 
           {/* Community Center */}
-          <MnlCard
-            title={"A Community Center Near You"}
-            image_header={
-              configProps.pathImage+"family_house.svg"
-            }
-            content_array={contentCommCenters}
-          />
+          {(configCards.community_center.display) ? (
+            <MnlCard
+              title={"A Community Center Near You"}
+              image_header={
+                configProps.globals.pathImage+"family_house.svg"
+              }
+              content_array={contentCommCenters}
+            />
+          ) : null}
 
           {/* Park Info */}
-          <MnlCard
-            title={"A Park Near You"}
-            image_header={
-              configProps.pathImage+"trees.svg"
-            }
-            content_array={contentPark}
-          />
+          {(configCards.park.display) ? (
+            <MnlCard
+              title={"A Park Near You"}
+              image_header={
+                configProps.globals.pathImage+"trees.svg"
+              }
+              content_array={contentPark}
+            />
+          ) : null}
+
           {/* Historical Info */}
-          <MnlCard
-            title={"Historic Districts"}
-            image_header={
-              configProps.pathImage+"location.svg"
-            }
-            content_array={this.checkHistInfo()}
-          />
+          {(configCards.historic_district.display) ? (
+            <MnlCard
+              title={"Historic Districts"}
+              image_header={
+                configProps.globals.pathImage+"location.svg"
+              }
+              content_array={this.checkHistInfo()}
+            />
+          ) : null}
+
         </div>
         <button className="t--upper t--sans"
           onClick={() => {
@@ -145,7 +156,7 @@ class CitySpaces extends React.Component {
     );
     let displayCitySpaces;
     if (this.props.section == "city-spaces") {
-      history.pushState(null, null, configProps.path+'?p3');
+      history.pushState(null, null, configProps.globals.path+'?p3');
       displayCitySpaces = cardsCitySpaces;
     } else if (this.props.section == null) {
       displayCitySpaces = (
@@ -163,7 +174,7 @@ class CitySpaces extends React.Component {
           <MnlSection
             title={"City Spaces"}
             image_header={
-              configProps.pathImage+"playground.svg"
+              configProps.globals.pathImage+"playground.svg"
             }
             desc={secDesc}
           />
