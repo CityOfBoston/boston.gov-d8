@@ -1,6 +1,19 @@
 class Representation extends React.Component {
   render() {
-    // Content for card
+    // Content for cards
+    const configMayor = configProps.sections.representation.cards.mayor;
+    let contentMayor;
+    contentMayor = [
+        {
+          heading: configMayor.name,
+          content: "Mayor"
+        },
+        { content: 
+            <div>
+              Learn more about <a href={configMayor.url} className="mnl-link">Boston's Major</a>.
+            </div> 
+        }
+    ];
     let contentRepArray;
     if (this.props.councilor !== null) {
       contentRepArray = [
@@ -110,7 +123,17 @@ class Representation extends React.Component {
               Learn more about <a href={"/departments/elections/vote-early-boston"} className="mnl-link">early voting in Boston</a>.
             </div>
           )
-    })
+    });
+    // Content for Street Sweeping
+    const contentStateFederalReps = [
+      {
+        content: (
+            <div >For more information on your State and Federal representatives, visit the <a href={"https://malegislature.gov/search/findmylegislator"} target="_blank" rel="noreferrer" className="mnl-link">Find My Legislator tool</a>. 
+            </div>
+        )
+      }
+    ];
+    const configCards = configProps.sections.representation.cards;
     const secDesc =
       "Ward and precinct numbers, and early voting and polling locations.";
     const cardsRepresentation = (
@@ -123,53 +146,85 @@ class Representation extends React.Component {
         </div>
         <div className="g">
           {/* Polling Info */}
-          <MnlCard
-            title={"Your Polling Information"}
-            image_header={
-              configProps.pathImage+"voting_ballot.svg"
-            }
-            content_array={contentPollingArray}
-          />
-          {/* City Councilor */}
-          <MnlCard
-            title={"Your City Councilor"}
-            image={
-              this.props.councilor_image !== null && this.props.councilor
-                ? this.props.councilor_image
-                : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
-            }
-            image_href={
-              this.props.councilor !== null
-                ? this.props.councilor_webpage
-                : "departments/city-council"
-            }
-            content_array={contentRepArray}
-          />
+          {(configCards.polling_information.display) ? (
+            <MnlCard
+              title={"Your Polling Information"}
+              image_header={
+                configProps.globals.pathImage+"voting_ballot.svg"
+              }
+              content_array={contentPollingArray}
+            />
+          ) : null}
 
-          {/* Neighborhood Liason */}
-          <MnlCard
-            title={"Your Neighborhood Contact"}
-            image={
-              this.props.liason_image !== null && this.props.liason_name
-                ? this.props.liason_image
-                : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
-            }
-            image_href={
-              this.props.liason_name !== null
-                ? this.props.liason_webpage
-                : "/departments/neighborhood-services"
-            }
-            content_array={contentLiasonArray}
-          />
+        {/* City Mayor */}
+          {(configCards.mayor.display) ? (
+            <MnlCard
+              title={"Your Mayor"}
+              image={
+                configMayor.image
+              }
+              image_href={
+                configMayor.url
+              }
+              content_array={contentMayor}
+            />
+          ) : null}
+
+          {/* City Councilor */}
+          {(configCards.city_councilor.display) ? (
+            <MnlCard
+              title={"Your City Councilor"}
+              image={
+                this.props.councilor_image !== null && this.props.councilor
+                  ? this.props.councilor_image
+                  : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
+              }
+              image_href={
+                this.props.councilor !== null
+                  ? this.props.councilor_webpage
+                  : "departments/city-council"
+              }
+              content_array={contentRepArray}
+            />
+          ) : null}
+
+          {/* Neighborhood Contact */}
+          {(configCards.neighborhood_contact.display) ? (
+            <MnlCard
+              title={"Your Neighborhood Contact"}
+              image={
+                this.props.liason_image !== null && this.props.liason_name
+                  ? this.props.liason_image
+                  : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
+              }
+              image_href={
+                this.props.liason_name !== null
+                  ? this.props.liason_webpage
+                  : "/departments/neighborhood-services"
+              }
+              content_array={contentLiasonArray}
+            />
+          ) : null}
 
           {/* Early Voting Info */}
-          {this.props.early_voting_active == true ? (
+          {(configCards.early_voting.display) ? (
             <MnlCard
               title={"An Early Voting Location Near You"}
               image_header={
-                configProps.pathImage+"voting_ballot.svg"
+                configProps.globals.pathImage+"voting_ballot.svg"
               }
               content_array={contentEarlyVotingArray}
+            />
+          ): null}
+
+        {/* State and Federal Reps */}
+          {(configCards.state_federal_reps.display) ? (
+            <MnlCard
+              title={"Your State and Federal Reps"}
+              image_header={
+                "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
+              }
+              content_array={contentStateFederalReps}
             />
           ): null}
 
@@ -185,7 +240,7 @@ class Representation extends React.Component {
     );
     let displayReps;
     if (this.props.section == "reps") {
-      history.pushState(null, null, configProps.path+'?p3');
+      history.pushState(null, null, configProps.globals.path+'?p3');
       displayReps = cardsRepresentation;
     } else if (this.props.section == null) {
       displayReps = (
@@ -203,7 +258,7 @@ class Representation extends React.Component {
           <MnlSection
             title={"Representation"}
             image_header={
-              configProps.pathImage+"conversation.svg"
+              configProps.globals.pathImage+"conversation.svg"
             }
             desc={secDesc}
           />
