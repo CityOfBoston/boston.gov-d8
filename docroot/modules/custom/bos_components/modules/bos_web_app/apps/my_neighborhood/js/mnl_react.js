@@ -6,8 +6,6 @@ class MNL extends React.Component {
       error: null,
       isLoading: false,
       isLoadingRecollect: null,
-      season: configProps.season,
-      earlyVoting: configProps.earlyVoting,
       section: null,
       sam_id: null,
       itemsLookup: [],
@@ -53,7 +51,7 @@ class MNL extends React.Component {
         submittedAddress: null,
         submittedKeywords: null,
       });
-      history.pushState(null, null, configProps.path)
+      history.pushState(null, null, configProps.globals.path)
   }
 
   setCheckLocalStorage = (sam_id, sam_address, section) => {
@@ -175,7 +173,15 @@ class MNL extends React.Component {
         "&page[limit]=" + 
         paramsQuery.limit +
         "&sort=" +
-        paramsQuery.sort
+        paramsQuery.sort,
+        {
+          "mode": "cors",
+          "headers": {
+            "Content-Type": "application/json",
+            // Needed for CORS google translate
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
+          },
+        },
         
     )
       .then(res => res.json())
@@ -224,7 +230,15 @@ class MNL extends React.Component {
       "/jsonapi/node/neighborhood_lookup?filter" +
         paramsSamGet.value +
         "&fields" +
-        paramsSamGet.fields
+        paramsSamGet.fields,
+        {
+          "mode": "cors",
+          "headers": {
+            "Content-Type": "application/json",
+            // Needed for CORS google translate
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
+          },
+        },
     )
       .then(res => res.json())
       .then(
@@ -318,80 +332,87 @@ class MNL extends React.Component {
       }
     }
     let recollectEvents = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect);
-    /*let recollectData = null;
-    if(recollectEvents !== null && this.state.isLoadingRecollect !== true){
-      recollectData = this.state.itemsRecollect;
-    }*/
+    let configSection = configProps.sections;
     let mnlDisplay = this.state.submittedAddress ? (
+      
       <div>
-      {history.pushState({id: 'sections'}, '', configProps.path+'?p2')}
+      {history.pushState({id: 'sections'}, '', configProps.globals.path+'?p2')}
       <div className="g">
-        <CityServices
-          recollect_events={recollectEvents}
-          section={this.state.section}
-          displaySection={this.displaySection}
-        />
-        
-       <CitySpaces
-          library_branch={this.state.itemsDisplay.public_libraries_branch}
-          library_address={this.state.itemsDisplay.public_libraries_address}
-          library_zipcode={this.state.itemsDisplay.public_libraries_zipcode}
-          comm_center={this.state.itemsDisplay.community_centers_name}
-          comm_address={this.state.itemsDisplay.community_centers_address}
-          comm_hours={this.state.itemsDisplay.community_centers_school_year_hours}
-          comm_summer_hours={this.state.itemsDisplay.community_centers_summer_hours}
-          park_name={this.state.itemsDisplay.parks_name}
-          park_district={this.state.itemsDisplay.parks_district}
-          park_ownership={this.state.itemsDisplay.parks_ownership}
-          park_type={this.state.itemsDisplay.parks_type}
-          hist_name={this.state.itemsDisplay.historic_districts_name}
-          hist_place_name={this.state.itemsDisplay.historic_districts_place_name}
-          hist_status={this.state.itemsDisplay.historic_districts_status}
-          hist_year={this.state.itemsDisplay.historic_districts_year}
-          hist_use_type={this.state.itemsDisplay.historic_districts_use_type}
-          zoning_district={this.state.itemsDisplay.zoning_districts_district}
-          section={this.state.section}
-          displaySection={this.displaySection}
-        />
+        {(configSection.city_services.display) ? (
+          <CityServices
+            recollect_events={recollectEvents}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
 
-        <Representation
-          councilor={this.state.itemsDisplay.city_council_councilor}
-          district={this.state.itemsDisplay.city_council_district}
-          councilor_image={this.state.itemsDisplay.city_council_image}
-          councilor_webpage={this.state.itemsDisplay.city_council_webpage}
-          liason_name={this.state.itemsDisplay.ons_liaison_name}
-          liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
-          liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
-          liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
-          voting_location={this.state.itemsDisplay.polling_locations_location2}
-          voting_address={this.state.itemsDisplay.polling_locations_location3}
-          early_voting_active={this.state.earlyVoting}
-          early_voting_dates={this.state.itemsDisplay.early_voting_dates}
-          early_voting_times={this.state.itemsDisplay.early_voting_times}
-          early_voting_address={this.state.itemsDisplay.early_voting_address}
-          early_voting_location={this.state.itemsDisplay.early_voting_location}
-          early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
-          early_voting_notes={this.state.itemsDisplay.early_voting_notes}
-          ward={this.state.itemsDisplay.ward_name}
-          precinct={this.state.itemsDisplay.precincts_name}
-          section={this.state.section}
-          displaySection={this.displaySection}
-        />
+        {(configSection.city_spaces.display) ? (
+          <CitySpaces
+            library_branch={this.state.itemsDisplay.public_libraries_branch}
+            library_address={this.state.itemsDisplay.public_libraries_address}
+            library_zipcode={this.state.itemsDisplay.public_libraries_zipcode}
+            comm_center={this.state.itemsDisplay.community_centers_name}
+            comm_address={this.state.itemsDisplay.community_centers_address}
+            comm_hours={this.state.itemsDisplay.community_centers_school_year_hours}
+            comm_summer_hours={this.state.itemsDisplay.community_centers_summer_hours}
+            park_name={this.state.itemsDisplay.parks_name}
+            park_district={this.state.itemsDisplay.parks_district}
+            park_ownership={this.state.itemsDisplay.parks_ownership}
+            park_type={this.state.itemsDisplay.parks_type}
+            hist_name={this.state.itemsDisplay.historic_districts_name}
+            hist_place_name={this.state.itemsDisplay.historic_districts_place_name}
+            hist_status={this.state.itemsDisplay.historic_districts_status}
+            hist_year={this.state.itemsDisplay.historic_districts_year}
+            hist_use_type={this.state.itemsDisplay.historic_districts_use_type}
+            zoning_district={this.state.itemsDisplay.zoning_districts_district}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
 
-        <PublicSafety
-          police_station_name={this.state.itemsDisplay.police_dept_police_station}
-          police_station_address={this.state.itemsDisplay.police_dept_address}
-          police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
-          police_station_zip={this.state.itemsDisplay.police_dept_zip}
-          police_district={this.state.itemsDisplay.police_district}
-          fire_station_name={this.state.itemsDisplay.fire_dept_name}
-          fire_station_address={this.state.itemsDisplay.fire_dept_address}
-          fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
-          section={this.state.section}
-          displaySection={this.displaySection}
-        />
+        {(configSection.representation.display) ? (
+          <Representation
+            councilor={this.state.itemsDisplay.city_council_councilor}
+            district={this.state.itemsDisplay.city_council_district}
+            councilor_image={this.state.itemsDisplay.city_council_image}
+            councilor_webpage={this.state.itemsDisplay.city_council_webpage}
+            liason_name={this.state.itemsDisplay.ons_liaison_name}
+            liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
+            liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
+            liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
+            voting_location={this.state.itemsDisplay.polling_locations_location2}
+            voting_address={this.state.itemsDisplay.polling_locations_location3}
+            early_voting_active={this.state.earlyVoting}
+            early_voting_dates={this.state.itemsDisplay.early_voting_dates}
+            early_voting_times={this.state.itemsDisplay.early_voting_times}
+            early_voting_address={this.state.itemsDisplay.early_voting_address}
+            early_voting_location={this.state.itemsDisplay.early_voting_location}
+            early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
+            early_voting_notes={this.state.itemsDisplay.early_voting_notes}
+            ward={this.state.itemsDisplay.ward_name}
+            precinct={this.state.itemsDisplay.precincts_name}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
+
+        {(configSection.public_safety.display) ? (
+          <PublicSafety
+            police_station_name={this.state.itemsDisplay.police_dept_police_station}
+            police_station_address={this.state.itemsDisplay.police_dept_address}
+            police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
+            police_station_zip={this.state.itemsDisplay.police_dept_zip}
+            police_district={this.state.itemsDisplay.police_district}
+            fire_station_name={this.state.itemsDisplay.fire_dept_name}
+            fire_station_address={this.state.itemsDisplay.fire_dept_address}
+            fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
  
-        {this.state.season == "summer" || this.state.season == null ? (
+        
+        {(configSection.summer.display) ? (
           <SummerResources
             tot_name={this.state.itemsDisplay.tot_sprays_name}
             tot_address={this.state.itemsDisplay.tot_sprays_address}
@@ -404,7 +425,7 @@ class MNL extends React.Component {
           />
         ) : null}
 
-        {this.state.season == "winter" || this.state.season == null ? (
+        {(configSection.winter.display) ? (
           <WinterResources
             snow_routes={this.state.itemsDisplay.snow_routes_name}
             snow_routes_respsonsibility={this.state.itemsDisplay.snow_routes_responsibility}
@@ -417,12 +438,17 @@ class MNL extends React.Component {
           />
         ) : null}
 
-        <Newsletter 
-          section={this.state.section}
-        />
-        <Bos311 
-          section={this.state.section}
-        />
+        {(configSection.newsletter.display) ? (
+          <Newsletter 
+            section={this.state.section}
+          />
+        ) : null}
+
+        {(configSection.bos_311.display) ? (
+          <Bos311 
+            section={this.state.section}
+          />
+        ) : null}
       </div>
       </div>
     ) : (
