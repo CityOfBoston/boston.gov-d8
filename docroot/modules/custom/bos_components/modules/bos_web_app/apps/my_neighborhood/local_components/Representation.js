@@ -220,7 +220,7 @@ class Representation extends React.Component {
         {/* State and Federal Reps */}
           {(configCards.state_federal_reps.display) ? (
             <MnlCard
-              title={"Your State and Federal Reps"}
+              title={"State and Federal Representatives"}
               image_header={
                 "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
               }

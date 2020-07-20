@@ -59,7 +59,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            Learn more about the City's <a href={"/departments/boston-centers-youth-families"} className="mnl-link">community centers</a>
+            Due to COVID-19, please visit <a href={"/departments/boston-centers-youth-families"} className="mnl-link">Boston.gov/BCYF</a> for the latest facility hours and program information.
           </div>
         )
       }
