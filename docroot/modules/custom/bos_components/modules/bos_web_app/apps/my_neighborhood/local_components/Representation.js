@@ -124,11 +124,11 @@ class Representation extends React.Component {
             </div>
           )
     });
-    // Content for Street Sweeping
+    // Content for State and Feferal
     const contentStateFederalReps = [
       {
         content: (
-            <div >For more information on your State and Federal representatives, visit the <a href={"https://malegislature.gov/search/findmylegislator"} target="_blank" rel="noreferrer" className="mnl-link">Find My Legislator tool</a>. 
+            <div >For more information on your State and Federal representatives, visit the <a href={"https://malegislature.gov/search/findmylegislator"} target="_blank" rel="noreferrer" className="mnl-link">Find My Legislator tool</a> on <a href={"https://mass.gov"} target="_blank" rel="noreferrer" className="mnl-link">Mass.gov</a>. 
             </div>
         )
       }
