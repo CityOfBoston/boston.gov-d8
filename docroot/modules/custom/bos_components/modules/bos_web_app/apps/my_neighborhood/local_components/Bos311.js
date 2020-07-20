@@ -15,7 +15,7 @@ class Bos311 extends React.Component {
           <MnlSection
             title={"Boston 311"}
             image_header={
-              "https://assets.boston.gov/icons/experiential_icons/bos_311.svg"
+              configProps.globals.pathImage + "bos_311.svg"
             }
             desc={secDesc}
           />
