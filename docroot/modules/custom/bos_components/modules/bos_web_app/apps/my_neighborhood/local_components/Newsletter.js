@@ -15,7 +15,7 @@ class Newsletter extends React.Component {
           <MnlSection
             title={"Newsletter Sign Up"}
             image_header={
-              "https://patterns.boston.gov/assets/icons/experiential_icons/email_notification.svg"
+              configProps.globals.pathImage + "email_notification.svg"
             }
             desc={secDesc}
       
