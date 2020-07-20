@@ -95,7 +95,7 @@ before_install:
   - ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_server_customize.sh
 
 install:
-  - travis_wait 30 ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_build.sh
+  - travis_wait 40 ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_build.sh
 
 script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it

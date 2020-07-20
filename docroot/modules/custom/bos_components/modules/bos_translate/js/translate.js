@@ -1,6 +1,6 @@
 /**
  * @file
- * Script to run Google translate service
+ * Script to run Google translate service.
  */
 
 'use strict';
@@ -19,7 +19,7 @@ let covidPages = function() {
       this.multilingual();
     }
     , multilingual:function() {
-      let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706, 13654116, 13654121, 11566946];
+      let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706, 11566946];
       let $this = jQuery('#page');
       if (jQuery.inArray($this.data('target'), trArray) !== -1) {
         $this.find('#content').addClass('notranslate');
@@ -309,7 +309,7 @@ let translate = function(d){
         let k=l.substring(1, (l.length-1));
         l=k
       }
-      let h="http://translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
+      let h="//translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
       let j="";
       let i;
       j+='<div id="languages" class="translate-languages"><a class="md-cb" href="#" id="langCloseButton"></a>';
