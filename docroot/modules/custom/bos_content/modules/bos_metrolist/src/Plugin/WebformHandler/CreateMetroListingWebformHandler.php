@@ -124,12 +124,14 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
 
     if ($existingContact) {
-      return (string)$existingContact->id();
-    }else{
+      return (string) $existingContact->id();
+    }
+    else {
       try {
-        // return (string) $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData);
-        return (string)$this->client()->objectCreate('Contact', $fieldData);
-      } catch (Exception $exception) {
+        // Return (string) $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData);.
+        return (string) $this->client()->objectCreate('Contact', $fieldData);
+      }
+      catch (Exception $exception) {
         \Drupal::logger('bos_metrolist')->error($exception->getMessage());
         return FALSE;
       }
