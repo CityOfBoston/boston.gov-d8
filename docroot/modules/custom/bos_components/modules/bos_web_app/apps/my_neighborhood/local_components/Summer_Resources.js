@@ -12,7 +12,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            For more information about pool hours during COVID-19, please visit the <a href={"/departments/boston-centers-youth-families"} className="mnl-link">BCYF page</a>.
+            Only some outdoor pools are open during COVID-19, but they are open to all City residents. For more information about pool hours during COVID-19, please visit the <a href={"/departments/boston-centers-youth-families"} className="mnl-link">BCYF page</a>.
             <spacefill></spacefill>
           </div>
         )

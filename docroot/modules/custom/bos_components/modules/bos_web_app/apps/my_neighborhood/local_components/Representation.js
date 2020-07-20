@@ -10,7 +10,7 @@ class Representation extends React.Component {
         },
         { content: 
             <div>
-              Learn more about <a href={configMayor.url} className="mnl-link">Boston's Major</a>.
+              Learn more about <a href={configMayor.url} className="mnl-link">Boston's Mayor</a>.
             </div> 
         }
     ];
@@ -24,7 +24,7 @@ class Representation extends React.Component {
           {
             content: 
               <div>
-                Learn more about <a href={"/departments/city-council"} className="mnl-link">Boston's City Council</a>.
+                To learn more about Boston's City Council and view all members, including at-large councilors, visit the <a href={"/departments/city-council#city-council-members"} className="mnl-link">City Council page</a>.
               </div> 
           }
       ];

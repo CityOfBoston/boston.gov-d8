@@ -43,7 +43,7 @@ class CitySpaces extends React.Component {
       {
         content: (
           <div>
-            To learn more about the city's library system and library hours during COVID-19, visit <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer" className="mnl-link">bpl.org</a>.
+            Due to COVID-19, BPL sites are offering modified services. Please visit <a href={"https://www.bpl.org/"} target="_blank" rel="noreferrer" className="mnl-link">bpl.org</a> for more information about what sites are open and their hours.
           </div>
         )
       }
