@@ -75,6 +75,7 @@ class CityServices extends React.Component {
               content_array={contentRecollect}
             />
           ) : null}
+          
           {/* Street Sweeping */}
           {(configCards.street_sweeping.display) ? (
             <MnlCard
