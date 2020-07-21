@@ -55,8 +55,8 @@ class MNL extends React.Component {
   }
 
   setCheckLocalStorage = (sam_id, sam_address, section) => {
-    if(localStorage.getItem("sam_data")){
-      let localSAM = JSON.parse(localStorage.getItem("sam_data"));
+    if(window.parent.localStorage.getItem("sam_data")){
+      let localSAM = JSON.parse(window.parent.localStorage.getItem("sam_data"));
       this.displayAddress(localSAM[0].sam_id,localSAM[0].sam_address,localSAM[0].section);
       if(localSAM[0].section !== null){
         this.setState({section:localSAM[0].section});
@@ -71,7 +71,7 @@ class MNL extends React.Component {
         "sam_address": samAddress,
         "section": cardSection
       }];
-      localStorage.setItem("sam_data", JSON.stringify(mnl));
+      window.parent.localStorage.setItem("sam_data", JSON.stringify(mnl));
     }
   }
 
@@ -256,7 +256,7 @@ class MNL extends React.Component {
             });
             this.lookupRecollect();
             this.scaleInputText();
-            localStorage.removeItem("sam_data");
+            window.parent.localStorage.removeItem("sam_data");
             this.setCheckLocalStorage(this.state.sam_id,this.state.submittedAddress, section);
           } else {
             this.setState({
@@ -283,7 +283,7 @@ class MNL extends React.Component {
       this.setState({
         section: display
       });
-      localStorage.removeItem("sam_data");
+      window.parent.localStorage.removeItem("sam_data");
       this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, display);
     }
   };

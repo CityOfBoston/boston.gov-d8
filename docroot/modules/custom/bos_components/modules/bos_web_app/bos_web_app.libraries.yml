@@ -18,7 +18,7 @@ my_neighborhood:
     #Libraries for REACT
     apps/my_neighborhood/libraries/react.16.13.1.min.js: {attributes: {type: text/javascript }}
     apps/my_neighborhood/libraries/react-dom.16.13.1.min.js: {attributes: {type: text/javascript }}
-    #apps/my_neighborhood/libraries/babel_standalone_6.25.0.min.js: {attributes: {type: text/javascript }}
+    apps/my_neighborhood/libraries/babel_standalone_6.25.0.min.js: {attributes: {type: text/javascript }}
 
     #MNL REACT Components
     #Important - Must load before application and config.
@@ -36,7 +36,7 @@ my_neighborhood:
     apps/my_neighborhood/js/mnl_config.min.js: {attributes: {type: text/javascript}}
     apps/my_neighborhood/js/mnl_components.min.js: {attributes: {type: text/javascript}}
     #MNL REACT application and config
-    apps/my_neighborhood/js/mnl_react.min.js: {attributes: {type: text/javascript}}
+    apps/my_neighborhood/js/mnl_react.js: {attributes: {type: text/babel}}
     
     #Jquery plugin for search bar auto text scaling
     https://jquery-textfill.github.io/js/textfill/jquery.textfill.js: {attributes: {type: text/javascript,minified: true}}
