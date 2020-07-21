@@ -283,6 +283,7 @@ class MNL extends React.Component {
       this.setState({
         section: display
       });
+      
       window.parent.localStorage.removeItem("sam_data");
       this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, display);
     }
