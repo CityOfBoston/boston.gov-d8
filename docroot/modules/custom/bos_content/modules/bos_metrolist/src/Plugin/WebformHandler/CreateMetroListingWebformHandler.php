@@ -67,7 +67,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    *   Submission Data.
    *
    * @return mixed
-   *   Return SFID or false
+   *   Return SFID of Contact or false
    */
   public function addContact(array $developmentData) {
 
