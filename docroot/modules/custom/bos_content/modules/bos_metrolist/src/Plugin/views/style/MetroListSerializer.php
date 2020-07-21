@@ -23,6 +23,7 @@ class MetroListSerializer extends Serializer {
    */
   public function render() {
     $rows = [];
+    $options = [];
     // If the Data Entity row plugin is used, this will be an array of entities
     // which will pass through Serializer to one of the registered Normalizers,
     // which will transform it to arrays/scalars. If the Data field row plugin
@@ -31,10 +32,32 @@ class MetroListSerializer extends Serializer {
     foreach ($this->view->result as $row_index => $row) {
       $this->view->row_index = $row_index;
 
+
+      if ($this->view->current_display == 'rest_export_nested_1') {
+        $this->occupancyType = 'rent';
+      }
       $row = $this->view->rowPlugin->render($row);
 
       // Loop through the rows fields and if the string value is a number then set as an int value.
       foreach ($row as $fieldName => $field) {
+
+        if ($fieldName == 'units') {
+          $offer = (string)$row['offer'];
+          $assignment = (string)$row['assignment'];
+          $unitGroups = json_decode(trim((string)$field));
+
+          foreach ($unitGroups as $groupKey => $unitGroup) {
+            if ($unitGroup->occupancyType != $offer || $unitGroup->assignmentType != $assignment) {
+              unset($unitGroups[$groupKey]);
+            }else{
+              unset($unitGroups[$groupKey]->occupancyType);
+              unset($unitGroups[$groupKey]->assignmentType);
+            }
+          }
+
+          $field = json_encode(array_values($unitGroups));
+        }
+
         if ($fieldName != 'id') {
           $value = is_string($field) ? $field : $field->__toString();
 
@@ -59,6 +82,13 @@ class MetroListSerializer extends Serializer {
     else {
       $content_type = !empty($this->options['formats']) ? reset($this->options['formats']) : 'json';
     }
+
+    if ($this->view->current_display == 'rest_export_nested_1') {
+      //json_decode(trim((string)$rows[0]["units"]))
+      $this->occupancyType = 'rent';
+    }
+
+
     return $this->serializer->serialize($rows, $content_type, ['views_style_plugin' => $this]);
   }
 
