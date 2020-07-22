@@ -156,7 +156,7 @@ class CitySpaces extends React.Component {
     );
     let displayCitySpaces;
     if (this.props.section == "city-spaces") {
-      history.pushState(null, null, configProps.globals.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayCitySpaces = cardsCitySpaces;
     } else if (this.props.section == null) {
       displayCitySpaces = (

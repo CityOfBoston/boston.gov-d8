@@ -80,7 +80,7 @@ class SummerResources extends React.Component {
     );
     let displaySummer;
     if (this.props.section == "summer") {
-      history.pushState(null, null, configProps.globals.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displaySummer = cardsSummer;
     } else if (this.props.section == null) {
       displaySummer = (

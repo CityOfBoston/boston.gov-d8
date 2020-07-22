@@ -98,7 +98,7 @@ class CityServices extends React.Component {
     );
     let displayCityServices;
     if (this.props.section == "city-services" ) {
-      {configProps.frame == false ? history.pushState(null, null, configProps.globals.path+'?p3') : null};
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayCityServices = cardsCityServices;
     } else if (this.props.section == null) {
       displayCityServices = (

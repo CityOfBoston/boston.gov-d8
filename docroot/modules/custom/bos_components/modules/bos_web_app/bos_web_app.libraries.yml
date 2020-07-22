@@ -3,40 +3,40 @@ bos_web_app:
   dependencies:
     - core/drupalSettings
 metrolist:
-  version: 2.3
+  version: 2.3.21591861
   js:
     apps/metrolist/index.bundle.js: {attributes: {type: text/javascript }}
-#    apps/metrolist/0.index.bundle.js: {attributes: {type: text/javascript}}
+#   apps/metrolist/0.index.bundle.js: {attributes: {type: text/javascript}}
     apps/metrolist/1.index.bundle.js: {attributes: {type: text/javascript}}
     apps/metrolist/2.index.bundle.js: {attributes: {type: text/javascript}}
   dependencies:
     - core/drupalSettings
 
 my_neighborhood:
-  version: 1.0.9.10
+  version: 1.0.9.11
   js:
     #Libraries for REACT
     apps/my_neighborhood/libraries/react.16.13.1.min.js: {attributes: {type: text/javascript }}
     apps/my_neighborhood/libraries/react-dom.16.13.1.min.js: {attributes: {type: text/javascript }}
-    apps/my_neighborhood/libraries/babel_standalone_6.25.0.min.js: {attributes: {type: text/javascript }}
+    #apps/my_neighborhood/libraries/babel_standalone_6.25.0.min.js: {attributes: {type: text/javascript }}
 
     #MNL REACT Components
     #Important - Must load before application and config.
-    apps/my_neighborhood/local_components/Search.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Mnl_Card.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Mnl_Section.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Representation.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/City_Spaces.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Public_Safety.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/City_Services.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Newsletter.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Bos311.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/local_components/Winter_Resources.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Search.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Mnl_Card.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Mnl_Section.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Representation.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/City_Spaces.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Public_Safety.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/City_Services.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Newsletter.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Bos311.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
+    #apps/my_neighborhood/local_components/Winter_Resources.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
     #apps/my_neighborhood/local_components/Summer_Resources.js: {attributes: {type: text/babel, minified: true, preprocess: true}}
-    apps/my_neighborhood/js/mnl_config.js: {attributes: {type: text/javascript}}
-    #apps/my_neighborhood/js/mnl_components.min.js: {attributes: {type: text/javascript}}
     #MNL REACT application and config
-    apps/my_neighborhood/js/mnl_react.js: {attributes: {type: text/babel}}
+    apps/my_neighborhood/js/mnl_config.min.js: {attributes: {type: text/javascript}}
+    apps/my_neighborhood/js/mnl_components.min.js: {attributes: {type: text/javascript}}
+    apps/my_neighborhood/js/mnl_react.min.js: {attributes: {type: text/javascript}}
     
     #Jquery plugin for search bar auto text scaling
     https://jquery-textfill.github.io/js/textfill/jquery.textfill.js: {attributes: {type: text/javascript,minified: true}}
