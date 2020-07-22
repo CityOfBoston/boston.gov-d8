@@ -102,9 +102,9 @@ const configProps = {
 		},
 	},
 	"frame_google": function(){
-		const page = window.parent.location.href;
+		const page = location.href;
 		const pageGoogle = page.toLowerCase().indexOf("google");
-		if (window.location !== window.parent.location || pageGoogle >= 0) {
+		if (pageGoogle >= 0) {
 			return true;
 		}else{
 			return false;
