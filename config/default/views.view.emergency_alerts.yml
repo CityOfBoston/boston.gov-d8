@@ -29,8 +29,12 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: tag
-        options: {  }
+        type: time
+        options:
+          results_lifespan: 0
+          results_lifespan_custom: 0
+          output_lifespan: 60
+          output_lifespan_custom: 0
       query:
         type: views_query
         options:
