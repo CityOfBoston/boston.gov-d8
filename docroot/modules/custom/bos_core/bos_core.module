@@ -23,6 +23,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Cache\Cache;
 
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
@@ -1211,5 +1212,19 @@ function bos_core_entity_presave(EntityInterface $entity) {
       }
     }
 
+    // Invalidate some nodes caches.
+    switch ($entity->get('moderation_state')->getString()) {
+      case "published":
+        if ($entity->getType() == "emergency_alert") {
+          Cache::invalidateTags(["config:views.view.emergency_alerts"]);
+        }
+        elseif ($entity->getType() == "site_alert") {
+          Cache::invalidateTags(["config:views.view.site_alerts"]);
+        }
+        break;
+    }
+
   }
 }
+//
+//config:views.view.site_alerts
