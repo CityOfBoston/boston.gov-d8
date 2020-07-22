@@ -486,5 +486,5 @@ class MNL extends React.Component {
 ReactDOM.render(<MNL />,
   document.getElementById("web-app")
 );
-console.log(configProps.frame());
-console.log(configProps.is_google());
+console.log("frame: " + configProps.frame());
+console.log("google: " + configProps.is_google());
