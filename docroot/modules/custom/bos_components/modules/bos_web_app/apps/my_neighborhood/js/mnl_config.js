@@ -101,19 +101,12 @@ const configProps = {
 			"display": true,
 		},
 	},
-	"frame": function(){
-		if (window.location !== window.parent.location) {
-			return true;
-		}else{
-			return false;
-		}
-	},
-	"is_google": function(){
+	"frame_google": function(){
 		const page = window.parent.location.href;
 		const pageGoogle = page.toLowerCase().indexOf("google");
-		if(pageGoogle >= 0){
+		if (window.location !== window.parent.location || pageGoogle >= 0) {
 			return true;
-		}else {
+		}else{
 			return false;
 		}
 	}
