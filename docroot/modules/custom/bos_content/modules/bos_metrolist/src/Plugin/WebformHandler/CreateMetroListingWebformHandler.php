@@ -67,7 +67,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    *   Submission Data.
    *
    * @return mixed
-   *   Return SFID or false
+   *   Return SFID of Contact or false
    */
   public function addContact(array $developmentData) {
 
@@ -88,11 +88,15 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
     $contactName = explode(' ', $contactName);
     if (isset($contactName[1])) {
-      $fieldData['FirstName'] = $contactName[0];
-      $fieldData['LastName'] = $contactName[1];
+      $contactFirstName = $contactName[0];
+      $fieldData['FirstName'] = $contactFirstName;
+      $contactLastName = $contactName[1];
+      $fieldData['LastName'] = $contactLastName;
     }
     else {
-      $fieldData['LastName'] = $contactName[0];
+      $contactFirstName = NULL;
+      $contactLastName = $contactName[0];
+      $fieldData['LastName'] = $contactLastName;
     }
 
     if (!empty($contactAddress)) {
@@ -103,11 +107,34 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
 
     try {
-      return (string) $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData);
+      $contactQuery = new SelectQuery('Contact');
+      if ($contactFirstName) {
+        $contactQuery->addCondition('FirstName', "'$contactFirstName'");
+      }
+      $contactQuery->addCondition('LastName', "'$contactLastName'");
+      $contactQuery->addCondition('Email', "'$contactEmail'");
+      $contactQuery->fields = ['Id', 'Name', 'Email'];
+
+      $existingContact = reset($this->client()->query($contactQuery)->records()) ?? NULL;
+
     }
     catch (Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
       return FALSE;
+    }
+
+    if ($existingContact) {
+      return (string) $existingContact->id();
+    }
+    else {
+      try {
+        // Return (string) $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData);.
+        return (string) $this->client()->objectCreate('Contact', $fieldData);
+      }
+      catch (Exception $exception) {
+        \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+        return FALSE;
+      }
     }
   }
 
