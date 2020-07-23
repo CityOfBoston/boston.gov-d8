@@ -79,7 +79,7 @@ class Representation extends React.Component {
           content: this.props.precinct
         },
         {
-          content: <div>Find out if you are <a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">registered to vote</a> and <a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">where your polling location is.</a></div>
+          content: <div>Find out if you are <a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">registered to vote</a> and <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer" className="mnl-link">where your polling location is.</a></div>
         }
       ];
     }
