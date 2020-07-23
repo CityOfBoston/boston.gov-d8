@@ -12,7 +12,7 @@ class SummerResources extends React.Component {
       {
         content: (
           <div>
-            Only some outdoor pools are open during COVID-19, but they are open to all City residents. For more information about pool hours during COVID-19, please visit the <a href={"/departments/boston-centers-youth-families"} className="mnl-link">BCYF page</a>.
+            BCYF Clougherty and Mirabella outdoor pools are open at limited capacity by reservation only to City of Boston residents. All other BCYF indoor pools will remain open only for participating youth for in-person summer programming at this time. We have new protocols and procedures this year that you can read more at the <a href={"/departments/boston-centers-youth-families"} className="mnl-link">BCYF page</a>.
             <spacefill></spacefill>
           </div>
         )
