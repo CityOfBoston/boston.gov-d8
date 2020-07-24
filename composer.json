@@ -25,6 +25,19 @@
     {
       "type": "composer",
       "url": "https://asset-packagist.org"
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "furf/jquery-ui-touch-punch",
+        "version": "1.0.0",
+        "type": "drupal-library",
+        "source": {
+          "url": "https://github.com/furf/jquery-ui-touch-punch.git",
+          "type": "git",
+          "reference": "master"
+        }
+      }
     }
   ],
   "require": {
@@ -40,7 +53,7 @@
     "drupal/advanced_text_formatter": "^1.0",
     "drupal/ape": "^1.2",
     "drupal/autologout": "^1.0",
-    "drupal/better_exposed_filters": "^3.0@alpha",
+    "drupal/better_exposed_filters": "^5.0",
     "drupal/bg_image_formatter": "^1.1",
     "drupal/chosen": "^2.5",
     "drupal/coder": "^3.7",
@@ -119,7 +132,7 @@
     "drupal/token_custom": "^1.0",
     "drupal/token_filter": "^1.0",
     "drupal/twig_tweak": "^2.1",
-    "drupal/typed_data": "^1.0-alpha2",
+    "drupal/typed_data": "^1.0@alpha",
     "drupal/viewfield": "^3.0",
     "drupal/views_accordion": "^1.3",
     "drupal/views_bulk_operations": "^2.3",
@@ -134,7 +147,8 @@
     "squizlabs/php_codesniffer": "^3.5",
     "vlucas/phpdotenv": "^2.4",
     "webflo/drupal-finder": "^1.0.0",
-    "webmozart/path-util": "^2.3"
+    "webmozart/path-util": "^2.3",
+    "furf/jquery-ui-touch-punch": "^1.0"
   },
 
   "require-dev": {
@@ -184,9 +198,6 @@
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
     "patches": {
-      "drupal/better_exposed_filters": {
-        "https://www.drupal.org/project/better_exposed_filters/issues/3019535": "https://www.drupal.org/files/issues/2019-03-20/3019535-bef_ajax_error_0.patch"
-      },
       "drupal/core": {
         "* CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
         "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2018-05-14/2794481-60.patch",
