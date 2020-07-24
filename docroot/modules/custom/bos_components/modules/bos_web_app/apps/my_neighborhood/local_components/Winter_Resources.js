@@ -83,7 +83,7 @@ class WinterResources extends React.Component {
 
     let displayWinter;
     if (this.props.section == "winter") {
-      history.pushState(null, null, configProps.globals.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayWinter = cardsWinter;
     } else if (this.props.section == null) {
       displayWinter = (
