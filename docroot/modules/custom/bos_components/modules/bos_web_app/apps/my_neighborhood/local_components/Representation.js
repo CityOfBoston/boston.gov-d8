@@ -79,7 +79,7 @@ class Representation extends React.Component {
           content: this.props.precinct
         },
         {
-          content: <div> Find your <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer" className="mnl-link">polling location</a>.</div>
+          content: <div>Find out if you are <a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">registered to vote</a> and <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer" className="mnl-link">where your polling location is.</a></div>
         }
       ];
     }
@@ -135,7 +135,7 @@ class Representation extends React.Component {
     ];
     const configCards = configProps.sections.representation.cards;
     const secDesc =
-      "Ward and precinct numbers, and early voting and polling locations.";
+      "Your representation and voting information.";
     const cardsRepresentation = (
       <div>
         <div className="sh">
@@ -240,7 +240,7 @@ class Representation extends React.Component {
     );
     let displayReps;
     if (this.props.section == "reps") {
-      history.pushState(null, null, configProps.globals.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayReps = cardsRepresentation;
     } else if (this.props.section == null) {
       displayReps = (

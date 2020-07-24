@@ -19,7 +19,7 @@ let covidPages = function() {
       this.multilingual();
     }
     , multilingual:function() {
-      let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706, 11566946];
+      let trArray = [11564731, 11564741, 11564716, 11564756, 11564736, 11564746, 11564721, 11564711, 11564706];
       let $this = jQuery('#page');
       if (jQuery.inArray($this.data('target'), trArray) !== -1) {
         $this.find('#content').addClass('notranslate');
