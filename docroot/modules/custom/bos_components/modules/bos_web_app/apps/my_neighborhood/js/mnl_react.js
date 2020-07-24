@@ -51,27 +51,29 @@ class MNL extends React.Component {
         submittedAddress: null,
         submittedKeywords: null,
       });
-      history.pushState(null, null, configProps.globals.path)
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path) : null)}
   }
 
   setCheckLocalStorage = (sam_id, sam_address, section) => {
-    if(localStorage.getItem("sam_data")){
-      let localSAM = JSON.parse(localStorage.getItem("sam_data"));
-      this.displayAddress(localSAM[0].sam_id,localSAM[0].sam_address,localSAM[0].section);
-      if(localSAM[0].section !== null){
-        this.setState({section:localSAM[0].section});
+    if (!configProps.frame_google()) {
+      if(localStorage.getItem("sam_data")){
+        let localSAM = JSON.parse(localStorage.getItem("sam_data"));
+        this.displayAddress(localSAM[0].sam_id,localSAM[0].sam_address,localSAM[0].section);
+        if(localSAM[0].section !== null){
+          this.setState({section:localSAM[0].section});
+        }
       }
-    }
-    else {
-      let samId = (sam_id ? sam_id : null);
-      let samAddress = (sam_address ? sam_address : null);
-      let cardSection = (section ? section : null);
-      let mnl = [{
-        "sam_id": samId,
-        "sam_address": samAddress,
-        "section": cardSection
-      }];
-      localStorage.setItem("sam_data", JSON.stringify(mnl));
+      else {
+        let samId = (sam_id ? sam_id : null);
+        let samAddress = (sam_address ? sam_address : null);
+        let cardSection = (section ? section : null);
+        let mnl = [{
+          "sam_id": samId,
+          "sam_address": samAddress,
+          "section": cardSection
+        }];
+        localStorage.setItem("sam_data", JSON.stringify(mnl));
+      }
     }
   }
 
@@ -175,6 +177,7 @@ class MNL extends React.Component {
         "&sort=" +
         paramsQuery.sort,
         {
+          "credentials": "include",
           "mode": "cors",
           "headers": {
             "Content-Type": "application/json",
@@ -232,7 +235,8 @@ class MNL extends React.Component {
         "&fields" +
         paramsSamGet.fields,
         {
-          "mode": "cors",
+        "credentials": "include",
+        "mode": "cors",
           "headers": {
             "Content-Type": "application/json",
             // Needed for CORS google translate
@@ -336,7 +340,7 @@ class MNL extends React.Component {
     let mnlDisplay = this.state.submittedAddress ? (
       
       <div>
-      {history.pushState({id: 'sections'}, '', configProps.globals.path+'?p2')}
+      {(!configProps.frame_google() ? history.pushState({id: 'sections'}, '', configProps.globals.path+'?p2') : null)}
       <div className="g">
         {(configSection.city_services.display) ? (
           <CityServices

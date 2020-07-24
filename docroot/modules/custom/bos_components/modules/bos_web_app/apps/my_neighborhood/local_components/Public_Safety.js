@@ -85,7 +85,7 @@ class PublicSafety extends React.Component {
 
     let displayPublicSafety;
     if (this.props.section == "public_safety") {
-      history.pushState(null, null, configProps.globals.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayPublicSafety = cardsPublicSafety;
     } else if (this.props.section == null) {
       displayPublicSafety = (

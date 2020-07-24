@@ -100,5 +100,14 @@ const configProps = {
 		"bos_311": {
 			"display": true,
 		},
+	},
+	"frame_google": function(){
+		const page = location.href;
+		const pageGoogle = page.toLowerCase().indexOf("google");
+		if (pageGoogle >= 0) {
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
