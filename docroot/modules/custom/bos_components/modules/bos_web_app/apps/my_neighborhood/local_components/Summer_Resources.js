@@ -36,7 +36,7 @@ class SummerResources extends React.Component {
       }
     ];
     const configCards = configProps.sections.summer.cards;
-    const secDesc = "Cooling centers, pools and splash pads near you.";
+    const secDesc = "Pools and splash pads near you.";
     const cardsSummer = (
       <div>
         <div className="sh">
