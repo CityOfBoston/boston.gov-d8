@@ -2,12 +2,14 @@
 
 /**
  * @file
- * The Base module file for bos311 module.
+ * The Base module file for bos module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_theme().
@@ -160,7 +162,7 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
             $vars['link'] = _bos_core_get_file_link($document['0']['target_id'], $vars['title'], $attributes);
             $link_items = _bos_core_paragraph_extract_link($paragraph);
             $vars['url'] = $link_items['url'];
-            if ($vars['elements']['#view_mode'] != 'quick_links'){
+            if ($vars['elements']['#view_mode'] != 'quick_links') {
               $vars['attributes']['class'][] = 'download-link';
             }
             $vars['has_icon'] = TRUE;
@@ -277,3 +279,19 @@ function bos_link_collections_paragraph_gol_list_links_summary_alter(array $form
   ];
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_link_collections_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (isset($element["#paragraph_type"]) && $element["#paragraph_type"] == 'group_of_links_quick_links') {
+    $numberOfLinks = isset($element['subform']['field_links']['widget']) ? count(Element::children($element['subform']['field_links']['widget'])) : 0;
+    // Setting to 10 for 8 links + 2 actions (add-more & header actions)
+    if ($numberOfLinks >= 10) {
+      unset($element['subform']['field_links']['widget']['add_more']);
+      $element['subform']['field_links']['widget']['add_more'] = [
+        '#markup' => 'You can not add more then 8 links.',
+        '#type' => 'container',
+      ];
+    }
+  }
+}
