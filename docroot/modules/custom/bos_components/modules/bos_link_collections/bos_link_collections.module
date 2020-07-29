@@ -280,14 +280,12 @@ function bos_link_collections_paragraph_gol_list_links_summary_alter(array $form
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_field_widget_form_alter().
  */
 function bos_link_collections_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   if (isset($element["#paragraph_type"]) && $element["#paragraph_type"] == 'group_of_links_quick_links') {
     $links = isset($element['subform']['field_links']['widget']) ? Element::children($element['subform']['field_links']['widget']) : NULL;
     $numberOfLinks = isset($links) ? count($links) : 0;
-    dpm($links);
-    dpm($numberOfLinks);
     if ($numberOfLinks >= 10 && $numberOfLinks >= 2) {
       // Disable the Duplicate action on current links so we don't go over 8.
       foreach ($links as $linkKey) {
@@ -300,7 +298,6 @@ function bos_link_collections_field_widget_form_alter(&$element, FormStateInterf
         '#markup' => 'You can not add more then 8 links.',
         '#type' => 'container',
       ];
-      dpm($element['subform']['field_links']['widget']);
     }
   }
 }
