@@ -288,14 +288,14 @@ function bos_link_collections_field_widget_form_alter(&$element, FormStateInterf
     $numberOfLinks = isset($links) ? count($links) : 0;
     if ($numberOfLinks >= 10 && $numberOfLinks >= 2) {
       // Disable the Duplicate action on current links so we don't go over 8.
-      foreach ($links as $linkKey) {
-        if ($linkKey != 'add_more' && $linkKey != 'header_actions') {
+      foreach ($links as $linkKey => $linkValue) {
+        if (($linkValue != 'add_more' && $linkValue != 'header_actions') || $linkValue === 0) {
           $element['subform']['field_links']['widget'][$linkKey]['top']['actions']['dropdown_actions']['duplicate_button']['#access'] = FALSE;
         }
       }
       unset($element['subform']['field_links']['widget']['add_more']);
       $element['subform']['field_links']['widget']['add_more'] = [
-        '#markup' => 'You can not add more then 8 links.',
+        '#markup' => 'You cannot add more then 8 links.',
         '#type' => 'container',
       ];
     }
