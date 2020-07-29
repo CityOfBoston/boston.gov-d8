@@ -290,7 +290,7 @@ function bos_link_collections_field_widget_form_alter(&$element, FormStateInterf
       // Disable the Duplicate action on current links so we don't go over 8.
       foreach ($links as $linkKey => $linkValue) {
         if (($linkValue != 'add_more' && $linkValue != 'header_actions') || $linkValue === 0) {
-          $element['subform']['field_links']['widget'][$linkKey]['top']['actions']['dropdown_actions']['duplicate_button']['#access'] = FALSE;
+          $element['subform']['field_links']['widget'][$linkValue]['top']['actions']['dropdown_actions']['duplicate_button']['#access'] = FALSE;
         }
       }
       unset($element['subform']['field_links']['widget']['add_more']);
