@@ -284,14 +284,23 @@ function bos_link_collections_paragraph_gol_list_links_summary_alter(array $form
  */
 function bos_link_collections_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   if (isset($element["#paragraph_type"]) && $element["#paragraph_type"] == 'group_of_links_quick_links') {
-    $numberOfLinks = isset($element['subform']['field_links']['widget']) ? count(Element::children($element['subform']['field_links']['widget'])) : 0;
-    // Setting to 10 for 8 links + 2 actions (add-more & header actions)
-    if ($numberOfLinks >= 10) {
+    $links = isset($element['subform']['field_links']['widget']) ? Element::children($element['subform']['field_links']['widget']) : NULL;
+    $numberOfLinks = isset($links) ? count($links) : 0;
+    dpm($links);
+    dpm($numberOfLinks);
+    if ($numberOfLinks >= 10 && $numberOfLinks >= 2) {
+      // Disable the Duplicate action on current links so we don't go over 8.
+      foreach ($links as $linkKey) {
+        if ($linkKey != 'add_more' && $linkKey != 'header_actions') {
+          $element['subform']['field_links']['widget'][$linkKey]['top']['actions']['dropdown_actions']['duplicate_button']['#access'] = FALSE;
+        }
+      }
       unset($element['subform']['field_links']['widget']['add_more']);
       $element['subform']['field_links']['widget']['add_more'] = [
         '#markup' => 'You can not add more then 8 links.',
         '#type' => 'container',
       ];
+      dpm($element['subform']['field_links']['widget']);
     }
   }
 }
