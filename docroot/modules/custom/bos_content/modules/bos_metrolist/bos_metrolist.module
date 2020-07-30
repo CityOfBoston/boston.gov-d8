@@ -159,6 +159,34 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
 }
 
 /**
+ * Implements hook_views_pre_build()
+ */
+function bos_metrolist_views_pre_build(ViewExecutable $view) {
+  if ($view->current_display == 'block_metrolist_development_units' && $view->filter) {
+
+    $type = $view->getRequest()->get('type') ?? NULL;
+    $assignments = $view->getRequest()->get('assignment') ?? NULL;
+
+    if ($type == 'rent') {
+      $view->filter['field_ml_unit_occupancy_type_target_id']->value = [33296];
+    }
+    elseif ($type == 'sale' || $type == 'own') {
+      $view->filter['field_ml_unit_occupancy_type_target_id']->value = [33356];
+    }
+
+    if ($assignments == 'first') {
+      $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33326];
+    }
+    elseif ($assignments == 'lottery') {
+      $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33306];
+    }
+    elseif ($assignments == 'waitlist') {
+      $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33346];
+    }
+  }
+}
+
+/**
  * Implements hook_form_alter().
  *
  * @param array $rows
