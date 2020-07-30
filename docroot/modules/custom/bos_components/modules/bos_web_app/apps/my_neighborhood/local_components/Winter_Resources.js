@@ -37,6 +37,7 @@ class WinterResources extends React.Component {
         )
       }
     ];
+    const configCards = configProps.sections.winter.cards;
     const secDesc = "Find you where you can / can’t park and how to prepare for snow emergencies.";
     const cardsWinter = (
       <div>
@@ -48,21 +49,27 @@ class WinterResources extends React.Component {
         </div>
         <div className="g">
           {/* Emergency Parking */}
-          <MnlCard
-            title={"Snow Emergency Parking"}
-            image_header={
-              configProps.pathImage+"parking.svg"
-            }
-            content_array={contentSnowEmergencyParking}
-          />
+          {(configCards.snow_emergency.display) ? (
+            <MnlCard
+              title={"Snow Emergency Parking"}
+              image_header={
+                configProps.globals.pathImage+"parking.svg"
+              }
+              content_array={contentSnowEmergencyParking}
+            />
+          ) : null}
+
           {/* Snow Routes */}
-          <MnlCard
-            title={"A Snow Route Near You"}
-            image_header={
-              configProps.pathImage+"plan.svg"
-            }
-            content_array={contentSnowRoutes}
-          />
+          {(configCards.snow_route.display) ? (
+            <MnlCard
+              title={"A Snow Route Near You"}
+              image_header={
+                configProps.globals.pathImage+"plan.svg"
+              }
+              content_array={contentSnowRoutes}
+            />
+          ) : null}
+
         </div>
         <button className="t--upper t--sans"
           onClick={() => {
@@ -76,7 +83,7 @@ class WinterResources extends React.Component {
 
     let displayWinter;
     if (this.props.section == "winter") {
-      history.pushState(null, null, configProps.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayWinter = cardsWinter;
     } else if (this.props.section == null) {
       displayWinter = (
@@ -94,7 +101,7 @@ class WinterResources extends React.Component {
           <MnlSection
             title={"Winter Resources"}
             image_header={
-              configProps.pathImage+"snow_1.svg"
+              configProps.globals.pathImage+"snow_1.svg"
             }
             desc={secDesc}
           />

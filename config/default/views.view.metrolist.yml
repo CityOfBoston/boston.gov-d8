@@ -298,10 +298,15 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:core.entity_view_display.node.article.default'
+        - 'config:core.entity_view_display.node.article.teaser'
+        - 'config:core.entity_view_display.node.department_profile.article'
+        - 'config:core.entity_view_display.node.department_profile.default'
+        - 'config:core.entity_view_display.node.department_profile.teaser'
+        - 'config:core.entity_view_display.node.how_to.teaser'
         - 'config:core.entity_view_display.node.article.article'
         - 'config:core.entity_view_display.node.article.calendar_listing'
         - 'config:core.entity_view_display.node.article.contact'
-        - 'config:core.entity_view_display.node.article.default'
         - 'config:core.entity_view_display.node.article.department_listing'
         - 'config:core.entity_view_display.node.article.featured_item'
         - 'config:core.entity_view_display.node.article.featured_topics'
@@ -310,11 +315,9 @@ display:
         - 'config:core.entity_view_display.node.article.popup_icon'
         - 'config:core.entity_view_display.node.article.published_by'
         - 'config:core.entity_view_display.node.article.rss'
-        - 'config:core.entity_view_display.node.article.teaser'
         - 'config:core.entity_view_display.node.article.topics_list'
         - 'config:core.entity_view_display.node.change.default'
         - 'config:core.entity_view_display.node.change.teaser'
-        - 'config:core.entity_view_display.node.department_profile.article'
         - 'config:core.entity_view_display.node.department_profile.calendar_listing'
         - 'config:core.entity_view_display.node.department_profile.card'
         - 'config:core.entity_view_display.node.department_profile.contact'
@@ -326,7 +329,6 @@ display:
         - 'config:core.entity_view_display.node.department_profile.listing_long'
         - 'config:core.entity_view_display.node.department_profile.poll_stub'
         - 'config:core.entity_view_display.node.department_profile.published_by'
-        - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.how_to.article'
@@ -341,7 +343,6 @@ display:
         - 'config:core.entity_view_display.node.how_to.poll_stub'
         - 'config:core.entity_view_display.node.how_to.popup_icon'
         - 'config:core.entity_view_display.node.how_to.published_by'
-        - 'config:core.entity_view_display.node.how_to.teaser'
         - 'config:core.entity_view_display.node.landing_page.article'
         - 'config:core.entity_view_display.node.landing_page.calendar_listing'
         - 'config:core.entity_view_display.node.landing_page.contact'
@@ -3913,7 +3914,7 @@ display:
           admin_label: 'Apply Action'
           empty: false
           tokenize: true
-          content: "{% set app_link = field_ml_unit_lottery_app_link|striptags|trim|url_encode %}\r\n{% set field_ml_agent_email = field_ml_agent_email|striptags|trim %}\r\n\r\n{% set email_subject = \"Share MetroList Listing\" %}\r\n{% set email_body = \"Share MetroList Listing Copy with Link.\" %}\r\n{% set email_values= {'subject': email_subject, 'body': email_body} %}\r\n\r\n\r\n\r\n<div class=\"b ml-units-apply-action print-none\">\r\n    <div class=\"m-v400\">\r\n        {% if app_link %}\r\n            <a href=\"{{ app_link }}\" class=\"p-h300 btn btn--sm btn--200\">Apply</a>\r\n        {% elseif field_ml_agent_email %}\r\n            <a href=\"mailto:{{field_ml_agent_email}}?{{email_values | url_encode}}\" class=\"p-h300 btn btn--sm btn--200 hide-form\">Email Agent</a>\r\n        {% else %}\r\n            <a href=\"https://www.boston.gov\" class=\"p-h300 btn btn--sm btn--200\">Visit Website</a>\r\n        {% endif %}\r\n    </div>\r\n</div>"
+          content: "{% set app_link = field_ml_unit_lottery_app_link|raw %}\r\n{% set field_ml_agent_email = field_ml_agent_email|striptags|trim %}\r\n\r\n{% set email_subject = \"Share MetroList Listing\" %}\r\n{% set email_body = \"Share MetroList Listing Copy with Link.\" %}\r\n{% set email_values= {'subject': email_subject, 'body': email_body} %}\r\n\r\n\r\n\r\n<div class=\"b ml-units-apply-action print-none\">\r\n    <div class=\"m-v400\">\r\n        {% if app_link %}\r\n            <a href=\"{{ app_link }}\" class=\"p-h300 btn btn--sm btn--200\">Apply</a>\r\n        {% elseif field_ml_agent_email %}\r\n            <a href=\"mailto:{{field_ml_agent_email}}?{{email_values | url_encode}}\" class=\"p-h300 btn btn--sm btn--200 hide-form\">Email Agent</a>\r\n        {% else %}\r\n            <a href=\"https://www.boston.gov\" class=\"p-h300 btn btn--sm btn--200\">Visit Website</a>\r\n        {% endif %}\r\n    </div>\r\n</div>"
           plugin_id: text_custom
         area_text_custom_2:
           id: area_text_custom_2

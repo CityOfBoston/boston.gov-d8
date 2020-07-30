@@ -39,6 +39,7 @@ class PublicSafety extends React.Component {
                  </div>
       }
     ];
+    const configCards = configProps.sections.public_safety.cards;
     const secDesc = "Find the nearest police and fire stations to your address.";
     const cardsPublicSafety = (
       <div>
@@ -50,21 +51,27 @@ class PublicSafety extends React.Component {
         </div>
         <div className="g">
           {/* Police Station */}
-          <MnlCard
-            title={"A Police Station Near You"}
-            image_header={
-              configProps.pathImage+"police.svg"
-            }
-            content_array={contentPolice}
-          />
+          {(configCards.police_station.display) ? (
+            <MnlCard
+              title={"A Police Station Near You"}
+              image_header={
+                configProps.globals.pathImage+"police.svg"
+              }
+              content_array={contentPolice}
+            />
+          ) : null}
+
           {/* Fire Station */}
-          <MnlCard
-            title={"A Fire Station Near You"}
-            image_header={
-              configProps.pathImage+"fire_dept.svg"
-            }
-            content_array={contentFire}
-          />
+          {(configCards.fire_station.display) ? (
+            <MnlCard
+              title={"A Fire Station Near You"}
+              image_header={
+                configProps.globals.pathImage+"fire_dept.svg"
+              }
+              content_array={contentFire}
+            />
+          ) : null}
+
         </div>
         <button className="t--upper t--sans"
           onClick={() => {
@@ -78,7 +85,7 @@ class PublicSafety extends React.Component {
 
     let displayPublicSafety;
     if (this.props.section == "public_safety") {
-      history.pushState(null, null, configProps.path+'?p3');
+      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path+'?p3') : null)};
       displayPublicSafety = cardsPublicSafety;
     } else if (this.props.section == null) {
       displayPublicSafety = (
@@ -96,7 +103,7 @@ class PublicSafety extends React.Component {
           <MnlSection
             title={"Public Safety"}
             image_header={
-              configProps.pathImage+"first_aid.svg"
+              configProps.globals.pathImage+"first_aid.svg"
             }
             desc={secDesc}
           />
