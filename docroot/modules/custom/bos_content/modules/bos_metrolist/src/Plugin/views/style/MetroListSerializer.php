@@ -32,7 +32,6 @@ class MetroListSerializer extends Serializer {
     foreach ($this->view->result as $row_index => $row) {
       $this->view->row_index = $row_index;
 
-
       if ($this->view->current_display == 'rest_export_nested_1') {
         $this->occupancyType = 'rent';
       }
@@ -42,14 +41,15 @@ class MetroListSerializer extends Serializer {
       foreach ($row as $fieldName => $field) {
 
         if ($fieldName == 'units') {
-          $offer = (string)$row['offer'];
-          $assignment = (string)$row['assignment'];
-          $unitGroups = json_decode(trim((string)$field));
+          $offer = (string) $row['offer'];
+          $assignment = (string) $row['assignment'];
+          $unitGroups = json_decode(trim((string) $field));
 
           foreach ($unitGroups as $groupKey => $unitGroup) {
             if ($unitGroup->occupancyType != $offer || $unitGroup->assignmentType != $assignment) {
               unset($unitGroups[$groupKey]);
-            }else{
+            }
+            else {
               unset($unitGroups[$groupKey]->occupancyType);
               unset($unitGroups[$groupKey]->assignmentType);
             }
@@ -84,10 +84,9 @@ class MetroListSerializer extends Serializer {
     }
 
     if ($this->view->current_display == 'rest_export_nested_1') {
-      //json_decode(trim((string)$rows[0]["units"]))
+      // json_decode(trim((string)$rows[0]["units"]))
       $this->occupancyType = 'rent';
     }
-
 
     return $this->serializer->serialize($rows, $content_type, ['views_style_plugin' => $this]);
   }
