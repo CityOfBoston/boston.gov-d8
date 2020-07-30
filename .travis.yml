@@ -6,7 +6,6 @@ branches:
   only:
     - develop
     - master
-    - quick_links_2
 
 php:
   - 7.3
@@ -100,10 +99,10 @@ install:
 script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
-  # of monitored branches..
+  # of monitored branches.
   # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
   - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
-  # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only.
+  # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
 
 deploy:
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
@@ -117,8 +116,3 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: quick_links_2
