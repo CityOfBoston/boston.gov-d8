@@ -100,8 +100,8 @@
     {% set drOpen = true %}
     {% set drOpenValues = '' %}
 
-    {% if loop.index0 == 0 %}
-{#      {% set drOpenValues = 'checked' %}#}
+    {% if loop.index0 == 0 and rows|length == 1 %}
+      {% set drOpenValues = 'checked' %}
     {% endif %}
 
     <div{{ row.attributes.addClass(row_classes) }}>
