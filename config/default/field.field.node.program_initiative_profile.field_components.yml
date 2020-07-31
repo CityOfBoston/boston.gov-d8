@@ -27,6 +27,7 @@ dependencies:
     - paragraphs.paragraphs_type.group_of_links_grid
     - paragraphs.paragraphs_type.group_of_links_list
     - paragraphs.paragraphs_type.group_of_links_mini_grid
+    - paragraphs.paragraphs_type.group_of_links_quick_links
     - paragraphs.paragraphs_type.hero_image
     - paragraphs.paragraphs_type.iframe
     - paragraphs.paragraphs_type.list
@@ -87,6 +88,7 @@ settings:
       commission_summary: commission_summary
       commission_search: commission_search
       embed_view: embed_view
+      group_of_links_quick_links: group_of_links_quick_links
       events_and_notices: events_and_notices
     target_bundles_drag_drop:
       3_column_w_image:
@@ -197,6 +199,9 @@ settings:
       group_of_links_mini_grid:
         enabled: true
         weight: -62
+      group_of_links_quick_links:
+        enabled: true
+        weight: 104
       header_text:
         weight: -87
         enabled: false
@@ -288,4 +293,3 @@ settings:
         weight: 132
         enabled: false
 field_type: entity_reference_revisions
-
