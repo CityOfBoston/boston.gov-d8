@@ -69,7 +69,7 @@ class MNLProcessCleanup extends QueueWorkerBase {
 
     $this->removeDupes();
 
-    if ($this->stats["processed"] == 0 && $this->stats["dupes"] !== 0) {
+    if ($this->stats["processed"] == 0 && $this->stats["dupes"] == 0) {
       \Drupal::logger("mnl import")
         ->info("[2] MNL cleanup queue worker destroyed but no neighborhood_lookup entities were removed.");
       return;
