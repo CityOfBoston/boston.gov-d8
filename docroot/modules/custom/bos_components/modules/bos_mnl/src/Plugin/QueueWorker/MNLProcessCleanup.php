@@ -54,10 +54,12 @@ class MNLProcessCleanup extends QueueWorkerBase {
       "pre-entities" => $result->count,
       "post-entities" => 0,
       "processed" => 0,
+      "dupes" => 0,
       "starttime" => strtotime("now"),
     ];
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+
   }
 
   /**
@@ -65,7 +67,9 @@ class MNLProcessCleanup extends QueueWorkerBase {
    */
   public function __destruct() {
 
-    if ($this->stats["processed"] == 0) {
+    $this->removeDupes();
+
+    if ($this->stats["processed"] == 0 && $this->stats["dupes"] == 0) {
       \Drupal::logger("mnl import")
         ->info("[2] MNL cleanup queue worker destroyed but no neighborhood_lookup entities were removed.");
       return;
@@ -95,7 +99,8 @@ class MNLProcessCleanup extends QueueWorkerBase {
         Entities in DB at start:      " . number_format($this->stats["pre-entities"], 0) . "<br>
         mnl_cleanup queue at start:   " . number_format($this->stats["queue"], 0) . "<br>
         == Queue Processing =================<br>
-        Removed entities:             " . number_format($this->stats["processed"], 0) . "<br>
+        Removed out of date entities:           " . number_format($this->stats["processed"], 0) . "<br>
+        Removed duplicate entities:             " . number_format($this->stats["dupes"], 0) . "<br>
         == Result ===========================<br>
         Entities in DB at end:        " . number_format($this->stats["post-entities"], 0) . "<br>
         mnl_cleanup queue at end:     " . number_format($this->queue->numberOfItems(), 0) . "<br>
@@ -112,6 +117,42 @@ class MNLProcessCleanup extends QueueWorkerBase {
   private function endQueues() {
     $queue = \Drupal::queue('mnl_import');
     return ($queue->numberOfItems() == 0 && $this->queue->numberOfItems() == 0);
+  }
+
+  /**
+   * Check and remove dupes.
+   */
+  private function removeDupes() {
+    // Fetch and load the dupes.
+    $query = \Drupal::database()->select('node__field_sam_id', 'sid')
+      ->fields('sid', ['field_sam_id_value']);
+    $query->addExpression('count(*) > 1', 'dupes');
+    $query->groupBy("sid.field_sam_id_value");
+    $query->having('dupes >= :matches', [':matches' => 1]);
+    $results = $query->execute()->fetchAll();
+
+    // Load dupes and find changed date.
+    foreach ($results as $result) {
+      $sam_id = $result->field_sam_id_value;
+      $query = \Drupal::database()->select('node_field_data', 'nfd')
+        ->fields('nfd', ['nid', 'title', 'type', 'changed']);
+      $query->condition('nfd.type', 'neighborhood_lookup')
+        ->condition('nfd.title', $sam_id);
+      $dupes = $query->execute()->fetchAll();
+      $dupesSort = array_column($dupes, 'changed');
+      array_multisort($dupesSort, SORT_DESC, $dupes);
+      foreach ($dupes as $dupe => $item) {
+        // Delete all duplicate SAM IDs EXCEPT for first/newest.
+        if ($dupe !== 0) {
+          // Remove duplicate items.
+          \Drupal::entityTypeManager()
+            ->getStorage("node")
+            ->load($item->nid)
+            ->delete();
+          $this->stats["dupes"]++;
+        }
+      }
+    }
   }
 
   /**
