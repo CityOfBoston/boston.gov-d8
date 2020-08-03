@@ -135,9 +135,8 @@ class MNLProcessCleanup extends QueueWorkerBase {
     foreach ($results as $result) {
       $sam_id = $result->field_sam_id_value;
       $query = \Drupal::database()->select('node_field_data', 'nfd')
-        ->fields('nfd', ['nid', 'title', 'status', 'type', 'changed']);
-      $query->condition('nfd.status', '1')
-        ->condition('nfd.type', 'neighborhood_lookup')
+        ->fields('nfd', ['nid', 'title', 'type', 'changed']);
+      $query->condition('nfd.type', 'neighborhood_lookup')
         ->condition('nfd.title', $sam_id);
       $dupes = $query->execute()->fetchAll();
       $dupesSort = array_column($dupes, 'changed');
@@ -150,8 +149,8 @@ class MNLProcessCleanup extends QueueWorkerBase {
             ->getStorage("node")
             ->load($item->nid)
             ->delete();
+          $this->stats["dupes"]++;
         }
-        $this->stats["dupes"]++;
       }
     }
   }
