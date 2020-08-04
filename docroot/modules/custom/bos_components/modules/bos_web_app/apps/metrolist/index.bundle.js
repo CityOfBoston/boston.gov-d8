@@ -66354,12 +66354,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "resolveLocationConsideringGoogleTranslate", function() { return resolveLocationConsideringGoogleTranslate; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "switchToGoogleTranslateBaseIfNeeded", function() { return switchToGoogleTranslateBaseIfNeeded; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "switchBackToMetrolistBaseIfNeeded", function() { return switchBackToMetrolistBaseIfNeeded; });
+/* harmony import */ var _util_objects__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @util/objects */ "./src/util/objects.js");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+
+var globalThis = Object(_util_objects__WEBPACK_IMPORTED_MODULE_0__["getGlobalThis"])();
 function isOnGoogleTranslate() {
   return globalThis.location.hostname === 'translate.googleusercontent.com' || globalThis.location.hostname === 'translate.google.com' || globalThis.location.pathname === '/translate_c';
 }
