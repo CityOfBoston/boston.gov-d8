@@ -126,9 +126,8 @@ class MNLProcessCleanup extends QueueWorkerBase {
     // Fetch and load the dupes.
     $query = \Drupal::database()->select('node__field_sam_id', 'sid')
       ->fields('sid', ['field_sam_id_value']);
-    $query->addExpression('count(*) > 1', 'dupes');
     $query->groupBy("sid.field_sam_id_value");
-    $query->having('dupes >= :matches', [':matches' => 1]);
+    $query->having('count(*) > 1 >= :matches', [':matches' => 1]);
     $results = $query->execute()->fetchAll();
 
     // Load dupes and find changed date.
