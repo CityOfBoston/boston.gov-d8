@@ -2,12 +2,14 @@
 
 /**
  * @file
- * The Base module file for bos311 module.
+ * The Base module file for bos module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_theme().
@@ -25,6 +27,9 @@ function bos_link_collections_theme() {
   $theme['paragraph__group_of_links_mini_grid'] = [
     'base hook' => 'paragraph',
   ];
+  $theme['paragraph__group_of_links_quick_links'] = [
+    'base hook' => 'paragraph',
+  ];
   $theme['paragraph__gol_list_links'] = [
     'base hook' => 'paragraph',
   ];
@@ -35,6 +40,14 @@ function bos_link_collections_theme() {
   $theme['paragraph__internal_link__separated_title'] = [
     'base hook' => 'paragraph',
     'template' => 'link--mode--separated-title',
+  ];
+  $theme['paragraph__internal_link__quick_links'] = [
+    'base hook' => 'paragraph',
+    'template' => 'link--mode--quick-links',
+  ];
+  $theme['paragraph__external_link__quick_links'] = [
+    'base hook' => 'paragraph',
+    'template' => 'link--mode--quick-links',
   ];
   $theme['field__field_external_link__external_link__mode__separated_title'] = [
     'base hook' => 'field',
@@ -47,6 +60,10 @@ function bos_link_collections_theme() {
     'base hook' => 'paragraph',
     'template' => 'link--mode--ribbon-link',
   ];
+  $theme['paragraph__document__quick_links'] = [
+    'base hook' => 'paragraph',
+    'template' => 'link--mode--quick-links',
+  ];
   $theme['field__field_external_link__external_link__mode__ribbon_link'] = [
     'base hook' => 'field',
     'template' => 'link--mode--ribbon-link',
@@ -56,6 +73,9 @@ function bos_link_collections_theme() {
     'template' => 'link--mode--ribbon-link',
   ];
   $theme['field__paragraph__group_of_links_mini_grid'] = [
+    'base hook' => 'field',
+  ];
+  $theme['field__paragraph__group_of_links_quick_links'] = [
     'base hook' => 'field',
   ];
   $theme['field__paragraph__field_link__group_of_links_grid'] = [
@@ -83,6 +103,16 @@ function bos_link_collections_preprocess_paragraph__group_of_links_grid(&$vars) 
     $cta = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_link')
       ->getValue(), ['class' => ['btn']]);
     $vars['cta'] = !empty($cta['link']) ? $cta['link'] : [];
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
+function bos_link_collections_preprocess_paragraph__group_of_links_quick_links(&$vars) {
+  $vars['content']['field_links'];
+  if (!empty($vars['paragraph'])) {
+    $vars['Quick_link'] = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_links'));
   }
 }
 
@@ -118,7 +148,7 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
     $paragraph = $vars['paragraph'];
     switch ($paragraph->bundle()) {
       case 'document':
-        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link') {
+        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link' || $vars['elements']['#view_mode'] == 'quick_links') {
           if (!$paragraph->get('field_document')->isEmpty()) {
             $document = $paragraph->get('field_document')->getValue();
             if ($paragraph->get('field_document')->isEmpty() || $paragraph->get('field_title')->isEmpty()) {
@@ -130,20 +160,38 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
             }
             $attributes = ['attributes' => ['title' => "Download {$vars['title']}", 'target' => '_blank']];
             $vars['link'] = _bos_core_get_file_link($document['0']['target_id'], $vars['title'], $attributes);
-            $vars['attributes']['class'][] = 'download-link';
+            $link_items = _bos_core_paragraph_extract_link($paragraph);
+            $vars['url'] = $link_items['url'];
+            if ($vars['elements']['#view_mode'] != 'quick_links') {
+              $vars['attributes']['class'][] = 'download-link';
+            }
             $vars['has_icon'] = TRUE;
           }
         }
         break;
 
       case 'internal_link':
-        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link') {
+        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link' || $vars['elements']['#view_mode'] == 'quick_links') {
           $link = $paragraph->get('field_internal_link')->getValue();
           if (isset($link['0'])) {
             $options = ['title' => "Go to {$link['0']['title']}"];
             $link_items = _bos_core_paragraph_extract_link($paragraph, $options);
             $vars['link'] = $link_items['link'];
             $vars['title'] = $link_items['title'];
+            $vars['url'] = $link_items['url'];
+          }
+        }
+        break;
+
+      case 'external_link':
+        if ($vars['elements']['#view_mode'] == 'quick_links') {
+          $link = $paragraph->get('field_external_link')->getValue();
+          if (isset($link['0'])) {
+            $options = ['title' => "Go to {$link['0']['title']}"];
+            $link_items = _bos_core_paragraph_extract_link($paragraph, $options);
+            $vars['link'] = $link_items['link'];
+            $vars['title'] = $link_items['title'];
+            $vars['url'] = $link_items['url'];
           }
         }
         break;
@@ -229,4 +277,27 @@ function bos_link_collections_paragraph_gol_list_links_summary_alter(array $form
     'attributes' => $attributes,
     'content' => $markup,
   ];
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function bos_link_collections_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  if (isset($element["#paragraph_type"]) && $element["#paragraph_type"] == 'group_of_links_quick_links') {
+    $links = isset($element['subform']['field_links']['widget']) ? Element::children($element['subform']['field_links']['widget']) : NULL;
+    $numberOfLinks = isset($links) ? count($links) : 0;
+    if ($numberOfLinks >= 10 && $numberOfLinks >= 2) {
+      // Disable the Duplicate action on current links so we don't go over 8.
+      foreach ($links as $linkKey => $linkValue) {
+        if (($linkValue != 'add_more' && $linkValue != 'header_actions') || $linkValue === 0) {
+          $element['subform']['field_links']['widget'][$linkValue]['top']['actions']['dropdown_actions']['duplicate_button']['#access'] = FALSE;
+        }
+      }
+      unset($element['subform']['field_links']['widget']['add_more']);
+      $element['subform']['field_links']['widget']['add_more'] = [
+        '#markup' => 'You cannot add more then 8 links.',
+        '#type' => 'container',
+      ];
+    }
+  }
 }

@@ -34,10 +34,17 @@ dependencies:
     - node.type.metrolist_development
     - node.type.metrolist_unit
     - taxonomy.vocabulary.availability_status
+    - taxonomy.vocabulary.metrolist_user_guide_type
+    - taxonomy.vocabulary.ml_occupancy_type
     - webform.webform.metrolist_launch_feedback
   content:
     - 'paragraph:grid_of_cards:2e010d52-f59e-4671-ac92-5a9307ca7118'
     - 'taxonomy_term:availability_status:62ee443f-a31e-404e-96b9-f1390664bd81'
+    - 'taxonomy_term:metrolist_user_guide_type:654223b2-e22f-460c-abfd-89852ec7a5ce'
+    - 'taxonomy_term:metrolist_user_guide_type:879320e9-efa5-4ec8-9d28-516401a17c33'
+    - 'taxonomy_term:metrolist_user_guide_type:f5903a74-0bba-4baa-9a82-d9644dc8e6c0'
+    - 'taxonomy_term:ml_occupancy_type:2bb2eb9f-67df-434a-824a-6cd7ea3d656b'
+    - 'taxonomy_term:ml_occupancy_type:cd1aa0d1-2a8c-44a7-9799-0a0e6c7bb7e2'
   module:
     - address
     - bos_metrolist
@@ -321,13 +328,9 @@ display:
         - 'config:core.entity_view_display.node.department_profile.listing'
         - 'config:core.entity_view_display.node.department_profile.listing_long'
         - 'config:core.entity_view_display.node.department_profile.poll_stub'
-        - 'config:core.entity_view_display.node.department_profile.popup_icon'
         - 'config:core.entity_view_display.node.department_profile.published_by'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
-        - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
-        - 'config:core.entity_view_display.node.event.default'
-        - 'config:core.entity_view_display.node.event.featured_item'
         - 'config:core.entity_view_display.node.how_to.article'
         - 'config:core.entity_view_display.node.how_to.calendar_listing'
         - 'config:core.entity_view_display.node.how_to.contact'
@@ -343,7 +346,6 @@ display:
         - 'config:core.entity_view_display.node.landing_page.article'
         - 'config:core.entity_view_display.node.landing_page.calendar_listing'
         - 'config:core.entity_view_display.node.landing_page.contact'
-        - 'config:core.entity_view_display.node.landing_page.default'
         - 'config:core.entity_view_display.node.landing_page.department_listing'
         - 'config:core.entity_view_display.node.landing_page.featured_item'
         - 'config:core.entity_view_display.node.landing_page.featured_topics'
@@ -368,23 +370,16 @@ display:
         - 'config:core.entity_view_display.node.listing_page.topics_list'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
-        - 'config:core.entity_view_display.node.metrolist_development.contact'
-        - 'config:core.entity_view_display.node.metrolist_development.default'
-        - 'config:core.entity_view_display.node.metrolist_development.map'
         - 'config:core.entity_view_display.node.metrolist_development.teaser'
-        - 'config:core.entity_view_display.node.metrolist_unit.default'
-        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
         - 'config:core.entity_view_display.node.neighborhood_lookup.default'
         - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
-        - 'config:core.entity_view_display.node.person_profile.default'
         - 'config:core.entity_view_display.node.person_profile.department_listing'
         - 'config:core.entity_view_display.node.person_profile.embed'
         - 'config:core.entity_view_display.node.person_profile.featured_item'
         - 'config:core.entity_view_display.node.person_profile.featured_topics'
-        - 'config:core.entity_view_display.node.person_profile.listing'
         - 'config:core.entity_view_display.node.person_profile.listing_long'
         - 'config:core.entity_view_display.node.person_profile.poll_stub'
         - 'config:core.entity_view_display.node.person_profile.popup_icon'
@@ -394,8 +389,6 @@ display:
         - 'config:core.entity_view_display.node.place_profile.default'
         - 'config:core.entity_view_display.node.place_profile.listing'
         - 'config:core.entity_view_display.node.place_profile.teaser'
-        - 'config:core.entity_view_display.node.post.default'
-        - 'config:core.entity_view_display.node.post.featured_item'
         - 'config:core.entity_view_display.node.post.listing'
         - 'config:core.entity_view_display.node.post.listing_short'
         - 'config:core.entity_view_display.node.post.rss'
@@ -412,12 +405,9 @@ display:
         - 'config:core.entity_view_display.node.public_notice.teaser'
         - 'config:core.entity_view_display.node.script_page.default'
         - 'config:core.entity_view_display.node.script_page.listing'
-        - 'config:core.entity_view_display.node.site_alert.default'
         - 'config:core.entity_view_display.node.site_alert.embed'
         - 'config:core.entity_view_display.node.site_alert.teaser'
-        - 'config:core.entity_view_display.node.status_item.default'
         - 'config:core.entity_view_display.node.status_item.listing'
-        - 'config:core.entity_view_display.node.status_item.listing_long'
         - 'config:core.entity_view_display.node.status_item.teaser'
         - 'config:core.entity_view_display.node.tabbed_content.default'
         - 'config:core.entity_view_display.node.topic_page.default'
@@ -426,6 +416,24 @@ display:
         - 'config:core.entity_view_display.node.topic_page.listing_long'
         - 'config:core.entity_view_display.node.transaction.default'
         - 'config:core.entity_view_display.node.transaction.listing'
+        - 'config:core.entity_view_display.node.department_profile.default'
+        - 'config:core.entity_view_display.node.department_profile.popup_icon'
+        - 'config:core.entity_view_display.node.emergency_alert.default'
+        - 'config:core.entity_view_display.node.event.default'
+        - 'config:core.entity_view_display.node.event.featured_item'
+        - 'config:core.entity_view_display.node.landing_page.default'
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
+        - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.person_profile.default'
+        - 'config:core.entity_view_display.node.person_profile.listing'
+        - 'config:core.entity_view_display.node.post.default'
+        - 'config:core.entity_view_display.node.post.featured_item'
+        - 'config:core.entity_view_display.node.site_alert.default'
+        - 'config:core.entity_view_display.node.status_item.default'
+        - 'config:core.entity_view_display.node.status_item.listing_long'
   attachment_2:
     display_plugin: attachment
     id: attachment_2
@@ -3749,6 +3757,69 @@ display:
           empty_zero: false
           hide_alter_empty: false
           plugin_id: custom
+        field_ml_unit_user_guide_type_3:
+          id: field_ml_unit_user_guide_type_3
+          table: node__field_ml_unit_user_guide_type
+          field: field_ml_unit_user_guide_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: false
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       defaults:
         fields: false
         style: false
@@ -3786,6 +3857,18 @@ display:
       title: 'Available Units in this Building'
       display_description: ''
       sorts:
+        field_ml_unit_occupancy_type_target_id:
+          id: field_ml_unit_occupancy_type_target_id
+          table: node__field_ml_unit_occupancy_type
+          field: field_ml_unit_occupancy_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
         field_ml_unit_num_of_bedrooms_value:
           id: field_ml_unit_num_of_bedrooms_value
           table: node__field_ml_unit_num_of_bedrooms
@@ -3944,6 +4027,15 @@ display:
           admin_label: 'field_ml_incm_elgblty_ami_thold: Taxonomy term'
           required: true
           plugin_id: standard
+        field_ml_unit_user_guide_type:
+          id: field_ml_unit_user_guide_type
+          table: node__field_ml_unit_user_guide_type
+          field: field_ml_unit_user_guide_type
+          relationship: none
+          group_type: group
+          admin_label: 'field_ml_unit_user_guide_type: Taxonomy term'
+          required: true
+          plugin_id: standard
       arguments:
         nid:
           id: nid
@@ -4034,42 +4126,6 @@ display:
           default_argument_type: query_parameter
           default_argument_options:
             query_param: ami
-            fallback: all
-            multiple: and
-          default_argument_skip_url: false
-          summary_options:
-            base_path: ''
-            count: true
-            items_per_page: 25
-            override: false
-          summary:
-            sort_order: asc
-            number_of_records: 0
-            format: default_summary
-          specify_validation: false
-          validate:
-            type: none
-            fail: 'not found'
-          validate_options: {  }
-          must_not_be: false
-          plugin_id: 'null'
-        null_2:
-          id: null_2
-          table: views
-          field: 'null'
-          relationship: none
-          group_type: group
-          admin_label: Type
-          default_action: default
-          exception:
-            value: all
-            title_enable: false
-            title: All
-          title_enable: false
-          title: ''
-          default_argument_type: query_parameter
-          default_argument_options:
-            query_param: type
             fallback: all
             multiple: and
           default_argument_skip_url: false
@@ -4364,11 +4420,107 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: datetime
+        field_ml_unit_user_guide_type_target_id:
+          id: field_ml_unit_user_guide_type_target_id
+          table: node__field_ml_unit_user_guide_type
+          field: field_ml_unit_user_guide_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            - 33326
+            - 33306
+            - 33346
+          group: 3
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: metrolist_user_guide_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_ml_unit_occupancy_type_target_id:
+          id: field_ml_unit_occupancy_type_target_id
+          table: node__field_ml_unit_occupancy_type
+          field: field_ml_unit_occupancy_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            - 33296
+            - 33356
+          group: 3
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: textfield
+          limit: true
+          vid: ml_occupancy_type
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
       filter_groups:
         operator: AND
         groups:
           1: AND
           2: OR
+          3: AND
       cache:
         type: tag
         options: {  }
@@ -6162,6 +6314,9 @@ display:
         type: data_field
         options:
           field_options:
+            field_ml_unit_occupancy_type_1:
+              alias: occupancyType
+              raw_output: false
             counter:
               alias: id
               raw_output: false
@@ -6182,6 +6337,9 @@ display:
               raw_output: false
             field_ml_unit_min_income_thold:
               alias: incomeQualification
+              raw_output: false
+            field_ml_unit_user_guide_type:
+              alias: assignmentType
               raw_output: false
       arguments:
         nid:
@@ -6443,6 +6601,132 @@ display:
         options:
           offset: 0
       fields:
+        field_ml_unit_occupancy_type_1:
+          id: field_ml_unit_occupancy_type_1
+          table: node__field_ml_unit_occupancy_type
+          field: field_ml_unit_occupancy_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: "{% set occupancy_type = field_ml_unit_occupancy_type_1|striptags|trim %}\r\n{% if occupancy_type == \"Rent\" %}\r\n    rent\r\n{% elseif  occupancy_type == \"Own\" %}\r\n    sale\r\n{% endif %}"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: true
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: true
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: false
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_ml_unit_user_guide_type:
+          id: field_ml_unit_user_guide_type
+          table: node__field_ml_unit_user_guide_type
+          field: field_ml_unit_user_guide_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ field_ml_unit_user_guide_type|striptags|trim|lower|split('' '')[0] }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         counter:
           id: counter
           table: views
@@ -6454,7 +6738,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ raw_arguments.nid }}-{{ counter }}'
+            text: '{{ raw_arguments.nid }}-{{ field_ml_unit_occupancy_type_1|first }}-{{ field_ml_unit_user_guide_type|first }}-{{ counter }}'
             make_link: false
             path: ''
             absolute: false
@@ -6802,7 +7086,7 @@ display:
           type: entity_reference_label
           settings:
             link: false
-          group_column: entity_id
+          group_column: target_id
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -6928,6 +7212,7 @@ display:
         - 'config:field.storage.node.field_ml_unit_num_of_bedrooms'
         - 'config:field.storage.node.field_ml_unit_occupancy_type'
         - 'config:field.storage.node.field_ml_unit_rent_or_sale_price'
+        - 'config:field.storage.node.field_ml_unit_user_guide_type'
   rest_export_nested_1:
     display_plugin: rest_export_nested
     id: rest_export_nested_1
@@ -7267,6 +7552,132 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
+        field_ml_unit_occupancy_type:
+          id: field_ml_unit_occupancy_type
+          table: node__field_ml_unit_occupancy_type
+          field: field_ml_unit_occupancy_type
+          relationship: reverse__node__field_ml_development
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: 0
+          alter:
+            alter_text: 1
+            text: "{% set occupancy_type = field_ml_unit_occupancy_type|striptags|trim %}\r\n{% if occupancy_type == \"Rent\" %}\r\n    rent\r\n{% elseif  occupancy_type == \"Own\" %}\r\n    sale\r\n{% endif %}"
+            make_link: 0
+            path: ''
+            absolute: 0
+            external: 0
+            replace_spaces: 0
+            path_case: none
+            trim_whitespace: 1
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: 0
+            max_length: '0'
+            word_boundary: 1
+            ellipsis: 1
+            more_link: 0
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: 1
+            trim: 0
+            preserve_tags: ''
+            html: 0
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: 1
+          empty: ''
+          hide_empty: 0
+          empty_zero: 0
+          hide_alter_empty: 1
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: 0
+          group_column: entity_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: 0
+          plugin_id: field
+        field_ml_unit_user_guide_type:
+          id: field_ml_unit_user_guide_type
+          table: node__field_ml_unit_user_guide_type
+          field: field_ml_unit_user_guide_type
+          relationship: reverse__node__field_ml_development
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: 0
+          alter:
+            alter_text: 1
+            text: '{{ field_ml_unit_user_guide_type|striptags|trim|lower|split('' '')[0] }}'
+            make_link: 0
+            path: ''
+            absolute: 0
+            external: 0
+            replace_spaces: 0
+            path_case: none
+            trim_whitespace: 1
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: 0
+            max_length: '0'
+            word_boundary: 1
+            ellipsis: 1
+            more_link: 0
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: 1
+            trim: 0
+            preserve_tags: ''
+            html: 0
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: 1
+          empty: ''
+          hide_empty: 0
+          empty_zero: 0
+          hide_alter_empty: 1
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: 0
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: 0
+          plugin_id: field
         nid:
           id: nid
           table: node_field_data
@@ -7278,7 +7689,7 @@ display:
           exclude: 0
           alter:
             alter_text: 1
-            text: '{{ nid| json_encode }}'
+            text: "{% set developmentID = nid |striptags|trim %}\r\n{% set occupancyType = field_ml_unit_occupancy_type |striptags|trim|first|lower %}\r\n{% set assignmentType = field_ml_unit_user_guide_type |striptags|trim|first|lower %}\r\n{{ developmentID }}-{{ occupancyType }}-{{ assignmentType }}"
             make_link: 0
             path: ''
             absolute: 0
@@ -7624,69 +8035,6 @@ display:
           empty_zero: 0
           hide_alter_empty: 1
           plugin_id: standard
-        field_ml_unit_occupancy_type:
-          id: field_ml_unit_occupancy_type
-          table: node__field_ml_unit_occupancy_type
-          field: field_ml_unit_occupancy_type
-          relationship: reverse__node__field_ml_development
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: 0
-          alter:
-            alter_text: 1
-            text: "{% set occupancy_type = field_ml_unit_occupancy_type|striptags|trim %}\r\n{% if occupancy_type == \"Rent\" %}\r\n    rent\r\n{% elseif  occupancy_type == \"Own\" %}\r\n    sale\r\n{% endif %}"
-            make_link: 0
-            path: ''
-            absolute: 0
-            external: 0
-            replace_spaces: 0
-            path_case: none
-            trim_whitespace: 1
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: 0
-            max_length: '0'
-            word_boundary: 1
-            ellipsis: 1
-            more_link: 0
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: 1
-            trim: 0
-            preserve_tags: ''
-            html: 0
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: 1
-          empty: ''
-          hide_empty: 0
-          empty_zero: 0
-          hide_alter_empty: 1
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: 0
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: 0
-          plugin_id: field
         field_ml_units_json:
           id: field_ml_units_json
           table: node__field_ml_units_json
@@ -7804,69 +8152,6 @@ display:
           type: list_default
           settings: {  }
           group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: 0
-          plugin_id: field
-        field_ml_unit_user_guide_type:
-          id: field_ml_unit_user_guide_type
-          table: node__field_ml_unit_user_guide_type
-          field: field_ml_unit_user_guide_type
-          relationship: reverse__node__field_ml_development
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: 0
-          alter:
-            alter_text: 1
-            text: '{{ field_ml_unit_user_guide_type|striptags|trim|lower|split('' '')[0] }}'
-            make_link: 0
-            path: ''
-            absolute: 0
-            external: 0
-            replace_spaces: 0
-            path_case: none
-            trim_whitespace: 1
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: 0
-            max_length: '0'
-            word_boundary: 1
-            ellipsis: 1
-            more_link: 0
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: 1
-            trim: 0
-            preserve_tags: ''
-            html: 0
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: 1
-          empty: ''
-          hide_empty: 0
-          empty_zero: 0
-          hide_alter_empty: 1
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: 0
-          group_column: target_id
           group_columns: {  }
           group_rows: true
           delta_limit: 0

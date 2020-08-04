@@ -69,7 +69,7 @@ function bos_metrolist_theme() {
  *   Render variables.
  */
 function bos_metrolist_preprocess_page(array &$variables) {
-  if (isset($variables['node']) && !is_string($variables['node'])  && $variables['node']->bundle() == 'metrolist_development') {
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'metrolist_development') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
     $variables['attributes']['class'][] = 'mn';
   }
@@ -92,10 +92,10 @@ function bos_metrolist_preprocess_page(array &$variables) {
 function bos_metrolist_form_taxonomy_term_ml_income_eligibility_ami_thold_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
   $incomeFields = [
-      'field_total_house_income_data',
-      'total_house_income_data_bpda',
-      'total_house_income_data_hud'
-    ];
+    'field_total_house_income_data',
+    'total_house_income_data_bpda',
+    'total_house_income_data_hud'
+  ];
 
   foreach ($incomeFields as $incomeField) {
     if (isset($form[$incomeField])) {
@@ -132,19 +132,18 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
   // Rent / own.
   $bounds['type'] = $view->getRequest()->get('type') ?? NULL;
 
-  $rowGroups = [
-    'inBounds' => [],
-    'outOfBounds' => []
-  ];
-
-  foreach ($rows as $row) {
-    bos_metrolist_set_views_row_group($rowGroups, $bounds, $row);
+  // Sort by type first if it is set so that we can populate the header and footer data correctly.
+  if (is_null($bounds['type']) || $bounds['type'] == 'rent') {
+    $variables['view']->sort['field_ml_unit_occupancy_type_target_id']->options['order'] = 'ASC';
+  }
+  else {
+    $variables['view']->sort['field_ml_unit_occupancy_type_target_id']->options['order'] = 'DESC';
+    $variables['view']->result = array_reverse($variables['view']->result);
   }
 
-  $variables['inBoundsRows'] = !empty($rowGroups['inBounds']) ? $rowGroups['inBounds'] : $rowGroups['outOfBounds'];
-  $variables['outOfBoundsRows'] = !empty($rowGroups['inBounds']) ? $rowGroups['outOfBounds'] : [];
-
-  $variables['rows'] = $variables['inBoundsRows'];
+  foreach ($rows as $row) {
+    bos_metrolist_set_views_active_rows($rows, $bounds, $row);
+  }
 
   $variables['email_button'] = $options['show_email_button'] ? bos_metrolist_build_email_button($variables) : NULL;
   $variables['print_button'] = $options['show_print_button'] ? bos_metrolist_build_print_button($variables) : NULL;
@@ -156,6 +155,85 @@ function bos_metrolist_preprocess_views_view_metrolist_drawers(&$variables) {
   // $variables['share_button_instagram'] = $options['show_share_buttons'] ? bos_metrolist_build_share_button($variables, 'instagram') : NULL;
 
   $variables['report_unavailable_button'] = bos_metrolist_build_unavailable_button($variables);
+
+}
+
+/**
+ * Implements hook_views_pre_build()
+ */
+function bos_metrolist_views_pre_build(ViewExecutable $view) {
+  if ($view->current_display == 'block_metrolist_development_units' && $view->filter) {
+
+    $type = $view->getRequest()->get('type') ?? NULL;
+    $assignments = $view->getRequest()->get('assignment') ?? NULL;
+
+    if ($type == 'rent') {
+      $view->filter['field_ml_unit_occupancy_type_target_id']->value = [33296];
+    }
+    elseif ($type == 'sale' || $type == 'own') {
+      $view->filter['field_ml_unit_occupancy_type_target_id']->value = [33356];
+    }
+
+    if ($assignments == 'first') {
+      $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33326];
+    }
+    elseif ($assignments == 'lottery') {
+      $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33306];
+    }
+    elseif ($assignments == 'waitlist') {
+      $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33346];
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * @param array $rows
+ *   Referenced set of Rows.
+ * @param array $bounds
+ *   The bounds from the filter params.
+ * @param array $row
+ *   Current row.
+ */
+function bos_metrolist_set_views_active_rows(array &$rows, array $bounds = [], array $row = []) {
+  $rowResult = $row['content']['#row'] ?? NULL;
+  $index = $rowResult->index ?? NULL;
+
+  // Let value of 'sale' map to 'own' for the JsApp filter values.
+  $type = (strtolower($bounds['type']) == 'sale') ? 'own' : strtolower($bounds['type']);
+  $type = strtolower($rowResult->_relationship_entities["field_ml_unit_occupancy_type"]->label()) == $type ? TRUE : FALSE;
+
+  $amiValue = preg_replace('/\D/', '', $rowResult->_relationship_entities["field_ml_incm_elgblty_ami_thold"]->label());
+  $amiBounds = explode('-', $bounds['ami']);
+  // Sort the ami bounds in case we are given them in the wrong order in the url filters.
+  sort($amiBounds);
+  $amiLow = $amiBounds[0] ?? NULL;
+  $amiHigh = $amiBounds[1] ?? NULL;
+
+  $ami = ($amiValue >= $amiLow && $amiValue <= $amiHigh) ? TRUE : FALSE;
+
+  $bedsBounds = explode(' ', $bounds['beds']);
+  $beds = in_array($rowResult->node__field_ml_unit_num_of_bedrooms_field_ml_unit_num_of_bed, $bedsBounds);
+
+  if (!is_null($bounds['beds']) && !$beds) {
+    // $rows[$index] = $row;
+    return;
+  }
+  elseif (!is_null($bounds['ami']) && !$ami) {
+    // $rows[$index] = $row;
+    return;
+  }
+  elseif (!is_null($bounds['type']) && !$type) {
+    // $rows['outOfBounds'][$index] = $row;
+    return;
+  }
+  else {
+    // Set a class to bold the drawer title.
+    $rows[$index]['attributes']->addClass('active');
+    // $rows[$index] = $row;
+    return;
+  }
 
 }
 
@@ -174,7 +252,7 @@ function bos_metrolist_build_email_button($variables) {
   $title = [
     '#type' => 'html_tag',
     '#tag' => 'span',
-  // '#value' => $variables['view']->style_plugin->options['email_button_text'],
+    // '#value' => $variables['view']->style_plugin->options['email_button_text'],
     '#value' => '',
     '#attributes' => [
       'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
@@ -188,11 +266,11 @@ function bos_metrolist_build_email_button($variables) {
     '#attributes' => [
       'src' => 'https://assets.boston.gov/icons/experiential_icons/email.svg',
       'style' => [
-          'max-height: 42px;',
-          'margin: 0;',
-          'padding: 0;',
-          'display: block;',
-          'flex:1'
+        'max-height: 42px;',
+        'margin: 0;',
+        'padding: 0;',
+        'display: block;',
+        'flex:1'
       ],
       'class' => ['']
     ],
@@ -236,7 +314,7 @@ function bos_metrolist_build_print_button($variables) {
   $title = [
     '#type' => 'html_tag',
     '#tag' => 'span',
-  // '#value' => $variables['view']->style_plugin->options['print_button_text'],
+    // '#value' => $variables['view']->style_plugin->options['print_button_text'],
     '#value' => '',
     '#attributes' => [
       'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
@@ -250,11 +328,11 @@ function bos_metrolist_build_print_button($variables) {
     '#attributes' => [
       'src' => 'https://assets.boston.gov/icons/experiential_icons/printer.svg',
       'style' => [
-          'max-height: 42px;',
-          'margin: 0;',
-          'padding: 0;',
-          'display: block;',
-          'flex:1'
+        'max-height: 42px;',
+        'margin: 0;',
+        'padding: 0;',
+        'display: block;',
+        'flex:1'
       ],
       'class' => ['']
     ],
@@ -324,8 +402,8 @@ function bos_metrolist_build_share_button(array $variables, $provider = '') {
   $title = [
     '#type' => 'html_tag',
     '#tag' => 'span',
-  // '#value' => $variables['view']->style_plugin->options['email_button_text'],
-  // '#value' => $socials[$provider]['label'],
+    // '#value' => $variables['view']->style_plugin->options['email_button_text'],
+    // '#value' => $socials[$provider]['label'],
     '#value' => '',
     '#attributes' => [
       'style' => ['display: block;', 'flex:2;', 'white-space: nowrap;'],
@@ -377,11 +455,11 @@ function bos_metrolist_build_share_button(array $variables, $provider = '') {
 
   if ($provider == 'twitter') {
     $button['#url']->setOption('query', [
-    // 'subject' => "Share Metrolist Listing - $developmentTitle",
-    // 'body' => "Share Metrolist Listing - $developmentTitle ( $developmentURL )",
-    // 'url' => \Drupal::token()->replace("[current-page:url]", ['node' => $development], ['clear' => TRUE]),
+      // 'subject' => "Share Metrolist Listing - $developmentTitle",
+      // 'body' => "Share Metrolist Listing - $developmentTitle ( $developmentURL )",
+      // 'url' => \Drupal::token()->replace("[current-page:url]", ['node' => $development], ['clear' => TRUE]),
       'url' => $developmentURL,
-    // 'text' => \Drupal::token()->replace("New listing on Boston Metrolist: [current-page:title]", ['node' => $development], ['clear' => TRUE]),
+      // 'text' => \Drupal::token()->replace("New listing on Boston Metrolist: [current-page:title]", ['node' => $development], ['clear' => TRUE]),
       'text' => "New listing on Boston Metrolist: $developmentTitle",
       'hashtags' => $socials[$provider]['hashtags'],
     ]);
@@ -400,7 +478,7 @@ function bos_metrolist_build_share_button(array $variables, $provider = '') {
  * Build unavailable button.
  *
  * @param array $variables
- *   Vars.
+ *   Variables.
  *
  * @return array
  *   Button render array
@@ -453,8 +531,8 @@ function bos_metrolist_build_unavailable_button(array $variables) {
     'class' => [
       'webform-dialog',
       'webform-dialog-narrow',
-  // 'btn btn--sm',
-  // 'm-r100',
+      // 'btn btn--sm',
+      // 'm-r100',
       'ml-action-btn',
       'hide-form'
     ],
@@ -523,7 +601,7 @@ function bos_metrolist_create_listing_submission($email = 'John.Smith@example.co
   // Create webform submission.
   $values = [
     'webform_id' => $webform->id(),
-  // @TODO: not sure we need this... need to test
+    // @TODO: not sure we need this... need to test
     'in_draft' => TRUE,
     'data' => [
       'contact_email' => $email,
