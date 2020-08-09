@@ -1256,6 +1256,8 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
   // ADA SKIP NAV
   $(document).ready(function () {
     $(document).on('focus', '#skipLink', function () {
+      var burger = document.getElementById('brg-tr');
+      burger.checked = false;
       $("div.sw-skipnav-outerbar").animate({
         marginTop: "0px"
       }, 500);
