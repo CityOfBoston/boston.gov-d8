@@ -59,7 +59,11 @@ class MetroListSerializer extends Serializer {
         }
 
         if ($fieldName == 'maxIncomeByHouseholdSize') {
-          $field = explode(', ', (String) $field);
+          $fields = explode(', ', (String) $field);
+          foreach ($fields as $key => $value) {
+            $fields[$key] = is_numeric($value) ? intval($value) : $value;
+          }
+          $field = $fields;
         }
 
         if ($fieldName != 'id') {
