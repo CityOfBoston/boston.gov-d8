@@ -3066,6 +3066,7 @@ display:
         footer: false
         filters: false
         filter_groups: false
+        query: false
       row:
         type: data_field
         options:
@@ -3090,6 +3091,9 @@ display:
               raw_output: false
             total_house_income_data_hud_5:
               alias: '6'
+              raw_output: false
+            field_total_house_income_data:
+              alias: maxIncomeByHouseholdSize
               raw_output: false
       group_by: false
       fields:
@@ -3159,18 +3163,18 @@ display:
           entity_type: taxonomy_term
           entity_field: name
           plugin_id: term_name
-        total_house_income_data_hud:
-          id: total_house_income_data_hud
-          table: taxonomy_term__total_house_income_data_hud
-          field: total_house_income_data_hud
+        field_total_house_income_data:
+          id: field_total_house_income_data
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data
           relationship: none
           group_type: group
           admin_label: ''
-          label: '1 person'
+          label: ''
           exclude: false
           alter:
             alter_text: false
-            text: '{{ total_house_income_data_hud|int }}'
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -3202,7 +3206,7 @@ display:
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: false
+          element_default_classes: true
           empty: ''
           hide_empty: false
           empty_zero: false
@@ -3214,341 +3218,11 @@ display:
             prefix_suffix: false
             decimal_separator: .
             scale: 0
-          group_column: value
+          group_column: entity_id
           group_columns: {  }
           group_rows: true
-          delta_limit: 1
+          delta_limit: 6
           delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        total_house_income_data_hud_1:
-          id: total_house_income_data_hud_1
-          table: taxonomy_term__total_house_income_data_hud
-          field: total_house_income_data_hud
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: '2 people'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_decimal
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-            decimal_separator: .
-            scale: 0
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 1
-          delta_offset: 1
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        total_house_income_data_hud_2:
-          id: total_house_income_data_hud_2
-          table: taxonomy_term__total_house_income_data_hud
-          field: total_house_income_data_hud
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: '3 people'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_decimal
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-            decimal_separator: .
-            scale: 0
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 1
-          delta_offset: 2
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        total_house_income_data_hud_3:
-          id: total_house_income_data_hud_3
-          table: taxonomy_term__total_house_income_data_hud
-          field: total_house_income_data_hud
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: '4 people'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_decimal
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-            decimal_separator: .
-            scale: 0
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 1
-          delta_offset: 3
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        total_house_income_data_hud_4:
-          id: total_house_income_data_hud_4
-          table: taxonomy_term__total_house_income_data_hud
-          field: total_house_income_data_hud
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: '5 people'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_decimal
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-            decimal_separator: .
-            scale: 0
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 1
-          delta_offset: 4
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        total_house_income_data_hud_5:
-          id: total_house_income_data_hud_5
-          table: taxonomy_term__total_house_income_data_hud
-          field: total_house_income_data_hud
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: '6 people'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_decimal
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-            decimal_separator: .
-            scale: 0
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 1
-          delta_offset: 5
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
@@ -3644,15 +3318,18 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        name:
-          id: name
-          table: taxonomy_term_field_data
-          field: name
+        field_total_house_income_data_value:
+          id: field_total_house_income_data_value
+          table: taxonomy_term__field_total_house_income_data
+          field: field_total_house_income_data_value
           relationship: none
           group_type: group
-          admin_label: 'Show 100% only as Base'
-          operator: '='
-          value: '100% AMI'
+          admin_label: ''
+          operator: 'not empty'
+          value:
+            min: ''
+            max: ''
+            value: ''
           group: 1
           exposed: false
           expose:
@@ -3670,6 +3347,8 @@ display:
             remember_roles:
               authenticated: authenticated
             placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -3682,13 +3361,19 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: taxonomy_term
-          entity_field: name
-          plugin_id: string
+          plugin_id: numeric
       filter_groups:
         operator: AND
         groups:
           1: AND
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+          distinct: true
+          replica: false
+          query_comment: ''
+          query_tags: null
     cache_metadata:
       max-age: -1
       contexts:
@@ -3697,7 +3382,7 @@ display:
         - request_format
         - user.permissions
       tags:
-        - 'config:field.storage.taxonomy_term.total_house_income_data_hud'
+        - 'config:field.storage.taxonomy_term.field_total_house_income_data'
   rest_export_1:
     display_plugin: rest_export
     id: rest_export_1
