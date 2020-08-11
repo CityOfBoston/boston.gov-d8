@@ -58,8 +58,12 @@ class MetroListSerializer extends Serializer {
           $field = json_encode(array_values($unitGroups));
         }
 
+        if ($fieldName == 'maxIncomeByHouseholdSize') {
+          $field = explode(', ', (String) $field);
+        }
+
         if ($fieldName != 'id') {
-          $value = is_string($field) ? $field : $field->__toString();
+          $value = is_string($field) || is_array($field) ? $field : $field->__toString();
 
           if ($value === 'null') {
             $row[$fieldName] = NULL;
