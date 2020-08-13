@@ -23,7 +23,7 @@ class CitySpaces extends React.Component {
     contentDistricts.push({
       content: (
         <div>
-          Learn more about <a href={"/departments/landmarks-commission"} className="mnl-link">the City's historic districts</a>.
+          Learn more about <a href={"/departments/landmarks-commission"} className="mnl-link">the City's historic districts</a> and <a href={"/departments/landmarks-commission/how-we-review-design-changes-historic-districts"} className="mnl-link">what it means to be inside of one</a>.
         </div>
       )
     }) 
