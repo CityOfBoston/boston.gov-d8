@@ -8,11 +8,15 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class MetrolistAMIPathSubscriber implements InboundPathProcessorInterface, EventSubscriberInterface
-{
+/**
+ * MetrolistAMIPathSubscriber - Alter the path and redirect route for MetroList AMI Estimator.
+ */
+class MetrolistAMIPathSubscriber implements InboundPathProcessorInterface, EventSubscriberInterface {
 
-  public static function amiEstimatorUrl()
-  {
+  /**
+   * Set the URL / path to match on.
+   */
+  public static function amiEstimatorUrl() {
     return '/metrolist/ami-estimator';
   }
 
@@ -27,8 +31,7 @@ class MetrolistAMIPathSubscriber implements InboundPathProcessorInterface, Event
    * @return string
    *   The processed path.
    */
-  public function processInbound($path, Request $request)
-  {
+  public function processInbound($path, Request $request) {
     if (self::stringStartsWith(self::amiEstimatorUrl(), strtolower($path))) {
       return \Drupal::service('path.alias_manager')->getPathByAlias(self::amiEstimatorUrl());
     }
@@ -39,36 +42,35 @@ class MetrolistAMIPathSubscriber implements InboundPathProcessorInterface, Event
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents()
-  {
-    // register our event right before the redirect module redirects
-    $events[ KernelEvents::REQUEST ][] = ['stopRedirectIfMetrolistAMI', 31];
+  public static function getSubscribedEvents() {
+    // Register our event right before the redirect module redirects.
+    $events[KernelEvents::REQUEST][] = ['stopRedirectIfMetrolistAmi', 31];
 
     return $events;
   }
 
   /**
-   * ------------------------------------
-   * From the redirect module (redirect/src/EventSubscriber/RouteNormalizerRequestSubscriber.php):
+   * From the redirect module (redirect/src/EventSubscriber/RouteNormalizerRequestSubscriber.php):.
    *
    * The normalization can be disabled by setting the "_disable_route_normalizer"
    * request parameter to TRUE. However, this should be done before
    * onKernelRequestRedirect() method is executed.
-   * ------------------------------------
    *
    * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
    *   The event to process.
    */
-  public static function stopRedirectIfMetrolistAMI(GetResponseEvent $event) {
+  public static function stopRedirectIfMetrolistAmi(GetResponseEvent $event) {
     $path = $event->getRequest()->getPathInfo();
 
     if (self::stringStartsWith(self::amiEstimatorUrl(), strtolower($path))) {
-      $event->getRequest()->attributes->set('_disable_route_normalizer', true);
+      $event->getRequest()->attributes->set('_disable_route_normalizer', TRUE);
     }
   }
 
-  public static function stringStartsWith($needle, $haystack)
-  {
+  /**
+   * Check if a string starts with a sub-string.
+   */
+  public static function stringStartsWith($needle, $haystack) {
     return (substr($haystack, 0, strlen($needle)) === $needle);
   }
 
