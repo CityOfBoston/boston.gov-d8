@@ -1,0 +1,6 @@
+services:
+  bos_metrolist.metrolist_ami_path_subscriber:
+    class: Drupal\bos_metrolist\MetrolistAMIPathSubscriber
+    tags:
+      - { name: path_processor_inbound }
+      - { name: event_subscriber }
