@@ -16,6 +16,8 @@ use Drupal\views\ViewExecutable;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
 
+use Drupal\bos_metrolist\MetroListSalesForceConnection;
+
 /**
  * Implements hook_help().
  */
@@ -642,4 +644,49 @@ function bos_metrolist_webform_submission_presave(WebformSubmission $webform_sub
     $message = str_replace('#metrolist:new-listing:token#', $token, $webform_submission->getElementData('hidden_message'));
     $webform_submission->setElementData('hidden_message', $message);
   }
+}
+
+/**
+ * Implements hook_webform_element_alter().
+ *
+ * @param array $element
+ *   Webform element / field.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Active Webform form_state.
+ * @param array $context
+ *   Context data about the webform.
+ */
+function bos_metrolist_webform_element_alter(array &$element, FormStateInterface $form_state, array $context) {
+
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_contact') {
+    $salesForce = new MetroListSalesForceConnection();
+    $webformSID = $element['#webform_submission'] ?? NULL;
+
+    $salesForce->loadWebformSubmission($webformSID);
+    $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
+
+    if ($contactOptions) {
+      $element['#options'] = array_merge($element['#options'], $contactOptions);
+    }
+
+  }
+
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_development') {
+    $salesForce = new MetroListSalesForceConnection();
+    $webformSID = $element['#webform_submission'] ?? NULL;
+    $salesForce->loadWebformSubmission($webformSID);
+    $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
+
+    $developmentOptions = $salesForce->getDevelopmentOptionsByContactSID($contactSID);
+
+    if ($developmentOptions) {
+      $element['#options'] = array_merge($element['#options'], $developmentOptions);
+    }
+
+  }
+
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--contact_name') {
+    $form_state->setValue('contact_name', 'IT WORKS');
+  }
+
 }
