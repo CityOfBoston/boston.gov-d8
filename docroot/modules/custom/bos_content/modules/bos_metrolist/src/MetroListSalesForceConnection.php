@@ -170,4 +170,25 @@ class MetroListSalesForceConnection {
     return $options;
   }
 
+
+  /**
+   *
+   */
+  public function getUnitsByDevelopmentSID(string $developmentSFID) {
+
+    try {
+      $developmentQuery = new SelectQuery('Development_Unit__c');
+      $developmentQuery->addCondition('Development_new__c', "'$developmentSFID'");
+      $developmentQuery->fields = ['Id', 'Name', 'Availability_Status__c', 'Income_Eligibility_AMI_Threshold__c', 'Number_of_Bedrooms__c', 'Rent_or_Sale_Price__c', 'Minimum_Income_Threshold__c'];
+
+      return $this->client()->query($developmentQuery)->records() ?? NULL;
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+      return FALSE;
+    }
+
+  }
+
+
 }
