@@ -1293,5 +1293,19 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       });
     })
 
+    $(document).on('focusin', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#1871bd");
+      $(this).find('.di .di-tt').attr("tabindex","-1");
+    });
+    $(document).on('focusout', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#ffffff");
+    });
+    $(document).on('mouseover', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#1871bd");
+    });
+    $(document).on('mouseout', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#ffffff");
+    });
+
   });
 })(jQuery, Drupal, this, this.document);
