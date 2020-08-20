@@ -517,7 +517,21 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
       if ($currentUnits) {
         $webformCurrentUnits = [];
         foreach ($currentUnits as $unitSFID => $currentUnit) {
-          $adaUnit = ($currentUnit->field('ADA_H__c') || $currentUnit->field('ADA_V__c') || $currentUnit->field('ADA_M__c')) ? '✓' : '-';
+//          $adaUnit = ($currentUnit->field('ADA_H__c') || $currentUnit->field('ADA_V__c') || $currentUnit->field('ADA_M__c')) ? "&#128065;" : '-';
+
+          $adaUnit = [];
+
+          if ($currentUnit->field('ADA_H__c')) {
+            $adaUnit[] = '✓ Hearing';
+          }
+          if ($currentUnit->field('ADA_V__c')) {
+            $adaUnit[] = '✓ Visual';
+          }
+          if ($currentUnit->field('ADA_M__c')) {
+            $adaUnit[] = '✓ Mobility';
+          }
+
+          $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "";
 
           $webformCurrentUnits[] = [
             'relist_unit' => 0,
