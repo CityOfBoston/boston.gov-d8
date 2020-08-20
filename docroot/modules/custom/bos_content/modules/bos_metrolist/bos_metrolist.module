@@ -685,8 +685,34 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
 
   }
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--contact_name') {
-    $form_state->setValue('contact_name', 'IT WORKS');
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--units') {
+    $salesForce = new MetroListSalesForceConnection();
+    $excludeOptions = ['Homeless Set Aside'];
+    $amiOptions = $salesForce->getPickListValues('Development_unit__C', 'Income_Eligibility_AMI_Threshold__c', $excludeOptions) ?? null;
+
+    if ($amiOptions) {
+      $element['#element']['ami']['#options'] = $amiOptions;
+    }
   }
+
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--region') {
+    $salesForce = new MetroListSalesForceConnection();
+    $regionOptions = $salesForce->getPickListValues('Development__C', 'Region__c') ?? null;
+
+    if ($regionOptions) {
+      $element['#options'] = $regionOptions;
+    }
+  }
+
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--city') {
+    $salesForce = new MetroListSalesForceConnection();
+    $cityOptions = $salesForce->getPickListValues('Development__C', 'City__c') ?? null;
+
+    if ($cityOptions) {
+      $element['#options'] = $cityOptions;
+    }
+  }
+
+
 
 }
