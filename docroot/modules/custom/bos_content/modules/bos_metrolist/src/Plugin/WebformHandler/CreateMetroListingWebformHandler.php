@@ -517,8 +517,11 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
       if ($currentUnits) {
         $webformCurrentUnits = [];
         foreach ($currentUnits as $unitSFID => $currentUnit) {
+          $adaUnit = ($currentUnit->field('ADA_H__c') || $currentUnit->field('ADA_V__c') || $currentUnit->field('ADA_M__c')) ? '✓' : '-';
+
           $webformCurrentUnits[] = [
             'relist_unit' => 0,
+            'ada' => $adaUnit,
             'ami' => $currentUnit->field('Income_Eligibility_AMI_Threshold__c'),
             'bedrooms' => $currentUnit->field('Number_of_Bedrooms__c'),
             'price' => $currentUnit->field('Rent_or_Sale_Price__c'),

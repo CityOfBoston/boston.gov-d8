@@ -179,7 +179,18 @@ class MetroListSalesForceConnection {
     try {
       $developmentQuery = new SelectQuery('Development_Unit__c');
       $developmentQuery->addCondition('Development_new__c', "'$developmentSFID'");
-      $developmentQuery->fields = ['Id', 'Name', 'Availability_Status__c', 'Income_Eligibility_AMI_Threshold__c', 'Number_of_Bedrooms__c', 'Rent_or_Sale_Price__c', 'Minimum_Income_Threshold__c'];
+      $developmentQuery->fields = [
+        'Id',
+        'Name',
+        'Availability_Status__c',
+        'Income_Eligibility_AMI_Threshold__c',
+        'Number_of_Bedrooms__c',
+        'Rent_or_Sale_Price__c',
+        'Minimum_Income_Threshold__c',
+        'ADA_H__c',
+        'ADA_V__c',
+        'ADA_M__c',
+        ];
 
       return $this->client()->query($developmentQuery)->records() ?? NULL;
     }
@@ -190,5 +201,19 @@ class MetroListSalesForceConnection {
 
   }
 
+  public function getPickListValues(string $sf_object, string $sf_field, array $exclude = []) {
+    $values = [];
+    $picklistData = $this->client()->objectDescribe($sf_object)->getField($sf_field)['picklistValues'] ?? null;
+
+    if ($picklistData) {
+      foreach ($picklistData as $option) {
+        if ($option['active'] && !in_array($option['value'], $exclude)) {
+          $values[$option['value']] = $option['label'];
+        }
+      }
+    }
+
+    return $values;
+  }
 
 }
