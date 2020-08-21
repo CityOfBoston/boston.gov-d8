@@ -23,6 +23,10 @@ use Drupal\bos_metrolist\MetroListSalesForceConnection;
  */
 class CreateMetroListingWebformHandler extends WebformHandlerBase
 {
+  /**
+   * @var bool
+   */
+  public $updatedDevelopmentData = FALSE;
 
   /**
    * {@inheritdoc}
@@ -283,22 +287,24 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
   {
 
     $units = $developmentData['units'];
-    try {
+//    try {
+//
+//      $unitsQuery = new SelectQuery('Development_Unit__c');
+//      // $unitsQuery->addCondition('Development_new__c', "'a093F000006AFZU'");
+//      $unitsQuery->addCondition('Development_new__c', "'$developmentId'");
+//      $unitsQuery->fields = ['Id', 'Name'];
+//      $unitsResults = $this->client()->query($unitsQuery)->records() ?? NULL;
+//
+//    } catch (Exception $exception) {
+//      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+//      return FALSE;
+//    }
 
-      $unitsQuery = new SelectQuery('Development_Unit__c');
-      // $unitsQuery->addCondition('Development_new__c', "'a093F000006AFZU'");
-      $unitsQuery->addCondition('Development_new__c', "'$developmentId'");
-      $unitsQuery->fields = ['Id', 'Name'];
-      $unitsResults = $this->client()->query($unitsQuery)->records() ?? NULL;
-
-    } catch (Exception $exception) {
-      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-      return FALSE;
-    }
-
-    if (empty($unitsResults)) {
+    if (!empty($units)) {
       foreach ($units as $unitGroup) {
-
+        if (empty($unitGroup['price'])) {
+          continue;
+        }
         for ($unitNumber = 1; $unitNumber <= $unitGroup['unit_count']; $unitNumber++) {
 
           $unitName = $developmentData['street_address'] . ' Unit #' . $unitNumber;
@@ -314,7 +320,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
             'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',
             // @TODO: Need to add this to the Listing Form somehow for "% of Income"
             'Rent_Type__c' => 'Fixed $',
-            'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] . '% AMI' : 'N/A',
+            'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] : 'N/A',
             'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double)$unitGroup['bedrooms'] : 0.0,
             'Rent_or_Sale_Price__c' => isset($unitGroup['price']) ? (double)filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
             'ADA_V__c' => empty($unitGroup['ada_v']) ? FALSE : TRUE,
@@ -344,7 +350,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
           }
 
           try {
-            $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
+//            $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
+            $this->client()->objectCreate('Development_Unit__c', $fieldData);
           } catch (Exception $exception) {
             \Drupal::logger('bos_metrolist')->error($exception->getMessage());
             return FALSE;
@@ -356,6 +363,86 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     }
   }
 
+
+  public function updateUnits(array $developmentData, string $developmentId)
+  {
+
+    $currentUnits = $developmentData['current_units'];
+//    try {
+//
+//      $unitsQuery = new SelectQuery('Development_Unit__c');
+//      // $unitsQuery->addCondition('Development_new__c', "'a093F000006AFZU'");
+//      $unitsQuery->addCondition('Development_new__c', "'$developmentId'");
+//      $unitsQuery->fields = ['Id', 'Name'];
+//      $unitsResults = $this->client()->query($unitsQuery)->records() ?? NULL;
+//
+//    } catch (Exception $exception) {
+//      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+//      return FALSE;
+//    }
+
+    if (!empty($currentUnits)) {
+    foreach ($currentUnits as $unit) {
+
+      if (empty($unit['relist_unit'])) {
+        continue;
+      }
+
+//      for ($unitNumber = 1; $unitNumber <= $unitGroup['unit_count']; $unitNumber++) {
+
+//        $unitName = $developmentData['street_address'] . ' Unit #' . $unitNumber;
+
+        // @TODO: Change out the values for some of these by updating the options values in the webform configs to match SF.
+        $fieldData = [
+//          'Name' => $unitName,
+//          'Development_new__c' => $developmentId,
+          'Availability_Status__c' => 'Pending',
+//          'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes',
+          'Availability_Type__c' => 'First come, first served',
+          'User_Guide_Type__c' => 'First come, first served',
+//          'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',
+          // @TODO: Need to add this to the Listing Form somehow for "% of Income"
+//          'Rent_Type__c' => 'Fixed $',
+//          'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] . '% AMI' : 'N/A',
+//          'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double)$unitGroup['bedrooms'] : 0.0,
+          'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double)filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
+//          'ADA_V__c' => empty($unitGroup['ada_v']) ? FALSE : TRUE,
+//          'ADA_H__c' => empty($unitGroup['ada_h']) ? FALSE : TRUE,
+//          'ADA_M__c' => empty($unitGroup['ada_m']) ? FALSE : TRUE,
+          'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+        ];
+
+        if (!empty($unit['minimum_income_threshold'])) {
+          $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double)filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+        }
+
+        if (!empty($developmentData['posted_to_metrolist_date'])) {
+          $fieldData['Requested_Publish_Date__c'] = $developmentData['posted_to_metrolist_date'];
+        }
+
+        if (!empty($developmentData['application_deadline_datetime'])) {
+          $fieldData['Lottery_Application_Deadline__c'] = $developmentData['application_deadline_datetime'];
+        }
+
+        if (!empty($developmentData['website_link'])) {
+          $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
+        }
+
+        try {
+          $this->client()->objectUpdate('Development_Unit__c', $unit['sfid'], $fieldData);
+//          $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
+        } catch (Exception $exception) {
+          \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+          return FALSE;
+        }
+
+//      }
+
+    }
+    }
+  }
+
+
   /**
    * {@inheritdoc}
    */
@@ -365,12 +452,15 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     $fieldData = $webform_submission->getData();
 
     if ($webform_submission->isCompleted()) {
-      $contactId = $this->addContact($fieldData);
+      $contactId = $fieldData['contactsfid'] ?? $this->addContact($fieldData) ?? null;
 
       if ($contactId) {
-        $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId);
+        $developmentId = $fieldData['developmentsfid'] ?? $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? null;
 
         if ($developmentId) {
+          if ($fieldData['update_unit_information']) {
+            $this->updateUnits($fieldData, $developmentId);
+          }
           $this->addUnits($fieldData, $developmentId);
         }
       }
@@ -415,26 +505,26 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
         foreach ($fields as $webform_field => $sf_field) {
 //          if (empty($webform_submission->getElementData($webform_field))) {
 
-            if ($webform_field == 'contact_address') {
-              $sf_field = [
-                'address' => $contactData->field('MailingStreet'),
-                'city' => $contactData->field('MailingCity'),
-                'state_province' => $contactData->field('MailingState'),
-                'postal_code' => $contactData->field('MailingPostalCode'),
-                'address_2' => "",
-                'country' => "",
-              ];
+          if ($webform_field == 'contact_address') {
+            $sf_field = [
+              'address' => $contactData->field('MailingStreet'),
+              'city' => $contactData->field('MailingCity'),
+              'state_province' => $contactData->field('MailingState'),
+              'postal_code' => $contactData->field('MailingPostalCode'),
+              'address_2' => "",
+              'country' => "",
+            ];
 
-              $webform_submission->setElementData($webform_field, $sf_field);
+            $webform_submission->setElementData($webform_field, $sf_field);
 
-            } elseif($webform_field == 'contact_company' && $accountData) {
+          } elseif ($webform_field == 'contact_company' && $accountData) {
 
-              $sf_field = $accountData->field('Name');
-              $webform_submission->setElementData($webform_field, $sf_field);
-            } else {
+            $sf_field = $accountData->field('Name');
+            $webform_submission->setElementData($webform_field, $sf_field);
+          } else {
 
-              $webform_submission->setElementData($webform_field, $contactData->field($sf_field));
-            }
+            $webform_submission->setElementData($webform_field, $contactData->field($sf_field));
+          }
 //          }
         }
 
@@ -470,43 +560,45 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
         foreach ($fields as $webform_field => $sf_field) {
 //          if (empty($webform_submission->getElementData($webform_field))) {
 
-            if ($webform_field == 'upfront_fees' || $webform_field == 'amenities_features' || $webform_field == 'utilities_included') {
-              $sf_field = explode(';', $developmentData->field($sf_field));
-              $webform_submission->setElementData($webform_field, $sf_field);
+          if ($webform_field == 'upfront_fees' || $webform_field == 'amenities_features' || $webform_field == 'utilities_included') {
+            $sf_field = explode(';', $developmentData->field($sf_field));
+            $webform_submission->setElementData($webform_field, $sf_field);
 
-            } elseif ($webform_field == 'public_contact_address') {
+          } elseif ($webform_field == 'public_contact_address') {
 
-              //@TODO: Re-factor this!!!
-              $sf_public_address = explode("\r\n", $developmentData->field('Public_Contact_Address__c'));
-              $sf_public_street = $sf_public_address[0];
-              $sf_public_address = explode(', ', $sf_public_address[1]);
-              $sf_public_city = $sf_public_address[0];
-              $sf_public_address = explode(' ', $sf_public_address[1]);
-              $sf_public_state = $sf_public_address[0];
-              $sf_public_zipcode = $sf_public_address[1];
+            //@TODO: Re-factor this!!!
+            $sf_public_address = explode("\r\n", $developmentData->field('Public_Contact_Address__c'));
+            $sf_public_street = $sf_public_address[0];
+            $sf_public_address = explode(', ', $sf_public_address[1]);
+            $sf_public_city = $sf_public_address[0];
+            $sf_public_address = explode(' ', $sf_public_address[1]);
+            $sf_public_state = $sf_public_address[0];
+            $sf_public_zipcode = $sf_public_address[1];
 
-              $sf_field = [
-                'address' => $sf_public_street,
-                'city' => $sf_public_city,
-                'state_province' => $sf_public_state,
-                'postal_code' => $sf_public_zipcode,
-                'address_2' => "",
-                'country' => "",
-              ];
-              $webform_submission->setElementData($webform_field, $sf_field);
+            $sf_field = [
+              'address' => $sf_public_street,
+              'city' => $sf_public_city,
+              'state_province' => $sf_public_state,
+              'postal_code' => $sf_public_zipcode,
+              'address_2' => "",
+              'country' => "",
+            ];
+            $webform_submission->setElementData($webform_field, $sf_field);
 
-            }else {
+          } else {
 
-              $webform_submission->setElementData($webform_field, $developmentData->field($sf_field));
-            }
+            $webform_submission->setElementData($webform_field, $developmentData->field($sf_field));
+          }
 //          }
         }
 
+
+        $this->updatedDevelopmentData = TRUE;
         $webform_submission->setElementData('developmentsfid', $developmentSFID);
       }
     }
 
-    if ($developmentSFID == $webform_submission->getElementData('developmentsfid') && $webform_submission->getElementData('update_unit_information')) {
+    if (isset($developmentSFID) && $developmentSFID == $webform_submission->getElementData('developmentsfid') && $webform_submission->getElementData('update_unit_information')) {
 
 
       $salesForce = new MetroListSalesForceConnection();
@@ -514,7 +606,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
       $currentUnits = $salesForce->getUnitsByDevelopmentSID($developmentSFID);
 
 
-      if ($currentUnits) {
+      if ($currentUnits && empty($webform_submission->getElementData('current_units')[0]['sfid']) || ($currentUnits && $this->updatedDevelopmentData)) {
+        $this->updatedDevelopmentData = FALSE;
         $webformCurrentUnits = [];
         foreach ($currentUnits as $unitSFID => $currentUnit) {
 //          $adaUnit = ($currentUnit->field('ADA_H__c') || $currentUnit->field('ADA_V__c') || $currentUnit->field('ADA_M__c')) ? "&#128065;" : '-';
@@ -546,8 +639,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
 
         }
         $webform_submission->setElementData('current_units', $webformCurrentUnits);
+//        $webform_submission->save();
       }
-
 
 
     }
