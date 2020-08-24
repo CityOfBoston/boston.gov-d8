@@ -81,6 +81,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
   public function addContact(array $developmentData)
   {
 
+    $contactSFID = $developmentData['contactsfid'] ?? null;
+
     $contactEmail = $developmentData['contact_email'] ?? NULL;
     $contactName = $developmentData['contact_name'] ?? NULL;
     $contactPhone = $developmentData['contact_phone'] ?? NULL;
@@ -135,8 +137,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
       return (string)$existingContact->id();
     } else {
       try {
-        // Return (string) $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData);.
-        return (string)$this->client()->objectCreate('Contact', $fieldData);
+         return (string) $this->client()->objectUpsert('Contact', 'Id', $contactSFID, $fieldData);
+//        return (string)$this->client()->objectCreate('Contact', $fieldData);
       } catch (Exception $exception) {
         \Drupal::logger('bos_metrolist')->error($exception->getMessage());
         return FALSE;
@@ -212,6 +214,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
    */
   public function addDevelopment(string $developmentName, array $developmentData, string $contactId)
   {
+    $developmentSFID = $developmentData['developmentsfid'] ?? null;
 
     $fieldData = [
       'Name' => $developmentName,
@@ -265,7 +268,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     }
 
     try {
-      return (string)$this->client()->objectUpsert('Development__c', 'Name', $developmentName, $fieldData);
+      return (string)$this->client()->objectUpsert('Development__c', 'Id', $developmentSFID, $fieldData);
+//      return (string)$this->client()->objectUpsert('Development__c', 'Name', $developmentName, $fieldData);
     } catch (Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
       return FALSE;
@@ -452,10 +456,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     $fieldData = $webform_submission->getData();
 
     if ($webform_submission->isCompleted()) {
-      $contactId = $fieldData['contactsfid'] ?? $this->addContact($fieldData) ?? null;
+      $contactId = $this->addContact($fieldData) ?? null;
 
       if ($contactId) {
-        $developmentId = $fieldData['developmentsfid'] ?? $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? null;
+        $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? null;
 
         if ($developmentId) {
           if ($fieldData['update_unit_information']) {
