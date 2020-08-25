@@ -117,25 +117,25 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
       $fieldData['MailingPostalCode'] = $contactAddress['postal_code'];
     }
 
-    try {
-      $contactQuery = new SelectQuery('Contact');
-      if ($contactFirstName) {
-        $contactQuery->addCondition('FirstName', "'$contactFirstName'");
-      }
-      $contactQuery->addCondition('LastName', "'$contactLastName'");
-      $contactQuery->addCondition('Email', "'$contactEmail'");
-      $contactQuery->fields = ['Id', 'Name', 'Email'];
-
-      $existingContact = reset($this->client()->query($contactQuery)->records()) ?? NULL;
-
-    } catch (Exception $exception) {
-      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-      return FALSE;
-    }
-
-    if ($existingContact) {
-      return (string)$existingContact->id();
-    } else {
+//    try {
+//      $contactQuery = new SelectQuery('Contact');
+//      if ($contactFirstName) {
+//        $contactQuery->addCondition('FirstName', "'$contactFirstName'");
+//      }
+//      $contactQuery->addCondition('LastName', "'$contactLastName'");
+//      $contactQuery->addCondition('Email', "'$contactEmail'");
+//      $contactQuery->fields = ['Id', 'Name', 'Email'];
+//
+//      $existingContact = reset($this->client()->query($contactQuery)->records()) ?? NULL;
+//
+//    } catch (Exception $exception) {
+//      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+//      return FALSE;
+//    }
+//
+//    if ($existingContact) {
+//      return (string)$existingContact->id();
+//    } else {
       try {
          return (string) $this->client()->objectUpsert('Contact', 'Id', $contactSFID, $fieldData);
 //        return (string)$this->client()->objectCreate('Contact', $fieldData);
@@ -143,7 +143,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
         \Drupal::logger('bos_metrolist')->error($exception->getMessage());
         return FALSE;
       }
-    }
+//    }
   }
 
   /**
