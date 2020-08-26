@@ -137,8 +137,12 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
 //      return (string)$existingContact->id();
 //    } else {
       try {
-         return (string) $this->client()->objectUpsert('Contact', 'Id', $contactSFID, $fieldData);
-//        return (string)$this->client()->objectCreate('Contact', $fieldData);
+
+        if (!empty($contactSFID)) {
+          return (string) $this->client()->objectUpsert('Contact', 'Id', $contactSFID, $fieldData);
+        }else{
+          return (string)$this->client()->objectCreate('Contact', $fieldData);
+        }
       } catch (Exception $exception) {
         \Drupal::logger('bos_metrolist')->error($exception->getMessage());
         return FALSE;
@@ -268,8 +272,13 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
     }
 
     try {
-      return (string)$this->client()->objectUpsert('Development__c', 'Id', $developmentSFID, $fieldData);
-//      return (string)$this->client()->objectUpsert('Development__c', 'Name', $developmentName, $fieldData);
+
+      if (!empty($developmentSFID)) {
+        return (string)$this->client()->objectUpsert('Development__c', 'Id', $developmentSFID, $fieldData);
+      }else{
+        return (string)$this->client()->objectCreate('Development__c', $fieldData);
+      }
+
     } catch (Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
       return FALSE;
@@ -351,6 +360,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase
 
           if (isset($developmentData['website_link'])) {
             $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
+          }
+
+          if (isset($developmentData['pdf_upload']) && $developmentData['direct_visitors'] == 'pdf') {
+            $fieldData['Lottery_Application_Website__c'] = file_create_url(file_load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
           }
 
           try {

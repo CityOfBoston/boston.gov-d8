@@ -713,6 +713,13 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
     }
   }
 
+  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--neighborhood') {
+    $salesForce = new MetroListSalesForceConnection();
+    $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? null;
 
+    if ($neighborhoodOptions) {
+      $element['#options'] = $neighborhoodOptions;
+    }
+  }
 
 }
