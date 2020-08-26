@@ -6,7 +6,7 @@ use Drupal\salesforce\Exception;
 use Drupal\salesforce\SelectQuery;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
-use function PHPUnit\Framework\arrayHasKey;
+use Drupal\bos_metrolist\MetroListSalesForceConnection;
 
 /**
  * Create a new node entity from a webform submission.
@@ -22,6 +22,12 @@ use function PHPUnit\Framework\arrayHasKey;
  * )
  */
 class CreateMetroListingWebformHandler extends WebformHandlerBase {
+  /**
+   * Flag for Development Updated.
+   *
+   * @var bool
+   */
+  public $updatedDevelopmentData = FALSE;
 
   /**
    * {@inheritdoc}
@@ -71,13 +77,15 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    */
   public function addContact(array $developmentData) {
 
+    $contactSFID = $developmentData['contactsfid'] ?? NULL;
+
     $contactEmail = $developmentData['contact_email'] ?? NULL;
     $contactName = $developmentData['contact_name'] ?? NULL;
     $contactPhone = $developmentData['contact_phone'] ?? NULL;
     $contactAddress = $developmentData['contact_address'] ?? [];
 
     $fieldData = [
-    // @TODO: Make Config?, Hardcoded the SFID to `DND Contacts`
+      // @TODO: Make Config?, Hardcoded the SFID to `DND Contacts`
       'AccountId' => $this->addAccount($developmentData),
       'Email' => $contactEmail,
     ];
@@ -107,35 +115,19 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
 
     try {
-      $contactQuery = new SelectQuery('Contact');
-      if ($contactFirstName) {
-        $contactQuery->addCondition('FirstName', "'$contactFirstName'");
+
+      if (!empty($contactSFID)) {
+        return (string) $this->client()->objectUpsert('Contact', 'Id', $contactSFID, $fieldData);
       }
-      $contactQuery->addCondition('LastName', "'$contactLastName'");
-      $contactQuery->addCondition('Email', "'$contactEmail'");
-      $contactQuery->fields = ['Id', 'Name', 'Email'];
-
-      $existingContact = reset($this->client()->query($contactQuery)->records()) ?? NULL;
-
+      else {
+        return (string) $this->client()->objectCreate('Contact', $fieldData);
+      }
     }
     catch (Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
       return FALSE;
     }
-
-    if ($existingContact) {
-      return (string) $existingContact->id();
-    }
-    else {
-      try {
-        // Return (string) $this->client()->objectUpsert('Contact', 'Email', $contactEmail, $fieldData);.
-        return (string) $this->client()->objectCreate('Contact', $fieldData);
-      }
-      catch (Exception $exception) {
-        \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-        return FALSE;
-      }
-    }
+    // }
   }
 
   /**
@@ -178,7 +170,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         'Business_Legal_Name__c' => $developmentData['contact_company'],
         'Type' => 'Property Manager',
         'Division__c' => 'DND',
-      // @TODO: hardcoded to SFID for Account Record Type: "Vendor"
+        // @TODO: hardcoded to SFID for Account Record Type: "Vendor"
         'RecordTypeId' => '012C0000000I0hCIAS',
       ];
 
@@ -207,6 +199,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    *   Return SFID or false
    */
   public function addDevelopment(string $developmentName, array $developmentData, string $contactId) {
+    $developmentSFID = $developmentData['developmentsfid'] ?? NULL;
 
     $fieldData = [
       'Name' => $developmentName,
@@ -261,7 +254,14 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
 
     try {
-      return (string) $this->client()->objectUpsert('Development__c', 'Name', $developmentName, $fieldData);
+
+      if (!empty($developmentSFID)) {
+        return (string) $this->client()->objectUpsert('Development__c', 'Id', $developmentSFID, $fieldData);
+      }
+      else {
+        return (string) $this->client()->objectCreate('Development__c', $fieldData);
+      }
+
     }
     catch (Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
@@ -283,23 +283,12 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
   public function addUnits(array $developmentData, string $developmentId) {
 
     $units = $developmentData['units'];
-    try {
 
-      $unitsQuery = new SelectQuery('Development_Unit__c');
-      // $unitsQuery->addCondition('Development_new__c', "'a093F000006AFZU'");
-      $unitsQuery->addCondition('Development_new__c', "'$developmentId'");
-      $unitsQuery->fields = ['Id', 'Name'];
-      $unitsResults = $this->client()->query($unitsQuery)->records() ?? NULL;
-
-    }
-    catch (Exception $exception) {
-      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-      return FALSE;
-    }
-
-    if (empty($unitsResults)) {
+    if (!empty($units)) {
       foreach ($units as $unitGroup) {
-
+        if (empty($unitGroup['price'])) {
+          continue;
+        }
         for ($unitNumber = 1; $unitNumber <= $unitGroup['unit_count']; $unitNumber++) {
 
           $unitName = $developmentData['street_address'] . ' Unit #' . $unitNumber;
@@ -313,9 +302,9 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Availability_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
             'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
             'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',
-          // @TODO: Need to add this to the Listing Form somehow for "% of Income"
+            // @TODO: Need to add this to the Listing Form somehow for "% of Income"
             'Rent_Type__c' => 'Fixed $',
-            'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] . '% AMI' : 'N/A',
+            'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] : 'N/A',
             'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double) $unitGroup['bedrooms'] : 0.0,
             'Rent_or_Sale_Price__c' => isset($unitGroup['price']) ? (double) filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
             'ADA_V__c' => empty($unitGroup['ada_v']) ? FALSE : TRUE,
@@ -344,14 +333,79 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
           }
 
+          if (isset($developmentData['pdf_upload']) && $developmentData['direct_visitors'] == 'pdf') {
+            $fieldData['Lottery_Application_Website__c'] = file_create_url(file_load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
+          }
+
           try {
-            $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
+            // $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
+            $this->client()->objectCreate('Development_Unit__c', $fieldData);
           }
           catch (Exception $exception) {
             \Drupal::logger('bos_metrolist')->error($exception->getMessage());
             return FALSE;
           }
 
+        }
+
+      }
+    }
+  }
+
+  /**
+   * Update a SF Units.
+   *
+   * @param array $developmentData
+   *   Submission Data.
+   * @param string $developmentId
+   *   Development ID.
+   *
+   * @return mixed
+   *   Return SFID or false
+   */
+  public function updateUnits(array $developmentData, string $developmentId) {
+
+    $currentUnits = $developmentData['current_units'];
+
+    if (!empty($currentUnits)) {
+      foreach ($currentUnits as $unit) {
+
+        if (empty($unit['relist_unit'])) {
+          continue;
+        }
+
+        // @TODO: Change out the values for some of these by updating the options values in the webform configs to match SF.
+        $fieldData = [
+          'Availability_Status__c' => 'Pending',
+          'Availability_Type__c' => 'First come, first served',
+          'User_Guide_Type__c' => 'First come, first served',
+          'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
+          'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+        ];
+
+        if (!empty($unit['minimum_income_threshold'])) {
+          $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+        }
+
+        if (!empty($developmentData['posted_to_metrolist_date'])) {
+          $fieldData['Requested_Publish_Date__c'] = $developmentData['posted_to_metrolist_date'];
+        }
+
+        if (!empty($developmentData['application_deadline_datetime'])) {
+          $fieldData['Lottery_Application_Deadline__c'] = $developmentData['application_deadline_datetime'];
+        }
+
+        if (!empty($developmentData['website_link'])) {
+          $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
+        }
+
+        try {
+          $this->client()->objectUpdate('Development_Unit__c', $unit['sfid'], $fieldData);
+          // $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
+        }
+        catch (Exception $exception) {
+          \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+          return FALSE;
         }
 
       }
@@ -366,12 +420,15 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     $fieldData = $webform_submission->getData();
 
     if ($webform_submission->isCompleted()) {
-      $contactId = $this->addContact($fieldData);
+      $contactId = $this->addContact($fieldData) ?? NULL;
 
       if ($contactId) {
-        $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId);
+        $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? NULL;
 
         if ($developmentId) {
+          if ($fieldData['update_unit_information']) {
+            $this->updateUnits($fieldData, $developmentId);
+          }
           $this->addUnits($fieldData, $developmentId);
         }
       }
@@ -379,6 +436,173 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
     // TODO: Change the autogenerated stub.
     parent::postSave($webform_submission, $update);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(WebformSubmissionInterface $webform_submission) {
+
+    if ($contactSFID = $webform_submission->getElementData('select_contact')) {
+      if ($contactSFID != 'new' && (empty($webform_submission->getElementData('contactsfid')) || $contactSFID != $webform_submission->getElementData('contactsfid'))) {
+        // Get Contact Object.
+        $contactData = $this->client()->objectRead('Contact', $contactSFID);
+        // Set field value.
+
+        $accountData = $contactData->hasField('AccountId') ? $this->client()->objectRead('Account', $contactData->field('AccountId')) : NULL;
+
+        $fields = [
+          'contact_name' => 'Name',
+          'contact_address' => 'MailingAddress',
+          'contact_phone' => 'Phone',
+          'contact_company' => 'Account'
+        ];
+
+        foreach ($fields as $webform_field => $sf_field) {
+          // If (empty($webform_submission->getElementData($webform_field))) {.
+
+          if ($webform_field == 'contact_address') {
+            $sf_field = [
+              'address' => $contactData->field('MailingStreet'),
+              'city' => $contactData->field('MailingCity'),
+              'state_province' => $contactData->field('MailingState'),
+              'postal_code' => $contactData->field('MailingPostalCode'),
+              'address_2' => "",
+              'country' => "",
+            ];
+
+            $webform_submission->setElementData($webform_field, $sf_field);
+
+          }
+          elseif ($webform_field == 'contact_company' && $accountData) {
+
+            $sf_field = $accountData->field('Name');
+            $webform_submission->setElementData($webform_field, $sf_field);
+          }
+          else {
+
+            $webform_submission->setElementData($webform_field, $contactData->field($sf_field));
+          }
+          // }
+        }
+
+        $webform_submission->setElementData('contactsfid', $contactSFID);
+      }
+    }
+
+    if ($developmentSFID = $webform_submission->getElementData('select_development')) {
+      if ($developmentSFID != 'new' && (empty($webform_submission->getElementData('developmentsfid')) || $developmentSFID != $webform_submission->getElementData('developmentsfid'))) {
+        // If ($developmentSFID != 'new' && empty($webform_submission->getElementData('developmentsfid'))) {.
+
+        $developmentData = $this->client()->objectRead('Development__c', $developmentSFID);
+
+        $fields = [
+          'property_name' => 'Name',
+          'city' => 'City__c',
+          'region' => 'Region__c',
+          'neighborhood' => 'Neighborhood__c',
+          // 'building_in_boston' => 'Name',
+          'street_address' => 'Street_Address__c',
+          'zip_code' => 'ZIP_Code__c',
+          'upfront_fees' => 'Due_at_signing__c',
+          'amenities_features' => 'Features__c',
+          'utilities_included' => 'Utilities_included__c',
+          'public_contact_email' => 'Public_Contact_Email__c',
+          'public_contact_name' => 'Public_Contact_Name__c',
+          'property_management_company' => 'Listing_Contact_Company__c',
+          'public_contact_phone' => 'Public_Contact_Phone__c',
+          'public_contact_address' => 'Public_Contact_Address__c',
+          'wheelchair_accessible' => 'Wheelchair_Access__c'
+        ];
+
+        foreach ($fields as $webform_field => $sf_field) {
+          // If (empty($webform_submission->getElementData($webform_field))) {.
+
+          if ($webform_field == 'upfront_fees' || $webform_field == 'amenities_features' || $webform_field == 'utilities_included') {
+            $sf_field = explode(';', $developmentData->field($sf_field));
+            $webform_submission->setElementData($webform_field, $sf_field);
+
+          }
+          elseif ($webform_field == 'public_contact_address') {
+
+            // @TODO: Re-factor this!!!
+            $sf_public_address = explode("\r\n", $developmentData->field('Public_Contact_Address__c'));
+            $sf_public_street = $sf_public_address[0];
+            $sf_public_address = explode(', ', $sf_public_address[1]);
+            $sf_public_city = $sf_public_address[0];
+            $sf_public_address = explode(' ', $sf_public_address[1]);
+            $sf_public_state = $sf_public_address[0];
+            $sf_public_zipcode = $sf_public_address[1];
+
+            $sf_field = [
+              'address' => $sf_public_street,
+              'city' => $sf_public_city,
+              'state_province' => $sf_public_state,
+              'postal_code' => $sf_public_zipcode,
+              'address_2' => "",
+              'country' => "",
+            ];
+            $webform_submission->setElementData($webform_field, $sf_field);
+
+          }
+          else {
+
+            $webform_submission->setElementData($webform_field, $developmentData->field($sf_field));
+          }
+          // }
+        }
+
+        $this->updatedDevelopmentData = TRUE;
+        $webform_submission->setElementData('developmentsfid', $developmentSFID);
+      }
+    }
+
+    if (isset($developmentSFID) && $developmentSFID == $webform_submission->getElementData('developmentsfid') && $webform_submission->getElementData('update_unit_information')) {
+
+      $salesForce = new MetroListSalesForceConnection();
+
+      $currentUnits = $salesForce->getUnitsByDevelopmentSid($developmentSFID);
+
+      if ($currentUnits && empty($webform_submission->getElementData('current_units')[0]['sfid']) || ($currentUnits && $this->updatedDevelopmentData)) {
+        $this->updatedDevelopmentData = FALSE;
+        $webformCurrentUnits = [];
+        foreach ($currentUnits as $unitSFID => $currentUnit) {
+          // $adaUnit = ($currentUnit->field('ADA_H__c') || $currentUnit->field('ADA_V__c') || $currentUnit->field('ADA_M__c')) ? "&#128065;" : '-';
+
+          $adaUnit = [];
+
+          if ($currentUnit->field('ADA_H__c')) {
+            $adaUnit[] = '✓ Hearing';
+          }
+          if ($currentUnit->field('ADA_V__c')) {
+            $adaUnit[] = '✓ Visual';
+          }
+          if ($currentUnit->field('ADA_M__c')) {
+            $adaUnit[] = '✓ Mobility';
+          }
+
+          $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "";
+
+          $webformCurrentUnits[] = [
+            'relist_unit' => 0,
+            'ada' => $adaUnit,
+            'ami' => $currentUnit->field('Income_Eligibility_AMI_Threshold__c'),
+            'bedrooms' => $currentUnit->field('Number_of_Bedrooms__c'),
+            'price' => $currentUnit->field('Rent_or_Sale_Price__c'),
+            'minimum_income_threshold' => $currentUnit->field('Minimum_Income_Threshold__c'),
+            'status' => $currentUnit->field('Availability_Status__c'),
+            'sfid' => $currentUnit->field('Id'),
+          ];
+
+        }
+        $webform_submission->setElementData('current_units', $webformCurrentUnits);
+        // $webform_submission->save();
+      }
+
+    }
+
+    // TODO: Change the autogenerated stub.
+    parent::preSave($webform_submission);
   }
 
 }
