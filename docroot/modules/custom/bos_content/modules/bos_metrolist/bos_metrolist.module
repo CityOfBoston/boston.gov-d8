@@ -677,7 +677,7 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
     $salesForce->loadWebformSubmission($webformSID);
     $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
 
-    $developmentOptions = $salesForce->getDevelopmentOptionsByContactSID($contactSID);
+    $developmentOptions = $salesForce->getDevelopmentOptionsByContactSid($contactSID);
 
     if ($developmentOptions) {
       $element['#options'] = array_merge($element['#options'], $developmentOptions);
@@ -688,7 +688,7 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--units') {
     $salesForce = new MetroListSalesForceConnection();
     $excludeOptions = ['Homeless Set Aside'];
-    $amiOptions = $salesForce->getPickListValues('Development_unit__C', 'Income_Eligibility_AMI_Threshold__c', $excludeOptions) ?? null;
+    $amiOptions = $salesForce->getPickListValues('Development_unit__C', 'Income_Eligibility_AMI_Threshold__c', $excludeOptions) ?? NULL;
 
     if ($amiOptions) {
       $element['#element']['ami']['#options'] = $amiOptions;
@@ -697,7 +697,7 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
 
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--region') {
     $salesForce = new MetroListSalesForceConnection();
-    $regionOptions = $salesForce->getPickListValues('Development__C', 'Region__c') ?? null;
+    $regionOptions = $salesForce->getPickListValues('Development__C', 'Region__c') ?? NULL;
 
     if ($regionOptions) {
       $element['#options'] = $regionOptions;
@@ -706,7 +706,7 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
 
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--city') {
     $salesForce = new MetroListSalesForceConnection();
-    $cityOptions = $salesForce->getPickListValues('Development__C', 'City__c') ?? null;
+    $cityOptions = $salesForce->getPickListValues('Development__C', 'City__c') ?? NULL;
 
     if ($cityOptions) {
       $element['#options'] = $cityOptions;
@@ -715,7 +715,7 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
 
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--neighborhood') {
     $salesForce = new MetroListSalesForceConnection();
-    $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? null;
+    $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? NULL;
 
     if ($neighborhoodOptions) {
       $element['#options'] = $neighborhoodOptions;

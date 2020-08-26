@@ -7,18 +7,22 @@ use Drupal\salesforce\SelectQuery;
 use Drupal\webform\Entity\WebformSubmission;
 
 /**
- *
+ * Connection for Drupal CoB MetroList connection to SF.
  */
 class MetroListSalesForceConnection {
 
-  // Public function __construct()
-  //  {
-  //
-  //  }
   /**
+   * Webform Submission.
+   *
    * @var \Drupal\Core\Entity\EntityInterface|null
    */
   private $webformSubmission = NULL;
+
+  /**
+   * Contact Email.
+   *
+   * @var string|null
+   */
   private $contactEmail = NULL;
 
   /**
@@ -43,10 +47,15 @@ class MetroListSalesForceConnection {
   }
 
   /**
-   * @param null $sid
+   * Load a Webform Submission.
+   *
+   * @param string $sid
+   *   Submission ID.
+   *
    * @return \Drupal\Core\Entity\EntityInterface|null
+   *   Webform Submission.
    */
-  public function loadWebformSubmission($sid = NULL) {
+  public function loadWebformSubmission(string $sid = NULL) {
     if ($this->webformSubmission && is_null($sid)) {
       return $this->webformSubmission;
     }
@@ -58,14 +67,20 @@ class MetroListSalesForceConnection {
   }
 
   /**
+   * The current Webform Submission.
    *
+   * @return \Drupal\Core\Entity\EntityInterface|null
+   *   Webform Submission.
    */
   public function webformSubmission() {
     return $this->webformSubmission;
   }
 
   /**
+   * Get Contact email from webform submission.
    *
+   * @return string
+   *   Contact email.
    */
   public function getContactEmail() {
     if ($this->webformSubmission()) {
@@ -91,16 +106,19 @@ class MetroListSalesForceConnection {
   }
 
   /**
+   * Get Contacts by Email.
    *
+   * @param string $email
+   *   Contact Email.
+   *
+   * @return bool|null
+   *   Contacts.
    */
   public function getContactsByEmail(string $email) {
 
     try {
       $contactQuery = new SelectQuery('Contact');
-      // If ($contactFirstName) {
-      //        $contactQuery->addCondition('FirstName', "'$contactFirstName'");
-      //      }
-      //      $contactQuery->addCondition('LastName', "'$contactLastName'");.
+
       $contactQuery->addCondition('Email', "'" . urlencode($email) . "'");
       $contactQuery->fields = ['Id', 'Name', 'Email'];
 
@@ -114,11 +132,17 @@ class MetroListSalesForceConnection {
   }
 
   /**
+   * Get Contact options by Email lookup.
    *
+   * @param string|null $email
+   *   Contact Email.
+   *
+   * @return array|void
+   *   Array of Contact options from SF.
    */
   public function getContactOptionsByEmail(string $email = NULL) {
     if (empty($email)) {
-      return;
+      return NULL;
     }
 
     $options = [];
@@ -133,9 +157,15 @@ class MetroListSalesForceConnection {
   }
 
   /**
+   * Get Developments by Contact SF ID.
    *
+   * @param string $contactSID
+   *   Contact SF ID.
+   *
+   * @return bool|null
+   *   Developments.
    */
-  public function getDevelopmentsByContactSID(string $contactSID) {
+  public function getDevelopmentsByContactSid(string $contactSID) {
 
     try {
       $developmentQuery = new SelectQuery('Development__c');
@@ -152,16 +182,22 @@ class MetroListSalesForceConnection {
   }
 
   /**
+   * Get Development options by Contact SF ID.
    *
+   * @param string|null $contactSID
+   *   Contact SF ID.
+   *
+   * @return array|void
+   *   Development options.
    */
-  public function getDevelopmentOptionsByContactSID(string $contactSID = NULL) {
+  public function getDevelopmentOptionsByContactSid(string $contactSID = NULL) {
     if (empty($contactSID) || $contactSID == 'new') {
-      return;
+      return NULL;
     }
 
     $options = [];
 
-    foreach ($this->getDevelopmentsByContactSID($contactSID) as $development) {
+    foreach ($this->getDevelopmentsByContactSid($contactSID) as $development) {
       if ($development->hasField('Id') && $development->hasField('Name')) {
         $options[$development->field('Id')] = $development->field('Name') . ' (' . $development->field('Street_Address__c') . ', ' . $development->field('City__c') . ')';
       }
@@ -170,11 +206,16 @@ class MetroListSalesForceConnection {
     return $options;
   }
 
-
   /**
+   * Get SF Units of a Development.
    *
+   * @param string $developmentSFID
+   *   Development SF ID.
+   *
+   * @return bool|null
+   *   Return Units or null/false.
    */
-  public function getUnitsByDevelopmentSID(string $developmentSFID) {
+  public function getUnitsByDevelopmentSid(string $developmentSFID) {
 
     try {
       $developmentQuery = new SelectQuery('Development_Unit__c');
@@ -190,7 +231,7 @@ class MetroListSalesForceConnection {
         'ADA_H__c',
         'ADA_V__c',
         'ADA_M__c',
-        ];
+      ];
 
       return $this->client()->query($developmentQuery)->records() ?? NULL;
     }
@@ -201,9 +242,22 @@ class MetroListSalesForceConnection {
 
   }
 
+  /**
+   * Get picklist values from SF.
+   *
+   * @param string $sf_object
+   *   SF object.
+   * @param string $sf_field
+   *   SF Field name.
+   * @param array $exclude
+   *   Values to exclude.
+   *
+   * @return array
+   *   Array of options from SF.
+   */
   public function getPickListValues(string $sf_object, string $sf_field, array $exclude = []) {
     $values = [];
-    $picklistData = $this->client()->objectDescribe($sf_object)->getField($sf_field)['picklistValues'] ?? null;
+    $picklistData = $this->client()->objectDescribe($sf_object)->getField($sf_field)['picklistValues'] ?? NULL;
 
     if ($picklistData) {
       foreach ($picklistData as $option) {
