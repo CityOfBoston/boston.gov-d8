@@ -178,8 +178,9 @@ class SwiftypeController extends ControllerBase {
     }
 
     if ($results['body']->info->page == NULL) {
-      $range = new stdClass ();
-    }else {
+      $range = new stdClass();
+    }
+    else {
       $range = $results['body']->info->page;
     }
 
