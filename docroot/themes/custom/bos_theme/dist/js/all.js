@@ -1293,6 +1293,7 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       });
     })
 
+    // Change the backround color focus of event posts when accessed via keyboard
     $(document).on('focusin', '.post-featured-item-wrapper', function () {
       $(this).css("background-color", "#1871bd");
       $(this).find('.di .di-tt').attr("tabindex","-1");
