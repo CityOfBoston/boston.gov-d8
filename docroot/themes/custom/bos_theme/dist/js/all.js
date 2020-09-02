@@ -1308,6 +1308,7 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       $(this).css("background-color", "#ffffff");
     });
 
+    // Always focus on modal on "mailto:" link click
     $('a[href^="mailto:"]').on('click', function(e){
       $('button.md-cb').focus();
     });
