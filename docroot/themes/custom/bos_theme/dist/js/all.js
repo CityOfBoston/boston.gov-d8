@@ -1308,5 +1308,34 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       $(this).css("background-color", "#ffffff");
     });
 
+    $('a[href^="mailto:"]').on('click', function(e){
+      $('button.md-cb').focus();
+    });
+
+    $(document).on('keydown', function(e) {
+      var target = e.target;
+      var shiftPressed = e.shiftKey;
+      // If TAB key pressed
+      if (e.keyCode == 9) {
+        // If inside a Modal dialog (determined by attribute role="dialog")
+        if ($(target).parents('[role=dialog]').length) {
+          // Find first or last input element in the dialog parent (depending on whether Shift was pressed).
+          // Input elements must be visible, and can be Input/Select/Button/Textarea.
+          var borderElem = shiftPressed ?
+            $(target).closest('[role=dialog]').find('input:visible,select:visible,button:visible,textarea:visible').first()
+            :
+            $(target).closest('[role=dialog]').find('input:visible,select:visible,button:visible,textarea:visible').last();
+          if ($(borderElem).length) {
+            if ($(target).is($(borderElem))) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        }
+      }
+      return true;
+    });
+
   });
 })(jQuery, Drupal, this, this.document);
