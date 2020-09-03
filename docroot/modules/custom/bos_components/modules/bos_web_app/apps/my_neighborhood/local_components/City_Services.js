@@ -5,9 +5,10 @@ class CityServices extends React.Component {
     let contentRecollect = [];
     let recollectData = this.props.recollect_events;
     let found = null;
+    console.log(recollectData);
     if(recollectData !== null) {
       Object.keys(recollectData).map(function(key,index){
-        if(found !== true){
+        if(found !== true && recollectData[key].flags){
           Object.keys(recollectData[key].flags).map(function(key_flag,index_flag){
             if (recollectData[key].flags[key_flag].name == "Trash" || recollectData[key].flags[key_flag].name == "Recycling" ) {
               const dateProp = recollectData[key].day;
