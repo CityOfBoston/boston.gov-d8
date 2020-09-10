@@ -9,7 +9,9 @@ import { handlePseudoButtonKeyDown } from '@util/a11y-seo';
 import { getGlobalThis } from '@util/objects';
 
 import FilterGroup from '@components/FilterGroup';
-import Filter from '@components/Filter';
+import FilterLabel from '@components/FilterLabel';
+import Checkbox from '@components/Checkbox';
+import Range from '@components/Range';
 // import Callout from '@components/Callout';
 import Icon from '@components/Icon';
 // import Inset from '@components/Inset';
@@ -172,23 +174,27 @@ function FiltersPanel( props ) {
             <FilterGroup.Label>Offer</FilterGroup.Label>
             <Row space="rent-sale" stackAt="large">
               <Column width="1/2">
-                <Filter
-                  type="checkbox-button"
+                <Checkbox
+                  button
                   criterion="offer"
                   value="rent"
                   checked={ offer.rent }
                   aria-label={ `For Rent (${rentalCount})` }
-                >{ `For Rent (${rentalCount})` }</Filter>
+                >{ `For Rent (${rentalCount})` }</Checkbox>
               </Column>
               <Column width="1/2">
-                <Filter type="checkbox-button" criterion="offer" value="sale" checked={ offer.sale }>{ `For Sale (${listingCounts.offer.sale})` }</Filter>
+                <Checkbox
+                  button
+                  criterion="offer"
+                  value="sale"
+                  checked={ offer.sale }
+                >{ `For Sale (${listingCounts.offer.sale})` }</Checkbox>
               </Column>
             </Row>
           </FilterGroup>
           <FilterGroup criterion="rentalPrice">
             <FilterGroup.Label>Rental Price</FilterGroup.Label>
-            <Filter
-              type="range"
+            <Range
               criterion="rentalPrice"
               min={ 0 }
               step={ 100 }
@@ -203,14 +209,13 @@ function FiltersPanel( props ) {
           <FilterGroup criterion="location">
             <FilterGroup.Label>Location</FilterGroup.Label>
             <Stack space="sister-checkboxes">
-              <Filter
-                type="checkbox"
+              <Checkbox
                 criterion="city"
                 value="boston"
                 checked={ location.city.boston }
                 hasSubcategories
               >
-                <Filter.Label>Boston</Filter.Label>
+                <FilterLabel>Boston</FilterLabel>
                 {
                   Object.keys( listingCounts.location.neighborhood )
                     .sort()
@@ -220,24 +225,24 @@ function FiltersPanel( props ) {
                     ) )
                     .map( ( neighborhood ) => {
                       const count = listingCounts.location.neighborhood[neighborhood];
-                      return <Filter
-                        key={ neighborhood }
-                        type="checkbox"
-                        criterion="neighborhood"
-                        value={ neighborhood }
-                        checked={ location.neighborhood[neighborhood] || false }
-                      >{ `${capitalCase( neighborhood )} (${count || '0'})` }</Filter>;
+                      return (
+                        <Checkbox
+                          key={ neighborhood }
+                          criterion="neighborhood"
+                          value={ neighborhood }
+                          checked={ location.neighborhood[neighborhood] || false }
+                        >{ `${capitalCase( neighborhood )} (${count || '0'})` }</Checkbox>
+                      );
                     } )
                 }
-              </Filter>
-              <Filter
-                type="checkbox"
+              </Checkbox>
+              <Checkbox
                 criterion="city"
                 value="beyondBoston"
                 checked={ location.city.beyondBoston }
                 hasSubcategories
               >
-                <Filter.Label>Beyond Boston</Filter.Label>
+                <FilterLabel>Beyond Boston</FilterLabel>
                 {
                   Object.keys( listingCounts.location.cardinalDirection )
                     .sort( ( cardinalDirectionA, cardinalDirectionB ) => (
@@ -246,30 +251,30 @@ function FiltersPanel( props ) {
                     ) )
                     .map( ( cardinalDirection ) => {
                       const count = listingCounts.location.cardinalDirection[cardinalDirection];
-                      return <Filter
-                        key={ cardinalDirection }
-                        type="checkbox"
-                        criterion="cardinalDirection"
-                        value={ cardinalDirection }
-                        checked={ location.cardinalDirection[cardinalDirection] || false }
-                      >{ `${capitalCase( cardinalDirection )} of Boston (${count || '0'})` }</Filter>;
+                      return (
+                        <Checkbox
+                          key={ cardinalDirection }
+                          criterion="cardinalDirection"
+                          value={ cardinalDirection }
+                          checked={ location.cardinalDirection[cardinalDirection] || false }
+                        >{ `${capitalCase( cardinalDirection )} of Boston (${count || '0'})` }</Checkbox>
+                      );
                     } )
                 }
-              </Filter>
+              </Checkbox>
             </Stack>
           </FilterGroup>
           <FilterGroup criterion="bedrooms" orientation="horizontal">
             <FilterGroup.Label>Bedrooms</FilterGroup.Label>
-            <Filter type="checkbox" criterion="bedrooms" aria-label="0-bedrooms" checked={ bedrooms['0'] }>0</Filter>
-            <Filter type="checkbox" criterion="bedrooms" aria-label="1-bedrooms" checked={ bedrooms['1'] }>1</Filter>
-            <Filter type="checkbox" criterion="bedrooms" aria-label="2-bedrooms" checked={ bedrooms['2'] }>2</Filter>
-            <Filter type="checkbox" criterion="bedrooms" aria-label="3+-bedrooms" checked={ bedrooms['3+'] }>3+</Filter>
+            <Checkbox criterion="bedrooms" aria-label="0-bedrooms" checked={ !!bedrooms['0br'] } value="0br">0</Checkbox>
+            <Checkbox criterion="bedrooms" aria-label="1-bedrooms" checked={ !!bedrooms['1br'] } value="1br">1</Checkbox>
+            <Checkbox criterion="bedrooms" aria-label="2-bedrooms" checked={ !!bedrooms['2br'] } value="2br">2</Checkbox>
+            <Checkbox criterion="bedrooms" aria-label="3+-bedrooms" checked={ !!bedrooms['3+br'] } value="3+br">3+</Checkbox>
           </FilterGroup>
           <FilterGroup criterion="amiQualification">
             <FilterGroup.Label>Income Eligibility</FilterGroup.Label>
             <div onClick={ ( event ) => event.stopPropagation() }>
-              <Filter
-                type="range"
+              <Range
                 criterion="amiQualification"
                 min={ 0 }
                 max={ 200 }
@@ -281,7 +286,7 @@ function FiltersPanel( props ) {
             </div>
           </FilterGroup>
         </div>
-      </div>{/* filters-panel__menu */}
+      </div>{ /* filters-p anel__menu */ }
     </section>
   );
 }

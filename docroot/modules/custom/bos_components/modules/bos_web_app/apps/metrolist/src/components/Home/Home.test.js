@@ -6,14 +6,16 @@ import { getNoFiltersApplied } from '__mocks__/filters';
 import { generateRandomNumberString } from '@util/strings';
 import Home from './index';
 
-it( 'renders', () => {
-  render(
-    <Home
-      home={ {
-        ...minimalHomeDefinition,
-        "id": generateRandomNumberString(),
-      } }
-      filters={ getNoFiltersApplied() }
-    />,
-  );
+describe( 'Home', () => {
+  it( 'Renders', () => {
+    render(
+      <Home
+        home={ {
+          ...minimalHomeDefinition,
+          "id": generateRandomNumberString(),
+        } }
+        filters={ getNoFiltersApplied() }
+      />,
+    );
+  } );
 } );

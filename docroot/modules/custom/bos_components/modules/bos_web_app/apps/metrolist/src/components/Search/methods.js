@@ -66,8 +66,8 @@ export function filterHomes( {
       );
       let matchesNarrowLocation = ( home.cardinalDirection === null ) ? neighborhoodIsPresentInFilters : cardinalDirectionIsPresentInFilters;
 
-      const unitBedroomSizes = home.units.map( ( unit ) => unit.bedrooms ).sort();
-      let matchesBedrooms = (
+      const unitBedroomSizes = home.units.filter( ( unit ) => unit && unit.bedrooms ).map( ( unit ) => unit.bedrooms ).sort();
+      let matchesBedrooms = unitBedroomSizes.length && (
         (
           ( filtersToApply.bedrooms['0'] === true )
           && ( unitBedroomSizes.indexOf( 0 ) !== -1 )
@@ -86,11 +86,14 @@ export function filterHomes( {
         )
       );
 
-      const dedupedAmi = new Set( home.units.map( ( unit ) => unit.amiQualification ) );
+      const dedupedAmi = new Set( home.units.filter( ( unit ) => unit && unit.amiQualification ).map( ( unit ) => unit.amiQualification ) );
       const unitAmiQualifications = Array.from( dedupedAmi );
       let matchesAmiQualification;
 
-      if ( home.incomeRestricted === false ) {
+      if (
+        ( home.incomeRestricted === false )
+        || ( !unitAmiQualifications.length )
+      ) {
         matchesAmiQualification = true;
       } else {
         for ( let index = 0; index < unitAmiQualifications.length; index++ ) {
@@ -149,109 +152,111 @@ export function filterHomes( {
       );
     } )
     .map( ( home ) => {
-      const newUnits = home.units.filter( ( unit ) => {
-        let unitMatchesRentalPrice;
+      const newUnits = home.units
+        .filter( ( unit ) => unit ) // Remove undefined, null, etc.
+        .filter( ( unit ) => {
+          let unitMatchesRentalPrice;
 
-        if (
-          filtersToApply.rentalPrice.upperBound
-          && (
-            ( home.offer === 'rent' )
-            || ( home.type === 'apt' )
-          )
-        ) {
-          let rentalPriceLowerBound;
-          let rentalPriceUpperBound;
+          if (
+            filtersToApply.rentalPrice.upperBound
+            && (
+              ( home.offer === 'rent' )
+              || ( home.type === 'apt' )
+            )
+          ) {
+            let rentalPriceLowerBound;
+            let rentalPriceUpperBound;
 
-          if ( filtersToApply.rentalPrice.lowerBound > filtersToApply.rentalPrice.upperBound ) {
-            rentalPriceLowerBound = filtersToApply.rentalPrice.upperBound;
-            rentalPriceUpperBound = filtersToApply.rentalPrice.lowerBound;
+            if ( filtersToApply.rentalPrice.lowerBound > filtersToApply.rentalPrice.upperBound ) {
+              rentalPriceLowerBound = filtersToApply.rentalPrice.upperBound;
+              rentalPriceUpperBound = filtersToApply.rentalPrice.lowerBound;
+            } else {
+              rentalPriceLowerBound = filtersToApply.rentalPrice.lowerBound;
+              rentalPriceUpperBound = filtersToApply.rentalPrice.upperBound;
+            }
+
+            unitMatchesRentalPrice = (
+              ( unit.price >= rentalPriceLowerBound )
+              && (
+                ( unit.price <= rentalPriceUpperBound )
+                // If the current upper bound is equal to the default upper bound
+                // (which means it is all the way to the right on the slider),
+                // change from “$XXX” to “$XXX+”—i.e. expand the scope of prices to include
+                // values above the nominal maximum.
+                || (
+                  ( rentalPriceUpperBound === defaultFilters.rentalPrice.upperBound )
+                  && ( unit.price >= rentalPriceUpperBound )
+                )
+              )
+            );
           } else {
-            rentalPriceLowerBound = filtersToApply.rentalPrice.lowerBound;
-            rentalPriceUpperBound = filtersToApply.rentalPrice.upperBound;
+            unitMatchesRentalPrice = true;
           }
 
-          unitMatchesRentalPrice = (
-            ( unit.price >= rentalPriceLowerBound )
-            && (
-              ( unit.price <= rentalPriceUpperBound )
-              // If the current upper bound is equal to the default upper bound
-              // (which means it is all the way to the right on the slider),
-              // change from “$XXX” to “$XXX+”—i.e. expand the scope of prices to include
-              // values above the nominal maximum.
-              || (
-                ( rentalPriceUpperBound === defaultFilters.rentalPrice.upperBound )
-                && ( unit.price >= rentalPriceUpperBound )
-              )
+          let unitMatchesBedrooms = (
+            (
+              filtersToApply.bedrooms['0br']
+              && ( unit.bedrooms === 0 )
+            )
+            || (
+              filtersToApply.bedrooms['1br']
+              && ( unit.bedrooms === 1 )
+            )
+            || (
+              filtersToApply.bedrooms['2br']
+              && ( unit.bedrooms === 2 )
+            )
+            || (
+              filtersToApply.bedrooms['3+br']
+              && ( unit.bedrooms >= 3 )
             )
           );
-        } else {
-          unitMatchesRentalPrice = true;
-        }
 
-        let unitMatchesBedrooms = (
-          (
-            filtersToApply.bedrooms['0']
-            && ( unit.bedrooms === 0 )
-          )
-          || (
-            filtersToApply.bedrooms['1']
-            && ( unit.bedrooms === 1 )
-          )
-          || (
-            filtersToApply.bedrooms['2']
-            && ( unit.bedrooms === 2 )
-          )
-          || (
-            filtersToApply.bedrooms['3+']
-            && ( unit.bedrooms >= 3 )
-          )
-        );
-
-        if ( matchOnNoneSelected ) {
-          if (
-            !filtersToApply.bedrooms['0']
-            && !filtersToApply.bedrooms['1']
-            && !filtersToApply.bedrooms['2']
-            && !filtersToApply.bedrooms['3+']
-          ) {
-            unitMatchesBedrooms = true;
+          if ( matchOnNoneSelected ) {
+            if (
+              !filtersToApply.bedrooms['0br']
+              && !filtersToApply.bedrooms['1br']
+              && !filtersToApply.bedrooms['2br']
+              && !filtersToApply.bedrooms['3+br']
+            ) {
+              unitMatchesBedrooms = true;
+            }
           }
-        }
 
-        // TODO: Maybe exit early if we already know it is not a match?
-        // if ( !unitMatchesBedrooms ) {
-        //   return false;
-        // }
+          // TODO: Maybe exit early if we already know it is not a match?
+          // if ( !unitMatchesBedrooms ) {
+          //   return false;
+          // }
 
-        let unitMatchesAmiQualification;
-        const unitAmiQualification = ( unit.amiQualification || null );
+          let unitMatchesAmiQualification;
+          const unitAmiQualification = ( unit.amiQualification || null );
 
-        if ( unitAmiQualification === null ) {
-          unitMatchesAmiQualification = true;
-        } else if ( filtersToApply.amiQualification.lowerBound <= filtersToApply.amiQualification.upperBound ) {
-          unitMatchesAmiQualification = (
-            ( unitAmiQualification >= filtersToApply.amiQualification.lowerBound )
-            && ( unitAmiQualification <= filtersToApply.amiQualification.upperBound )
-          );
-        // These values can be switched in the UI causing the names to no longer be semantic
-        } else if ( filtersToApply.amiQualification.lowerBound > filtersToApply.amiQualification.upperBound ) {
-          unitMatchesAmiQualification = (
-            ( unitAmiQualification >= filtersToApply.amiQualification.upperBound )
-            && ( unitAmiQualification <= filtersToApply.amiQualification.lowerBound )
-          );
-        }
+          if ( unitAmiQualification === null ) {
+            unitMatchesAmiQualification = true;
+          } else if ( filtersToApply.amiQualification.lowerBound <= filtersToApply.amiQualification.upperBound ) {
+            unitMatchesAmiQualification = (
+              ( unitAmiQualification >= filtersToApply.amiQualification.lowerBound )
+              && ( unitAmiQualification <= filtersToApply.amiQualification.upperBound )
+            );
+          // These values can be switched in the UI causing the names to no longer be semantic
+          } else if ( filtersToApply.amiQualification.lowerBound > filtersToApply.amiQualification.upperBound ) {
+            unitMatchesAmiQualification = (
+              ( unitAmiQualification >= filtersToApply.amiQualification.upperBound )
+              && ( unitAmiQualification <= filtersToApply.amiQualification.lowerBound )
+            );
+          }
 
-        let unitMatchesIncomeQualification;
-        const unitIncomeQualification = ( unit.incomeQualification || null );
+          let unitMatchesIncomeQualification;
+          const unitIncomeQualification = ( unit.incomeQualification || null );
 
-        if ( ( unitIncomeQualification === null ) || !filtersToApply.incomeQualification.upperBound ) {
-          unitMatchesIncomeQualification = true;
-        } else {
-          unitMatchesIncomeQualification = ( unitIncomeQualification <= filtersToApply.incomeQualification.upperBound );
-        }
+          if ( ( unitIncomeQualification === null ) || !filtersToApply.incomeQualification.upperBound ) {
+            unitMatchesIncomeQualification = true;
+          } else {
+            unitMatchesIncomeQualification = ( unitIncomeQualification <= filtersToApply.incomeQualification.upperBound );
+          }
 
-        return ( unitMatchesRentalPrice && unitMatchesBedrooms && unitMatchesAmiQualification && unitMatchesIncomeQualification );
-      } );
+          return ( unitMatchesRentalPrice && unitMatchesBedrooms && unitMatchesAmiQualification && unitMatchesIncomeQualification );
+        } );
 
       return {
         ...home,
@@ -331,6 +336,10 @@ export function getNewFilters( event, filters ) {
       }
       break;
 
+    case 'bedrooms':
+      newFilters.bedrooms[$input.value] = newValue;
+      break;
+
     default:
   }
 
@@ -347,8 +356,6 @@ export function getNewFilters( event, filters ) {
         newFilters.location.cardinalDirection[cardinalDirection] = newValue;
       } );
       break;
-
-      // case ''
 
     default:
   }

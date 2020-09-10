@@ -6,8 +6,7 @@ import '@testing-library/jest-dom/extend-expect';
 import CalloutCta from './index';
 
 describe( 'CalloutCta', () => {
-  it( 'renders', () => {
-    // render( <CalloutCta /> );
-    throw new Error( 'Test missing' );
+  it( 'Renders', () => {
+    render( <CalloutCta /> );
   } );
 } );

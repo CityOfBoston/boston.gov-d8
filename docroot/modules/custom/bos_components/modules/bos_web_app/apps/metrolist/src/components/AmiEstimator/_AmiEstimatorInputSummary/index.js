@@ -7,7 +7,7 @@ import Stack from '@components/Stack';
 
 import './AmiEstimatorInputSummary.scss';
 
-import { getIconId } from '../util';
+import { getIconId } from '../methods';
 
 /* istanbul ignore next */
 function removeEmptyCents( money ) {

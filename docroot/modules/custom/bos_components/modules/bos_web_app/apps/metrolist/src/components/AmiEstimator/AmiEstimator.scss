@@ -2,31 +2,22 @@
 @import '@globals';
 
 .ml-ami-estimator {
-  // width: ( $nominal-width-ami-estimator-desktop / $nominal-width-desktop ) * 100%; // mockup
   width: 90%;
-  // max-width: 39rem;
-  // margin: rem( 93px ) auto 0;
   margin: 0 auto;
   color: $color-black;
 }
   .ml-ami-estimator__heading,
   .sh-title.ml-ami-estimator__heading {
     font-family: $font-family-heading;
-    // font-size: responsive rem( 28px ) rem( 38px );
     font-style: normal;
     color: $color-metrolist-text-blue;
     letter-spacing: rem( 1px );
-    // line-height: rem( 35px );
     margin: 0;
     padding: 0;
   }
   .ml-ami-estimator__prompt-inner {
     margin: 0;
-    // margin-inline-end: 0;
-    // margin-inline-start: 0;
     padding: 0;
-    // padding-inline-start: 0;
-    // padding-inline-end: 0;
     border: 0;
   }
   .ml-ami-estimator__prompt-question {
@@ -35,13 +26,8 @@
     width: 100%;
     font-weight: bold;
     margin: 0;
-    // margin-inline-end: 0;
-    // margin-inline-start: 0;
     padding: 0;
     padding-bottom: rem( 8px );
-    // padding-inline-start: 0;
-    // padding-inline-end: 0;
-    // border: 0;
     border-bottom: rem( 4px ) solid $color-black;
   }
   .ml-ami-estimator__prompt-answer {
@@ -58,9 +44,6 @@
   .ml-ami-estimator__navigation {
     justify-content: space-between;
   }
-  // .ml-ami-estimator__navigation.ml-ami-estimator__navigation--step-1 {
-  //   justify-content: flex-end;
-  // }
   .ml-ami-estimator__button,
   .btn[class*="btn--metrolist"].ml-ami-estimator__button {
     width: rem( 252px );
@@ -108,10 +91,6 @@
       visibility: hidden;
     }
 
-    // &:focus {
-    //   border: 12px solid greenyellow;
-    // }
-
     &.visible {
       opacity: 1;
       height: unset;
@@ -121,8 +100,7 @@
 // Transitions
 
 $prompt-width: 90vw;
-$prompt-width--tablet: 39rem; // 50vw;
-// $prompt-width--desktop: 33.3333vw;
+$prompt-width--tablet: 39rem;
 
 .ml-ami-estimator,
 .step,
@@ -168,7 +146,7 @@ $prompt-width--tablet: 39rem; // 50vw;
   }
   
   // Exit
-  
+
   .slide-left-exit,
   .slide-right-exit {
     width: $width;
