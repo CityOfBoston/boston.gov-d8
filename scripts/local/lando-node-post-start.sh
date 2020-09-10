@@ -19,7 +19,7 @@
   printf "\n"
   printf "[LANDO] starts <$(basename "$0")>\n"
 
-  . "${LANDO_MOUNT}/scripts/lando/lando-patterns-post-start.sh"
-  . "${LANDO_MOUNT}/scripts/lando/lando-webapps-post-start.sh"
+  . "${LANDO_MOUNT}/scripts/local/lando-patterns-post-start.sh"
+  . "${LANDO_MOUNT}/scripts/local/lando-webapps-post-start.sh"
 
   printf "[LANDO] ends <$(basename "$0")>\n"

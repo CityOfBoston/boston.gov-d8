@@ -11,7 +11,7 @@
 
   # Include the utilities file/library.
   # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
-  . "${LANDO_MOUNT}/scripts/lando/lando-patterns-customize.sh"
-  . "${LANDO_MOUNT}/scripts/lando/lando-webapps-customize.sh"
+  . "${LANDO_MOUNT}/scripts/local/lando-patterns-customize.sh"
+  . "${LANDO_MOUNT}/scripts/local/lando-webapps-customize.sh"
 
   printf "[LANDO] ends <$(basename "$0")>\n"
