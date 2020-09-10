@@ -79,7 +79,7 @@ services:
       conf: xdebug.ini
 
     build_as_root:
-      - printf "\n[LANDO] Appserver Event - build as root\n\n"
+      - printf "\n[LANDO] Appserver Event - build as root\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
@@ -131,6 +131,12 @@ tooling:
     description: "Drupal: Copy the remote staging DB into the local DB"
     cmd:
       - /app/scripts/local/sync.sh 'dev'
+
+  drupal-sync-files:
+    service: appserver
+    description: "Drupal: Copy the images and pdfs from prod to local"
+    cmd:
+      - /app/scripts/local/filesync.sh 'dev'
 
   drupal-pull-repo:
     service: appserver
