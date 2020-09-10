@@ -28,6 +28,12 @@ patterns:
   travis:
     build: false
 
+webapps:
+  local:
+    # Make paths relative to repo root.
+    source: docroot/modules/custom/bos_components/modules/bos_web_app/apps
+    local_dir: web_apps
+
 build:
   local:
     # Build Type = dev or prod.
