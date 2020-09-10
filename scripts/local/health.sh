@@ -7,7 +7,7 @@ if [[ -n "$command" ]]; then
     if [[ "${command}" == "database" ]]; then
         mysql -h127.0.0.1 -P3306 -udrupal --password=drupal -e"show databases;"  || exit 1
         exit 0
-    elif [[ "${command}" == "patterns" ]]; then
+    elif [[ "${command}" == "node" ]]; then
         if [[ -d /app/patterns/public/css ]]; then
             # If the patterns folder is populated, then try to get the fractal server
             wget http://127.0.0.1 -O .null0.test || exit 1
