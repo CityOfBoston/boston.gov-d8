@@ -19,9 +19,9 @@
 ###############################################################
 
   printf "\n"
-  printf "[LANDO] starts <$(basename "$0")>\n"
+  printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
 
   . "${LANDO_MOUNT}/scripts/local/lando-build-patterns.sh"
   . "${LANDO_MOUNT}/scripts/local/lando-build-webapps.sh"
 
-  printf "[LANDO] ends <$(basename "$0")>\n"
+  printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"

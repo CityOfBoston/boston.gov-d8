@@ -12,7 +12,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename "$0")>\n"
+    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
 
     # Link the webapps folder from inside drupal into the root, so that
     # developers can find the modules more easily.
@@ -24,4 +24,4 @@
 
     printout "INFO" "WebApp source files can be editted at ${webapps_local_local_dir}"
 
-    printf "[LANDO] ends <$(basename "$0")>\n"
+    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"

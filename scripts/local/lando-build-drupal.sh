@@ -46,7 +46,7 @@
         esac
     done
 
-    printf "ref: $(basename "$0")\n"
+    printf "ref: $(basename $BASH_SOURCE) \n"
     printf "\n"
     printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Installing Drupal and dependencies."

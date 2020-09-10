@@ -17,7 +17,7 @@
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
     printf "\n"
-    printf "ref: $(basename "$0")\n"
+    printf "ref: $(basename $BASH_SOURCE) \n"
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Installing Linux packages in appserver container."
     printf "${LightPurple}       ================================================================================${NC}\n"

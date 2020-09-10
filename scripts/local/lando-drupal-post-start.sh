@@ -30,7 +30,7 @@
     . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
 
     printf "\n"
-    printf "ref: $(basename "$0")\n"
+    printf "ref: $(basename $BASH_SOURCE) \n"
     printout "LANDO" "Project Event - post-start\n"
     printf "================================================================================\n"
     printout "SUCCESS" "Docker containers are now started."

@@ -15,7 +15,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename "$0")>\n"
+    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed."
         exit 0
@@ -42,4 +42,4 @@
     clone_patterns_repo
     printout "INFO" "Patterns source files can be editted at ${patterns_local_repo_local_dir}"
 
-    printf "[LANDO] ends <$(basename "$0")>\n"
+    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
