@@ -8,12 +8,12 @@
 
   # Include the utilities file/library.
   REPO_ROOT="${LANDO_MOUNT}"
-  . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
+  . "$/helpers/cob_build_utilities.sh"
 
   # Create script variables
   target_env="local"
 
-  printf "ref: $(basename "$0")\n"
+  printf "ref: $(basename $BASH_SOURCE) \n"
   printf "\n${LightPurple}       ================================================================================${NC}\n"
   printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
   printf "${LightPurple}       ================================================================================${NC}\n"
