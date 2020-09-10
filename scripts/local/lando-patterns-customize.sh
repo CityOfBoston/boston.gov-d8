@@ -31,14 +31,15 @@
         printf "mkdir /user/.node_js\n"
         if [[ ! -d /user/.node_js ]]; then mkdir /user/.node_js; fi
         if [[ ! -e /user/.node_js/node ]]; then cp /usr/local/bin/node /user/.node_js/.; fi
+        printout "INFO" "node.js executable is linked to /user/.node.js/ on the host PC (for IDE linting)"
     fi
 
     # Create a clean folder into which the repo can be cloned.
     if [[ -d ${patterns_local_repo_local_dir} ]]; then rm -rf ${patterns_local_repo_local_dir}; fi
-    printf "mkdir ${patterns_local_repo_local_dir}\n"
     mkdir ${patterns_local_repo_local_dir}
     chown node:node ${patterns_local_repo_local_dir}
     # Clone the patterns repo into a folder within the Main boston.gov d8 repo.
     clone_patterns_repo
+    printout "INFO" "Patterns source files can be editted at ${patterns_local_repo_local_dir}"
 
     printf "[LANDO] ends <$(basename "$0")>\n"
