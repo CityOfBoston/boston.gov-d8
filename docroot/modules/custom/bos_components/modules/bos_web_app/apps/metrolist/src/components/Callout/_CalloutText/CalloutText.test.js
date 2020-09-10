@@ -6,8 +6,7 @@ import '@testing-library/jest-dom/extend-expect';
 import CalloutText from './index';
 
 describe( 'CalloutText', () => {
-  it( 'renders', () => {
-    // render( <CalloutText /> );
-    throw new Error( 'Test missing' );
+  it( 'Renders', () => {
+    render( <CalloutText /> );
   } );
 } );

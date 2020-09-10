@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import Icon from '@components/Icon';
 // import Checkbox from '@components/Checkbox';
-import Scale from '@components/Scale';
+import RadioGroup from '@components/RadioGroup';
 // import Row from '@components/Row';
 // import Column from '@components/Column';
 import Stack from '@components/Stack';
@@ -96,7 +96,7 @@ const AmiEstimatorHouseholdIncome = forwardRef( ( props, ref ) => {
         </legend>
         <Stack space="2">
           <Icon className="ml-ami-estimator__prompt-answer-icon" icon="deposit_check" height="100" alt="" />
-          <Stack space="1">{/* ami-estimator-income-rate */}
+          <Stack space="1">{ /* ami-estimator-income-rate */ }
             <input
               id="household-income"
               ref={ incomeInputRef }
@@ -118,7 +118,7 @@ const AmiEstimatorHouseholdIncome = forwardRef( ( props, ref ) => {
               id="ami-estimator-household-income-error"
               className="ml-ami-estimator__prompt-answer-error"
             >{ props.formData.householdIncome.errorMessage }</FormErrorMessage>
-            <Scale
+            <RadioGroup
               criterion="incomeRate"
               values="Yearly,Monthly"
               value={ props.formData.incomeRate.value || defaultIncomeRate }

@@ -7,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Routes from './index';
 
 describe( 'Routes', () => {
-  it( 'renders', () => {
+  it( 'Renders', () => {
     render(
       <MemoryRouter>
         <Routes />

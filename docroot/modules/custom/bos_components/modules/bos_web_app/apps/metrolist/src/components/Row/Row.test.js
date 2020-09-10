@@ -2,6 +2,8 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import Row from './index';
 
-it( 'renders', () => {
-  render( <Row /> );
+describe( 'Row', () => {
+  it( 'Renders', () => {
+    render( <Row /> );
+  } );
 } );
