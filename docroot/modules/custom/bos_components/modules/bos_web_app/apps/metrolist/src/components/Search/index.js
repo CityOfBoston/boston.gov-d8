@@ -47,10 +47,10 @@ const defaultFilters = {
     },
   },
   "bedrooms": {
-    "0": false,
-    "1": false,
-    "2": false,
-    "3+": false,
+    "0br": false,
+    "1br": false,
+    "2br": false,
+    "3+br": false,
   },
   "amiQualification": {
     "lowerBound": 0,
@@ -95,13 +95,36 @@ if ( savedFilters ) {
         savedFilters.location.neighborhood[nb] = savedNeighborhoods[nb];
       } );
 
+    if ( hasOwnProperty( savedFilters.bedrooms, '0' ) ) {
+      savedFilters.bedrooms['0br'] = savedFilters.bedrooms['0'];
+      delete savedFilters.bedrooms['0'];
+    }
+
+    if ( hasOwnProperty( savedFilters.bedrooms, '1' ) ) {
+      savedFilters.bedrooms['1br'] = savedFilters.bedrooms['1'];
+      delete savedFilters.bedrooms['1'];
+    }
+
+    if ( hasOwnProperty( savedFilters.bedrooms, '2' ) ) {
+      savedFilters.bedrooms['2br'] = savedFilters.bedrooms['2'];
+      delete savedFilters.bedrooms['2'];
+    }
+
     if ( hasOwnProperty( savedFilters.bedrooms, '3' ) ) {
-      savedFilters.bedrooms['3+'] = savedFilters.bedrooms['3'];
+      savedFilters.bedrooms['3+br'] = savedFilters.bedrooms['3'];
       delete savedFilters.bedrooms['3'];
     }
 
+    if ( hasOwnProperty( savedFilters.bedrooms, '3+' ) ) {
+      savedFilters.bedrooms['3+br'] = savedFilters.bedrooms['3+'];
+      delete savedFilters.bedrooms['3+'];
+    }
+
     delete savedFilters.bedrooms['4+'];
+
+    localStorage.setItem( 'filters', JSON.stringify( savedFilters ) );
   } else {
+    console.log( 'isNotPlainObject' );
     savedFilters = {};
   }
 } else {
@@ -129,6 +152,7 @@ function Search( props ) {
   const [pages, setPages] = useState( [1] );
   const [isDesktop, setIsDesktop] = useState( window.matchMedia( '(min-width: 992px)' ).matches );
   const [showClearFiltersInitially, setShowClearFiltersInitially] = useState( false );
+  const [homesHaveLoaded, setHomesHaveLoaded] = useState( false );
   const history = useHistory();
   const query = useQuery();
   const $drawer = useRef();
@@ -200,10 +224,10 @@ function Search( props ) {
         },
       },
       "bedrooms": {
-        "0": false,
-        "1": false,
-        "2": false,
-        "3+": false,
+        "0br": false,
+        "1br": false,
+        "2br": false,
+        "3+br": false,
       },
       "amiQualification": {
         "lowerBound": 0,
@@ -228,7 +252,6 @@ function Search( props ) {
       localStorage.getItem( 'useHouseholdIncomeAsIncomeQualificationFilter' ),
     );
 
-    // console.log( 'resetFilters', resetFilters );
     setFilters( resetFilters );
     localStorage.setItem( 'useHouseholdIncomeAsIncomeQualificationFilter', 'false' );
   };
@@ -325,8 +348,92 @@ function Search( props ) {
     return [];
   };
 
+  const loadData = ( newHomes ) => {
+    const paginatedNewHomes = paginate( newHomes );
+    populateListingCounts( newHomes );
+    const existingFilters = localStorage.getItem( 'filters' );
+    const requestedPage = parseInt( query.get( 'page' ), 10 );
+    let newFilters;
+
+    setPaginatedHomes( paginatedNewHomes );
+
+    if ( requestedPage ) {
+      setCurrentPage( requestedPage );
+    } else {
+      setCurrentPage( 1 );
+    }
+
+    setTotalPages( paginatedNewHomes.length );
+
+    if ( existingFilters ) {
+      newFilters = { ...JSON.parse( existingFilters ) };
+    } else {
+      newFilters = { ...filters };
+    }
+
+    Object.keys( listingCounts.location.neighborhood )
+      .sort()
+      .forEach( ( nb ) => {
+        newFilters.location.neighborhood[nb] = ( newFilters.location.neighborhood[nb] || false );
+        defaultFilters.location.neighborhood[nb] = false;
+      } );
+
+    Object.keys( listingCounts.location.cardinalDirection ).forEach( ( cd ) => {
+      newFilters.location.cardinalDirection[cd] = ( newFilters.location.cardinalDirection[cd] || false );
+      defaultFilters.location.cardinalDirection[cd] = false;
+    } );
+
+    if (
+      hasOwnProperty( savedFilters, 'location' )
+      && hasOwnProperty( savedFilters.location, 'neighborhood' )
+    ) {
+      Object.keys( savedFilters.location.neighborhood )
+        .forEach( ( nb ) => {
+          if ( !hasOwnProperty( defaultFilters.location.neighborhood, nb ) ) {
+            delete savedFilters.location.neighborhood[nb];
+          }
+        } );
+    }
+
+    setFilters( newFilters );
+    localStorage.setItem( 'filters', JSON.stringify( newFilters ) );
+
+    const defaultFiltersString = JSON.stringify( defaultFilters, null, 2 );
+    const savedFiltersString = JSON.stringify( savedFilters, null, 2 );
+
+    const savedFiltersMatchDefaultFilters = (
+      ( savedFiltersString !== '{}' )
+      && ( defaultFiltersString === savedFiltersString )
+    );
+
+    setShowClearFiltersInitially( !savedFiltersMatchDefaultFilters );
+    setHomesHaveLoaded( true );
+  };
+
+  const updateDrawerHeight = ( drawerRef, wait ) => {
+    const updateHeight = () => {
+      if ( drawerRef && drawerRef.current ) {
+        const height = getComputedStyle( drawerRef.current ).getPropertyValue( 'height' );
+
+        if ( height !== '0px' ) {
+          drawerRef.current.style.height = height;
+        }
+      }
+
+      setUpdatingDrawerHeight( false );
+    };
+
+    if ( wait ) {
+      setTimeout( updateHeight, wait );
+    } else {
+      updateHeight();
+    }
+  };
+
   useEffect( () => {
-    if ( !getAllHomes().length ) {
+    const allHomes = getAllHomes();
+
+    if ( !allHomes.length ) {
       fetch(
         apiEndpoint,
         {
@@ -343,58 +450,12 @@ function Search( props ) {
             return response.json();
           }
         } )
-        .then( ( apiHomes ) => {
-          const paginatedApiHomes = paginate( apiHomes );
-          populateListingCounts( apiHomes );
-          const existingFilters = localStorage.getItem( 'filters' );
-          const requestedPage = parseInt( query.get( 'page' ), 10 );
-          let newFilters;
-
-          setPaginatedHomes( paginatedApiHomes );
-
-          if ( requestedPage ) {
-            setCurrentPage( requestedPage );
-          } else {
-            setCurrentPage( 1 );
-          }
-
-          setTotalPages( paginatedApiHomes.length );
-
-          if ( existingFilters ) {
-            newFilters = { ...JSON.parse( existingFilters ) };
-          } else {
-            newFilters = { ...filters };
-          }
-
-          Object.keys( listingCounts.location.neighborhood )
-            .sort()
-            .forEach( ( nb ) => {
-              newFilters.location.neighborhood[nb] = ( newFilters.location.neighborhood[nb] || false );
-              defaultFilters.location.neighborhood[nb] = false;
-            } );
-
-          Object.keys( listingCounts.location.cardinalDirection ).forEach( ( cd ) => {
-            newFilters.location.cardinalDirection[cd] = ( newFilters.location.cardinalDirection[cd] || false );
-            defaultFilters.location.cardinalDirection[cd] = false;
-          } );
-
-          setFilters( newFilters );
-          localStorage.setItem( 'filters', JSON.stringify( newFilters ) );
-
-          const defaultFiltersString = JSON.stringify( defaultFilters, null, 2 );
-          const savedFiltersString = JSON.stringify( savedFilters, null, 2 );
-          const savedFiltersMatchDefaultFilters = ( defaultFiltersString === savedFiltersString );
-
-          console.log( 'defaultFilters', defaultFiltersString );
-          console.log( '---' );
-          console.log( 'savedFilters', savedFiltersString );
-          console.log( 'savedFiltersMatchDefaultFilters', savedFiltersMatchDefaultFilters );
-
-          setShowClearFiltersInitially( !savedFiltersMatchDefaultFilters );
-        } )
+        .then( ( apiHomes ) => loadData( apiHomes ) )
         .catch( ( error ) => {
           console.error( error );
         } );
+    } else {
+      loadData( allHomes );
     }
 
     let isResizing = false;
@@ -436,30 +497,7 @@ function Search( props ) {
     setPages( Array.from( { "length": totalPages }, ( v, k ) => k + 1 ) );
   }, [totalPages] );
 
-  const updateDrawerHeight = ( drawerRef, wait ) => {
-    // console.log( 'updateDrawerHeight' );
-
-    const updateHeight = () => {
-      if ( drawerRef && drawerRef.current ) {
-        const height = getComputedStyle( drawerRef.current ).getPropertyValue( 'height' );
-
-        if ( height !== '0px' ) {
-          drawerRef.current.style.height = height;
-        }
-      }
-
-      setUpdatingDrawerHeight( false );
-    };
-
-    if ( wait ) {
-      setTimeout( updateHeight, wait );
-    } else {
-      updateHeight();
-    }
-  };
-
   const supportsSvg = ( typeof SVGRect !== "undefined" );
-
   const FiltersPanelUi = () => {
     populateListingCounts( getAllHomes() );
 
@@ -485,7 +523,6 @@ function Search( props ) {
       />
     );
   };
-
   const CalloutUi = (
     <Inset key="ami-estimator-callout" className="filters-panel__callout-container" until="large">
       <Callout
@@ -532,6 +569,7 @@ function Search( props ) {
           columnWidth="2/3"
           filters={ filters }
           homes={ filteredHomes }
+          homesHaveLoaded={ homesHaveLoaded }
         />
       </Row>
       <nav>
@@ -554,10 +592,10 @@ Search.defaultProps = {
   "amiEstimation": null,
   "filters": {
     ...defaultFilters,
-    ...savedFilters,
+    // ...savedFilters,
   },
 };
 
-localStorage.setItem( 'filters', JSON.stringify( Search.defaultProps.filters ) );
+// localStorage.setItem( 'filters', JSON.stringify( Search.defaultProps.filters ) );
 
 export default Search;

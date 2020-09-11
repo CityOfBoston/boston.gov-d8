@@ -1,4 +1,5 @@
-import moment from 'moment';
+import React from 'react';
+import dayjs from 'dayjs';
 import { capitalize } from '@util/strings';
 
 export function formatKey( { key, value, info } ) {
@@ -38,13 +39,23 @@ export function formatKey( { key, value, info } ) {
 
 export function formatValue( { key, value, info } ) {
   let formattedValue;
+  let date;
+
+  if (
+    ( key === 'listingDate' )
+    || ( key === 'applicationDueDate' )
+  ) {
+    if ( value ) {
+      date = dayjs( value );
+    }
+  }
 
   switch ( key ) {
     case 'listingDate':
-      formattedValue = moment( value ).format( 'M/D/YY' );
+      formattedValue = <time dateTime={ date.toISOString() }>{ date.format( 'M/D/YY' ) }</time>;
       break;
     case 'applicationDueDate':
-      formattedValue = ( value ? moment( value ).format( 'M/D/YY' ) : null );
+      formattedValue = ( value ? <time dateTime={ date.toISOString() }>{ date.format( 'M/D/YY' ) }</time> : null );
       // formattedValue = null;
       break;
     case 'assignment':

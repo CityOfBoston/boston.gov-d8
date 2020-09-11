@@ -9,7 +9,7 @@ import ScrollToTop from './index';
 describe( 'ScrollToTop', () => {
   globalThis.scrollTo = jest.fn();
 
-  it( 'renders', () => {
+  it( 'Renders', () => {
     const spy = jest.spyOn( globalThis, 'scrollTo' );
 
     render(

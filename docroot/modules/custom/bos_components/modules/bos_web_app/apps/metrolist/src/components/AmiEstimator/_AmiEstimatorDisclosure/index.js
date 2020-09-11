@@ -60,6 +60,4 @@ AmiEstimatorDisclosure.propTypes = {
   "adjustContainerHeight": PropTypes.func,
 };
 
-// AmiEstimatorDisclosure.
-
 export default AmiEstimatorDisclosure;

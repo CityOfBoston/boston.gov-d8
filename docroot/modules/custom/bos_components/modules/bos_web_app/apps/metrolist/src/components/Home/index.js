@@ -100,7 +100,7 @@ function Home( props ) {
               )
           }
         </Stack>
-        <Row as="footer" className="ml-home__footer" space="panel" stackUntil="small">{/* TODO: Should be home-info--two-column */}
+        <Row as="footer" className="ml-home__footer" space="panel" stackUntil="small">{ /* TODO: Should be home-info--two-column */ }
           <HomeInfo
             className="ml-home-footer__home-info"
             info={ {

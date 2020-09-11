@@ -16,6 +16,4 @@ function ScrollToTop() {
 
 ScrollToTop.displayName = 'ScrollToTop';
 
-// ScrollToTop.propTypes = {};
-
 export default ScrollToTop;

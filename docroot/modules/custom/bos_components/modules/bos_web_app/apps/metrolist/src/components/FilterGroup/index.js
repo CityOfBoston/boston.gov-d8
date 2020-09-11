@@ -50,11 +50,9 @@ class FilterGroup extends React.Component {
     }
 
     let Wrapper;
-    let wrapperSpacing;
 
     if ( this.props.orientation === 'horizontal' ) {
       Wrapper = Row;
-      wrapperSpacing = 'equally';
     } else {
       Wrapper = 'div';
     }
@@ -65,9 +63,7 @@ class FilterGroup extends React.Component {
         <Wrapper
           id={ groupId }
           ref={ this.$filters }
-          // space={ wrapperSpacing }
           className={ `ml-filter-group__filters${this.state.isExpanded ? ' ml-filter-group__filters--expanded' : ''}` }
-          // style={ { "display": ( this.state.isExpanded ? '' : 'none' ) } }
         >
           { childArray }
         </Wrapper>
@@ -102,9 +98,9 @@ class FilterGroup extends React.Component {
         }
         onChange={ this.handleChange }
       >
-        {/* <Wrapper> */}
+        { /* <Wrapper> */ }
         { this.renderFilters( this.props ) }
-        {/* </Wrapper> */}
+        { /* </Wrapper> */ }
       </fieldset>
     );
   }
