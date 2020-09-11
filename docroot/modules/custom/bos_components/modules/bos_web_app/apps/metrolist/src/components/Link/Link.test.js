@@ -29,7 +29,7 @@ describe( 'Link', () => {
     jest.useRealTimers();
   } );
 
-  it( 'renders', () => {
+  it( 'Renders', () => {
     render(
       <MemoryRouter>
         <Link to="/" />

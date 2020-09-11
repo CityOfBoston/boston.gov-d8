@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Home from '@components/Home';
 import Stack from '@components/Stack';
 import Inset from '@components/Inset';
+import Icon from '@components/Icon';
 
 import { homeObject } from '@util/validation';
 
@@ -14,6 +15,7 @@ function ResultsPanel( props ) {
     homes, className, columnWidth, filters,
   } = props;
   const attributes = { ...props };
+  const [showHomes, setShowHomes] = useState( false );
 
   if ( homes && ( homes.length > 0 ) ) {
     delete attributes.homes;
@@ -28,6 +30,32 @@ function ResultsPanel( props ) {
     delete attributes.filters;
   }
 
+  delete attributes.homesHaveLoaded;
+
+  const Homes = () => (
+    ( homes && homes.length )
+      ? homes.map( ( home ) => <Home key={ home.id } home={ home } filters={ filters } /> )
+      : (
+        <div className="ml-results-panel__home-status">
+          <Icon icon="house-missing" width="134" height="83" alt="" />
+          <p className="ml-results-panel__home-status-text">No homes match the selected filters.</p>
+        </div>
+      )
+  );
+
+  const NoHomesAvailable = () => (
+    <div className="ml-results-panel__home-status">
+      <Icon icon="house-loading" fallbackExtension="gif" width="134" height="83" alt="" />
+      <p className="ml-results-panel__home-status-text">Loading homes…</p>
+    </div>
+  );
+
+  useEffect( () => {
+    const showHomesAfterLoadingAnimationCompletes = setTimeout( () => setShowHomes( true ), 1500 );
+
+    return () => clearTimeout( showHomesAfterLoadingAnimationCompletes );
+  }, [homes] );
+
   return (
     <article
       data-testid="ml-results-panel"
@@ -38,9 +66,9 @@ function ResultsPanel( props ) {
       <Inset until="large">
         <Stack space="panel">
         {
-          homes && ( homes.length )
-            ? homes.map( ( home ) => <Home key={ home.id } home={ home } filters={ filters } /> )
-            : <p>No homes match the selected filters.</p>
+          showHomes
+            ? <Homes />
+            : <NoHomesAvailable />
         }
         </Stack>
       </Inset>
@@ -50,9 +78,14 @@ function ResultsPanel( props ) {
 
 ResultsPanel.propTypes = {
   "homes": PropTypes.arrayOf( homeObject ),
+  "homesHaveLoaded": PropTypes.bool,
   "columnWidth": PropTypes.string,
   "className": PropTypes.string,
   "filters": PropTypes.object,
+};
+
+ResultsPanel.defaultProps = {
+  "homes": [],
 };
 
 export default ResultsPanel;

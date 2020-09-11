@@ -62,7 +62,7 @@ ClearFiltersButton.propTypes = {
   "undoClearFilters": PropTypes.func.isRequired,
   "hasInteractedWithFilters": PropTypes.bool.isRequired,
   "showClearFiltersInitially": PropTypes.bool,
-  "lastInteractedWithFilters": PropTypes.object,
+  "lastInteractedWithFilters": PropTypes.number,
 };
 
 export default ClearFiltersButton;

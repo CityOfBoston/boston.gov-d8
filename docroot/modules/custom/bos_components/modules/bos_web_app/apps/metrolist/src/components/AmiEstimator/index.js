@@ -505,12 +505,12 @@ function AmiEstimator( props ) {
               "height": heights[location.pathname],
             } }
           >
-            {/*
+            { /*
               This is no different than other usage of
               <CSSTransition>, just make sure to pass
               `location` to `Switch` so it can match
               the old location as it animates out.
-            */}
+            */ }
             <CSSTransition
               key={ location.key }
               classNames={ isNavigatingBackward ? 'slide-right' : 'slide-left' }

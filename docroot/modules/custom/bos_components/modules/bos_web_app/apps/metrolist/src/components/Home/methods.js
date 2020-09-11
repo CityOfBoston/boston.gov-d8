@@ -1,13 +1,13 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { capitalCase } from 'change-case';
 
 export function wasJustListed( listingDate, unitOfTime = 'hours', newnessThreshold = 48 ) {
   // testing:
   // return true;
 
-  const now = moment();
-  const then = moment( listingDate );
+  const now = dayjs();
+  const then = dayjs( listingDate );
   const diff = now.diff( then, unitOfTime );
 
   if ( diff <= newnessThreshold ) {

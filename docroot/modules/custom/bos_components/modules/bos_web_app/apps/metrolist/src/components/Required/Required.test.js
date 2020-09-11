@@ -6,7 +6,7 @@ import '@testing-library/jest-dom/extend-expect';
 import Required from './index';
 
 describe( 'Required', () => {
-  it( 'renders', () => {
+  it( 'Renders', () => {
     const { getByText } = render( <Required /> );
 
     getByText( '*' );
