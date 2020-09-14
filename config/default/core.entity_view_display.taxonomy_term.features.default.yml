@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.features.field_icon
+    - image.style.square_icon_56px
     - taxonomy.vocabulary.features
   module:
     - fences
+    - media
     - text
 id: taxonomy_term.features.default
 targetEntityType: taxonomy_term
@@ -23,10 +25,10 @@ content:
   field_icon:
     label: hidden
     weight: 0
-    type: entity_reference_entity_view
+    type: media_thumbnail
     settings:
-      view_mode: thumbnail
-      link: false
+      image_style: square_icon_56px
+      image_link: ''
     third_party_settings:
       fences:
         fences_field_tag: none

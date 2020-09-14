@@ -1338,5 +1338,10 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       return true;
     });
 
+    iFrameResize({
+      log                     : true,                  // Enable console logging
+      enablePublicMethods     : true                   // Enable methods within iframe hosted page
+    });
+
   });
 })(jQuery, Drupal, this, this.document);
