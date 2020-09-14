@@ -9,7 +9,7 @@ dependencies:
     - taxonomy.vocabulary.features
   module:
     - fences
-    - svg_image
+    - media
     - text
 id: taxonomy_term.features.sidebar_right
 targetEntityType: taxonomy_term
@@ -31,22 +31,18 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
   field_icon:
-    type: image
+    type: media_thumbnail
     weight: 1
     region: content
     label: hidden
     settings:
       image_style: square_icon_56px
       image_link: ''
-      svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
     third_party_settings:
       fences:
         fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: detail-item_left
         fences_label_tag: none
         fences_label_classes: ''
