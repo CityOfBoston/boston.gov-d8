@@ -1339,8 +1339,10 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
     });
 
     iFrameResize({
-      log                     : true,                  // Enable console logging
-      enablePublicMethods     : true                   // Enable methods within iframe hosted page
+      log : false, // disable console logging
+      enablePublicMethods : true, // Enable methods within iframe hosted page
+      sizeHeight				: true, // Enable resize of iframe to content height
+      autoResize 				: true // Enable changes to window or DOM cause iFrame to resize to the new content size
     });
 
   });
