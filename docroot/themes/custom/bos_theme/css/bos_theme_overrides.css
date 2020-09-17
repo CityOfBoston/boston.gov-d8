@@ -1325,7 +1325,11 @@ body.no-s .md-c:focus-within {
   .node-type-how-to .component-sectio.paragraphs-item-internal-linkn {
     padding: 0;
   }
-  .oh-display-label {min-width: 6.6em;}
+
+  .oh-display-label {
+    min-width: 6.6em;
+  }
+}
 
 @media screen and (max-width: 480px) {
   .brg-tr:checked ~ .mn #main-menu.sticky.h {
@@ -1354,3 +1358,25 @@ What: Fix inherited title styles
  */
 
 .dr-ql-str-t h2 {color: #fff; padding-right: 0;}
+
+/**
+Stella
+Where: 500 error page
+What: New page construction
+ */
+
+err.err--500 {
+  background-image: url('../images/500.svg'); /* in dev */
+  background-color: transparent;
+  background-position: bottom;
+  background-size: 102%;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 20px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: 500px;
+  height: 400px;
+  z-index: 8;
+}
