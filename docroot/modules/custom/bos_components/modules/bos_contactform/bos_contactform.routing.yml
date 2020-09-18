@@ -1,0 +1,7 @@
+bos_bibblio:
+ path: '/contactform/emails'
+ defaults:
+   _controller: '\Drupal\bos_contactform\Controller\PostmarkAPI::begin'
+ methods: [POST]
+ requirements:
+   _access: 'TRUE'
