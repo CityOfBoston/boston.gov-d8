@@ -56,8 +56,8 @@ class PostmarkAPI extends ControllerBase {
     }
     else {
       $postmark_env = [
-        "token" => "6c7fd838-968b-4b54-8a3b-cd50a087a9ac",
-        "domain" => "contactform-staging.boston.gov",
+        "token" => Settings::get('postmark_token'),
+        "domain" => Settings::get('postmark_domain'),
       ];
     }
 
