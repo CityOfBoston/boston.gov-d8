@@ -3,6 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - core.date_format.medium
     - entity_browser.browser.image_entity_browser
     - field.field.node.event.body
     - field.field.node.event.field_address
@@ -319,9 +320,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_contacts:
     weight: 4
@@ -367,9 +368,12 @@ content:
     third_party_settings: {  }
   field_event_date_recur:
     weight: 8
-    settings: {  }
+    settings:
+      interpreter: ''
+      date_format_type: medium
+      occurrences_modal: true
     third_party_settings: {  }
-    type: date_recur_modular_alpha
+    type: date_recur_modular_sierra
     region: content
   field_event_type:
     type: options_select
@@ -423,9 +427,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_manual_date:
     weight: 29
@@ -436,7 +440,8 @@ content:
     region: content
   field_metatags:
     weight: 2
-    settings: {  }
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
@@ -485,9 +490,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_thumbnail:
     weight: 7
