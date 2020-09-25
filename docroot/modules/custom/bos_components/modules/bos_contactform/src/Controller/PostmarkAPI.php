@@ -63,13 +63,18 @@ class PostmarkAPI extends ControllerBase {
 
     $postmark_env = json_decode(json_encode($postmark_env));
     $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
+    $htmlMessage = strpos($emailFields["message"], "<div");
     $data = [
       "To" => $emailFields["to_address"],
       "From" => "Boston.gov Contact Form <" . $rand . "@" . $postmark_env->domain . ">",
       "ReplyTo" => $emailFields["from_address"],
       "Subject" => $emailFields["subject"],
-      "TextBody" => $emailFields["message"]
-      ];
+      "TextBody" => $emailFields["message"],
+    ];
+
+    if ($htmlMessage !== FALSE) {
+      $data["HtmlBody"] = $emailFields["message"];
+    }
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "https://api.postmarkapp.com/email");
