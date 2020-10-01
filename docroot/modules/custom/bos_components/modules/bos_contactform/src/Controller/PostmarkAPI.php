@@ -57,6 +57,7 @@ class PostmarkAPI extends ControllerBase {
     else {
       $postmark_env = [
         "token" => Settings::get('postmark_token'),
+        "auth" => Settings::get('postmark_auth'),
         "domain" => Settings::get('postmark_domain'),
       ];
     }
@@ -64,35 +65,46 @@ class PostmarkAPI extends ControllerBase {
     $postmark_env = json_decode(json_encode($postmark_env));
     $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
     $htmlMessage = strpos($emailFields["message"], "<div");
+    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->auth ? TRUE : FALSE);
     $data = [
+      "TemplateID" => 20439969,
+      "TemplateModel" => [
+        "subject_custom" => $emailFields["subject"],
+        "TextBody" => $emailFields["message"],
+      ],
       "To" => $emailFields["to_address"],
       "From" => "Boston.gov Contact Form <" . $rand . "@" . $postmark_env->domain . ">",
       "ReplyTo" => $emailFields["from_address"],
-      "Subject" => $emailFields["subject"],
-      "TextBody" => $emailFields["message"],
     ];
 
-    if ($htmlMessage !== FALSE) {
-      $data["HtmlBody"] = $emailFields["message"];
-    }
+    if ($auth == TRUE) :
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://api.postmarkapp.com/email");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($ch, CURLOPT_HEADER, FALSE);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-      "Accept: application/json",
-      "Content-Type: application/json",
-      "X-Postmark-Server-Token: " . $postmark_env->token,
-    ]);
-    $response = curl_exec($ch);
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, "https://api.postmarkapp.com/email/withTemplate");
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($ch, CURLOPT_HEADER, FALSE);
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+      curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Accept: application/json",
+        "Content-Type: application/json",
+        "X-Postmark-Server-Token: " . $postmark_env->token,
+      ]);
+      $response = curl_exec($ch);
 
-    $response_array = [
-      'status' => 'success',
-      'response' => $response,
-    ];
+      $response_array = [
+        'status' => 'success',
+        'response' => $response,
+      ];
+
+    else :
+
+      $response_array = [
+        'status' => 'error',
+        'response' => 'wrong token could not authenticate',
+      ];
+
+    endif;
 
     return $response_array;
 
@@ -146,45 +158,23 @@ class PostmarkAPI extends ControllerBase {
   }
 
   /**
-   * Parse and decode form data.
-   *
-   * @param string $data_post
-   *   The urlencoded string that needs to be parsed and decoded.
-   */
-  public function getParams($data_post) {
-    $data_json = urldecode($data_post);
-    $data_json = explode("&", $data_json);
-
-    $fields = ['to_address', 'from_address', 'subject', 'message'];
-    $clean_up = ["email", "[", "]", "'"];
-    $emailFields = [];
-
-    foreach ($data_json as $item) {
-      $values = explode("=", $item);
-      $key = str_replace($clean_up, "", $values[0]);
-      if (in_array($key, $fields)) {
-        $emailFields[$key] = $values[1];
-      }
-    }
-
-    return $this->validateParams($emailFields);
-  }
-
-  /**
    * Begin script and API operations.
    */
   public function begin() {
-    // Get POST data and perform API request to specific Bibblio endpoint.
+    // Get POST data and check auth.
+
     $request_method = $this->request->getCurrentRequest()->getMethod();
     if ($request_method == "POST") :
-      $data = $this->request->getCurrentRequest()->getContent();
-      $response_array = $this->getParams($data);
+      $data = $this->request->getCurrentRequest()->get('email');
+      $response_array = $this->validateParams($data);
 
     else :
+
       $response_array = [
         'status' => 'error',
         'response' => 'no post data',
       ];
+
     endif;
 
     $response = new CacheableJsonResponse($response_array);
