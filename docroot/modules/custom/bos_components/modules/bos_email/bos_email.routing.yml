@@ -1,0 +1,7 @@
+bos_email:
+ path: '/rest/email/{server}'
+ defaults:
+   _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+ methods: [POST]
+ requirements:
+   _access: 'TRUE'
