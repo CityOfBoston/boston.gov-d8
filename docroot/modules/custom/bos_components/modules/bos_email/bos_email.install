@@ -2,13 +2,13 @@
 
 /**
  * @file
- * The install file for bos_contactform module.
+ * The install file for bos_email module.
  */
 
 /**
  * Implements hook_uninstall().
  */
-function bos_contactform_uninstall() {
+function bos_email_uninstall() {
   if (function_exists("_bos_core_uninstall_boston")) {
     _bos_core_uninstall_boston(basename(__FILE__, ".install"));
   }
