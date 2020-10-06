@@ -80,4 +80,9 @@
     }, 2000);
   });
 
+  $( document ).ajaxStop(function () {
+    cob_linkitShowSpinner(true);
+    cob_linkitCreateLinks();
+  });
+
 })(jQuery, this, this.document);
