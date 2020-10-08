@@ -132,14 +132,14 @@ if ( savedFilters ) {
 }
 
 let useAmiRecommendationAsLowerBound = localStorage.getItem( 'useAmiRecommendationAsLowerBound' );
+let tempAMI;
 if ( useAmiRecommendationAsLowerBound ) {
   useAmiRecommendationAsLowerBound = ( useAmiRecommendationAsLowerBound === 'true' );
 
-  if ( useAmiRecommendationAsLowerBound ) {
-    savedFilters.amiQualification = ( savedFilters.amiQualification || { "lowerBound": 0, "upperBound": null } );
-
-    savedFilters.amiQualification.lowerBound = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
-    localStorage.setItem( 'useAmiRecommendationAsLowerBound', 'false' );
+  if ( useAmiRecommendationAsLowerBound ) { 
+    //savedFilters.amiQualification = ( savedFilters.amiQualification || { "lowerBound": 0, "upperBound": null } );
+    //savedFilters.amiQualification.lowerBound = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
+    tempAMI = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
   }
 }
 
@@ -369,6 +369,11 @@ function Search( props ) {
       newFilters = { ...JSON.parse( existingFilters ) };
     } else {
       newFilters = { ...filters };
+    }
+
+    if(useAmiRecommendationAsLowerBound === true){
+      newFilters.amiQualification.lowerBound = tempAMI;
+      localStorage.setItem( 'useAmiRecommendationAsLowerBound', 'false' )
     }
 
     Object.keys( listingCounts.location.neighborhood )
