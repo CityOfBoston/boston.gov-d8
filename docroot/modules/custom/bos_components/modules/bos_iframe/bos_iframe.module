@@ -29,6 +29,7 @@ function bos_iframe_preprocess_paragraph(&$vars) {
         if (!$paragraph->get('field_source_url')->isEmpty()) {
           $url = $paragraph->get('field_source_url')->getValue();
           $vars['source_url'] = $url['0']['value'];
+          $vars['iframe_title'] = $vars['content']['field_short_title'][0]['#context']['value'];
         }
         if (!$paragraph->get('field_iframe_size')->isEmpty()) {
           $size = $paragraph->get('field_iframe_size')->getValue();

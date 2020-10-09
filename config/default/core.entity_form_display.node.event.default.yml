@@ -3,7 +3,6 @@ langcode: und
 status: true
 dependencies:
   config:
-    - core.date_format.medium
     - entity_browser.browser.image_entity_browser
     - field.field.node.event.body
     - field.field.node.event.field_address
@@ -368,12 +367,9 @@ content:
     third_party_settings: {  }
   field_event_date_recur:
     weight: 8
-    settings:
-      interpreter: ''
-      date_format_type: medium
-      occurrences_modal: true
+    settings: {  }
     third_party_settings: {  }
-    type: date_recur_modular_sierra
+    type: date_recur_modular_alpha
     region: content
   field_event_type:
     type: options_select
