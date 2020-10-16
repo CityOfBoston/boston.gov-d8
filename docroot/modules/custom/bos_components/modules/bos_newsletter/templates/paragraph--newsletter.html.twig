@@ -55,7 +55,7 @@
         <div class="g--{% if content.field_description %}6{% else %}12{% endif %}">
 
           {% if content.field_newsletter %}
-            <form id="newsletter_upaknee" action="https://contactform.boston.gov/subscriptions?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
+            <form id="newsletter_upaknee" action="/rest/email_newsletter/subscribe" method="POST" class="bos-newsletter" novalidate>
 
               <div class="fs">
 
@@ -64,6 +64,7 @@
                   <div class="txt">
                     <label for="subscriber[email]" class="txt-l">Your Email Address</label>
                     <input name="subscriber[email]" type="email" value="" placeholder="Email address" class="txt-f bos-newsletter-email">
+                    <input name="subscriber[list]" type="hidden" value="{{ newsletter_id }}">
                   </div>
 
                   <div class="txt">
@@ -71,10 +72,15 @@
                     <input name="subscriber[zipcode]" type="text" value="" placeholder="Zip Code" class="txt-f bos-newsletter-zip" size="18">
                   </div>
 
+                  <div class="txt visually-hidden">
+                    <label for="subscriber[honey]" class="txt-l">Gotcha</label>
+                    <input name="subscriber[honey]" type="text" value="" placeholder="Honey" >
+                  </div>
+
                 </div>
 
                 <div class="bc bc--r">
-                  <button type="submit" class="btn btn--700">Sign Up</button>
+                  <button type="submit" class="btn btn--700" name="Sign Up">Sign Up</button>
                 </div>
 
               </div>
