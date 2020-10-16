@@ -75,7 +75,7 @@ class UpakneeAPI extends ControllerBase {
                                 <email>' . $subscriber_data["email"] . '</email>
                                 <existing-update>true</existing-update>
                                 <source>boston.gov webform</source>
-                                <source-ip>' . $_SERVER['HTTP_REFERER'] . '</source-ip>
+                                <source-ip>' . $_SERVER["REMOTE_ADDR"] . '</source-ip>
                                 <zipcode>' . $subscriber_data["zipcode"] . '</zipcode>
                                 <subscriptions>
                                     <subscription>
