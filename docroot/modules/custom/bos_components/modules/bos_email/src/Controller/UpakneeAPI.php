@@ -68,44 +68,55 @@ class UpakneeAPI extends ControllerBase {
    *   The array containing Upaknee API needed fields.
    */
   public function subscriberAdd(array $subscriber_data) {
-    $username = $this->getToken();
-    $password = '';
-    $subscriber_data_xml = '<subscriber>
-                              <email>' . $subscriber_data["email"] . '</email>
-                              <existing-update>true</existing-update>
-                              <zipcode>' . $subscriber_data["zipcode"] . '</zipcode>
-                              <subscriptions>
-                                  <subscription>
-                                      <newsletter-id>' . $subscriber_data["list"] . '</newsletter-id>
-                                  </subscription>
-                              </subscriptions>
-                            </subscriber>';
-    $ch = curl_init();
-    curl_setopt_array($ch, [
-      CURLOPT_URL => "https://rest.upaknee.com/subscribers/",
-      CURLOPT_RETURNTRANSFER => TRUE,
-      CURLOPT_ENCODING => "",
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 0,
-      CURLOPT_USERPWD => $username . ":" . $password,
-      CURLOPT_FOLLOWLOCATION => TRUE,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => "POST",
-      CURLOPT_POSTFIELDS => $subscriber_data_xml,
-      CURLOPT_HTTPHEADER => [
-        "Accept: application/xml",
-        "Content-Type: application/xml"
-      ],
-    ]);
+    if ($subscriber_data["honey"] == "") {
+      $username = $this->getToken();
+      $password = '';
+      $subscriber_data_xml = '<subscriber>
+                                <email>' . $subscriber_data["email"] . '</email>
+                                <existing-update>true</existing-update>
+                                <zipcode>' . $subscriber_data["zipcode"] . '</zipcode>
+                                <subscriptions>
+                                    <subscription>
+                                        <newsletter-id>' . $subscriber_data["list"] . '</newsletter-id>
+                                    </subscription>
+                                </subscriptions>
+                              </subscriber>';
+      $ch = curl_init();
+      curl_setopt_array($ch, [
+        CURLOPT_URL => "https://rest.upaknee.com/subscribers/",
+        CURLOPT_RETURNTRANSFER => TRUE,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_USERPWD => $username . ":" . $password,
+        CURLOPT_FOLLOWLOCATION => TRUE,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => $subscriber_data_xml,
+        CURLOPT_HTTPHEADER => [
+          "Accept: application/xml",
+          "Content-Type: application/xml"
+        ],
+      ]);
 
-    $response = curl_exec($ch);
-    curl_close($ch);
+      $response = curl_exec($ch);
+      curl_close($ch);
 
-    $response_array = [
-      'status' => 'success',
-      'subscriber' => 'true',
-      'response' => $response,
-    ];
+      $response_array = [
+        'status' => 'success',
+        'subscriber' => 'true',
+        'response' => $response,
+      ];
+    }
+    else {
+
+      $response_array = [
+        'status' => 'error',
+        'subscriber' => 'false',
+        'response' => 'suspected shady honey submission',
+      ];
+
+    }
 
     return $response_array;
 
