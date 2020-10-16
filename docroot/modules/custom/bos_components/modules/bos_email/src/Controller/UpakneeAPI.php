@@ -62,7 +62,7 @@ class UpakneeAPI extends ControllerBase {
   }
 
   /**
-   * Send email via Postmark API.
+   * Add subscriber via Upaknee API.
    *
    * @param array $subscriber_data
    *   The array containing Upaknee API needed fields.
@@ -144,4 +144,4 @@ class UpakneeAPI extends ControllerBase {
 
 }
 
-// End PostmarkAPI class.
+// End UpakneeAPI class.
