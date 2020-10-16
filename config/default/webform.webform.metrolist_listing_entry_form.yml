@@ -212,10 +212,10 @@ handlers:
         hidden_subject: hidden_subject
         hidden_message: hidden_message
       custom_data: ''
-      custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Bearer c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
+      custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
       cast: true
       debug: false
-      completed_url: 'https://contactform.boston.gov/emails'
+      completed_url: 'https://www.boston.gov/rest/email/contactform'
       completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
       updated_url: ''
       updated_custom_data: ''
