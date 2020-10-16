@@ -34,7 +34,7 @@
   {% endif %}
   <div>
     {% if content.field_newsletter %}
-      <form id="newsletter_upaknee" action="https://contactform.boston.gov/subscriptions?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
+      <form id="newsletter_upaknee" action="/rest/email_newsletter/subscribe" method="POST" class="bos-newsletter" novalidate>
         <div class="fs">
           <div class="fs-c">
             <div class="txt">
