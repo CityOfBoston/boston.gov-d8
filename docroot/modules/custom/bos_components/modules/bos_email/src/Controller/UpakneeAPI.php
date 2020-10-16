@@ -74,6 +74,8 @@ class UpakneeAPI extends ControllerBase {
       $subscriber_data_xml = '<subscriber>
                                 <email>' . $subscriber_data["email"] . '</email>
                                 <existing-update>true</existing-update>
+                                <source>boston.gov webform</source>
+                                <source-ip>' . $_SERVER['HTTP_REFERER'] . '</source-ip>
                                 <zipcode>' . $subscriber_data["zipcode"] . '</zipcode>
                                 <subscriptions>
                                     <subscription>
@@ -102,21 +104,18 @@ class UpakneeAPI extends ControllerBase {
       $response = curl_exec($ch);
       curl_close($ch);
 
-      $response_array = [
-        'status' => 'success',
-        'subscriber' => 'true',
-        'response' => $response,
-      ];
     }
     else {
 
-      $response_array = [
-        'status' => 'error',
-        'subscriber' => 'false',
-        'response' => 'suspected shady honey submission',
-      ];
+      // To do log for suspicious behavior and track bad IP address.
 
     }
+
+    $response_array = [
+      'status' => 'success',
+      'subscriber' => 'true',
+      'response' => $response,
+    ];
 
     return $response_array;
 
