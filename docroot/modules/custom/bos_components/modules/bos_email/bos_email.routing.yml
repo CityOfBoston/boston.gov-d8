@@ -1,7 +1,15 @@
-bos_email:
+bos_email.send:
  path: '/rest/email/{server}'
  defaults:
    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+ methods: [POST]
+ requirements:
+   _access: 'TRUE'
+
+bos_email.newsletter_manager:
+ path: '/rest/email_newsletter/{operation}'
+ defaults:
+   _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
  methods: [POST]
  requirements:
    _access: 'TRUE'
