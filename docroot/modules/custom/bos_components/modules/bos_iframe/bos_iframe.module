@@ -29,13 +29,25 @@ function bos_iframe_preprocess_paragraph(&$vars) {
         if (!$paragraph->get('field_source_url')->isEmpty()) {
           $url = $paragraph->get('field_source_url')->getValue();
           $vars['source_url'] = $url['0']['value'];
+          $vars['iframe_title'] = $vars['content']['field_short_title'][0]['#context']['value'];
         }
-        $vars['id'] = Html::getUniqueId('iframe');
         if (!$paragraph->get('field_iframe_size')->isEmpty()) {
-          $size = $paragraph->get('field_iframe_size')->getValue()['0']['value'];
-          $vars['size'] = !empty($size) ? "height: {$size}px;" : NULL;
+          $size = $paragraph->get('field_iframe_size')->getValue();
+          if (!$size['0']['value'] > 0) {
+            $vars['size'] = "inherit";
+          }
+          else {
+            $vars['size'] = $size['0']['value'];
+          }
         }
         break;
     }
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_iframe_preprocess_page(&$variables) {
+  $variables['#attached']['library'][] = 'bos_iframe/bos_iframe_js';
 }
