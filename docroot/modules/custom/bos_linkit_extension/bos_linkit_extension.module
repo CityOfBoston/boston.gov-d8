@@ -486,6 +486,8 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
     "phone-frame",
     "phone",
   ]) != "") {
+    $mail_key = ["cob_tabs", "stuff", 1, "form", "email"];
+    $email = $form_state->getValue($mail_key);
     // This is a tel: link.
     if (empty($email["phone-frame"]["phone"])) {
       $name = $form["cob_tabs"]["stuff"][1]["form"]["email"]["phone-frame"]["phone"]["#parents"];
@@ -493,7 +495,6 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
       $form_state->setErrorByName($name, "Phone type link requires a phone number.");
       return;
     }
-
     // Build new href element.
     $attributes["href"] = "tel:" . urlencode(Html::escape($email["phone-frame"]["phone"]));
     $form_state->setValue("attributes", $attributes);

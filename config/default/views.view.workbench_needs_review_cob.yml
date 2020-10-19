@@ -5,7 +5,6 @@ dependencies:
   config:
     - system.menu.admin
     - user.role.administrator
-    - user.role.content_editor
     - user.role.developer
     - user.role.site_administrator
     - workflows.workflow.city_of_boston_workflows
@@ -35,7 +34,6 @@ display:
             administrator: administrator
             site_administrator: site_administrator
             developer: developer
-            content_editor: content_editor
       cache:
         type: tag
         options: {  }
@@ -327,6 +325,55 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: field
+        changed:
+          id: changed
+          table: node_field_revision
+          field: changed
+          entity_type: node
+          entity_field: changed
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim: false
+            word_boundary: false
+            ellipsis: false
+            strip_tags: false
+            html: false
+          hide_empty: false
+          empty_zero: false
+          plugin_id: field
+          type: timestamp
+          settings:
+            date_format: medium
+            custom_date_format: ''
+            timezone: ''
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_alter_empty: true
+          click_sort_column: value
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
         revision_uid:
           id: revision_uid
           table: node_revision
@@ -392,34 +439,42 @@ display:
           entity_type: node
           entity_field: revision_uid
           plugin_id: field
-        changed:
-          id: changed
+        status:
+          id: status
           table: node_field_revision
-          field: changed
-          entity_type: node
-          entity_field: changed
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            trim: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            html: false
-          hide_empty: false
-          empty_zero: false
-          plugin_id: field
-          type: timestamp
-          settings:
-            date_format: medium
-            custom_date_format: ''
-            timezone: ''
+          field: status
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
+          label: Status
           exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -429,8 +484,15 @@ display:
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
+          type: boolean
+          settings:
+            format: custom
+            format_custom_true: Published
+            format_custom_false: 'Unpublished '
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -441,6 +503,9 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: node
+          entity_field: status
+          plugin_id: field
       filters:
         status:
           id: status
@@ -459,14 +524,14 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -479,9 +544,9 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: boolean
           entity_type: node
           entity_field: status
+          plugin_id: boolean
         moderation_state:
           id: moderation_state
           table: node_field_revision
@@ -540,14 +605,14 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -632,6 +697,10 @@ display:
       arguments: {  }
       display_extenders: {  }
       show_admin_links: false
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
@@ -684,9 +753,12 @@ display:
         context: '0'
         menu_name: admin
       access:
-        type: perm
+        type: role
         options:
-          perm: 'view any unpublished content'
+          role:
+            administrator: administrator
+            site_administrator: site_administrator
+            developer: developer
       defaults:
         access: false
         header: false
@@ -746,15 +818,40 @@ display:
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
-          input_required: false
           text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: filtered_html
           bef:
             general:
-              allow_secondary: false
-              secondary_label: 'Advanced options'
               autosubmit: false
               autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
               autosubmit_hide: false
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+            filter:
+              moderation_state:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              type:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              status:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
             moderation_state:
               bef_format: default
               more_options:
@@ -790,209 +887,7 @@ display:
                 is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
-          text_input_required_format: filtered_html
-      filters:
-        moderation_state:
-          id: moderation_state
-          table: node_field_revision
-          field: moderation_state
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            city_of_boston_workflows-needs_review: city_of_boston_workflows-needs_review
-          group: 1
-          exposed: true
-          expose:
-            operator_id: moderation_state_op
-            label: 'Moderation state'
-            description: ''
-            use_operator: false
-            operator: moderation_state_op
-            identifier: moderation_state
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-            reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          plugin_id: moderation_state_filter
-        revision_uid:
-          id: revision_uid
-          table: node_revision
-          field: revision_uid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: revision_uid_op
-            label: 'Revision user'
-            description: ''
-            use_operator: false
-            operator: revision_uid_op
-            identifier: revision_uid
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: revision_uid
-          plugin_id: numeric
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          relationship: nid
-          group_type: group
-          admin_label: ''
-          operator: in
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: type_op
-            label: 'Content type'
-            description: ''
-            use_operator: false
-            operator: type_op
-            identifier: type
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-            reduce: false
-            argument: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-        status:
-          id: status
-          table: node_field_revision
-          field: status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: '0'
-          group: 1
-          exposed: true
-          expose:
-            operator_id: ''
-            label: Published
-            description: ''
-            use_operator: false
-            operator: status_op
-            identifier: status
-            required: true
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
+          input_required: false
       fields:
         node_bulk_form:
           id: node_bulk_form
@@ -1575,6 +1470,142 @@ display:
           inline: {  }
           separator: ''
           hide_empty: false
+      filters:
+        status:
+          id: status
+          table: node_field_revision
+          field: status
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '0'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+        moderation_state:
+          id: moderation_state
+          table: node_field_revision
+          field: moderation_state
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            city_of_boston_workflows-needs_review: city_of_boston_workflows-needs_review
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          plugin_id: moderation_state_filter
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: nid
+          group_type: group
+          admin_label: ''
+          operator: in
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: type_op
+            label: 'Content type'
+            description: ''
+            use_operator: false
+            operator: type_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: type
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: false
+            argument: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: 0
       contexts:
@@ -1583,6 +1614,6 @@ display:
         - url
         - url.query_args
         - 'user.node_grants:view'
-        - user.permissions
+        - user.roles
       tags:
         - 'config:workflow_list'

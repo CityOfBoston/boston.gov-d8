@@ -177,10 +177,17 @@ class SwiftypeController extends ControllerBase {
       $results = NULL;
     }
 
+    if ($results['body']->info->page == NULL) {
+      $range = new stdClass();
+    }
+    else {
+      $range = $results['body']->info->page;
+    }
+
     return [
       '#theme' => 'bos_swiftype_search_results',
       '#results' => $results,
-      '#range'   => $this->pageRange($results['body']->info->page),
+      '#range'   => $this->pageRange($range),
       '#selected_facets' => $params['facet'] ?? [],
       '#bos_search_url' => $this->config('bos_search_url') ?: "",
       "#facets" => [],

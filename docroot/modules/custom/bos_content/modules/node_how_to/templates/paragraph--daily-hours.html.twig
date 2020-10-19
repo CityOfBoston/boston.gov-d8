@@ -33,9 +33,9 @@
       <span class="oh-wrapper">
         {% for index,office_hour in content.field_daily_hours.0['#office_hours'] %}
           <span class="oh-display">
-            <span class="oh-display-label" style="width: 6.6em;">{{ office_hour.label }}</span>
+            <span class="oh-display-label">{{ office_hour.label }}</span>
             <span class="oh-display-times oh-display-hours">{{ office_hour.formatted_slots }} <br></span>
-          </span>    
+          </span>
         {% endfor %}
       </span>
     </div>
