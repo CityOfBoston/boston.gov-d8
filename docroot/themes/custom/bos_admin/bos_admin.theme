@@ -136,6 +136,16 @@ function bos_admin_preprocess_textarea(&$variables) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function bos_admin_preprocess_input__textfield(&$variables) {
+
+  // Views autocomplete form ...
+  $variables["#attached"]["library"][] = "bos_admin/autocomplete";
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
   $unhelpfulUsernamePattern = "~(CON|INT|)[0-9]{5,}~";
   foreach ($form["node_revisions_table"] as $key => &$revision) {

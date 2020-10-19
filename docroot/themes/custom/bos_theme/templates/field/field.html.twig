@@ -22,6 +22,7 @@
     'field-label-' ~ label_display,
   ]
 %}
+{% set my_role = 'listitem' %}
 {%
   set title_classes = [
     'field-label',
@@ -36,7 +37,7 @@
   {% endif %}
   {% for item in items %}
     {% if display_item_tag %}
-        <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field-item') }}>
+        <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field-item').setAttribute('role', my_role) }}>
     {% endif %}
     {{ item.content }}
     {% if display_item_tag %}

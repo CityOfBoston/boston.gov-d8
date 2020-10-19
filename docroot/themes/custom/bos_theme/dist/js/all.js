@@ -1256,6 +1256,8 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
   // ADA SKIP NAV
   $(document).ready(function () {
     $(document).on('focus', '#skipLink', function () {
+      var burger = document.getElementById('brg-tr');
+      burger.checked = false;
       $("div.sw-skipnav-outerbar").animate({
         marginTop: "0px"
       }, 500);
@@ -1290,6 +1292,58 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
         }
       });
     })
+
+    // Change the backround color focus of event posts when accessed via keyboard
+    $(document).on('focusin', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#1871bd");
+      $(this).find('.di .di-tt').attr("tabindex","-1");
+    });
+    $(document).on('focusout', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#ffffff");
+    });
+    $(document).on('mouseover', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#1871bd");
+    });
+    $(document).on('mouseout', '.post-featured-item-wrapper', function () {
+      $(this).css("background-color", "#ffffff");
+    });
+
+    // Always focus on modal on "mailto:" link click
+    $('a[href^="mailto:"]').on('click', function(e){
+      $('button.md-cb').focus();
+    });
+
+    $(document).on('keydown', function(e) {
+      var target = e.target;
+      var shiftPressed = e.shiftKey;
+      // If TAB key pressed
+      if (e.keyCode == 9) {
+        // If inside a Modal dialog (determined by attribute role="dialog")
+        if ($(target).parents('[role=dialog]').length) {
+          // Find first or last input element in the dialog parent (depending on whether Shift was pressed).
+          // Input elements must be visible, and can be Input/Select/Button/Textarea.
+          var borderElem = shiftPressed ?
+            $(target).closest('[role=dialog]').find('input:visible,select:visible,button:visible,textarea:visible').first()
+            :
+            $(target).closest('[role=dialog]').find('input:visible,select:visible,button:visible,textarea:visible').last();
+          if ($(borderElem).length) {
+            if ($(target).is($(borderElem))) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+        }
+      }
+      return true;
+    });
+
+    iFrameResize({
+      log : false, // disable console logging
+      enablePublicMethods : true, // Enable methods within iframe hosted page
+      sizeHeight				: true, // Enable resize of iframe to content height
+      autoResize 				: true // Enable changes to window or DOM cause iFrame to resize to the new content size
+    });
 
   });
 })(jQuery, Drupal, this, this.document);
