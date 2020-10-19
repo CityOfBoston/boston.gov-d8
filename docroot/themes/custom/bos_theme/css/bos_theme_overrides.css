@@ -274,7 +274,7 @@ button.lity-close {
   line-height: 1.2rem;
 }
 .contextual-region .contextual .contextual-links a,
-.contextual-region .contextual .contextual-links a:hover {
+.contextual-region .contextual .contextual-links a:hover, .contextual-region .contextual .contextual-links a:focus {
   font-size: small;
   font-style:normal;
 }
@@ -304,7 +304,7 @@ What: Changes style of contextual edit button on all node displays on boston_the
   border-radius: 0;
   padding: 0;
 }
-.contextual .trigger:hover {
+.contextual .trigger:hover, .contextual .trigger:focus {
   background-image: url(../images/context-edit-hover.svg);
   background-color: transparent !important;
   background-position-y: center;
@@ -914,9 +914,13 @@ What:  Sizes and centers the icon/image in the transaction box.
     float: left;
     margin: 0;
   }
+
   .lwi-t {
     float: left;
   }
+}
+@media screen and (max-width:480px) {
+  .paragraphs-item-transaction-grid .lwi-ic svg {width: 55px;}
 }
 
 /*
@@ -1297,8 +1301,7 @@ div.sw-skipnav-outerbar {
 
 a.sw-skipnav {
   display: inline-block;
-  margin: auto;
-  margin-top: 0px;
+  margin: 0 auto;
   color: #fff;
   text-decoration: none;
 }
@@ -1310,11 +1313,43 @@ a.sw-skipnav {
 .toolbar-fixed.toolbar-horizontal.toolbar-tray-open #page #main-menu.sticky {top: 8.8em;}
 .logged-in.toolbar-fixed #main-menu.sticky {top:4.3em;}
 
+.paragraphs-item-bos311 a.g--4:focus .lwa--w {color:#fcb61a;}
+
+#statusHeader.emergency-override-processed h2 {margin: 0; line-height: 1; font-size: 28px; letter-spacing: 0;}
+a[href^="mailto:"] {
+  white-space: nowrap;
+}
+body.no-s .md-c:focus-within {
+  transition: background-color 0.01s;
+}
+
+.node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
+
+.sr-only {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+
+@media (min-width: 980px) {
+  .node-type-how-to .component-sectio.paragraphs-item-internal-linkn {
+    padding: 0;
+  }
+
+  .oh-display-label {
+    min-width: 6.6em;
+  }
+}
+
 @media screen and (max-width: 480px) {
   .brg-tr:checked ~ .mn #main-menu.sticky.h {
     left: 256px;
     outline: none;
   }
+  .oh-display-label {min-width: 4em;}
 }
 
 /**
@@ -1336,3 +1371,4 @@ What: Fix inherited title styles
  */
 
 .dr-ql-str-t h2 {color: #fff; padding-right: 0;}
+

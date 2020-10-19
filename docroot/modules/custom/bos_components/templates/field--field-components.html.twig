@@ -41,13 +41,17 @@
     {% if multiple %}
         <div{{ attributes }}>
             {% for item in items %}
-                <a{{ item.content.nav_title['#attributes'] }}></a>
+                {% if item.content.nav_title['#attributes'] %}
+                  <a{{ item.content.nav_title['#attributes'] }} href="javascript:void(0)" title="This is an anchor"></a>
+                {% endif %}
                 {{ item.content }}
             {% endfor %}
         </div>
     {% else %}
         {% for item in items %}
-            <a{{ item.content.nav_title['#attributes'] }}></a>
+            {% if item.content.nav_title['#attributes'] %}
+              <a{{ item.content.nav_title['#attributes'] }} href="javascript:void(0)" title="This is an anchor"></a>
+            {% endif %}
             {{ item.content }}
         {% endfor %}
     {% endif %}
@@ -58,7 +62,9 @@
             <div>
         {% endif %}
         {% for item in items %}
-            <a{{ item.content.nav_title.attributes }}></a>
+            {% if item.content.nav_title.attributes %}
+              <a{{ item.content.nav_title.attributes }} href="javascript:void(0)" title="This is an anchor"></a>
+            {% endif %}
             <div{{ item.attributes }}>{{ item.content }}</div>
         {% endfor %}
         {% if multiple %}
