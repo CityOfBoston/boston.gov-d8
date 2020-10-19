@@ -34,16 +34,23 @@
   {% endif %}
   <div>
     {% if content.field_newsletter %}
-      <form id="newsletter_upaknee" action="https://contactform.boston.gov/subscriptions?list={{ newsletter_id }}" method="POST" class="bos-newsletter" novalidate>
+      <form id="newsletter_upaknee" action="/rest/email_newsletter/subscribe" method="POST" class="bos-newsletter" novalidate>
         <div class="fs">
           <div class="fs-c">
             <div class="txt">
-              <label for="subscriber[email]" class="txt-l txt-l--mt000">Your Email Address</label>
+              <label for="subscriber[email]" class="txt-l">Your Email Address</label>
               <input name="subscriber[email]" id="subscriber[email]" type="email" value="" placeholder="Email address" class="txt-f bos-newsletter-email">
+              <input name="subscriber[list]" type="hidden" value="{{ newsletter_id }}">
             </div>
+
             <div class="txt">
-              <label for="subscriber[zipcode]" class="txt-l txt-l--mt000">Zip Code</label>
-              <input name="subscriber[zipcode]" id="subscriber[zipcode]" type="text" value="" placeholder="Zip Code" class="txt-f bos-newsletter-zip" size="10">
+              <label for="subscriber[zipcode]" class="txt-l">Zip Code</label>
+              <input name="subscriber[zipcode]" id="subscriber[zipcode]" type="text" value="" placeholder="Zip Code" class="txt-f bos-newsletter-zip" size="18">
+            </div>
+
+            <div class="txt visually-hidden">
+              <label for="subscriber[honey]" class="txt-l">Gotcha</label>
+              <input name="subscriber[honey]" type="text" value="" placeholder="Honey" >
             </div>
           </div>
           <div class="bc bc--r">
