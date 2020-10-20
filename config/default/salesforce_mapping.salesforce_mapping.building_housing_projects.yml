@@ -1,0 +1,104 @@
+uuid: fc182a2a-6521-4b1d-b26d-0cce406a5f02
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_project_name
+    - field.field.node.bh_project.field_bh_project_stage
+    - field.field.node.bh_project.field_bh_project_start_date
+    - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_total_num_units
+    - field.storage.node.field_bh_funding_stage
+    - field.storage.node.field_bh_project_stage
+    - field.storage.node.field_bh_project_status
+    - field.storage.node.field_bh_record_type
+    - node.type.bh_project
+    - taxonomy.vocabulary.bh_funding_stage
+    - taxonomy.vocabulary.bh_project_stage
+    - taxonomy.vocabulary.bh_project_status
+    - taxonomy.vocabulary.bh_record_type
+  module:
+    - salesforce_pull
+id: building_housing_projects
+label: 'Building Housing - Projects'
+weight: 0
+type: salesforce_mapping
+key: ''
+async: false
+push_standalone: false
+pull_standalone: true
+pull_trigger_date: LastModifiedDate
+pull_where_clause: 'RecordType.Name IN (''NHD_Development'', ''NHD_Disposition'')'
+sync_triggers:
+  push_create: false
+  push_update: false
+  push_delete: false
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Project__c
+drupal_entity_type: node
+drupal_bundle: bh_project
+field_mappings:
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_name
+    salesforce_field: Name
+    direction: sf_drupal
+    id: 0
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_parcel_id
+    salesforce_field: Parcel_ID__c
+    direction: sf_drupal
+    id: 1
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_total_num_units
+    salesforce_field: Total_No_of_Units__c
+    direction: sf_drupal
+    id: 2
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_start_date
+    salesforce_field: Project_Start_Date__c
+    direction: sf_drupal
+    id: 3
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_record_type
+    salesforce_field: RecordTypeId
+    direction: sf_drupal
+    id: 4
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_project_stage
+    salesforce_field: Project_Stage__c
+    direction: sf_drupal
+    id: 5
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_project_status
+    salesforce_field: Project_Status__c
+    direction: sf_drupal
+    id: 6
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_funding_stage
+    salesforce_field: NHD_Stage__c
+    direction: sf_drupal
+    id: 7
+  -
+    drupal_field_type: properties
+    drupal_field_value: title
+    salesforce_field: Name
+    direction: sf_drupal
+    id: 8
+push_limit: 0
+push_retries: 3
+push_frequency: 0
+pull_frequency: 0
+always_upsert: false
