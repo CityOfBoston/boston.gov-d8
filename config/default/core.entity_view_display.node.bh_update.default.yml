@@ -1,0 +1,30 @@
+uuid: 82d968ea-82bf-4d79-b3f9-64ff45034190
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.bh_update.body
+    - node.type.bh_update
+  module:
+    - text
+    - user
+_core:
+  default_config_hash: Bo9O66NOzWi_ECAprZZ8iAmcXmJj-fdUATKpAarby1k
+id: node.bh_update.default
+targetEntityType: node
+bundle: bh_update
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 101
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true

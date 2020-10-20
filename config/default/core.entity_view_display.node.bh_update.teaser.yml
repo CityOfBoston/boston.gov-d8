@@ -1,0 +1,32 @@
+uuid: 7753ed7c-7d92-4be6-bc10-3166148a533f
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.bh_update.body
+    - node.type.bh_update
+  module:
+    - text
+    - user
+_core:
+  default_config_hash: rP_bolU0PIX6p09oqiNjZu2XXO30vva1W7Xg9AX3qI4
+id: node.bh_update.teaser
+targetEntityType: node
+bundle: bh_update
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true
