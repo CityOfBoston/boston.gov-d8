@@ -1,0 +1,38 @@
+uuid: 48923764-ad94-41aa-9326-57fcbaa2fd85
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_project_name
+    - field.field.node.bh_project.field_bh_project_stage
+    - field.field.node.bh_project.field_bh_project_start_date
+    - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_total_num_units
+    - node.type.bh_project
+  module:
+    - user
+_core:
+  default_config_hash: 0N45RTJVnmavMo1yabvBrmlcwQYTy3pjCEl0QiyPChk
+id: node.bh_project.teaser
+targetEntityType: node
+bundle: bh_project
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_bh_funding_stage: true
+  field_bh_parcel_id: true
+  field_bh_project_name: true
+  field_bh_project_stage: true
+  field_bh_project_start_date: true
+  field_bh_project_status: true
+  field_bh_record_type: true
+  field_bh_total_num_units: true
+  langcode: true
+  published_at: true
