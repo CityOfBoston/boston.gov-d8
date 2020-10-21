@@ -23,7 +23,7 @@ async: false
 push_standalone: false
 pull_standalone: true
 pull_trigger_date: LastModifiedDate
-pull_where_clause: ''
+pull_where_clause: 'Active__c = true'
 sync_triggers:
   push_create: false
   push_update: false
@@ -40,45 +40,46 @@ field_mappings:
     drupal_field_value: field_bh_parcel_name
     salesforce_field: Name
     direction: sf_drupal
-    id: 7
+    id: 0
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_parcel_header
     salesforce_field: Parcel_Header__c
     direction: sf_drupal
-    id: 8
+    id: 1
   -
     drupal_field_type: RelatedTermString
     drupal_field_value: field_bh_property_type
     salesforce_field: Property_Type__c
     direction: sf_drupal
-    id: 9
+    id: 2
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_owned_by_dnd
     salesforce_field: Active__c
     direction: sf_drupal
-    id: 10
+    id: 3
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_assessing_lot_size
     salesforce_field: Assessing_Lot_Size__c
     direction: sf_drupal
-    id: 11
+    id: 4
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_street_address_temp
     salesforce_field: Street_Address__c
     direction: sf_drupal
-    id: 12
+    id: 5
   -
     drupal_field_type: properties
     drupal_field_value: title
     salesforce_field: Name
     direction: sf_drupal
-    id: 13
+    id: 6
 push_limit: 0
 push_retries: 3
 push_frequency: 0
 pull_frequency: 0
 always_upsert: false
+
