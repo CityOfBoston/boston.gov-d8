@@ -3,10 +3,21 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.card
+    - field.storage.node.field_bh_funding_stage
+    - field.storage.node.field_bh_parcel_id
+    - field.storage.node.field_bh_project_stage
+    - field.storage.node.field_bh_project_start_date
+    - field.storage.node.field_bh_project_status
+    - field.storage.node.field_bh_record_type
+    - field.storage.node.field_bh_total_num_units
     - node.type.bh_project
+    - taxonomy.vocabulary.bh_project_stage
+    - taxonomy.vocabulary.bh_project_status
   module:
+    - better_exposed_filters
+    - datetime
     - node
+    - taxonomy
     - user
 id: building_housing
 label: 'Building Housing'
@@ -38,22 +49,75 @@ display:
           query_comment: ''
           query_tags: {  }
       exposed_form:
-        type: basic
+        type: bef
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
           sort_asc_label: Asc
           sort_desc_label: Desc
+          text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: filtered_html
+          bef:
+            general:
+              autosubmit: true
+              autosubmit_exclude_textfield: false
+              autosubmit_textfield_delay: 500
+              autosubmit_hide: true
+              input_required: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              secondary_open: false
+            filter:
+              field_bh_project_name_value:
+                plugin_id: default
+                advanced:
+                  collapsible: false
+                  is_secondary: false
+              field_bh_project_stage_target_id:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              field_bh_project_start_date_value:
+                plugin_id: bef_datepicker
+                advanced:
+                  collapsible: false
+                  is_secondary: false
+              field_bh_project_status_target_id:
+                plugin_id: default
+                advanced:
+                  rewrite:
+                    filter_rewrite_values: ''
+                  collapsible: false
+                  is_secondary: false
+              field_bh_total_num_units_value:
+                plugin_id: bef_sliders
+                advanced:
+                  collapsible: false
+                  is_secondary: false
+                min: '0'
+                max: '99999'
+                step: '1'
+                animate: normal
+                animate_ms: '0'
+                orientation: horizontal
       pager:
-        type: mini
+        type: full
         options:
           items_per_page: 20
           offset: 0
           id: 0
           total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
+            first: '« First'
+            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -62,9 +126,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
+          quantity: 9
       style:
         type: grid
         options:
@@ -131,10 +193,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        rendered_entity:
-          id: rendered_entity
-          table: node
-          field: rendered_entity
+        field_bh_parcel_id:
+          id: field_bh_parcel_id
+          table: node__field_bh_parcel_id
+          field: field_bh_parcel_id
           relationship: none
           group_type: group
           admin_label: ''
@@ -179,9 +241,401 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          view_mode: card
-          entity_type: node
-          plugin_id: rendered_entity
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_project_status:
+          id: field_bh_project_status
+          table: node__field_bh_project_status
+          field: field_bh_project_status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_project_stage:
+          id: field_bh_project_stage
+          table: node__field_bh_project_stage
+          field: field_bh_project_stage
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_funding_stage:
+          id: field_bh_funding_stage
+          table: node__field_bh_funding_stage
+          field: field_bh_funding_stage
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_project_start_date:
+          id: field_bh_project_start_date
+          table: node__field_bh_project_start_date
+          field: field_bh_project_start_date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_default
+          settings:
+            timezone_override: ''
+            format_type: date_format_normal_date
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_total_num_units:
+          id: field_bh_total_num_units
+          table: node__field_bh_total_num_units
+          field: field_bh_total_num_units
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Total Units'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: true
+          empty_zero: true
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_record_type:
+          id: field_bh_record_type
+          table: node__field_bh_record_type
+          field: field_bh_record_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         status:
           value: '1'
@@ -208,6 +662,271 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
+        field_bh_project_name_value:
+          id: field_bh_project_name_value
+          table: node__field_bh_project_name
+          field: field_bh_project_name_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: word
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_project_name_value_op
+            label: 'Project Name'
+            description: ''
+            use_operator: false
+            operator: field_bh_project_name_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_project_name_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: Search
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_bh_project_stage_target_id:
+          id: field_bh_project_stage_target_id
+          table: node__field_bh_project_stage
+          field: field_bh_project_stage_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_project_stage_target_id_op
+            label: 'Project Stage'
+            description: ''
+            use_operator: false
+            operator: field_bh_project_stage_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_project_stage
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: 'Project Stage (field_bh_project_stage)'
+            description: null
+            identifier: field_bh_project_stage_target_id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: bh_project_stage
+          hierarchy: true
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_bh_project_start_date_value:
+          id: field_bh_project_start_date_value
+          table: node__field_bh_project_start_date
+          field: field_bh_project_start_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_project_start_date_value_op
+            label: 'Start Date'
+            description: ''
+            use_operator: false
+            operator: field_bh_project_start_date_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_project_start_date_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: 'Start Date'
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: datetime
+        field_bh_project_status_target_id:
+          id: field_bh_project_status_target_id
+          table: node__field_bh_project_status
+          field: field_bh_project_status_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_project_status_target_id_op
+            label: 'Project Status'
+            description: ''
+            use_operator: false
+            operator: field_bh_project_status_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_project_status_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: bh_project_status
+          hierarchy: true
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_bh_total_num_units_value:
+          id: field_bh_total_num_units_value
+          table: node__field_bh_total_num_units
+          field: field_bh_total_num_units_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_total_num_units_value_op
+            label: 'Total Units'
+            description: ''
+            use_operator: true
+            operator: field_bh_total_num_units_value_op
+            operator_limit_selection: true
+            operator_list:
+              '<': '<'
+              '=': '='
+              '!=': '!='
+              '>': '>'
+            identifier: field_bh_total_num_units_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: all
+            min_placeholder: '0'
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: numeric
       sorts:
         created:
           id: created
@@ -225,166 +944,41 @@ display:
             label: ''
           granularity: second
       title: 'Building Housing - DEV'
-      header: {  }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: 'Displaying @start - @end of @total'
+          plugin_id: result
       footer: {  }
       empty: {  }
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
+      use_ajax: true
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:core.entity_view_display.node.article.article'
-        - 'config:core.entity_view_display.node.article.calendar_listing'
-        - 'config:core.entity_view_display.node.article.contact'
-        - 'config:core.entity_view_display.node.article.default'
-        - 'config:core.entity_view_display.node.article.department_listing'
-        - 'config:core.entity_view_display.node.article.featured_item'
-        - 'config:core.entity_view_display.node.article.featured_topics'
-        - 'config:core.entity_view_display.node.article.listing_long'
-        - 'config:core.entity_view_display.node.article.poll_stub'
-        - 'config:core.entity_view_display.node.article.popup_icon'
-        - 'config:core.entity_view_display.node.article.published_by'
-        - 'config:core.entity_view_display.node.article.rss'
-        - 'config:core.entity_view_display.node.article.teaser'
-        - 'config:core.entity_view_display.node.article.topics_list'
-        - 'config:core.entity_view_display.node.change.default'
-        - 'config:core.entity_view_display.node.change.teaser'
-        - 'config:core.entity_view_display.node.department_profile.article'
-        - 'config:core.entity_view_display.node.department_profile.calendar_listing'
-        - 'config:core.entity_view_display.node.department_profile.card'
-        - 'config:core.entity_view_display.node.department_profile.contact'
-        - 'config:core.entity_view_display.node.department_profile.default'
-        - 'config:core.entity_view_display.node.department_profile.department_listing'
-        - 'config:core.entity_view_display.node.department_profile.featured_item'
-        - 'config:core.entity_view_display.node.department_profile.featured_topics'
-        - 'config:core.entity_view_display.node.department_profile.icon_popup'
-        - 'config:core.entity_view_display.node.department_profile.listing'
-        - 'config:core.entity_view_display.node.department_profile.listing_long'
-        - 'config:core.entity_view_display.node.department_profile.poll_stub'
-        - 'config:core.entity_view_display.node.department_profile.popup_icon'
-        - 'config:core.entity_view_display.node.department_profile.published_by'
-        - 'config:core.entity_view_display.node.department_profile.teaser'
-        - 'config:core.entity_view_display.node.department_profile.topics_list'
-        - 'config:core.entity_view_display.node.emergency_alert.default'
-        - 'config:core.entity_view_display.node.emergency_alert.teaser'
-        - 'config:core.entity_view_display.node.event.default'
-        - 'config:core.entity_view_display.node.event.featured_item'
-        - 'config:core.entity_view_display.node.how_to.article'
-        - 'config:core.entity_view_display.node.how_to.calendar_listing'
-        - 'config:core.entity_view_display.node.how_to.contact'
-        - 'config:core.entity_view_display.node.how_to.default'
-        - 'config:core.entity_view_display.node.how_to.department_listing'
-        - 'config:core.entity_view_display.node.how_to.featured_item'
-        - 'config:core.entity_view_display.node.how_to.featured_topics'
-        - 'config:core.entity_view_display.node.how_to.listing'
-        - 'config:core.entity_view_display.node.how_to.listing_long'
-        - 'config:core.entity_view_display.node.how_to.poll_stub'
-        - 'config:core.entity_view_display.node.how_to.popup_icon'
-        - 'config:core.entity_view_display.node.how_to.published_by'
-        - 'config:core.entity_view_display.node.how_to.teaser'
-        - 'config:core.entity_view_display.node.landing_page.article'
-        - 'config:core.entity_view_display.node.landing_page.calendar_listing'
-        - 'config:core.entity_view_display.node.landing_page.contact'
-        - 'config:core.entity_view_display.node.landing_page.default'
-        - 'config:core.entity_view_display.node.landing_page.department_listing'
-        - 'config:core.entity_view_display.node.landing_page.featured_item'
-        - 'config:core.entity_view_display.node.landing_page.featured_topics'
-        - 'config:core.entity_view_display.node.landing_page.listing_long'
-        - 'config:core.entity_view_display.node.landing_page.poll_stub'
-        - 'config:core.entity_view_display.node.landing_page.popup_icon'
-        - 'config:core.entity_view_display.node.landing_page.published_by'
-        - 'config:core.entity_view_display.node.landing_page.teaser'
-        - 'config:core.entity_view_display.node.landing_page.topics_list'
-        - 'config:core.entity_view_display.node.listing_page.article'
-        - 'config:core.entity_view_display.node.listing_page.calendar_listing'
-        - 'config:core.entity_view_display.node.listing_page.contact'
-        - 'config:core.entity_view_display.node.listing_page.default'
-        - 'config:core.entity_view_display.node.listing_page.department_listing'
-        - 'config:core.entity_view_display.node.listing_page.featured_item'
-        - 'config:core.entity_view_display.node.listing_page.featured_topics'
-        - 'config:core.entity_view_display.node.listing_page.listing_long'
-        - 'config:core.entity_view_display.node.listing_page.poll_stub'
-        - 'config:core.entity_view_display.node.listing_page.popup_icon'
-        - 'config:core.entity_view_display.node.listing_page.published_by'
-        - 'config:core.entity_view_display.node.listing_page.teaser'
-        - 'config:core.entity_view_display.node.listing_page.topics_list'
-        - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
-        - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
-        - 'config:core.entity_view_display.node.metrolist_development.contact'
-        - 'config:core.entity_view_display.node.metrolist_development.map'
-        - 'config:core.entity_view_display.node.metrolist_development.teaser'
-        - 'config:core.entity_view_display.node.metrolist_unit.default'
-        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
-        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
-        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
-        - 'config:core.entity_view_display.node.person_profile.article'
-        - 'config:core.entity_view_display.node.person_profile.calendar_listing'
-        - 'config:core.entity_view_display.node.person_profile.contact'
-        - 'config:core.entity_view_display.node.person_profile.default'
-        - 'config:core.entity_view_display.node.person_profile.department_listing'
-        - 'config:core.entity_view_display.node.person_profile.embed'
-        - 'config:core.entity_view_display.node.person_profile.featured_item'
-        - 'config:core.entity_view_display.node.person_profile.featured_topics'
-        - 'config:core.entity_view_display.node.person_profile.listing'
-        - 'config:core.entity_view_display.node.person_profile.listing_long'
-        - 'config:core.entity_view_display.node.person_profile.poll_stub'
-        - 'config:core.entity_view_display.node.person_profile.popup_icon'
-        - 'config:core.entity_view_display.node.person_profile.published_by'
-        - 'config:core.entity_view_display.node.person_profile.teaser'
-        - 'config:core.entity_view_display.node.person_profile.topics_list'
-        - 'config:core.entity_view_display.node.place_profile.default'
-        - 'config:core.entity_view_display.node.place_profile.listing'
-        - 'config:core.entity_view_display.node.place_profile.teaser'
-        - 'config:core.entity_view_display.node.post.default'
-        - 'config:core.entity_view_display.node.post.featured_item'
-        - 'config:core.entity_view_display.node.post.listing'
-        - 'config:core.entity_view_display.node.post.listing_short'
-        - 'config:core.entity_view_display.node.post.rss'
-        - 'config:core.entity_view_display.node.post.teaser'
-        - 'config:core.entity_view_display.node.procurement_advertisement.default'
-        - 'config:core.entity_view_display.node.procurement_advertisement.featured_item'
-        - 'config:core.entity_view_display.node.procurement_advertisement.listing'
-        - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
-        - 'config:core.entity_view_display.node.program_initiative_profile.default'
-        - 'config:core.entity_view_display.node.program_initiative_profile.listing'
-        - 'config:core.entity_view_display.node.public_notice.default'
-        - 'config:core.entity_view_display.node.public_notice.featured_item'
-        - 'config:core.entity_view_display.node.public_notice.listing'
-        - 'config:core.entity_view_display.node.public_notice.teaser'
-        - 'config:core.entity_view_display.node.script_page.default'
-        - 'config:core.entity_view_display.node.script_page.listing'
-        - 'config:core.entity_view_display.node.site_alert.default'
-        - 'config:core.entity_view_display.node.site_alert.embed'
-        - 'config:core.entity_view_display.node.site_alert.teaser'
-        - 'config:core.entity_view_display.node.status_item.default'
-        - 'config:core.entity_view_display.node.status_item.listing'
-        - 'config:core.entity_view_display.node.status_item.listing_long'
-        - 'config:core.entity_view_display.node.status_item.teaser'
-        - 'config:core.entity_view_display.node.tabbed_content.default'
-        - 'config:core.entity_view_display.node.topic_page.default'
-        - 'config:core.entity_view_display.node.topic_page.featured_topics'
-        - 'config:core.entity_view_display.node.topic_page.listing'
-        - 'config:core.entity_view_display.node.topic_page.listing_long'
-        - 'config:core.entity_view_display.node.transaction.default'
-        - 'config:core.entity_view_display.node.transaction.listing'
-        - 'config:core.entity_view_display.node.bh_account.default'
-        - 'config:core.entity_view_display.node.bh_account.teaser'
-        - 'config:core.entity_view_display.node.bh_contact.default'
-        - 'config:core.entity_view_display.node.bh_contact.teaser'
-        - 'config:core.entity_view_display.node.bh_parcel.default'
-        - 'config:core.entity_view_display.node.bh_parcel.teaser'
-        - 'config:core.entity_view_display.node.bh_project.default'
-        - 'config:core.entity_view_display.node.bh_project.teaser'
-        - 'config:core.entity_view_display.node.bh_update.default'
-        - 'config:core.entity_view_display.node.bh_update.teaser'
-        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:field.storage.node.field_bh_funding_stage'
+        - 'config:field.storage.node.field_bh_parcel_id'
+        - 'config:field.storage.node.field_bh_project_stage'
+        - 'config:field.storage.node.field_bh_project_start_date'
+        - 'config:field.storage.node.field_bh_project_status'
+        - 'config:field.storage.node.field_bh_record_type'
+        - 'config:field.storage.node.field_bh_total_num_units'
   page_1:
     display_plugin: page
     id: page_1
@@ -398,153 +992,17 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - url.query_args
+        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:core.entity_view_display.node.article.article'
-        - 'config:core.entity_view_display.node.article.calendar_listing'
-        - 'config:core.entity_view_display.node.article.contact'
-        - 'config:core.entity_view_display.node.article.default'
-        - 'config:core.entity_view_display.node.article.department_listing'
-        - 'config:core.entity_view_display.node.article.featured_item'
-        - 'config:core.entity_view_display.node.article.featured_topics'
-        - 'config:core.entity_view_display.node.article.listing_long'
-        - 'config:core.entity_view_display.node.article.poll_stub'
-        - 'config:core.entity_view_display.node.article.popup_icon'
-        - 'config:core.entity_view_display.node.article.published_by'
-        - 'config:core.entity_view_display.node.article.rss'
-        - 'config:core.entity_view_display.node.article.teaser'
-        - 'config:core.entity_view_display.node.article.topics_list'
-        - 'config:core.entity_view_display.node.bh_account.default'
-        - 'config:core.entity_view_display.node.bh_account.teaser'
-        - 'config:core.entity_view_display.node.bh_contact.default'
-        - 'config:core.entity_view_display.node.bh_contact.teaser'
-        - 'config:core.entity_view_display.node.bh_parcel.default'
-        - 'config:core.entity_view_display.node.bh_parcel.teaser'
-        - 'config:core.entity_view_display.node.bh_project.default'
-        - 'config:core.entity_view_display.node.bh_project.teaser'
-        - 'config:core.entity_view_display.node.bh_update.default'
-        - 'config:core.entity_view_display.node.bh_update.teaser'
-        - 'config:core.entity_view_display.node.change.default'
-        - 'config:core.entity_view_display.node.change.teaser'
-        - 'config:core.entity_view_display.node.department_profile.article'
-        - 'config:core.entity_view_display.node.department_profile.calendar_listing'
-        - 'config:core.entity_view_display.node.department_profile.card'
-        - 'config:core.entity_view_display.node.department_profile.contact'
-        - 'config:core.entity_view_display.node.department_profile.default'
-        - 'config:core.entity_view_display.node.department_profile.department_listing'
-        - 'config:core.entity_view_display.node.department_profile.featured_item'
-        - 'config:core.entity_view_display.node.department_profile.featured_topics'
-        - 'config:core.entity_view_display.node.department_profile.icon_popup'
-        - 'config:core.entity_view_display.node.department_profile.listing'
-        - 'config:core.entity_view_display.node.department_profile.listing_long'
-        - 'config:core.entity_view_display.node.department_profile.poll_stub'
-        - 'config:core.entity_view_display.node.department_profile.popup_icon'
-        - 'config:core.entity_view_display.node.department_profile.published_by'
-        - 'config:core.entity_view_display.node.department_profile.teaser'
-        - 'config:core.entity_view_display.node.department_profile.topics_list'
-        - 'config:core.entity_view_display.node.emergency_alert.default'
-        - 'config:core.entity_view_display.node.emergency_alert.teaser'
-        - 'config:core.entity_view_display.node.event.default'
-        - 'config:core.entity_view_display.node.event.featured_item'
-        - 'config:core.entity_view_display.node.how_to.article'
-        - 'config:core.entity_view_display.node.how_to.calendar_listing'
-        - 'config:core.entity_view_display.node.how_to.contact'
-        - 'config:core.entity_view_display.node.how_to.default'
-        - 'config:core.entity_view_display.node.how_to.department_listing'
-        - 'config:core.entity_view_display.node.how_to.featured_item'
-        - 'config:core.entity_view_display.node.how_to.featured_topics'
-        - 'config:core.entity_view_display.node.how_to.listing'
-        - 'config:core.entity_view_display.node.how_to.listing_long'
-        - 'config:core.entity_view_display.node.how_to.poll_stub'
-        - 'config:core.entity_view_display.node.how_to.popup_icon'
-        - 'config:core.entity_view_display.node.how_to.published_by'
-        - 'config:core.entity_view_display.node.how_to.teaser'
-        - 'config:core.entity_view_display.node.landing_page.article'
-        - 'config:core.entity_view_display.node.landing_page.calendar_listing'
-        - 'config:core.entity_view_display.node.landing_page.contact'
-        - 'config:core.entity_view_display.node.landing_page.default'
-        - 'config:core.entity_view_display.node.landing_page.department_listing'
-        - 'config:core.entity_view_display.node.landing_page.featured_item'
-        - 'config:core.entity_view_display.node.landing_page.featured_topics'
-        - 'config:core.entity_view_display.node.landing_page.listing_long'
-        - 'config:core.entity_view_display.node.landing_page.poll_stub'
-        - 'config:core.entity_view_display.node.landing_page.popup_icon'
-        - 'config:core.entity_view_display.node.landing_page.published_by'
-        - 'config:core.entity_view_display.node.landing_page.teaser'
-        - 'config:core.entity_view_display.node.landing_page.topics_list'
-        - 'config:core.entity_view_display.node.listing_page.article'
-        - 'config:core.entity_view_display.node.listing_page.calendar_listing'
-        - 'config:core.entity_view_display.node.listing_page.contact'
-        - 'config:core.entity_view_display.node.listing_page.default'
-        - 'config:core.entity_view_display.node.listing_page.department_listing'
-        - 'config:core.entity_view_display.node.listing_page.featured_item'
-        - 'config:core.entity_view_display.node.listing_page.featured_topics'
-        - 'config:core.entity_view_display.node.listing_page.listing_long'
-        - 'config:core.entity_view_display.node.listing_page.poll_stub'
-        - 'config:core.entity_view_display.node.listing_page.popup_icon'
-        - 'config:core.entity_view_display.node.listing_page.published_by'
-        - 'config:core.entity_view_display.node.listing_page.teaser'
-        - 'config:core.entity_view_display.node.listing_page.topics_list'
-        - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
-        - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
-        - 'config:core.entity_view_display.node.metrolist_development.contact'
-        - 'config:core.entity_view_display.node.metrolist_development.default'
-        - 'config:core.entity_view_display.node.metrolist_development.map'
-        - 'config:core.entity_view_display.node.metrolist_development.teaser'
-        - 'config:core.entity_view_display.node.metrolist_unit.default'
-        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
-        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
-        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
-        - 'config:core.entity_view_display.node.person_profile.article'
-        - 'config:core.entity_view_display.node.person_profile.calendar_listing'
-        - 'config:core.entity_view_display.node.person_profile.contact'
-        - 'config:core.entity_view_display.node.person_profile.default'
-        - 'config:core.entity_view_display.node.person_profile.department_listing'
-        - 'config:core.entity_view_display.node.person_profile.embed'
-        - 'config:core.entity_view_display.node.person_profile.featured_item'
-        - 'config:core.entity_view_display.node.person_profile.featured_topics'
-        - 'config:core.entity_view_display.node.person_profile.listing'
-        - 'config:core.entity_view_display.node.person_profile.listing_long'
-        - 'config:core.entity_view_display.node.person_profile.poll_stub'
-        - 'config:core.entity_view_display.node.person_profile.popup_icon'
-        - 'config:core.entity_view_display.node.person_profile.published_by'
-        - 'config:core.entity_view_display.node.person_profile.teaser'
-        - 'config:core.entity_view_display.node.person_profile.topics_list'
-        - 'config:core.entity_view_display.node.place_profile.default'
-        - 'config:core.entity_view_display.node.place_profile.listing'
-        - 'config:core.entity_view_display.node.place_profile.teaser'
-        - 'config:core.entity_view_display.node.post.default'
-        - 'config:core.entity_view_display.node.post.featured_item'
-        - 'config:core.entity_view_display.node.post.listing'
-        - 'config:core.entity_view_display.node.post.listing_short'
-        - 'config:core.entity_view_display.node.post.rss'
-        - 'config:core.entity_view_display.node.post.teaser'
-        - 'config:core.entity_view_display.node.procurement_advertisement.default'
-        - 'config:core.entity_view_display.node.procurement_advertisement.featured_item'
-        - 'config:core.entity_view_display.node.procurement_advertisement.listing'
-        - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
-        - 'config:core.entity_view_display.node.program_initiative_profile.default'
-        - 'config:core.entity_view_display.node.program_initiative_profile.listing'
-        - 'config:core.entity_view_display.node.public_notice.default'
-        - 'config:core.entity_view_display.node.public_notice.featured_item'
-        - 'config:core.entity_view_display.node.public_notice.listing'
-        - 'config:core.entity_view_display.node.public_notice.teaser'
-        - 'config:core.entity_view_display.node.script_page.default'
-        - 'config:core.entity_view_display.node.script_page.listing'
-        - 'config:core.entity_view_display.node.site_alert.default'
-        - 'config:core.entity_view_display.node.site_alert.embed'
-        - 'config:core.entity_view_display.node.site_alert.teaser'
-        - 'config:core.entity_view_display.node.status_item.default'
-        - 'config:core.entity_view_display.node.status_item.listing'
-        - 'config:core.entity_view_display.node.status_item.listing_long'
-        - 'config:core.entity_view_display.node.status_item.teaser'
-        - 'config:core.entity_view_display.node.tabbed_content.default'
-        - 'config:core.entity_view_display.node.topic_page.default'
-        - 'config:core.entity_view_display.node.topic_page.featured_topics'
-        - 'config:core.entity_view_display.node.topic_page.listing'
-        - 'config:core.entity_view_display.node.topic_page.listing_long'
-        - 'config:core.entity_view_display.node.transaction.default'
-        - 'config:core.entity_view_display.node.transaction.listing'
+        - 'config:field.storage.node.field_bh_funding_stage'
+        - 'config:field.storage.node.field_bh_parcel_id'
+        - 'config:field.storage.node.field_bh_project_stage'
+        - 'config:field.storage.node.field_bh_project_start_date'
+        - 'config:field.storage.node.field_bh_project_status'
+        - 'config:field.storage.node.field_bh_record_type'
+        - 'config:field.storage.node.field_bh_total_num_units'
 
