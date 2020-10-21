@@ -1,0 +1,550 @@
+uuid: a35d55dd-d1f9-42b9-be51-0e2611b430ad
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+    - node.type.bh_project
+  module:
+    - node
+    - user
+id: building_housing
+label: 'Building Housing'
+module: views
+description: 'DND Building Housing'
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    display_plugin: default
+    id: default
+    display_title: Master
+    position: 0
+    display_options:
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_comment: ''
+          query_tags: {  }
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        type: mini
+        options:
+          items_per_page: 20
+          offset: 0
+          id: 0
+          total_pages: null
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          tags:
+            previous: ‹‹
+            next: ››
+      style:
+        type: grid
+        options:
+          grouping: {  }
+          columns: 3
+          automatic_width: true
+          alignment: horizontal
+          col_class_default: true
+          col_class_custom: ''
+          row_class_default: true
+          row_class_custom: ''
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      fields:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          entity_type: node
+          entity_field: title
+          label: ''
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            trim: false
+            word_boundary: false
+            ellipsis: false
+            strip_tags: false
+            html: false
+          hide_empty: false
+          empty_zero: false
+          settings:
+            link_to_entity: true
+          plugin_id: field
+          relationship: none
+          group_type: group
+          admin_label: ''
+          exclude: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        rendered_entity:
+          id: rendered_entity
+          table: node
+          field: rendered_entity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          view_mode: card
+          entity_type: node
+          plugin_id: rendered_entity
+      filters:
+        status:
+          value: '1'
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            bh_project: bh_project
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          order: DESC
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+      title: 'Building Housing - DEV'
+      header: {  }
+      footer: {  }
+      empty: {  }
+      relationships: {  }
+      arguments: {  }
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:core.entity_view_display.node.article.article'
+        - 'config:core.entity_view_display.node.article.calendar_listing'
+        - 'config:core.entity_view_display.node.article.contact'
+        - 'config:core.entity_view_display.node.article.default'
+        - 'config:core.entity_view_display.node.article.department_listing'
+        - 'config:core.entity_view_display.node.article.featured_item'
+        - 'config:core.entity_view_display.node.article.featured_topics'
+        - 'config:core.entity_view_display.node.article.listing_long'
+        - 'config:core.entity_view_display.node.article.poll_stub'
+        - 'config:core.entity_view_display.node.article.popup_icon'
+        - 'config:core.entity_view_display.node.article.published_by'
+        - 'config:core.entity_view_display.node.article.rss'
+        - 'config:core.entity_view_display.node.article.teaser'
+        - 'config:core.entity_view_display.node.article.topics_list'
+        - 'config:core.entity_view_display.node.change.default'
+        - 'config:core.entity_view_display.node.change.teaser'
+        - 'config:core.entity_view_display.node.department_profile.article'
+        - 'config:core.entity_view_display.node.department_profile.calendar_listing'
+        - 'config:core.entity_view_display.node.department_profile.card'
+        - 'config:core.entity_view_display.node.department_profile.contact'
+        - 'config:core.entity_view_display.node.department_profile.default'
+        - 'config:core.entity_view_display.node.department_profile.department_listing'
+        - 'config:core.entity_view_display.node.department_profile.featured_item'
+        - 'config:core.entity_view_display.node.department_profile.featured_topics'
+        - 'config:core.entity_view_display.node.department_profile.icon_popup'
+        - 'config:core.entity_view_display.node.department_profile.listing'
+        - 'config:core.entity_view_display.node.department_profile.listing_long'
+        - 'config:core.entity_view_display.node.department_profile.poll_stub'
+        - 'config:core.entity_view_display.node.department_profile.popup_icon'
+        - 'config:core.entity_view_display.node.department_profile.published_by'
+        - 'config:core.entity_view_display.node.department_profile.teaser'
+        - 'config:core.entity_view_display.node.department_profile.topics_list'
+        - 'config:core.entity_view_display.node.emergency_alert.default'
+        - 'config:core.entity_view_display.node.emergency_alert.teaser'
+        - 'config:core.entity_view_display.node.event.default'
+        - 'config:core.entity_view_display.node.event.featured_item'
+        - 'config:core.entity_view_display.node.how_to.article'
+        - 'config:core.entity_view_display.node.how_to.calendar_listing'
+        - 'config:core.entity_view_display.node.how_to.contact'
+        - 'config:core.entity_view_display.node.how_to.default'
+        - 'config:core.entity_view_display.node.how_to.department_listing'
+        - 'config:core.entity_view_display.node.how_to.featured_item'
+        - 'config:core.entity_view_display.node.how_to.featured_topics'
+        - 'config:core.entity_view_display.node.how_to.listing'
+        - 'config:core.entity_view_display.node.how_to.listing_long'
+        - 'config:core.entity_view_display.node.how_to.poll_stub'
+        - 'config:core.entity_view_display.node.how_to.popup_icon'
+        - 'config:core.entity_view_display.node.how_to.published_by'
+        - 'config:core.entity_view_display.node.how_to.teaser'
+        - 'config:core.entity_view_display.node.landing_page.article'
+        - 'config:core.entity_view_display.node.landing_page.calendar_listing'
+        - 'config:core.entity_view_display.node.landing_page.contact'
+        - 'config:core.entity_view_display.node.landing_page.default'
+        - 'config:core.entity_view_display.node.landing_page.department_listing'
+        - 'config:core.entity_view_display.node.landing_page.featured_item'
+        - 'config:core.entity_view_display.node.landing_page.featured_topics'
+        - 'config:core.entity_view_display.node.landing_page.listing_long'
+        - 'config:core.entity_view_display.node.landing_page.poll_stub'
+        - 'config:core.entity_view_display.node.landing_page.popup_icon'
+        - 'config:core.entity_view_display.node.landing_page.published_by'
+        - 'config:core.entity_view_display.node.landing_page.teaser'
+        - 'config:core.entity_view_display.node.landing_page.topics_list'
+        - 'config:core.entity_view_display.node.listing_page.article'
+        - 'config:core.entity_view_display.node.listing_page.calendar_listing'
+        - 'config:core.entity_view_display.node.listing_page.contact'
+        - 'config:core.entity_view_display.node.listing_page.default'
+        - 'config:core.entity_view_display.node.listing_page.department_listing'
+        - 'config:core.entity_view_display.node.listing_page.featured_item'
+        - 'config:core.entity_view_display.node.listing_page.featured_topics'
+        - 'config:core.entity_view_display.node.listing_page.listing_long'
+        - 'config:core.entity_view_display.node.listing_page.poll_stub'
+        - 'config:core.entity_view_display.node.listing_page.popup_icon'
+        - 'config:core.entity_view_display.node.listing_page.published_by'
+        - 'config:core.entity_view_display.node.listing_page.teaser'
+        - 'config:core.entity_view_display.node.listing_page.topics_list'
+        - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
+        - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
+        - 'config:core.entity_view_display.node.metrolist_development.teaser'
+        - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
+        - 'config:core.entity_view_display.node.person_profile.article'
+        - 'config:core.entity_view_display.node.person_profile.calendar_listing'
+        - 'config:core.entity_view_display.node.person_profile.contact'
+        - 'config:core.entity_view_display.node.person_profile.default'
+        - 'config:core.entity_view_display.node.person_profile.department_listing'
+        - 'config:core.entity_view_display.node.person_profile.embed'
+        - 'config:core.entity_view_display.node.person_profile.featured_item'
+        - 'config:core.entity_view_display.node.person_profile.featured_topics'
+        - 'config:core.entity_view_display.node.person_profile.listing'
+        - 'config:core.entity_view_display.node.person_profile.listing_long'
+        - 'config:core.entity_view_display.node.person_profile.poll_stub'
+        - 'config:core.entity_view_display.node.person_profile.popup_icon'
+        - 'config:core.entity_view_display.node.person_profile.published_by'
+        - 'config:core.entity_view_display.node.person_profile.teaser'
+        - 'config:core.entity_view_display.node.person_profile.topics_list'
+        - 'config:core.entity_view_display.node.place_profile.default'
+        - 'config:core.entity_view_display.node.place_profile.listing'
+        - 'config:core.entity_view_display.node.place_profile.teaser'
+        - 'config:core.entity_view_display.node.post.default'
+        - 'config:core.entity_view_display.node.post.featured_item'
+        - 'config:core.entity_view_display.node.post.listing'
+        - 'config:core.entity_view_display.node.post.listing_short'
+        - 'config:core.entity_view_display.node.post.rss'
+        - 'config:core.entity_view_display.node.post.teaser'
+        - 'config:core.entity_view_display.node.procurement_advertisement.default'
+        - 'config:core.entity_view_display.node.procurement_advertisement.featured_item'
+        - 'config:core.entity_view_display.node.procurement_advertisement.listing'
+        - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
+        - 'config:core.entity_view_display.node.program_initiative_profile.default'
+        - 'config:core.entity_view_display.node.program_initiative_profile.listing'
+        - 'config:core.entity_view_display.node.public_notice.default'
+        - 'config:core.entity_view_display.node.public_notice.featured_item'
+        - 'config:core.entity_view_display.node.public_notice.listing'
+        - 'config:core.entity_view_display.node.public_notice.teaser'
+        - 'config:core.entity_view_display.node.script_page.default'
+        - 'config:core.entity_view_display.node.script_page.listing'
+        - 'config:core.entity_view_display.node.site_alert.default'
+        - 'config:core.entity_view_display.node.site_alert.embed'
+        - 'config:core.entity_view_display.node.site_alert.teaser'
+        - 'config:core.entity_view_display.node.status_item.default'
+        - 'config:core.entity_view_display.node.status_item.listing'
+        - 'config:core.entity_view_display.node.status_item.listing_long'
+        - 'config:core.entity_view_display.node.status_item.teaser'
+        - 'config:core.entity_view_display.node.tabbed_content.default'
+        - 'config:core.entity_view_display.node.topic_page.default'
+        - 'config:core.entity_view_display.node.topic_page.featured_topics'
+        - 'config:core.entity_view_display.node.topic_page.listing'
+        - 'config:core.entity_view_display.node.topic_page.listing_long'
+        - 'config:core.entity_view_display.node.transaction.default'
+        - 'config:core.entity_view_display.node.transaction.listing'
+        - 'config:core.entity_view_display.node.bh_account.default'
+        - 'config:core.entity_view_display.node.bh_account.teaser'
+        - 'config:core.entity_view_display.node.bh_contact.default'
+        - 'config:core.entity_view_display.node.bh_contact.teaser'
+        - 'config:core.entity_view_display.node.bh_parcel.default'
+        - 'config:core.entity_view_display.node.bh_parcel.teaser'
+        - 'config:core.entity_view_display.node.bh_project.default'
+        - 'config:core.entity_view_display.node.bh_project.teaser'
+        - 'config:core.entity_view_display.node.bh_update.default'
+        - 'config:core.entity_view_display.node.bh_update.teaser'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+  page_1:
+    display_plugin: page
+    id: page_1
+    display_title: Page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: building-housing-dev
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:core.entity_view_display.node.article.article'
+        - 'config:core.entity_view_display.node.article.calendar_listing'
+        - 'config:core.entity_view_display.node.article.contact'
+        - 'config:core.entity_view_display.node.article.default'
+        - 'config:core.entity_view_display.node.article.department_listing'
+        - 'config:core.entity_view_display.node.article.featured_item'
+        - 'config:core.entity_view_display.node.article.featured_topics'
+        - 'config:core.entity_view_display.node.article.listing_long'
+        - 'config:core.entity_view_display.node.article.poll_stub'
+        - 'config:core.entity_view_display.node.article.popup_icon'
+        - 'config:core.entity_view_display.node.article.published_by'
+        - 'config:core.entity_view_display.node.article.rss'
+        - 'config:core.entity_view_display.node.article.teaser'
+        - 'config:core.entity_view_display.node.article.topics_list'
+        - 'config:core.entity_view_display.node.bh_account.default'
+        - 'config:core.entity_view_display.node.bh_account.teaser'
+        - 'config:core.entity_view_display.node.bh_contact.default'
+        - 'config:core.entity_view_display.node.bh_contact.teaser'
+        - 'config:core.entity_view_display.node.bh_parcel.default'
+        - 'config:core.entity_view_display.node.bh_parcel.teaser'
+        - 'config:core.entity_view_display.node.bh_project.default'
+        - 'config:core.entity_view_display.node.bh_project.teaser'
+        - 'config:core.entity_view_display.node.bh_update.default'
+        - 'config:core.entity_view_display.node.bh_update.teaser'
+        - 'config:core.entity_view_display.node.change.default'
+        - 'config:core.entity_view_display.node.change.teaser'
+        - 'config:core.entity_view_display.node.department_profile.article'
+        - 'config:core.entity_view_display.node.department_profile.calendar_listing'
+        - 'config:core.entity_view_display.node.department_profile.card'
+        - 'config:core.entity_view_display.node.department_profile.contact'
+        - 'config:core.entity_view_display.node.department_profile.default'
+        - 'config:core.entity_view_display.node.department_profile.department_listing'
+        - 'config:core.entity_view_display.node.department_profile.featured_item'
+        - 'config:core.entity_view_display.node.department_profile.featured_topics'
+        - 'config:core.entity_view_display.node.department_profile.icon_popup'
+        - 'config:core.entity_view_display.node.department_profile.listing'
+        - 'config:core.entity_view_display.node.department_profile.listing_long'
+        - 'config:core.entity_view_display.node.department_profile.poll_stub'
+        - 'config:core.entity_view_display.node.department_profile.popup_icon'
+        - 'config:core.entity_view_display.node.department_profile.published_by'
+        - 'config:core.entity_view_display.node.department_profile.teaser'
+        - 'config:core.entity_view_display.node.department_profile.topics_list'
+        - 'config:core.entity_view_display.node.emergency_alert.default'
+        - 'config:core.entity_view_display.node.emergency_alert.teaser'
+        - 'config:core.entity_view_display.node.event.default'
+        - 'config:core.entity_view_display.node.event.featured_item'
+        - 'config:core.entity_view_display.node.how_to.article'
+        - 'config:core.entity_view_display.node.how_to.calendar_listing'
+        - 'config:core.entity_view_display.node.how_to.contact'
+        - 'config:core.entity_view_display.node.how_to.default'
+        - 'config:core.entity_view_display.node.how_to.department_listing'
+        - 'config:core.entity_view_display.node.how_to.featured_item'
+        - 'config:core.entity_view_display.node.how_to.featured_topics'
+        - 'config:core.entity_view_display.node.how_to.listing'
+        - 'config:core.entity_view_display.node.how_to.listing_long'
+        - 'config:core.entity_view_display.node.how_to.poll_stub'
+        - 'config:core.entity_view_display.node.how_to.popup_icon'
+        - 'config:core.entity_view_display.node.how_to.published_by'
+        - 'config:core.entity_view_display.node.how_to.teaser'
+        - 'config:core.entity_view_display.node.landing_page.article'
+        - 'config:core.entity_view_display.node.landing_page.calendar_listing'
+        - 'config:core.entity_view_display.node.landing_page.contact'
+        - 'config:core.entity_view_display.node.landing_page.default'
+        - 'config:core.entity_view_display.node.landing_page.department_listing'
+        - 'config:core.entity_view_display.node.landing_page.featured_item'
+        - 'config:core.entity_view_display.node.landing_page.featured_topics'
+        - 'config:core.entity_view_display.node.landing_page.listing_long'
+        - 'config:core.entity_view_display.node.landing_page.poll_stub'
+        - 'config:core.entity_view_display.node.landing_page.popup_icon'
+        - 'config:core.entity_view_display.node.landing_page.published_by'
+        - 'config:core.entity_view_display.node.landing_page.teaser'
+        - 'config:core.entity_view_display.node.landing_page.topics_list'
+        - 'config:core.entity_view_display.node.listing_page.article'
+        - 'config:core.entity_view_display.node.listing_page.calendar_listing'
+        - 'config:core.entity_view_display.node.listing_page.contact'
+        - 'config:core.entity_view_display.node.listing_page.default'
+        - 'config:core.entity_view_display.node.listing_page.department_listing'
+        - 'config:core.entity_view_display.node.listing_page.featured_item'
+        - 'config:core.entity_view_display.node.listing_page.featured_topics'
+        - 'config:core.entity_view_display.node.listing_page.listing_long'
+        - 'config:core.entity_view_display.node.listing_page.poll_stub'
+        - 'config:core.entity_view_display.node.listing_page.popup_icon'
+        - 'config:core.entity_view_display.node.listing_page.published_by'
+        - 'config:core.entity_view_display.node.listing_page.teaser'
+        - 'config:core.entity_view_display.node.listing_page.topics_list'
+        - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
+        - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
+        - 'config:core.entity_view_display.node.metrolist_development.teaser'
+        - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
+        - 'config:core.entity_view_display.node.person_profile.article'
+        - 'config:core.entity_view_display.node.person_profile.calendar_listing'
+        - 'config:core.entity_view_display.node.person_profile.contact'
+        - 'config:core.entity_view_display.node.person_profile.default'
+        - 'config:core.entity_view_display.node.person_profile.department_listing'
+        - 'config:core.entity_view_display.node.person_profile.embed'
+        - 'config:core.entity_view_display.node.person_profile.featured_item'
+        - 'config:core.entity_view_display.node.person_profile.featured_topics'
+        - 'config:core.entity_view_display.node.person_profile.listing'
+        - 'config:core.entity_view_display.node.person_profile.listing_long'
+        - 'config:core.entity_view_display.node.person_profile.poll_stub'
+        - 'config:core.entity_view_display.node.person_profile.popup_icon'
+        - 'config:core.entity_view_display.node.person_profile.published_by'
+        - 'config:core.entity_view_display.node.person_profile.teaser'
+        - 'config:core.entity_view_display.node.person_profile.topics_list'
+        - 'config:core.entity_view_display.node.place_profile.default'
+        - 'config:core.entity_view_display.node.place_profile.listing'
+        - 'config:core.entity_view_display.node.place_profile.teaser'
+        - 'config:core.entity_view_display.node.post.default'
+        - 'config:core.entity_view_display.node.post.featured_item'
+        - 'config:core.entity_view_display.node.post.listing'
+        - 'config:core.entity_view_display.node.post.listing_short'
+        - 'config:core.entity_view_display.node.post.rss'
+        - 'config:core.entity_view_display.node.post.teaser'
+        - 'config:core.entity_view_display.node.procurement_advertisement.default'
+        - 'config:core.entity_view_display.node.procurement_advertisement.featured_item'
+        - 'config:core.entity_view_display.node.procurement_advertisement.listing'
+        - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
+        - 'config:core.entity_view_display.node.program_initiative_profile.default'
+        - 'config:core.entity_view_display.node.program_initiative_profile.listing'
+        - 'config:core.entity_view_display.node.public_notice.default'
+        - 'config:core.entity_view_display.node.public_notice.featured_item'
+        - 'config:core.entity_view_display.node.public_notice.listing'
+        - 'config:core.entity_view_display.node.public_notice.teaser'
+        - 'config:core.entity_view_display.node.script_page.default'
+        - 'config:core.entity_view_display.node.script_page.listing'
+        - 'config:core.entity_view_display.node.site_alert.default'
+        - 'config:core.entity_view_display.node.site_alert.embed'
+        - 'config:core.entity_view_display.node.site_alert.teaser'
+        - 'config:core.entity_view_display.node.status_item.default'
+        - 'config:core.entity_view_display.node.status_item.listing'
+        - 'config:core.entity_view_display.node.status_item.listing_long'
+        - 'config:core.entity_view_display.node.status_item.teaser'
+        - 'config:core.entity_view_display.node.tabbed_content.default'
+        - 'config:core.entity_view_display.node.topic_page.default'
+        - 'config:core.entity_view_display.node.topic_page.featured_topics'
+        - 'config:core.entity_view_display.node.topic_page.listing'
+        - 'config:core.entity_view_display.node.topic_page.listing_long'
+        - 'config:core.entity_view_display.node.transaction.default'
+        - 'config:core.entity_view_display.node.transaction.listing'
+
