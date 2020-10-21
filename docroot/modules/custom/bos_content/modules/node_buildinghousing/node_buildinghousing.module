@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
@@ -33,3 +34,14 @@ function node_buildinghousing_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function node_buildinghousing_views_pre_render(ViewExecutable $view) {
+  if (isset($view) && ($view->storage->id() == 'building_housing')) {
+    $view->element['#attached']['library'][] = 'node_buildinghousing/buildinghousing_views';
+  }
+}
+
+
