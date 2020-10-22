@@ -146,9 +146,9 @@ function clone_patterns_repo() {
 
     # If the target folder for the patterns repo does not exist, then create it now.
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
-        mkdir ${patterns_local_repo_local_dir} &&
-          chown node:node ${patterns_local_repo_local_dir}
+        mkdir ${patterns_local_repo_local_dir}
     fi
+    chown node:node ${patterns_local_repo_local_dir}
 
     # Clone the Patterns repo into the target folder.
     git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100 &&
