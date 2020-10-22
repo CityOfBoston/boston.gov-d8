@@ -133,7 +133,7 @@ function clone_private_repo() {
 
 function clone_patterns_repo() {
 
-    printf "ref: $(basename "$0")\n"
+    printf "ref: cob_build_utilities.clone_patterns_repo()\n"
     printout "INFO" "Cloning ${patterns_local_repo_branch} branch of Patterns library."
 
     if [[ -n ${GITHUB_TOKEN} ]]; then
@@ -144,27 +144,29 @@ function clone_patterns_repo() {
         REPO_LOCATION="git@github.com:"
     fi
 
-    # Create a clean folder into which the repo can be cloned.
+    # If the target folder for the patterns repo does not exist, then create it now.
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
-        mkdir ${patterns_local_repo_local_dir}
-        chown node:node ${patterns_local_repo_local_dir}
+        mkdir ${patterns_local_repo_local_dir} &&
+          chown node:node ${patterns_local_repo_local_dir}
     fi
 
-    git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100
+    # Clone the Patterns repo into the target folder.
+    git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100 &&
 
     if [[ $? != 0 ]]; then
         printout "ERROR" "Patterns library NOT cloned or installed."
         exit 1
     fi
+    printout "SUCCESS" "Patterns library cloned."
 
     # Make the public folder that gulp and fractal will build into.
     if [[ ! -d ${patterns_local_repo_local_dir}/public ]]; then
-        mkdir ${patterns_local_repo_local_dir}/public
-        chown node:node ${patterns_local_repo_local_dir}/public
-        chmod 755 ${patterns_local_repo_local_dir}/public
+        printout "INFO" "Create patterns build folder"
+        (mkdir ${patterns_local_repo_local_dir}/public &&
+          chown node:node ${patterns_local_repo_local_dir}/public &&
+          chmod 755 ${patterns_local_repo_local_dir}/public &&
+          printout "SUCCESS" "Build folder created at ${patterns_local_repo_local_dir}/public.") || printout "WARNING" "Build folder was not created."
     fi
-
-    printout "SUCCESS" "Patterns library cloned."
 
 }
 
