@@ -48,7 +48,6 @@
     printout "INFO" "Remove Patterns repo (it will be re-cloned later)."
     if [[ -d ${patterns_local_repo_local_dir} ]]; then rm -rf ${patterns_local_repo_local_dir}/; fi
     (mkdir ${patterns_local_repo_local_dir} &&
-      chown node:node ${patterns_local_repo_local_dir} &&
       printout "SUCCESS" "Patterns repo removed.") || printout "ERROR" "Patterns repo was not removed."
 
     # Change the permissions on the log file so that non-root user can add to log.
