@@ -13,7 +13,13 @@ class Contactform extends ControllerBase {
    * Template for plain text message.
    *
    * @param string $message_sender
-   *   The message sent from user.
+   *   The message sent by the user.
+   * @param string $name
+   *   The name supllied by the user.
+   * @param string $from_address
+   *   The from address supplied by the user.
+   * @param string $url
+   *   The page url from where form was submitted.
    */
   public static function templatePlainText($message_sender, $name, $from_address, $url) {
 
