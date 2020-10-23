@@ -20,9 +20,9 @@
         printout "INFO" "Patterns library will not be deployed."
         exit 0
     fi
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Installing Linux packages in the patterns node container."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
 
     # Copy the node.js executable file in the container to a location that can be seen on the host.
     # This way eslint can run from PHPStorm without needing to install node.js on the host.

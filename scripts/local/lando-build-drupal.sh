@@ -164,12 +164,12 @@
     printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Create & update content database."
     printf "${LightMagenta}================================================================================${NC}\n"
-    printf "      A MySQL database is required to store the Drupal site configurations and content."
+    printf "      A MySQL database is required to store the Drupal site configurations and content.\n"
     printf "      Depending on the build settings, the DB can either be created or copied from Acquia.\n"
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
-        printout "INFO" "INITIALIZE Mode: Will create a new DB using 'drush site-install' and then import repo configs."
+        printout "INFO" "Using INITIALIZE Mode: Will create a new DB using 'drush site-install' and then import repo configs."
         printout "" "" "... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
 
         # Define the site-install command.
@@ -234,7 +234,7 @@
         #   @bostond8.prod = (content from Acquia prod environment).
         #                    Slower, b/c config is different from the repo so cim is slower.  Content up-to-date.
         #                    Adds load to production server b/c backup and rsync processes originate on prod server.
-        printout "INFO" "SYNC Mode: Will copy remote DB and then import repo configs."
+        printout "INFO" "Using SYNC Mode: Will copy remote DB and then import repo configs."
 
         # Ensure a remote source is defined, default to the develop environment on Acquia.
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi

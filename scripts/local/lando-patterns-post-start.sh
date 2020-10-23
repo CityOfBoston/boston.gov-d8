@@ -32,9 +32,9 @@
 
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then printf "No folder ${patterns_local_repo_local_dir}\n"; tail -f /dev/null ; exit 0; fi
 
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "LANDO" "Project Event - patterns post-start\n"
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
 
     # Install the patterns app.
     printout "INFO" "Starting Patterns library - will build stylus(css) and minify js files."
