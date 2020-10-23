@@ -3,10 +3,12 @@
 namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\bos_email\Templates\Contactform;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal;
 
 /**
  * Postmark class for API.
@@ -68,24 +70,19 @@ class PostmarkAPI extends ControllerBase {
       $postmark_env = [
         "registry_token" => Settings::get('postmark_settings')['registry_token'],
         "contactform_token" => Settings::get('postmark_settings')['contactform_token'],
-        "commissions_token" => Settings::get('postmark_settings')['contactform_commissions'],
+        "commissions_token" => Settings::get('postmark_settings')['commissions_token'],
         "auth" => Settings::get('postmark_settings')['auth'],
       ];
     }
 
     $postmark_env = json_decode(json_encode($postmark_env));
-    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
-    $htmlMessage = strpos($emailFields["message"], "<div");
     $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->auth ? TRUE : FALSE);
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
-    $data_basic = [
-      "To" => $emailFields["to_address"],
-      "From" => $from_address,
-    ];
-
     if (isset($emailFields["template_id"])) {
-      $data_template = [
+      $data = [
+        "To" => $emailFields["to_address"],
+        "From" => $from_address,
         "TemplateID" => $emailFields["template_id"],
         "TemplateModel" => [
           "subject" => $emailFields["subject"],
@@ -93,18 +90,40 @@ class PostmarkAPI extends ControllerBase {
           "ReplyTo" => $emailFields["from_address"]
         ],
       ];
-      $data = array_merge($data_basic, $data_template);
       $postmark_endpoint = "https://api.postmarkapp.com/email/withTemplate";
     }
+    elseif ($server == "contactform") {
+      $env = ($_ENV['AH_SITE_ENVIRONMENT'] !== 'prod' ? '-staging' : '');
+      $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
+      $message = new Contactform();
+      $message_template = $message->templatePlainText(
+                  $emailFields["message"],
+                  $emailFields["name"],
+                  $emailFields["from_address"],
+                  $emailFields["url"]);
+      $from_contactform_rand = "Boston.gov Contact Form <" . $rand . "@contactform" . $env . ".boston.gov>";
+
+      $data = [
+        "To" => $emailFields["to_address"],
+        "From" => $from_contactform_rand,
+        "subject" => $emailFields["subject"],
+        "TextBody" => $message_template,
+        "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $from,
+      ];
+      $postmark_endpoint = "https://api.postmarkapp.com/email";
+    }
     else {
-      $data_text = [
+
+      $data = [
+        "To" => $emailFields["to_address"],
+        "From" => $from_address,
         "subject" => $emailFields["subject"],
         "TextBody" => $emailFields["message"],
         "ReplyTo" => $emailFields["from_address"]
       ];
-      $data = array_merge($data_basic, $data_text);
       $postmark_endpoint = "https://api.postmarkapp.com/email";
     }
+
     if ($auth == TRUE) :
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $postmark_endpoint);
