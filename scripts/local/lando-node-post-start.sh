@@ -17,9 +17,11 @@
 ###############################################################
 
   printf "\n"
-  printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+  printf "\n"
 
   . "${LANDO_MOUNT}/scripts/local/lando-patterns-post-start.sh"
   . "${LANDO_MOUNT}/scripts/local/lando-webapps-post-start.sh"
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

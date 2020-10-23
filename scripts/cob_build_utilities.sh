@@ -68,7 +68,7 @@ function printout () {
             col1=${InverseOn}${Bold}${Green}
             col2=${Green}
             col3=${DimOn}${Green}
-        elif [[ "${1}" == "INFO" ]]; then
+        elif [[ "${1}" == "ACTION" ]]; then
             col1=${InverseOn}${Bold}${LightBlue}
             col2=${LightBlue}
             col3=$${DimOn}{LightBlue}
@@ -85,7 +85,7 @@ function printout () {
             col2=${Cyan}
             col3=${DimOn}${Cyan}
         else
-            col1=${InverseOn}{Bold}${Default}
+            col1=${InverseOn}${Bold}${Default}
             col2=${Default}
             col3={DimOn}${Default}
         fi
@@ -195,7 +195,9 @@ function clone_patterns_repo() {
 
 function build_settings() {
 
-    printout "INFO" "Will update and implement settings files."
+    printf "ref: cob_build_utilities:build_settings()"
+
+    printout "ACTION" "Installing and updating Drupal settings files."
 
     if [[ -z "${project_docroot}}" ]]; then
         # Read in config and variables.
@@ -258,7 +260,7 @@ function build_settings() {
     rm -f "${docroot}/sites/example.settings.local.php"
     rm -f "${docroot}/sites/example.sites.php"
 
-    printout "SUCCESS" "Settings files written/updated.\n"
+    printout "SUCCESS" "Settings files written/updated."
 }
 
 function displayTime() {
@@ -304,3 +306,4 @@ fi
 # Read in config and variables.
 eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
 eval $(parse_yaml "${REPO_ROOT}/scripts/.config.yml" "")
+setup_logs="${REPO_ROOT}/setup"

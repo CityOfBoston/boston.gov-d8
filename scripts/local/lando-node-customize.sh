@@ -13,8 +13,8 @@
   target_env="local"
 
   printf "\n"
-  printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
-
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+  printf "\n"
   printf "${Blue}       ================================================================================${NC}\n"
   printout "STEP" "NODE: Install patterns and webapps into the node container."
   printf "${Blue}       ================================================================================${NC}\n"
@@ -33,4 +33,5 @@
   . "${LANDO_MOUNT}/scripts/local/lando-patterns-customize.sh"
   . "${LANDO_MOUNT}/scripts/local/lando-webapps-customize.sh"
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

@@ -13,8 +13,10 @@
   # Create script variables
   target_env="local"
 
-  printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
-  printf "\n${LightMagenta}       ================================================================================${NC}\n"
+  printf "\n"
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+  printf "\n"
+  printf "${Blue}       ================================================================================${NC}\n"
   printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
   printf "${Blue}       ================================================================================${NC}\n"
 
@@ -38,9 +40,10 @@
 
   else
 
-    printout "INFO" "Note: mycli and pspg server-side tools not installed."
-    printf "        - If you require these tools then enable in config.yml.\n"
+    printout "INFO" "MyCLI and pspg server-side tools not installed." "If you require these tools then enable in config.yml.\n"
+    printf "\n"
 
   fi
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n\n"
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

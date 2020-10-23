@@ -31,7 +31,6 @@
 
     # Create additional working variables.
     target_env="local"
-    setup_logs="${LANDO_MOUNT}/setup"
     project_sync=${project_docroot}/${build_local_config_sync}
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
@@ -47,7 +46,8 @@
     done
 
     printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+    printf "\n"
     printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "DRUPAL Installing Drupal framework and dependencies."
     printf "${Blue}       ================================================================================${NC}\n"
@@ -62,7 +62,7 @@
 
     # Check if drupal is already installed.  If it is flash up a warning.
     if [ -z ${project_docroot}/core/lib/Drupal.php ]; then
-        printout "WARNING" "Drupal is already installed." \
+        printout "WARNING" "Drupal is already installed."
         printout "" "" "- Local site's un-exported configurations (e.g. by drush cex) will be deleted."
         printout "" "" "- Files in sites/default/files will not be changed (i.e. will not be updated or deleted)."
         printout "" "" "- 'Composer install' will still run and may update/overwrite versions of existing contributed modules."
@@ -103,9 +103,10 @@
     #  is known that packages have been added or upgraded.
 
     printout "INFO" "This step downloads and installs the Drupal core files, plus any contributed modules we have specified."
-    printf "      Composer also downloads and installs PHP and JS files required by contributed modules.\n"
-    printf "      The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files).\n"
-    printout "INFO" "see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
+    printout "INFO" "Drupal uses Composer (PHP Package Manager) to install PHP packages and dependencies."
+    printout "INFO" "Composer also downloads and installs PHP and JS files required by contributed modules."
+    printout "INFO" "The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files)."
+    printout "INFO" " - see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
     (cd ${LANDO_MOUNT} &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
@@ -115,19 +116,24 @@
           printout "ERROR" "Composer failed.\n"
 
     printf "${Blue}       ================================================================================${NC}\n"
-    printout "STEP" "DRUPAL: Building City of Boston (boston.gov) website/app locally."
+    printout "STEP" "DRUPAL: Add custom settings for City of Boston (boston.gov) website."
     printf "${Blue}       ================================================================================${NC}\n"
+    printout "INFO" "Secret config information is stored in a private repo."
+    printout "INFO" "Files from the private repo are now merged into the Drupal folders."
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
     # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
     # 'clone_private_repo' function is contained in lando_utilities.sh.
-    printout "ACTION" "Clone and merge files from the private repo." "These secret or confidential files are added to the drupal structure."
+    printout "ACTION" "Cloning and then merging files from the private repo."
     (clone_private_repo &> ${setup_logs}/drush_site_install.log &&
       printout "SUCCESS" "Repo merged.\n") || printout "ERROR" "Private Reop was not merged.\n"
 
     # Update the drush.yml file.
-    printout "ACTION" "Update the drush configuration and aliases."
+    printout "INFO" "CoB use a CLI called 'drush' to administer the website from scripts or interacively via a console."
+    printout "INFO" "Drush can administer both local and remote sites."
+    printout "INFO" "Actions performed against remote sites use an Alias which drush defines SSH credentials."
+    printout "ACTION" "Creating or updating drush configuration and aliases."
     drush_file=${LANDO_MOUNT}/drush/drush.yml
     drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
     (rm -rf ${drush_file} &&
@@ -138,8 +144,9 @@
 
     # Create/update settings, private settings and local settings files.
     # 'build_settings' function is contained in lando_utilities.sh.
-    printout "ACTION" "Update settings files."
-    (build_settings &> ${setup_logs}/drush_site_install.log &&
+    printout "INFO" "Drupal uses a number of settings files to define global settings for the website."
+    printout "INFO" "This includes run-time settings, database connectivity, core and optional file locations."
+    (build_settings &&
       printout "SUCCESS" "Settings updated.\n") || printout "ERROR" "Settings file not created - website may not load.\n"
 
     # Install Content.
@@ -170,8 +177,10 @@
     printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "DRUPAL: Install and update City of Boston content (into database)."
     printf "${Blue}       ================================================================================${NC}\n"
-    printf "      A MySQL database is required to store the Drupal site configurations and content.\n"
-    printf "      Depending on the build settings, the DB can either be created or copied from Acquia.\n"
+    printout "INFO" "Drupal is a Content Management System with content stored in a relational database."
+    printout "INFO" "CoB use a MySQL database to store both Drupal site configurations and boston.gov content."
+    printout "INFO" "With this local build, the MySQL database is hosted in the 'database' docker container."
+    printout "INFO" "Depending on the build settings, the local DB can either be created or copied from Acquia."
 
     # If we are restoring from a backup, make sure its correctly defined now, so we can default to sync if needed.
     if [[ "${build_local_database_source}" == "restore" ]]; then
@@ -187,7 +196,8 @@
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
         printout "INFO" "Using INITIALIZE Mode: Will create a new DB using 'drush site-install' and then import repo configs."
-        printout "" "" "... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
+        printout "INFO" " ... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
+        printout "INFO" " -> This will take some time ..."
 
         # Define the site-install command.
         SITE_INSTALL=" site-install ${project_profile_name} \
@@ -236,8 +246,9 @@
     elif [[ "${build_local_database_source}" == "restore" ]]; then
 
         printout "INFO" "Using RESTORE Mode: Will restore the DB from ${build_local_database_backup_location}."
-        printf   "         This will take some time ...\n"
+        printout "INFO" " -> This will take some time ..."
 
+        printout "ACTION" "Restoring database."
         (${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
           ${drush_cmd} -y sql:cli --database=default < ${build_local_database_backup_location} &&
           printout "SUCCESS" "Database has been restored.\n") || (printout "ERROR" "Database restore failed.\n" && exit 1)
@@ -256,34 +267,37 @@
         #   @bostond8.prod = (content from Acquia prod environment).
         #                    Slower, b/c config is different from the repo so cim is slower.  Content up-to-date.
         #                    Adds load to production server b/c backup and rsync processes originate on prod server.
-        printout "INFO" "Using SYNC Mode: Will copy remote DB and then import repo configs."
 
         # Ensure a remote source is defined - if not, default to the develop environment on Acquia.
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
-        printout "ACTION" "Copying database (and content) down from ${build_local_database_drush_alias} into docker the local DB container."
-        printf   "         This will take some time ...\n"
+        printout "INFO" "Using SYNC Mode: Will copy a remote DB into the locak database docker container."
+        printout "INFO" "Remote database going to be downloaded from ${build_local_database_drush_alias}."
+        printout "INFO" " -> This will take some time ..."
 
+        printout "ACTION" "Copying database and content."
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
         (${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
             ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >> ${setup_logs}/drush_site_install.log &&
-            printout "SUCCESS" "Site is installed with database and content from remote environment.\n") ||
-              (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" &&
-              exit 1)
+            printout "SUCCESS" "Site is installed with database and content from remote environment.\n") || (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" && exit 1)
     fi
 
     # Import configurations from the project repo into the database.
-    printout "ACTION" "Importing configuration from sync folder: '${project_sync}' into database"
+    printout "INFO" "Drupal websites are comprised of entities which make up components that appear on webpages."
+    printout "INFO" "Each module, entity and component requires configuration information which is initially provided in (yaml) files."
+    printout "INFO" "These files are imported into the database, adding to or overwriting default information."
     if [[ "${build_local_database_source}" == "sync" ]]; then
-        printf "        Depending on how different the DB source is to the config files, this may also take some time ...\n"
+        printout "INFO" "This build is updating an existing database."
+        printout "INFO" " -> Depending on how different the DB source is to the config files, this may also take some time ..."
     elif [[ "${build_local_database_source}" == "initialize" ]]; then
-        printf "        This is importing all of the site configs so it will take some time ...\n"
+        printout "INFO" "This build has a new and essentialy empty database."
+        printout "INFO" " -> this import will take some time ..."
     fi
-    printf "         -> follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
+    printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
 
+    printout "ACTION" "Importing configuration."
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
-
     if [[ $? -eq 0 ]]; then
         printout "SUCCESS" "Config from the repo has been applied to the database.\n"
     else
@@ -331,7 +345,8 @@
     # However, there is no guarantee that those modules are entirely approproate for developers.  So this step allows us
     # to specifically enable the modules needed by developers.
     # Function 'devModules' is contained in /scripts/deploy/cob_utilities.sh
-    printout "ACTION" "Enabling/disabling appropriate development features and functionality." " This may also take some time ..."
+    printout "INFO" "Some Drupal modules/functionality are only required on production sites, and others on local/dev sites."
+    printout "ACTION" "Enabling appropriate development features and functionality."
     devModules "@self"
     # Set the local build to use a local patterns (if the node container has fleet running in it).
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
@@ -345,7 +360,7 @@
     # Apply any pending database updates.
     printout "ACTION" "Apply pending database updates etc."
     ${drush_cmd} updb -y >> ${setup_logs}/config_import.log
-    printout "SUCCESS" "Done.\n"
+    printout "SUCCESS" "Updates Completed.\n"
 
     # Rebuild user access on nodes.
 #    printout "ACTION" "Rebuild user access on nodes."
@@ -353,11 +368,15 @@
 #    printout "SUCCESS" "Updates run.\n"
 
     # Capture the build info into a file to be printed at end of build process.
+    printout "INFO" "The production website master ${drupal_account_name} account is a randomized string."
+    printout "ACTION" "Changing the local ${drupal_account_name} password to '${drupal_account_password}'."
     printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >> ${setup_logs}/uli.log
-    ${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null
-    ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
+    (${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null &&
+      ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log &&
+      printout "SUCCESS" "Password changed.\n") || printout "WARNING" "Password was not changed.\n")
 
     text=$(displayTime $(($(date +%s)-timer)))
-    printout "SUCCESS" "Drupal build finished." "\nDrupal install & build took ${text}"
+    printout "INFO" "Drupal build finished." "Drupal install & build took ${text}"
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printf "\n"

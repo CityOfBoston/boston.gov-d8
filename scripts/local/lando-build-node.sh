@@ -18,9 +18,16 @@
 #   2. Install npm dependencies in package.json
 ###############################################################
 
-  printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
+  REPO_ROOT="${LANDO_MOUNT}"
+  . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
+  target_env="local"
+
+  printf "\n"
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+  printf "\n"
 
   . "${LANDO_MOUNT}/scripts/local/lando-build-patterns.sh"
   . "${LANDO_MOUNT}/scripts/local/lando-build-webapps.sh"
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

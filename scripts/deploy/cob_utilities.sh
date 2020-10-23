@@ -591,6 +591,8 @@ slackPost() {
 }
 
 devModules() {
+    printf "ref: cob_utilities:devModules()\n"
+
     printf " [action] Enable DEVELOPMENT-ONLY modules.\n"
 
     ALIAS="${1}"
