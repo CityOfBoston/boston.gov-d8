@@ -104,9 +104,8 @@
 
     printout "INFO" "This step downloads and installs the Drupal core files, plus any contributed modules we have specified."
     printf "      Composer also downloads and installs PHP and JS files required by contributed modules.\n"
-    printf "      The complete Drupal folder structure is created around our repo files as Core is installed.\n"
+    printf "      The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files).\n"
     printout "INFO" "see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
-    printout "INFO" "Executes: > composer install --prefer-dist --no-suggest --no-interaction"
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
     (cd ${LANDO_MOUNT} &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
@@ -115,7 +114,6 @@
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n") ||
           printout "ERROR" "Composer failed.\n"
 
-    printf "\n"
     printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Building Drupal website/app."
     printf "${LightMagenta}================================================================================${NC}\n"
@@ -124,26 +122,25 @@
     # Clone the private repo and merge files in it with the main repo.
     # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
     # 'clone_private_repo' function is contained in lando_utilities.sh.
-    printout "INFO" "Clone and merge files from the private repo."
-    printf "      These secret or confidential files are added to the drupal structure.\n"
-    clone_private_repo &> ${setup_logs}/drush_site_install.log
-    printout "SUCCESS" "Repo merged.\n"
+    printout "INFO" "Clone and merge files from the private repo." "These secret or confidential files are added to the drupal structure."
+    (clone_private_repo &> ${setup_logs}/drush_site_install.log &&
+      printout "SUCCESS" "Repo merged.\n") || printout "ERROR" "Private Reop was not merged.\n"
 
     # Update the drush.yml file.
     printout "INFO" "Update the drush configuration and aliases."
     drush_file=${LANDO_MOUNT}/drush/drush.yml
     drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
-    rm -rf ${drush_file}
-    printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file}
-    printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'\n\n" >> ${drush_file}
-    cat ${drush_cob} >> ${drush_file}
-    printout "SUCCESS" "Drush file updated.\n"
+    (rm -rf ${drush_file} &&
+      printf "# Docs at https://github.com/drush-ops/drush/blob/master/examples/example.drush.yml\n\n" > ${drush_file} &&
+      printf "options:\n  uri: '${LANDO_APP_URL}'\n  root: '${project_docroot}'\n\n" >> ${drush_file} &&
+      cat ${drush_cob} >> ${drush_file} &&
+      printout "SUCCESS" "Drush aliases updated.\n") || printout "ERROR" "Drush file a ${drush_file} not created.\n"
 
     # Create/update settings, private settings and local settings files.
     # 'build_settings' function is contained in lando_utilities.sh.
     printout "INFO" "Update settings files."
-    build_settings &> ${setup_logs}/drush_site_install.log
-    printout "SUCCESS" "Settings updated.\n"
+    (build_settings &> ${setup_logs}/drush_site_install.log &&
+      printout "SUCCESS" "Settings updated.\n") || printout "ERROR" "Settings file not created - website may not load.\n"
 
     # Install Drupal.
     # For local builds, there are 2 build strategies:
@@ -164,8 +161,10 @@
     #
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
 
+    printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Create & update content database."
-    printout "INFO" "A database is required to store the Drupal site configurations and content."
+    printf "${LightMagenta}================================================================================${NC}\n"
+    printf "      A MySQL database is required to store the Drupal site configurations and content."
     printf "      Depending on the build settings, the DB can either be created or copied from Acquia.\n"
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
@@ -240,7 +239,7 @@
         # Ensure a remote source is defined, default to the develop environment on Acquia.
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
-        printout "INFO" "Will copying database (and content) down from ${build_local_database_drush_alias} into docker the local DB container."
+        printout "INFO" "Copying database (and content) down from ${build_local_database_drush_alias} into docker the local DB container."
         printf   "         This will take some time ...\n"
 
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
@@ -252,7 +251,7 @@
         if [[ $? -eq 0 ]]; then
             printout "SUCCESS" "Site is installed with database and content from remote environment.\n"
         else
-            printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues."
+            printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n"
             exit 0
         fi
 
@@ -343,4 +342,4 @@
     ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log
 
     text=$(displayTime $(($(date +%s)-timer)))
-    printout "SUCCESS" "Drupal build finished." "\nDrupal install & build took ${text}\n"
+    printout "SUCCESS" "Drupal build finished." "\nDrupal install & build took ${text}"

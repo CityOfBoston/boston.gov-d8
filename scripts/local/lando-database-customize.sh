@@ -13,7 +13,7 @@
   # Create script variables
   target_env="local"
 
-  printf "ref: $(basename $BASH_SOURCE) \n"
+  printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
   printf "\n${LightPurple}       ================================================================================${NC}\n"
   printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
   printf "${LightPurple}       ================================================================================${NC}\n"
@@ -42,3 +42,5 @@
     printf "        - If you require these tools then enable in config.yml.\n"
 
   fi
+
+  printf "[LANDO] ends <$(basename $BASH_SOURCE)>\n\n"
