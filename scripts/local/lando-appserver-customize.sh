@@ -17,8 +17,8 @@
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
     printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
-    printf "\n${LightMagenta}       ================================================================================${NC}\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Installing Linux packages in appserver container."
     printf "${LightMagenta}       ================================================================================${NC}\n"
 
@@ -46,12 +46,21 @@
       printout "SUCCESS" "Scripts installed.\n") || printout "WARNING" "Container Health check scripts not installed.\n"
 
     # Create a clean folder into which the Patterns repo can be cloned.
-    # For some reason the patterns folder canot be deleted from within the node container.
-    printf "\n"
+    # First delete the existing folder : for some reason the patterns folder canot be deleted from within the
+    # node container (possibly because files have been altered in other containers,.
     printout "INFO" "Remove Patterns repo (it will be re-cloned later)."
-    if [[ -d ${patterns_local_repo_local_dir} ]]; then rm -rf ${patterns_local_repo_local_dir}/; fi
+    if [[ -d ${patterns_local_repo_local_dir} ]]; then
+      # Try to remove the folder.  This may be difficult.
+      rm -rf ${patterns_local_repo_local_dir}
+      # If the folder still exists, try to rename it
+      if [[ -d ${patterns_local_repo_local_dir} ]]; then
+        if [[ -d ${patterns_local_repo_local_dir}_old ]]; then rm -rf ${patterns_local_repo_local_dir}_old; fi
+        mv -f ${patterns_local_repo_local_dir} ${patterns_local_repo_local_dir}_old
+      fi
+    fi
+    # So now try to make the folder again (empty).  If this fails then we know we have not created an new empty folder.
     (mkdir ${patterns_local_repo_local_dir} &&
-      printout "SUCCESS" "Patterns repo removed.\n") || printout "ERROR" "Patterns repo was not removed.\n"
+      printout "SUCCESS" "Patterns repo removed.\n") || printout "WARN" "Patterns repo was not removed.  Will try again later.\n"
 
     # Change the permissions on the log file so that non-root user can add to log.
     chmod 777 ${LANDO_MOUNT}/setup/lando.log &>> ${setup_logs}/lando.log
@@ -60,4 +69,4 @@
     (service apache2 reload &>> ${setup_logs}/lando.log &&
       printout "SUCCESS" "Apache restarted.\n") || printout "WARNING" "Apache restarted failed.\n"
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"

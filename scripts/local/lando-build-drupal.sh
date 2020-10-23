@@ -46,11 +46,10 @@
         esac
     done
 
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
-    printf "\n"
-    printf "${LightMagenta}================================================================================${NC}\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Installing Drupal and dependencies."
-    printf "${LightMagenta}================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
 
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
@@ -114,9 +113,9 @@
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n") ||
           printout "ERROR" "Composer failed.\n"
 
-    printf "${LightMagenta}================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Building Drupal website/app."
-    printf "${LightMagenta}================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
@@ -161,9 +160,9 @@
     #
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
 
-    printf "${LightMagenta}================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Create & update content database."
-    printf "${LightMagenta}================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printf "      A MySQL database is required to store the Drupal site configurations and content.\n"
     printf "      Depending on the build settings, the DB can either be created or copied from Acquia.\n"
 
@@ -344,4 +343,4 @@
     text=$(displayTime $(($(date +%s)-timer)))
     printout "SUCCESS" "Drupal build finished." "\nDrupal install & build took ${text}"
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
