@@ -12,7 +12,7 @@ config:
   drupal: false
 
 proxy:
-  patterns:
+  node:
     - patterns.lndo.site
     - node.lndo.site
 
@@ -35,10 +35,10 @@ services:
         timeout: 15s
         retries: 5
     build_as_root:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m node Container Event - build as root\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[21m Event raised on Container 'node'\n"
       - /app/scripts/local/lando-node-customize.sh
     run:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m node Container Event - run\n\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[21m Event raised on Container 'node'\n\n"
       - /app/scripts/local/lando-build-node.sh
     command: /app/scripts/local/lando-node-post-start.sh
 
@@ -54,7 +54,7 @@ services:
         timeout: 10s
         retries: 5
     run_as_root:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m Database Event - run as root\n\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mrun as root\e[21m Event raised on Container 'database'\n"
       - /app/scripts/local/lando-database-customize.sh
 
     creds:
@@ -79,15 +79,14 @@ services:
       conf: xdebug.ini
 
     build_as_root:
-      - printf "\n\e[7m\e[7m[LANDO]\e[0m Appserver Event - build as root\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[21m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m Appserver Event - build\n\n"
-      - /bin/sh -c "composer require drush/drush:^9 --no-update --no-progress --no-suggest --prefer-dist &> /dev/null"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[21m Event raised on Container 'appserver\n"
 
     run:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m Appserver Event - run\n\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[21m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:
