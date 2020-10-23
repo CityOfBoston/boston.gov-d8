@@ -7,11 +7,11 @@
   ###############################################################
 
   printf "\n"
-  printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
 
   # Include the utilities file/library.
   # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
   . "${LANDO_MOUNT}/scripts/local/lando-patterns-customize.sh"
   . "${LANDO_MOUNT}/scripts/local/lando-webapps-customize.sh"
 
-  printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n\n"
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n\n"

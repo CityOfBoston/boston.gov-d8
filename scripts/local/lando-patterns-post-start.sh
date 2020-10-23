@@ -24,7 +24,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
@@ -50,4 +50,4 @@
     # (and the container will stop if this process terminates for any reason)
     cd ${patterns_local_repo_local_dir} && npm run dev
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"

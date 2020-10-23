@@ -26,7 +26,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
@@ -51,4 +51,4 @@
       npm run build &>> ${setup_logs}/patterns_build.log &&
       printout "SUCCESS" "Patterns library built.\n") || (printout "ERROR" "Patterns library NOT built.\n" && exit 1)
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"

@@ -15,7 +15,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed."
         exit 0
@@ -38,4 +38,4 @@
     # Clone the patterns repo into a folder within the Main boston.gov d8 repo.
     clone_patterns_repo
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"

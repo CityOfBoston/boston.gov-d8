@@ -15,7 +15,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
 
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Creating WebApp dev environment."
@@ -32,4 +32,4 @@
       npm install &> ${setup_logs}/webapp_build.log &&
       printout "SUCCESS" "WebApp dev environment setup."
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"

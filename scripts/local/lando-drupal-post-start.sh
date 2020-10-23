@@ -43,7 +43,7 @@
     fi
     printf "${Bold}\n"
     printf "===============================================================================================\n"
-    printf "DEVELOPMENT:"
+    printf "DEVELOPMENT:\n"
     printf " 1. Drupal custom module source files can be editted at ${project_docroot}/modules/custom\n"
     printf " 2. Patterns source files can be editted at ${patterns_local_repo_local_dir}\n"
     printf " 3. WebApp source files can be editted at ${webapps_local_local_dir}\n"
