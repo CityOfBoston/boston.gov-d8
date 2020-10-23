@@ -46,7 +46,7 @@
         esac
     done
 
-    printf "ref: $(basename $BASH_SOURCE) \n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
     printf "\n"
     printf "${LightMagenta}================================================================================${NC}\n"
     printout "STEP" "Installing Drupal and dependencies."
@@ -343,3 +343,5 @@
 
     text=$(displayTime $(($(date +%s)-timer)))
     printout "SUCCESS" "Drupal build finished." "\nDrupal install & build took ${text}"
+
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"

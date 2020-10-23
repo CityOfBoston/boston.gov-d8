@@ -17,7 +17,7 @@
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Installing Linux packages in appserver container."
     printf "${LightPurple}       ================================================================================${NC}\n"
@@ -30,7 +30,7 @@
         printout "INFO" "During build, process will be logged to files in ${setup_logs}" &&
         printout "" "     - After build, log files can be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
 
-    printout "INFO" "Installing linux utilities/apps/packages not present in default container.")
+    printout "INFO" "Installing linux utilities/apps/packages not present in default container."
     # Installs linux apps and extensions into the appserver container.
     (apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> /dev/null &&
       apt-get install -y --no-install-recommends zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log &&
@@ -40,7 +40,7 @@
     # Copy the 2 scrpts that the database server needs from the scripts folder into the .lando scripts folder.
     # This means the scripts will be loaded into the /helpers folder on all containers.
     # This means we can exclude the /app folder from mounting into the database giving it a performance boost.
-    printout "INFO" "Installing container-health check scripts.")
+    printout "INFO" "Installing container-health check scripts."
     (cp "${LANDO_MOUNT}/scripts/local/health.sh" /helpers/health.sh &&
       cp "${LANDO_MOUNT}/scripts/local/lando-database-customize.sh" /helpers/lando-database-customize.sh &&
       printout "SUCCESS" "Scripts installed.\n") || printout "WARNING" "Container Health check scripts not installed.\n"
@@ -60,4 +60,4 @@
     (service apache2 reload &>> ${setup_logs}/lando.log &&
       printout "SUCCESS" "Apache restarted.\n") || printout "WARNING" "Apache restarted failed.\n"
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE)>\n\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n\n"

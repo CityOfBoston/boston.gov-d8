@@ -14,8 +14,8 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
 
     # Here we need to search for webapps, detect and start their key watch processes
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"

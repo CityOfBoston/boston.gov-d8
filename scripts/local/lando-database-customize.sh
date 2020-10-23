@@ -13,7 +13,7 @@
   # Create script variables
   target_env="local"
 
-  printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
   printf "\n${LightPurple}       ================================================================================${NC}\n"
   printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
   printf "${LightPurple}       ================================================================================${NC}\n"
@@ -43,4 +43,4 @@
 
   fi
 
-  printf "[LANDO] ends <$(basename $BASH_SOURCE)>\n\n"
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n\n"

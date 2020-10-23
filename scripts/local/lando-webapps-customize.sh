@@ -12,7 +12,7 @@
     target_env="local"
 
     printf "\n"
-    printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
 
     printout "INFO" "Check and create development directory links for WebApps."
 
@@ -30,4 +30,4 @@
 
     printout "SUCCESS" "Directory links created and/or verified.\n"
 
-    printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n\n"
