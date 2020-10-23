@@ -17,9 +17,9 @@
     printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
 
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Creating WebApp dev environment."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printf "      Webapp source files are found in ${REPO_ROOT}/${webapps_local_local_dir}."
     printf "      Webapps are built and tested in the node container."
     printf "      Webapps are automatically synchronized into the Drupal appserver container."

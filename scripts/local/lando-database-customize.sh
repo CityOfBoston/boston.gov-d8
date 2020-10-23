@@ -14,9 +14,9 @@
   target_env="local"
 
   printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
-  printf "\n${LightPurple}       ================================================================================${NC}\n"
+  printf "\n${LightMagenta}       ================================================================================${NC}\n"
   printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
-  printf "${LightPurple}       ================================================================================${NC}\n"
+  printf "${LightMagenta}       ================================================================================${NC}\n"
 
   if [[ "${build_local_database_server_side_tools}" == "TRUE" ]] || [[ "${build_local_database_server_side_tools}" == "True" ]] || [[ "${build_local_database_server_side_tools}" == "true" ]]; then
     # Install python and pip so we can install mycli.

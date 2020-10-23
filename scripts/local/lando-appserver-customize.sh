@@ -18,9 +18,9 @@
 
     printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Installing Linux packages in appserver container."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
 
     # Prepare the folder which will hold setup logs.
     if [[ -e  ${setup_logs} ]]; then rm -rf ${setup_logs}/; fi

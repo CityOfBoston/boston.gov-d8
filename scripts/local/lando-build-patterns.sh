@@ -31,9 +31,9 @@
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
     fi
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Building Patterns."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${LightMagenta}       ================================================================================${NC}\n"
     printf "      Patterns resource files are found in ${patterns_local_repo_local_dir}."
     printf "      Patterns webapp is built/installed in the node container."
 
