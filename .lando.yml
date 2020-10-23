@@ -55,7 +55,7 @@ services:
         retries: 5
     run_as_root:
       - printf "\n\e[1m\e[7m[LANDO]\e[0m Database Event - run as root\n\n"
-      - /helpers/lando-database-customize.sh
+      - /app/scripts/local/lando-database-customize.sh
 
     creds:
       user: drupal
