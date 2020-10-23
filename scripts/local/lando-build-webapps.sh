@@ -28,7 +28,7 @@
     # Install a standard common set of dependencies required for the local build.
     # (This is all dependencies from the package.json file in the scripts folder).
     printout "INFO" "Installing WebApp standard packages and node dependencies."
-    cd ${REPO_ROOT}/scripts &&
+    cd ${REPO_ROOT}/${webapps_local_local_dir} &&
       npm install &> ${setup_logs}/webapp_build.log &&
       printout "SUCCESS" "WebApp dev environment setup."
 
