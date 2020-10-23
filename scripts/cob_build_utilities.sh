@@ -68,14 +68,14 @@ function printout () {
             col1=${InverseOn}${Bold}${Green}
             col2=${Green}
             col3=${DimOn}${Green}
-        elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
+        elif [[ "${1}" == "INFO" ]]; then
             col1=${InverseOn}${Bold}${LightBlue}
             col2=${LightBlue}
             col3=$${DimOn}{LightBlue}
-        elif [[ "${1}" == "STEP" ]]; then
-            col1=${InverseOn}${Bold}${Magenta}
-            col2=${Magenta}
-            col3=${DimOn}${Magenta}
+        elif [[ "${1}" == "STEP" ]] || [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
+            col1=${InverseOn}${Bold}${Blue}
+            col2=${Blue}
+            col3=${DimOn}${Blue}
         elif [[ "${1}" == "LANDO" ]]; then
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}

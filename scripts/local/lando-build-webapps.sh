@@ -19,7 +19,7 @@
 
     printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Creating WebApp dev environment."
-    printf "${LightMagenta}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
     printf "      Webapp source files are found in ${REPO_ROOT}/${webapps_local_local_dir}."
     printf "      Webapps are built and tested in the node container."
     printf "      Webapps are automatically synchronized into the Drupal appserver container."
@@ -27,7 +27,7 @@
     # Global Dependencies.
     # Install a standard common set of dependencies required for the local build.
     # (This is all dependencies from the package.json file in the scripts folder).
-    printout "INFO" "Installing WebApp standard packages and node dependencies."
+    printout "ACTION" "Installing WebApp standard packages and node dependencies."
     cd ${REPO_ROOT}/${webapps_local_local_dir} &&
       npm install &> ${setup_logs}/webapp_build.log &&
       printout "SUCCESS" "WebApp dev environment setup."

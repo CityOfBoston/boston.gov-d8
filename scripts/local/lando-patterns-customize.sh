@@ -20,25 +20,12 @@
         printout "INFO" "Patterns library will not be deployed."
         exit 0
     fi
-    printf "\n${LightMagenta}       ================================================================================${NC}\n"
-    printout "STEP" "Installing Linux packages in the patterns node container."
-    printf "${LightMagenta}       ================================================================================${NC}\n"
-
-    # Copy the node.js executable file in the container to a location that can be seen on the host.
-    # This way eslint can run from PHPStorm without needing to install node.js on the host.
-    # In PHPStorm point the path for node in eslint settings dialog to /user/.node_js/node
-    if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
-        printf "mkdir /user/.node_js\n"
-        if [[ ! -d /user/.node_js ]]; then mkdir /user/.node_js; fi
-        if [[ ! -e /user/.node_js/node ]]; then cp /usr/local/bin/node /user/.node_js/.; fi
-        printout "INFO" "node.js executable is linked to /user/.node.js/ on the host PC (for IDE linting)"
-    fi
 
     # During the appserver build, it created a clean folder into which the repo can be cloned.
     # Clone the patterns repo into a folder within the Main boston.gov d8 repo.
     if [[ "$(ls -A ${patterns_local_repo_local_dir})" ]]; then
       # So the folder was not completely removed.
-      printout "INFO" "Remove Patterns repo (it will be re-cloned later)."
+      printout "ACTION" "Removing Patterns repo (it will be re-cloned later)."
       # Try to remove the folder.  This may be difficult.
       rm -rf ${patterns_local_repo_local_dir}
       # If the folder still exists, try to rename it
@@ -53,4 +40,4 @@
     # If all is good, then clone the repo.
     clone_patterns_repo
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
