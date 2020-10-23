@@ -41,6 +41,19 @@
     else
         . ${REPO_ROOT}/scripts/doit/branding.sh;
     fi
+    printf "${Bold}\n"
+    printf "===============================================================================================\n"
+    printf "DEVELOPMENT:"
+    printf " 1. Drupal custom module source files can be editted at ${project_docroot}/modules/custom\n"
+    printf " 2. Patterns source files can be editted at ${patterns_local_repo_local_dir}\n"
+    printf " 3. WebApp source files can be editted at ${webapps_local_local_dir}\n"
+    printf "LOCAL TESTING:\n"
+    printf " 1. Drupal website can be viewed at https://boston.lndo.site\n"
+    printf " 2. Fleet website (Patterns) can be viewed at https://patterns.lndo.site:3030\n"
+    printf " 3. Local patterns CDN at http://patterns.lndo.site:3030\n"
+    printf " 3. WebApps can be viewed at https://node.lndo.site/[appname]/index.html\n"
+    printf "===============================================================================================\n\n${NC}"
+
     # Embed the custom xdebug file as a php ini file.
     # There are 2 customized ini's one per environment (mac and linux) -they should not be changed locally by the
     # user but can be modified in the private repo to improve debug experience for all users.

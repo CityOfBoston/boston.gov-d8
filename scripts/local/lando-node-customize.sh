@@ -14,4 +14,4 @@
   . "${LANDO_MOUNT}/scripts/local/lando-patterns-customize.sh"
   . "${LANDO_MOUNT}/scripts/local/lando-webapps-customize.sh"
 
-  printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"
+  printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n\n"

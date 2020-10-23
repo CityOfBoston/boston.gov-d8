@@ -38,6 +38,4 @@
     # Clone the patterns repo into a folder within the Main boston.gov d8 repo.
     clone_patterns_repo
 
-    printout "INFO" "Patterns source files can be editted at ${patterns_local_repo_local_dir}"
-
     printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"

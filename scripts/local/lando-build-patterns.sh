@@ -34,18 +34,21 @@
     printf "\n${LightPurple}       ================================================================================${NC}\n"
     printout "STEP" "Building Patterns."
     printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "      Patterns resource files are found in ${patterns_local_repo_local_dir}."
+    printf "      Patterns webapp is built/installed in the node container."
 
-    printout "INFO" "Installing node dependencies for patterns app."
-    cd ${patterns_local_repo_local_dir} && npm run preinstall && npm install && npm install -g gulp-cli@latest
-    if [[ $? != 0 ]]; then
-        printout "ERROR" "Patterns library NOT built or installed."
-        exit 1
-    fi
+    # Install patterns requisites.
+    printout "INFO" "Installing packages and node dependencies for patterns app."
+    (cd ${patterns_local_repo_local_dir} &&
+      npm run preinstall &&
+      npm install &&
+      npm install -g gulp-cli@latest &> ${setup_logs}/patterns_build.log &&
+      printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Patterns library NOT installed (or built)." && exit 1)
 
-    # Install the patterns app.
-    printout "INFO" "Building Patterns library."
     # Run an initial build to be sure everything is there.
-    cd ${patterns_local_repo_local_dir} && npm run build
+    printout "INFO" "Building Patterns library."
+    (cd ${patterns_local_repo_local_dir} &&
+      npm run build &>> ${setup_logs}/patterns_build.log &&
+      printout "SUCCESS" "Patterns library built.\n") || (printout "ERROR" "Patterns library NOT built.\n" && exit 1)
 
-    printout "SUCCESS" "Patterns library built."
     printf "[LANDO] ends <$(basename $BASH_SOURCE) >\n"

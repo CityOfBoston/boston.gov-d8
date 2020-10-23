@@ -18,7 +18,6 @@
 #   2. Install npm dependencies in package.json
 ###############################################################
 
-  printf "\n"
   printf "[LANDO] starts <$(basename $BASH_SOURCE) >\n"
 
   . "${LANDO_MOUNT}/scripts/local/lando-build-patterns.sh"
