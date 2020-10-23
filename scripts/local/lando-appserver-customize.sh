@@ -17,7 +17,8 @@
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
     printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+    printf "\n"
     printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "PHP in appserver: Installing required Linux packages in container."
     printf "${Blue}       ================================================================================${NC}\n"
@@ -69,4 +70,5 @@
     (service apache2 reload &>> ${setup_logs}/lando.log &&
       printout "SUCCESS" "Apache restarted.\n") || printout "WARNING" "Apache restarted failed.\n"
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

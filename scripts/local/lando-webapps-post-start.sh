@@ -14,8 +14,10 @@
     target_env="local"
 
     printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+    printf "\n"
 
     # Here we need to search for webapps, detect and start their key watch processes
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

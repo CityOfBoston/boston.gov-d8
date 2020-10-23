@@ -26,23 +26,24 @@
     target_env="local"
 
     printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+    printf "\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
     fi
-    printf "\n${LightMagenta}       ================================================================================${NC}\n"
+    printf "\n${Blue}       ================================================================================${NC}\n"
     printout "STEP" "Building Patterns."
     printf "${Blue}       ================================================================================${NC}\n"
-    printf "      Patterns resource files are found in ${patterns_local_repo_local_dir}."
-    printf "      Patterns webapp is built/installed in the node container."
+    printout "INFO" "Patterns source files are found in ${patterns_local_repo_local_dir}."
+    printout "INFO" "Patterns webapp is built/installed in the node container."
 
     # Install patterns requisites.
     printout "ACTION" "Installing packages and node dependencies for patterns app."
     (cd ${patterns_local_repo_local_dir} &&
-      npm run preinstall &&
-      npm install &&
-      npm install -g gulp-cli@latest &> ${setup_logs}/patterns_build.log &&
+      npm run preinstall  &> ${setup_logs}/patterns_build.log &&
+      npm install  &>> ${setup_logs}/patterns_build.log &&
+      npm install -g gulp-cli@latest &>> ${setup_logs}/patterns_build.log &&
       printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Patterns library NOT installed (or built)." && exit 1)
 
     # Run an initial build to be sure everything is there.
@@ -51,4 +52,5 @@
       npm run build &>> ${setup_logs}/patterns_build.log &&
       printout "SUCCESS" "Patterns library built.\n") || (printout "ERROR" "Patterns library NOT built.\n" && exit 1)
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printf "\n"

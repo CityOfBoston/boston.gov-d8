@@ -13,7 +13,7 @@
 
     printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
-
+    printf "\n"
     printout "ACTION" "Checking and creating development directory links for WebApps."
 
     # Link the webapps folder from inside drupal into the root, so that
@@ -34,4 +34,5 @@
 
     printout "SUCCESS" "Directory links created and/or verified.\n"
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"

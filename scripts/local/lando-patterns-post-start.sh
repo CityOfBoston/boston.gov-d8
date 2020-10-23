@@ -26,7 +26,8 @@
     printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mpost-start\e[21m Event raised on Container 'appserver'\n"
 
     printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+    printf "\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
@@ -34,7 +35,7 @@
 
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then printf "No folder ${patterns_local_repo_local_dir}\n"; tail -f /dev/null ; exit 0; fi
 
-    printf "\n${LightMagenta}       ================================================================================${NC}\n"
+    printf "\n${Blue}       ================================================================================${NC}\n"
     printout "LANDO" "Project Event - patterns post-start\n"
     printf "${Blue}       ================================================================================${NC}\n"
 
@@ -52,4 +53,5 @@
     # (and the container will stop if this process terminates for any reason)
     cd ${patterns_local_repo_local_dir} && npm run dev
 
-    printout "SCRIPT" "ends <$(basename $BASH_SOURCE) >\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"
