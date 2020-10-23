@@ -35,10 +35,10 @@ services:
         timeout: 15s
         retries: 5
     build_as_root:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[21m Event raised on Container 'node'\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'node'\n"
       - /app/scripts/local/lando-node-customize.sh
     run:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[21m Event raised on Container 'node'\n\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[0m Event raised on Container 'node'\n\n"
       - /app/scripts/local/lando-build-node.sh
     command: /app/scripts/local/lando-node-post-start.sh
 
@@ -48,13 +48,15 @@ services:
     portforward: true
     host: localhost
     overrides:
+      volumes:
+        - ./scripts/local:/app/scripts/local
       healthcheck:
         test: /helpers/health.sh database
         interval: 30s
         timeout: 10s
         retries: 5
     run_as_root:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mrun as root\e[21m Event raised on Container 'database'\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mrun_as_root\e[0m Event raised on Container 'database'\n"
       - /app/scripts/local/lando-database-customize.sh
 
     creds:
@@ -79,14 +81,14 @@ services:
       conf: xdebug.ini
 
     build_as_root:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[21m Event raised on Container 'appserver'\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[21m Event raised on Container 'appserver\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver\n"
 
     run:
-      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[21m Event raised on Container 'appserver'\n"
+      - printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:

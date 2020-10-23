@@ -46,10 +46,11 @@
         esac
     done
 
+    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
-    printf "${LightMagenta}       ================================================================================${NC}\n"
-    printout "STEP" "Installing Drupal and dependencies."
-    printf "${LightMagenta}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
+    printout "STEP" "DRUPAL Installing Drupal framework and dependencies."
+    printf "${Blue}       ================================================================================${NC}\n"
 
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
@@ -113,20 +114,20 @@
         printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n") ||
           printout "ERROR" "Composer failed.\n"
 
-    printf "${LightMagenta}       ================================================================================${NC}\n"
-    printout "STEP" "Building Drupal website/app."
-    printf "${LightMagenta}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
+    printout "STEP" "DRUPAL: Building City of Boston (boston.gov) website/app locally."
+    printf "${Blue}       ================================================================================${NC}\n"
     printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
     # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
     # 'clone_private_repo' function is contained in lando_utilities.sh.
-    printout "INFO" "Clone and merge files from the private repo." "These secret or confidential files are added to the drupal structure."
+    printout "ACTION" "Clone and merge files from the private repo." "These secret or confidential files are added to the drupal structure."
     (clone_private_repo &> ${setup_logs}/drush_site_install.log &&
       printout "SUCCESS" "Repo merged.\n") || printout "ERROR" "Private Reop was not merged.\n"
 
     # Update the drush.yml file.
-    printout "INFO" "Update the drush configuration and aliases."
+    printout "ACTION" "Update the drush configuration and aliases."
     drush_file=${LANDO_MOUNT}/drush/drush.yml
     drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
     (rm -rf ${drush_file} &&
@@ -137,19 +138,25 @@
 
     # Create/update settings, private settings and local settings files.
     # 'build_settings' function is contained in lando_utilities.sh.
-    printout "INFO" "Update settings files."
+    printout "ACTION" "Update settings files."
     (build_settings &> ${setup_logs}/drush_site_install.log &&
       printout "SUCCESS" "Settings updated.\n") || printout "ERROR" "Settings file not created - website may not load.\n"
 
-    # Install Drupal.
-    # For local builds, there are 2 build strategies:
-    #   Initialize:     This uses drush site-install to create a new Drupal site using the core and contributed modules
-    #                   previously downloaded by composer.  This method initially creates a fresh site with no custom
-    #                   modules and then loads the configuration from the repo (usually in docroot/../config/default).
-    #                   The end result is a fresh site with all the features and functionality, but no content.
-    #                   This is the slowest method than sync baecause there is a lot of config installing and module
-    #                   enabling (of both contributed and custom modules) required.
-    #   Sync:       This mode connects to a remote Drupal site and downloads and restores its database.  That database
+    # Install Content.
+    # For local builds, there are 3 DB build strategies:
+    #   initialize: This uses drush site-install to create a new Drupal site using the core and contributed modules
+    #               previously downloaded by composer.  This method initially creates a fresh site with no custom
+    #               modules and then loads the configuration from the repo (usually in docroot/../config/default).
+    #               The end result is a fresh site with all the features and functionality, but no content.
+    #               This is the slowest method than sync baecause there is a lot of config installing and module
+    #               enabling (of both contributed and custom modules) required.
+    #   restore:    This mode locates a local backup and restores that into the database container.
+    #               This is the quickest build route, but creates a local build with different content to the Acquia
+    #               sites, and raises the potential for config-import issues during install.  If you encounter
+    #               persistent configuration update issues, then manually fix them and take a new backup or temporarily
+    #               switch this option to 'sync' (or 'initialize' to create a website with no content) run a build,
+    #               and then take a local backup and try again.
+    #   sync:       This mode connects to a remote Drupal site and downloads and restores its database.  That database
     #               already contains both settings and content.  The final step in this process is to import/load the
     #               configuration for the main repo.
     #               The end result is a copy of the remote site and its content updated with the features and
@@ -160,11 +167,22 @@
     #
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
 
-    printf "${LightMagenta}       ================================================================================${NC}\n"
-    printout "STEP" "Create & update content database."
-    printf "${LightMagenta}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
+    printout "STEP" "DRUPAL: Install and update City of Boston content (into database)."
+    printf "${Blue}       ================================================================================${NC}\n"
     printf "      A MySQL database is required to store the Drupal site configurations and content.\n"
     printf "      Depending on the build settings, the DB can either be created or copied from Acquia.\n"
+
+    # If we are restoring from a backup, make sure its correctly defined now, so we can default to sync if needed.
+    if [[ "${build_local_database_source}" == "restore" ]]; then
+      if [[ -z ${build_local_database_backup_location} ]]; then
+        printout "WARNING" "RESTORE mode was requested in the config file, but no backup was provided. Sync mode will be used."
+        build_local_database_source="sync"
+      elif [[ ! -e  ${build_local_database_backup_location} ]]; then
+        printout "WARNING" "RESTORE mode was requested in the config file, but the specified backup file (${build_local_database_backup_location}) is missing. Sync mode will be used."
+        build_local_database_source="sync"
+      fi
+    fi
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
@@ -184,17 +202,13 @@
           -y"
 
         # Now run the site-install command.
-        printout "INFO" "Installing Drupal with an initial database containing no content."
+        printout "ACTION" "Installing Drupal with an initial database containing no content."
         echo "Executing: ${SITE_INSTALL}" >> ${setup_logs}/drush_site_install.log
-        ${drush_cmd} ${SITE_INSTALL} >> ${setup_logs}/drush_site_install.log
 
-        # If site-install command failed then alert.
-        if [[ $? -eq 0 ]]; then
-            printout "SUCCESS" "Site is freshly installed with clean database.\n"
-        else
-            printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues."
-            exit 0
-        fi
+        (${drush_cmd} ${SITE_INSTALL} >> ${setup_logs}/drush_site_install.log &&
+          printout "SUCCESS" "Site is freshly installed with clean database.\n") ||
+            (printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues." &&
+              exit 1)
 
         # Each Drupal site has a unique site UUID.
         # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
@@ -219,6 +233,15 @@
             fi
         fi
 
+    elif [[ "${build_local_database_source}" == "restore" ]]; then
+
+        printout "INFO" "Using RESTORE Mode: Will restore the DB from ${build_local_database_backup_location}."
+        printf   "         This will take some time ...\n"
+
+        (${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
+          ${drush_cmd} -y sql:cli --database=default < ${build_local_database_backup_location} &&
+          printout "SUCCESS" "Database has been restored.\n") || (printout "ERROR" "Database restore failed.\n" && exit 1)
+
     elif [[ "${build_local_database_source}" == "sync" ]]; then
 
         # Grab a copy of the database from the desired(remote) Acquia environent.
@@ -235,29 +258,23 @@
         #                    Adds load to production server b/c backup and rsync processes originate on prod server.
         printout "INFO" "Using SYNC Mode: Will copy remote DB and then import repo configs."
 
-        # Ensure a remote source is defined, default to the develop environment on Acquia.
+        # Ensure a remote source is defined - if not, default to the develop environment on Acquia.
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
-        printout "INFO" "Copying database (and content) down from ${build_local_database_drush_alias} into docker the local DB container."
+        printout "ACTION" "Copying database (and content) down from ${build_local_database_drush_alias} into docker the local DB container."
         printf   "         This will take some time ...\n"
 
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
         # remote server, and restore into the database container.
-        ${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
-            ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >> ${setup_logs}/drush_site_install.log
-
-        # See how we faired.
-        if [[ $? -eq 0 ]]; then
-            printout "SUCCESS" "Site is installed with database and content from remote environment.\n"
-        else
-            printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n"
-            exit 0
-        fi
-
+        (${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
+            ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >> ${setup_logs}/drush_site_install.log &&
+            printout "SUCCESS" "Site is installed with database and content from remote environment.\n") ||
+              (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" &&
+              exit 1)
     fi
 
     # Import configurations from the project repo into the database.
-    printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
+    printout "ACTION" "Importing configuration from sync folder: '${project_sync}' into database"
     if [[ "${build_local_database_source}" == "sync" ]]; then
         printf "        Depending on how different the DB source is to the config files, this may also take some time ...\n"
     elif [[ "${build_local_database_source}" == "initialize" ]]; then
@@ -314,7 +331,7 @@
     # However, there is no guarantee that those modules are entirely approproate for developers.  So this step allows us
     # to specifically enable the modules needed by developers.
     # Function 'devModules' is contained in /scripts/deploy/cob_utilities.sh
-    printout "INFO" "Enable/disable appropriate development features and functionality." " This may also take some time ..."
+    printout "ACTION" "Enabling/disabling appropriate development features and functionality." " This may also take some time ..."
     devModules "@self"
     # Set the local build to use a local patterns (if the node container has fleet running in it).
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
@@ -326,12 +343,12 @@
     # Run finalization / housekeeping tasks.
 
     # Apply any pending database updates.
-    printout "INFO" "Apply pending database updates etc."
+    printout "ACTION" "Apply pending database updates etc."
     ${drush_cmd} updb -y >> ${setup_logs}/config_import.log
     printout "SUCCESS" "Done.\n"
 
     # Rebuild user access on nodes.
-#    printout "INFO" "Rebuild user access on nodes."
+#    printout "ACTION" "Rebuild user access on nodes."
 #    ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config_import.log
 #    printout "SUCCESS" "Updates run.\n"
 

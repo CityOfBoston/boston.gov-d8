@@ -36,18 +36,18 @@
 
     printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "LANDO" "Project Event - patterns post-start\n"
-    printf "${LightMagenta}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
 
     # Install the patterns app.
     printout "INFO" "Starting Patterns library - will build stylus(css) and minify js files."
-    printout "INFO" "Wait for files."
+    printout "ACTION" "Wait for files."
     # Becuse the node container builds after the database and appserver containers, we have to
     # wait for those processes to complete first.  TODO: Make appserver and database dependent on the node server.
     while [[ ! -e  ${patterns_local_repo_local_dir}/public/css ]]; do
         sleep 10
     done
 
-    printout "INFO" "Create the fractal server and start watch file system for updates."
+    printout "ACTION" "Create the fractal server and start watch file system for updates."
     # Fire up the watchers: Note this process will remain running until the container is stopped.
     # (and the container will stop if this process terminates for any reason)
     cd ${patterns_local_repo_local_dir} && npm run dev

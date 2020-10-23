@@ -33,12 +33,12 @@
     fi
     printf "\n${LightMagenta}       ================================================================================${NC}\n"
     printout "STEP" "Building Patterns."
-    printf "${LightMagenta}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
     printf "      Patterns resource files are found in ${patterns_local_repo_local_dir}."
     printf "      Patterns webapp is built/installed in the node container."
 
     # Install patterns requisites.
-    printout "INFO" "Installing packages and node dependencies for patterns app."
+    printout "ACTION" "Installing packages and node dependencies for patterns app."
     (cd ${patterns_local_repo_local_dir} &&
       npm run preinstall &&
       npm install &&
@@ -46,7 +46,7 @@
       printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Patterns library NOT installed (or built)." && exit 1)
 
     # Run an initial build to be sure everything is there.
-    printout "INFO" "Building Patterns library."
+    printout "ACTION" "Building Patterns library."
     (cd ${patterns_local_repo_local_dir} &&
       npm run build &>> ${setup_logs}/patterns_build.log &&
       printout "SUCCESS" "Patterns library built.\n") || (printout "ERROR" "Patterns library NOT built.\n" && exit 1)

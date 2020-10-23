@@ -14,7 +14,7 @@
     printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
 
-    printout "INFO" "Check and create development directory links for WebApps."
+    printout "ACTION" "Checking and creating development directory links for WebApps."
 
     # Link the webapps folder from inside drupal into the root, so that
     # developers can find the modules more easily.
