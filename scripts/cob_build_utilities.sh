@@ -60,7 +60,7 @@ function printout () {
             col1=${InverseOn}${Bold}${LightRed}
             col2=${LightRed}
             col3=${LightRed}${DimOn}
-        elif [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
+        elif [[ "${1}" == "WARN" ]] || [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
             col1=${InverseOn}${Bold}${Yellow}
             col2=${Yellow}
             col3=${Yellow}${DimOn}
@@ -152,7 +152,7 @@ function clone_private_repo() {
 function clone_patterns_repo() {
 
     printf "ref: cob_build_utilities.clone_patterns_repo()\n\n"
-    printout "INFO" "Cloning ${patterns_local_repo_branch} branch of Patterns library."
+    printout "INFO" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
 
     if [[ -n ${GITHUB_TOKEN} ]]; then
         # Will enforce a token which should be passed via and ENVAR.
@@ -165,21 +165,26 @@ function clone_patterns_repo() {
     # If the target folder for the patterns repo does not exist, then create it now.
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
         mkdir ${patterns_local_repo_local_dir}
+    else
+      if [[ "$(ls -A ${patterns_local_repo_local_dir})" ]]; then
+        # We cannot clone into a non-empty folder.  This is fatal.
+        printout "ERROR" "Patterns folder ${patterns_local_repo_local_dir} is not empty and the build cannot delete it."
+        printf "        Please manually delete the patterns folder from the repo root on host machine, and retry the build.\n\n"
+        printf "${InverseOn}${Red}SEE ERRORS ABOVE.\n" &>> ${REPO_ROOT}/setup/uli.log;
+        printf "Please manually delete the patterns folder from the repo root on the host machine, and retry the build.\n\n${NC}" &>> ${REPO_ROOT}/setup/uli.log;
+        exit 1
+      fi
     fi
+    # Manke sure the folder is properly owned in this container.
     chown node:node ${patterns_local_repo_local_dir}
 
     # Clone the Patterns repo into the target folder.
-    git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100
-
-    if [[ $? != 0 ]]; then
-        printout "ERROR" "Patterns library NOT cloned or installed.\n"
-        exit 1
-    fi
-    printout "SUCCESS" "Patterns library cloned.\n"
+    (git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100 &&
+      printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
 
     # Make the public folder that gulp and fractal will build into.
     if [[ ! -d ${patterns_local_repo_local_dir}/public ]]; then
-        printout "INFO" "Create patterns build folder"
+        printout "INFO" "Create patterns (Gulp & Fractal) build folders"
         (mkdir ${patterns_local_repo_local_dir}/public &&
           chown node:node ${patterns_local_repo_local_dir}/public &&
           chmod 755 ${patterns_local_repo_local_dir}/public &&

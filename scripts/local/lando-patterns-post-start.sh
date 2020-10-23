@@ -23,6 +23,8 @@
     . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
     target_env="local"
 
+    printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mpost-start\e[21m Event raised on Container 'appserver'\n"
+
     printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE) >\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
