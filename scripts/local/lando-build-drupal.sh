@@ -102,14 +102,18 @@
     #  that developers should ensure the composer.lock file is kept up to date in the repository, particularly if it
     #  is known that packages have been added or upgraded.
 
+    printout "INFO" "This step downloads and installs the Drupal core files, plus any contributed modules we have specified."
+    printf "      Composer also downloads and installs PHP and JS files required by contributed modules.\n"
+    printf "      The complete Drupal folder structure is created around our repo files as Core is installed.\n"
     printout "INFO" "see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
     printout "INFO" "Executes: > composer install --prefer-dist --no-suggest --no-interaction"
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
-    cd ${LANDO_MOUNT} &&
+    (cd ${LANDO_MOUNT} &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
         composer drupal:scaffold &>> ${setup_logs}/composer.log &&
         echo "DONE." >> ${setup_logs}/composer.log &&
-        printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
+        printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n") ||
+          printout "ERROR" "Composer failed.\n"
 
     printf "\n"
     printf "${LightMagenta}================================================================================${NC}\n"
@@ -120,7 +124,8 @@
     # Clone the private repo and merge files in it with the main repo.
     # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
     # 'clone_private_repo' function is contained in lando_utilities.sh.
-    printout "INFO" "Clone and merge private repo into main project repo."
+    printout "INFO" "Clone and merge files from the private repo."
+    printf "      These secret or confidential files are added to the drupal structure.\n"
     clone_private_repo &> ${setup_logs}/drush_site_install.log
     printout "SUCCESS" "Repo merged.\n"
 
@@ -160,10 +165,12 @@
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
 
     printout "STEP" "Create & update content database."
+    printout "INFO" "A database is required to store the Drupal site configurations and content."
+    printf "      Depending on the build settings, the DB can either be created or copied from Acquia.\n"
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
-        printout "INFO" "INITIALIZE Mode: Will install Drupal using 'drush site-install' and then import repo configs."
+        printout "INFO" "INITIALIZE Mode: Will create a new DB using 'drush site-install' and then import repo configs."
         printout "" "" "... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
 
         # Define the site-install command.
@@ -233,7 +240,7 @@
         # Ensure a remote source is defined, default to the develop environment on Acquia.
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
-        printout "INFO" "Copying database (and content) from ${build_local_database_drush_alias} into docker database container."
+        printout "INFO" "Will copying database (and content) down from ${build_local_database_drush_alias} into docker the local DB container."
         printf   "         This will take some time ...\n"
 
         # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
