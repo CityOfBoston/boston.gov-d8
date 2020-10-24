@@ -22,15 +22,15 @@
       cd ${REPO_ROOT} &&
         ln -s ${webapps_local_source} ${webapps_local_local_dir}
     fi
-    printf "      Webapps directory is mapped to ${webapps_local_local_dir}.\n"
+    printout "INFO" "Webapps directory is mapped to ${webapps_local_local_dir}.\n"
 
     # Create a link for global.package file so it can be used by npm to set up the container
     # with a default set of node tools.
     if [[ ! -h ${REPO_ROOT}/${webapps_local_local_dir}/package.json ]]; then
       cd ${REPO_ROOT} &&
-        ln -s scripts/global.package ${webapps_local_local_dir}/package.json
+        ln -s "scripts/webapp.default.package" "${webapps_local_local_dir}/package.json"
     fi
-    printf "      Global node package file mapped.\n"
+    printout "INFO" "Global node package file mapped.\n"
 
     printout "SUCCESS" "Directory links created and/or verified.\n"
 
