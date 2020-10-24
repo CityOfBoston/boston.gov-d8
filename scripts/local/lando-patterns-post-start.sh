@@ -1,11 +1,10 @@
 #!/bin/bash
 
 ###############################################################
-#  These commands need to be run as normal user from lando.yml.
-#
 #  NOTE: THIS SCRIPT SHOULD BE RUN INSIDE THE CONTAINER.
+#         It should be the cmd passed to the docker start
 #
-#  These commands install Start the npm processes: gulp and stylus.
+#  This script starts the npm processes: gulp and stylus.
 #
 #  PRE-REQUISITES:
 #     - node:10 docker container for patterns is created and started, and
@@ -13,7 +12,10 @@
 #     - .lando.yml and .config.yml files are correctly configured.
 #
 #  Basic workflow:
-#     1. Start the fractal service.
+#     1. Wait for patterns to be installed (in case when container is initially created)
+#     2. execut npm run dev which:
+#           - starts the fractal service incl http_server on port 80
+#           - starts gulp watching for css and js changes.
 ###############################################################
 
     # Include the utilities file/libraries.
@@ -23,9 +25,6 @@
     . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
     target_env="local"
 
-    printf "\n\e[1m\e[7m[LANDO]\e[0m \e[1mpost-start\e[21m Event raised on Container 'appserver'\n"
-
-    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then

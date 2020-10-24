@@ -29,7 +29,6 @@
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
     . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
 
-    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     printf "${Green}${InvertOn}  ================================================================================\n"

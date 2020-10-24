@@ -45,7 +45,6 @@
         esac
     done
 
-    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     printf "${Blue}       ================================================================================${NC}\n"
