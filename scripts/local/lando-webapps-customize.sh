@@ -11,8 +11,7 @@
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
     target_env="local"
 
-    printf "\n"
-    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     printout "ACTION" "Checking and creating development directory links for WebApps."
 

@@ -14,7 +14,6 @@
     # Create script variables
     target_env="local"
 
-    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then

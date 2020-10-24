@@ -16,7 +16,6 @@
     setup_logs="${LANDO_MOUNT}/setup"
     LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
 
-    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     printf "${Blue}       ================================================================================${NC}\n"

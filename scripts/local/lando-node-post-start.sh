@@ -16,7 +16,6 @@
 #     1. Start the fractal service.
 ###############################################################
 
-  printf "\n"
   printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
   printf "\n"
 

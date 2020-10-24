@@ -35,7 +35,7 @@ services:
         timeout: 15s
         retries: 5
     build_as_root:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'node'\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'node'\n\n"
       - /app/scripts/local/lando-node-customize.sh
     run:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[0m Event raised on Container 'node'\n\n"
@@ -56,7 +56,7 @@ services:
         timeout: 10s
         retries: 5
     run_as_root:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun_as_root\e[0m Event raised on Container 'database'\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun_as_root\e[0m Event raised on Container 'database'\n\n"
       - /app/scripts/local/lando-database-customize.sh
 
     creds:
@@ -81,14 +81,14 @@ services:
       conf: xdebug.ini
 
     build_as_root:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver'\n\n"
 
     run:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:
@@ -159,4 +159,4 @@ tooling:
 
 events:
   post-start:
-    - appserver: printf "\e[1m\e[7m[LANDO]\e[0m \e[1mpost-start\e[0m Event raised on Container 'appserver\n" && /app/scripts/local/lando-drupal-post-start.sh
+    - appserver: printf "\e[1m\e[7m[LANDO]\e[0m \e[1mpost-start\e[0m Event raised on Container 'appserver'\n\n" && /app/scripts/local/lando-drupal-post-start.sh

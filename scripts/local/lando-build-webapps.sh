@@ -14,7 +14,6 @@
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
     target_env="local"
 
-    printf "\n"
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     printf "\n${Blue}       ================================================================================${NC}\n"
@@ -28,9 +27,9 @@
     # Install a standard common set of dependencies required for the local build.
     # (This is all dependencies from the package.json file in the scripts folder).
     printout "ACTION" "Installing WebApp standard packages and node dependencies."
-    cd ${REPO_ROOT}/${webapps_local_local_dir} &&
+    (cd ${REPO_ROOT}/${webapps_local_local_dir} &&
       npm install &> ${setup_logs}/webapp_build.log &&
-      printout "SUCCESS" "WebApp dev environment setup."
+      printout "SUCCESS" "WebApp dev environment created.\n") || printout "ERROR" "WebApp dev environment NOT created.\n"
 
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
     printf "\n"

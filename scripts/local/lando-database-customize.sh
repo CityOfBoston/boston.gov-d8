@@ -13,7 +13,6 @@
   # Create script variables
   target_env="local"
 
-  printf "\n"
   printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
   printf "\n"
   printf "${Blue}       ================================================================================${NC}\n"

@@ -12,7 +12,6 @@
   . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
   target_env="local"
 
-  printf "\n"
   printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
   printf "\n"
   printf "${Blue}       ================================================================================${NC}\n"
