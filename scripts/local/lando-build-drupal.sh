@@ -131,8 +131,8 @@
 
     # Update the drush.yml file.
     printout "INFO" "CoB use a CLI called 'drush' to administer the website from scripts or interacively via a console."
-    printout "INFO" "Drush can administer both local and remote sites."
-    printout "INFO" "Actions performed against remote sites use an Alias which drush defines SSH credentials."
+    printout "INFO" "Drush can administer both local and remote Acquia sites."
+    printout "INFO" "Actions performed against remote (Aquia) sites use an Alias which defines SSH credentials."
     printout "ACTION" "Creating or updating drush configuration and aliases."
     drush_file=${LANDO_MOUNT}/drush/drush.yml
     drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
@@ -146,8 +146,7 @@
     # 'build_settings' function is contained in lando_utilities.sh.
     printout "INFO" "Drupal uses a number of settings files to define global settings for the website."
     printout "INFO" "This includes run-time settings, database connectivity, core and optional file locations."
-    (build_settings &&
-      printout "SUCCESS" "Settings updated.\n") || printout "ERROR" "Settings file not created - website may not load.\n"
+    build_settings || printout "ERROR" "Settings file not created - website may not load.\n"
 
     # Install Content.
     # For local builds, there are 3 DB build strategies:
@@ -180,7 +179,7 @@
     printout "INFO" "Drupal is a Content Management System with content stored in a relational database."
     printout "INFO" "CoB use a MySQL database to store both Drupal site configurations and boston.gov content."
     printout "INFO" "With this local build, the MySQL database is hosted in the 'database' docker container."
-    printout "INFO" "Depending on the build settings, the local DB can either be created or copied from Acquia."
+    printout "INFO" "Depending on the build settings, the local DB can either be created or copied from Acquia.\n"
 
     # If we are restoring from a backup, make sure its correctly defined now, so we can default to sync if needed.
     if [[ "${build_local_database_source}" == "restore" ]]; then
@@ -195,7 +194,7 @@
 
     if [[ "${build_local_database_source}" == "initialize" ]]; then
 
-        printout "INFO" "Using INITIALIZE Mode: Will create a new DB using 'drush site-install' and then import repo configs."
+        printout "INFO" "This build is using INITIALIZE Mode and Will create a new DB using 'drush site-install' and then import repo configs."
         printout "INFO" " ... with ${lando_services_database_type=mysql} database '${lando_services_database_creds_database}' on '${lando_services_database_host}:${lando_services_database_portforward}' in container '${LANDO_APP_PROJECT}_database_1'"
         printout "INFO" " -> This will take some time ..."
 
@@ -245,7 +244,7 @@
 
     elif [[ "${build_local_database_source}" == "restore" ]]; then
 
-        printout "INFO" "Using RESTORE Mode: Will restore the DB from ${build_local_database_backup_location}."
+        printout "INFO" "This build is using RESTORE Mode and will restore the DB from ${build_local_database_backup_location}."
         printout "INFO" " -> This will take some time ..."
 
         printout "ACTION" "Restoring database."
@@ -271,7 +270,7 @@
         # Ensure a remote source is defined - if not, default to the develop environment on Acquia.
         if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
-        printout "INFO" "Using SYNC Mode: Will copy a remote DB into the locak database docker container."
+        printout "INFO" "This build is using SYNC Mode and will copy a remote DB into the locak database docker container."
         printout "INFO" "Remote database going to be downloaded from ${build_local_database_drush_alias}."
         printout "INFO" " -> This will take some time ..."
 
@@ -281,6 +280,9 @@
         (${drush_cmd} -y sql:drop --database=default > ${setup_logs}/drush_site_install.log &&
             ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >> ${setup_logs}/drush_site_install.log &&
             printout "SUCCESS" "Site is installed with database and content from remote environment.\n") || (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" && exit 1)
+    elif [[ "${build_local_database_source}" == "none" ]]; then
+        printout "INFO" "This build is using NONE Mode. Existing DB is unchanged."
+        printout "SUCCESS" "Did nothing.\n"
     fi
 
     # Import configurations from the project repo into the database.
@@ -373,7 +375,7 @@
     printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >> ${setup_logs}/uli.log
     (${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null &&
       ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log &&
-      printout "SUCCESS" "Password changed.\n") || printout "WARNING" "Password was not changed.\n")
+      printout "SUCCESS" "Password changed.\n") || printout "WARNING" "Password was not changed.\n"
 
     text=$(displayTime $(($(date +%s)-timer)))
     printout "INFO" "Drupal build finished." "Drupal install & build took ${text}"
