@@ -195,7 +195,7 @@ function clone_patterns_repo() {
 
 function build_settings() {
 
-    printf "ref: cob_build_utilities:build_settings()"
+    printf "ref: cob_build_utilities:build_settings()\n"
 
     printout "ACTION" "Installing and updating Drupal settings files."
 
@@ -260,7 +260,7 @@ function build_settings() {
     rm -f "${docroot}/sites/example.settings.local.php"
     rm -f "${docroot}/sites/example.sites.php"
 
-    printout "SUCCESS" "Settings files written/updated."
+    printout "SUCCESS" "Settings files written/updated.\n"
 }
 
 function displayTime() {
