@@ -77,7 +77,7 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "true"
-    contactform_endpoint_2:
+    contactform_endpoint_v2:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
       # none = don't alter modules enabled from configuration
       type: dev
@@ -86,7 +86,7 @@ build:
         # Set source to 'initialize' to start a fresh install.
         # Otherwise set it to 'sync' to sync from the drush-alias environment.
         source: initialize
-        drush_alias: "@bostond8.test"
+        drush_alias: "@bostond8.dev2"
       config:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
@@ -137,7 +137,7 @@ deploy:
     drush_db_source: "@bostond8.prod"
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-  contactform_endpoint_2:
+  contactform_endpoint_v2:
     # Folder in Travis container where deploy files will be "built"
     dir: ${REPO_ROOT}/deploy
     # Name of the target branch in the Acquia repo. Should be quoted if it contains - or _ or spaces.
