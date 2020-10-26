@@ -48,6 +48,32 @@ class PostmarkAPI extends ControllerBase {
   }
 
   /**
+   * Perform Drupal Queue tasks.
+   *
+   * @param string $operation
+   *   The value of the operation to be performed.
+   * @param array $data
+   *   The array containing the email POST data.
+   * @param string $id
+   *   The id of the item to be deleted.
+   */
+  public function queueOperations(string $operation, array $data, string $id) {
+    $queue_name = 'email_contactform';
+    $queue = \Drupal::queue($queue_name);
+
+    if ($operation == "add") {
+      $queue_item_id = $queue->createItem($data);
+      return $queue_item_id;
+    }
+
+    if ($operation == "delete") {
+      $item_obj = (object) ['item_id' => $id];
+      $queue->deleteItem($item_obj);
+    }
+
+  }
+
+  /**
    * Send email via Postmark API.
    *
    * @param array $emailFields
@@ -125,6 +151,10 @@ class PostmarkAPI extends ControllerBase {
     }
 
     if ($auth == TRUE) :
+      // Add email data to queue in case of Postmark failure.
+      $queue_item = $this->queueOperations('add', $data, '');
+
+      // Send to Postmark.
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $postmark_endpoint);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -136,7 +166,14 @@ class PostmarkAPI extends ControllerBase {
         "Content-Type: application/json",
         "X-Postmark-Server-Token: " . $postmark_env->$postmark_server_token,
       ]);
+
       $response = curl_exec($ch);
+      $response_json = json_decode($response, TRUE);
+
+      // Check for message success from Postmark and remove from Drupal queue.
+      if (strtolower($response_json["Message"]) == "ok") {
+        $this->queueOperations('delete', [], $queue_item);
+      }
 
       $response_array = [
         'status' => 'success',
