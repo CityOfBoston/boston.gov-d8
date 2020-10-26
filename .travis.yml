@@ -6,7 +6,7 @@ branches:
   only:
     - develop
     - master
-    - Accessibility_v2
+    - drupal_tickets
 
 php:
   - 7.3
@@ -121,4 +121,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: Accessibility_v2
+      branch: drupal_tickets
