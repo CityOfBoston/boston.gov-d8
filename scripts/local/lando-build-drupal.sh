@@ -381,5 +381,6 @@
     text=$(displayTime $(($(date +%s)-timer)))
     printout "INFO" "Drupal build finished." "Drupal install & build took ${text}"
 
+    printf "\n"
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
     printf "\n"
