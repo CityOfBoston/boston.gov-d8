@@ -15,7 +15,7 @@
   printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
   printf "\n"
   printf "${Blue}       ================================================================================${NC}\n"
-  printout "STEP" "NODE: Install patterns and webapps into the node container."
+  printout "STEP" "Prepare NodeJS env in node: Install patterns and webapps into the node container."
   printf "${Blue}       ================================================================================${NC}\n"
 
     # Copy the node.js executable file in the container to a location that can be seen on the host.

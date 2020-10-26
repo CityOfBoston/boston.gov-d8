@@ -19,7 +19,7 @@
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
     printf "${Blue}       ================================================================================${NC}\n"
-    printout "STEP" "PHP in appserver: Installing required Linux packages in container."
+    printout "STEP" "Prepare PHP env in appserver: Installing required Linux packages in container."
     printf "${Blue}       ================================================================================${NC}\n"
 
     # Prepare the folder which will hold setup logs.

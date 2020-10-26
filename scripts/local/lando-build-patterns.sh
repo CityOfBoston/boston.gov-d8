@@ -31,7 +31,7 @@
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
     fi
-    printf "\n${Blue}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "Building Patterns."
     printf "${Blue}       ================================================================================${NC}\n"
     printout "INFO" "Patterns source files are found in ${patterns_local_repo_local_dir}."
