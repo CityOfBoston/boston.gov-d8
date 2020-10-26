@@ -16,7 +16,7 @@
 
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
-    printf "\n${Blue}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "Creating WebApp dev environment."
     printf "${Blue}       ================================================================================${NC}\n"
     printout "INFO" "Webapp source files are found in ${REPO_ROOT}/${webapps_local_local_dir}."

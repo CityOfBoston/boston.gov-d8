@@ -50,6 +50,7 @@
     printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "DRUPAL Installing Drupal framework and dependencies."
     printf "${Blue}       ================================================================================${NC}\n"
+    printout "INFO" " - see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
 
     # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
     # The folder has been created and permissions set in lando-container-customize.sh
@@ -105,7 +106,6 @@
     printout "INFO" "Drupal uses Composer (PHP Package Manager) to install PHP packages and dependencies."
     printout "INFO" "Composer also downloads and installs PHP and JS files required by contributed modules."
     printout "INFO" "The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files)."
-    printout "INFO" " - see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
     (cd ${LANDO_MOUNT} &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
@@ -117,9 +117,9 @@
     printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "DRUPAL: Add custom settings for City of Boston (boston.gov) website."
     printf "${Blue}       ================================================================================${NC}\n"
+    printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
     printout "INFO" "Secret config information is stored in a private repo."
     printout "INFO" "Files from the private repo are now merged into the Drupal folders."
-    printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 
     # Clone the private repo and merge files in it with the main repo.
     # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
@@ -175,10 +175,11 @@
     printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "DRUPAL: Install and update City of Boston content (into database)."
     printf "${Blue}       ================================================================================${NC}\n"
+    printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
     printout "INFO" "Drupal is a Content Management System with content stored in a relational database."
     printout "INFO" "CoB use a MySQL database to store both Drupal site configurations and boston.gov content."
     printout "INFO" "With this local build, the MySQL database is hosted in the 'database' docker container."
-    printout "INFO" "Depending on the build settings, the local DB can either be created or copied from Acquia.\n"
+    printout "INFO" "Depending on the build settings, the local DB can either be created or copied from Acquia."
 
     # If we are restoring from a backup, make sure its correctly defined now, so we can default to sync if needed.
     if [[ "${build_local_database_source}" == "restore" ]]; then
@@ -281,7 +282,8 @@
             printout "SUCCESS" "Site is installed with database and content from remote environment.\n") || (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" && exit 1)
     elif [[ "${build_local_database_source}" == "none" ]]; then
         printout "INFO" "This build is using NONE Mode. Existing DB is unchanged."
-        printout "SUCCESS" "Did nothing.\n"
+        printout "WARNING" "If there is no DB in the database container, or if it is incomplete, then subsequent build steps will fail."
+        printout "SUCCESS" "Did nothing !.\n"
     fi
 
     # Import configurations from the project repo into the database.
@@ -295,7 +297,7 @@
         printout "INFO" "This build has a new and essentialy empty database."
         printout "INFO" " -> this import will take some time ..."
     fi
-    printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log\n"
+    printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
     printout "ACTION" "Importing configuration."
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
