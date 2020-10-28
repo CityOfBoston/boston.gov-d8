@@ -4,8 +4,8 @@ namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\bos_email\Templates\Contactform;
+use Drupal\bos_email\Controller\PostmarkVars;
 use Drupal\Core\Cache\CacheableJsonResponse;
-use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal;
@@ -50,27 +50,15 @@ class PostmarkAPI extends ControllerBase {
   /**
    * Perform Drupal Queue tasks.
    *
-   * @param string $operation
-   *   The value of the operation to be performed.
    * @param array $data
    *   The array containing the email POST data.
-   * @param string $id
-   *   The id of the item to be deleted.
    */
-  public function queueOperations(string $operation, array $data, string $id) {
+  public function addQueueItem(array $data) {
     $queue_name = 'email_contactform';
     $queue = \Drupal::queue($queue_name);
+    $queue_item_id = $queue->createItem($data);
 
-    if ($operation == "add") {
-      $queue_item_id = $queue->createItem($data);
-      return $queue_item_id;
-    }
-
-    if ($operation == "delete") {
-      $item_obj = (object) ['item_id' => $id];
-      $queue->deleteItem($item_obj);
-    }
-
+    return $queue_item_id;
   }
 
   /**
@@ -82,27 +70,9 @@ class PostmarkAPI extends ControllerBase {
    *   The server being called via the endpoint uri.
    */
   public function sendEmail(array $emailFields, string $server) {
-    $postmark_server_token = $server . "_token";
 
-    if (isset($_ENV['POSTMARK_SETTINGS'])) {
-      $postmark_env = [];
-      $get_vars = explode(",", $_ENV['POSTMARK_SETTINGS']);
-      foreach ($get_vars as $item) {
-        $json = explode(":", $item);
-        $postmark_env[$json[0]] = $json[1];
-      }
-    }
-    else {
-      $postmark_env = [
-        "registry_token" => Settings::get('postmark_settings')['registry_token'],
-        "contactform_token" => Settings::get('postmark_settings')['contactform_token'],
-        "commissions_token" => Settings::get('postmark_settings')['commissions_token'],
-        "auth" => Settings::get('postmark_settings')['auth'],
-      ];
-    }
-
-    $postmark_env = json_decode(json_encode($postmark_env));
-    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->auth ? TRUE : FALSE);
+    $postmark_env = new PostmarkVars();
+    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->varsPostmark()["auth"] ? TRUE : FALSE);
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
@@ -116,7 +86,7 @@ class PostmarkAPI extends ControllerBase {
           "ReplyTo" => $emailFields["from_address"]
         ],
       ];
-      $postmark_endpoint = "https://api.postmarkapp.com/email/withTemplate";
+      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email/withTemplate";
     }
     elseif ($server == "contactform") {
       $env = ($_ENV['AH_SITE_ENVIRONMENT'] !== 'prod' ? '-staging' : '');
@@ -136,7 +106,7 @@ class PostmarkAPI extends ControllerBase {
         "TextBody" => $message_template,
         "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $from,
       ];
-      $postmark_endpoint = "https://api.postmarkapp.com/email";
+      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
     else {
 
@@ -147,37 +117,32 @@ class PostmarkAPI extends ControllerBase {
         "TextBody" => $emailFields["message"],
         "ReplyTo" => $emailFields["from_address"]
       ];
-      $postmark_endpoint = "https://api.postmarkapp.com/email";
+      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
 
     if ($auth == TRUE) :
+      $data["server"] = $server;
       // Add email data to queue in case of Postmark failure.
-      $queue_item = $this->queueOperations('add', $data, '');
+      $queue_item = $this->addQueueItem($data);
 
-      // Send to Postmark.
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $postmark_endpoint);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($ch, CURLOPT_HEADER, FALSE);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-      curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Accept: application/json",
-        "Content-Type: application/json",
-        "X-Postmark-Server-Token: " . $postmark_env->$postmark_server_token,
-      ]);
+      $database = \Drupal::database();
+      $query = $database->query("SELECT * FROM queue WHERE item_id = $queue_item");
+      $result = $query->fetchAll();
 
-      $response = curl_exec($ch);
-      $response_json = json_decode($response, TRUE);
+      $queue_factory = \Drupal::service('queue');
+      $queue_manager = \Drupal::service('plugin.manager.queue_worker');
+      $queue_worker = $queue_manager->createInstance('email_contactform');
+      $queue = $queue_factory->get('email_contactform');
 
-      // Check for message success from Postmark and remove from Drupal queue.
-      if (strtolower($response_json["Message"]) == "ok") {
-        $this->queueOperations('delete', [], $queue_item);
+      $process_item = $queue_worker->processItem($result);
+      if ($process_item == "ok") {
+        $time = time();
+        $database->query("UPDATE queue SET expire = $time WHERE item_id = $queue_item");
       }
 
       $response_array = [
         'status' => 'success',
-        'response' => $response,
+        'response' => $process_item,
       ];
 
     else :
