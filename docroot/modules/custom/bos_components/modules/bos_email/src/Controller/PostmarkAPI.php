@@ -126,18 +126,27 @@ class PostmarkAPI extends ControllerBase {
       $queue_item = $this->addQueueItem($data);
 
       $database = \Drupal::database();
-      $query = $database->query("SELECT * FROM queue WHERE item_id = $queue_item");
+      $query = $database->query("SELECT data FROM queue WHERE item_id = $queue_item AND expire = 0");
       $result = $query->fetchAll();
+      if ($result) {
 
-      $queue_factory = \Drupal::service('queue');
-      $queue_manager = \Drupal::service('plugin.manager.queue_worker');
-      $queue_worker = $queue_manager->createInstance('email_contactform');
-      $queue = $queue_factory->get('email_contactform');
+        $time = time() + 30;
+        $database->query("UPDATE queue SET expire = $time WHERE item_id = $queue_item AND expire = 0");
 
-      $process_item = $queue_worker->processItem($result);
-      if ($process_item == "ok") {
-        $time = time();
-        $database->query("UPDATE queue SET expire = $time WHERE item_id = $queue_item");
+        $queue_factory = \Drupal::service('queue');
+        $queue_manager = \Drupal::service('plugin.manager.queue_worker');
+        $queue_worker = $queue_manager->createInstance('email_contactform');
+        $queue = $queue_factory->get('email_contactform');
+
+        $data_process = unserialize($result[0]->data);
+        $process_item = $queue_worker->processItem($data_process);
+
+        if ($process_item) {
+          $database->query("DELETE FROM queue WHERE item_id = $queue_item");
+        }
+        else {
+          $database->query("UPDATE queue SET expire = 0 WHERE item_id = $queue_item");
+        }
       }
 
       $response_array = [
