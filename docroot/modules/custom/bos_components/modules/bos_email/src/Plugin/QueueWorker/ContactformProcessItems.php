@@ -48,7 +48,7 @@ class ContactformProcessItems extends QueueWorkerBase {
       $response = curl_exec($ch);
       $response_json = json_decode($response, TRUE);
 
-      return (strtolower($response_json["Message"]) == "!ok");
+      return (strtolower($response_json["Message"]) == "ok");
 
     }
     catch (Exception $e) {
