@@ -26,7 +26,6 @@ class ContactformProcessItems extends QueueWorkerBase {
   public function processItem($item) {
     // Send emails via Postmark.
     $item_json = json_encode($item);
-    $item_array_decode = json_decode($item_array_encode, TRUE);
 
     $postmark_env = new PostmarkVars();
     $server_token = $item["server"] . "_token";
@@ -48,11 +47,19 @@ class ContactformProcessItems extends QueueWorkerBase {
       $response = curl_exec($ch);
       $response_json = json_decode($response, TRUE);
 
-      return (strtolower($response_json["Message"]) == "ok");
+      if (strtolower($response_json["Message"]) == "ok") {
+        return TRUE;
+      }
+      else {
+        return FALSE;
+
+        $error = 'Message was not sent by Postmark.';
+        Exception($error);
+
+      }
 
     }
     catch (Exception $e) {
-
       return FALSE;
     }
 
