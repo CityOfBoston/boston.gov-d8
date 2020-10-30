@@ -4,6 +4,8 @@ namespace Drupal\bos_email\Plugin\QueueWorker;
 
 use Drupal;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Queue\QueueWorkerInterface;
+use Drupal\Core\Queue\RequeueException;
 use Drupal\bos_email\Controller\PostmarkVars;
 
 /**
@@ -51,10 +53,8 @@ class ContactformProcessItems extends QueueWorkerBase {
         return TRUE;
       }
       else {
+        $exception = new RequeueException('Email issue with Postmark and sent for requeue.');
         return FALSE;
-
-        $error = 'Message was not sent by Postmark.';
-        Exception($error);
 
       }
 
