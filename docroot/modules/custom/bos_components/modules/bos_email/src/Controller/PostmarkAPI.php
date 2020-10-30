@@ -144,9 +144,7 @@ class PostmarkAPI extends ControllerBase {
         if ($process_item) {
           $database->query("DELETE FROM queue WHERE item_id = $queue_item");
         }
-        else {
-          $database->query("UPDATE queue SET expire = 0 WHERE item_id = $queue_item");
-        }
+
       }
 
       $response_array = [
