@@ -127,6 +127,23 @@ function node_event_preprocess_node__event(&$variables) {
   // Select the date to appear on the node.
   if (isset($variables["content"]["field_event_date_recur"]["#object"])) {
     $vdate = $variables["content"]["field_event_date_recur"][0];
+
+    $length = count($vdate['#occurrences']);
+    $variables["recurring"] = $length;
+
+    // Render the time element of the event date into a detail_item.
+    $event_start_time = $variables['elements']['#node']->field_event_date_recur[0]->value;
+    // All dates stored in UTC in DB.
+    $event_start_time = strtotime($event_start_time . " +0000");
+    $variables["start_time"] = \Drupal::service('date.formatter')->format($event_start_time, "date_format_calendar_time", "", date_default_timezone_get());
+
+    $event_end_time = $variables['elements']['#node']->field_event_date_recur[0]->end_value;
+    $event_end_time = strtotime($event_end_time . " +0000");
+    $variables["end_time"] = \Drupal::service('date.formatter')->format($event_end_time, "date_format_calendar_time", "", date_default_timezone_get());
+
+    $event_ical_rrule = $variables['elements']['#node']->field_event_date_recur[0]->rrule;
+    $variables["rrule"] = $event_ical_rrule;
+
     if ($vdate["#is_recurring"]) {
       // This is a recurring event.
       if (!empty($vdate["#occurrences"])) {
@@ -162,14 +179,14 @@ function node_event_preprocess_node__event(&$variables) {
     $event_date = $variables['elements']['#node']->field_event_date_recur[0]->value;
     // All dates stored in UTC in DB.
     $event_date = strtotime($event_date . " +0000");
-    $vars["label"] = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+    $vars["label"] = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", date_default_timezone_get());
 
     if (!empty($variables['elements']['#node']->field_event_date_recur[0]->end_value
       && $variables['elements']['#node']->field_event_date_recur[0]->value != $variables['elements']['#node']->field_event_date_recur[0]->end_value)) {
       $event_end_date = $variables['elements']['#node']->field_event_date_recur[0]->end_value;
       $event_end_date = strtotime($event_end_date . " +0000");
       $vars["label"] .= " - " . \Drupal::service('date.formatter')
-        ->format($event_end_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+        ->format($event_end_date, "date_format_calendar_time", "", date_default_timezone_get());
     }
     $variables["content"]["field_event_times"] = Drupal::theme()->render("detail_item", $vars);
   }
