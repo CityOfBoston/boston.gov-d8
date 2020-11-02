@@ -2,13 +2,13 @@
 
 namespace Drupal\bos_email\Controller;
 
+use Drupal;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\bos_email\Templates\Contactform;
-use Drupal\bos_email\Controller\PostmarkVars;
+use Drupal\bos_email\Controller\PostmarkOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal;
 
 /**
  * Postmark class for API.
@@ -69,10 +69,10 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
-  public function sendEmail(array $emailFields, string $server) {
+  public function formatData(array $emailFields, string $server) {
 
-    $postmark_env = new PostmarkVars();
-    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->varsPostmark()["auth"] ? TRUE : FALSE);
+    $postmark_env = new PostmarkOps();
+    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->getVars()["auth"] ? TRUE : FALSE);
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
@@ -122,34 +122,24 @@ class PostmarkAPI extends ControllerBase {
 
     if ($auth == TRUE) :
       $data["server"] = $server;
-      // Add email data to queue in case of Postmark failure.
-      $queue_item = $this->addQueueItem($data);
 
-      $database = \Drupal::database();
-      $query = $database->query("SELECT data FROM queue WHERE item_id = $queue_item AND expire = 0");
-      $result = $query->fetchAll();
-      if ($result) {
+      $postmark_ops = new postmarkOps();
+      $postmark_send = $postmark_ops->sendEmail($data);
 
-        $time = time() + 30;
-        $database->query("UPDATE queue SET expire = $time WHERE item_id = $queue_item AND expire = 0");
+      if (!$postmark_send) {
+        // Add email data to queue because of Postmark failure.
+        $this->addQueueItem($data);
+        $response_message = 'Message sent to queue.';
 
-        $queue_factory = \Drupal::service('queue');
-        $queue_manager = \Drupal::service('plugin.manager.queue_worker');
-        $queue_worker = $queue_manager->createInstance('email_contactform');
-        $queue = $queue_factory->get('email_contactform');
-
-        $data_process = unserialize($result[0]->data);
-        $process_item = $queue_worker->processItem($data_process);
-
-        if ($process_item) {
-          $database->query("DELETE FROM queue WHERE item_id = $queue_item");
-        }
-
+      }
+      else {
+        // Message was sent successfully to sender via Postmark.
+        $response_message = 'Message sent to sender.';
       }
 
       $response_array = [
         'status' => 'success',
-        'response' => $process_item,
+        'response' => $response_message,
       ];
 
     else :
@@ -210,7 +200,7 @@ class PostmarkAPI extends ControllerBase {
     }
 
     if ($error == NULL) {
-      return $this->sendEmail($emailFields, $server);
+      return $this->formatData($emailFields, $server);
     }
     else {
       $response_array = [

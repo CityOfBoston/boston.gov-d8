@@ -3,10 +3,10 @@
 namespace Drupal\bos_email\Plugin\QueueWorker;
 
 use Drupal;
+use Drupal\Core\Queue\RequeueException;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\Queue\QueueWorkerInterface;
-use Drupal\Core\Queue\RequeueException;
-use Drupal\bos_email\Controller\PostmarkVars;
+use Drupal\bos_email\Controller\PostmarkOps;
 
 /**
  * Processes emails through Postmark API.
@@ -26,40 +26,18 @@ class ContactformProcessItems extends QueueWorkerBase {
    *   The item stored in the queue.
    */
   public function processItem($item) {
-    // Send emails via Postmark.
-    $item_json = json_encode($item);
-
-    $postmark_env = new PostmarkVars();
-    $server_token = $item["server"] . "_token";
-    $server_token = $postmark_env->varsPostmark()[$server_token];
-
     try {
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $item["postmark_endpoint"]);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($ch, CURLOPT_HEADER, FALSE);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $item_json);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Accept: application/json",
-        "Content-Type: application/json",
-        "X-Postmark-Server-Token: " . $server_token,
-      ]);
 
-      $response = curl_exec($ch);
-      $response_json = json_decode($response, TRUE);
+      $postmark_ops = new postmarkOps();
+      $postmark_send = $postmark_ops->sendEmail($item);
 
-      if (strtolower($response_json["Message"]) == "ok") {
-        return TRUE;
-      }
-      else {
-        $exception = new RequeueException('Email issue with Postmark and sent for requeue.');
-        return FALSE;
-
+      if (!$postmark_send) {
+        throw new RequeueException('There was a problem.');
       }
 
     }
     catch (Exception $e) {
+
       return FALSE;
     }
 
