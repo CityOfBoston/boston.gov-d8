@@ -28,7 +28,7 @@ class ContactformProcessItems extends QueueWorkerBase {
   public function processItem($item) {
     try {
 
-      $postmark_ops = new postmarkOps();
+      $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($item);
 
       if (!$postmark_send) {

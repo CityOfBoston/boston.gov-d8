@@ -123,7 +123,7 @@ class PostmarkAPI extends ControllerBase {
     if ($auth == TRUE) :
       $data["server"] = $server;
 
-      $postmark_ops = new postmarkOps();
+      $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($data);
 
       if (!$postmark_send) {
