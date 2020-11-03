@@ -2,9 +2,11 @@
 
 namespace Drupal\bos_email\Controller;
 
+use Drupal;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\bos_email\Templates\Contactform;
+use Drupal\bos_email\Controller\PostmarkOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
-use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -46,6 +48,20 @@ class PostmarkAPI extends ControllerBase {
   }
 
   /**
+   * Perform Drupal Queue tasks.
+   *
+   * @param array $data
+   *   The array containing the email POST data.
+   */
+  public function addQueueItem(array $data) {
+    $queue_name = 'email_contactform';
+    $queue = \Drupal::queue($queue_name);
+    $queue_item_id = $queue->createItem($data);
+
+    return $queue_item_id;
+  }
+
+  /**
    * Send email via Postmark API.
    *
    * @param array $emailFields
@@ -53,39 +69,16 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
-  public function sendEmail(array $emailFields, string $server) {
-    $postmark_server_token = $server . "_token";
+  public function formatData(array $emailFields, string $server) {
 
-    if (isset($_ENV['POSTMARK_SETTINGS'])) {
-      $postmark_env = [];
-      $get_vars = explode(",", $_ENV['POSTMARK_SETTINGS']);
-      foreach ($get_vars as $item) {
-        $json = explode(":", $item);
-        $postmark_env[$json[0]] = $json[1];
-      }
-    }
-    else {
-      $postmark_env = [
-        "registry_token" => Settings::get('postmark_settings')['registry_token'],
-        "contactform_token" => Settings::get('postmark_settings')['contactform_token'],
-        "commissions_token" => Settings::get('postmark_settings')['contactform_commissions'],
-        "auth" => Settings::get('postmark_settings')['auth'],
-      ];
-    }
-
-    $postmark_env = json_decode(json_encode($postmark_env));
-    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
-    $htmlMessage = strpos($emailFields["message"], "<div");
-    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->auth ? TRUE : FALSE);
+    $postmark_env = new PostmarkOps();
+    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->getVars()["auth"] ? TRUE : FALSE);
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
-    $data_basic = [
-      "To" => $emailFields["to_address"],
-      "From" => $from_address,
-    ];
-
     if (isset($emailFields["template_id"])) {
-      $data_template = [
+      $data = [
+        "To" => $emailFields["to_address"],
+        "From" => $from_address,
         "TemplateID" => $emailFields["template_id"],
         "TemplateModel" => [
           "subject" => $emailFields["subject"],
@@ -93,35 +86,60 @@ class PostmarkAPI extends ControllerBase {
           "ReplyTo" => $emailFields["from_address"]
         ],
       ];
-      $data = array_merge($data_basic, $data_template);
-      $postmark_endpoint = "https://api.postmarkapp.com/email/withTemplate";
+      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email/withTemplate";
+    }
+    elseif ($server == "contactform") {
+      $env = ($_ENV['AH_SITE_ENVIRONMENT'] !== 'prod' ? '-staging' : '');
+      $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
+      $message = new Contactform();
+      $message_template = $message->templatePlainText(
+                  $emailFields["message"],
+                  $emailFields["name"],
+                  $emailFields["from_address"],
+                  $emailFields["url"]);
+      $from_contactform_rand = "Boston.gov Contact Form <" . $rand . "@contactform" . $env . ".boston.gov>";
+
+      $data = [
+        "To" => $emailFields["to_address"],
+        "From" => $from_contactform_rand,
+        "subject" => $emailFields["subject"],
+        "TextBody" => $message_template,
+        "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $from,
+      ];
+      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
     else {
-      $data_text = [
+
+      $data = [
+        "To" => $emailFields["to_address"],
+        "From" => $from_address,
         "subject" => $emailFields["subject"],
         "TextBody" => $emailFields["message"],
         "ReplyTo" => $emailFields["from_address"]
       ];
-      $data = array_merge($data_basic, $data_text);
-      $postmark_endpoint = "https://api.postmarkapp.com/email";
+      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
+
     if ($auth == TRUE) :
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $postmark_endpoint);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($ch, CURLOPT_HEADER, FALSE);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-      curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Accept: application/json",
-        "Content-Type: application/json",
-        "X-Postmark-Server-Token: " . $postmark_env->$postmark_server_token,
-      ]);
-      $response = curl_exec($ch);
+      $data["server"] = $server;
+
+      $postmark_ops = new PostmarkOps();
+      $postmark_send = $postmark_ops->sendEmail($data);
+
+      if (!$postmark_send) {
+        // Add email data to queue because of Postmark failure.
+        $this->addQueueItem($data);
+        $response_message = 'Message sent to queue.';
+
+      }
+      else {
+        // Message was sent successfully to sender via Postmark.
+        $response_message = 'Message sent to sender.';
+      }
 
       $response_array = [
         'status' => 'success',
-        'response' => $response,
+        'response' => $response_message,
       ];
 
     else :
@@ -182,7 +200,7 @@ class PostmarkAPI extends ControllerBase {
     }
 
     if ($error == NULL) {
-      return $this->sendEmail($emailFields, $server);
+      return $this->formatData($emailFields, $server);
     }
     else {
       $response_array = [
