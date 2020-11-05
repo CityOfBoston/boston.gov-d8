@@ -40,6 +40,7 @@
   else
 
     printout "INFO" "MyCLI and pspg server-side tools not installed." "If you require these tools then enable in config.yml.\n"
+    printout "SUCCESS" "Nothing Done.\n"
 
   fi
 
