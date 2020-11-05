@@ -39,24 +39,24 @@ global-styling.local:
   data:
     name: 'Patterns (local)'
 
-global-styling.patterns:
-  remote: https://patterns.boston.gov
+global-styling.patterns-staging:
+  remote: https://d1dgqfrsegcfqp.cloudfront.net/
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    https://patterns.boston.gov/scripts/all.js: {type: external, minified: true }
+    https://d1dgqfrsegcfqp.cloudfront.net/scripts/all.js: {type: external, minified: true }
   dependencies:
   - core/jquery
   css:
     theme:
-      https://patterns.boston.gov/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://patterns.boston.gov/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
-      https://patterns.boston.gov/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+      https://d1dgqfrsegcfqp.cloudfront.net/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://d1dgqfrsegcfqp.cloudfront.net/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://d1dgqfrsegcfqp.cloudfront.net/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
-    name: 'Patterns (production)'
+    name: 'Patterns (staging)'
 
 global-styling.heroku-patterns:
   remote: https://cob-patterns-staging.herokuapp.com/
@@ -97,15 +97,15 @@ fleet-components.patterns:
   js:
     https://patterns.boston.gov/web-components/fleetcomponents.js: {type: external, minified: true }
 
-fleet-components.heroku-patterns:
-  remote: https://cob-patterns-staging.herokuapp.com/
+fleet-components.patterns-staging:
+  remote: https://d1dgqfrsegcfqp.cloudfront.net/
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    https://cob-patterns-staging.herokuapp.com/web-components/fleetcomponents.js: {type: external, minified: true }
+    https://d1dgqfrsegcfqp.cloudfront.net/web-components/fleetcomponents.js: {type: external, minified: true }
 
 page.assets:
   js:
