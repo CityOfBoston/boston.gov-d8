@@ -1,23 +1,37 @@
+uuid: d2b4e146-39d5-4248-ad8f-376c90ba6abd
 langcode: en
 status: true
 dependencies:
-    config:
-        - field.field.node.bh_parcel_project_assoc.body
-        - node.type.bh_parcel_project_assoc
-    module:
-        - text
-        - user
+  config:
+    - field.field.node.bh_parcel_project_assoc.field_bh_parcel_ref
+    - field.field.node.bh_parcel_project_assoc.field_bh_project_ref
+    - node.type.bh_parcel_project_assoc
+  module:
+    - user
 id: node.bh_parcel_project_assoc.default
 targetEntityType: node
 bundle: bh_parcel_project_assoc
 mode: default
 content:
-    body:
-        label: hidden
-        type: text_default
-        weight: 101
-        settings: {  }
-        third_party_settings: {  }
-    links:
-        weight: 100
-hidden: {  }
+  field_bh_parcel_ref:
+    weight: 103
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_bh_project_ref:
+    weight: 102
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  links:
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true

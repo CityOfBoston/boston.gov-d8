@@ -3,25 +3,48 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_commitment_letter_date
+    - field.field.node.bh_project.field_bh_construct_complete_date
+    - field.field.node.bh_project.field_bh_construction_start_date
+    - field.field.node.bh_project.field_bh_conveyance_vote_date
+    - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_disposition_type
+    - field.field.node.bh_project.field_bh_dnd_funding_award_date
     - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_initial_comm_mtg_date
+    - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_neighborhood
     - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_predicted_closing_date
+    - field.field.node.bh_project.field_bh_project_complete_date
     - field.field.node.bh_project.field_bh_project_name
     - field.field.node.bh_project.field_bh_project_stage
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
     - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_wysiwyg_photo_a
+    - field.storage.node.field_bh_coordinates
+    - field.storage.node.field_bh_disposition_type
     - field.storage.node.field_bh_funding_stage
+    - field.storage.node.field_bh_neighborhood
     - field.storage.node.field_bh_project_stage
     - field.storage.node.field_bh_project_status
     - field.storage.node.field_bh_record_type
+    - field.storage.node.field_bh_wysiwyg_photo_a
     - node.type.bh_project
+    - taxonomy.vocabulary.bh_disposition_type
     - taxonomy.vocabulary.bh_funding_stage
+    - taxonomy.vocabulary.bh_neighborhood
     - taxonomy.vocabulary.bh_project_stage
     - taxonomy.vocabulary.bh_project_status
     - taxonomy.vocabulary.bh_record_type
   module:
+    - geolocation
     - salesforce_pull
+    - text
 id: building_housing_projects
 label: 'Building Housing - Projects'
 weight: 0
@@ -97,9 +120,104 @@ field_mappings:
     salesforce_field: Name
     direction: sf_drupal
     id: 8
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_coordinates.lat
+    salesforce_field: Parcel_Y_Coordinate__c
+    direction: sf_drupal
+    id: 9
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_coordinates.lng
+    salesforce_field: Parcel_X_Coordinate__c
+    direction: sf_drupal
+    id: 10
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_wysiwyg_photo_a.value
+    salesforce_field: Project_Photo_1__c
+    direction: sf_drupal
+    id: 11
+  -
+    drupal_field_type: properties
+    drupal_field_value: body
+    salesforce_field: Narrative__c
+    direction: sf_drupal
+    id: 12
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_neighborhood
+    salesforce_field: Neighborhood_computed__c
+    direction: sf_drupal
+    id: 13
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_disposition_type
+    salesforce_field: Disposition_Type__c
+    direction: sf_drupal
+    id: 14
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_complete_date
+    salesforce_field: Actual_Finish_Date__c
+    direction: sf_drupal
+    id: 15
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_initial_comm_mtg_date
+    salesforce_field: Initial_Cmnty_Meeting_Complete_Actual__c
+    direction: sf_drupal
+    id: 16
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_rfp_issued_date
+    salesforce_field: RFP_Issued_Actual__c
+    direction: sf_drupal
+    id: 17
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_initial_td_vote_date
+    salesforce_field: Initial_TD_Vote_Actual__c
+    direction: sf_drupal
+    id: 18
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_dnd_funding_award_date
+    salesforce_field: Award_Enroll__c
+    direction: sf_drupal
+    id: 19
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_conveyance_vote_date
+    salesforce_field: Conveyance_Vote_Actual__c
+    direction: sf_drupal
+    id: 20
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_commitment_letter_date
+    salesforce_field: Commitment_Letter_Date__c
+    direction: sf_drupal
+    id: 21
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_predicted_closing_date
+    salesforce_field: Finance_Closing__c
+    direction: sf_drupal
+    id: 22
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_construction_start_date
+    salesforce_field: Construction_Start_Date__c
+    direction: sf_drupal
+    id: 23
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_construct_complete_date
+    salesforce_field: Construction_Finish_Actual__c
+    direction: sf_drupal
+    id: 24
 push_limit: 0
 push_retries: 3
 push_frequency: 0
 pull_frequency: 0
 always_upsert: false
-

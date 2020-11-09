@@ -3,20 +3,40 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_commitment_letter_date
+    - field.field.node.bh_project.field_bh_construct_complete_date
+    - field.field.node.bh_project.field_bh_construction_start_date
+    - field.field.node.bh_project.field_bh_conveyance_vote_date
+    - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_disposition_type
+    - field.field.node.bh_project.field_bh_dnd_funding_award_date
     - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_initial_comm_mtg_date
+    - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_neighborhood
     - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_predicted_closing_date
+    - field.field.node.bh_project.field_bh_project_complete_date
     - field.field.node.bh_project.field_bh_project_name
+    - field.field.node.bh_project.field_bh_project_parcels
     - field.field.node.bh_project.field_bh_project_stage
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_updates
     - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_wysiwyg_photo_a
     - node.type.bh_project
   module:
     - content_moderation
     - datetime
+    - geolocation
     - path
     - publication_date
+    - text
+    - viewfield
 _core:
   default_config_hash: 3e-iBVlxrftwBzLQhS4WJ8F_ZvldBCDRKOTshqE1snc
 id: node.bh_project.default
@@ -30,8 +50,76 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  field_bh_commitment_letter_date:
+    weight: 143
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_construct_complete_date:
+    weight: 146
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_construction_start_date:
+    weight: 145
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_conveyance_vote_date:
+    weight: 142
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_coordinates:
+    weight: 131
+    settings: {  }
+    third_party_settings: {  }
+    type: geolocation_latlng
+    region: content
+  field_bh_disposition_type:
+    weight: 136
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_bh_dnd_funding_award_date:
+    weight: 141
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
   field_bh_funding_stage:
     weight: 128
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_bh_initial_comm_mtg_date:
+    weight: 138
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_initial_td_vote_date:
+    weight: 140
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_neighborhood:
+    weight: 135
     settings:
       match_operator: CONTAINS
       match_limit: 10
@@ -48,6 +136,18 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
+  field_bh_predicted_closing_date:
+    weight: 144
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_project_complete_date:
+    weight: 134
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
   field_bh_project_name:
     weight: 121
     settings:
@@ -55,6 +155,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_bh_project_parcels:
+    weight: 132
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
     region: content
   field_bh_project_stage:
     weight: 126
@@ -82,6 +188,12 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
+  field_bh_project_updates:
+    weight: 137
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
+    region: content
   field_bh_record_type:
     weight: 125
     settings:
@@ -92,12 +204,26 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
+  field_bh_rfp_issued_date:
+    weight: 139
+    settings: {  }
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
   field_bh_total_num_units:
     weight: 123
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
+  field_bh_wysiwyg_photo_a:
+    weight: 133
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
     region: content
   langcode:
     type: language_select
@@ -168,4 +294,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  body: true
