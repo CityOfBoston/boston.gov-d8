@@ -1,0 +1,87 @@
+uuid: 4d61d347-c70e-4381-a2a7-1260d061edd4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.bh_update.body
+    - field.field.node.bh_update.field_bh_headline
+    - field.field.node.bh_update.field_bh_project_ref
+    - field.field.node.bh_update.field_bh_update_posted_date
+    - field.field.node.bh_update.field_bh_update_type_ref
+    - field.storage.node.body
+    - field.storage.node.field_bh_project_ref
+    - field.storage.node.field_bh_update_type_ref
+    - node.type.bh_project
+    - node.type.bh_update
+    - taxonomy.vocabulary.bh_project_update_type
+  module:
+    - salesforce_pull
+    - text
+id: building_housing_project_update
+label: 'Building Housing - Project Update'
+weight: 0
+type: salesforce_mapping
+key: ''
+async: false
+push_standalone: false
+pull_standalone: true
+pull_trigger_date: LastModifiedDate
+pull_where_clause: ''
+sync_triggers:
+  push_create: false
+  push_update: false
+  push_delete: false
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Update__c
+drupal_entity_type: node
+drupal_bundle: bh_update
+field_mappings:
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_headline
+    salesforce_field: Headline__c
+    direction: sf_drupal
+    id: 0
+  -
+    drupal_field_type: RelatedIDs
+    drupal_field_value: field_bh_project_ref
+    salesforce_field: Project__c
+    direction: sf_drupal
+    id: 1
+  -
+    drupal_field_type: properties
+    drupal_field_value: status
+    salesforce_field: Publish_to_Web__c
+    direction: sf_drupal
+    id: 2
+  -
+    drupal_field_type: properties
+    drupal_field_value: title
+    salesforce_field: Name
+    direction: sf_drupal
+    id: 3
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: body.value
+    salesforce_field: Update_Body__c
+    direction: sf_drupal
+    id: 4
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_update_type_ref
+    salesforce_field: Type__c
+    direction: sf_drupal
+    id: 5
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_update_posted_date
+    salesforce_field: CreatedDate
+    direction: sf_drupal
+    id: 6
+push_limit: 0
+push_retries: 3
+push_frequency: 0
+pull_frequency: 0
+always_upsert: false
