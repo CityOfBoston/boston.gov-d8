@@ -5,6 +5,11 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.bh_update.body
+    - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_headline
+    - field.field.node.bh_update.field_bh_project_ref
+    - field.field.node.bh_update.field_bh_update_posted_date
+    - field.field.node.bh_update.field_bh_update_type_ref
     - node.type.bh_update
   module:
     - text
@@ -28,5 +33,10 @@ content:
     weight: 100
     region: content
 hidden:
+  field_bh_attachment: true
+  field_bh_headline: true
+  field_bh_project_ref: true
+  field_bh_update_posted_date: true
+  field_bh_update_type_ref: true
   langcode: true
   published_at: true

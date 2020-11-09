@@ -4,18 +4,37 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.card
+    - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_commitment_letter_date
+    - field.field.node.bh_project.field_bh_construct_complete_date
+    - field.field.node.bh_project.field_bh_construction_start_date
+    - field.field.node.bh_project.field_bh_conveyance_vote_date
+    - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_disposition_type
+    - field.field.node.bh_project.field_bh_dnd_funding_award_date
     - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_initial_comm_mtg_date
+    - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_neighborhood
     - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_predicted_closing_date
+    - field.field.node.bh_project.field_bh_project_complete_date
     - field.field.node.bh_project.field_bh_project_name
+    - field.field.node.bh_project.field_bh_project_parcels
     - field.field.node.bh_project.field_bh_project_stage
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_updates
     - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_wysiwyg_photo_a
     - node.type.bh_project
   module:
+    - advanced_text_formatter
     - datetime
     - fences
+    - text
     - user
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
@@ -24,22 +43,13 @@ targetEntityType: node
 bundle: bh_project
 mode: card
 content:
-  field_bh_funding_stage:
-    weight: 5
-    label: inline
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_bh_parcel_id:
+  body:
+    type: text_default
     weight: 1
-    label: inline
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
     region: content
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
   field_bh_project_name:
     weight: 0
     label: hidden
@@ -57,7 +67,7 @@ content:
     type: entity_reference_label
     region: content
   field_bh_project_start_date:
-    weight: 6
+    weight: 5
     label: inline
     settings:
       timezone_override: ''
@@ -80,14 +90,6 @@ content:
     third_party_settings: {  }
     type: entity_reference_label
     region: content
-  field_bh_record_type:
-    weight: 7
-    label: inline
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
   field_bh_total_num_units:
     weight: 2
     label: inline
@@ -97,8 +99,62 @@ content:
     third_party_settings: {  }
     type: number_integer
     region: content
+  field_bh_wysiwyg_photo_a:
+    type: advanced_text
+    weight: 6
+    region: content
+    label: hidden
+    settings:
+      trim_length: '0'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: drupal
+      format: full_html
+      allowed_html:
+        - a
+        - b
+        - br
+        - dd
+        - dl
+        - dt
+        - em
+        - i
+        - li
+        - ol
+        - p
+        - strong
+        - u
+        - ul
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
 hidden:
+  field_bh_commitment_letter_date: true
+  field_bh_construct_complete_date: true
+  field_bh_construction_start_date: true
+  field_bh_conveyance_vote_date: true
+  field_bh_coordinates: true
+  field_bh_disposition_type: true
+  field_bh_dnd_funding_award_date: true
+  field_bh_funding_stage: true
+  field_bh_initial_comm_mtg_date: true
+  field_bh_initial_td_vote_date: true
+  field_bh_neighborhood: true
+  field_bh_parcel_id: true
+  field_bh_predicted_closing_date: true
+  field_bh_project_complete_date: true
+  field_bh_project_parcels: true
+  field_bh_project_updates: true
+  field_bh_record_type: true
+  field_bh_rfp_issued_date: true
   langcode: true
   links: true
   published_at: true
-

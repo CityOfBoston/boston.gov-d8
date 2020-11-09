@@ -3,8 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.bh_parcel.body
     - field.field.node.bh_parcel.field_bh_assessing_lot_size
+    - field.field.node.bh_parcel.field_bh_coordinates
     - field.field.node.bh_parcel.field_bh_owned_by_dnd
     - field.field.node.bh_parcel.field_bh_parcel_header
     - field.field.node.bh_parcel.field_bh_parcel_name
@@ -13,9 +13,9 @@ dependencies:
     - node.type.bh_parcel
   module:
     - content_moderation
+    - geolocation
     - path
     - publication_date
-    - text
 _core:
   default_config_hash: oPlLAzUal_Zd8G0N8Xx6bHBk9nqJCvTH6KyTsnW-G00
 id: node.bh_parcel.default
@@ -23,15 +23,6 @@ targetEntityType: node
 bundle: bh_parcel
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 31
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 10
@@ -44,6 +35,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: number
+    region: content
+  field_bh_coordinates:
+    weight: 127
+    settings: {  }
+    third_party_settings: {  }
+    type: geolocation_latlng
     region: content
   field_bh_owned_by_dnd:
     weight: 124

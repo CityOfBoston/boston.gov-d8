@@ -4,8 +4,15 @@ status: true
 dependencies:
   config:
     - field.field.node.bh_update.body
+    - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_headline
+    - field.field.node.bh_update.field_bh_project_ref
+    - field.field.node.bh_update.field_bh_update_posted_date
+    - field.field.node.bh_update.field_bh_update_type_ref
     - node.type.bh_update
   module:
+    - datetime
+    - file
     - text
     - user
 _core:
@@ -21,6 +28,46 @@ content:
     weight: 101
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_bh_attachment:
+    weight: 105
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    type: file_default
+    region: content
+  field_bh_headline:
+    weight: 104
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_bh_project_ref:
+    weight: 103
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_bh_update_posted_date:
+    weight: 107
+    label: above
+    settings:
+      format_type: medium
+      timezone_override: ''
+    third_party_settings: {  }
+    type: datetime_default
+    region: content
+  field_bh_update_type_ref:
+    weight: 106
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
   links:
     weight: 100

@@ -4,15 +4,18 @@ status: true
 dependencies:
   config:
     - field.field.node.bh_parcel.field_bh_assessing_lot_size
+    - field.field.node.bh_parcel.field_bh_coordinates
     - field.field.node.bh_parcel.field_bh_owned_by_dnd
     - field.field.node.bh_parcel.field_bh_parcel_header
     - field.field.node.bh_parcel.field_bh_parcel_name
     - field.field.node.bh_parcel.field_bh_property_type
     - field.field.node.bh_parcel.field_bh_street_address_temp
+    - field.storage.node.field_bh_coordinates
     - field.storage.node.field_bh_property_type
     - node.type.bh_parcel
     - taxonomy.vocabulary.bh_property_type
   module:
+    - geolocation
     - salesforce_pull
 id: building_housing_parcels
 label: 'Building Housing - Parcels'
@@ -23,7 +26,7 @@ async: false
 push_standalone: false
 pull_standalone: true
 pull_trigger_date: LastModifiedDate
-pull_where_clause: 'Active__c = true'
+pull_where_clause: ''
 sync_triggers:
   push_create: false
   push_update: false
@@ -77,9 +80,20 @@ field_mappings:
     salesforce_field: Name
     direction: sf_drupal
     id: 6
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_coordinates.lat
+    salesforce_field: Y_Coordinate__c
+    direction: sf_drupal
+    id: 7
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_coordinates.lng
+    salesforce_field: X_Coordinate__c
+    direction: sf_drupal
+    id: 8
 push_limit: 0
 push_retries: 3
 push_frequency: 0
 pull_frequency: 0
 always_upsert: false
-
