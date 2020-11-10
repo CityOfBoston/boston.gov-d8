@@ -25,9 +25,10 @@
 
     # Create a link for global.package file so it can be used by npm to set up the container
     # with a default set of node tools.
+    # The package.json will only be visible inside containers, from the host the link will not resolve.
+    # This is intentional, developers should not need to change this file.
     if [[ ! -h ${REPO_ROOT}/${webapps_local_local_dir}/package.json ]]; then
-      cd ${REPO_ROOT} &&
-        ln -s "scripts/webapp.default.package" "${webapps_local_local_dir}/package.json"
+      ln -s "${REPO_ROOT}/scripts/webapp.default.package" "${REPO_ROOT}/${webapps_local_local_dir}/package.json"
     fi
     printout "INFO" "Global node package file mapped.\n"
 
