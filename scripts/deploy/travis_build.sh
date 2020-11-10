@@ -29,6 +29,8 @@
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
 
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+
     # Create additional working variables.
     timer=$(date +%s)
     yes=1
@@ -54,8 +56,6 @@
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
-
-    printf "ref: $(basename "$0")\n"
 
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
@@ -323,4 +323,4 @@
         printout "SUCCESS" "Build Candidate tested." "Install & build process took${text}\n"
 
     fi
-
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
