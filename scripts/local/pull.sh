@@ -13,7 +13,7 @@
     printout "INFO" "Will pull latest code from public repo and merge in settings from private repo."
 
     # Pull current boston.gov branch from git.
-    printout "INFO" "Pulling current branch from Boston.gov-d8."
+    printout "ACTION" "Pulling current branch from Boston.gov-d8."
     cd /app/docroot &&
         git fetch --all >> /dev/null &&
         git pull --all >> /dev/null
@@ -28,18 +28,18 @@
         clone_patterns_repo
     fi
     # Pull patterns current branch from git.
-    printout "INFO" "Pulling current branch from Patterns."
+    printout "ACTION" "Pulling current branch from Patterns."
     cd /app/patterns &&
         git fetch --all >> /dev/null &&
         git pull --all >> /dev/null
 
     # Check for options/flags passed in.
     if [[ "${1}" != "--no-sync" ]]; then
-        printout "INFO" "Preparing Config Import"
+        printout "ACTION" "Executing Config Import"
         printf "       - Don't worry that modules are uninstalled here - they will be re-enabled later."
         ${drush_cmd} cim -y
         ${drush_cmd} updb -y
-        printout "INFO" "Resetting modules for development."
+        printout "ACTION" "Resetting modules for development."
         devModules
     fi
 

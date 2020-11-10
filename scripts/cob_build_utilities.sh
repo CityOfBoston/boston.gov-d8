@@ -1,28 +1,32 @@
 #!/bin/bash
 
 # Define colors
-
-Black='\033[30m'
-Red='\033[31m'
-Green='\033[32m'
-Yellow='\033[33m'
-Blue='\033[34m'
-Magenta='\033[35m'
-Cyan='\033[36m'
-LightGray='\033[37m'
-DarkGray='\033[90m'
-LightRed='\033[91m'
-LightGreen='\033[92m'
-LightYellow='\033[93m'
-LightBlue='\033[94m'
-LightMagenta='\033[95m'
-LightCyan='\033[96m'
-White='\033[97m'
-RedBG='\033[41;1;97m'
-GreenBG='\033[42;1;97m'
-YellowBG='\033[103;1;30m'
-NC='\033[0m'
-Bold='\033[1m'
+Default='\e[39m'
+Black='\e[30m'
+Red='\e[31m'
+Green='\e[32m'
+Yellow='\e[33m'
+Blue='\e[34m'
+Magenta='\e[35m'
+Cyan='\e[36m'
+LightGray='\e[37m'
+DarkGray='\e[90m'
+LightRed='\e[91m'
+LightGreen='\e[92m'
+LightYellow='\e[93m'
+LightBlue='\e[94m'
+LightMagenta='\e[95m'
+LightCyan='\e[96m'
+White='\e[97m'
+RedBG='\e[41;1;97m'
+GreenBG='\e[42;1;97m'
+YellowBG='\e[103;1;30m'
+NC='\e[0m'
+Bold='\e[1m'
+InverseOn='\e[7m'
+InverseOff='\e[27m'
+DimOn='\e[2m'
+DimOff='\e[22m'
 
 # basic parse of a yml file into a series of variables.
 function parse_yaml() {
@@ -53,23 +57,37 @@ function printout () {
     if [[ "${quiet}" != "1" ]]; then
 
         if [[ "${1}" == "ERROR" ]] || [[ "${1}" == "FAIL" ]]; then
-            col1=${RedBG}
+            col1=${InverseOn}${Bold}${LightRed}
             col2=${LightRed}
-        elif [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
-            col1=${YellowBG}
+            col3=${LightRed}${DimOn}
+        elif [[ "${1}" == "WARN" ]] || [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
+            col1=${InverseOn}${Bold}${Yellow}
             col2=${Yellow}
+            col3=${Yellow}${DimOn}
         elif [[ "${1}" == "SUCCESS" ]]; then
-            col1=${GreenBG}
+            col1=${InverseOn}${Bold}${Green}
             col2=${Green}
-        elif [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
-            col1=${Bold}${LightBlue}
+            col3=${DimOn}${Green}
+        elif [[ "${1}" == "ACTION" ]]; then
+            col1=${InverseOn}${Bold}${LightBlue}
+            col2=${LightBlue}
+            col3=$${DimOn}{LightBlue}
+        elif [[ "${1}" == "STEP" ]] || [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
+            col1=${InverseOn}${Bold}${Blue}
+            col2=${Blue}
+            col3=${DimOn}${Blue}
+        elif [[ "${1}" == "LANDO" ]]; then
+            col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
-        elif [[ "${1}" == "STEP" ]]; then
-            col1=${Bold}${Magenta}
-            col2=${LightMagenta}
+            col3=${DimOn}${Cyan}
+        elif [[ "${1}" == "SCRIPT" ]]; then
+            col1=${InverseOn}${Bold}${Cyan}
+            col2=${Cyan}
+            col3=${DimOn}${Cyan}
         else
-            col1=${Bold}${Cyan}
-            col2=${Cyan}
+            col1=${InverseOn}${Bold}${Default}
+            col2=${Default}
+            col3={DimOn}${Default}
         fi
 
         if [[ -n ${1} ]]; then
@@ -79,7 +97,7 @@ function printout () {
               printf " $col2${2}$NC"
         fi
         if [[ -n ${3} ]]; then
-            printf "${LightGray} - ${3}$NC"
+            printf "$col2 - ${3}$NC"
         fi
         printf "\n"
     fi
@@ -133,8 +151,8 @@ function clone_private_repo() {
 
 function clone_patterns_repo() {
 
-    printf "ref: $(basename "$0")\n"
-    printout "INFO" "Cloning ${patterns_local_repo_branch} branch of Patterns library."
+    printf "ref: cob_build_utilities.clone_patterns_repo()\n\n"
+    printout "INFO" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
 
     if [[ -n ${GITHUB_TOKEN} ]]; then
         # Will enforce a token which should be passed via and ENVAR.
@@ -144,33 +162,42 @@ function clone_patterns_repo() {
         REPO_LOCATION="git@github.com:"
     fi
 
-    # Create a clean folder into which the repo can be cloned.
+    # If the target folder for the patterns repo does not exist, then create it now.
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
         mkdir ${patterns_local_repo_local_dir}
-        chown node:node ${patterns_local_repo_local_dir}
-    fi
-
-    git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100
-
-    if [[ $? != 0 ]]; then
-        printout "ERROR" "Patterns library NOT cloned or installed."
+    else
+      if [[ "$(ls -A ${patterns_local_repo_local_dir})" ]]; then
+        # We cannot clone into a non-empty folder.  This is fatal.
+        printout "ERROR" "Patterns folder ${patterns_local_repo_local_dir} is not empty and the build cannot delete it."
+        printf "        Please manually delete the patterns folder from the repo root on host machine, and retry the build.\n\n"
+        printf "${InverseOn}${Red}SEE ERRORS ABOVE.\n" &>> ${REPO_ROOT}/setup/uli.log;
+        printf "Please manually delete the patterns folder from the repo root on the host machine, and retry the build.\n\n${NC}" &>> ${REPO_ROOT}/setup/uli.log;
         exit 1
+      fi
     fi
+    # Manke sure the folder is properly owned in this container.
+    chown node:node ${patterns_local_repo_local_dir}
+
+    # Clone the Patterns repo into the target folder.
+    (git clone -b ${patterns_local_repo_branch} ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q --depth 100 &&
+      printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
 
     # Make the public folder that gulp and fractal will build into.
     if [[ ! -d ${patterns_local_repo_local_dir}/public ]]; then
-        mkdir ${patterns_local_repo_local_dir}/public
-        chown node:node ${patterns_local_repo_local_dir}/public
-        chmod 755 ${patterns_local_repo_local_dir}/public
+        printout "INFO" "Create patterns (Gulp & Fractal) build folders"
+        (mkdir ${patterns_local_repo_local_dir}/public &&
+          chown node:node ${patterns_local_repo_local_dir}/public &&
+          chmod 755 ${patterns_local_repo_local_dir}/public &&
+          printout "SUCCESS" "Build folder created at ${patterns_local_repo_local_dir}/public.\n") || printout "WARNING" "Build folder was not created.\n"
     fi
-
-    printout "SUCCESS" "Patterns library cloned."
 
 }
 
 function build_settings() {
 
-    printout "INFO" "Will update and implement settings files."
+    printf "ref: cob_build_utilities:build_settings()\n"
+
+    printout "ACTION" "Installing and updating Drupal settings files."
 
     if [[ -z "${project_docroot}}" ]]; then
         # Read in config and variables.
@@ -279,3 +306,4 @@ fi
 # Read in config and variables.
 eval $(parse_yaml "${REPO_ROOT}/.lando.yml" "lando_")
 eval $(parse_yaml "${REPO_ROOT}/scripts/.config.yml" "")
+setup_logs="${REPO_ROOT}/setup"
