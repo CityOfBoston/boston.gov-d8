@@ -12,7 +12,7 @@ NC='\033[0m'
 
 # This function runs a syntax check on selected set of files and gives a pass/fail report.
 function lint() {
-    printf "INFO" "Runing PHP linting checks for syntax errors.\n"
+    printf "ACTION" "Runing PHP linting checks for syntax errors.\n"
     ${REPO_ROOT}/vendor/bin/parallel-lint \
         -e php,module,inc,install \
         --no-progress \
@@ -34,7 +34,7 @@ function lint() {
 
 # This function runs a PHPCodesniff across a selected set of files, and produces a report.
 function phpcs() {
-    printout "INFO" "Setting PHPCS options.\n"
+    printout "ACTION" "Setting PHPCS options.\n"
 
     if [[ ! -d ${REPO_ROOT}/docroot/modules/custom ]] || [[ ! -d ${REPO_ROOT}/docroot/themes/custom ]]; then
         printout "ERROR" "Build does not contain custom code folders."
@@ -45,7 +45,7 @@ function phpcs() {
     ${REPO_ROOT}vendor/bin/phpcs --config-set ignore_warnings_on_exit 1 &> /dev/null
     ${REPO_ROOT}vendor/bin/phpcs --config-set colors 1 &> /dev/null
 
-    printout "INFO" "Running PHPCS tests on project files."
+    printout "ACTION" "Running PHPCS tests on project files."
     ${REPO_ROOT}/vendor/bin/phpcs \
         --extensions="php/php,module/php,inc/php,install/php,theme/php,js/js" \
         --ignore="*.tpl.php,*.css,*.yml,*.twig,*.md,*.min.js,**/dist/*.js,**/patterns/*.js,**/bos_web_app/*.js" \

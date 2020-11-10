@@ -12,6 +12,7 @@
     printout "INFO" "Installing Linux packages in Travis container."
 
     # Installs linux apps and extensions into the appserver container.
+    composer self-update 1.10.13
     sudo apt-get install -y --no-install-recommends libgd-dev openssh-client fontconfig openssl
 
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
