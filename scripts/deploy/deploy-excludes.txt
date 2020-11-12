@@ -1,20 +1,29 @@
-.idea
+# This file excludes files that are not needed on Acquia servers.
+
+# Exclude all IDE & editor config folders.
 .git
+.idea
+
+# Exclude all media files we have created or cached locally.
 docroot/sites/default/files
+
+# Exclude settings which are not relevant to aquia hosted sites.
 docroot/sites/default/settings/settings.terraform.php
 docroot/sites/default/settings/settings.travis.php
-docroot/.es*
-docroot/.csslintrc
+
+# Exclude unwanted hook files (Acquia supplied these templates).
 hooks/samples
 hooks/templates
-setup
-tests
-drush/.gitignore
-LICENSE.md
-migrate.config.log
-migrate.content.log
-migrate.settings.log
-migrations.csv
-README.md
-.private
-.travis.yml
+
+# Exclude files related to linting, CDI environments etc.
+.css*
+.eslint*
+.editorconfig
+
+# Exclude git generated files.
+.gitignore
+.gitattributes
+
+# Exclude any package files.
+package*.json
+composer.*

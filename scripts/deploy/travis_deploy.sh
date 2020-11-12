@@ -55,39 +55,40 @@
     # will not trigger deployment unless DEPLOY_PR is true.
     if [[ "${TRAVIS_PULL_REQUEST}" == "false" ]] || [[ "${DEPLOY_PR}" == "true" ]]; then
 
-        printout "INFO" "Deployments will be triggered on the '${source_branch}' branch (or on any tag)."
-        printf   "       - Current branch is '${TRAVIS_BRANCH}' \n       - Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
-        printf   "       - Checking config for '${TRAVIS_BRANCH_SANITIZED}' \n"
+        printout "INFO" " -- Deployments will be triggered on the '${source_branch}' branch (or on any tag)."
+        printout "INFO" " |  Current branch is '${TRAVIS_BRANCH}'\n"
+        printout "INFO" " |  Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
+        printout "INFO" " |  Checking config for '${TRAVIS_BRANCH_SANITIZED}' \n"
 
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
 
             printout "INFO" "The Build Candidate is accepted and is now the Build Artifact.\n"
 
-            printout "STEP" "== Generate Deploy Candidate ======"
-            printf "Use the 'Deploy Artifact' in <${TRAVIS_BUILD_DIR}> to generate the 'Deploy Candidate' into ${deploy_dir}.\n"
+            printf "${Blue}       ================================================================================${NC}\n"
+            printout "STEP" "Generate Deploy Candidate"
+            printf "${Blue}       ================================================================================${NC}\n"
+            printout "INFO" "We use the 'Deploy Artifact' in <${TRAVIS_BUILD_DIR}> to generate the 'Deploy Candidate' into ${deploy_dir}.\n"
 
             if [[ "${deploy_dry_run}" != "false" ]]; then
-                printout "" "\n       ============================================================================="
-                printout "WARNING" "DRY RUN - This is a test build of Deploy Candidate - it will NOT be deployed."
-                printout "" "       =============================================================================\n"
+                printout "WARNING" " *** DRY RUN - This is a test build of Deploy Candidate - it will NOT be deployed."
             fi
 
-            printout "INFO" "Recreate the deploy directory (${deploy_dir})"
+            printout "ACTION" "Recreate the deploy directory (${deploy_dir})"
             rm -rf ${deploy_dir} &&  mkdir -p ${deploy_dir}
 
-            printout "STEP" "Initialize new git repo in deploy directory."
+            printout "ACTION" "Initialize new git repo in deploy directory."
             remote_name=$(echo "${deploy_remote}" | openssl md5 | cut -d' ' -f 2)
             cd ${deploy_dir} &&
                 git init &&
                 git config gc.pruneExpire 3.days.ago &&
                 git remote add ${remote_name} ${deploy_remote}
 
-            printout "INFO" "Create and checkout the branch ${deploy_branch} in new repo."
+            printout "ACTION" "Create and checkout the branch ${deploy_branch} in new repo."
             cd ${deploy_dir} &&
                 git checkout -b ${deploy_branch}
 
-            printout "INFO" "Fetch & merge files from remote repo."
+            printout "ACTION" "Fetch & merge files from remote repo."
             cd ${deploy_dir} &&
                 git fetch ${remote_name} &&
                 git merge ${remote_name}/${deploy_branch} &&
@@ -96,36 +97,52 @@
 
             printout "SUCCESS" "Created the Deploy Candidate in <${deploy_dir}>.\n"
 
-            printout "STEP" "Copy files from (GitHub) into <${deploy_dir}>"
+            printout "INFO" "Now need to copy files from (GitHub) into <${deploy_dir}>"
             # Remove the various .gitignore files so we can use git to manage full set of the Deploy Candidate files.
-            printout "INFO" "Refine Build Artifact (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
+            printout "ACTION" "Refine Build Artifact (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
 
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
             mkdir ${deploy_dir}/docroot/sites/default/settings
             chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
 
             # Move files from the Deploy Candidate into the Acquia Repo.
-            printout "INFO" "Select Build Artifact files and copy to create the Deploy Candidate."
-            rsync \
-                -rlDW \
-                --inplace \
-                --delete \
-                --exclude-from=${deploy_excludes_file} \
-                --files-from=${deploy_includes_file} \
-                ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
+            printout "INFO" "Deployment to Acquia involves taking the Build Artifact which was created previously and"
+            printout "INFO" "committing selected files into a branch in the Acquia Repo.  Acquia detects the commit "
+            printout "INFO" "and deploys the code in the branch onto any environment/s tracking the branch updated."
+            printout "INFO" "By selecting files from the Build Artifact, we are creating and committing/pushing a"
+            printout "INFO" "Deploy Candidate to Acquia."
+            printout "ACTION" "Select Build Artifact files and create/commit a Deploy Candidate."
+            # First do the entire Drupal
+            # Files/folders to be copied are specified in the files-from file.
+            # Excluding those files/folders in the exclude-from file,
+            #  - but always including those in the include-from file.
+            cd ${TRAVIS_BUILD_DIR} &&
+              rsync \
+                  -rlDW \
+                  --files-from=${deploy_from_file} \
+                  --exclude-from=${deploy_excludes_file} \
+                  --include-from=${deploy_includes_file} \
+                  . ${deploy_dir}/
+            # Now do the webapp folders which have their own inclusion/exclusion rules
+            cd ${webapps_local_source} &&
+              rsync \
+                  -rlDW \
+                  --delete-excluded \
+                  --files-from=${webapp_from_file} \
+                  --exclude-from=${webapp_excludes_file} \
+                  --include-from=${webapp_includes_file} \
+                  . ${deploy_dir}/${webapps_local_source}
 
             # Sanitize - remove files from file defined in deploy_sanitize_file.
             # deploy_sanitize_file is a line delimited list of wildcard files or folders.
             if [[ -s ${deploy_sanitize_file} ]]; then
-                # xargs -d '\n' rm < "${deploy_sanitize_file}"
+                printout "ACTION" "Sanitizing files to be deployed."
                 for f in $(cat ${deploy_sanitize_file}) ; do
                     if [[ ${f:0:1} != "/" ]]; then
                         set f="${TRAVIS_BUILD_DIR}/${f}"
                     fi
-                    rm -f "$f"
-                    if [[ ${?} -eq 0 ]]; then
-                        printf " [notice] sanitize: deleted <${f}>\n"
-                    fi
+                    (rm -f "$f" &&
+                        printout "SUCCESS" "Sanitize: deleted <${f}> files\n") || printout "WARNING" "Sanitize: failed\n"
                 done
             fi
             # Removes any gitignore files in contrib or custom modules.
@@ -147,6 +164,28 @@
 
                 printout "SUCCESS" "Deployed ${deploy_branch} to ${remote_name}\n"
                 printout "NOTE" "Acquia pipeline and hooks will now run.\n"
+
+                if [[ "${public_repo_push}" == "true" ]]; then
+                    cd ${TRAVIS_BUILD_DIR} &&
+                        rsync \
+                            -rlDW \
+                            --files-from=${public_repo_deploy_from_file} \
+                            --exclude-from=${public_repo_deploy_includes_file} \
+                            --include-from=${public_repo_deploy_excludes_file} \
+                            . ${deploy_dir}/
+                    # Sanitize - remove files from file defined in deploy_sanitize_file.
+                    # deploy_sanitize_file is a line delimited list of wildcard files or folders.
+                    if [[ -s ${public_repo_deploy_sanitize_file} ]]; then
+                        printout "ACTION" "Sanitizing files to be deployed."
+                        for f in $(cat ${public_repo_deploy_sanitize_file}) ; do
+                            if [[ ${f:0:1} != "/" ]]; then
+                                set f="${TRAVIS_BUILD_DIR}/${f}"
+                            fi
+                            (rm -f "$f" &&
+                                printout "SUCCESS" "Sanitize: deleted <${f}> files\n") || printout "WARNING" "Sanitize: failed\n"
+                        done
+                    fi
+                fi
 
             else
 

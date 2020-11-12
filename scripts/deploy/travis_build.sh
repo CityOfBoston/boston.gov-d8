@@ -83,9 +83,9 @@
         mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
 
         printf "\n"
-        printf "=========================================================================================\n"
+        printf "${Blue}       =========================================================================================\n"
         printout "INFO" "Creating the Build Candidate."
-        printf "=========================================================================================\n\n"
+        printf "${Blue}       =========================================================================================\n\n"
 
         if [[ ${isHotfix} -eq 1 ]]; then
             printout "NOTICE" "=== HOTFIX DETECTED ======================\n"
@@ -146,9 +146,9 @@
         # Load the cob_utitlities script which has some config procedures.
         . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
 
-        printf "=========================================================================================\n"
+        printf "${Blue}       =========================================================================================\n"
         printout "INFO" "Verifying & testing the Build Candidate."
-        printf "=========================================================================================\n\n"
+        printf "${Blue}       =========================================================================================\n\n"
 
         printout "" "==== Verify the Candidate ==========="
         . ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "all" "${TRAVIS_EVENT_TYPE}"
