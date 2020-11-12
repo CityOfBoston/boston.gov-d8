@@ -251,16 +251,10 @@
         </div>
       {% endif %}
 
-      <div title="Add to Calendar" class="addeventatc">
-        Add to Calendar
-        <span class="start">{{ content.field_event_date_recur.0['#date'].start_date['#attributes'].datetime|date('U')|format_date('custom', 'm/d/Y') }} {{ start_time }}</span>
-        <span class="end">{{ content.field_event_date_recur.0['#date'].end_date['#attributes'].datetime|date('U')|format_date('custom', 'm/d/Y') }} {{ end_time }}</span>
-        <span class="timezone">America/New_York</span>
-        <span class="title">{{ title }}</span>
-        <span class="description">{{ content.field_intro_text }}</span>
-        <span class="location">{{ content.field_address }}</span>
-        <span class="recurring">{{ rrule }}</span>
+      <div class="addtocal">
+        {{ drupal_field('field_event_date_recur', 'node', content.id, 'add_to_calendar') }}
       </div>
+
     </div>
 
   </div>
