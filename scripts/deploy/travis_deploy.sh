@@ -43,7 +43,7 @@
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
     drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
 
-    printf "ref: $(basename "$0")\n"
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
 
     # Manage SSH keys for deployment to Acquia.
     openssl aes-256-cbc -K $ACQUIA_KEY -iv $ACQUIA_VECTOR -in $TRAVIS_BUILD_DIR/scripts/deploy/acquia.enc -out $TRAVIS_BUILD_DIR/scripts/deploy/acquia_deploy -d
@@ -220,3 +220,5 @@
       else
         printout "INFO" "Build artifacts are not deployed for Pull Requests."
     fi
+
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
