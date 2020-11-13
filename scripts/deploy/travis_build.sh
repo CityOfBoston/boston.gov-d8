@@ -120,9 +120,8 @@
         # Clone the private repo and merge files in it with the main repo.
         # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
         # 'clone_private_repo' function is contained in cob_build_utilities.sh.
-        printout "INFO" "Some confidential settings are required for the website, and these are stored in a"
-        printout "INFO" "private repository."
-        printout "INFO" "This repo needs to be cloned and then merged with the current public repo (and the "
+        printout "INFO" "Some confidential settings are required for the website, and these are stored in a private repository."
+        printout "INFO" "This private repo needs to be cloned, then merged with files from the current public repo (and all the"
         printout "INFO" "files just downloaded via Composer)."
         clone_private_repo
 
@@ -159,8 +158,8 @@
         printf "${Blue}       =========================================================================================\n\n"
 
         printout "INFO" "This step will verify the Candidate by checking coding standards, attempting "
-        printout "INFO" "to build (install) drupal, and then load up the current content from the Acquia "
-        printout "INFO" "dev site, and finally run whatever automated tests are specified. "
+        printout "INFO" "to build (install) drupal, then downloading the current content from the Acquia "
+        printout "INFO" "dev site, and finally running whatever automated tests are specified. "
         . ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "all" "${TRAVIS_EVENT_TYPE}"
         if [[ ${?} -ne 0 ]]; then
             exit 1
