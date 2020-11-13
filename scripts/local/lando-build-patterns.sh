@@ -25,27 +25,31 @@
     . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
     target_env="local"
 
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
-    printf "[LANDO] starts <$(basename "$0")>\n"
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         printout "INFO" "Patterns library will not be deployed.."
         exit 0
     fi
-    printf "\n${LightPurple}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
     printout "STEP" "Building Patterns."
-    printf "${LightPurple}       ================================================================================${NC}\n"
+    printf "${Blue}       ================================================================================${NC}\n"
+    printout "INFO" "Patterns source files are found in ${patterns_local_repo_local_dir}."
+    printout "INFO" "Patterns webapp is built/installed in the node container."
 
-    printout "INFO" "Installing node dependencies for patterns app."
-    cd ${patterns_local_repo_local_dir} && npm run preinstall && npm install && npm install -g gulp-cli@latest
-    if [[ $? != 0 ]]; then
-        printout "ERROR" "Patterns library NOT built or installed."
-        exit 1
-    fi
+    # Install patterns requisites.
+    printout "ACTION" "Installing packages and node dependencies for patterns app."
+    (cd ${patterns_local_repo_local_dir} &&
+      npm run preinstall  &> ${setup_logs}/patterns_build.log &&
+      npm install  &>> ${setup_logs}/patterns_build.log &&
+      npm install -g gulp-cli@latest &>> ${setup_logs}/patterns_build.log &&
+      printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Patterns library NOT installed (or built)." && exit 1)
 
-    # Install the patterns app.
-    printout "INFO" "Building Patterns library."
     # Run an initial build to be sure everything is there.
-    cd ${patterns_local_repo_local_dir} && npm run build
+    printout "ACTION" "Building Patterns library."
+    (cd ${patterns_local_repo_local_dir} &&
+      npm run build &>> ${setup_logs}/patterns_build.log &&
+      printout "SUCCESS" "Patterns library built.\n") || (printout "ERROR" "Patterns library NOT built.\n" && exit 1)
 
-    printout "SUCCESS" "Patterns library built."
-    printf "[LANDO] ends <$(basename "$0")>\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printf "\n"
