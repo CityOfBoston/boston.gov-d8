@@ -8,10 +8,15 @@
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
 
     printf "\n"
-    printf "ref: $(basename "$0")\n"
-    printout "INFO" "Installing Linux packages in Travis container."
+    php --version
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+    printout "INFO" "Travis deploys its own php container (see php version above)."
+    printout "INFO" "For the COB build, we need to add some Linux packages to this standard build."
+    printout "ACTION" "Installing required Linux packages in Travis container."
 
     # Installs linux apps and extensions into the appserver container.
+    printout "WARN" "Temporarily, we are fixing the composer version to 1.x."
+    composer self-update 1.10.13
     sudo apt-get install -y --no-install-recommends libgd-dev openssh-client fontconfig openssl
 
     setup_logs="${TRAVIS_BUILD_DIR}/setup"
@@ -22,3 +27,4 @@
         chmod 777 ${setup_logs};
 
     printout "SUCCESS" "Travis container is prepared with custom modules.\n"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"

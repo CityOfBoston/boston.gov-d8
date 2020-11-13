@@ -28,6 +28,12 @@ patterns:
   travis:
     build: false
 
+webapps:
+  local:
+    # Make paths relative to repo root.
+    source: docroot/modules/custom/bos_components/modules/bos_web_app/apps
+    local_dir: web_apps
+
 build:
   local:
     # Build Type = dev or prod.
@@ -38,13 +44,15 @@ build:
       #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
       sync: "../config/default"
     database:
-      # Set source to 'initialize' to start a fresh install.
-      # Otherwise set it to 'sync' (and provide a drush-alias) to sync from the drush-alias environment.
+      # Source: set to 'initialize' to start a fresh install.
+      #         set to 'sync' (and provide a drush-alias) to sync from the drush-alias environment.
+      #         set to 'restore' (and provide backup location) to restore a local backup.
       # Tip: Develop environment has database in closest state to the github repo configs.
       source: sync
       # If you wish to use mycli and pspg tools in the container, set the next line to true.
       server_side_tools: false
       drush_alias: "@bostond8.dev"
+      backup_location: ""
       host: boston_database_1
       port: 3306
 

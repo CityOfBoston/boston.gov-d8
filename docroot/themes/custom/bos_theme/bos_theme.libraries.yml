@@ -58,22 +58,22 @@ global-styling.patterns:
   data:
     name: 'Patterns (production)'
 
-global-styling.heroku-patterns:
-  remote: https://cob-patterns-staging.herokuapp.com/
+global-styling.patterns-staging:
+  remote: https://patterns-stg.boston.gov
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    https://cob-patterns-staging.herokuapp.com/scripts/all.js: {type: external, minified: true }
+    https://patterns-stg.boston.gov/scripts/all.js: {type: external, minified: true }
   dependencies:
   - core/jquery
   css:
     theme:
-      https://cob-patterns-staging.herokuapp.com/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://cob-patterns-staging.herokuapp.com/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
-      https://cob-patterns-staging.herokuapp.com/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+      https://patterns-stg.boston.gov/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://patterns-stg.boston.gov/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://patterns-stg.boston.gov/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (staging)'
 
@@ -97,15 +97,15 @@ fleet-components.patterns:
   js:
     https://patterns.boston.gov/web-components/fleetcomponents.js: {type: external, minified: true }
 
-fleet-components.heroku-patterns:
-  remote: https://cob-patterns-staging.herokuapp.com/
+fleet-components.patterns-staging:
+  remote: https://patterns-stg.boston.gov
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    https://cob-patterns-staging.herokuapp.com/web-components/fleetcomponents.js: {type: external, minified: true }
+    https://patterns-stg.boston.gov/web-components/fleetcomponents.js: {type: external, minified: true }
 
 page.assets:
   js:
