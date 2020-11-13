@@ -80,7 +80,7 @@ function printout () {
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
             col3=${DimOn}${Cyan}
-        elif [[ "${1}" == "SCRIPT" ]]; then
+        elif [[ "${1}" == "SCRIPT" ]] || [ "${1}" == "FUNCTION" ]]; then
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
             col3=${DimOn}${Cyan}
@@ -105,8 +105,8 @@ function printout () {
 
 function clone_private_repo() {
 
-  printf "ref: $(basename "$0")\n"
-  printout "INFO" "Clone private repo and merge with main repo."
+  printout "FUNCTION" "$(basename $BASH_SOURCE).clone_private_repo()" "Called from $(basename $0)"
+  printout "ACTION" "Clone private repo and merge with main repo."
 
   # Assign a temporary folder.
   if [[ -z "${git_private_repo_local_dir}" ]]; then git_private_repo_local_dir="${REPO_ROOT}/tmprepo"; fi
@@ -151,8 +151,8 @@ function clone_private_repo() {
 
 function clone_patterns_repo() {
 
-    printf "ref: cob_build_utilities.clone_patterns_repo()\n\n"
-    printout "INFO" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
+    printout "FUNCTION" "$(basename $BASH_SOURCE).clone_patterns_repo()" "Called from $(basename $0)"
+    printout "ACTION" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
 
     if [[ -n ${GITHUB_TOKEN} ]]; then
         # Will enforce a token which should be passed via and ENVAR.
@@ -195,7 +195,7 @@ function clone_patterns_repo() {
 
 function build_settings() {
 
-    printf "ref: cob_build_utilities:build_settings()\n"
+    printout "FUNCTION" "$(basename $BASH_SOURCE).build_settings()" "Called from $(basename $0)"
 
     printout "ACTION" "Installing and updating Drupal settings files."
 

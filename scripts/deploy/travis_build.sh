@@ -92,7 +92,10 @@
         fi
 
         # Install PHP (and other ...) packages/modules using composer:
-        printout "INFO" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output suppressed unless errors occur."
+        printout "INFO" "Composer is used to download the core Drupal files, along with any dependencies sepcified for"
+        printout "INFO" "the website to be built."
+        printout "NOTICE" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output suppressed unless errors occur."
+        printout "ACTION" "Downloading Drupal and dependencies to Travis container."
         cd ${TRAVIS_BUILD_DIR} &&
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
             composer self-update &&
@@ -117,10 +120,15 @@
         # Clone the private repo and merge files in it with the main repo.
         # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
         # 'clone_private_repo' function is contained in cob_build_utilities.sh.
+        printout "INFO" "Some confidential settings are required for the website, and these are stored in a"
+        printout "INFO" "private repository."
+        printout "INFO" "This repo needs to be cloned and then merged with the current public repo (and the "
+        printout "INFO" "files just downloaded via Composer)."
         clone_private_repo
 
         # Create/update settings, private settings and local settings files.
         # 'build_settings' function is contained in cob_build_utilities.sh.
+        printout "INFO" "Drupal relies on settings files, some of which are best built during 'installation'."
         build_settings
 
         text=$(displayTime $(($(date +%s)-timer)))
@@ -150,7 +158,9 @@
         printout "INFO" "Verifying & testing the Build Candidate."
         printf "${Blue}       =========================================================================================\n\n"
 
-        printout "" "==== Verify the Candidate ==========="
+        printout "INFO" "This step will verify the Candidate by checking coding standards, attempting "
+        printout "INFO" "to build (install) drupal, and then load up the current content from the Acquia "
+        printout "INFO" "dev site, and finally run whatever automated tests are specified. "
         . ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "all" "${TRAVIS_EVENT_TYPE}"
         if [[ ${?} -ne 0 ]]; then
             exit 1
@@ -177,6 +187,7 @@
               -y"
 
             # Now run the site-install command.
+            printout "ACTION" "Installing Drupal"
             ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
 
             # If site-install command failed then alert.
@@ -230,7 +241,9 @@
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_travis_config_dosync}" != "false" ]]; then
 
-            printout "INFO" "Import configuration from sync folder: '${project_sync}' into database"
+            printout "INFO" "The database currently loaded needs to be updated with any changed configs that are"
+            printout "INFO" "contained in this branch."
+            printout "INFO" "This step will import configuration from sync folder: '${project_sync}' into database"
 
             # Each Drupal site has a unique site UUID.
             # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
@@ -240,20 +253,22 @@
             # be the same as that in the </config/default/system.site.yml> file.
             if [[ -s ${project_sync}/system.site.yml ]]; then
                 # Fetch site UUID from the configs in the (newly made) database.
-                printout "INFO" "Checks site UUID."
+                printout "INFO" "First we must sync the UUIDs in the configs and the Database (or else import will fail)."
+                printout "ACTION" "Checking site UUID."
                 db_uuid=$(${drush_cmd} @self cget "system.site" "uuid" | grep -Eo "\s[0-9a-h\-]*")
                 # Fetch the site UUID from the configuration file.
                 yml_uuid=$(cat ${project_sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
                 if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
                     # The config UUID is different to the UUID in the database, so we will change the databases UUID to
                     # match the config files UUID and all should be good.
-                    ${drush_cmd} @self cset "system.site" "uuid" ${yml_uuid} -y &> /dev/null
-                    if [[ $? -eq 0 ]]; then
-                        printout "INFO" "UUID in DB is updated to ${yml_uuid}."
-                    fi
+                    (printout "NOTICE" "UUID in DB needs to be updated to ${yml_uuid}." &&
+                      ${drush_cmd} @self cset "system.site" "uuid" ${yml_uuid} -y &> /dev/null &&
+                      printout "SUCCESS" "UUID in DB is updated.") ||
+                        printout "WARNING" "Updating UUID Failed."
                 fi
             fi
 
+            printout "ACTION" "Import boston.gov configs into the Database."
             ${drush_cmd} @self config-import sync -y &> ${setup_logs}/config_import.log
 
             if [[ $? -eq 0 ]]; then
@@ -314,7 +329,8 @@
 
         # Run finalization / housekeeping tasks.
         # Apply any pending database updates.
-        printout "INFO" "Apply pending database updates etc."
+        printout "INFO" "New or updated modules may have updates to apply to the database schema.  Apply these now."
+        printout "ACTION" "Apply pending database updates etc."
         ${drush_cmd} updb -y
         printout "SUCCESS" "Done.\n"
 
