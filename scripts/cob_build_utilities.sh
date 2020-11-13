@@ -8,6 +8,7 @@ Green='\e[32m'
 Yellow='\e[33m'
 Blue='\e[34m'
 Magenta='\e[35m'
+Orange='\e[48;5;172m'
 Cyan='\e[36m'
 LightGray='\e[37m'
 DarkGray='\e[90m'
@@ -61,9 +62,9 @@ function printout () {
             col2=${LightRed}
             col3=${LightRed}${DimOn}
         elif [[ "${1}" == "WARN" ]] || [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
-            col1=${InverseOn}${Bold}${Yellow}
-            col2=${Yellow}
-            col3=${Yellow}${DimOn}
+            col1=${InverseOn}${Bold}${Orange}
+            col2=${Orange}
+            col3=${Orange}${DimOn}
         elif [[ "${1}" == "SUCCESS" ]]; then
             col1=${InverseOn}${Bold}${Green}
             col2=${Green}
@@ -80,7 +81,7 @@ function printout () {
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
             col3=${DimOn}${Cyan}
-        elif [[ "${1}" == "SCRIPT" ]] || [ "${1}" == "FUNCTION" ]]; then
+        elif [[ "${1}" == "SCRIPT" ]] || [[ "${1}" == "FUNCTION" ]]; then
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
             col3=${DimOn}${Cyan}
