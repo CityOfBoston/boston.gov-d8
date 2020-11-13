@@ -28,7 +28,8 @@ class BosAddtocalView extends AddtocalView {
     $elements = parent::viewElements($items, $langcode);
 
     # The following is a fix fot the date_recur field type.
-    if (isset($elements) && (count($elements) > 0) && getClass($items) == "Drupal\date_recur\Plugin\Field\FieldType\DateRecurFieldItemList") {
+    //if ( getClass($items) == "Drupal\date_recur\Plugin\Field\FieldType\DateRecurFieldItemList") {
+      //isset($elements) && (count($elements) > 0) &&
       foreach ($items as $delta => $item) {
         $helper = $item->getHelper();
         // $rules = $helper->getRules();
@@ -56,7 +57,7 @@ class BosAddtocalView extends AddtocalView {
         else {
           $elements[$delta]["addtocal"]["#access"] = FALSE;
         }
-      }
+     // }
     }
 
     return $elements;
