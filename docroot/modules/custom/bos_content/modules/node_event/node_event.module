@@ -319,17 +319,3 @@ function node_event_preprocess_field_multiple_value_form(array &$variables) {
     "field_related" => "Add more related content",
   ]);
 }
-
-function node_event_addtocal_links_alter(&$variables, &$links) {
-  //$variables['elements']['#node'];
-  $links["content"]["field_event_date_recur"][0];
-  //if ($links == 'date_recur') {
-    if (!empty($links['items']['list'][0]['values'])) {
-      $start_date = $links['items']['list'][0]['values']['value'];
-      $end_date = $links['items']['list'][0]['values']['end_value'];
-
-      return $start_date;
-    }
-  //}
-}
-
