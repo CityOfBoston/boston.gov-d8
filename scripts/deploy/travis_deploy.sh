@@ -170,7 +170,7 @@
                     dist_dir="${git_public_repo_dir}"
                     dist_remote="${git_public_repo_repo}"
                     dist_branch="${}"
-                    printout "ACTION" "Recreate the distribution directory (${dist_dir})"
+                    printout "ACTION" "Creating the distribution directory (${dist_dir})"
                     rm -rf ${dist_dir} &&  mkdir -p ${dist_dir}
 
                     printout "ACTION" "Select Release Candidate files and copy to the distribution directory."
