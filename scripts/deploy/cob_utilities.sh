@@ -596,7 +596,8 @@ slackPost() {
 }
 
 devModules() {
-    printf "ref: cob_utilities:devModules()\n"
+
+    printf "[FUNCTION] $(basename $BASH_SOURCE).devModules()" "Called from $(basename $0)\n"
 
     printf " [action] Enable DEVELOPMENT-ONLY modules.\n"
 

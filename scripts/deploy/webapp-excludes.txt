@@ -1,0 +1,22 @@
+# Take out files+folders prefixed with "_" or "."
+_*
+.*
+
+# remove all package.json etc files.
+package*.json
+
+# make sure the src folder is excluded
+docroot/modules/custom/bos_components/modules/bos_web_app/apps/**/src
+
+# remove all other files we don't need
+*.html
+*.json
+gulp*.*
+webpack*.*
+babel*.*
+*config*
+robots.txt
+favicon.ico
+
+# Remove the gitignores
+.gitignore

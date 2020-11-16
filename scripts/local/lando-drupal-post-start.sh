@@ -44,22 +44,6 @@
         . ${REPO_ROOT}/scripts/doit/branding.sh;
     fi
 
-    # Always provide this block
-    printf "${Bold}\n"
-    printf "===============================================================================================\n"
-    printf "DEVELOPMENT:\n"
-    path="${lando_config_webroot}/$REPO_ROOT/}"
-    printf " 1. Drupal custom module source files can be editted in host folder ${path}/modules/custom\n"
-    path="${patterns_local_repo_local_dir}/$REPO_ROOT/}"
-    printf " 2. Patterns source files can be editted in host folder ${path}\n"
-    printf " 3. WebApp source files can be editted in host folder ${webapps_local_local_dir}\n"
-    printf "LOCAL TESTING:\n"
-    printf " 1. Drupal website can be viewed at https://boston.lndo.site\n"
-    printf " 2. Fleet website (Patterns) can be viewed at https://patterns.lndo.site:3030\n"
-    printf " 3. Local patterns CDN at http://patterns.lndo.site:3030\n"
-    printf " 3. WebApps can be viewed at https://node.lndo.site/[appname]/index.html\n"
-    printf "===============================================================================================\n\n${NC}"
-
     # Embed the custom xdebug file as a php ini file.
     # There are 2 customized ini's one per environment (mac and linux) -they should not be changed locally by the
     # user but can be modified in the private repo to improve debug experience for all users.
@@ -103,6 +87,7 @@
     # For example IPAddresses, memory allocations etc
     # The file is not tracked by git, so manual changes will potentially be lost when the
     # app is rebuilt.
+    printout "ACTION" "Setup XDebug in Drupal container."
     if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
         rm /usr/local/etc/php/conf.d/boston-dev-php.ini
     fi
@@ -110,7 +95,24 @@
     chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
     # Restart apache to get those files loaded.
+    printout "ACTION" "Restart Apache service in Drupal container."
     service apache2 stop && service apache2 start
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
-  printf "\n"
+    # Always provide this block
+    printf "${Bold}\n"
+    printf "===============================================================================================\n"
+    printf "DEVELOPMENT:\n"
+    path="${lando_config_webroot/$REPO_ROOT/}"
+    printf " 1. Drupal custom module source files can be editted in host folder ${path}/modules/custom\n"
+    path="${patterns_local_repo_local_dir/$REPO_ROOT/}"
+    printf " 2. Patterns source files can be editted in host folder ${path}\n"
+    printf " 3. WebApp source files can be editted in host folder ${webapps_local_local_dir}/\n"
+    printf "LOCAL TESTING:\n"
+    printf " 1. Drupal website can be viewed at https://boston.lndo.site\n"
+    printf " 2. Fleet website (Patterns) can be viewed at https://patterns.lndo.site:3030\n"
+    printf " 3. Local patterns CDN at http://patterns.lndo.site:3030\n"
+    printf " 3. WebApps can be viewed at https://node.lndo.site/[appname]/index.html\n"
+    printf "===============================================================================================\n\n${NC}"
+
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printf "\n"
