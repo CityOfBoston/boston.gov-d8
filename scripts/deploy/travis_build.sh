@@ -84,7 +84,7 @@
 
         printf "\n"
         printf "${Blue}       =========================================================================================\n"
-        printout "INFO" "Creating the Build Candidate."
+        printout "INFO" "Creating the Release Candidate."
         printf "${Blue}       =========================================================================================\n\n"
 
         if [[ ${isHotfix} -eq 1 ]]; then
@@ -131,7 +131,7 @@
         build_settings
 
         text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Build Candidate created." "Process took${text}\n"
+        printout "SUCCESS" "Release Candidate created." "Process took${text}\n"
 
     fi
 
@@ -139,7 +139,7 @@
     # => If the commit message contains the text "hotfix" then this step (which takes time and does not produce
     #    anything which will later be deployed) will be skipped.
     #
-    # This block verifies the Build Artifact (i.e. the code in the PR) will actually build, and then runs QC style
+    # This block verifies the Release Artifact (i.e. the code in the PR) will actually build, and then runs QC style
     # tests of the code for linting and formatting standards.
     #
     # ============================================================================================================
@@ -154,7 +154,7 @@
         . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
 
         printf "${Blue}       =========================================================================================\n"
-        printout "INFO" "Verifying & testing the Build Candidate."
+        printout "INFO" "Verifying & testing the Release Candidate."
         printf "${Blue}       =========================================================================================\n\n"
 
         printout "INFO" "This step will verify the Candidate by checking coding standards, attempting "
@@ -196,7 +196,7 @@
                 printout "ERROR" "Fail - Site install failure"
                 echo -e "\n${RedBG}  ============================================================================== ${NC}"
                 echo -e "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
-                echo -e "\n${RedBG}  =                      Build verification aborted.                           = ${NC}"
+                echo -e "\n${RedBG}  =                      Release verification aborted.                         = ${NC}"
                 echo -e "\n${RedBG}  ============================================================================== ${NC}"
                 printout "ERROR" ".\n"
                 printout "" "==> Site Install log dump:"
@@ -226,7 +226,7 @@
             else
                 echo -e "\n${RedBG}  ============================================================================== ${NC}"
                 echo -e "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
-                echo -e "\n${RedBG}  =                      Build verification aborted.                           = ${NC}"
+                echo -e "\n${RedBG}  =                      Release verification aborted.                         = ${NC}"
                 echo -e "\n${RedBG}  ============================================================================== ${NC}"
                 printout "ERROR" ".\n"
                 printout "" "==> Site Install log dump:"
@@ -298,7 +298,7 @@
                         printout "" "          Dump ends."
                         echo -e "\n${RedBG}  ============================================================================== ${NC}"
                         echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"
-                        echo -e   "${RedBG} |                      Build verification aborted.                             |${NC}"
+                        echo -e   "${RedBG} |                      Release verification aborted.                           |${NC}"
                         echo -e   "${RedBG}  ============================================================================== ${NC}\n"
                         exit 1
                     fi
@@ -329,7 +329,7 @@
 
         # Update Travis console log.
         text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Build Candidate tested." "Install & build process took${text}\n"
+        printout "SUCCESS" "Release Candidate tested." "Install & build process took${text}\n"
 
     fi
   printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"

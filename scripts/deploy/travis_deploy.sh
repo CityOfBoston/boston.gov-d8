@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #############################################################################################
-#  This script will copy the build artifact in the Travis environment into the associated
+#  This script will copy the Release Candidate in the Travis environment into the associated
 #  Acquia project repository.
 #
 #  This script should be executed in the `deploy` section of .travis.yml.
@@ -57,21 +57,21 @@
 
         printout "INFO" " -- Deployments will be triggered on the '${source_branch}' branch (or on any tag)."
         printout "INFO" " |  Current branch is '${TRAVIS_BRANCH}'\n"
-        printout "INFO" " |  Travis build artifact id is '${TRAVIS_BUILD_ID}'.\n"
+        printout "INFO" " |  Travis artifact id is '${TRAVIS_BUILD_ID}'.\n"
         printout "INFO" " |  Checking config for '${TRAVIS_BRANCH_SANITIZED}' \n"
 
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
 
-            printout "INFO" "The Build Candidate is accepted and is now the Build Artifact.\n"
+            printout "INFO" "The Release Candidate is accepted and is now the Deploy Artifact.\n"
 
             printf "${Blue}       ================================================================================${NC}\n"
-            printout "STEP" "Generate Deploy Candidate"
+            printout "STEP" "Construct Deploy Artifact"
             printf "${Blue}       ================================================================================${NC}\n"
-            printout "INFO" "We use the 'Deploy Artifact' in <${TRAVIS_BUILD_DIR}> to generate the 'Deploy Candidate' into ${deploy_dir}.\n"
+            printout "INFO" "We use the 'Release Candidate' in <${TRAVIS_BUILD_DIR}> to construct the 'Deploy Artifact' into ${deploy_dir}.\n"
 
             if [[ "${deploy_dry_run}" != "false" ]]; then
-                printout "WARNING" " *** DRY RUN - This is a test build of Deploy Candidate - it will NOT be deployed."
+                printout "WARNING" " *** DRY RUN - This is a test construction of Deploy Artifact - it will NOT be deployed."
             fi
 
             printout "ACTION" "Recreate the deploy directory (${deploy_dir})"
@@ -99,19 +99,19 @@
 
             printout "INFO" "Now need to copy files from (GitHub) into <${deploy_dir}>"
             # Remove the various .gitignore files so we can use git to manage full set of the Deploy Candidate files.
-            printout "ACTION" "Refine Build Artifact (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
+            printout "ACTION" "Refine Release Candidate (GitHub branch ${TRAVIS_BRANCH} built in ${TRAVIS_BUILD_DIR})."
 
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
             mkdir ${deploy_dir}/docroot/sites/default/settings
             chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
 
             # Move files from the Deploy Candidate into the Acquia Repo.
-            printout "INFO" "Deployment to Acquia involves taking the Build Artifact which was created previously and"
+            printout "INFO" "Deployment to Acquia involves taking the Release Candidate which was created previously and"
             printout "INFO" "committing selected files into a branch in the Acquia Repo.  Acquia detects the commit "
             printout "INFO" "and deploys the code in the branch onto any environment/s tracking the branch updated."
-            printout "INFO" "By selecting files from the Build Artifact, we are creating and committing/pushing a"
-            printout "INFO" "Deploy Candidate to Acquia."
-            printout "ACTION" "Select Build Artifact files and create/commit a Deploy Candidate."
+            printout "INFO" "By selecting files from the Release Candidate, we are creating a Deploy Artifact which can be"
+            printout "INFO" "committed/pushed to an Acquia Repo."
+            printout "ACTION" "Select Release Candidate files and create/commit a Deploy Candidate."
             # First do the entire Drupal
             # Files/folders to be copied are specified in the files-from file.
             # Excluding those files/folders in the exclude-from file,
@@ -133,64 +133,86 @@
                   --include-from=${webapp_includes_file} \
                   . ${deploy_dir}/${webapps_local_source}
 
-            # Sanitize - remove files from file defined in deploy_sanitize_file.
-            # deploy_sanitize_file is a line delimited list of wildcard files or folders.
-            if [[ -s ${deploy_sanitize_file} ]]; then
-                printout "ACTION" "Sanitizing files to be deployed."
-                for f in $(cat ${deploy_sanitize_file}) ; do
-                    if [[ ${f:0:1} != "/" ]]; then
-                        set f="${TRAVIS_BUILD_DIR}/${f}"
-                    fi
-                    (rm -f "$f" &&
-                        printout "SUCCESS" "Sanitize: deleted <${f}> files\n") || printout "WARNING" "Sanitize: failed\n"
-                done
-            fi
             # Removes any gitignore files in contrib or custom modules.
             find ${TRAVIS_BUILD_DIR}/docroot/modules/. -type f -name ".gitignore" -delete -print &> /dev/null
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             chmod +x ${TRAVIS_BUILD_DIR}/hooks/**/*.sh
 
-            printout "SUCCESS" "Deploy Candidate is now ready in the Acquia repo in <${deploy_dir}>.\n"
+            printout "SUCCESS" "Deploy Artifact is now fully constructed.\n"
 
             if [[ "${deploy_dry_run}" == "false" ]]; then
 
-                printout "INFO" "Branch ${TRAVIS_BRANCH} now ready to deploy to Acquia as ${deploy_branch}."
+                printout "INFO" "As far as this script is concerned, deploying the Deploy Artifact is acheived by pushing it"
+                printout "INFO" "to the <${deploy_dir}> branch of the remote Acquia-hosted repo.\n"
+                printout "INFO" "The ${TRAVIS_BRANCH} branch is now ready to deploy to Acquia as ${deploy_branch}."
+                printout "ACTION" "Push ${TRAVIS_BRANCH} containing Deploy Artifact to Acquia repo."
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to "
                 cd ${deploy_dir} &&
                     git add --all &&
                     git commit -m "${deploy_commitMsg}" --quiet &&
                     git push ${remote_name} ${deploy_branch}
 
-                printout "SUCCESS" "Deployed ${deploy_branch} to ${remote_name}\n"
-                printout "NOTE" "Acquia pipeline and hooks will now run.\n"
+                printout "SUCCESS" "Branch pushed to Acquia repo.\n"
+                printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an"
+                printf "       environment, then Acquia pipeline and hooks (scripts) will be initiated shortly and finish the deployment to the Acquia environment.\n"
 
                 if [[ "${public_repo_push}" == "true" ]]; then
+                    printout "INFO" "The deployment hand-off to Acquia is complete."
+                    printout "INFO" "The Release Candidate will now be sanitized and copied across to the public repo."
+                    printout "ACTION" "Select files and copy files into distribution folders at."
+
+                    dist_dir="${git_public_repo_dir}"
+                    dist_remote="${git_public_repo_repo}"
+                    dist_branch="${}"
+                    printout "ACTION" "Recreate the distribution directory (${dist_dir})"
+                    rm -rf ${dist_dir} &&  mkdir -p ${dist_dir}
+
+                    printout "ACTION" "Select Release Candidate files and copy to the distribution directory."
                     cd ${TRAVIS_BUILD_DIR} &&
                         rsync \
                             -rlDW \
                             --files-from=${public_repo_deploy_from_file} \
                             --exclude-from=${public_repo_deploy_includes_file} \
                             --include-from=${public_repo_deploy_excludes_file} \
-                            . ${deploy_dir}/
-                    # Sanitize - remove files from file defined in deploy_sanitize_file.
-                    # deploy_sanitize_file is a line delimited list of wildcard files or folders.
-                    if [[ -s ${public_repo_deploy_sanitize_file} ]]; then
-                        printout "ACTION" "Sanitizing files to be deployed."
-                        for f in $(cat ${public_repo_deploy_sanitize_file}) ; do
-                            if [[ ${f:0:1} != "/" ]]; then
-                                set f="${TRAVIS_BUILD_DIR}/${f}"
-                            fi
-                            (rm -f "$f" &&
-                                printout "SUCCESS" "Sanitize: deleted <${f}> files\n") || printout "WARNING" "Sanitize: failed\n"
-                        done
-                    fi
+                            . ${dist_dir}/
+                    printout "SUCCESS" "Content to stnc/distribute to public repo is now fully constructed."
+
+                    printout "ACTION" "Initialize new git repo in distribution directory."
+                    dist_name=$(echo "${dist_remote}" | openssl md5 | cut -d' ' -f 2)
+                    cd ${dist_dir} &&
+                        git init &&
+                        git config gc.pruneExpire 3.days.ago &&
+                        git remote add ${dist_name} ${dist_remote}
+
+                    printout "ACTION" "Create and checkout the branch ${dist_branch} in new repo."
+                    cd ${dist_dir} &&
+                        git checkout -b "${dist_branch}"
+
+                    printout "ACTION" "Fetch & merge files from existing public repo."
+                    cd ${dist_dir} &&
+                        git fetch ${dist_name} &&
+                        git merge ${dist_name}/${dist_branch} &&
+                        rm -f .git/gc.log &&
+                        git prune
+
+                    printout "ACTION" "Push the branch with updated files to the public repo."
+                    dist_commitMsg="Pushed files from '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH})."
+                    cd ${dist_dir} &&
+                        git add --all &&
+                        git commit -m "${dist_commitMsg}" --quiet &&
+                        git push ${dist_name} ${dist_branch}
+
+                    printout "SUCCESS" "Pushed ${dist_branch} to ${dist_name}\n"
+
+                    printout "SUCCESS" "Prepared the new branch in <${dist_dir}>.\n"
                 fi
 
             else
 
+                printout "INFO" "This script is in dry-run mode.  Nothing is pushed to the Acquia repo.\n"
                 printf "==================================================================================\n"
-                printout "OUTPUT" "Build Artifact"
+                printout "OUTPUT" "Release Candidate file listing:"
                 printf "----------------------------------------------------------------------------------\n"
                 printout "INFO" "Repository Root:"
                 ls -la ${TRAVIS_BUILD_DIR}
@@ -201,7 +223,7 @@
                 printf "==================================================================================\n\n"
 
                 printf "==================================================================================\n"
-                printout "OUTPUT" "Deploy Candidate"
+                printout "OUTPUT" "Deploy Artifact file listing:"
                 printf "----------------------------------------------------------------------------------\n"
                 printout "INFO" "Repository Root:"
                 ls -la ${deploy_dir}
@@ -214,11 +236,11 @@
             fi
 
           else
-            printout "INFO" "This Build Artifact is not tracked and will NOT be deployed."
+            printout "INFO" "This Deploy Artifact is not tracked and will NOT be deployed."
         fi
 
       else
-        printout "INFO" "Build artifacts are not deployed for Pull Requests."
+        printout "INFO" "Release candidates are not deployed for Pull Requests."
     fi
 
   printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
