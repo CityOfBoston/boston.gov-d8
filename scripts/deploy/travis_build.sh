@@ -275,17 +275,10 @@
             else
                 # If we have sync'd a remote database, some of the configs we want to import may not be able to be applied.
                 # The work aound is to try a partial configuration import.
-                printf "\n"
-                printout "WARNING" "==== Config Import Errors ========================="
-                printout "" "          Config import log dump (last 25 rows):"
-                tail -25 ${setup_logs}/config_import.log
-                printout "" "          Dump ends."
-                printout "WARNING" "Will retry a partial config import."
-
-                ${drush_cmd} en config, profile -y >/dev/null
                 ${drush_cmd} @self config-import --partial -y &> ${setup_logs}/config_import.log
 
                 if [[ $? -eq 0 ]]; then
+                    printout "WARNING" "A partial config import was performed."
                     printout "SUCCESS" "Config from the repo has been applied to the database.\n"
                 else
                     printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
@@ -294,6 +287,7 @@
                     ${drush_cmd} @self config-import --partial -y &> ${setup_logs}/config_import.log
 
                     if [[ $? -eq 0 ]]; then
+                        printout "WARNING" "A partial config import was performed, on the second attempt."
                         printout "SUCCESS" "Config from the repo has been applied to the database.\n"
                     else
                         # Uh oh!
