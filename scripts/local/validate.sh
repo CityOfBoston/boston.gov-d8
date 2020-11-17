@@ -12,7 +12,8 @@ NC='\033[0m'
 
 # This function runs a syntax check on selected set of files and gives a pass/fail report.
 function lint() {
-    printf "ACTION" "Runing PHP linting checks for syntax errors.\n"
+    printout "FUNCTION" "$(basename $BASH_SOURCE).lint()" "Called from $(basename $0)"
+    printout "ACTION" "Runing PHP linting checks for syntax errors.\n"
     ${REPO_ROOT}/vendor/bin/parallel-lint \
         -e php,module,inc,install \
         --no-progress \
@@ -34,6 +35,7 @@ function lint() {
 
 # This function runs a PHPCodesniff across a selected set of files, and produces a report.
 function phpcs() {
+    printout "FUNCTION" "$(basename $BASH_SOURCE).phpcs()" "Called from $(basename $0)"
     printout "ACTION" "Setting PHPCS options.\n"
 
     if [[ ! -d ${REPO_ROOT}/docroot/modules/custom ]] || [[ ! -d ${REPO_ROOT}/docroot/themes/custom ]]; then
@@ -99,10 +101,10 @@ if [[ -n "$command" ]]; then
 
     elif [[ $command == "all" ]]; then
         if [[ -n ${2} ]] && [[ "${2}" != "pull_request" ]]; then
-            printout "NOTICE" "Code validation is only performed on Pull Requests.\n"
+            printout "NOTICE" "Code validation is only performed on Pull Requests."
         fi
         printf "\n"
-        printout "NOTICE" "Running code validation checks.\n"
+        printout "NOTICE" "Running code validation checks."
 
         lint $args && phpcs $args
 

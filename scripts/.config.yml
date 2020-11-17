@@ -29,6 +29,10 @@ patterns:
     build: false
 
 webapps:
+  # Definition of files that will and wont be copied from build to deploy.
+  rsync_from_file: ${REPO_ROOT}/scripts/deploy/webapp-from.txt
+  rsync_includes_file: ${REPO_ROOT}/scripts/deploy/webapp-includes.txt
+  rsync_excludes_file: ${REPO_ROOT}/scripts/deploy/webapp-excludes.txt
   local:
     # Make paths relative to repo root.
     source: docroot/modules/custom/bos_components/modules/bos_web_app/apps
@@ -101,9 +105,9 @@ deploy:
     # Alias for deploy target Aquia server.
     drush_alias: "@bostond8.dev"
     # Definition of files that will and wont be copied from build to deploy.
+    from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -121,9 +125,9 @@ deploy:
     # Alias for deploy target Aquia server.
     drush_alias: "@bostond8.test"
     # Definition of files that will and wont be copied from build to deploy.
+    from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -151,6 +155,19 @@ git:
     # which will be copied to the main repo and then set up to be called from (i.e. extend)
     # the sites main settings.php script.
     settings_file: sites/default/settings/private.settings.php
+
+  # This node defines a public repository which is shared as part of the City's
+  # commitment to opensource content.
+  public_repo:
+    dir: ${REPO_ROOT}/distrib
+    push: false
+    repo: CityOfBoston/boston.gov.git
+    branch: develop
+
+    deploy:
+      from_file: ${REPO_ROOT}/scripts/deploy/pubrepo-from.txt
+      includes_file: ${REPO_ROOT}/scripts/deploy/pubrepo-includes.txt
+      excludes_file: ${REPO_ROOT}/scripts/deploy/pubrepo-excludes.txt
 
 composer:
   bin: ${REPO_ROOT}/vendor/bin

@@ -108,6 +108,8 @@
     printout "INFO" "The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files)."
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
     (cd ${LANDO_MOUNT} &&
+        composer self-update 1.10.13 &&
+        composer clear-cache &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
         composer drupal:scaffold &>> ${setup_logs}/composer.log &&
         echo "DONE." >> ${setup_logs}/composer.log &&
