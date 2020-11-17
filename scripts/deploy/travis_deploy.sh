@@ -63,7 +63,7 @@
         # Trigger deployment if $source_branch parameters matches or this is a tag.
         if [[ "${TRAVIS_BRANCH}" == "${source_branch}" ]] || [[ -n ${TRAVIS_TAG} ]]; then
 
-            printout "INFO" "The Release Candidate is accepted and is now the Deploy Artifact.\n"
+            printout "INFO" "The Release Candidate is accepted.\n"
 
             printf "${Blue}       ================================================================================${NC}\n"
             printout "STEP" "Construct Deploy Artifact"
@@ -99,7 +99,9 @@
 
             printout "ACTION" "Setting permissions on Drupal settings files."
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
-            mkdir ${deploy_dir}/docroot/sites/default/settings
+            if [[ ! -d ${deploy_dir}/docroot/sites/default/settings ]]; then
+              mkdir ${deploy_dir}/docroot/sites/default/settings
+            fi
             chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
 
             # Move files from the Deploy Candidate into the Acquia Repo.
@@ -121,13 +123,16 @@
                   . ${deploy_dir}/
             # Now do the webapp folders which have their own inclusion/exclusion rules
             printout "ACTION" "Removing un-needed webapp source files."
+            webapp_from_file="${!src}"
+            webapp_includes_file="${!src}"
+            webapps_local_source="${!src}"
             cd ${webapps_local_source} &&
               rsync \
                   -rlDW \
                   --delete-excluded \
-                  --files-from=${webapp_from_file} \
-                  --exclude-from=${webapp_excludes_file} \
-                  --include-from=${webapp_includes_file} \
+                  --files-from=${webapps_rsync_from_file} \
+                  --exclude-from=${webapps_rsync_excludes_file} \
+                  --include-from=${webapps_rsync_includes_file} \
                   . ${deploy_dir}/${webapps_local_source}
 
             # Removes any gitignore files in contrib or custom modules.
@@ -136,7 +141,7 @@
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting permissions on Acquia Hook files."
-            chmod +x ${TRAVIS_BUILD_DIR}/hooks/**/*.sh
+            chmod +x ${deploy_dir}/hooks/**/*.sh
 
             printout "SUCCESS" "Deploy Artifact is now fully constructed.\n"
 
@@ -170,7 +175,7 @@
                     dist_dir="${git_public_repo_dir}"
                     dist_remote="${git_public_repo_repo}"
                     dist_branch="${}"
-                    printout "ACTION" "Recreate the distribution directory (${dist_dir})"
+                    printout "ACTION" "Creating the distribution directory (${dist_dir})"
                     rm -rf ${dist_dir} &&  mkdir -p ${dist_dir}
 
                     printout "ACTION" "Select Release Candidate files and copy to the distribution directory."
