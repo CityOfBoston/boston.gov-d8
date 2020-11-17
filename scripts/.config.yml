@@ -29,6 +29,10 @@ patterns:
     build: false
 
 webapps:
+  # Definition of files that will and wont be copied from build to deploy.
+  rsync_from_file: ${REPO_ROOT}/scripts/deploy/webapp-from.txt
+  rsync_includes_file: ${REPO_ROOT}/scripts/deploy/webapp-includes.txt
+  rsync_excludes_file: ${REPO_ROOT}/scripts/deploy/webapp-excludes.txt
   local:
     # Make paths relative to repo root.
     source: docroot/modules/custom/bos_components/modules/bos_web_app/apps
@@ -104,10 +108,6 @@ deploy:
     from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    # Definition of files that will and wont be copied from build to deploy.
-    webapp_from_file: ${REPO_ROOT}/scripts/deploy/webapp-from.txt
-    webapp_includes_file: ${REPO_ROOT}/scripts/deploy/webapp-includes.txt
-    webapp_excludes_file: ${REPO_ROOT}/scripts/deploy/webapp-excludes.txt
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
@@ -128,10 +128,6 @@ deploy:
     from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    # Definition of files that will and wont be copied from build to deploy.
-    webapp_from_file: ${REPO_ROOT}/scripts/deploy/webapp-from.txt
-    webapp_includes_file: ${REPO_ROOT}/scripts/deploy/webapp-includes.txt
-    webapp_excludes_file: ${REPO_ROOT}/scripts/deploy/webapp-excludes.txt
     # Dry-run (for testing).
     dry_run: false
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
