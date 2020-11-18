@@ -54,11 +54,11 @@ build:
       # Tip: Develop environment has database in closest state to the github repo configs.
       source: sync
       # If you wish to use mycli and pspg tools in the container, set the next line to true.
-      server_side_tools: false
       drush_alias: "@bostond8.dev"
       backup_location: ""
       host: boston_database_1
       port: 3306
+      server_side_tools: false
 
   travis:
     develop:

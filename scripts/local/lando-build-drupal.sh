@@ -330,6 +330,15 @@
                 printout "SUCCESS" "Config from the repo has been applied to the database.\n"
             else
                 # Uh oh!
+                if [[ "${build_local_database_source}" == "none" ]]; then
+                  printout "ERROR" "Configs are failing to import, and the DB Mode is NONE."
+                  printout "ERROR" "Check ${setup_logs}/config_import.log for full printout of attempted process."
+                  printout "ERROR" "It is very likely that the database container did not already have a database installed."
+                  printout "ERROR" "SUGGESTION: in ${Bold}/scripts/.config.yml${BoldOff} file, change the build:local:database:source value to 'sync'"
+                  printout "ERROR" "and retry the build."
+                  printout "ERROR" "${InverseOn}Appserver build is aborted and the local boston.gov is not built."
+                  exit 1
+                fi
                 printout "" "\n"
                 printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
                 printout "ERROR" "Showing last 50 log messages from config_import"
@@ -338,7 +347,7 @@
                 printout "" "" " -Will continue continue build."
                 # Capture the error and save for later display
                 echo -e "\n${RedBG}  ============================================================================== ${NC}"  >> ${setup_logs}/uli.log
-                echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"  >> ${setup_logs}/uli.log
+                echo -e   "${RedBG} |            IMPORTANT:The Drupal configuration import failed.                 |${NC}"  >> ${setup_logs}/uli.log
                 echo -e   "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}"  >> ${setup_logs}/uli.log
                 echo -e   "${RedBG}  ============================================================================== ${NC}\n"  >> ${setup_logs}/uli.log
             fi
@@ -352,7 +361,7 @@
     # Function 'devModules' is contained in /scripts/deploy/cob_utilities.sh
     printout "INFO" "Some Drupal modules/functionality are only required on production sites, and others on local/dev sites."
     printout "ACTION" "Enabling appropriate development features and functionality."
-    devModules "@self"
+    devModules "@self" &>> ${setup_logs}/config_import.log
     # Set the local build to use a local patterns (if the node container has fleet running in it).
     if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
         drush bcss 2

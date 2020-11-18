@@ -17,7 +17,7 @@
     printout "INFO" "For the COB build, we need to add some Linux packages to this standard build."
     printout "ACTION" "Installing required Linux packages in Travis container."
 
-    # Installs linux apps and extensions into the appserver container.
+    # Installs linux apps and extensions into the travis container.
     printout "WARN" "Temporarily, we are fixing the composer version to 1.x."
     composer self-update 1.10.13 &&
       printout "SUCCESS" "Composer is set to v1.10.13."
