@@ -108,7 +108,6 @@
     printout "INFO" "The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files)."
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
     (cd ${LANDO_MOUNT} &&
-        composer self-update 1.10.13 &&
         composer clear-cache &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
         composer drupal:scaffold &>> ${setup_logs}/composer.log &&
@@ -150,7 +149,12 @@
     build_settings || printout "ERROR" "Settings file not created - website may not load.\n"
 
     # Install Content.
-    # For local builds, there are 3 DB build strategies:
+    # The database container has MySQL installed, with the data-files stored in a docker-volume.
+    # Even if the database container itself is destroyed, when it is rebuilt, the volume is re-mounted and the previous
+    # database (saved in the volume) is restored. This is why the database strategies *must* delete the contents of the
+    # database before content is syc'd, rebuilt or restored.
+    #
+    # For local builds, there are 4 DB build strategies:
     #   initialize: This uses drush site-install to create a new Drupal site using the core and contributed modules
     #               previously downloaded by composer.  This method initially creates a fresh site with no custom
     #               modules and then loads the configuration from the repo (usually in docroot/../config/default).
@@ -171,6 +175,8 @@
     #               Beacuse configuration import just applies differences between config in the database and files,
     #               there is far less enabling/disabling of modules, and this method is generally quicker than
     #               Initialize.
+    #   none:       This mode leaves the database as is in the database container.  This strategy works because
+    #               we have the
     #
     # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
 
