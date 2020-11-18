@@ -240,8 +240,7 @@
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_travis_config_dosync}" != "false" ]]; then
 
-            printout "INFO" "The database currently loaded needs to be updated with any changed configs that are"
-            printout "INFO" "contained in this branch."
+            printout "INFO" "The database currently loaded needs to be updated with any changed configs that are contained in this branch."
             printout "INFO" "This step will import configuration from sync folder: '${project_sync}' into database"
 
             # Each Drupal site has a unique site UUID.
@@ -267,7 +266,7 @@
                 fi
             fi
 
-            printout "ACTION" "Import boston.gov configs into the Database."
+            printout "ACTION" "Importing boston.gov configs into the Database."
             ${drush_cmd} @self config-import sync -y &> ${setup_logs}/config_import.log
 
             if [[ $? -eq 0 ]]; then
