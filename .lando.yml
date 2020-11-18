@@ -53,6 +53,7 @@ services:
         - "32306:3306"
       volumes:
         - ./scripts:/app/scripts
+        - ./.lando.yml:/app/.lando.yml
       healthcheck:
         test: /helpers/health.sh database
         interval: 30s
