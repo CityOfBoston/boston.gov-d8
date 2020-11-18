@@ -77,6 +77,13 @@
             printout "ACTION" "Creating the deploy directory (${deploy_dir})"
             rm -rf ${deploy_dir} &&  mkdir -p ${deploy_dir}
 
+            printout "ACTION" "Setting permissions on Drupal settings files."
+            chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
+            if [[ ! -d ${deploy_dir}/docroot/sites/default/settings ]]; then
+              mkdir ${deploy_dir}/docroot/sites/default/settings
+            fi
+            chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
+
             printout "ACTION" "Initializing a new git repo in deploy directory, and adding remote (to Acquia repo)."
             remote_name=$(echo "${deploy_remote}" | openssl md5 | cut -d' ' -f 2)
             cd ${deploy_dir} &&
@@ -95,21 +102,14 @@
                 rm -f .git/gc.log &&
                 git prune &> /dev/null
 
-            printout "SUCCESS" "Created the Deploy Artifact in <${deploy_dir}>.\n"
-
-            printout "ACTION" "Setting permissions on Drupal settings files."
-            chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
-            if [[ ! -d ${deploy_dir}/docroot/sites/default/settings ]]; then
-              mkdir ${deploy_dir}/docroot/sites/default/settings
-            fi
-            chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
+            printout "SUCCESS" "Initialized the Deploy Artifact repo in <${deploy_dir}>.\n"
 
             # Move files from the Deploy Candidate into the Acquia Repo.
             printout "INFO" "Deployment to Acquia involves taking the Release Candidate (which was created previously) and"
             printout "INFO" "committing selected files into a branch in the Acquia Repo. "
-            printout "INFO" "Acquia detects the commit and deploys the code in the branch onto any environment/s tracking the branch updated."
-            printout "INFO" "Selecting files from the Release Candidate creats a Deploy Artifact which can be committed/pushed to an Acquia Repo.\n"
-            printout "ACTION" "Selecting files from Release Candidate to create a Deploy Artifact."
+            printout "INFO" "Selecting and copying files from the Release Candidate creats a Deploy Artifact which can be committed/pushed "
+            printout "INFO" "to an Acquia Repo.\n"
+            printout "ACTION" "Copying files from Release Candidate to create a Deploy Artifact."
             # First do the entire Drupal
             # Files/folders to be copied are specified in the files-from file.
             # Excluding those files/folders in the exclude-from file,
@@ -140,10 +140,10 @@
             find ${TRAVIS_BUILD_DIR}/docroot/modules/. -type f -name ".gitignore" -delete -print &> /dev/null
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
-            printout "ACTION" "Setting permissions on Acquia Hook files."
+            printout "ACTION" "Setting execute permissions on Acquia Hook files."
             chmod +x ${deploy_dir}/hooks/**/*.sh
 
-            printout "SUCCESS" "Deploy Artifact is now fully constructed.\n"
+            printout "SUCCESS" "All files copied and the Deploy Artifact is now fully constructed and ready.\n"
 
             if [[ "${deploy_dry_run}" == "false" ]]; then
 
