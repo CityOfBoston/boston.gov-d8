@@ -65,7 +65,7 @@
     # Change the permissions on the log file so that non-root user can add to log.
     chmod 777 ${LANDO_MOUNT}/setup/lando.log &>> ${setup_logs}/lando.log
 
-    printout "ACTION" "Restarting Appserver's Apache webserver."
+    printout "ACTION" "Restarting appserver's Apache webserver."
     (service apache2 reload &>> ${setup_logs}/lando.log &&
       printout "SUCCESS" "Apache restarted.\n") || printout "WARNING" "Apache restarted failed.\n"
 
