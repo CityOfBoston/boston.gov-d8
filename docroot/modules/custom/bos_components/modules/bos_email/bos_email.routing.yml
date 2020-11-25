@@ -1,10 +1,18 @@
 bos_email.send:
- path: '/rest/email/{server}'
- defaults:
-   _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
- methods: [POST]
- requirements:
-   _access: 'TRUE'
+  path: '/rest/email/{server}'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
+
+bos_email.send_legacy:
+  path: '/emails'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
 
 bos_email.newsletter_manager:
  path: '/rest/email_newsletter/{operation}'
