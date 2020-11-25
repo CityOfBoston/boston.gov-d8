@@ -3,6 +3,8 @@ bos_email.send:
   defaults:
     _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
   methods: [POST]
+  options:
+    no_cache: 'TRUE'
   requirements:
     _access: 'TRUE'
 
@@ -10,6 +12,8 @@ bos_email.send_legacy:
   path: '/emails'
   defaults:
     _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+  options:
+    no_cache: 'TRUE'
   methods: [POST]
   requirements:
     _access: 'TRUE'
@@ -19,6 +23,8 @@ bos_email.newsletter_manager:
  defaults:
    _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
  methods: [POST]
+   options:
+     no_cache: 'TRUE'
  requirements:
    _access: 'TRUE'
 
@@ -27,5 +33,7 @@ bos_email.newsletter_manager_legacy:
   defaults:
     _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
   methods: [POST]
+  options:
+    no_cache: 'TRUE'
   requirements:
     _access: 'TRUE'
