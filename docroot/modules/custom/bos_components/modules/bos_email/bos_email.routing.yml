@@ -13,3 +13,11 @@ bos_email.newsletter_manager:
  methods: [POST]
  requirements:
    _access: 'TRUE'
+
+bos_email.newsletter_manager_legacy:
+  path: '/subscriptions'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'
