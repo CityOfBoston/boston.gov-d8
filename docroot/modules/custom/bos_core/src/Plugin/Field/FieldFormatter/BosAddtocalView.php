@@ -44,9 +44,9 @@ class BosAddtocalView extends AddtocalView {
           $elements[$delta]['start_date']['#plain_text'] = $this->formatDate($start_date);
           $elements[$delta]['end_date']['#plain_text'] = $this->formatDate($end_date);
 
-          $title = $elements[$delta]["addtocal"]["#addtocal_link"]->title;
+          $title = strip_tags($elements[$delta]["addtocal"]["#addtocal_link"]->title);
           $address = $elements[$delta]["addtocal"]["#addtocal_link"]->address;
-          $description = $elements[$delta]["addtocal"]["#addtocal_link"]->description;
+          $description = strip_tags($elements[$delta]["addtocal"]["#addtocal_link"]->description);
           $link = Link::create($title, $start_date, $end_date);
           $link->address($address);
           $link->description($description);
