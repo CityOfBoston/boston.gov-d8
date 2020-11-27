@@ -19,13 +19,13 @@ bos_email.send_legacy:
     _access: 'TRUE'
 
 bos_email.newsletter_manager:
- path: '/rest/email_newsletter/{operation}'
- defaults:
+  path: '/rest/email_newsletter/{operation}'
+  defaults:
    _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
- methods: [POST]
-   options:
-     no_cache: 'TRUE'
- requirements:
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
    _access: 'TRUE'
 
 bos_email.newsletter_manager_legacy:
