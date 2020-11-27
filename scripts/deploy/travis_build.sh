@@ -267,6 +267,7 @@
             fi
 
             printout "ACTION" "Importing boston.gov configs into the Database."
+            ${drush_cmd} @self en config -y
             ${drush_cmd} @self config-import sync -y &> ${setup_logs}/config_import.log
 
             if [[ $? -eq 0 ]]; then
