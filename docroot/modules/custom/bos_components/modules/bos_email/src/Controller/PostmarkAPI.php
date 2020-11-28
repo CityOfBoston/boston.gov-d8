@@ -218,7 +218,7 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
-  public function begin(string $server) {
+  public function begin(string $server = 'contactform') {
     // Get POST data and check auth.
     $this->server = $server;
 
