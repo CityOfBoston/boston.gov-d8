@@ -128,7 +128,7 @@ class UpakneeAPI extends ControllerBase {
    * @param string $operation
    *   The operation being called via the endpoint uri.
    */
-  public function begin(string $operation) {
+  public function begin(string $operation = 'subscribe') {
     // Get POST data and check operation.
     $this->operation = $operation;
 
