@@ -5,13 +5,17 @@
  * Contains node_buildinghousing.module.
  */
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\NodeType;
 use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_help().
  */
-function node_buildinghousing_help($route_name, RouteMatchInterface $route_match) {
+function node_buildinghousing_help($route_name, RouteMatchInterface $route_match)
+{
   switch ($route_name) {
     // Main module help for the node_buildinghousing module.
     case 'help.page.node_buildinghousing':
@@ -27,7 +31,8 @@ function node_buildinghousing_help($route_name, RouteMatchInterface $route_match
 /**
  * Implements hook_theme().
  */
-function node_buildinghousing_theme() {
+function node_buildinghousing_theme()
+{
   return [
     'node_buildinghousing' => [
       'render element' => 'children',
@@ -38,10 +43,264 @@ function node_buildinghousing_theme() {
 /**
  * Implements hook_views_pre_render().
  */
-function node_buildinghousing_views_pre_render(ViewExecutable $view) {
+function node_buildinghousing_views_pre_render(ViewExecutable $view)
+{
   if (isset($view) && ($view->storage->id() == 'building_housing')) {
     $view->element['#attached']['library'][] = 'node_buildinghousing/buildinghousing_views';
+
+    $cssClass = 'view-id-' . $view->id() . ' view-display-id-' . $view->current_display;
+    $view->display_handler->setOption('css_class', $cssClass);
   }
 }
 
 
+function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface $entity)
+{
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_project') {
+
+    $projectRecordType = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_record_type')->target_id)->name->value ?? null;
+    $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
+    $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
+
+    $projectStatus = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_status')->target_id)->name->value ?? null;
+
+    $projectStage = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_stage')->target_id)->name->value ?? null;
+
+    $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? null;
+    foreach ($publicStages as $key => $publicStage) {
+      $publicStages[$publicStage->name] = $publicStage->tid;
+      unset($publicStages[$key]);
+    }
+
+    $projectCompeteDate = $entity->get('field_bh_project_complete_date')->value ?? null;
+
+    $publicStage = null;
+
+
+    // Rule B
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Not Started', 'Hold', 'Suspended'])
+    ) {
+      $publicStage = 'Not Active';
+    }
+
+    // Rule C
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, [
+        'Under Consideration',
+        'Research for Disposition Underway',
+        'Future Consideration',
+        'Remnant - No Interest',
+        'Urban Wild / Conservation',
+        'Municipal Use',
+        'Tax Taking / Subject to Redemption'
+      ])
+    ) {
+      $publicStage = 'Not Active';
+    }
+
+    // Rule D
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, [
+        'Community Meeting In Process',
+        'RFP In Process'
+      ])
+    ) {
+      $publicStage = 'Project Launch';
+    }
+
+    // Rule E
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, [
+        'RFP Issued',
+        'Proposal Review'
+      ])
+    ) {
+      $publicStage = 'Selecting Developer';
+    }
+
+    // Rule F
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, [
+        'Under Agreement',
+        'Closing Underway'
+      ])
+    ) {
+      $publicStage = 'City Planning Process';
+    }
+
+    // Rule G
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, ['In construction'])
+    ) {
+      $publicStage = 'In Construction';
+    }
+
+    // Rule H
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, ['Construction complete - Project open'])
+    ) {
+      $publicStage = 'Project Completed';
+    }
+
+    // Rule I
+    if (in_array($projectRecordType, ['Disposition'])
+      && in_array($projectStatus, ['Completed'])
+    && strtotime($projectCompeteDate) >= strtotime('-2 years') //@TODO: ? What if the ProjectCompleteDate is null?
+    ) {
+      $publicStage = 'Project Completed';
+    }
+
+    // Rule J
+    if (in_array($projectRecordType, ['NHD Development'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, [
+        'Commitment',
+        'Awarded',
+        'Pre-Commitment Process',
+        'Closing Underway',
+        'Pre-development'
+      ])
+    ) {
+      $publicStage = 'City Planning Process';
+    }
+
+    // Rule K
+    if (in_array($projectRecordType, ['NHD Development'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, ['In construction'])
+    ) {
+      $publicStage = 'In Construction';
+    }
+
+    // Rule L
+    if (in_array($projectRecordType, ['NHD Development'])
+      && in_array($projectStatus, ['Active'])
+      && in_array($projectStage, ['Construction complete - Project open'])
+    ) {
+      $publicStage = 'In Construction';
+    }
+
+    // Rule M
+    if (in_array($projectRecordType, ['NHD Development'])
+      && in_array($projectStatus, ['Completed'])
+      && strtotime($projectCompeteDate) >= strtotime('-2 years')
+    ) {
+      $publicStage = 'Project Completed';
+    }
+
+
+    // Set the Public Stage on the Project or unset it if no rules apply
+    if ($publicStage) {
+      $entity->set('field_bh_public_stage', [$publicStages[$publicStage]]);
+    }else{
+      $entity->set('field_bh_public_stage', []);
+    }
+
+  }
+
+
+}
+
+
+function node_buildinghousing_entity_extra_field_info() {
+  $extraFields = [];
+
+  foreach (NodeType::loadMultiple() as $bundle) {
+
+    if ($bundle->id() == 'bh_project') {
+      $extraFields['node'][$bundle->id()]['display']['bh_computed_project_type'] = [
+        'label' => t('Computed Project Type'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+    }
+  }
+
+
+  return $extraFields;
+}
+
+function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode){
+
+  if($display->getComponent('bh_computed_project_type')) {
+    $build['bh_computed_project_type'] = _node_buildinghousing_build_render_computed_project_type($entity);
+  }
+
+}
+
+function _node_buildinghousing_build_render_computed_project_type ($entity) {
+  $render = [];
+
+  $computedProjectType = _node_buildinghousing_get_computed_project_type($entity);
+
+  if ($computedProjectType) {
+    $vars = [
+      'classes' => [
+        'icon' => 'icon-location',
+        'label' => 'detail-item--secondary grid-card__title',
+        'body' => 'detail-item__body--tertiary',
+        'detail' => 'detail-item--middle m-v300 grid-card__title',
+      ],
+    ];
+
+    $vars['label'] = $computedProjectType['label'] ?? null;
+    $vars['body'] = $computedProjectType['body'] ?? null;
+
+    $render = ['#markup' => \Drupal::theme()->render("detail_item", $vars)];
+
+    return  $render;
+
+  }
+}
+
+
+function _node_buildinghousing_get_computed_project_type ($entity) {
+  $data = [];
+  $mainType = null;
+  $subType = null;
+
+  $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  if ($dispositionTypeId = $entity->get('field_bh_disposition_type')->target_id) {
+//    $dispositionType = $termStorage->load($dispositionTypeId);
+    $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
+
+    $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : null;
+    $subType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : null;
+  }
+
+  if ($projectTypeId = $entity->get('field_bh_project_type')->target_id) {
+//    $projectType = $termStorage->load($projectTypeId);
+    $projectTypeParents = $termStorage->loadAllParents($projectTypeId);
+
+    if ($subType == 'Housing' || empty($mainType)) {
+      $mainType = 'Housing';
+      $subType = !empty($projectTypeParents) ? array_pop($projectTypeParents) : null;
+    }
+  }
+
+
+  if ($mainType) {
+    $mainType = $mainType->getName();
+    $data['label'] = $mainType;
+  }
+
+  if ($subType) {
+    if ($subType->getName() == 'Mixed Use - Assisted' || $subType->getName() == 'Mixed Use - Market') {
+      $subType = 'Mixed Use';
+      $data['body'] = $subType;
+    }elseif ($subType->getName() != 'N/A'){
+      $subType = $subType->getName();
+      $data['body'] = $subType;
+    }
+  }
+
+  return $data;
+}
