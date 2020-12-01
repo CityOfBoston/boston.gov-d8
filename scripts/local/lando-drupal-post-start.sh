@@ -29,18 +29,21 @@
     . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
     . "${LANDO_MOUNT}/scripts/deploy/cob_utilities.sh"
 
+    printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
     printf "\n"
-    printf "ref: $(basename "$0")\n"
-    printout "LANDO" "Project Event - post-start\n"
-    printf "================================================================================\n"
-    printout "SUCCESS" "Docker containers are now started."
-    printf "================================================================================\n\n"
+    printf "${Green}${InvertOn}  ================================================================================\n"
+    printout "SUCCESS" "${InvertOn}Docker containers are now started.                                            |"
+    printf "${Green}${InvertOn}  ================================================================================\n\n"
 
+    # We are now at the end of the build and/or start process.
+
+    # Printout anything that has been cached into setup/uli.log.
     if [[ -e ${REPO_ROOT}/setup/uli.log ]]; then
         cat ${REPO_ROOT}/setup/uli.log && rm -f ${REPO_ROOT}/setup/uli.log;
     else
         . ${REPO_ROOT}/scripts/doit/branding.sh;
     fi
+
     # Embed the custom xdebug file as a php ini file.
     # There are 2 customized ini's one per environment (mac and linux) -they should not be changed locally by the
     # user but can be modified in the private repo to improve debug experience for all users.
@@ -58,15 +61,19 @@
     fi
 
     if [[ "$OS" == "LINUX" ]] || [[ "$OS" == "linux" ]]; then
-        printout "INFO" "Host is Linux"
+        printout "INFO" "The Host PC is Linux"
         xdebug="${LANDO_MOUNT}/xdebug_linux.ini"
         # Update xdebug file with correct remote_host.
         sed -i "s/host\.docker\.internal/${LANDO_HOST_IP}/g" ${xdebug} && sed -i "s/_host=[0-9\.]*/_host=$LANDO_HOST_IP/g" ${xdebug}
     elif [[ "$OS" == "OSX" ]] || [[ "$OS" == "darwin" ]]; then
-        printout "INFO" "Host is MacOSX"
+        printout "INFO" "The Host PC is MacOSX"
         xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
+    else
+        printout "INFO" "Brace yourself, you look to be running Windows"
     fi
 
+    # Add a php ini file to set customized PHP configurations within the container.
+    # For example, memory allocation, timeouts, error handling etc.
     if [[ -n ${xdebug} ]]; then
         if [[ -e /usr/local/etc/php/conf.d/php_cob.ini ]]; then
             rm /usr/local/etc/php/conf.d/php_cob.ini
@@ -76,8 +83,11 @@
     fi
 
     # Link the local-dev php.ini file.
-    # The file below is where developers should add their individual php ini customizations.  The file is not tracked
-    # by git, so changes will potentially be lost when the app is rebuilt.
+    # The file below is where developers should add their individual php ini customizations.
+    # For example IPAddresses, memory allocations etc
+    # The file is not tracked by git, so manual changes will potentially be lost when the
+    # app is rebuilt.
+    printout "ACTION" "Setup XDebug in Drupal container."
     if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
         rm /usr/local/etc/php/conf.d/boston-dev-php.ini
     fi
@@ -85,4 +95,29 @@
     chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
     # Restart apache to get those files loaded.
+    printout "ACTION" "Restart Apache service in Drupal container."
     service apache2 stop && service apache2 start
+
+    # Always provide this block
+    printf "${Bold}\n"
+    printf "===============================================================================================\n"
+    printf "LOCAL DEVELOPMENT:\n"
+    path="${lando_config_webroot/$REPO_ROOT/}"
+    printf " 1. Drupal custom module source files can be editted in host folder ${path}/modules/custom\n"
+    path="${patterns_local_repo_local_dir/$REPO_ROOT/}"
+    printf " 2. Patterns source files can be editted in host folder ${path}\n"
+    printf " 3. WebApp source files can be editted in host folder ${webapps_local_local_dir}/\n"
+    printf " 4. Drupals MySQL Database can be connected to on port 32306\n"
+    printf "    e.g. connstr = 'jdbc:mysql://localhost:32306/drupal' (user=drupal pwd=drupal)\n"
+    printf "LOCAL TESTING:\n"
+    printf " 1. Drupal website can be viewed at https://boston.lndo.site\n"
+    printf " 2. Fleet website (Patterns) can be viewed at https://patterns.lndo.site:3030\n"
+    printf " 3. Local patterns CDN at: \n"
+    printf "              js: https://patterns.lndo.site:3030/public/scripts/\n"
+    printf "              css: https://patterns.lndo.site:3030/public/css/\n"
+    printf "              images: https://patterns.lndo.site:3030/assets/images\n"
+    printf " 4. WebApps can be tested at https://node.lndo.site/[appname]/index.html\n"
+    printf "===============================================================================================\n\n${NC}"
+
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printf "\n"

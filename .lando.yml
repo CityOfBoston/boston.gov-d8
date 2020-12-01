@@ -12,11 +12,13 @@ config:
   drupal: false
 
 proxy:
-  patterns:
-    - patterns.lndo.site
+  node:
+    - patterns.lndo.site:3030
+    - node.lndo.site
+    - cdn.lndo.site:3030
 
 services:
-  patterns:
+  node:
     type: node:10
     ssl: true
     overrides:
@@ -29,17 +31,17 @@ services:
         PORT: "80"
         FRACTAL_PORT: "80"
       healthcheck:
-        test: /app/scripts/local/health.sh patterns
+        test: /app/scripts/local/health.sh node
         interval: 30s
         timeout: 15s
         retries: 5
     build_as_root:
-      - printf "\n[LANDO] Patterns Container Event - build as root\n"
-      - /app/scripts/local/lando-patterns-customize.sh
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'node'\n"
+      - /app/scripts/local/lando-node-customize.sh
     run:
-      - printf "\n[LANDO] Patterns Container Event - run\n\n"
-      - /app/scripts/local/lando-build-patterns.sh
-    command: /app/scripts/local/lando-patterns-post-start.sh
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[0m Event raised on Container 'node'\n"
+      - /app/scripts/local/lando-build-node.sh
+    command: /app/scripts/local/lando-node-post-start.sh
 
   database:
     type: mysql
@@ -47,14 +49,19 @@ services:
     portforward: true
     host: localhost
     overrides:
+      ports:
+        - "32306:3306"
+      volumes:
+        - ./scripts:/app/scripts
+        - ./.lando.yml:/app/.lando.yml
       healthcheck:
         test: /helpers/health.sh database
         interval: 30s
         timeout: 10s
         retries: 5
     run_as_root:
-      - printf "\n[LANDO] Database Event - run as root\n\n"
-      - /helpers/lando-database-customize.sh
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun_as_root\e[0m Event raised on Container 'database'\n"
+      - /app/scripts/local/lando-database-customize.sh
 
     creds:
       user: drupal
@@ -65,6 +72,8 @@ services:
     type: php:7.3
     webroot: docroot
     xdebug: true
+    composer: []
+    composer_version: '1.10.13'
     overrides:
       healthcheck:
         test: /app/scripts/local/health.sh appserver
@@ -72,21 +81,19 @@ services:
         timeout: 15s
         retries: 5
       environment:
+        DRUSH_OPTIONS_URI: "https://boston.lndo.site"
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
-    config:
-      conf: xdebug.ini
 
     build_as_root:
-      - printf "\n[LANDO] Appserver Event - build as root\n\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-appserver-customize.sh
 
     build:
-      - printf "\n[LANDO] Appserver Event - build\n\n"
-      - /bin/sh -c "composer require drush/drush:^9 --no-update --no-progress --no-suggest --prefer-dist &> /dev/null"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver'\n"
 
     run:
-      - printf "\n[LANDO] Appserver Event - run\n\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:
@@ -107,18 +114,18 @@ tooling:
     - drupal
 
   npm:
-    service: patterns
-    description: "Run npm commands in patterns:node container: lando npm <command>"
+    service: node
+    description: "Run npm commands in node:node container: lando npm <command>"
     cmd:
       - echo a; cd /app/patterns && npm
 
   node:
-    service: patterns
-    description: "Run node commands in patterns container: lando node <command>"
+    service: node
+    description: "Run node commands in node container: lando node <command>"
 
   gulp:
-    service: patterns
-    description: "Run node:gulp commands in patterns container: lando gulp <command>"
+    service: node
+    description: "Run node:gulp commands in node container: lando gulp <command>"
 
   mycli:
     service: database
@@ -130,6 +137,12 @@ tooling:
     description: "Drupal: Copy the remote staging DB into the local DB"
     cmd:
       - /app/scripts/local/sync.sh 'dev'
+
+  drupal-sync-files:
+    service: appserver
+    description: "Drupal: Copy the images and pdfs from prod to local"
+    cmd:
+      - /app/scripts/local/filesync.sh 'dev'
 
   drupal-pull-repo:
     service: appserver
@@ -151,4 +164,4 @@ tooling:
 
 events:
   post-start:
-    - appserver: /app/scripts/local/lando-drupal-post-start.sh
+    - appserver: printf "\e[1m\e[7m[LANDO]\e[0m \e[1mpost-start\e[0m Event raised on Container 'appserver'\n" && /app/scripts/local/lando-drupal-post-start.sh
