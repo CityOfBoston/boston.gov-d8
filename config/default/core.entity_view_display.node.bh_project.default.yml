@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_funding_stage
     - field.field.node.bh_project.field_bh_initial_comm_mtg_date
     - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_meetings
     - field.field.node.bh_project.field_bh_neighborhood
     - field.field.node.bh_project.field_bh_parcel_id
     - field.field.node.bh_project.field_bh_predicted_closing_date
@@ -23,7 +24,9 @@ dependencies:
     - field.field.node.bh_project.field_bh_project_stage
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_type
     - field.field.node.bh_project.field_bh_project_updates
+    - field.field.node.bh_project.field_bh_public_stage
     - field.field.node.bh_project.field_bh_record_type
     - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
@@ -36,6 +39,7 @@ dependencies:
     - fences
     - field_group
     - geolocation
+    - node_buildinghousing
     - text
     - user
     - viewfield
@@ -43,12 +47,13 @@ third_party_settings:
   field_group:
     group_information:
       children:
+        - group_meetings
         - group_dates
         - group_stats
         - group_photos
         - group_parcels
       parent_name: ''
-      weight: 4
+      weight: 6
       format_type: tabs
       region: content
       format_settings:
@@ -124,10 +129,11 @@ third_party_settings:
         - field_bh_project_status
         - field_bh_project_stage
         - field_bh_disposition_type
+        - field_bh_project_type
         - field_bh_neighborhood
         - field_bh_total_num_units
       parent_name: ''
-      weight: 3
+      weight: 5
       format_type: details
       region: content
       format_settings:
@@ -136,6 +142,19 @@ third_party_settings:
         classes: m-v400
         open: false
       label: 'Additional Details and Information'
+    group_meetings:
+      children:
+        - field_bh_meetings
+      parent_name: group_information
+      weight: 20
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: Meetings
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -143,6 +162,11 @@ targetEntityType: node
 bundle: bh_project
 mode: default
 content:
+  bh_computed_project_type:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   body:
     type: text_default
     weight: 2
@@ -511,7 +535,7 @@ content:
         fences_label_tag: div
         fences_label_classes: ''
   field_bh_disposition_type:
-    weight: 4
+    weight: 31
     label: above
     settings:
       link: true
@@ -573,8 +597,18 @@ content:
         fences_label_classes: ''
     type: datetime_default
     region: content
+  field_bh_meetings:
+    weight: 26
+    label: hidden
+    settings:
+      view_title: hidden
+      always_build_output: false
+      empty_view_title: hidden
+    third_party_settings: {  }
+    type: viewfield_default
+    region: content
   field_bh_neighborhood:
-    weight: 5
+    weight: 33
     label: above
     settings:
       link: true
@@ -589,7 +623,7 @@ content:
     type: entity_reference_label
     region: content
   field_bh_parcel_id:
-    weight: 1
+    weight: 28
     label: above
     settings:
       link_to_entity: false
@@ -668,7 +702,7 @@ content:
     type: viewfield_default
     region: content
   field_bh_project_stage:
-    weight: 3
+    weight: 30
     label: above
     settings:
       link: true
@@ -699,7 +733,7 @@ content:
     type: datetime_default
     region: content
   field_bh_project_status:
-    weight: 2
+    weight: 29
     label: above
     settings:
       link: true
@@ -711,6 +745,14 @@ content:
         fences_field_item_classes: m-l300
         fences_label_tag: div
         fences_label_classes: ''
+    type: entity_reference_label
+    region: content
+  field_bh_project_type:
+    weight: 32
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
     type: entity_reference_label
     region: content
   field_bh_project_updates:
@@ -730,6 +772,13 @@ content:
         fences_label_classes: ''
     type: viewfield_default
     region: content
+  field_bh_public_stage:
+    weight: 3
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: entity_reference_bh_public_stage
+    region: content
   field_bh_rfp_issued_date:
     weight: 6
     label: inline
@@ -747,7 +796,7 @@ content:
     type: datetime_default
     region: content
   field_bh_total_num_units:
-    weight: 6
+    weight: 34
     label: above
     settings:
       thousand_separator: ''

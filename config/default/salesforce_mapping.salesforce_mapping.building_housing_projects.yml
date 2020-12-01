@@ -22,6 +22,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_project_stage
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_type
     - field.field.node.bh_project.field_bh_record_type
     - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
@@ -32,6 +33,7 @@ dependencies:
     - field.storage.node.field_bh_neighborhood
     - field.storage.node.field_bh_project_stage
     - field.storage.node.field_bh_project_status
+    - field.storage.node.field_bh_project_type
     - field.storage.node.field_bh_record_type
     - field.storage.node.field_bh_wysiwyg_photo_a
     - node.type.bh_project
@@ -40,6 +42,7 @@ dependencies:
     - taxonomy.vocabulary.bh_neighborhood
     - taxonomy.vocabulary.bh_project_stage
     - taxonomy.vocabulary.bh_project_status
+    - taxonomy.vocabulary.bh_project_type
     - taxonomy.vocabulary.bh_record_type
   module:
     - geolocation
@@ -51,7 +54,7 @@ weight: 0
 type: salesforce_mapping
 key: ''
 async: false
-push_standalone: false
+push_standalone: true
 pull_standalone: true
 pull_trigger_date: LastModifiedDate
 pull_where_clause: 'RecordTypeID IN (''0120y0000007rw7'', ''012C0000000Hqw0'')'
@@ -216,6 +219,12 @@ field_mappings:
     salesforce_field: Construction_Finish_Actual__c
     direction: sf_drupal
     id: 24
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_project_type
+    salesforce_field: Project_Type__c
+    direction: sf_drupal
+    id: 25
 push_limit: 0
 push_retries: 3
 push_frequency: 0
