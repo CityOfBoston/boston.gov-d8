@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_funding_stage
     - field.field.node.bh_project.field_bh_initial_comm_mtg_date
     - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_meetings
     - field.field.node.bh_project.field_bh_neighborhood
     - field.field.node.bh_project.field_bh_parcel_id
     - field.field.node.bh_project.field_bh_predicted_closing_date
@@ -23,7 +24,9 @@ dependencies:
     - field.field.node.bh_project.field_bh_project_stage
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_type
     - field.field.node.bh_project.field_bh_project_updates
+    - field.field.node.bh_project.field_bh_public_stage
     - field.field.node.bh_project.field_bh_record_type
     - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
@@ -118,6 +121,12 @@ content:
     third_party_settings: {  }
     type: datetime_default
     region: content
+  field_bh_meetings:
+    weight: 147
+    settings: {  }
+    third_party_settings: {  }
+    type: viewfield_select
+    region: content
   field_bh_neighborhood:
     weight: 135
     settings:
@@ -188,11 +197,31 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
+  field_bh_project_type:
+    weight: 149
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
   field_bh_project_updates:
     weight: 137
     settings: {  }
     third_party_settings: {  }
     type: viewfield_select
+    region: content
+  field_bh_public_stage:
+    weight: 148
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_bh_record_type:
     weight: 125
