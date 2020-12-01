@@ -404,14 +404,19 @@ sync_db() {
 
     fi
 
-    # Set the website to use patterns library from heroku staging.
+    # Set the website to use patterns library from appropriate location.
+    # 2=local containers, 3=production AWS, 4=stage AWS
     if [ "${target_env}" == "dev" ]; then
-        ${drush_cmd} ${ALIAS} bcss 3
+        # Use the staging (AWS) environment on the dev server/s
+        ${drush_cmd} ${ALIAS} bcss 4
     elif [ "${target_env}" == "test" ]; then
+        # Use prod (AWS) environment on the staging server/s
         ${drush_cmd} ${ALIAS} bcss 3
     elif [ "${target_env}" == "prod" ]; then
+        # Use prod (AWS) environment on prod servers
         ${drush_cmd} ${ALIAS} bcss 3
     elif [ "${target_env}" == "local" ]; then
+        # Use local container version in local builds
         ${drush_cmd} ${ALIAS} bcss 2
     else
         ${drush_cmd} ${ALIAS} bcss 3
@@ -591,6 +596,9 @@ slackPost() {
 }
 
 devModules() {
+
+    printf "[FUNCTION] $(basename $BASH_SOURCE).devModules()" "Called from $(basename $0)\n"
+
     printf " [action] Enable DEVELOPMENT-ONLY modules.\n"
 
     ALIAS="${1}"

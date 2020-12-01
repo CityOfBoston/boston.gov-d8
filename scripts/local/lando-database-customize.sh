@@ -8,15 +8,16 @@
 
   # Include the utilities file/library.
   REPO_ROOT="${LANDO_MOUNT}"
-  . "${LANDO_MOUNT}/scripts/cob_build_utilities.sh"
+  . "/app/scripts/cob_build_utilities.sh"
 
   # Create script variables
   target_env="local"
 
-  printf "ref: $(basename "$0")\n"
-  printf "\n${LightPurple}       ================================================================================${NC}\n"
+  printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
+  printf "\n"
+  printf "${Blue}       ================================================================================${NC}\n"
   printout "STEP" "Install MySQl tools (mycli and pspg) into the database container."
-  printf "${LightPurple}       ================================================================================${NC}\n"
+  printf "${Blue}       ================================================================================${NC}\n"
 
   if [[ "${build_local_database_server_side_tools}" == "TRUE" ]] || [[ "${build_local_database_server_side_tools}" == "True" ]] || [[ "${build_local_database_server_side_tools}" == "true" ]]; then
     # Install python and pip so we can install mycli.
@@ -38,7 +39,10 @@
 
   else
 
-    printout "INFO" "Note: mycli and pspg server-side tools not installed."
-    printf "        - If you require these tools then enable in config.yml.\n"
+    printout "INFO" "MyCLI and pspg server-side tools not installed." "If you require these tools then enable in config.yml.\n"
+    printout "SUCCESS" "Nothing Done.\n"
 
   fi
+
+  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+  printf "\n"
