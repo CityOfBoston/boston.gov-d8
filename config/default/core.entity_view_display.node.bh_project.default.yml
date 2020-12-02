@@ -53,7 +53,7 @@ third_party_settings:
         - group_photos
         - group_parcels
       parent_name: ''
-      weight: 6
+      weight: 7
       format_type: tabs
       region: content
       format_settings:
@@ -133,7 +133,7 @@ third_party_settings:
         - field_bh_neighborhood
         - field_bh_total_num_units
       parent_name: ''
-      weight: 5
+      weight: 6
       format_type: details
       region: content
       format_settings:
@@ -163,6 +163,11 @@ bundle: bh_project
 mode: default
 content:
   bh_computed_project_type:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_manager_contact:
     weight: 4
     region: content
     settings: {  }
@@ -773,7 +778,7 @@ content:
     type: viewfield_default
     region: content
   field_bh_public_stage:
-    weight: 3
+    weight: 5
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
