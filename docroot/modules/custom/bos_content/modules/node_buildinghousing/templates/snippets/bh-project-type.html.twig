@@ -1,0 +1,48 @@
+{#
+/**
+ * @file
+ * Default theme implementation for detail item.
+ *
+ * Available variables:
+ * - label: The label value of the detail item.
+ * - body: The content value of the detail item.
+ * - phone: The phone number value of the detail item.
+ * - image: The image value of the detail item.
+ * - classes: Array of classes to be applied to detail, icon, label, and body
+ *   elements.
+ */
+#}
+
+{% if classes.icon %}
+  {% set left_content = '<div class="icon ' ~ classes.icon ~ '"></div>' %}
+{% elseif label and 'detail-item--secondary' in default_classes.detail %}
+  {% set left_content = "<div>" ~ label ~ "</div>" %}
+{% elseif label and 'detail-item--secondary' in classes.detail %}
+  {% set left_content = "<div>" ~ label ~ "</div>" %}
+{% elseif image %}
+  {% set left_content = "<div>" ~ image ~ "</div>" %}
+{% endif %}
+
+
+<div class="bh-project-type bg--cb g--4--xxl g--6 m-b300 m-b500--xxl ">
+  <div class="cdd-c">
+
+    <div class="bg--cb cdd-ic">
+{#        <img src="https://patterns.boston.gov/images/global/icons/experiential/triple-decker.svg">#}
+
+        <div width="100" height="100" typeof="foaf:Image" class="project-type-icon">
+          <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 144 144"><polygon points="107.49 32.26 36.51 32.26 35.46 26.79 108.54 26.79 107.49 32.26" fill="#fff" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></polygon><rect x="39.09" y="32.44" width="66.83" height="84.77" fill="#fff" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="86.24" y="40.58" width="10.6" height="10.67" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="86.24" y="65.49" width="10.6" height="10.67" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="86.24" y="91.4" width="10.6" height="10.67" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="53.01" y="74.49" width="21.54" height="15.33" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="53.01" y="47.99" width="21.54" height="15.33" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="39.09" y="111.82" width="66.83" height="5.38" fill="#fff" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></rect><rect x="47.4" y="32.67" width="5.61" height="83.87" fill="#fff" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><rect x="53.01" y="101.49" width="21.54" height="15.33" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><line x1="57.51" y1="101.32" x2="57.51" y2="111.32" fill="none" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></line><line x1="62.51" y1="101.32" x2="62.51" y2="111.32" fill="none" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></line><line x1="67.51" y1="101.32" x2="67.51" y2="111.32" fill="none" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></line><line x1="53.01" y1="84.82" x2="77.01" y2="84.82" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></line><line x1="53.01" y1="58.82" x2="77.01" y2="58.82" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></line><rect x="71.84" y="32.67" width="5.41" height="83.87" fill="#fff" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><line x1="57.51" y1="48.32" x2="57.51" y2="58.32" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></line><line x1="62.51" y1="48.32" x2="62.51" y2="58.32" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></line><rect x="47.4" y="32.36" width="29.86" height="5.15" fill="#fff" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></rect><line x1="67.51" y1="48.32" x2="67.51" y2="58.32" fill="none" stroke="#111f2d" stroke-linecap="round" stroke-miterlimit="10" stroke-width="3"></line><line x1="57.51" y1="74.32" x2="57.51" y2="84.32" fill="none" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></line><line x1="62.51" y1="74.32" x2="62.51" y2="84.32" fill="none" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></line><line x1="67.51" y1="74.32" x2="67.51" y2="84.32" fill="none" stroke="#111f2d" stroke-miterlimit="10" stroke-width="3"></line></svg>
+        </div>
+
+    </div>
+
+    <div class="cdd-d">
+      <div class="cdd-d-i">
+        <div class="t--subinfo t--w br br-b100 br-g100 br--w">{{ title }}</div>
+        <div class="t--intro t--sans t--upper t--w m-b100">{{ label }}</div>
+        <div class="t--subtitle t--sans t-upper t--w">{{ body }}</div>
+      </div>
+    </div>
+
+  </div>
+</div>
