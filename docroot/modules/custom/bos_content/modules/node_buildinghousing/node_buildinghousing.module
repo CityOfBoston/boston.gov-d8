@@ -268,7 +268,6 @@ function _node_buildinghousing_get_computed_project_type ($entity) {
   $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
   if ($dispositionTypeId = $entity->get('field_bh_disposition_type')->target_id) {
-//    $dispositionType = $termStorage->load($dispositionTypeId);
     $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
 
     $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : null;
@@ -276,7 +275,6 @@ function _node_buildinghousing_get_computed_project_type ($entity) {
   }
 
   if ($projectTypeId = $entity->get('field_bh_project_type')->target_id) {
-//    $projectType = $termStorage->load($projectTypeId);
     $projectTypeParents = $termStorage->loadAllParents($projectTypeId);
 
     if ($subType == 'Housing' || empty($mainType)) {
