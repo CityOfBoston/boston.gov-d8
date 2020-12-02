@@ -37,7 +37,35 @@ function node_buildinghousing_theme()
     'node_buildinghousing' => [
       'render element' => 'children',
     ],
+    'bh_project_type' => [
+      'template' => 'snippets/bh-project-type',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "image" => NULL,
+        "classes" => NULL,
+      ],
+    ],
+    'bh_project_manager_contact' => [
+      'template' => 'snippets/bh-project-manager-contact',
+      'variables' => [
+        "title" =>  t("Get In Touch"),
+        "label" =>  t("Project Manager"),
+        "name" => NULL,
+        "email" => NULL,
+        "phone" => NULL,
+        "classes" => NULL,
+      ],
+    ],
   ];
+}
+
+function node_buildinghousing_preprocess_page(array &$variables)
+{
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'bh_project') {
+    $variables['#attached']['library'][] = 'node_buildinghousing/buildinghousing_project';
+    $variables['attributes']['class'][] = 'mn';
+  }
 }
 
 /**
@@ -152,7 +180,7 @@ function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface 
     // Rule I
     if (in_array($projectRecordType, ['Disposition'])
       && in_array($projectStatus, ['Completed'])
-    && strtotime($projectCompeteDate) >= strtotime('-2 years') //@TODO: ? What if the ProjectCompleteDate is null?
+      && strtotime($projectCompeteDate) >= strtotime('-2 years') //@TODO: ? What if the ProjectCompleteDate is null?
     ) {
       $publicStage = 'Project Completed';
     }
@@ -199,7 +227,7 @@ function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface 
     // Set the Public Stage on the Project or unset it if no rules apply
     if ($publicStage) {
       $entity->set('field_bh_public_stage', [$publicStages[$publicStage]]);
-    }else{
+    } else {
       $entity->set('field_bh_public_stage', []);
     }
 
@@ -209,7 +237,8 @@ function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface 
 }
 
 
-function node_buildinghousing_entity_extra_field_info() {
+function node_buildinghousing_entity_extra_field_info()
+{
   $extraFields = [];
 
   foreach (NodeType::loadMultiple() as $bundle) {
@@ -220,21 +249,57 @@ function node_buildinghousing_entity_extra_field_info() {
         'weight' => 100,
         'visible' => TRUE,
       ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_manager_contact'] = [
+        'label' => t('Project Manager Contact Information'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
     }
   }
 
   return $extraFields;
 }
 
-function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode){
+function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode)
+{
 
-  if($display->getComponent('bh_computed_project_type')) {
+  if ($display->getComponent('bh_computed_project_type')) {
     $build['bh_computed_project_type'] = _node_buildinghousing_build_render_computed_project_type($entity);
   }
 
+  if ($display->getComponent('bh_computed_project_type')) {
+    $build['bh_project_manager_contact'] = _node_buildinghousing_build_render_project_manager_contact($entity);
+
+  }
 }
 
-function _node_buildinghousing_build_render_computed_project_type ($entity) {
+function _node_buildinghousing_build_render_project_manager_contact($entity)
+{
+  $render = [];
+
+  $vars = [
+    'classes' => [
+      'icon' => 'icon-location',
+      'label' => 'detail-item--secondary grid-card__title',
+      'body' => 'detail-item__body--tertiary',
+      'detail' => 'detail-item--middle m-v300 grid-card__title',
+    ],
+  ];
+
+  $vars['name'] = "Julio Pilier";
+  $vars['email'] = "julio.pilier@boston.gov";
+  $vars['phone'] = "617-635-0214";
+
+  $render = ['#markup' => \Drupal::theme()->render("bh_project_manager_contact", $vars)];
+
+  return $render;
+
+}
+
+function _node_buildinghousing_build_render_computed_project_type($entity)
+{
   $render = [];
 
   $computedProjectType = _node_buildinghousing_get_computed_project_type($entity);
@@ -251,16 +316,18 @@ function _node_buildinghousing_build_render_computed_project_type ($entity) {
 
     $vars['label'] = $computedProjectType['label'] ?? null;
     $vars['body'] = $computedProjectType['body'] ?? null;
+    $vars['title'] = t('What are we building?');
 
-    $render = ['#markup' => \Drupal::theme()->render("detail_item", $vars)];
+    $render = ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
 
-    return  $render;
+    return $render;
 
   }
 }
 
 
-function _node_buildinghousing_get_computed_project_type ($entity) {
+function _node_buildinghousing_get_computed_project_type($entity)
+{
   $data = [];
   $mainType = null;
   $subType = null;
@@ -293,7 +360,7 @@ function _node_buildinghousing_get_computed_project_type ($entity) {
     if ($subType->getName() == 'Mixed Use - Assisted' || $subType->getName() == 'Mixed Use - Market') {
       $subType = 'Mixed Use';
       $data['body'] = $subType;
-    }elseif ($subType->getName() != 'N/A'){
+    } elseif ($subType->getName() != 'N/A') {
       $subType = $subType->getName();
       $data['body'] = $subType;
     }
