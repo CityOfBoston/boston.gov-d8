@@ -99,7 +99,7 @@ build:
         # Set source to 'initialize' to start a fresh install.
         # Otherwise set it to 'sync' to sync from the drush-alias environment.
         source: initialize
-        drush_alias: "@bostond8.dev2"
+        drush_alias: "@bostond8.ci"
       config:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
@@ -158,7 +158,7 @@ deploy:
     # Path to the drush command in the Travis container.
     travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
     # Alias for deploy target Aquia server.
-    drush_alias: "@bostond8.dev2"
+    drush_alias: "@bostond8.ci"
     # Definition of files that will and wont be copied from build to deploy.
     from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
