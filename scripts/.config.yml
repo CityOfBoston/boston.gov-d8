@@ -140,9 +140,10 @@ deploy:
     # Alias for deploy target Aquia server. Ci or Uat
     drush_alias: "@bostond8.ci"
     # Definition of files that will and wont be copied from build to deploy.
+    from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
     includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
+#    sanitize_file: ${REPO_ROOT}/scripts/deploy/deploy-sanitize-files.txt
     # Message we want to appear in Acquia repo for the deployment commit.
     commit_message: "Automated commit by Travis CI for Build \#\${travis.id}"
     # Dry-run (for testing).
