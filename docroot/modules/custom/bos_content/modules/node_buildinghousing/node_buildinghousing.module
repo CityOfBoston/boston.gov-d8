@@ -344,7 +344,7 @@ function _node_buildinghousing_get_computed_project_type($entity)
   if ($projectTypeId = $entity->get('field_bh_project_type')->target_id) {
     $projectTypeParents = $termStorage->loadAllParents($projectTypeId);
 
-    if ($subType == 'Housing' || empty($mainType)) {
+    if ($mainType->getName() == 'Housing' || empty($mainType)) {
       $mainType = 'Housing';
       $subType = !empty($projectTypeParents) ? array_pop($projectTypeParents) : null;
     }
@@ -352,16 +352,14 @@ function _node_buildinghousing_get_computed_project_type($entity)
 
 
   if ($mainType) {
-    $mainType = $mainType->getName();
-    $data['label'] = $mainType;
+    $data['label'] = is_string($mainType) ? $mainType : $mainType->getName();
   }
 
   if ($subType) {
-    if ($subType->getName() == 'Mixed Use - Assisted' || $subType->getName() == 'Mixed Use - Market') {
-      $subType = 'Mixed Use';
-      $data['body'] = $subType;
-    } elseif ($subType->getName() != 'N/A') {
-      $subType = $subType->getName();
+    $subType = $subType->getName();
+    if ($subType == 'Mixed Use - Assisted' || $subType == 'Mixed Use - Market') {
+      $data['body'] = 'Mixed Use';
+    } elseif ($subType != 'N/A') {
       $data['body'] = $subType;
     }
   }
