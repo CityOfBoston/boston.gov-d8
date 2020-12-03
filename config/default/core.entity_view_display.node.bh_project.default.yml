@@ -35,14 +35,12 @@ dependencies:
     - node.type.bh_project
   module:
     - advanced_text_formatter
-    - datetime
     - fences
     - field_group
     - geolocation
     - node_buildinghousing
     - text
     - user
-    - viewfield
 third_party_settings:
   field_group:
     group_information:
@@ -53,9 +51,9 @@ third_party_settings:
         - group_photos
         - group_parcels
       parent_name: ''
-      weight: 7
+      weight: 9
       format_type: tabs
-      region: content
+      region: hidden
       format_settings:
         id: ''
         classes: ''
@@ -63,21 +61,21 @@ third_party_settings:
       label: Information
     group_dates:
       children:
-        - field_bh_project_start_date
-        - field_bh_initial_comm_mtg_date
-        - field_bh_rfp_issued_date
-        - field_bh_initial_td_vote_date
-        - field_bh_dnd_funding_award_date
-        - field_bh_conveyance_vote_date
         - field_bh_commitment_letter_date
-        - field_bh_predicted_closing_date
-        - field_bh_construction_start_date
         - field_bh_construct_complete_date
+        - field_bh_construction_start_date
+        - field_bh_conveyance_vote_date
+        - field_bh_dnd_funding_award_date
+        - field_bh_initial_comm_mtg_date
+        - field_bh_initial_td_vote_date
+        - field_bh_predicted_closing_date
         - field_bh_project_complete_date
+        - field_bh_project_start_date
+        - field_bh_rfp_issued_date
       parent_name: group_information
       weight: 21
       format_type: tab
-      region: content
+      region: hidden
       format_settings:
         id: ''
         classes: ''
@@ -85,12 +83,11 @@ third_party_settings:
         formatter: closed
       label: Dates
     group_photos:
-      children:
-        - field_bh_wysiwyg_photo_a
+      children: {  }
       parent_name: group_information
       weight: 23
       format_type: tab
-      region: content
+      region: hidden
       format_settings:
         id: ''
         classes: ''
@@ -103,7 +100,7 @@ third_party_settings:
       parent_name: group_information
       weight: 24
       format_type: tab
-      region: content
+      region: hidden
       format_settings:
         id: ''
         classes: ''
@@ -116,7 +113,7 @@ third_party_settings:
       parent_name: group_information
       weight: 22
       format_type: tab
-      region: content
+      region: hidden
       format_settings:
         description: ''
         formatter: open
@@ -125,17 +122,15 @@ third_party_settings:
       label: Updates
     group_sidebar_info:
       children:
-        - field_bh_parcel_id
-        - field_bh_project_status
-        - field_bh_project_stage
         - field_bh_disposition_type
+        - field_bh_parcel_id
+        - field_bh_project_stage
+        - field_bh_project_status
         - field_bh_project_type
-        - field_bh_neighborhood
-        - field_bh_total_num_units
       parent_name: ''
-      weight: 6
+      weight: 8
       format_type: details
-      region: content
+      region: hidden
       format_settings:
         description: 'Bellow are more details about this Project.'
         id: ''
@@ -148,13 +143,92 @@ third_party_settings:
       parent_name: group_information
       weight: 20
       format_type: tab
-      region: content
+      region: hidden
       format_settings:
         id: ''
         classes: ''
         description: ''
         formatter: closed
       label: Meetings
+    group_hero_placeholder:
+      children:
+        - field_bh_wysiwyg_photo_a
+      parent_name: group_header
+      weight: 5
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: 'height="300"'
+        effect: none
+        speed: fast
+        id: hero-placeholder
+        classes: g--8
+      label: 'Hero Placeholder'
+    group_header:
+      children:
+        - field_bh_project_name
+        - field_bh_coordinates
+        - group_hero_placeholder
+        - field_bh_neighborhood
+        - field_bh_total_num_units
+      parent_name: ''
+      weight: 0
+      format_type: html_element
+      region: content
+      format_settings:
+        description: ''
+        id: ''
+        classes: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        effect: none
+        speed: fast
+        attributes: ''
+      label: 'Header Content'
+    group_sidebar:
+      children:
+        - bh_computed_project_type
+        - bh_project_manager_contact
+      parent_name: ''
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'column mobile-100 desktop-33-right sidebar'
+      label: 'Sidebar Content'
+    group_main_content:
+      children:
+        - body
+        - field_bh_public_stage
+      parent_name: ''
+      weight: 2
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'column mobile-100 desktop-66-left'
+      label: 'Main Content'
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -174,85 +248,21 @@ content:
     third_party_settings: {  }
   body:
     type: text_default
-    weight: 2
+    weight: 3
     region: content
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
-  field_bh_commitment_letter_date:
-    weight: 10
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_construct_complete_date:
-    weight: 13
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_construction_start_date:
-    weight: 12
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_conveyance_vote_date:
-    weight: 9
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
   field_bh_coordinates:
     type: geolocation_map
-    weight: 1
+    weight: 4
     region: content
-    label: visually_hidden
+    label: hidden
     settings:
       set_marker: true
-      title: Project
+      title: ''
       info_text:
-        value: '[node:title]'
+        value: ''
         format: plain_text
       centre:
         fit_bounds:
@@ -298,8 +308,8 @@ content:
           map_center_id: location_plugins
       map_provider_id: google_maps
       map_provider_settings:
-        height: 300px
-        width: 100%
+        height: 200px
+        width: 300px
         type: ROADMAP
         zoom: 16
         maxZoom: 20
@@ -327,16 +337,16 @@ content:
               close_button: 0
             enabled: false
           control_streetview:
+            enabled: true
             weight: 0
             settings:
               position: TOP_LEFT
               behavior: default
-            enabled: false
           control_zoom:
             enabled: true
             weight: 0
             settings:
-              position: RIGHT_CENTER
+              position: RIGHT_TOP
               behavior: default
               style: SMALL
           map_restriction:
@@ -385,13 +395,13 @@ content:
                 height: null
             enabled: false
           marker_infowindow:
-            enabled: true
             weight: 0
             settings:
               info_window_solitary: true
+              disable_auto_pan: true
               max_width: null
               info_auto_display: false
-              disable_auto_pan: false
+            enabled: false
           control_recenter:
             weight: 0
             settings:
@@ -446,12 +456,12 @@ content:
               behavior: default
             enabled: false
           control_maptype:
-            enabled: true
             weight: 0
             settings:
               position: RIGHT_BOTTOM
               behavior: default
               style: DEFAULT
+            enabled: false
           context_popup:
             weight: 0
             settings:
@@ -460,8 +470,8 @@ content:
                 format: filtered_html
             enabled: false
           google_maps_layer_bicycling:
-            enabled: true
             weight: 0
+            enabled: false
           client_location_indicator:
             weight: 0
             enabled: false
@@ -492,11 +502,11 @@ content:
               polygon: false
             enabled: false
           control_fullscreen:
+            enabled: true
             weight: 0
             settings:
               position: TOP_LEFT
               behavior: default
-            enabled: false
           control_geocoder:
             weight: 0
             settings:
@@ -539,81 +549,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-  field_bh_disposition_type:
-    weight: 31
-    label: above
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: entity_reference_label
-    region: content
-  field_bh_dnd_funding_award_date:
-    weight: 8
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_initial_comm_mtg_date:
-    weight: 5
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_initial_td_vote_date:
-    weight: 7
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_meetings:
-    weight: 26
-    label: hidden
-    settings:
-      view_title: hidden
-      always_build_output: false
-      empty_view_title: hidden
-    third_party_settings: {  }
-    type: viewfield_default
-    region: content
   field_bh_neighborhood:
-    weight: 33
+    weight: 6
     label: above
     settings:
       link: true
@@ -626,56 +563,9 @@ content:
         fences_label_tag: div
         fences_label_classes: ''
     type: entity_reference_label
-    region: content
-  field_bh_parcel_id:
-    weight: 28
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: string
-    region: content
-  field_bh_predicted_closing_date:
-    weight: 11
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_project_complete_date:
-    weight: 14
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
     region: content
   field_bh_project_name:
-    weight: 0
+    weight: 3
     label: visually_hidden
     settings:
       link_to_entity: false
@@ -683,125 +573,21 @@ content:
       fences:
         fences_field_tag: div
         fences_field_classes: ''
-        fences_field_item_tag: h3
+        fences_field_item_tag: h1
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
     type: string
     region: content
-  field_bh_project_parcels:
-    weight: 7
-    label: above
-    settings:
-      view_title: hidden
-      always_build_output: true
-      empty_view_title: hidden
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: g--5
-        fences_field_item_tag: div
-        fences_field_item_classes: ''
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: viewfield_default
-    region: content
-  field_bh_project_stage:
-    weight: 30
-    label: above
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: entity_reference_label
-    region: content
-  field_bh_project_start_date:
-    weight: 4
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
-  field_bh_project_status:
-    weight: 29
-    label: above
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: entity_reference_label
-    region: content
-  field_bh_project_type:
-    weight: 32
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
-  field_bh_project_updates:
-    weight: 25
-    label: hidden
-    settings:
-      view_title: hidden
-      empty_view_title: hidden
-      always_build_output: false
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: ''
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: viewfield_default
-    region: content
   field_bh_public_stage:
-    weight: 5
+    weight: 4
     label: visually_hidden
     settings: {  }
     third_party_settings: {  }
     type: entity_reference_bh_public_stage
     region: content
-  field_bh_rfp_issued_date:
-    weight: 6
-    label: inline
-    settings:
-      timezone_override: ''
-      format_type: date_format_normal_date
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: m-l300
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: datetime_default
-    region: content
   field_bh_total_num_units:
-    weight: 34
+    weight: 7
     label: above
     settings:
       thousand_separator: ''
@@ -846,7 +632,7 @@ content:
     third_party_settings:
       fences:
         fences_field_tag: div
-        fences_field_classes: ''
+        fences_field_classes: d-n
         fences_field_item_tag: div
         fences_field_item_classes: ''
         fences_label_tag: div
@@ -854,8 +640,28 @@ content:
     type: advanced_text
     region: content
 hidden:
+  field_bh_commitment_letter_date: true
+  field_bh_construct_complete_date: true
+  field_bh_construction_start_date: true
+  field_bh_conveyance_vote_date: true
+  field_bh_disposition_type: true
+  field_bh_dnd_funding_award_date: true
   field_bh_funding_stage: true
+  field_bh_initial_comm_mtg_date: true
+  field_bh_initial_td_vote_date: true
+  field_bh_meetings: true
+  field_bh_parcel_id: true
+  field_bh_predicted_closing_date: true
+  field_bh_project_complete_date: true
+  field_bh_project_parcels: true
+  field_bh_project_stage: true
+  field_bh_project_start_date: true
+  field_bh_project_status: true
+  field_bh_project_type: true
+  field_bh_project_updates: true
   field_bh_record_type: true
+  field_bh_rfp_issued_date: true
   langcode: true
   links: true
   published_at: true
+
