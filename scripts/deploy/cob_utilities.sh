@@ -613,7 +613,7 @@ devModules() {
     # Enable key development modules.
     ${drush_cmd} cdel views.view.migrate_taxonomy &> /dev/null
     ${drush_cmd} cdel views.view.migrate_paragraphs &> /dev/null
-    if [[ target_env == "local"]]; then
+    if [[ ${target_env} == "local"]]; then
       ${drush_cmd} en -y automated_cron,twig_xdebug > /dev/null
     fi
     ${drush_cmd} en -y devel,dblog,syslog,config_devel,masquerade,migrate,migrate_tools > /dev/null

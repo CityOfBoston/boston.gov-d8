@@ -198,6 +198,17 @@
       "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
       "drush/Commands/{$name}": ["type:drupal-drush"]
     },
+    "drupal-scaffold": {
+        "allowed-packages": [
+            "drupal/core"
+        ],
+        "locations": {
+            "web-root": "./docroot"
+        },
+        "file-mapping": {
+            "[web-root]/.htaccess": false
+        }
+    },
     "patches": {
       "drupal/core": {
         "* CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
