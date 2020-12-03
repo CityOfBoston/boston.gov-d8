@@ -74,7 +74,8 @@ function phpcs() {
         --standard=DrupalPractice\
         -n \
         ${REPO_ROOT}/docroot/modules/custom \
-        ${REPO_ROOT}/docroot/themes/custom && printout "SUCCESS" "Best Practice PASS"|| err2=1
+        ${REPO_ROOT}/docroot/themes/custom &&
+        printout "SUCCESS" "Best Practice PASS" || err2=1
 
     if [[ $err -eq 0 ]]; then
         printout "SUCCESS" "${GreenBG}Coding standards and Best Practices OK.${NC}\n"

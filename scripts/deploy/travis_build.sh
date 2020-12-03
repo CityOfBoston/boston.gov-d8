@@ -194,14 +194,15 @@
                 printout "SUCCESS" "Site is freshly installed with clean database.\n"
             else
                 printout "ERROR" "Fail - Site install failure"
-                echo -e "\n${RedBG}  ============================================================================== ${NC}"
-                echo -e "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
-                echo -e "\n${RedBG}  =                      Release verification aborted.                         = ${NC}"
-                echo -e "\n${RedBG}  ============================================================================== ${NC}"
-                printout "ERROR" ".\n"
+                printf "\n${RedBG}  ============================================================================== ${NC}"
+                printf "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
+                printf "\n${RedBG}  =                      Release verification aborted.                         = ${NC}"
+                printf "\n${RedBG}  ============================================================================== ${NC}\n"
                 printout "" "==> Site Install log dump:"
                 cat  ${setup_logs}/site_install.log
-                printout "" "=<= Dump ends."
+                printout "" "=== Dump ends.\n"
+                ls -la ${TRAVIS_BUILD_DIR}/docroot/sites/default
+                ls -la ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
                 exit 1
             fi
 
