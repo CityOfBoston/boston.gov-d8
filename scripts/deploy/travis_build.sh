@@ -105,11 +105,10 @@
             composer drupal:scaffold &>> ${setup_logs}/composer.log &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
         if [[ $? -ne 0 ]]; then
-            echo -e "\n ${RedBG}
-  ==============================================================================\n
-  =               IMPORTANT: Composer packages not downloaded.                 =\n
-  =                               Build aborted                                =\n
-  ==============================================================================${NC}\n"
+            printf "\n${RedBG}  ============================================================================== ${NC}"
+            printf "\n${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
+            printf "\n${RedBG}  =                               Build aborted.                               = ${NC}"
+            printf "\n${RedBG}  ============================================================================== ${NC}\n"
             printout "ERROR" "Composer failed check output below."
             printout "" "==> Composer log dump:"
             cat  ${setup_logs}/composer.log
@@ -225,14 +224,13 @@
             if [[ $? -eq 0 ]]; then
                 printout "SUCCESS" "Site has database and content from remote environment.\n"
             else
-                echo -e "\n${RedBG}  ============================================================================== ${NC}"
-                echo -e "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
-                echo -e "\n${RedBG}  =                      Release verification aborted.                         = ${NC}"
-                echo -e "\n${RedBG}  ============================================================================== ${NC}"
-                printout "ERROR" ".\n"
+                printf "\n${RedBG}  ============================================================================== ${NC}"
+                printf "\n${RedBG}  =             IMPORTANT: Drupal build phase did not complete.                = ${NC}"
+                printf "\n${RedBG}  =                      Release verification aborted.                         = ${NC}"
+                printf "\n${RedBG}  ============================================================================== ${NC}\n"
                 printout "" "==> Site Install log dump:"
                 cat  ${setup_logs}/site_install.log
-                printout "" "=<= Dump ends."
+                printout "" "=== Dump ends."
                 exit 1
             fi
         fi
