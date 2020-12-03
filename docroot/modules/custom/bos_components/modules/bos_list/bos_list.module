@@ -193,13 +193,19 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
   if ($form["#id"] == 'views-exposed-form-places-listing') {
     $form['title']['#attributes']['class'] = ['sf-i-f', 'form-text'];
     $form['title']['#attributes']['placeholder'] = 'Search...';
-    $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
+    $form["actions"]["submit"]["#attributes"]['class'] = [
+      'sf-i-b',
+      'form-submit',
+    ];
     unset($form["#info"]["filter-title"]["label"]);
   }
   elseif ($form["#id"] == 'views-exposed-form-transactions-page-1') {
     $form['title']['#attributes']['class'] = ['sf-i-f', 'form-text'];
     $form['title']['#attributes']['placeholder'] = 'Search transactions...';
-    $form["actions"]["submit"]["#attributes"]['class'] = ['sf-i-b', 'form-submit'];
+    $form["actions"]["submit"]["#attributes"]['class'] = [
+      'sf-i-b',
+      'form-submit',
+    ];
     unset($form["#info"]["filter-title"]["label"]);
   }
 
