@@ -53,10 +53,16 @@ function jsTask(){
             watch: false,
             entry: glob.sync('./src/js/components/*.js'),
             output: {
-                 filename: 'index.js',
-                 libraryTarget: 'umd',
+                filename: 'index.js',
+                libraryTarget: 'umd',
                 libraryExport: 'default' //<-- New line
              },
+            /*optimization: {
+                splitChunks: {
+                    maxSize: 10000,
+                    chunks: 'all',
+                },
+            },*/
             mode: 'production',
             module: {
               rules: [
