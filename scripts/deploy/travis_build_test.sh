@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ###############################################################
-#  These commands will be run from the Travis container as it builds.
+#  USED TO TEST TRAVIS BUILD IN A LOCAL CONTAINER.
+###############################################################
 #
 #  These commands install Drupal, sync down a database from Acquia
 #  and update that Database with local & current repo settings.
@@ -23,6 +24,15 @@
 #    https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
 #
 ###############################################################
+
+    REPO_ROOT=/app
+    TRAVIS_BRANCH=develop
+    TRAVIS_EVENT_TYPE=pull_request
+    TRAVIS_BUILD_DIR=${REPO_ROOT}
+    TRAVIS_COMMIT_MESSAGE="local"
+    LGITHUB_TOKEN="d537f3c47ca9913f6ab46252d0ea424d2e8fcd4f"
+    REPO_LOCATION="https://davidrkupton:${LGITHUB_TOKEN}@github.com/"
+    database="mysql://drupal:drupal@boston_database_1/drupal"
 
     # Include the utilities file/libraries.
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
@@ -68,8 +78,8 @@
 
     if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]] || [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
-        if [ ! -e  /usr/local/bin/drupal ]; then
-            sudo ln -s ${TRAVIS_BUILD_DIR}/vendor/drupal/console/bin/drupal /usr/local/bin/
+        if [ ! -L  /usr/local/bin/drupal ]; then
+            ln -s ${TRAVIS_BUILD_DIR}/vendor/drupal/console/bin/drupal /usr/local/bin/
         fi
 
         # Set the Acquia environment variable.
@@ -80,7 +90,7 @@
         fi
 
         # Make an account for drupal in MySQL (better than using root a/c).
-        mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO 'drupal'@'localhost' IDENTIFIED BY 'drupal';"
+        mysql --host=boston_database_1 -u drupal --password=drupal -e "SHOW DATABASES;"
 
         printf "\n"
         printf "${Blue}       =========================================================================================\n"
@@ -97,13 +107,13 @@
         printout "NOTICE" "Executing: > composer install --prefer-dist --no-suggest --no-interaction" "Output suppressed unless errors occur."
         printout "ACTION" "Downloading Drupal and dependencies to Travis container."
         cd ${TRAVIS_BUILD_DIR} &&
+            rm -f ${setup_logs}/composer.log &&
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
-            composer self-update 1.10.13 &&
+           # composer self-update 1.10.13 &&
             composer clear-cache &&
-            composer config -g github-oauth.github.com "$GITHUB_TOKEN" &&
-            composer install --no-suggest --prefer-dist --no-interaction -vvv &> ${setup_logs}/composer.log &&
-            composer drupal:scaffold &>> ${setup_logs}/composer.log &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
+#            composer install --no-suggest --prefer-dist --no-interaction -vvv &> ${setup_logs}/composer.log &&
+#            composer drupal:scaffold &>> ${setup_logs}/composer.log &&
         if [[ $? -ne 0 ]]; then
             printf "\n${RedBG}  ============================================================================== ${NC}"
             printf "\n${RedBG}  =               IMPORTANT: Composer packages not downloaded.                 = ${NC}"
@@ -174,7 +184,7 @@
 
             # Define the site-install command.
             SITE_INSTALL=" site-install ${project_profile_name} \
-              --db-url=mysql://drupal:drupal@localhost/drupal \
+              --db-url=${database} \
               --site-name=${lando_name} \
               --site-mail=${drupal_account_mail} \
               --account-name=${drupal_account_name} \
@@ -186,6 +196,7 @@
 
             # Now run the site-install command.
             printout "ACTION" "Installing Drupal"
+            echo ${drush_cmd} ${SITE_INSTALL}
             ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
 
             # If site-install command failed then alert.
@@ -200,8 +211,6 @@
                 printout "" "==> Site Install log dump:"
                 cat  ${setup_logs}/site_install.log
                 printout "" "=== Dump ends.\n"
-                ls -la ${TRAVIS_BUILD_DIR}/docroot/sites/default
-                ls -la ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
                 exit 1
             fi
 
