@@ -53,7 +53,7 @@ build:
       #         set to 'restore' (and provide backup location) to restore a local backup.
       #         set to 'none' to not import or create a new db (NOTE: new/changed configs will still be imported).
       # Tip: Develop environment has database in closest state to the github repo configs.
-      source: sync
+      source: initialize
       # If you wish to use mycli and pspg tools in the container, set the next line to true.
       drush_alias: "@bostond8.dev"
       backup_location: ""
