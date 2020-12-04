@@ -83,10 +83,13 @@ services:
       database: drupal
 
   appserver:
-    type: php
-    composer_version: "2.0.7"
+    type: php:7.3
+    composer: []
+    composer_version: '2.0.7'
     webroot: docroot
-    xdebug: true
+    xdebug: debug,develop
+    config:
+      php: scripts/local/boston-dev-php.ini
     overrides:
       mem_limit: 8G
       memswap_limit: 15G
@@ -105,7 +108,6 @@ services:
     build_as_root:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-appserver-customize.sh
-      - composer --version
 
     build:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver'\n"
