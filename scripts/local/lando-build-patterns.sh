@@ -55,12 +55,13 @@
       printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Dependencies NOT installed." && exit 1)
 
     printout "ACTION" "Installing gulp cli and checking configs."
-    (cd ${patterns_local_repo_local_dir} &&
+    (cd ${patterns_local_repo_localawk_dir} &&
       echo "$ npm install --no-fund --no-optional"  &>> ${setup_logs}/patterns_build.log &&
       npm install --no-fund --no-optional  &>> ${setup_logs}/patterns_build.log &&
       echo "$ npm install -g gulp-cli@latest  --no-fund --no-optional" &>> ${setup_logs}/patterns_build.log &&
       npm install -g  --no-fund --no-optional gulp-cli@latest &>> ${setup_logs}/patterns_build.log &&
-      printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Patterns library NOT installed." && exit 1)
+      printf "Gulp " && gulp -v | grep "CLI" | awk "{print $1}" &&
+      printout "SUCCESS" "Gulp latest installed.\n") || (printout "ERROR" "Patterns library NOT installed." && exit 1)
 
     # Run an initial build to be sure everything is there.
     printout "ACTION" "Building Patterns library."

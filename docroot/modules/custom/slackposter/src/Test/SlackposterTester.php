@@ -2,7 +2,6 @@
 
 namespace Drupal\slackposter\Test;
 
-use Drupal;
 use Drupal\Core\Url;
 use Drupal\slackposter\Integrate\SlackPost;
 use Drupal\slackposter\Integrate\SlackRestResponse;
@@ -22,9 +21,9 @@ class SlackposterTester {
 
     $out = '';
 
-    $config = Drupal::config("slackposter.settings");
+    $config = \Drupal::config("slackposter.settings");
     if (empty($config->get("rest.enabled"))) {
-      Drupal::messenger()->addMessage("REST not enabled for slackposter.");
+      \Drupal::messenger()->addMessage("REST not enabled for slackposter.");
       return new RedirectResponse(Url::fromRoute('<front>')->toString());
     }
 
@@ -37,7 +36,7 @@ class SlackposterTester {
         $out = $slack->post('posting test', '#integrationtest');
         break;
     }
-    Drupal::messenger()->addMessage("Test Post Completed.");
+    \Drupal::messenger()->addMessage("Test Post Completed.");
     return new RedirectResponse(Url::fromRoute('<front>')->toString());
   }
 
@@ -51,9 +50,9 @@ class SlackposterTester {
     $out = '';
     global $base_url;
 
-    $config = Drupal::config("slackposter.settings");
+    $config = \Drupal::config("slackposter.settings");
     if (empty($config->get("rest.enabled"))) {
-      Drupal::messenger()->addMessage("REST not enabled for slackposter.");
+      \Drupal::messenger()->addMessage("REST not enabled for slackposter.");
       return new RedirectResponse(Url::fromRoute('<front>')->toString());
     }
 
@@ -64,7 +63,7 @@ class SlackposterTester {
         $out = $slack->post('posting test', '#integrationtest');
         break;
     }
-    Drupal::messenger()->addMessage("Test Post Completed.");
+    \Drupal::messenger()->addMessage("Test Post Completed.");
     return new RedirectResponse(Url::fromRoute('<front>')->toString());
   }
 
