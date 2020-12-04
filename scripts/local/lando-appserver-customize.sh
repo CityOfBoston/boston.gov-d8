@@ -35,7 +35,7 @@
     (apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> /dev/null &&
       apt-get install -y --no-install-recommends zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log &&
       docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ &>> ${setup_logs}/lando.log &&
-      printout "SUCCESS" "All Packages installed.\n") || (printout "ERROR" "Problem installing Linux Packages.\n" && return 1)
+      printout "SUCCESS" "All Packages installed.\n") || (printout "ERROR" "Problem installing Linux Packages.\n" && exit 1)
 
     # Copy the 2 scrpts that the database server needs from the scripts folder into the .lando scripts folder.
     # This means the scripts will be loaded into the /helpers folder on all containers.
