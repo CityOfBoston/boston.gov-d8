@@ -181,7 +181,10 @@ class CodeRedSubscriber extends ControllerBase {
       $result = $this->post($uri, $fields, $headers);
     }
     else {
-      $result = ["output" => "Missing Drupal Configuration.", "HTTP_CODE" => "500"];
+      $result = [
+        "output" => "Missing Drupal Configuration.",
+        "HTTP_CODE" => "500",
+      ];
     }
 
     return $this->responseOutput($result['output'], $result['http_code']);
