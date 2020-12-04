@@ -2,9 +2,7 @@
 
 namespace Drupal\bos_migration;
 
-use Drupal;
 use Drupal\Core\Database\Database;
-use PDO;
 
 /**
  * Makes a class with the migration configs..
@@ -212,7 +210,10 @@ class MigrationConfigAlter {
     "paragraph__grid_of_cards" => ["bos:paragraph:3"],
     "paragraph__grid_of_people" => ["bos:paragraph:4", "bos:paragraph:99"],
     "paragraph__grid_of_places" => ["bos:paragraph:4", "bos:paragraph:99"],
-    "paragraph__grid_of_programs_initiatives" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__grid_of_programs_initiatives" => [
+      "bos:paragraph:4",
+      "bos:paragraph:99",
+    ],
     "paragraph__grid_of_quotes" => ["bos:paragraph:3"],
     "paragraph__grid_of_topics" => ["bos:paragraph:4", "bos:paragraph:99"],
     "paragraph__group_of_links_grid" => ["bos:paragraph:3", "bos:paragraph:10"],
@@ -229,7 +230,10 @@ class MigrationConfigAlter {
     "paragraph__list" => ["bos:paragraph:3"],
     "paragraph__map" => ["bos:paragraph:1"],
     "paragraph__message_for_the_day" => ["bos:paragraph:2"],
-    "paragraph__news_and_announcements" => ["bos:paragraph:4", "bos:paragraph:99"],
+    "paragraph__news_and_announcements" => [
+      "bos:paragraph:4",
+      "bos:paragraph:99",
+    ],
     "paragraph__newsletter" => ["bos:paragraph:2"],
     "paragraph__photo" => ["bos:paragraph:2"],
     "paragraph__quote" => ["bos:paragraph:2"],
@@ -1199,7 +1203,7 @@ class MigrationConfigAlter {
    *   The migrations array as best known.
    */
   public static function migrations() {
-    return Drupal::state()->get("bos_migration.migrations", []);
+    return \Drupal::state()->get("bos_migration.migrations", []);
   }
 
   /**
@@ -1241,7 +1245,7 @@ class MigrationConfigAlter {
       \Drupal::state()->set("bos_migration.migrations", $this->migrations);
     }
 
-    Drupal::logger("migration")
+    \Drupal::logger("migration")
       ->info("bos_migration configuration rebuilt.");
     printf("[notice] bos_migration configuration rebuilt.\n");
 
@@ -1256,7 +1260,9 @@ class MigrationConfigAlter {
     // Log the final array that is output for debug purposes.
     // (This is a big entry so can be removed on release).
     \Drupal::logger('migrate')
-      ->info("<b>Altered Migration Config Array:</b><br><pre>@output</pre>", ["@output" => print_r($this->migrations, TRUE)]);
+      ->info("<b>Altered Migration Config Array:</b><br><pre>@output</pre>", [
+        "@output" => print_r($this->migrations, TRUE)
+      ]);
   }
 
   /**
@@ -1428,7 +1434,7 @@ class MigrationConfigAlter {
     foreach (["notice", "warning"] as $logType) {
       if (!empty($logging[$logType])) {
         $msg = implode("<br> \n", $logging[$logType]);
-        Drupal::logger('migrate')->{$logType}(trim($msg));
+        \Drupal::logger('migrate')->{$logType}(trim($msg));
       }
     }
   }
@@ -1737,37 +1743,37 @@ class MigrationConfigAlter {
     switch ($entityType) {
       case "paragraph":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('paragraphs')")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       case "field_collection":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('field_collection')")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       case "taxonomy":
         $data = $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'taxonomy_term') > 0")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
         $data["field_commission"] = ["field_name" => "field_commission"];
         return $data;
 
       case "node":
         return $con->query("SELECT field_name FROM field_config c where c.type='entityreference' and INSTR(data, 'node') > 0;")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       case "rich-text":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('text_long', 'text_with_summary')")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       case "link":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('link_field')")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       case "image":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('image')")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       case "file":
         return $con->query("SELECT field_name FROM field_config WHERE type IN ('file')")
-          ->fetchAllAssoc('field_name', PDO::FETCH_ASSOC);
+          ->fetchAllAssoc('field_name', \PDO::FETCH_ASSOC);
 
       default:
         return [];

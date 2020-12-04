@@ -2,11 +2,9 @@
 
 namespace Drupal\bos_core;
 
-use Drupal;
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
-use Exception;
 
 /**
  * Module to provide common Media entity functions.
@@ -37,7 +35,7 @@ class BosCoreMediaEntityHelpers {
     // Update the filename if necessary.
     if (NULL != ($file = File::load($fid))) {
       if ($filename != $file->getFilename()) {
-        Drupal::database()->update("file_managed")
+        \Drupal::database()->update("file_managed")
           ->condition("fid", $fid)
           ->fields(["filename" => $filename])
           ->execute();
@@ -77,9 +75,9 @@ class BosCoreMediaEntityHelpers {
         $last_file_fid = $result["last_fid"] + $offset;
       }
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       if ($mode == self::SYNC_IN_MIGRATION) {
-        throw new Exception("Cannot access the D7 database");
+        throw new \Exception("Cannot access the D7 database");
       }
     }
 
@@ -154,7 +152,7 @@ class BosCoreMediaEntityHelpers {
    *   Array of file entity objects (\Drupal\file\Entity\File).
    */
   public static function getFileEntities($uri) {
-    $query = Drupal::entityQuery("file")
+    $query = \Drupal::entityQuery("file")
       ->condition("uri", $uri, "=");
     $entities = $query->execute();
     if (empty($entities)) {
@@ -191,7 +189,7 @@ class BosCoreMediaEntityHelpers {
     if ($fid != 0) {
       $fields["fid"] = $fid;
     }
-    $file_entity = Drupal::entityTypeManager()
+    $file_entity = \Drupal::entityTypeManager()
       ->getStorage('file')
       ->create($fields);
     $file_entity->save();
@@ -214,7 +212,7 @@ class BosCoreMediaEntityHelpers {
    *   An assoc array of filtered media objects.
    */
   public static function getMediaEntityFromFile($fid, $type = NULL) {
-    $query = Drupal::database()->select("media_field_data", "fd")
+    $query = \Drupal::database()->select("media_field_data", "fd")
       ->fields("fd", ["mid", "thumbnail__target_id"]);
     $query->innerJoin("media__image", "i", "fd.mid = i.entity_id");
     $query->innerJoin("file_managed", "f", "i.image_target_id = f.fid");
@@ -287,7 +285,7 @@ class BosCoreMediaEntityHelpers {
    *   Should this media entity be included in the media library.
    */
   public static function updateMediaLibrary($mid, $in_library = TRUE) {
-    Drupal::database()->update("media__field_media_in_library")
+    \Drupal::database()->update("media__field_media_in_library")
       ->condition("entity_id", $mid)
       ->fields(["field_media_in_library_value" => ($in_library ? 1 : 0)])
       ->execute();
@@ -301,10 +299,10 @@ class BosCoreMediaEntityHelpers {
    * Creates an entry in the migrations mapping table for use during migrations.
    */
   public static function createMigrateMap() {
-    $result = Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
+    $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_map_d7_file';")
       ->fetchAll();
     if (empty($result)) {
-      Drupal::database()->query("CREATE TABLE `migrate_map_d7_file` (
+      \Drupal::database()->query("CREATE TABLE `migrate_map_d7_file` (
       `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
       `sourceid1` int(11) NOT NULL,
       `destid1` int(10) unsigned DEFAULT NULL,
@@ -322,10 +320,10 @@ class BosCoreMediaEntityHelpers {
    * Creates a migration message for use during migrations.
    */
   public static function createMigrateMessage() {
-    $result = Drupal::database()->query("SHOW TABLES LIKE 'migrate_message_d7_file';")
+    $result = \Drupal::database()->query("SHOW TABLES LIKE 'migrate_message_d7_file';")
       ->fetchAll();
     if (empty($result)) {
-      Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
+      \Drupal::database()->query("CREATE TABLE `migrate_message_d7_file` (
       `msgid` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `source_ids_hash` varchar(64) NOT NULL COMMENT 'Hash of source ids. Used as primary key',
       `level` int(10) unsigned NOT NULL DEFAULT '1',
@@ -367,21 +365,21 @@ class BosCoreMediaEntityHelpers {
 
       $table_name = "migrate_map_" . $mig_type;
 
-      Drupal::database()->delete($table_name)
+      \Drupal::database()->delete($table_name)
         ->condition("sourceid1", $fields["sourceid1"])
         ->condition("destid1", $destid)
         ->execute();
 
-      Drupal::database()->merge($table_name)
+      \Drupal::database()->merge($table_name)
         ->keys($keys)
         ->fields($fields)
         ->execute();
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       // Got an error. SQL-23000 is a duplicate row entry, thats OK so allow
       // it but dont allow anything else.
       if ($e->getCode() != 23000) {
-        throw new Exception($e->getMessage(), $e->getCode());
+        throw new \Exception($e->getMessage(), $e->getCode());
       }
     }
   }

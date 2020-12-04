@@ -2,12 +2,10 @@
 
 namespace Drupal\bos_core\Plugin\QueueWorker;
 
-use Drupal;
 use Drupal\bos_core\BosCoreSyncIconManifestService;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -56,7 +54,7 @@ abstract class IconManifestProcessBase extends QueueWorkerBase implements Contai
   public function processItem($data) {
 
     // Load the manifest cache.
-    $manifest_cache = Drupal::state()->get("bos_core.icon_library.manifest", []);
+    $manifest_cache = \Drupal::state()->get("bos_core.icon_library.manifest", []);
 
     // Just use the next available fid/vid for any file entities created.
     $last = ["fid" => 0, "vid" => 0];
@@ -69,12 +67,12 @@ abstract class IconManifestProcessBase extends QueueWorkerBase implements Contai
       BosCoreSyncIconManifestService::processFileUri($data, $last);
       $manifest_cache[] = $data;
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       return FALSE;
     }
 
     // Save cache for next time.
-    Drupal::state()->set("bos_core.icon_library.manifest", $manifest_cache);
+    \Drupal::state()->set("bos_core.icon_library.manifest", $manifest_cache);
 
     return TRUE;
   }

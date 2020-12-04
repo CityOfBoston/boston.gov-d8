@@ -2,7 +2,6 @@
 
 namespace Drupal\slackposter\Integrate;
 
-use Drupal;
 use Masterminds\HTML5\Exception;
 
 /**
@@ -114,9 +113,9 @@ class SlackPost {
   public function __construct(string $referring_module = "default", string $_webhook_url = NULL) {
 
     // Get the admin settings.
-    $config = Drupal::config('slackposter.settings');
+    $config = \Drupal::config('slackposter.settings');
     $this->settings = $config->getRawData();
-    $config = Drupal::config('system.site');
+    $config = \Drupal::config('system.site');
     $this->settings['general']['app_id'] = $config->get('name');
 
     $this->channel = $this->settings['channels']['default'];
