@@ -96,7 +96,8 @@
 
     # Restart apache to get those files loaded.
     printout "ACTION" "Restart Apache service in Drupal container."
-    service apache2 stop && service apache2 start
+    service apache2 stop && service apache2 start &&
+      printout "SUCCESS" "Apache service restarted."
 
     # Always provide this block
     printf "${Bold}\n"

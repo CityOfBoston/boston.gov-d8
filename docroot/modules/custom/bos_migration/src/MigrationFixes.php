@@ -1511,7 +1511,8 @@ class MigrationFixes {
   public static function fixPdfLinks($commit = FALSE) {
     printf("Will Search and repair broken links from migration..\n");
     $path_maps = self::$folderMappings;
-    $cnt = 0; $fnd = 0;
+    $cnt = 0;
+    $fnd = 0;
     // Define the fields and tables to scan.
     // Array table=>field.
     $eligible = [
@@ -1629,7 +1630,7 @@ class MigrationFixes {
                       // OK so it was missed in the migration, copy now.
                       printf("[INFO] %s could not be found at %s\n", $orig["basename"], $orig["dirname"]);
                       printf(" - or its map (%s)\n", str_replace(" ", "%20", $href));
-                      $outFileName = str_replace("//", DRUPAL_ROOT . "/sites/default/files/", $href);;
+                      $outFileName = str_replace("//", DRUPAL_ROOT . "/sites/default/files/", $href);
                       if ($commit) {
                         $options = [
                           CURLOPT_FILE => fopen($outFileName, 'w'),
