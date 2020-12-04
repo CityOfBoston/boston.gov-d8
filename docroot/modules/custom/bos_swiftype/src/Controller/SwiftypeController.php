@@ -11,7 +11,6 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Mail\MailManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\bos_swiftype\Swiftype\SwiftypeClient;
-use stdClass;
 
 /**
  * Class SwiftypeController.
@@ -178,7 +177,7 @@ class SwiftypeController extends ControllerBase {
     }
 
     if ($results['body']->info->page == NULL) {
-      $range = new stdClass();
+      $range = new \stdClass();
     }
     else {
       $range = $results['body']->info->page;
@@ -193,7 +192,7 @@ class SwiftypeController extends ControllerBase {
       "#facets" => [],
       "#facets_extra" => [],
       "#has_results" => FALSE,
-      "#info" => new stdClass(),
+      "#info" => new \stdClass(),
       "#records" => [],
     ];
   }
@@ -207,7 +206,7 @@ class SwiftypeController extends ControllerBase {
    * @return array
    *   The overall number of pages.
    */
-  private function pageRange(stdClass $info) {
+  private function pageRange(\stdClass $info) {
     $start = 1;
     $end = 5;
 
