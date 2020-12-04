@@ -3,8 +3,6 @@
 namespace Drupal\bos_core;
 
 use Drupal\file\Entity\File;
-use Exception;
-use Drupal;
 
 /**
  * Class BosCoreSyncIconManifestService.
@@ -33,13 +31,13 @@ class BosCoreSyncIconManifestService {
    */
   public static function import($mode = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
 
-    $moduleHandler = Drupal::service('module_handler');
+    $moduleHandler = \Drupal::service('module_handler');
     $migration_enabled = FALSE;
     if ($mode == BosCoreMediaEntityHelpers::SYNC_IN_MIGRATION) {
       $migration_enabled = TRUE;
       if (!$moduleHandler->moduleExists('migrate')) {
         printf("[error] Migration module is not enabled !.\n");
-        Drupal::logger("drush")->error("Migration module is not enabled !");
+        \Drupal::logger("drush")->error("Migration module is not enabled !");
         return FALSE;
       }
     }
@@ -47,12 +45,12 @@ class BosCoreSyncIconManifestService {
     // Load the manifest file.
     try {
       $manifest = self::loadManifestFile();
-      $manifest_file = Drupal::config("bos_core.settings")
+      $manifest_file = \Drupal::config("bos_core.settings")
         ->get("icon.manifest");
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       printf("[warning] %s\n", $e->getMessage());
-      Drupal::logger("drush")->warning($e->getMessage());
+      \Drupal::logger("drush")->warning($e->getMessage());
       return FALSE;
     }
 
@@ -60,7 +58,7 @@ class BosCoreSyncIconManifestService {
     $manifest_cache = [];
     if (!$migration_enabled) {
       // See if we have a manifest cached.
-      $manifest_cache = Drupal::state()
+      $manifest_cache = \Drupal::state()
         ->get("bos_core.icon_library.manifest", []);
     }
 
@@ -94,9 +92,9 @@ class BosCoreSyncIconManifestService {
     try {
       BosCoreMediaEntityHelpers::findLastIds($last["fid"], $last["vid"], $mode);
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       printf("[error] %s\n", $e);
-      Drupal::logger("drush")->error($e);
+      \Drupal::logger("drush")->error($e);
       return FALSE;
     }
 
@@ -109,7 +107,7 @@ class BosCoreSyncIconManifestService {
     }
 
     // Save this manifest for later use (e.g. migration).
-    Drupal::state()->set("bos_core.icon_library.manifest", $manifest_cache);
+    \Drupal::state()->set("bos_core.icon_library.manifest", $manifest_cache);
 
     printf("\nImports icons from %s\n", $manifest_file);
     printf("Manifest defines %d icon files.\n", $cnt["Total"]);
@@ -215,16 +213,16 @@ class BosCoreSyncIconManifestService {
    */
   public static function loadManifestFile() {
     // Get the manifest file name as set in the settings form.
-    $manifest_file = Drupal::config("bos_core.settings")->get("icon.manifest");
+    $manifest_file = \Drupal::config("bos_core.settings")->get("icon.manifest");
     if (empty($manifest_file)) {
       $manifest_file = "https://assets.boston.gov/manifest/icons_manifest.txt";
-      Drupal::configFactory()->getEditable('bos_core.settings')->set('icon.manifest', $manifest_file)->save();
+      \Drupal::configFactory()->getEditable('bos_core.settings')->set('icon.manifest', $manifest_file)->save();
     }
 
     // Fetch the contents of the manifest file.
     $manifest = file_get_contents($manifest_file);
     if (empty($manifest)) {
-      throw new Exception("Icon manifest file not found!");
+      throw new \Exception("Icon manifest file not found!");
     }
 
     // Explode each line in the file into a row in an array and return.
@@ -273,9 +271,9 @@ class BosCoreSyncIconManifestService {
         try {
           BosCoreMediaEntityHelpers::createSimpleMappingEntry($file->id(), $file->id(), "d7_file");
         }
-        catch (Exception $e) {
-          Drupal::logger("drush")->warning($e->getMessage());
-          Drupal::messenger()->addWarning($e->getMessage());
+        catch (\Exception $e) {
+          \Drupal::logger("drush")->warning($e->getMessage());
+          \Drupal::messenger()->addWarning($e->getMessage());
         }
       }
     }
