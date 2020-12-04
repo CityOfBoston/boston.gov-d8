@@ -22,12 +22,9 @@ services:
     type: node:10
     ssl: true
     overrides:
-      deploy:
-        resources:
-          limits:
-            memory: 10G
-          reservations:
-            memory: 2G
+      mem_limit: 8G
+      memswap_limit: 15G
+      mem_reservation: 512m
       expose:
         - "80"
         - "443"
@@ -55,12 +52,9 @@ services:
     portforward: true
     host: localhost
     overrides:
-      deploy:
-        resources:
-          limits:
-            memory: 5G
-          reservations:
-            memory: 2G
+      mem_limit: 5G
+      memswap_limit: 8G
+      mem_reservation: 2G
       ports:
         - "32306:3306"
       volumes:
@@ -87,12 +81,9 @@ services:
     composer: []
     composer_version: '1.10.13'
     overrides:
-      deploy:
-        resources:
-          limits:
-            memory: 10G
-          reservations:
-            memory: 2G
+      mem_limit: 8G
+      memswap_limit: 15G
+      mem_reservation: 2G
       healthcheck:
         test: /app/scripts/local/health.sh appserver
         interval: 30s
