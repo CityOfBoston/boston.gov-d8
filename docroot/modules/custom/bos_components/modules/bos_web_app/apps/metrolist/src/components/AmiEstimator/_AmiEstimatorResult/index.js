@@ -24,7 +24,6 @@ function getAmiBracket( householdSize, annualizedHouseholdIncome ) {
 
     if ( hasOwnProperty( amiBracket, 'maxIncomeByHouseholdSize' ) ) {
       const maxIncome = amiBracket.maxIncomeByHouseholdSize[householdSize - 1];
-
       if ( maxIncome >= annualizedHouseholdIncome ) {
         bestMaxIncome = maxIncome;
         bestAmi = amiBracket.ami;
@@ -35,6 +34,10 @@ function getAmiBracket( householdSize, annualizedHouseholdIncome ) {
     }
   }
 
+  if (bestAmi == 0) {
+      const lastItem = amiDefinitions.slice(-1)[0];
+      bestAmi = lastItem.ami;
+  } 
   return { "ami": bestAmi, "maxIncome": bestMaxIncome };
 }
 

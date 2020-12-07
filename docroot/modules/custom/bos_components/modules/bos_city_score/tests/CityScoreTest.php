@@ -15,14 +15,14 @@ namespace Drupal\phpunit;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CityScoreTest: Tests cityscore API.
  *
  * @package Drupal
  */
-class CityScoreTest extends PHPUnit_Framework_TestCase {
+class CityScoreTest extends TestCase {
 
   /**
    * Define an array of tests.
@@ -100,17 +100,41 @@ class CityScoreTest extends PHPUnit_Framework_TestCase {
       "response-code" => 200,
       "tests" => [
         ["type" => "string", "match" => "jQuery('table.views-table').append"],
-        ["type" => "string", "match" => '<td class="cs__table--centered">-</td>'],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">-</td>',
+        ],
         ["type" => "string", "match" => "<td>FIELD 1</td>"],
         ["type" => "string", "match" => "<td>FIELD 2</td>"],
         ["type" => "string", "match" => "<td>FIELD 3</td>", "bool" => FALSE],
-        ["type" => "string", "match" => '<td class="cs__table--centered">-</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.99</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.06</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.29</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.99</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.95</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.78</td>'],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">-</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.99</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.06</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.29</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.99</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.95</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.78</td>',
+        ],
       ],
     ],
     [
@@ -122,18 +146,45 @@ class CityScoreTest extends PHPUnit_Framework_TestCase {
       "response-code" => 200,
       "tests" => [
         ["type" => "string", "match" => "<head>"],
-        ["type" => "string", "match" => '<meta property="og:url" content="http://127.0.0.1:8888/rest/cityscore/html-table" />'],
+        [
+          "type" => "string",
+          "match" => '<meta property="og:url" content="http://127.0.0.1:8888/rest/cityscore/html-table" />',
+        ],
         ["type" => "preg", "match" => '/img.*b-dark.svg.*City of Boston/'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">-</td>'],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">-</td>',
+        ],
         ["type" => "string", "match" => "<td>FIELD 1</td>"],
         ["type" => "string", "match" => "<td>FIELD 3</td>", "bool" => FALSE],
-        ["type" => "string", "match" => '<td class="cs__table--centered">-</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.99</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.06</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.29</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.99</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.95</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.78</td>'],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">-</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.99</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.06</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.29</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.99</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.95</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.78</td>',
+        ],
       ],
     ],
     [
@@ -313,11 +364,26 @@ class CityScoreTest extends PHPUnit_Framework_TestCase {
         ["type" => "string", "match" => "<td>FIELD 1</td>"],
         ["type" => "string", "match" => "<td>FIELD 2</td>", "bool" => FALSE],
         ["type" => "string", "match" => "<td>FIELD 4</td>"],
-        ["type" => "string", "match" => '<td class="cs__table--centered">-</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.99</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.06</td>'],
-        ["type" => "string", "match" => '<td class="cs__table--centered">1.29</td>'],
-        ["type" => "string", "match" => '<td class="cs__low cs__table--centered">0.99</td>'],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">-</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.99</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.06</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__table--centered">1.29</td>',
+        ],
+        [
+          "type" => "string",
+          "match" => '<td class="cs__low cs__table--centered">0.99</td>',
+        ],
       ],
     ],
     [

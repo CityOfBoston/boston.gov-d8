@@ -8,11 +8,17 @@ Green='\033[0;32m'
 LightGreen='\033[1;32m'
 RedBG='\033[41;1;37m'
 GreenBG='\033[42;30m'
+YellowBG='\e[103;1;30m'
+Bold='\e[1m'
+BoldOff='\e[21m'
+InverseOn='\e[7m'
+InverseOff='\e[27m'
 NC='\033[0m'
 
 # This function runs a syntax check on selected set of files and gives a pass/fail report.
 function lint() {
-    printf "ACTION" "Runing PHP linting checks for syntax errors.\n"
+    printout "FUNCTION" "$(basename $BASH_SOURCE).lint()" "Called from $(basename $0)"
+    printout "ACTION" "Runing PHP linting checks for syntax errors.\n"
     ${REPO_ROOT}/vendor/bin/parallel-lint \
         -e php,module,inc,install \
         --no-progress \
@@ -34,7 +40,8 @@ function lint() {
 
 # This function runs a PHPCodesniff across a selected set of files, and produces a report.
 function phpcs() {
-    printout "ACTION" "Setting PHPCS options.\n"
+    printout "FUNCTION" "$(basename $BASH_SOURCE).phpcs()" "Called from $(basename $0)"
+    printout "ACTION" "Preparing PHPCS."
 
     if [[ ! -d ${REPO_ROOT}/docroot/modules/custom ]] || [[ ! -d ${REPO_ROOT}/docroot/themes/custom ]]; then
         printout "ERROR" "Build does not contain custom code folders."
@@ -45,31 +52,62 @@ function phpcs() {
     ${REPO_ROOT}vendor/bin/phpcs --config-set ignore_warnings_on_exit 1 &> /dev/null
     ${REPO_ROOT}vendor/bin/phpcs --config-set colors 1 &> /dev/null
 
-    printout "ACTION" "Running PHPCS tests on project files."
+    printout "ACTION" "Running PHPCS Drupal Standards tests on project files."
+    err1=0
+    err2=0
     ${REPO_ROOT}/vendor/bin/phpcs \
         --extensions="php/php,module/php,inc/php,install/php,theme/php,js/js" \
         --ignore="*.tpl.php,*.css,*.yml,*.twig,*.md,*.min.js,**/dist/*.js,**/patterns/*.js,**/bos_web_app/*.js" \
-        --report-full="${REPO_ROOT}/setup/err.code_sniffer.txt" \
+        --report-full="${REPO_ROOT}/setup/err.code_sniffer.standards.txt" \
         --report="summary" \
-        --standard=${REPO_ROOT}/docroot/modules/contrib/coder/coder_sniffer/Drupal/ruleset.xml \
+        --standard=Drupal\
         -n \
         ${REPO_ROOT}/docroot/modules/custom \
-        ${REPO_ROOT}/docroot/themes/custom
+        ${REPO_ROOT}/docroot/themes/custom &&
+        printout "SUCCESS" "Standards PASSED" || err1=1
+    printout "ACTION" "Running PHPCS Drupal Best Practice tests on project files."
+    ${REPO_ROOT}/vendor/bin/phpcs \
+        --extensions="php/php,module/php,inc/php,install/php,theme/php,js/js" \
+        --ignore="*.tpl.php,*.css,*.yml,*.twig,*.md,*.min.js,**/dist/*.js,**/patterns/*.js,**/bos_web_app/*.js" \
+        --report-full="${REPO_ROOT}/setup/err.code_sniffer.bestpractice.txt" \
+        --report="summary" \
+        --standard=DrupalPractice\
+        -n \
+        ${REPO_ROOT}/docroot/modules/custom \
+        ${REPO_ROOT}/docroot/themes/custom &&
+        printout "SUCCESS" "Best Practice PASS" || err2=1
 
-    if [[ $? -eq 0 ]]; then
-        printout "SUCCESS" "${GreenBG}Coding standards OK.${NC}\n"
-        rm -rf ${REPO_ROOT}/setup/err.code_sniffer.txt
+    if [[ $err -eq 0 ]]; then
+        printout "SUCCESS" "${GreenBG}Coding standards and Best Practices OK.${NC}\n"
+        rm -rf ${REPO_ROOT}/setup/err.code_sniffer.standards.txt
+        rm -rf ${REPO_ROOT}/setup/err.code_sniffer.bestpractice.txt
     else
-        printout "FAIL" "${RedBG}PHPCS ERRORS FOUND${NC}\n"
-        cat ${REPO_ROOT}/setup/err.code_sniffer.txt
         if [[ -n ${LANDO_APP_NAME} ]]; then
             LANDO_APP_URL="https://${LANDO_APP_NAME}.${LANDO_DOMAIN}"
         else
             LANDO_APP_URL="https://boston.lndo.site"
         fi
-        printout "NOTICE" "${Red}See results at ${REPO_ROOT}/setup/err.code_sniffer.txt${NC}"
-        printf "         - ${LANDO_APP_URL}/sites/default/files/setup/err.code_sniffer.txt\n\n"
-        exit 1
+        if [[ $err1 -eq 1 ]]; then
+            printout "FAIL" "${RedBG}PHPCS ERRORS FOUND${NC}\n"
+            if [[ -e ${REPO_ROOT}/setup/err.code_sniffer.standards.txt ]]; then
+              cat ${REPO_ROOT}/setup/err.code_sniffer.standards.txt
+              printout "NOTICE" "${Red}See results at ${REPO_ROOT}/setup/err.code_sniffer.standards.txt${NC}"
+              printf "         - ${LANDO_APP_URL}/sites/default/files/setup/err.code_sniffer.standards.txt\n\n"
+            fi
+        fi
+        if [[ $err2 -eq 1 ]]; then
+            printout "WARNING" "${YellowBG}PHPCS Best Practice issues found${NC}"
+            if [[ -e ${REPO_ROOT}/setup/err.code_sniffer.bestpractice.txt ]]; then
+              cat ${REPO_ROOT}/setup/err.code_sniffer.bestpractice.txt
+              printout "NOTICE" "${Red}See results at ${REPO_ROOT}/setup/err.code_sniffer.bestpractice.txt${NC}"
+              printf "         - ${LANDO_APP_URL}/sites/default/files/setup/err.code_sniffer.bestpractice.txt\n\n"
+            fi
+        fi
+        # Raise an error if the standards failed, otherwise no error.
+        if [[ $err1 -eq 1 ]]; then
+          exit 1
+        fi
+
     fi
 }
 
@@ -99,10 +137,10 @@ if [[ -n "$command" ]]; then
 
     elif [[ $command == "all" ]]; then
         if [[ -n ${2} ]] && [[ "${2}" != "pull_request" ]]; then
-            printout "NOTICE" "Code validation is only performed on Pull Requests.\n"
+            printout "NOTICE" "Code validation is only performed on Pull Requests."
         fi
         printf "\n"
-        printout "NOTICE" "Running code validation checks.\n"
+        printout "NOTICE" "Running code validation checks."
 
         lint $args && phpcs $args
 
