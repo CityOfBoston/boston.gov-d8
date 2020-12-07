@@ -356,7 +356,10 @@ function _bos_component_embed_level(array &$variables) {
     elseif (in_array($object->getEntityTypeId(), ["paragraph", "taxonomy"])) {
       $variables['is_component_field'] = TRUE;
       $parent = $object->getParentEntity();
-      if (isset($parent) &&  in_array($parent->getEntityTypeId(), ["paragraph", "taxonomy"])) {
+      if (isset($parent) &&  in_array($parent->getEntityTypeId(), [
+          "paragraph",
+          "taxonomy"
+        ])) {
         $variables['is_component_field'] = FALSE;
         $variables['is_subcomponent_field'] = TRUE;
       }
