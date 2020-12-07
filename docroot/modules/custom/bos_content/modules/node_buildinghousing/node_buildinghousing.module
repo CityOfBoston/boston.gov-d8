@@ -42,19 +42,35 @@ function node_buildinghousing_theme()
       'variables' => [
         "label" => NULL,
         "body" => NULL,
-        "image" => NULL,
-        "classes" => NULL,
+        "icon" => NULL,
+        "bgColor" => '#091f2f',
       ],
     ],
     'bh_project_manager_contact' => [
       'template' => 'snippets/bh-project-manager-contact',
       'variables' => [
-        "title" =>  t("Get In Touch"),
-        "label" =>  t("Project Manager"),
+        "title" => t("Get In Touch"),
+        "label" => t("Project Manager"),
         "name" => NULL,
         "email" => NULL,
         "phone" => NULL,
         "classes" => NULL,
+      ],
+    ],
+    'bh_project_meeting_notice' => [
+      'template' => 'snippets/bh-project-meeting-notice',
+      'variables' => [
+        "title" => t("Community Meeting"),
+        "dateString" => NULL,
+        "detailsLink" => NULL,
+        "idForAddToCal" => NULL,
+        "classes" => NULL,
+      ],
+    ],
+    'bh_icons' => [
+      'template' => 'snippets/bh-icons.svg',
+      'variables' => [
+        'type' => 'triple-decker',
       ],
     ],
   ];
@@ -256,6 +272,11 @@ function node_buildinghousing_entity_extra_field_info()
         'visible' => TRUE,
       ];
 
+      $extraFields['node'][$bundle->id()]['display']['bh_project_meeting_notice'] = [
+        'label' => t('Project Meeting Notice'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
     }
   }
 
@@ -269,10 +290,40 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $build['bh_computed_project_type'] = _node_buildinghousing_build_render_computed_project_type($entity);
   }
 
-  if ($display->getComponent('bh_computed_project_type')) {
+  if ($display->getComponent('bh_project_manager_contact')) {
     $build['bh_project_manager_contact'] = _node_buildinghousing_build_render_project_manager_contact($entity);
 
   }
+
+  if ($display->getComponent('bh_project_meeting_notice')) {
+    $build['bh_project_meeting_notice'] = _node_buildinghousing_build_render_project_meeting_notice($entity);
+
+  }
+
+}
+
+function _node_buildinghousing_build_render_project_meeting_notice($entity)
+{
+  $render = [];
+
+  $vars = [
+    'classes' => [
+      'icon' => 'icon-location',
+      'label' => 'detail-item--secondary grid-card__title',
+      'body' => 'detail-item__body--tertiary',
+      'detail' => 'detail-item--middle m-v300 grid-card__title',
+    ],
+  ];
+
+//  $vars['title'] = t("Community Meeting"); //@TODO: Can this be the Event Type?
+  $vars['dateString'] = "Monday November 30 2020 @ 6PM";
+  $vars['detailsLink'] = "/events";
+  $vars['idForAddToCall'] = "";
+
+  $render = ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
+
+  return $render;
+
 }
 
 function _node_buildinghousing_build_render_project_manager_contact($entity)
@@ -317,6 +368,8 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
     $vars['label'] = $computedProjectType['label'] ?? null;
     $vars['body'] = $computedProjectType['body'] ?? null;
     $vars['title'] = t('What are we building?');
+    $vars['bgColor'] = $computedProjectType['bgColor'] ?? '#091f2f';
+    $vars['icon'] = $computedProjectType['icon'] ?? null;
 
     $render = ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
 
@@ -363,6 +416,36 @@ function _node_buildinghousing_get_computed_project_type($entity)
       $data['body'] = $subType;
     }
   }
+
+
+  $iconType = 'house';
+
+  //@TODO: Change all of this out for a color field on the Tax Terms
+  switch ($data['label']) {
+    case "Other":
+      $data['bgColor'] = '#FFC608';
+      $iconType = 'other';
+      break;
+    case "Open Space":
+      $data['bgColor'] = '#58B754';
+      $iconType = 'tree';
+      break;
+    case "Business":
+      $data['bgColor'] = '#45789C';
+      if ($subType == 'Parking') {
+        $iconType = 'parking';
+      }else{
+        $iconType = 'shopping';
+      }
+      break;
+    default:
+      $iconType = 'house';
+      break;
+
+  }
+
+//  $data['icon'] = ['#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'triple-decker'])];
+  $data['icon'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
 
   return $data;
 }

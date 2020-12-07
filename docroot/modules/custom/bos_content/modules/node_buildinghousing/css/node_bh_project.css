@@ -1,13 +1,71 @@
-.bh-project-type {}
-
-.bh-project-type .cdd-ic {
-  background-color: #091f2f;
-  border-right: none;
-  padding: unset;
+.bg--light-blue {
+  background-color: #51ACFF;
 }
 
+.t--bold {
+  font-weight: bold;
+}
+
+.t--normal {
+  font-style: normal;
+}
+
+.p-l100 {
+  padding-left: 4px;
+  padding-left: .25rem
+}
+
+.p-l200 {
+  padding-left: 8px;
+  padding-left: .5rem
+}
+
+.p-l300 {
+  padding-left: 16px;
+  padding-left: 1rem
+}
+
+.p-l400 {
+  padding-left: 20px;
+  padding-left: 1.25rem
+}
+
+.p-l500 {
+  padding-left: 27.56px;
+  padding-left: 1.7225rem
+}
+
+.p-l600 {
+  padding-left: 32px;
+  padding-left: 2rem
+}
+
+.p-l700 {
+  padding-left: 35px;
+  padding-left: 2.1875rem
+}
+
+
+
+
+
+.field--name-field-bh-project-parcels {
+  float: left;
+  margin: 0 1rem 1rem 0;
+}
+
+.bh-project-type {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+
 .bh-project-type .project-type-icon {
-  width: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin-right: 1rem;
 }
 
 .bh-project-type .cdd-ic img {
@@ -28,3 +86,15 @@
 
 
 .bh-project-manager-contact {}
+
+
+.bh-project-meeting-notice {}
+
+
+
+@media screen and (max-width: 360px) {
+  .container {
+    padding-left: 2% !important;
+    padding-right: 2% !important;
+  }
+}
