@@ -7,7 +7,6 @@ use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal;
 
 /**
  * Upaknee class for API.
@@ -76,7 +75,7 @@ class UpakneeAPI extends ControllerBase {
                                 <email>' . $subscriber_data["email"] . '</email>
                                 <existing-update>true</existing-update>
                                 <source>boston.gov webform</source>
-                                <source-ip>' . Drupal::request()->getClientIp() . '</source-ip>
+                                <source-ip>' . \Drupal::request()->getClientIp() . '</source-ip>
                                 <zipcode>' . $subscriber_data["zipcode"] . '</zipcode>
                                 <subscriptions>
                                     <subscription>
@@ -128,7 +127,7 @@ class UpakneeAPI extends ControllerBase {
    * @param string $operation
    *   The operation being called via the endpoint uri.
    */
-  public function begin(string $operation) {
+  public function begin(string $operation = 'subscribe') {
     // Get POST data and check operation.
     $this->operation = $operation;
 

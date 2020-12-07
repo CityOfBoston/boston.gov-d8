@@ -2,10 +2,8 @@
 
 namespace Drupal\bos_email\Controller;
 
-use Drupal;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\bos_email\Templates\Contactform;
-use Drupal\bos_email\Controller\PostmarkOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -218,7 +216,7 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
-  public function begin(string $server) {
+  public function begin(string $server = 'contactform') {
     // Get POST data and check auth.
     $this->server = $server;
 
