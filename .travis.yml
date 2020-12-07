@@ -6,7 +6,7 @@ branches:
   only:
     - develop
     - master
-    - drupal_tickets
+    - MNL_phase_two
 
 php:
   - 7.3
@@ -121,4 +121,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: drupal_tickets
+      branch: MNL_phase_two
