@@ -21,7 +21,6 @@ use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Row;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Serialization\Json;
-use Exception;
 
 /**
  * Replace local image and link tags with entity embeds.
@@ -275,10 +274,10 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
       try {
         $file = $this->createFileEntity($dest);
         if (empty($file)) {
-          throw new Exception("Could not copy " . $src . " and save as " . $dest . ".");
+          throw new \Exception("Could not copy " . $src . " and save as " . $dest . ".");
         }
       }
-      catch (Exception $e) {
+      catch (\Exception $e) {
         \Drupal::logger('Migrate')->warning($e->getMessage());
         return NULL;
       }
@@ -365,12 +364,12 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
 
     try {
       if (!is_string($json)) {
-        throw new Exception('String selected does not resolve to JSON. ', -889977);
+        throw new \Exception('String selected does not resolve to JSON. ', -889977);
       }
       $tag_info = Json::decode($json);
       if (!$file = File::load($tag_info['fid'])) {
         // Nothing to do if we can't find the file.
-        throw new Exception("Image " . $tag_info['fid'] . " could not be found.", -889977);
+        throw new \Exception("Image " . $tag_info['fid'] . " could not be found.", -889977);
       }
       $tag_info['file'] = $file;
       if (!empty($tag_info['attributes']) && is_array($tag_info['attributes'])) {
@@ -398,7 +397,7 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
         }
       }
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       // If we hit an error, don't perform replacement.
       if ($e->getCode() == -889977) {
         throw new MigrateSkipProcessException($e->getMessage());

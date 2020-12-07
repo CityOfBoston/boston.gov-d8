@@ -254,7 +254,10 @@ class EverbridgeSubscriber extends ControllerBase {
       $result = $this->post($uri, $fields, $everbridge_env);
     }
     else {
-      $result = ["output" => "Missing Drupal Configuration.", "HTTP_CODE" => "500"];
+      $result = [
+        "output" => "Missing Drupal Configuration.",
+        "HTTP_CODE" => "500",
+      ];
     }
 
     return $this->responseOutput($result['output'], $result['http_code']);

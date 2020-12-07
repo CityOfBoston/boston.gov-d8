@@ -613,7 +613,10 @@ devModules() {
     # Enable key development modules.
     ${drush_cmd} cdel views.view.migrate_taxonomy &> /dev/null
     ${drush_cmd} cdel views.view.migrate_paragraphs &> /dev/null
-    ${drush_cmd} en -y devel,dblog,automated_cron,syslog,twig_xdebug,config_devel,masquerade,migrate,migrate_tools > /dev/null
+    if [[ ${target_env} == "local" ]]; then
+      ${drush_cmd} en -y automated_cron,twig_xdebug > /dev/null
+    fi
+    ${drush_cmd} en -y devel,dblog,syslog,config_devel,masquerade,migrate,migrate_tools > /dev/null
     if [[ $? -ne 0 ]]; then
         slackErrors="${slackErrors}\n- :small_orange_diamond: Problem enabling required DEV modules in DRUPAL."
     fi

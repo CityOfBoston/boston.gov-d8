@@ -2,7 +2,6 @@
 
 namespace Drupal\bos_mnl\Plugin\QueueWorker;
 
-use Drupal;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**

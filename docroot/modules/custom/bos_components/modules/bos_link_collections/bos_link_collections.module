@@ -158,7 +158,12 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
               $title = $paragraph->get('field_title')->getValue();
               $vars['title'] = $title['0']['value'];
             }
-            $attributes = ['attributes' => ['title' => "Download {$vars['title']}", 'target' => '_blank']];
+            $attributes = [
+              'attributes' => [
+                'title' => "Download {$vars['title']}",
+                'target' => '_blank',
+              ],
+            ];
             $vars['link'] = _bos_core_get_file_link($document['0']['target_id'], $vars['title'], $attributes);
             $link_items = _bos_core_paragraph_extract_link($paragraph);
             $vars['url'] = $link_items['url'];

@@ -73,7 +73,7 @@ function printout () {
         elif [[ "${1}" == "ACTION" ]]; then
             col1=${InverseOn}${Bold}${LightBlue}
             col2=${LightBlue}
-            col3=$${DimOn}{LightBlue}
+            col3=${DimOn}{LightBlue}
         elif [[ "${1}" == "STEP" ]] || [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
             col1=${InverseOn}${Bold}${Blue}
             col2=${Blue}
@@ -89,7 +89,7 @@ function printout () {
         else
             col1=${InverseOn}${Bold}${Default}
             col2=${Default}
-            col3={DimOn}${Default}
+            col3=${DimOn}${Default}
         fi
 
         if [[ -n ${1} ]]; then
