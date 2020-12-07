@@ -250,6 +250,11 @@
           {{ content.field_sidebar_components }}
         </div>
       {% endif %}
+
+      <div class="addtocal">
+        {{ drupal_field('field_event_date_recur', 'node', content.id, 'add_to_calendar') }}
+      </div>
+
     </div>
 
   </div>

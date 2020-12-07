@@ -126,6 +126,7 @@ function node_event_preprocess_node__event(&$variables) {
 
   // Select the date to appear on the node.
   if (isset($variables["content"]["field_event_date_recur"]["#object"])) {
+    $variables["content"]["field_event_date_recur"]["#object"];
     $vdate = $variables["content"]["field_event_date_recur"][0];
     if ($vdate["#is_recurring"]) {
       // This is a recurring event.
