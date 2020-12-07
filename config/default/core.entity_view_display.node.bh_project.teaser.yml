@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_initial_td_vote_date
     - field.field.node.bh_project.field_bh_meetings
     - field.field.node.bh_project.field_bh_neighborhood
+    - field.field.node.bh_project.field_bh_notification_signup
     - field.field.node.bh_project.field_bh_parcel_id
     - field.field.node.bh_project.field_bh_predicted_closing_date
     - field.field.node.bh_project.field_bh_project_complete_date
@@ -45,6 +46,16 @@ targetEntityType: node
 bundle: bh_project
 mode: teaser
 content:
+  bh_computed_project_type:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  bh_project_manager_contact:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   body:
     type: advanced_text
     weight: 1
@@ -128,6 +139,7 @@ hidden:
   field_bh_initial_comm_mtg_date: true
   field_bh_initial_td_vote_date: true
   field_bh_meetings: true
+  field_bh_notification_signup: true
   field_bh_parcel_id: true
   field_bh_predicted_closing_date: true
   field_bh_project_name: true
