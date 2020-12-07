@@ -13,14 +13,18 @@ config:
 
 proxy:
   node:
-    - patterns.lndo.site
+    - patterns.lndo.site:3030
     - node.lndo.site
+    - cdn.lndo.site:3030
 
 services:
   node:
     type: node:10
     ssl: true
     overrides:
+      mem_limit: 8G
+      memswap_limit: 15G
+      mem_reservation: 512m
       expose:
         - "80"
         - "443"
@@ -48,8 +52,14 @@ services:
     portforward: true
     host: localhost
     overrides:
+      mem_limit: 5G
+      memswap_limit: 8G
+      mem_reservation: 2G
+      ports:
+        - "32306:3306"
       volumes:
         - ./scripts:/app/scripts
+        - ./.lando.yml:/app/.lando.yml
       healthcheck:
         test: /helpers/health.sh database
         interval: 30s
@@ -68,17 +78,21 @@ services:
     type: php:7.3
     webroot: docroot
     xdebug: true
+    composer: []
+    composer_version: '1.10.13'
     overrides:
+      mem_limit: 8G
+      memswap_limit: 15G
+      mem_reservation: 2G
       healthcheck:
         test: /app/scripts/local/health.sh appserver
         interval: 30s
         timeout: 15s
         retries: 5
       environment:
+        DRUSH_OPTIONS_URI: "https://boston.lndo.site"
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
-    config:
-      conf: xdebug.ini
 
     build_as_root:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"

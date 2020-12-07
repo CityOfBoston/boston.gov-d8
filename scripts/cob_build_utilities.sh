@@ -8,6 +8,7 @@ Green='\e[32m'
 Yellow='\e[33m'
 Blue='\e[34m'
 Magenta='\e[35m'
+Orange='\e[48;5;172m'
 Cyan='\e[36m'
 LightGray='\e[37m'
 DarkGray='\e[90m'
@@ -23,6 +24,7 @@ GreenBG='\e[42;1;97m'
 YellowBG='\e[103;1;30m'
 NC='\e[0m'
 Bold='\e[1m'
+BoldOff='\e[21m'
 InverseOn='\e[7m'
 InverseOff='\e[27m'
 DimOn='\e[2m'
@@ -61,9 +63,9 @@ function printout () {
             col2=${LightRed}
             col3=${LightRed}${DimOn}
         elif [[ "${1}" == "WARN" ]] || [[ "${1}" == "WARNING" ]] || [[ "${1}" == "ALERT" ]]; then
-            col1=${InverseOn}${Bold}${Yellow}
-            col2=${Yellow}
-            col3=${Yellow}${DimOn}
+            col1=${InverseOn}${Bold}${Orange}
+            col2=${Orange}
+            col3=${Orange}${DimOn}
         elif [[ "${1}" == "SUCCESS" ]]; then
             col1=${InverseOn}${Bold}${Green}
             col2=${Green}
@@ -71,7 +73,7 @@ function printout () {
         elif [[ "${1}" == "ACTION" ]]; then
             col1=${InverseOn}${Bold}${LightBlue}
             col2=${LightBlue}
-            col3=$${DimOn}{LightBlue}
+            col3=${DimOn}{LightBlue}
         elif [[ "${1}" == "STEP" ]] || [[ "${1}" == "INFO" ]] || [[ "${1}" == "STATUS" ]]; then
             col1=${InverseOn}${Bold}${Blue}
             col2=${Blue}
@@ -80,14 +82,14 @@ function printout () {
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
             col3=${DimOn}${Cyan}
-        elif [[ "${1}" == "SCRIPT" ]]; then
+        elif [[ "${1}" == "SCRIPT" ]] || [[ "${1}" == "FUNCTION" ]]; then
             col1=${InverseOn}${Bold}${Cyan}
             col2=${Cyan}
             col3=${DimOn}${Cyan}
         else
             col1=${InverseOn}${Bold}${Default}
             col2=${Default}
-            col3={DimOn}${Default}
+            col3=${DimOn}${Default}
         fi
 
         if [[ -n ${1} ]]; then
@@ -105,8 +107,8 @@ function printout () {
 
 function clone_private_repo() {
 
-  printf "ref: $(basename "$0")\n"
-  printout "INFO" "Clone private repo and merge with main repo."
+  printout "FUNCTION" "$(basename $BASH_SOURCE).clone_private_repo()" "Called from $(basename $0)"
+  printout "ACTION" "Clone private repo and merge with main repo."
 
   # Assign a temporary folder.
   if [[ -z "${git_private_repo_local_dir}" ]]; then git_private_repo_local_dir="${REPO_ROOT}/tmprepo"; fi
@@ -151,8 +153,8 @@ function clone_private_repo() {
 
 function clone_patterns_repo() {
 
-    printf "ref: cob_build_utilities.clone_patterns_repo()\n\n"
-    printout "INFO" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
+    printout "FUNCTION" "$(basename $BASH_SOURCE).clone_patterns_repo()" "Called from $(basename $0)"
+    printout "ACTION" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
 
     if [[ -n ${GITHUB_TOKEN} ]]; then
         # Will enforce a token which should be passed via and ENVAR.
@@ -195,7 +197,7 @@ function clone_patterns_repo() {
 
 function build_settings() {
 
-    printf "ref: cob_build_utilities:build_settings()\n"
+    printout "FUNCTION" "$(basename $BASH_SOURCE).build_settings()" "Called from $(basename $0)"
 
     printout "ACTION" "Installing and updating Drupal settings files."
 

@@ -2,7 +2,6 @@
 
 namespace Drupal\slackposter\Logger;
 
-use Drupal;
 use Drupal\Core\Logger\RfcLoggerTrait;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\slackposter\Controller\SlackController;
@@ -81,7 +80,7 @@ class SlackLogger implements LoggerInterface {
         $attachment->titlelink = $base_url . '/admin/reports/dblog';
         $attachment->text = $body;
         $attachment->addfield("Referer:", (empty($context['referer']) ? '' : $context['referer']), TRUE);
-        $attachment->addfield("User:", ((isset($account->name)) ? $account->name : 'Anonymous') . '<br>ip:' . Drupal::request()->getClientIp(), TRUE);
+        $attachment->addfield("User:", ((isset($account->name)) ? $account->name : 'Anonymous') . '<br>ip:' . \Drupal::request()->getClientIp(), TRUE);
         $attachment->addfield("Request:", (empty($context['request_uri']) ? '' : $context['request_uri']), TRUE);
         $attachment->addfield("Link:", (empty($context['link']) ? '' : str_ireplace('"/', '"' . $base_url . '/', $context['link'])), TRUE);
 

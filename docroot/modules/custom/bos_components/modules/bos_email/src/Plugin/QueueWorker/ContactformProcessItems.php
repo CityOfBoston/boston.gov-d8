@@ -2,10 +2,8 @@
 
 namespace Drupal\bos_email\Plugin\QueueWorker;
 
-use Drupal;
 use Drupal\Core\Queue\RequeueException;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\Core\Queue\QueueWorkerInterface;
 use Drupal\bos_email\Controller\PostmarkOps;
 
 /**
