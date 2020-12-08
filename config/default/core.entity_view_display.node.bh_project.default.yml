@@ -20,6 +20,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_parcel_id
     - field.field.node.bh_project.field_bh_predicted_closing_date
     - field.field.node.bh_project.field_bh_project_complete_date
+    - field.field.node.bh_project.field_bh_project_images
     - field.field.node.bh_project.field_bh_project_name
     - field.field.node.bh_project.field_bh_project_parcels
     - field.field.node.bh_project.field_bh_project_stage
@@ -155,7 +156,7 @@ third_party_settings:
       children:
         - field_bh_wysiwyg_photo_a
       parent_name: group_header
-      weight: 6
+      weight: 7
       format_type: html_element
       region: content
       format_settings:
@@ -173,6 +174,7 @@ third_party_settings:
       children:
         - field_bh_project_name
         - field_bh_project_parcels
+        - field_bh_project_images
         - field_bh_coordinates
         - group_hero_placeholder
         - group_info_list
@@ -256,7 +258,7 @@ third_party_settings:
         - field_bh_total_num_units
         - field_bh_parcel_id
       parent_name: group_header
-      weight: 7
+      weight: 8
       format_type: html_element
       region: content
       format_settings:
@@ -308,7 +310,7 @@ content:
         fences_label_classes: 'sh cl sh-title'
   field_bh_coordinates:
     type: geolocation_map
-    weight: 5
+    weight: 6
     region: content
     label: hidden
     settings:
@@ -647,6 +649,20 @@ content:
         fences_field_item_classes: t--info
         fences_label_tag: h6
         fences_label_classes: m-v200
+  field_bh_project_images:
+    type: entity_reference_bh_image_gallery
+    weight: 5
+    label: visually_hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    region: content
   field_bh_project_name:
     weight: 3
     label: visually_hidden

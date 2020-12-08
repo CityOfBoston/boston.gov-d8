@@ -21,6 +21,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_parcel_id
     - field.field.node.bh_project.field_bh_predicted_closing_date
     - field.field.node.bh_project.field_bh_project_complete_date
+    - field.field.node.bh_project.field_bh_project_images
     - field.field.node.bh_project.field_bh_project_name
     - field.field.node.bh_project.field_bh_project_parcels
     - field.field.node.bh_project.field_bh_project_stage
@@ -53,6 +54,11 @@ content:
     third_party_settings: {  }
     region: content
   bh_project_manager_contact:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  bh_project_meeting_notice:
     weight: 100
     settings: {  }
     third_party_settings: {  }
@@ -167,6 +173,7 @@ hidden:
   field_bh_parcel_id: true
   field_bh_predicted_closing_date: true
   field_bh_project_complete_date: true
+  field_bh_project_images: true
   field_bh_project_parcels: true
   field_bh_project_type: true
   field_bh_project_updates: true
