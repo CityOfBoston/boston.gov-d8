@@ -98,7 +98,7 @@ class MNL extends React.Component {
       searchColor: null
     });
 
-    if (inputChars >= 5 && event.keyCode === 13) {
+    if (inputChars >= 5 || event.keyCode === 13) {
       this.setState({
         isLoading: true,
         submittedKeywords: true,
