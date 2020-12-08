@@ -368,12 +368,6 @@ class MNL extends React.Component {
           />
         ) : null}
 
-        {(configSection.newsletter.display) ? (
-          <Newsletter
-            section={this.state.section}
-          />
-        ) : null}
-
         {(configSection.city_services.display) ? (
           <CityServices
             recollect_events={recollectEvents}
@@ -406,21 +400,11 @@ class MNL extends React.Component {
           />
         ) : null}
 
-        {(configSection.public_safety.display) ? (
-          <PublicSafety
-            police_station_name={this.state.itemsDisplay.police_dept_police_station}
-            police_station_address={this.state.itemsDisplay.police_dept_address}
-            police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
-            police_station_zip={this.state.itemsDisplay.police_dept_zip}
-            police_district={this.state.itemsDisplay.police_district}
-            fire_station_name={this.state.itemsDisplay.fire_dept_name}
-            fire_station_address={this.state.itemsDisplay.fire_dept_address}
-            fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
+        {(configSection.newsletter.display) ? (
+          <Newsletter
             section={this.state.section}
-            displaySection={this.displaySection}
           />
         ) : null}
-
 
         {(configSection.summer.display) ? (
           <SummerResources
@@ -443,6 +427,21 @@ class MNL extends React.Component {
             snow_parking_lots_address={this.state.itemsDisplay.snow_parking_lots_address}
             snow_parking_lots_fee={this.state.itemsDisplay.snow_parking_lots_fee}
             snow_parking_lots_comments={this.state.itemsDisplay.snow_parking_lots_comments}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
+
+        {(configSection.public_safety.display) ? (
+          <PublicSafety
+            police_station_name={this.state.itemsDisplay.police_dept_police_station}
+            police_station_address={this.state.itemsDisplay.police_dept_address}
+            police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
+            police_station_zip={this.state.itemsDisplay.police_dept_zip}
+            police_district={this.state.itemsDisplay.police_district}
+            fire_station_name={this.state.itemsDisplay.fire_dept_name}
+            fire_station_address={this.state.itemsDisplay.fire_dept_address}
+            fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
             section={this.state.section}
             displaySection={this.displaySection}
           />
