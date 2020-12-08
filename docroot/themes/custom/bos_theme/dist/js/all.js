@@ -1338,5 +1338,12 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       return true;
     });
 
+    iFrameResize({
+      log : false, // disable console logging
+      scrolling: true, // enable scrolling
+      sizeHeight: true, // Enable resize of iframe to content height
+      autoResize: true // Enable changes to window or DOM cause iFrame to resize to the new content size
+    });
+
   });
 })(jQuery, Drupal, this, this.document);
