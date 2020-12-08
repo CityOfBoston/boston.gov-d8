@@ -98,3 +98,41 @@
     padding-right: 2% !important;
   }
 }
+
+/* The actual timeline (the vertical ruler) */
+.bh-project-timeline-icon:after {
+  content:"";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  border-left: 2px solid #1871bd;
+  transform: translate(-50%);
+}
+
+.bh-project-timeline-icon {
+  margin: 0 auto;
+  position:relative;
+  text-align:center;
+  stroke: #ffffff;
+  fill: #1871bd;
+}
+
+.bh-project-timeline-content {
+  position: relative;
+}
+
+/* Add arrows to the right container (pointing left) */
+.bh-project-timeline-content::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  left: -16px;
+  border: medium solid #51ACFF;
+  border-width: 16px 16px 16px 0;
+  border-color: transparent #51ACFF transparent transparent;
+}

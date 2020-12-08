@@ -67,6 +67,25 @@ function node_buildinghousing_theme()
         "classes" => NULL,
       ],
     ],
+    'bh_project_timeline' => [
+      'template' => 'snippets/bh-project-timeline',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "bgColor" => '#091f2f',
+      ],
+    ],
+    'bh_project_timeline_moment' => [
+      'template' => 'snippets/bh-project-timeline-moment',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "bgColor" => '#091f2f',
+      ],
+    ],
+
     'bh_icons' => [
       'template' => 'snippets/bh-icons.svg',
       'variables' => [
@@ -424,7 +443,7 @@ function _node_buildinghousing_get_computed_project_type($entity)
   switch ($data['label']) {
     case "Other":
       $data['bgColor'] = '#FFC608';
-      $iconType = 'other';
+      $iconType = 'building';
       break;
     case "Open Space":
       $data['bgColor'] = '#58B754';

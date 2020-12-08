@@ -43,19 +43,27 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         ],
       ];
 
+      $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
+      $vars['body'] = 'This is just some additional copy for the moment. This is just some additional copy for the moment. This is just some additional copy for the moment. This is just some additional copy for the moment.';
+
       $vars['label'] = $publicStage->name;
 
       if ($stageIsActive) {
        $vars['body'] = 'Current Active Stage - ' . $publicStage->name;
-       $vars['classes']['icon'] = 'icon-alert';
+        $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
         $vars['classes']['label'] = 'detail-item--secondary grid-card__title';
         $vars['classes']['detail'] = 'detail-item--middle m-v300 grid-card__title';
       }
-      $elements[$delta] = ['#markup' => \Drupal::theme()->render("detail_item", $vars)];
+//      $elements[$delta] = ['#markup' => \Drupal::theme()->render("detail_item", $vars)];
+
+      $elements[$delta] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
     }
 
-    return $elements;
+
+    return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $elements])];
+
+//    return $elements;
   }
 
   /**
