@@ -1372,3 +1372,65 @@ What: Fix inherited title styles
 
 .dr-ql-str-t h2 {color: #fff; padding-right: 0;}
 
+/**
+Stella
+Where: Add to Cal UI
+What: Fix inherited title styles
+ */
+
+.addtocal {
+  position: relative;
+  color: transparent;
+}
+
+.addtocal-container {
+  float: none;
+  top: 0;
+  position: absolute;
+  color: #000000;
+}
+
+.addtocal-container button.addtocal {
+  display: inline-block;
+  color: #000000;
+  z-index: 20;
+  font-family: "Open Sans",Roboto, sans-serif;
+  font-weight: 600;
+  line-height: 100%;
+  background: #fff;
+  font-size: 15px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  padding: 13px 12px 12px 43px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased!important;
+  outline-color: rgba(0,78,255,0.5);
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  box-shadow: 0 0 0 0.5px rgba(50,50,93,.17), 0 2px 5px 0 rgba(50,50,93,.1), 0 1px 1.5px 0 rgba(0,0,0,.07), 0 1px 2px 0 rgba(0,0,0,.08), 0 0 0 0 transparent!important;
+  background-image: url(https://assets.boston.gov/icons/experiential_icons/calendar.svg);
+  background-position: left center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.addtocal-container button.addtocal:hover, .addtocal-container button.addtocal:focus, .addtocal-container button.addtocal:active {
+  text-decoration: none;
+  background: #fafafa url(https://assets.boston.gov/icons/experiential_icons/calendar.svg) no-repeat left center;
+  background-size: contain;
+}
+
+.addtocal-container .addtocal-menu {
+  min-width: 188px;
+}
+
+.addtocal-container .addtocal-menu ul, .addtocal-container .addtocal-menu ul li {
+  background:none;
+}
+
+.addtocal-container .addtocal-link a:hover, .addtocal-container .addtocal-link a:focus {
+  border-radius: 0;
+}
