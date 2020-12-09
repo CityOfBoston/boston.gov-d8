@@ -237,8 +237,8 @@ third_party_settings:
       children:
         - group_sidebar
         - group_main_content
-      parent_name: ''
-      weight: 1
+      parent_name: group_container_full_width
+      weight: 2
       format_type: html_element
       region: content
       format_settings:
@@ -250,7 +250,7 @@ third_party_settings:
         effect: none
         speed: fast
         id: ''
-        classes: 'm-t600 clearfix'
+        classes: 'm-t600 clearfix b-c'
       label: Content
     group_info_list:
       children:
@@ -272,6 +272,24 @@ third_party_settings:
         id: ''
         classes: ''
       label: 'Info List'
+    group_container_full_width:
+      children:
+        - group_content
+      parent_name: ''
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'clearfix b b--fw b--g'
+      label: 'Container - Full Width'
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -363,8 +381,8 @@ content:
             location_option_id: freeogeoip
       map_provider_id: google_maps
       map_provider_settings:
-        height: 150px
-        width: 300px
+        height: 157px
+        width: 335px
         type: ROADMAP
         zoom: 16
         maxZoom: 20

@@ -39,6 +39,10 @@ class EntityReferenceMediaBHImageGalleryFormatter extends EntityReferenceFormatt
 
     $images = $items->referencedEntities();
 
+    if (!$images) {
+      return $elements;
+    }
+
     $imageItems = array_shift($images)->get('image');
 
     foreach ($images as $delta => $image) {
@@ -58,6 +62,8 @@ class EntityReferenceMediaBHImageGalleryFormatter extends EntityReferenceFormatt
         'colorbox_caption_custom' => '',
       ],
     ]);
+
+    array_unshift($elements[0][0], ['#markup' => '<div class="t--subinfo">3</div>']);
 
     return $elements;
   }

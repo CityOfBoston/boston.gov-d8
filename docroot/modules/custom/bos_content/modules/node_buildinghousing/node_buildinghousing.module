@@ -82,6 +82,8 @@ function node_buildinghousing_theme()
         "label" => NULL,
         "body" => NULL,
         "icon" => NULL,
+        "date" => NULL,
+        "currentState" => NULL,
         "bgColor" => '#091f2f',
       ],
     ],
@@ -335,7 +337,7 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity)
   ];
 
 //  $vars['title'] = t("Community Meeting"); //@TODO: Can this be the Event Type?
-  $vars['dateString'] = "Monday November 30 2020 @ 6PM";
+  $vars['dateString'] = "Monday November 30 2020 at 6PM";
   $vars['detailsLink'] = "/events";
   $vars['idForAddToCall'] = "";
 
