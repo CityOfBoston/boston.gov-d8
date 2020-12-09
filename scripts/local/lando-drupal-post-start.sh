@@ -87,12 +87,12 @@
     # For example IPAddresses, memory allocations etc
     # The file is not tracked by git, so manual changes will potentially be lost when the
     # app is rebuilt.
-    printout "ACTION" "Setup XDebug in Drupal container."
-    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
-        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
-    fi
-    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
-    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
+#    printout "ACTION" "Setup XDebug in Drupal container."
+#    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
+#        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
+#    fi
+#    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
+#    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
     # Restart apache to get those files loaded.
     printout "ACTION" "Restart Apache service in Drupal container."

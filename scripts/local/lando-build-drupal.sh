@@ -222,7 +222,7 @@
         printout "ACTION" "Installing Drupal with an initial database containing no content."
         echo "Executing: ${SITE_INSTALL}" >> ${setup_logs}/drush_site_install.log
 
-        (${drush_cmd} ${SITE_INSTALL} >> ${setup_logs}/drush_site_install.log &&
+        (${drush_cmd} ${SITE_INSTALL} &>> ${setup_logs}/drush_site_install.log &&
           printout "SUCCESS" "Site is freshly installed with clean database.\n") ||
             (printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues." &&
               exit 1)
