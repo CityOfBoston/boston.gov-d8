@@ -28,33 +28,52 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $parent_entity = $items->getEntity();
     $elements = [];
 
-    $publicStages = $this->getPublicStages();
+    $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
+
+    $stageCurrentState = 'past'; //past, present, future.
     foreach ($this->getPublicStages() as $delta => $publicStage) {
       //$elements[$delta] = ['#markup' => $publicStage->name];
       $stageIsActive = $parent_entity->get('field_bh_public_stage')->target_id == $publicStage->tid;
 
-      $vars = [
-        'classes' => [
-          'icon' => 'icon-time',
-          'label' => 'detail-item--secondary',
-          'body' => 'detail-item__body--tertiary',
-          'detail' => 'detail-item--middle m-v300',
-        ],
-      ];
-
-      $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
-      $vars['body'] = 'This is just some additional copy for the moment. This is just some additional copy for the moment. This is just some additional copy for the moment. This is just some additional copy for the moment.';
-
-      $vars['label'] = $publicStage->name;
-
-      if ($stageIsActive) {
-       $vars['body'] = 'Current Active Stage - ' . $publicStage->name;
-        $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
-        $vars['classes']['label'] = 'detail-item--secondary grid-card__title';
-        $vars['classes']['detail'] = 'detail-item--middle m-v300 grid-card__title';
+      if ($stageCurrentState == 'past' && $stageIsActive) {
+        $stageCurrentState = 'present';
+      }elseif ($stageCurrentState == 'present' && !$stageIsActive) {
+        $stageCurrentState = 'future';
       }
-//      $elements[$delta] = ['#markup' => \Drupal::theme()->render("detail_item", $vars)];
+
+      $publicStageTerm = $termStorage->load($publicStage->tid);
+      $vars = [];
+
+      $stageTitle = $publicStageTerm->get('field_display_title') ?? null;
+      $stageIcon = $publicStageTerm->get('field_icon') ?? null;
+      $stageDescription = $publicStageTerm->get('description') ?? null;
+      $stageDate = 'Winter 2020';
+
+      if ($stageTitle->isEmpty()) {
+        continue;
+      }
+
+      $vars['icon'] = $stageIcon->view('icon');
+      $vars['label'] = $stageTitle->view(['label' => 'hidden']);
+      $vars['body'] = $stageDescription->view(['label' => 'hidden']);
+      $vars['date'] = $stageDate;
+      $vars['currentState'] = $stageCurrentState;
+
+
+      switch ($stageCurrentState) {
+        case 'past':
+//          $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
+          break;
+        case 'present':
+          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
+          break;
+        case 'future':
+          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => null]);
+          $vars['body'] = t('Predicted Date: ') . $stageDate;
+          $vars['date'] = '';
+          break;
+      }
 
       $elements[$delta] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 

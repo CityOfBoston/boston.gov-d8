@@ -10,6 +10,10 @@
   font-style: normal;
 }
 
+.t--nowrap {
+  white-space: nowrap;
+}
+
 .p-l100 {
   padding-left: 4px;
   padding-left: .25rem
@@ -99,6 +103,20 @@
   }
 }
 
+
+.timeline-moment-past {
+  /*background-color: red;*/
+}
+
+.timeline-moment-present {
+  /*background-color: blue;*/
+  /*color: #288BE4;*/
+}
+
+.timeline-moment-future {
+  /*background-color: green;*/
+}
+
 /* The actual timeline (the vertical ruler) */
 .bh-project-timeline-icon:after {
   content:"";
@@ -107,7 +125,7 @@
   top: 0;
   bottom: 0;
   left: 50%;
-  border-left: 2px solid #1871bd;
+  border-left: 3px solid #091f2f;
   transform: translate(-50%);
 }
 
@@ -116,7 +134,54 @@
   position:relative;
   text-align:center;
   stroke: #ffffff;
-  fill: #1871bd;
+  fill: #091f2f;
+}
+
+.bh-project-timeline-icon svg {
+  background-color: #f3f3f3;
+}
+
+.timeline-moment-present .bh-project-timeline-icon:after {
+  border-color: #288BE4;
+}
+
+.timeline-moment-present .bh-project-timeline-icon {
+  stroke: #ffffff;
+  fill: #288BE4;
+  color: #288BE4;
+}
+
+.timeline-moment-present .bh-project-timeline-content h4,
+.timeline-moment-present .bh-project-timeline-content .t--subinfo,
+.timeline-moment-present .bh-timeline-season {
+  /*background-color: blue;*/
+  color: #288BE4;
+}
+
+
+.timeline-moment-future .bh-project-timeline-content h4 {
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 27px;
+  /* or 169% */
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.timeline-moment-future .bh-project-timeline-icon:after {
+  border-color: #091f2f;
+  border-left-style: dashed;
+}
+
+.bh-project-timeline div:last-of-type .bh-project-timeline-icon:after {
+  border-left: unset;
+}
+
+.bh-timeline-season {
+  white-space: nowrap;
+  font-size: 16px;
 }
 
 .bh-project-timeline-content {
@@ -124,15 +189,15 @@
 }
 
 /* Add arrows to the right container (pointing left) */
-.bh-project-timeline-content::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 22px;
-  width: 0;
-  z-index: 1;
-  left: -16px;
-  border: medium solid #51ACFF;
-  border-width: 16px 16px 16px 0;
-  border-color: transparent #51ACFF transparent transparent;
-}
+/*.bh-project-timeline-content::before {*/
+/*  content: " ";*/
+/*  height: 0;*/
+/*  position: absolute;*/
+/*  top: 22px;*/
+/*  width: 0;*/
+/*  z-index: 1;*/
+/*  left: -16px;*/
+/*  border: medium solid #51ACFF;*/
+/*  border-width: 16px 16px 16px 0;*/
+/*  border-color: transparent #51ACFF transparent transparent;*/
+/*}*/
