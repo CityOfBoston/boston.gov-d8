@@ -90,6 +90,20 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "true"
+    MNL_phase_two:
+      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
+      # none = don't alter modules enabled from configuration
+      type: dev
+      suppress_output: 0
+      database:
+        # Set source to 'initialize' to start a fresh install.
+        # Otherwise set it to 'sync' to sync from the drush-alias environment.
+        source: initialize
+        drush_alias: "@bostond8.uat"
+      config:
+        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
+        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
+        sync: "true"
 
 deploy:
   # Each element of this deploy node is a branch in the main CoB repo.
