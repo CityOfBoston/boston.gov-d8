@@ -66,7 +66,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 //          $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
           break;
         case 'present':
-          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
+//          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
           break;
         case 'future':
           $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => null]);
@@ -75,7 +75,14 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           break;
       }
 
-      $elements[$delta] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
+      $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
+
+      //@TODO: THis is just a temp place to put the meeting for styling dev
+      if ($stageCurrentState == 'present') {
+        $elements[] = $this->getMeetings($parent_entity);
+//        $elements[] = $this->getDocuments($parent_entity);
+        $elements[] = $this->getTexts($parent_entity);
+      }
 
     }
 
@@ -83,6 +90,62 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $elements])];
 
 //    return $elements;
+  }
+
+
+  public function getMeetings($project) {
+    $elements = [];
+
+    $data = [
+      'label' => t('UPCOMING COMMUNITY MEETING'),
+      'title' => t('Warren St 14-17 Public Meeting'),
+      'body' => t('Description of what to expect at this public meeting, maybe a brief overview of the goals of the meeting.'),
+      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'calendar']),
+      'date' => 'DEC 15, 2020',
+      'time' => '6-8PM',
+      'link' => '/events',
+      'currentState' => 'present',
+      'addToCal' => NULL,
+    ];
+
+
+    $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
+    return $elements;
+  }
+
+  public function getTexts($project) {
+    $elements = [];
+
+    $data = [
+      'label' => t('Project Manager'),
+      'title' => t('Anne Conway'),
+      'body' => t('The Department of Neighborhood Development (DND) invites you to a virtual community meeting next month to introduce the preferred developer for the Request for Proposals (RFP) regarding 14-14A, 15-15A, and 17 Holborn St, Roxbury.
+'),
+      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
+      'date' => 'NOV 25, 2020',
+      'currentState' => 'present',
+    ];
+
+
+    $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
+    return $elements;
+  }
+
+  public function getDocuments($project) {
+    $elements = [];
+
+    $data = [
+      'label' => t('developer presentation'),
+      'title' => t('WillemLevielle RFP Response.pdf'),
+      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'calendar']),
+      'date' => 'DEC 15, 2020',
+      'link' => '/events',
+      'currentState' => 'present',
+    ];
+
+
+    $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $data)];
+    return $elements;
   }
 
   /**
