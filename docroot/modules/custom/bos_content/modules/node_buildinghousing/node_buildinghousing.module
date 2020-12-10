@@ -87,6 +87,40 @@ function node_buildinghousing_theme()
         "bgColor" => '#091f2f',
       ],
     ],
+    'bh_project_timeline_meeting' => [
+      'template' => 'snippets/bh-project-timeline-meeting',
+      'variables' => [
+        "label" => NULL,
+        "title" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "time" => NULL,
+        "link" => NULL,
+        "currentState" => 'present',
+        "addToCal" => NULL,
+      ],
+    ],
+    'bh_project_timeline_text' => [
+      'template' => 'snippets/bh-project-timeline-text',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "currentState" => 'present',
+      ],
+    ],
+    'bh_project_timeline_document' => [
+      'template' => 'snippets/bh-project-timeline-document',
+      'variables' => [
+        "label" => NULL,
+        "link" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "currentState" => 'present',
+      ],
+    ],
 
     'bh_icons' => [
       'template' => 'snippets/bh-icons.svg',
@@ -337,7 +371,7 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity)
   ];
 
 //  $vars['title'] = t("Community Meeting"); //@TODO: Can this be the Event Type?
-  $vars['dateString'] = "Monday November 30 2020 at 6PM";
+  $vars['dateString'] = "Tuesday December 15 2020 | 6-8PM";
   $vars['detailsLink'] = "/events";
   $vars['idForAddToCall'] = "";
 
@@ -346,6 +380,7 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity)
   return $render;
 
 }
+
 
 function _node_buildinghousing_build_render_project_manager_contact($entity)
 {
@@ -455,7 +490,7 @@ function _node_buildinghousing_get_computed_project_type($entity)
       $data['bgColor'] = '#45789C';
       if ($subType == 'Parking') {
         $iconType = 'parking';
-      }else{
+      } else {
         $iconType = 'shopping';
       }
       break;

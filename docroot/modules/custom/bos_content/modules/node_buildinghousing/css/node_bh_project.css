@@ -10,8 +10,24 @@
   font-style: normal;
 }
 
+.t--italic {
+  font-style: italic;
+}
+
 .t--nowrap {
   white-space: nowrap;
+}
+
+.t--title {
+  color: #1871bd;
+  font-family: Lora,Georgia,serif;
+  font-size: 26px;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.fl--r {
+  float: right;
 }
 
 .p-l100 {
@@ -133,7 +149,7 @@
   margin: 0 auto;
   position:relative;
   text-align:center;
-  stroke: #ffffff;
+  /*stroke: #ffffff;*/
   fill: #091f2f;
 }
 
@@ -146,31 +162,39 @@
 }
 
 .timeline-moment-present .bh-project-timeline-icon {
-  stroke: #ffffff;
+  /*stroke: #ffffff;*/
   fill: #288BE4;
   color: #288BE4;
 }
 
 .timeline-moment-present .bh-project-timeline-content h4,
 .timeline-moment-present .bh-project-timeline-content .t--subinfo,
+.timeline-meeting-present .bh-timeline-season,
 .timeline-moment-present .bh-timeline-season {
   /*background-color: blue;*/
   color: #288BE4;
 }
 
 
+.timeline-meeting-present .bh-project-timeline-content h4,
 .timeline-moment-future .bh-project-timeline-content h4 {
   font-family: Montserrat;
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
   line-height: 27px;
-  /* or 169% */
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
 
-.timeline-moment-future .bh-project-timeline-icon:after {
+.timeline-meeting-present .bh-project-timeline-content h4 {
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #288BE4;
+}
+
+.timeline-moment-future .bh-project-timeline-icon:after,
+.timeline-meeting-present .bh-project-timeline-icon:after {
   border-color: #091f2f;
   border-left-style: dashed;
 }
@@ -188,16 +212,26 @@
   position: relative;
 }
 
+.timeline-meeting-present {
+  position: relative;
+}
+
+.timeline-text .bh-timeline-season,
+.timeline-text .bh-project-timeline-icon{
+  padding-top: 6rem;
+}
+
+
 /* Add arrows to the right container (pointing left) */
-/*.bh-project-timeline-content::before {*/
-/*  content: " ";*/
-/*  height: 0;*/
-/*  position: absolute;*/
-/*  top: 22px;*/
-/*  width: 0;*/
-/*  z-index: 1;*/
-/*  left: -16px;*/
-/*  border: medium solid #51ACFF;*/
-/*  border-width: 16px 16px 16px 0;*/
-/*  border-color: transparent #51ACFF transparent transparent;*/
-/*}*/
+.timeline-text .bh-project-timeline-content::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 7.25rem;
+  width: 0;
+  z-index: 1;
+  left: -16px;
+  border: medium solid #ffffff;
+  border-width: 16px 16px 16px 0;
+  border-color: transparent #ffffff transparent transparent;
+}
