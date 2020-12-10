@@ -81,6 +81,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       if ($stageCurrentState == 'present') {
         $elements[] = $this->getMeetings($parent_entity);
 //        $elements[] = $this->getDocuments($parent_entity);
+      }
+
+      if ($stageCurrentState == 'past' && $delta == 2) {
         $elements[] = $this->getTexts($parent_entity);
       }
 
