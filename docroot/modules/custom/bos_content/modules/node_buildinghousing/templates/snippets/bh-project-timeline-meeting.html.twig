@@ -1,0 +1,69 @@
+{#
+/**
+ * @file
+ * Default theme implementation for detail item.
+ *
+ * Available variables:
+ * - title: The title value of the item.
+ * - label: The label value of the item.
+ * - body: The content value of the item.
+ * - icon: The icon value of the detail item.
+ * - date:
+ * - time:
+ * - link:
+ * - addTOCal:
+ * - currentState:
+ *
+ * - classes: Array of classes to be applied to detail, icon, label, and body
+ *   elements.
+ */
+#}
+
+
+<div class="bh-project-timeline-moment g g--12 timeline-meeting-{{ currentState }}" >
+
+  <div class="g g--4">
+    <div class="g--7 m-t500">
+      <h6 class="m-v000 bh-timeline-season t--cb">{{ date }}</h6>
+    </div>
+
+    <div typeof="foaf:Image" class="bh-project-timeline-icon g--5">
+      {{ icon }}
+    </div>
+
+  </div>
+
+  <div class="g--8 m-t400 m-b600 m-h100 p-a000  bh-project-timeline-content">
+    <h5 class="m-b100 m-t100 t--ob t--bold">{{ label }}</h5>
+
+    <div class="b b--w m-t600 p-a600">
+
+      <div class="t--title t--ob">{{ title }}</div>
+
+      <h6 class="m-v000">{{ date }} {{ time }}</h6>
+
+      <div class=""><p>{{ body }}</p></div>
+
+
+      <div class="g">
+
+        <div class="m-v200 g--6">
+          <a class="btn btn--b btn--200 btn--c" href="{{ addTOCal }}">Add to Cal</a>
+        </div>
+
+        <div class="m-v200 g--6">
+          <a class="btn btn--b btn--200" href="{{ link }}">Lean More</a>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+  </div>
+
+</div>
+
