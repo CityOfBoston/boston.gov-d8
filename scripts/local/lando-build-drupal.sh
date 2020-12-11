@@ -108,6 +108,7 @@
     printout "INFO" "The complete Drupal folder structure is created in ${project_docroot} (around our previously cloned repo files)."
     echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" > ${setup_logs}/composer.log
     (cd ${LANDO_MOUNT} &&
+        composer --version &&
         composer clear-cache &&
         composer install --no-suggest --prefer-dist --no-interaction &>> ${setup_logs}/composer.log &&
         composer drupal:scaffold &>> ${setup_logs}/composer.log &&
@@ -307,15 +308,6 @@
     fi
     printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
-    # Set a flag to indicate that the db is ready,
-    # and the containers healthcheck (health.sh) can commence.
-    # See notes in health.sh.
-    curl --fail -k -m5 https://boston.lndo.site &> /dev/null &&
-      ready=0
-    if [[ ! -z $ready ]] && [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
-      touch ${LANDO_MOUNT}/.dbready
-    fi
-
     printout "ACTION" "Importing configuration."
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
     if [[ $? -eq 0 ]]; then
@@ -403,6 +395,15 @@
     (${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &> /dev/null &&
       ${drush_cmd} user-login --name=${drupal_account_name} >> ${setup_logs}/uli.log &&
       printout "SUCCESS" "Password changed.\n") || printout "WARNING" "Password was not changed.\n"
+
+    # Set a flag to indicate that the db is ready,
+    # and the containers healthcheck (health.sh) can commence.
+    # See notes in health.sh.
+    curl --fail -k -m5 https://boston.lndo.site &> /dev/null &&
+      ready=0
+    if [[ ! -z $ready ]] && [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
+      touch ${LANDO_MOUNT}/.dbready
+    fi
 
     text=$(displayTime $(($(date +%s)-timer)))
     printout "INFO" "Drupal build finished." "Drupal install & build took ${text}"
