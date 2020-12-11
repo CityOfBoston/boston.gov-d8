@@ -4,14 +4,6 @@
 name: boston
 recipe: drupal8
 
-excludes:
-  - vendor
-  - hooks
-  - patterns/node_modules
-  - docroot/core
-  - docroot/libraries
-  - docroot/modules/contrib
-
 config:
   php: '7.3'
   webroot: docroot
@@ -31,8 +23,8 @@ services:
     ssl: true
     overrides:
       mem_limit: 8G
-      memswap_limit: 15G
-      mem_reservation: 512m
+      memswap_limit: 12G
+      mem_reservation: 2G
       expose:
         - "80"
         - "443"
@@ -88,16 +80,23 @@ services:
     composer_version: '2.0.7'
     webroot: docroot
     xdebug: debug,develop
+    excludes:
+      - vendor
+      - hooks
+      - patterns/node_modules
+      - docroot/core
+      - docroot/libraries
+      - docroot/modules/contrib
     config:
       php: scripts/local/boston-dev-php.ini
     overrides:
       mem_limit: 8G
-      memswap_limit: 15G
-      mem_reservation: 5G
+      memswap_limit: 12G
+      mem_reservation: 4G
       healthcheck:
         test: /app/scripts/local/health.sh appserver
-        interval: 30s
-        timeout: 15s
+        interval: 3m
+        timeout: 5s
         retries: 5
       environment:
         DRUSH_OPTIONS_URI: "https://boston.lndo.site"
