@@ -23,7 +23,7 @@ if [[ -n "$command" ]]; then
         exit 0
 
     elif [[ "${command}" == "node" ]]; then
-        if [[ ! -e ${LANDO_MOUNT}/patterns/.ready ]]; then
+        if [[ ! -e ${LANDO_MOUNT}/patterns/.nodeready ]]; then
           echo "Waiting for container to finish building ..."
           exit 0
         fi
@@ -34,7 +34,7 @@ if [[ -n "$command" ]]; then
         else
             good="Patterns installed and built - "
         fi
-        if [[ ! -e ${LANDO_MOUNT}/webapps/package.json ]]; then
+        if [[ ! -e ${LANDO_MOUNT}/web_apps/package.json ]]; then
             # Nothing is loaded yet, so just report all is good.
             fail="${fail}! Web_apps not installed - "
         else
@@ -47,8 +47,8 @@ if [[ -n "$command" ]]; then
         fi
 
         # If the patterns folder is populated, then try to get the fractal server
-        curl --fail -k -m5 http://127.0.0.1 &> /dev/null && good="${good} HTTP_Server (port 80): OK - " ||
-          fail="${fail}HTTP_Server:80 not responding - "
+        curl --fail -k -m5 http://127.0.0.1 &> /dev/null && good="${good} Fleet (HTTP port 80): OK - " ||
+          fail="${fail}Fleet (HTTP_Server port 80) not responding - "
         if [[ -z $fail ]]; then
           echo "${good}"
           exit 0
