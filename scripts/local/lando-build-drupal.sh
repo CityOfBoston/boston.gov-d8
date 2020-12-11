@@ -310,8 +310,9 @@
     # Set a flag to indicate that the db is ready,
     # and the containers healthcheck (health.sh) can commence.
     # See notes in health.sh.
-    curl --fail -k https://boston.lndo.site &> /dev/null && ready
-    if [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
+    curl --fail -k -m5 https://boston.lndo.site &> /dev/null &&
+      ready=0
+    if [[ ! -z $ready ]] && [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
       touch ${LANDO_MOUNT}/.dbready
     fi
 
