@@ -25,8 +25,13 @@
   printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
   printf "\n"
 
-  . "${LANDO_MOUNT}/scripts/local/lando-build-patterns.sh"
-  . "${LANDO_MOUNT}/scripts/local/lando-build-webapps.sh"
+  . "${LANDO_MOUNT}/scripts/local/lando-build-patterns.sh" &&
+    . "${LANDO_MOUNT}/scripts/local/lando-build-webapps.sh"
+
+  # Remove the flag to indicate that the db is ready
+  if [[ $? -eq 0 ]] && [[ -d ${patterns_local_repo_local_dir}/public/css ]] && [[ -e ${REPO_ROOT}/${webapps_local_local_dir}/package.json ]]; then
+    touch ${patterns_local_repo_local_dir}/.nodeready
+  fi
 
   printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
   printf "\n"
