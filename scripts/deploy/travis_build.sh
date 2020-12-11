@@ -98,7 +98,6 @@
         printout "ACTION" "Downloading Drupal and dependencies to Travis container."
         cd ${TRAVIS_BUILD_DIR} &&
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
-            composer self-update 1.10.13 &&
             composer clear-cache &&
             composer config -g github-oauth.github.com "$GITHUB_TOKEN" &&
             composer install --no-suggest --prefer-dist --no-interaction -vvv &> ${setup_logs}/composer.log &&
