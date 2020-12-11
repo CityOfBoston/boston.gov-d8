@@ -62,7 +62,7 @@ services:
     overrides:
       mem_limit: 5G
       memswap_limit: 8G
-      mem_reservation: 2G
+      mem_reservation: 5G
       ports:
         - "32306:3306"
       volumes:
@@ -93,7 +93,7 @@ services:
     overrides:
       mem_limit: 8G
       memswap_limit: 15G
-      mem_reservation: 2G
+      mem_reservation: 5G
       healthcheck:
         test: /app/scripts/local/health.sh appserver
         interval: 30s
