@@ -84,10 +84,12 @@ services:
 
   appserver:
     type: php:7.3
-    webroot: docroot
-    xdebug: true
     composer: []
-    composer_version: '1.10.13'
+    composer_version: '2.0.7'
+    webroot: docroot
+    xdebug: debug,develop
+    config:
+      php: scripts/local/boston-dev-php.ini
     overrides:
       mem_limit: 8G
       memswap_limit: 15G
@@ -101,6 +103,7 @@ services:
         DRUSH_OPTIONS_URI: "https://boston.lndo.site"
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
+        COMPOSER_MEMORY_LIMIT: 4G
         BACKDROP_SETTINGS: ""
 
     build_as_root:
