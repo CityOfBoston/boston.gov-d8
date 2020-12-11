@@ -4,6 +4,14 @@
 name: boston
 recipe: drupal8
 
+excludes:
+  - vendor
+  - hooks
+  - patterns/node_modules
+  - docroot/core
+  - docroot/libraries
+  - docroot/modules/contrib
+
 config:
   php: '7.3'
   webroot: docroot

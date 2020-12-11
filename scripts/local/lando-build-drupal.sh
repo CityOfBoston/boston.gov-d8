@@ -307,6 +307,14 @@
     fi
     printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
+    # Set a flag to indicate that the db is ready,
+    # and the containers healthcheck (health.sh) can commence.
+    # See notes in health.sh.
+    curl --fail -k https://boston.lndo.site &> /dev/null && ready
+    if [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
+      touch ${LANDO_MOUNT}/.dbready
+    fi
+
     printout "ACTION" "Importing configuration."
     ${drush_cmd} config-import sync -y &> ${setup_logs}/config_import.log
     if [[ $? -eq 0 ]]; then
