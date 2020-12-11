@@ -79,14 +79,7 @@ services:
     composer: []
     composer_version: '2.0.7'
     webroot: docroot
-    xdebug: debug,develop
-    excludes:
-      - vendor
-      - hooks
-      - patterns/node_modules
-      - docroot/core
-      - docroot/libraries
-      - docroot/modules/contrib
+    xdebug: debug
     config:
       php: scripts/local/boston-dev-php.ini
     overrides:
