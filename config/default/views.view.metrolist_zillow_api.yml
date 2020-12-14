@@ -17,6 +17,7 @@ dependencies:
     - 'taxonomy_term:ml_occupancy_type:cd1aa0d1-2a8c-44a7-9799-0a0e6c7bb7e2'
   module:
     - address
+    - bos_metrolist
     - datetime
     - node
     - options
@@ -1437,10 +1438,10 @@ display:
         options:
           offset: 0
       style:
-        type: serializer
+        type: metrolist_zillow_xml_serializer
         options:
           formats:
-            xml: xml
+            metrolist_zillow_xml: metrolist_zillow_xml
       row:
         type: data_field
         options:
