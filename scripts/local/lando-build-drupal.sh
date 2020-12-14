@@ -202,12 +202,11 @@ if [[ "${build_local_database_source}" == "restore" ]]; then
 fi
 
 if [[ "${build_local_database_source}" == "none" ]]; then
-  conn="-h${build_local_database_host} -P${build_local_database_port} -u${lando_services_database_creds_user} --password='${lando_services_database_creds_password}' "
-  usedb="use ${lando_services_database_creds_database}; "
-  echo "mysql ${conn} -e'show databases;' | grep $lando_services_database_creds_database"
+  conn="-h${build_local_database_host} -P${build_local_database_port} -u${lando_services_database_creds_user} --password=${lando_services_database_creds_password} "
   db=$(mysql ${conn} -e"show databases;" | grep $lando_services_database_creds_database)
   echo "output ${db}."
   if [[ "${db}" == "${lando_services_database_creds_database}" ]]; then
+    usedb="use ${lando_services_database_creds_database}; "
     table=$(mysql ${conn} -e"${usedb}; show tables like 'node';")
     if [[ ! -z $table ]]; then
       printout "WARNING" "There are no tables in the Drupal Database."
