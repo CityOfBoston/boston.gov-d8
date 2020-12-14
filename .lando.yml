@@ -21,10 +21,11 @@ services:
   node:
     type: node:10
     ssl: true
+    scanner: false
     overrides:
-      mem_limit: 8G
-      memswap_limit: 12G
-      mem_reservation: 2G
+      mem_limit: 5G
+      memswap_limit: 8G
+      mem_reservation: 4G
       expose:
         - "80"
         - "443"
@@ -51,6 +52,7 @@ services:
     app_mount: false
     portforward: true
     host: localhost
+    scanner: false
     overrides:
       mem_limit: 5G
       memswap_limit: 8G
@@ -80,15 +82,23 @@ services:
     composer_version: '2.0.7'
     webroot: docroot
     xdebug: debug
+    scanner: false
+    excludes:
+      - vendor
+      - hooks
+      - patterns/node_modules
+      - docroot/core
+      - docroot/libraries
+      - docroot/modules/contrib
     config:
       php: scripts/local/boston-dev-php.ini
     overrides:
       mem_limit: 8G
-      memswap_limit: 12G
-      mem_reservation: 4G
+      memswap_limit: 8G
+      mem_reservation: 5G
       healthcheck:
         test: /app/scripts/local/health.sh appserver
-        interval: 3m
+        interval: 500s
         timeout: 5s
         retries: 5
       environment:
