@@ -464,7 +464,7 @@ class Map extends React.Component {
   }
 
   render() {
-
+    (console.log('map'));
     return (
       <div>
         {/* make map take up entire viewport with room for the navbars */}
