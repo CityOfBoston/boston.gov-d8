@@ -10,7 +10,7 @@ branches:
     - develop
     - master
     - abutters_alt
-    
+
 php:
   - 7.3
 
@@ -119,7 +119,7 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: 
+      branch: master
   - provider: script
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
