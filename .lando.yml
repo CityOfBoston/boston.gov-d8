@@ -83,13 +83,6 @@ services:
     webroot: docroot
     xdebug: debug
     scanner: false
-    excludes:
-      - vendor
-      - hooks
-      - patterns/node_modules
-      - docroot/core
-      - docroot/libraries
-      - docroot/modules/contrib
     config:
       php: scripts/local/boston-dev-php.ini
     overrides:
