@@ -204,16 +204,15 @@ fi
 if [[ "${build_local_database_source}" == "none" ]]; then
   conn="-h${build_local_database_host} -P${build_local_database_port} -u${lando_services_database_creds_user} --password=${lando_services_database_creds_password} "
   db=$(mysql ${conn} -e"show databases;" | grep $lando_services_database_creds_database)
-  echo "output ${db}."
   if [[ "${db}" == "${lando_services_database_creds_database}" ]]; then
     usedb="use ${lando_services_database_creds_database}; "
-    table=$(mysql ${conn} -e"${usedb}; show tables like 'node';")
-    if [[ ! -z $table ]]; then
+    table=$(mysql ${conn} -e"${usedb}; show tables like 'node';" | grep node)
+    if [[ -z $table ]]; then
       printout "WARNING" "There are no tables in the Drupal Database."
       build_local_database_source="initialize"
     else
       data=$(mysql ${conn} -e"${usedb}; select count(*) from node \G" | grep count | awk '{print $2}')
-      if [[ ! -z $data ]] || [[ "${data}" == "0" ]]; then
+      if [[ -z $data ]] || [[ $data -eq 0 ]]; then
         printout "WARNING" "There is no content in the existing Drupal Database."
         printout "WARNING" "If subsequent build steps fail, then this may be the cause."
       else
@@ -221,7 +220,7 @@ if [[ "${build_local_database_source}" == "none" ]]; then
         printout "WARNING" "The database looks OK, but If there is incomplete database content or structure "
         printout "WARNING" "then subsequent build steps could fail or have unexpected results."
       fi
-      printout "SUCCESS" "Did nothing to database (with warnings!).\n"
+      printout "SUCCESS" "Did nothing to database (with caveats!).\n"
     fi
   else
     printout "WARNING" "There is no Drupal Database in the MySQL Server."
