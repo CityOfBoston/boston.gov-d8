@@ -3,7 +3,7 @@
 const { src, dest, watch, series, parallel } = require('gulp');
 // Importing all the Gulp-related packages we want to use
 const sourcemaps = require('gulp-sourcemaps');
-//const babel = require('gulp-babel');
+const babel = require('gulp-babel');
 const webpack = require('webpack-stream');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
