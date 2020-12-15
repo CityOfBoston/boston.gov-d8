@@ -75,10 +75,10 @@
     # Add a php ini file to set customized PHP configurations within the container.
     # For example, memory allocation, timeouts, error handling etc.
     if [[ -n ${xdebug} ]]; then
-        if [[ -e /usr/local/etc/php/conf.d/php_cob.ini ]]; then
-            rm /usr/local/etc/php/conf.d/php_cob.ini
+        if [[ -e /usr/local/etc/php/conf.d/zzz-php_cob.ini ]]; then
+            rm /usr/local/etc/php/conf.d/zzz-php_cob.ini
         fi
-        ln -s ${xdebug} /usr/local/etc/php/conf.d/php_cob.ini
+        ln -s ${xdebug} /usr/local/etc/php/conf.d/zzz-php_cob.ini
         chmod 600 ${xdebug}
     fi
 
