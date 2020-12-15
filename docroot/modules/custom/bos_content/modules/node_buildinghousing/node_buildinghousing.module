@@ -144,10 +144,18 @@ function node_buildinghousing_preprocess_page(array &$variables)
  */
 function node_buildinghousing_views_pre_render(ViewExecutable $view)
 {
-  if (isset($view) && ($view->storage->id() == 'building_housing')) {
+  if (isset($view) && (($view->storage->id() == 'building_housing') || ($view->storage->id() == 'bhmaps'))) {
     $view->element['#attached']['library'][] = 'node_buildinghousing/buildinghousing_views';
 
+    //$variables['attributes']['class'][] = 'mn';
+
     $cssClass = 'view-id-' . $view->id() . ' view-display-id-' . $view->current_display;
+    if ($view->storage->id() == 'bhmaps' && $view->current_display == 'livemap') {
+      $cssClass = $cssClass . ' b b--fw bg--g100 ';
+    }
+    if ($view->storage->id() == 'bhmaps' && $view->current_display == 'maplist') {
+      $cssClass = $cssClass . '';
+    }
     $view->display_handler->setOption('css_class', $cssClass);
   }
 }
