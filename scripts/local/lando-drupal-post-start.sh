@@ -75,10 +75,10 @@
     # Add a php ini file to set customized PHP configurations within the container.
     # For example, memory allocation, timeouts, error handling etc.
     if [[ -n ${xdebug} ]]; then
-        if [[ -e /usr/local/etc/php/conf.d/php_cob.ini ]]; then
-            rm /usr/local/etc/php/conf.d/php_cob.ini
+        if [[ -e /usr/local/etc/php/conf.d/zzz-php_cob.ini ]]; then
+            rm /usr/local/etc/php/conf.d/zzz-php_cob.ini
         fi
-        ln -s ${xdebug} /usr/local/etc/php/conf.d/php_cob.ini
+        ln -s ${xdebug} /usr/local/etc/php/conf.d/zzz-php_cob.ini
         chmod 600 ${xdebug}
     fi
 
@@ -87,12 +87,12 @@
     # For example IPAddresses, memory allocations etc
     # The file is not tracked by git, so manual changes will potentially be lost when the
     # app is rebuilt.
-    printout "ACTION" "Setup XDebug in Drupal container."
-    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
-        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
-    fi
-    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
-    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
+#    printout "ACTION" "Setup XDebug in Drupal container."
+#    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
+#        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
+#    fi
+#    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
+#    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
     # Restart apache to get those files loaded.
     printout "ACTION" "Restart Apache service in Drupal container."
@@ -118,6 +118,8 @@
     printf "              css: https://patterns.lndo.site:3030/public/css/\n"
     printf "              images: https://patterns.lndo.site:3030/assets/images\n"
     printf " 4. WebApps can be tested at https://node.lndo.site/[appname]/index.html\n"
+    printf " 5. Follow these instructions to whitelist the Lando certificates to eliminate browser warnings:\n"
+    printf "     - https://docs.lando.dev/config/security.html#trusting-the-ca\n"
     printf "===============================================================================================\n\n${NC}"
 
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"

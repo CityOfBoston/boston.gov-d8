@@ -109,7 +109,6 @@
         cd ${TRAVIS_BUILD_DIR} &&
             rm -f ${setup_logs}/composer.log &&
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default &&
-           # composer self-update 1.10.13 &&
             composer clear-cache &&
             printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n"
 #            composer install --no-suggest --prefer-dist --no-interaction -vvv &> ${setup_logs}/composer.log &&
