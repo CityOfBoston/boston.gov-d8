@@ -3134,7 +3134,7 @@ display:
           title_field: none
           label_field: none
           marker_icon_path: ''
-          marker_row_number: 1
+          marker_row_number: 0
           dynamic_map:
             enabled: 1
             update_handler: boundary_filter_field_bh_coordinates_boundary
@@ -3142,15 +3142,15 @@ display:
             views_refresh_delay: '500'
           centre:
             client_location:
-              weight: 0
-              enable: false
+              enable: true
+              weight: -10
               map_center_id: client_location
             fit_bounds:
               enable: true
               settings:
-                min_zoom: null
+                min_zoom: 12
                 reset_zoom: true
-              weight: 0
+              weight: -9
               map_center_id: fit_bounds
             fixed_boundaries:
               settings:
@@ -3158,40 +3158,40 @@ display:
                 east: ''
                 south: ''
                 west: ''
-              weight: 0
+              weight: -8
               enable: false
               map_center_id: fixed_boundaries
-            first_row:
-              weight: 0
+            boundary_filter_field_bh_coordinates_boundary:
+              weight: -7
               enable: false
-              map_center_id: location_plugins
-              settings:
-                location_option_id: first_row
+              map_center_id: views_boundary_filter
             fixed_value:
               settings:
                 latitude: null
                 longitude: null
                 location_option_id: fixed_value
-              weight: 0
+              weight: -6
               enable: false
               map_center_id: location_plugins
-            freeogeoip:
-              weight: 0
+            first_row:
+              weight: -5
               enable: false
               map_center_id: location_plugins
               settings:
-                location_option_id: freeogeoip
+                location_option_id: first_row
             ipstack:
               settings:
                 access_key: ''
                 location_option_id: ipstack
-              weight: 0
+              weight: -4
               enable: false
               map_center_id: location_plugins
-            boundary_filter_field_bh_coordinates_boundary:
-              weight: 0
+            freeogeoip:
+              weight: -3
               enable: false
-              map_center_id: views_boundary_filter
+              map_center_id: location_plugins
+              settings:
+                location_option_id: freeogeoip
           even_empty: 0
           map_provider_id: google_maps
           map_provider_settings:
@@ -3226,7 +3226,7 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  position: RIGHT_CENTER
+                  position: TOP_RIGHT
                   behavior: default
                   style: LARGE
               map_restriction:
@@ -3250,14 +3250,15 @@ display:
                   image_path: ''
                   styles: ''
                   zoom_on_click: true
-                  grid_size: 60
-                  minimum_cluster_size: 2
+                  grid_size: 30
+                  minimum_cluster_size: 3
                   max_zoom: 15
                   average_center: false
               marker_icon:
+                enabled: true
                 weight: 0
                 settings:
-                  marker_icon_path: ''
+                  marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-optimistic-blue.svg'
                   anchor:
                     x: 0
                     'y': 0
@@ -3268,12 +3269,11 @@ display:
                     x: 0
                     'y': 0
                   size:
-                    width: null
-                    height: null
+                    width: 32
+                    height: 46
                   scaled_size:
-                    width: null
-                    height: null
-                enabled: false
+                    width: 32
+                    height: 46
               marker_infowindow:
                 enabled: true
                 weight: 0
@@ -3309,7 +3309,7 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  marker_zoom_anchor_id: '{{ nid }}'
+                  marker_zoom_anchor_id: '{{ nid|raw }}'
               spiderfying:
                 weight: 0
                 settings:
@@ -3350,8 +3350,8 @@ display:
                     format: filtered_html
                 enabled: false
               google_maps_layer_bicycling:
-                enabled: true
                 weight: 0
+                enabled: false
               client_location_indicator:
                 weight: 0
                 enabled: false
@@ -3359,10 +3359,10 @@ display:
                 weight: 0
                 enabled: false
               control_locate:
-                enabled: true
                 weight: 0
                 settings:
                   position: TOP_LEFT
+                enabled: false
               map_disable_poi:
                 weight: 0
                 enabled: false
@@ -3417,12 +3417,12 @@ display:
               google_maps_layer_transit:
                 enabled: true
                 weight: 0
-            height: 800px
+            height: 100%
             width: 100%
             type: ROADMAP
-            zoom: 10
+            zoom: 12
             maxZoom: 20
-            minZoom: 0
+            minZoom: 10
             gestureHandling: auto
       defaults:
         style: false
@@ -3511,39 +3511,54 @@ display:
           id: title
           table: node_field_data
           field: title
-          entity_type: node
-          entity_field: title
-          label: ''
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            trim: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            html: false
-          hide_empty: false
-          empty_zero: false
-          settings:
-            link_to_entity: true
-          plugin_id: field
           relationship: none
           group_type: group
           admin_label: ''
+          label: ''
           exclude: false
-          element_type: ''
-          element_class: ''
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: 't--info t--cb'
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
           type: string
+          settings:
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -3554,6 +3569,9 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: node
+          entity_field: title
+          plugin_id: field
         field_bh_parcel_id:
           id: field_bh_parcel_id
           table: node__field_bh_parcel_id
@@ -3625,7 +3643,7 @@ display:
           group_type: group
           admin_label: ''
           label: Status
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -3688,7 +3706,7 @@ display:
           group_type: group
           admin_label: ''
           label: Stage
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -3814,7 +3832,7 @@ display:
           group_type: group
           admin_label: ''
           label: 'Start Date'
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -3878,7 +3896,7 @@ display:
           group_type: group
           admin_label: ''
           label: 'Total Units'
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -4111,7 +4129,7 @@ display:
           counter_start: 1
           plugin_id: counter
       pager:
-        type: mini
+        type: full
         options:
           items_per_page: 30
           offset: 0
@@ -4120,6 +4138,8 @@ display:
           tags:
             previous: ‹‹
             next: ››
+            first: '« First'
+            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -4128,6 +4148,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
+          quantity: 4
       header:
         area_text_custom:
           id: area_text_custom
@@ -4205,6 +4226,59 @@ display:
     display_options:
       display_extenders: {  }
       fields:
+        view_node:
+          id: view_node
+          table: node
+          field: view_node
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: bh-maplist-link
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          text: ' '
+          output_url_as_text: false
+          absolute: false
+          entity_type: node
+          plugin_id: entity_link
         nid:
           id: nid
           table: node_field_data
@@ -4467,22 +4541,44 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: h4
+          element_class: 't--cb m-v200'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: string
+          type: advanced_text
           settings:
-            link_to_entity: true
+            trim_length: '40'
+            ellipsis: 1
+            word_boundary: 0
+            use_summary: 0
+            token_replace: 0
+            filter: drupal
+            format: filtered_html
+            allowed_html:
+              - a
+              - b
+              - br
+              - dd
+              - dl
+              - dt
+              - em
+              - i
+              - li
+              - ol
+              - p
+              - strong
+              - u
+              - ul
+            autop: 0
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -4743,8 +4839,8 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: div
+          element_class: 't--subinfo t--g300'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -4870,14 +4966,14 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: ''
-          element_class: ''
+          element_type: div
+          element_class: 't--subinfo t--g300'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
@@ -4909,6 +5005,8 @@ display:
         relationships: false
         group_by: false
         css_class: false
+        footer: false
+        header: false
       pager:
         type: mini
         options:
@@ -4932,7 +5030,7 @@ display:
         type: default
         options:
           grouping: {  }
-          row_class: 'b bg--w p-a200 m-b200'
+          row_class: 'bh-maplist-project b bg--w p-a300 m-b300'
           default_row_class: false
       row:
         type: fields
@@ -4961,6 +5059,18 @@ display:
       group_by: false
       css_class: ''
       render_pager: true
+      footer: {  }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: 'Displaying @start - @end of @total'
+          plugin_id: result
     cache_metadata:
       max-age: -1
       contexts:
