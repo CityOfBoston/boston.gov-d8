@@ -118,6 +118,8 @@
     printf "              css: https://patterns.lndo.site:3030/public/css/\n"
     printf "              images: https://patterns.lndo.site:3030/assets/images\n"
     printf " 4. WebApps can be tested at https://node.lndo.site/[appname]/index.html\n"
+    printf " 5. Follow these instructions to whitelist the Lando certificates to eliminate browser warnings:\n"
+    printf "     - https://docs.lando.dev/config/security.html#trusting-the-ca\n"
     printf "===============================================================================================\n\n${NC}"
 
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
