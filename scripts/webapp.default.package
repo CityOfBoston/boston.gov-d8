@@ -90,5 +90,10 @@
     "whatwg-fetch": "^3.0.0",
     "xxhash": "^0.3.0"
   },
-  "scripts": {}
+  "scripts": {
+    "dev": "concurrently \"npm run dev-svr\"",
+    "start-container": "concurrently \"npm run dev-svr\" \"cd /app/patterns && npm run dev\"",
+    "dev-svr": "npx http-server -p${WEBAPP_PORT} -c-1 --no-dotfiles",
+    "dev-svr-ssl": "npx http-server -p${WEBAPP_PORT} -S --cert=/lando/certs/lndo.site.pem --key=/lando/certs/lndo.site.key -c-1 --no-dotfiles"
+  }
 }
