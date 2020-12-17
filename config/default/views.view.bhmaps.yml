@@ -39,6 +39,7 @@ dependencies:
     - datetime
     - geolocation
     - node
+    - node_buildinghousing
     - taxonomy
     - user
 id: bhmaps
@@ -3148,18 +3149,18 @@ display:
             fit_bounds:
               enable: true
               settings:
-                min_zoom: 12
+                min_zoom: 13
                 reset_zoom: true
               weight: -9
               map_center_id: fit_bounds
             fixed_boundaries:
+              enable: true
               settings:
-                north: ''
-                east: ''
-                south: ''
-                west: ''
+                north: '42.401'
+                east: '-70.750'
+                south: '42.228'
+                west: '-71.191'
               weight: -8
-              enable: false
               map_center_id: fixed_boundaries
             boundary_filter_field_bh_coordinates_boundary:
               weight: -7
@@ -3192,7 +3193,7 @@ display:
               map_center_id: location_plugins
               settings:
                 location_option_id: freeogeoip
-          even_empty: 0
+          even_empty: 1
           map_provider_id: google_maps
           map_provider_settings:
             map_features:
@@ -3217,11 +3218,11 @@ display:
                   close_button: 0
                 enabled: false
               control_streetview:
-                enabled: true
                 weight: 0
                 settings:
                   position: TOP_LEFT
                   behavior: default
+                enabled: false
               control_zoom:
                 enabled: true
                 weight: 0
@@ -3230,14 +3231,14 @@ display:
                   behavior: default
                   style: LARGE
               map_restriction:
+                enabled: true
                 weight: 0
                 settings:
-                  north: ''
-                  south: ''
-                  east: ''
-                  west: ''
-                  strict: true
-                enabled: false
+                  north: '42.401'
+                  south: '42.228'
+                  east: '-70.750'
+                  west: '-71.191'
+                  strict: false
               map_type_style:
                 weight: 0
                 settings:
@@ -3388,26 +3389,26 @@ display:
                   behavior: default
                 enabled: false
               control_geocoder:
+                enabled: true
                 weight: 0
                 settings:
                   position: TOP_LEFT
                   geocoder: google_geocoding_api
                   settings:
-                    label: Address
-                    description: 'Enter an address to be localized.'
-                    autocomplete_min_length: 1
+                    label: 'Ex: "Roxbury"'
+                    description: 'Search by Neighborhood'
+                    autocomplete_min_length: 2
                     component_restrictions:
                       route: ''
                       locality: ''
-                      administrative_area: ''
+                      administrative_area: Boston
                       postal_code: ''
                       country: ''
                     boundary_restriction:
-                      south: ''
-                      west: ''
-                      north: ''
-                      east: ''
-                enabled: false
+                      south: '42.228'
+                      west: '-71.191'
+                      north: '42.401'
+                      east: '-70.750'
               control_loading_indicator:
                 enabled: true
                 weight: 0
@@ -3420,9 +3421,9 @@ display:
             height: 100%
             width: 100%
             type: ROADMAP
-            zoom: 12
-            maxZoom: 20
-            minZoom: 10
+            zoom: 13
+            maxZoom: 18
+            minZoom: 12
             gestureHandling: auto
       defaults:
         style: false
@@ -4128,18 +4129,67 @@ display:
           hide_alter_empty: true
           counter_start: 1
           plugin_id: counter
+        building_housing_project_type_views_field:
+          id: building_housing_project_type_views_field
+          table: views
+          field: building_housing_project_type_views_field
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: building_housing_project_type_views_field
       pager:
         type: full
         options:
-          items_per_page: 30
+          items_per_page: 40
           offset: 0
           id: 0
           total_pages: null
           tags:
-            previous: ‹‹
-            next: ››
-            first: '« First'
-            last: 'Last »'
+            previous: ‹
+            next: ›
+            first: «
+            last: »
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -4157,7 +4207,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
+          empty: true
           tokenize: false
           content: "<div class=\"b bg--cb g p-a400\">\r\n<div class=\"g--6\">\r\n<h2 class=\"t--w m-b100 m-t100\">building in boston</h2>\r\n<div class=\"t--w t--subinfo\">Learn more about development projects in your area.</div>\r\n</div>\r\n<div class=\"g--3\"></div>\r\n<div class=\"g--3\">\r\n<h6 class=\"t--w m-t000\">department of neighborhood development</h6>\r\n</div>\r\n</div>"
           plugin_id: text_custom
@@ -4179,7 +4229,7 @@ display:
             general:
               autosubmit: true
               autosubmit_exclude_textfield: false
-              autosubmit_textfield_delay: 500
+              autosubmit_textfield_delay: 1000
               autosubmit_hide: true
               input_required: false
               allow_secondary: false
@@ -4505,6 +4555,55 @@ display:
           empty_zero: false
           hide_alter_empty: false
           plugin_id: custom
+        building_housing_project_type_views_field:
+          id: building_housing_project_type_views_field
+          table: views
+          field: building_housing_project_type_views_field
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: bh-maplist-project-type-icon
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: building_housing_project_type_views_field
         title:
           id: title
           table: node_field_data
@@ -4591,6 +4690,133 @@ display:
           field_api_classes: false
           entity_type: node
           entity_field: title
+          plugin_id: field
+        field_bh_public_stage:
+          id: field_bh_public_stage
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: 't--subinfo t--g300'
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: false
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_total_num_units:
+          id: field_bh_total_num_units
+          table: node__field_bh_total_num_units
+          field: field_bh_total_num_units
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ field_bh_total_num_units }} Units'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: 't--subinfo t--g300'
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: true
+          empty_zero: true
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ''
+            prefix_suffix: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
           plugin_id: field
         body:
           id: body
@@ -4803,70 +5029,6 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_bh_total_num_units:
-          id: field_bh_total_num_units
-          table: node__field_bh_total_num_units
-          field: field_bh_total_num_units
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: true
-            text: '{{ field_bh_total_num_units }} Units'
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: div
-          element_class: 't--subinfo t--g300'
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: false
-          empty: ''
-          hide_empty: true
-          empty_zero: true
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_integer
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
         field_bh_coordinates:
           id: field_bh_coordinates
           table: node__field_bh_coordinates
@@ -4930,69 +5092,6 @@ display:
           field_api_classes: false
           entity_type: node
           plugin_id: geolocation_field
-        field_bh_public_stage:
-          id: field_bh_public_stage
-          table: node__field_bh_public_stage
-          field: field_bh_public_stage
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: div
-          element_class: 't--subinfo t--g300'
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: false
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: false
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
       defaults:
         fields: false
         pager: false
@@ -5007,6 +5106,7 @@ display:
         css_class: false
         footer: false
         header: false
+        empty: false
       pager:
         type: mini
         options:
@@ -5068,9 +5168,21 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
-          content: 'Displaying @start - @end of @total'
+          empty: true
+          content: '<h6 class="m-v000 p-v200 t--cb">Displaying @start - @end of @total</h6>'
           plugin_id: result
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content: "<div class=\"p-a300 m-b300 m-t600\">\r\n<h3 class=\"t--cb m-b200 m-t600 p-t600\">No Results</h3>\r\n<div class=\"t--subinfo\">The project you’re looking for may be managed by the Boston Planning and Redevelopment Agency (BPDA). <a href=\"http://www.bostonplans.org/projects/development-projects\">Search their database here.</a></div>\r\n</div>"
+          plugin_id: text_custom
     cache_metadata:
       max-age: -1
       contexts:
@@ -5089,3 +5201,4 @@ display:
         - 'config:field.storage.node.field_bh_project_status'
         - 'config:field.storage.node.field_bh_public_stage'
         - 'config:field.storage.node.field_bh_total_num_units'
+
