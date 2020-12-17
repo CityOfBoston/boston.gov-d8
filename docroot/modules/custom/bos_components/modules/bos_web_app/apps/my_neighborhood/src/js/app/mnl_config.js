@@ -104,7 +104,8 @@ const configProps = {
 	"frame_google": function(){
 		const page = location.href;
 		const pageGoogle = page.toLowerCase().indexOf("google");
-		if (pageGoogle >= 0) {
+    const pageTranslate = page.toLowerCase().indexOf("translate");
+    if (pageGoogle >= 0 || pageTranslate >= 0) {
 			return true;
 		}else{
 			return false;
