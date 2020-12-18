@@ -79,6 +79,7 @@ class MNL extends React.Component {
 
   scaleInputText = op => {
       jQuery(".resize").textfill({
+      minFontPixels: 24,
       maxFontPixels: 75,
       success: function() {
         let fontReSize = jQuery(".resize span").css('fontSize');
