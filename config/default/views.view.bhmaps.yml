@@ -1233,7 +1233,7 @@ display:
           data_provider_id: geolocation_field_provider
           title_field: none
           label_field: none
-          marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-freedom-red.svg'
+          marker_icon_path: /modules/custom/bos_content/modules/node_buildinghousing/images/inactive-marker.svg
           marker_row_number: 0
       displays:
         livemap: livemap
@@ -2679,7 +2679,7 @@ display:
           data_provider_id: geolocation_field_provider
           title_field: none
           label_field: none
-          marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-optimistic-blue.svg'
+          marker_icon_path: '/modules/custom/bos_content/modules/node_buildinghousing/images/{{ building_housing_project_type_marker_views_field }}'
           marker_row_number: 0
           dynamic_map:
             enabled: 1
@@ -2785,16 +2785,16 @@ display:
                   west: '-71.191'
                   strict: false
               map_type_style:
+                enabled: true
                 weight: 0
                 settings:
-                  style: '[]'
-                enabled: false
+                  style: "[\r\n  {\r\n    \"featureType\": \"poi\",\r\n    \"stylers\": [\r\n      {\r\n        \"visibility\": \"off\"\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"featureType\": \"poi.park\",\r\n    \"stylers\": [\r\n      {\r\n        \"visibility\": \"on\"\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"featureType\": \"transit\",\r\n    \"stylers\": [\r\n      {\r\n        \"visibility\": \"on\"\r\n      }\r\n    ]\r\n  }\r\n]"
               marker_clusterer:
                 enabled: true
                 weight: 0
                 settings:
-                  image_path: ''
-                  styles: ''
+                  image_path: /modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m
+                  styles: "[\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m1.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m2.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m3.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m4.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m5.png\"\r\n  }\r\n]"
                   zoom_on_click: true
                   grid_size: 30
                   minimum_cluster_size: 3
@@ -2804,7 +2804,7 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-optimistic-blue.svg'
+                  marker_icon_path: '/modules/custom/bos_content/modules/node_buildinghousing/images/{{ building_housing_project_type_marker_views_field }}'
                   anchor:
                     x: 0
                     'y': 0
@@ -2825,9 +2825,9 @@ display:
                 weight: 0
                 settings:
                   info_window_solitary: true
-                  info_auto_display: true
                   disable_auto_pan: true
-                  max_width: null
+                  max_width: 250
+                  info_auto_display: false
               control_recenter:
                 weight: 0
                 settings:
@@ -2847,10 +2847,10 @@ display:
                   opacity: !!float 1
                 enabled: false
               geolocation_marker_scroll_to_id:
+                enabled: true
                 weight: 0
                 settings:
-                  scroll_target_id: ''
-                enabled: false
+                  scroll_target_id: 'project-{{ nid|raw }}'
               marker_zoom_to_animate:
                 enabled: true
                 weight: 0
@@ -2989,6 +2989,55 @@ display:
           separator: ''
           hide_empty: false
       fields:
+        building_housing_project_type_marker_views_field:
+          id: building_housing_project_type_marker_views_field
+          table: views
+          field: building_housing_project_type_marker_views_field
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: building_housing_project_type_marker_views_field
         nid:
           id: nid
           table: node_field_data
@@ -3674,55 +3723,6 @@ display:
           hide_alter_empty: true
           counter_start: 1
           plugin_id: counter
-        building_housing_project_type_views_field:
-          id: building_housing_project_type_views_field
-          table: views
-          field: building_housing_project_type_views_field
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: false
-          plugin_id: building_housing_project_type_views_field
       pager:
         type: full
         options:
@@ -4088,59 +4088,6 @@ display:
     display_options:
       display_extenders: {  }
       fields:
-        view_node:
-          id: view_node
-          table: node
-          field: view_node
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: bh-maplist-link
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: false
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          text: ' '
-          output_url_as_text: false
-          absolute: false
-          entity_type: node
-          plugin_id: entity_link
         nid:
           id: nid
           table: node_field_data
@@ -4205,6 +4152,108 @@ display:
           entity_type: node
           entity_field: nid
           plugin_id: field
+        nothing_2:
+          id: nothing_2
+          table: views
+          field: nothing
+          relationship: none
+          group_type: group
+          admin_label: 'Project Anchor'
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '<div id="project-{{ nid|raw }}" class="bh-project-anchor"></div>'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: custom
+        view_node:
+          id: view_node
+          table: node
+          field: view_node
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: bh-maplist-link
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          text: ' '
+          output_url_as_text: true
+          absolute: false
+          entity_type: node
+          plugin_id: entity_link
         field_bh_parcel_id:
           id: field_bh_parcel_id
           table: node__field_bh_parcel_id
@@ -4378,9 +4427,9 @@ display:
           exclude: false
           alter:
             alter_text: false
-            text: ''
-            make_link: false
-            path: ''
+            text: '{{ building_housing_project_type_views_field  }}'
+            make_link: true
+            path: '#project-{{nid|raw}}'
             absolute: false
             external: false
             replace_spaces: false
@@ -4388,7 +4437,7 @@ display:
             trim_whitespace: false
             alt: ''
             rel: ''
-            link_class: ''
+            link_class: geolocation-marker-zoom
             prefix: ''
             suffix: ''
             target: ''
@@ -4426,8 +4475,8 @@ display:
           label: ''
           exclude: false
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '<a href="{{ view_node }}">{{ title }}</a>'
             make_link: false
             path: ''
             absolute: false
@@ -4452,8 +4501,8 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: h4
-          element_class: 't--cb m-v200'
+          element_type: h5
+          element_class: 't--cb m-v200 bh-maplist-project-title'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -4467,7 +4516,7 @@ display:
           click_sort_column: value
           type: advanced_text
           settings:
-            trim_length: '40'
+            trim_length: '80'
             ellipsis: 1
             word_boundary: 0
             use_summary: 0
@@ -4540,7 +4589,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: div
-          element_class: 't--subinfo t--g300'
+          element_class: 't--subinfo t--g300 fl--l m-r400'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -4603,7 +4652,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: div
-          element_class: 't--subinfo t--g300'
+          element_class: 't--subinfo t--g300 fl--l m-r400'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -4912,7 +4961,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: false
+          exclude: true
           alter:
             alter_text: true
             text: '<a href="#project-{{nid|raw}}" class="geolocation-marker-zoom">ZOOM TO ON MAP</a>'
@@ -4998,7 +5047,7 @@ display:
         options:
           default_field_elements: true
           inline: {  }
-          separator: ''
+          separator: ' - '
           hide_empty: false
       sorts:
         field_bh_coordinates_proximity:
