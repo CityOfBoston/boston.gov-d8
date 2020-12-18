@@ -1,16 +1,16 @@
 class Bos311 extends React.Component {
-  
+
   render() {
     // Content for card
     let display311;
-    if (this.props.section == null) { 
+    if (this.props.section == null) {
       const secDesc = "Report non-emergency issues, like potholes and graffiti.";
       display311 = (
         <a
         className="cd g--4 g--4--sl m-t500 cdp-l bg--y mnl-section mnl-link"
         title={"Boston 311"}
         style={{ textAlign: "left" }}
-        href={"/departments/bos311"}
+        href="https://www.boston.gov/departments/bos311"
         >
           <MnlSection
             title={"Boston 311"}
