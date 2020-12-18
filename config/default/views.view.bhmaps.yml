@@ -16,6 +16,7 @@ dependencies:
     - node.type.bh_project
     - taxonomy.vocabulary.bh_project_stage
     - taxonomy.vocabulary.bh_project_status
+    - taxonomy.vocabulary.bh_public_stage
   content:
     - 'taxonomy_term:bh_project_stage:03b7f0c1-b52c-4127-99cd-237b5fc4c33d'
     - 'taxonomy_term:bh_project_stage:1c5fe858-da97-499d-ae3a-fe9f27b4d576'
@@ -33,6 +34,12 @@ dependencies:
     - 'taxonomy_term:bh_project_status:0b23fc76-03a2-407a-b3a4-cf9860f155a6'
     - 'taxonomy_term:bh_project_status:6c86b938-c182-4792-82aa-10c12f146ba2'
     - 'taxonomy_term:bh_project_status:b582e7b2-3b41-4ca0-8bdb-aa3d9a4c3c3a'
+    - 'taxonomy_term:bh_public_stage:52294adf-9a01-458d-b110-115baf33d1e4'
+    - 'taxonomy_term:bh_public_stage:b4700d9b-351e-4bd5-8419-c0d62d5596c5'
+    - 'taxonomy_term:bh_public_stage:bcd4e676-75b9-4a13-9b4c-0171e55adfc9'
+    - 'taxonomy_term:bh_public_stage:cc0a0cc6-0e9e-411f-a9f5-9e21a85d22ef'
+    - 'taxonomy_term:bh_public_stage:dd110333-95e7-456e-998a-1cea1c3a7ffd'
+    - 'taxonomy_term:bh_public_stage:ffcd54d9-7087-4f22-a2fa-7275d4952ff2'
   module:
     - advanced_text_formatter
     - better_exposed_filters
@@ -976,55 +983,6 @@ display:
     display_options:
       display_extenders: {  }
       fields:
-        nothing:
-          id: nothing
-          table: views
-          field: nothing
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: 0
-          alter:
-            alter_text: true
-            text: ACTIVE
-            make_link: 0
-            path: ''
-            absolute: 0
-            external: 0
-            replace_spaces: 0
-            path_case: none
-            trim_whitespace: 0
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: 0
-            max_length: '0'
-            word_boundary: 1
-            ellipsis: 1
-            more_link: 0
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: 0
-            trim: 0
-            preserve_tags: ''
-            html: 0
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: 1
-          empty: ''
-          hide_empty: 0
-          empty_zero: 0
-          hide_alter_empty: 0
-          plugin_id: custom
         title:
           id: title
           table: node_field_data
@@ -1072,6 +1030,69 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        field_bh_public_stage:
+          id: field_bh_public_stage
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: 0
+          alter:
+            alter_text: 0
+            text: ''
+            make_link: 0
+            path: ''
+            absolute: 0
+            external: 0
+            replace_spaces: 0
+            path_case: none
+            trim_whitespace: 0
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: 0
+            max_length: '0'
+            word_boundary: 1
+            ellipsis: 1
+            more_link: 0
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: 0
+            trim: 0
+            preserve_tags: ''
+            html: 0
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: 1
+          empty: ''
+          hide_empty: 0
+          empty_zero: 0
+          hide_alter_empty: 1
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: 0
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: 0
+          plugin_id: field
         field_bh_parcel_id:
           id: field_bh_parcel_id
           table: node__field_bh_parcel_id
@@ -1080,34 +1101,34 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: false
+          exclude: 1
           alter:
-            alter_text: false
+            alter_text: 0
             text: ''
-            make_link: false
+            make_link: 0
             path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
+            absolute: 0
+            external: 0
+            replace_spaces: 0
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: 0
             alt: ''
             rel: ''
             link_class: ''
             prefix: ''
             suffix: ''
             target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
+            nl2br: 0
+            max_length: '0'
+            word_boundary: 1
+            ellipsis: 1
+            more_link: 0
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
-            trim: false
+            strip_tags: 0
+            trim: 0
             preserve_tags: ''
-            html: false
+            html: 0
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -1115,15 +1136,15 @@ display:
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: 1
           empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
+          hide_empty: 0
+          empty_zero: 0
+          hide_alter_empty: 1
           click_sort_column: value
           type: string
           settings:
-            link_to_entity: false
+            link_to_entity: 0
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1133,387 +1154,7 @@ display:
           delta_first_last: false
           multi_type: separator
           separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_bh_project_status:
-          id: field_bh_project_status
-          table: node__field_bh_project_status
-          field: field_bh_project_status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_bh_project_stage:
-          id: field_bh_project_stage
-          table: node__field_bh_project_stage
-          field: field_bh_project_stage
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_bh_funding_stage:
-          id: field_bh_funding_stage
-          table: node__field_bh_funding_stage
-          field: field_bh_funding_stage
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_bh_project_start_date:
-          id: field_bh_project_start_date
-          table: node__field_bh_project_start_date
-          field: field_bh_project_start_date
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: datetime_default
-          settings:
-            timezone_override: ''
-            format_type: date_format_normal_date
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_bh_total_num_units:
-          id: field_bh_total_num_units
-          table: node__field_bh_total_num_units
-          field: field_bh_total_num_units
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Total Units'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: true
-          empty_zero: true
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_integer
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_bh_record_type:
-          id: field_bh_record_type
-          table: node__field_bh_record_type
-          field: field_bh_record_type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: ''
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
-          settings:
-            link: true
-          group_column: target_id
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
+          field_api_classes: 0
           plugin_id: field
         field_bh_coordinates:
           id: field_bh_coordinates
@@ -1523,7 +1164,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: 0
+          exclude: 1
           alter:
             alter_text: 0
             text: ''
@@ -1582,16 +1223,20 @@ display:
         fields: false
         filters: false
         filter_groups: false
+        sorts: false
+        link_display: false
+        link_url: false
       style:
         type: geolocation_layer
         options:
           geolocation_field: field_bh_coordinates
           data_provider_id: geolocation_field_provider
-          title_field: title
-          label_field: field_bh_parcel_id
-          marker_icon_path: ''
+          title_field: none
+          label_field: none
+          marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-freedom-red.svg'
           marker_row_number: 0
-      displays: {  }
+      displays:
+        livemap: livemap
       inherit_exposed_filters: 1
       filters:
         status:
@@ -1619,146 +1264,33 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        field_bh_project_name_value:
-          id: field_bh_project_name_value
-          table: node__field_bh_project_name
-          field: field_bh_project_name_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: word
-          value: ''
           group: 1
-          exposed: true
-          expose:
-            operator_id: field_bh_project_name_value_op
-            label: 'Project Name'
-            description: ''
-            use_operator: false
-            operator: field_bh_project_name_value_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_bh_project_name_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-              metrolist_editor: '0'
-            placeholder: Search
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: string
-        field_bh_project_stage_target_id:
-          id: field_bh_project_stage_target_id
-          table: node__field_bh_project_stage
-          field: field_bh_project_stage_target_id
+        field_bh_public_stage_target_id:
+          id: field_bh_public_stage_target_id
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage_target_id
           relationship: none
           group_type: group
           admin_label: ''
           operator: or
           value:
-            33691: '33691'
+            - '34166'
           group: 1
           exposed: false
           expose:
-            operator_id: field_bh_project_stage_target_id_op
-            label: 'Project Stage'
+            operator_id: false
+            label: ''
             description: ''
             use_operator: false
-            operator: field_bh_project_stage_target_id_op
+            operator: ''
             operator_limit_selection: false
             operator_list: {  }
-            identifier: field_bh_project_stage
+            identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-              metrolist_editor: '0'
-            reduce: true
-          is_grouped: false
-          group_info:
-            label: 'Project Stage (field_bh_project_stage)'
-            description: null
-            identifier: field_bh_project_stage_target_id
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items:
-              1: {  }
-              2: {  }
-              3: {  }
-          reduce_duplicates: 0
-          type: select
-          limit: true
-          vid: bh_project_stage
-          hierarchy: true
-          error_message: true
-          plugin_id: taxonomy_index_tid
-        field_bh_project_status_target_id:
-          id: field_bh_project_status_target_id
-          table: node__field_bh_project_status
-          field: field_bh_project_status_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value:
-            33696: 33696
-            33681: 33681
-            33761: 33761
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_bh_project_status_target_id_op
-            label: Status
-            description: ''
-            use_operator: false
-            operator: field_bh_project_status_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_bh_project_status_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-              metrolist_editor: '0'
             reduce: false
           is_grouped: false
           group_info:
@@ -1768,15 +1300,15 @@ display:
             optional: true
             widget: select
             multiple: false
-            remember: false
+            remember: 0
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: false
-          type: select
+          reduce_duplicates: 0
+          type: textfield
           limit: true
-          vid: bh_project_status
-          hierarchy: false
+          vid: bh_public_stage
+          hierarchy: 0
           error_message: true
           plugin_id: taxonomy_index_tid
         field_bh_coordinates_boundary:
@@ -1853,9 +1385,27 @@ display:
         groups:
           1: AND
       pager:
-        type: none
+        type: some
         options:
+          items_per_page: '20'
           offset: '0'
+      sorts:
+        field_bh_coordinates_proximity:
+          id: field_bh_coordinates_proximity
+          table: node__field_bh_coordinates
+          field: field_bh_coordinates_proximity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: node
+          plugin_id: geolocation_sort_proximity
+      link_display: livemap
+      link_url: ''
+      inherit_pager: 0
     cache_metadata:
       max-age: -1
       contexts:
@@ -1867,13 +1417,8 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_bh_coordinates'
-        - 'config:field.storage.node.field_bh_funding_stage'
         - 'config:field.storage.node.field_bh_parcel_id'
-        - 'config:field.storage.node.field_bh_project_stage'
-        - 'config:field.storage.node.field_bh_project_start_date'
-        - 'config:field.storage.node.field_bh_project_status'
-        - 'config:field.storage.node.field_bh_record_type'
-        - 'config:field.storage.node.field_bh_total_num_units'
+        - 'config:field.storage.node.field_bh_public_stage'
   leafletmap:
     display_plugin: page
     id: leafletmap
@@ -3134,7 +2679,7 @@ display:
           data_provider_id: geolocation_field_provider
           title_field: none
           label_field: none
-          marker_icon_path: ''
+          marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-optimistic-blue.svg'
           marker_row_number: 0
           dynamic_map:
             enabled: 1
@@ -3270,19 +2815,19 @@ display:
                     x: 0
                     'y': 0
                   size:
-                    width: 32
+                    width: 35
                     height: 46
                   scaled_size:
-                    width: 32
+                    width: 35
                     height: 46
               marker_infowindow:
                 enabled: true
                 weight: 0
                 settings:
                   info_window_solitary: true
+                  info_auto_display: true
                   disable_auto_pan: true
                   max_width: null
-                  info_auto_display: false
               control_recenter:
                 weight: 0
                 settings:
@@ -3310,7 +2855,7 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  marker_zoom_anchor_id: '{{ nid|raw }}'
+                  marker_zoom_anchor_id: 'project-{{ nid|raw }}'
               spiderfying:
                 weight: 0
                 settings:
@@ -3429,8 +2974,8 @@ display:
         style: false
         row: false
         fields: false
-        filters: true
-        filter_groups: true
+        filters: false
+        filter_groups: false
         header: false
         pager: false
         sorts: false
@@ -4198,7 +3743,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          quantity: 4
+          quantity: 2
       header:
         area_text_custom:
           id: area_text_custom
@@ -4212,7 +3757,20 @@ display:
           content: "<div class=\"b bg--cb g p-a400\">\r\n<div class=\"g--6\">\r\n<h2 class=\"t--w m-b100 m-t100\">building in boston</h2>\r\n<div class=\"t--w t--subinfo\">Learn more about development projects in your area.</div>\r\n</div>\r\n<div class=\"g--3\"></div>\r\n<div class=\"g--3\">\r\n<h6 class=\"t--w m-t000\">department of neighborhood development</h6>\r\n</div>\r\n</div>"
           plugin_id: text_custom
       path: bh/maps/live
-      sorts: {  }
+      sorts:
+        field_bh_coordinates_proximity:
+          id: field_bh_coordinates_proximity
+          table: node__field_bh_coordinates
+          field: field_bh_coordinates_proximity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: node
+          plugin_id: geolocation_sort_proximity
       exposed_form:
         type: bef
         options:
@@ -4249,6 +3807,260 @@ display:
                   collapsible: false
                   is_secondary: false
       css_class: 'b b--fw bg--g100 view-id-bhmaps view-display-id-livemap'
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            bh_project: bh_project
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+            argument: null
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+        field_bh_public_stage_target_id:
+          id: field_bh_public_stage_target_id
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            34171: 34171
+            34176: 34176
+            34181: 34181
+            34186: 34186
+            34191: 34191
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: bh_public_stage
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_bh_project_name_value:
+          id: field_bh_project_name_value
+          table: node__field_bh_project_name
+          field: field_bh_project_name_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: word
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_project_name_value_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_bh_project_name_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_project_name_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: 'Search Projects...'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_bh_coordinates_boundary:
+          id: field_bh_coordinates_boundary
+          table: node__field_bh_coordinates
+          field: field_bh_coordinates_boundary
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            lat_north_east: ''
+            lng_north_east: ''
+            lat_south_west: ''
+            lng_south_west: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Boundary (field_bh_coordinates)'
+            description: ''
+            use_operator: false
+            operator: field_bh_coordinates_boundary_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_coordinates_boundary
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            input_by_geocoding_widget: 0
+            geocoder_plugin_settings:
+              plugin_id: google_geocoding_api
+              settings:
+                label: Address
+                description: 'Enter an address to be localized.'
+                autocomplete_min_length: 1
+                component_restrictions:
+                  route: ''
+                  locality: ''
+                  administrative_area: ''
+                  postal_code: ''
+                  country: ''
+                boundary_restriction:
+                  south: ''
+                  west: ''
+                  north: ''
+                  east: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          plugin_id: geolocation_filter_boundary
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
@@ -5092,14 +4904,63 @@ display:
           field_api_classes: false
           entity_type: node
           plugin_id: geolocation_field
+        nothing_1:
+          id: nothing_1
+          table: views
+          field: nothing
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: true
+            text: '<a href="#project-{{nid|raw}}" class="geolocation-marker-zoom">ZOOM TO ON MAP</a>'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: custom
       defaults:
         fields: false
         pager: false
         style: false
         row: false
         sorts: false
-        filters: true
-        filter_groups: true
+        filters: false
+        filter_groups: false
         exposed_form: false
         relationships: false
         group_by: false
@@ -5139,7 +5000,20 @@ display:
           inline: {  }
           separator: ''
           hide_empty: false
-      sorts: {  }
+      sorts:
+        field_bh_coordinates_proximity:
+          id: field_bh_coordinates_proximity
+          table: node__field_bh_coordinates
+          field: field_bh_coordinates_proximity
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: node
+          plugin_id: geolocation_sort_proximity
       displays:
         livemap: livemap
       attachment_position: before
@@ -5183,6 +5057,260 @@ display:
           tokenize: false
           content: "<div class=\"p-a300 m-b300 m-t600\">\r\n<h3 class=\"t--cb m-b200 m-t600 p-t600\">No Results</h3>\r\n<div class=\"t--subinfo\">The project you’re looking for may be managed by the Boston Planning and Redevelopment Agency (BPDA). <a href=\"http://www.bostonplans.org/projects/development-projects\">Search their database here.</a></div>\r\n</div>"
           plugin_id: text_custom
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
+          value:
+            bh_project: bh_project
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+            argument: null
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+        field_bh_public_stage_target_id:
+          id: field_bh_public_stage_target_id
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value:
+            34171: 34171
+            34176: 34176
+            34181: 34181
+            34186: 34186
+            34191: 34191
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: bh_public_stage
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
+        field_bh_project_name_value:
+          id: field_bh_project_name_value
+          table: node__field_bh_project_name
+          field: field_bh_project_name_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: word
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_bh_project_name_value_op
+            label: ''
+            description: ''
+            use_operator: false
+            operator: field_bh_project_name_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_project_name_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: 'Search Projects...'
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: string
+        field_bh_coordinates_boundary:
+          id: field_bh_coordinates_boundary
+          table: node__field_bh_coordinates
+          field: field_bh_coordinates_boundary
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            lat_north_east: ''
+            lng_north_east: ''
+            lat_south_west: ''
+            lng_south_west: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: ''
+            label: 'Boundary (field_bh_coordinates)'
+            description: ''
+            use_operator: false
+            operator: field_bh_coordinates_boundary_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_bh_coordinates_boundary
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            input_by_geocoding_widget: 0
+            geocoder_plugin_settings:
+              plugin_id: google_geocoding_api
+              settings:
+                label: Address
+                description: 'Enter an address to be localized.'
+                autocomplete_min_length: 1
+                component_restrictions:
+                  route: ''
+                  locality: ''
+                  administrative_area: ''
+                  postal_code: ''
+                  country: ''
+                boundary_restriction:
+                  south: ''
+                  west: ''
+                  north: ''
+                  east: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: node
+          plugin_id: geolocation_filter_boundary
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
     cache_metadata:
       max-age: -1
       contexts:
