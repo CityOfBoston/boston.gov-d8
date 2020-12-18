@@ -10,7 +10,8 @@ class Bos311 extends React.Component {
         className="cd g--4 g--4--sl m-t500 cdp-l bg--y mnl-section mnl-link"
         title={"Boston 311"}
         style={{ textAlign: "left" }}
-        href="https://www.boston.gov/departments/bos311"
+        href={"/departments/bos311"}
+        target="_blank"
         >
           <MnlSection
             title={"Boston 311"}
