@@ -1318,6 +1318,8 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       var shiftPressed = e.shiftKey;
       // If TAB key pressed
       if (e.keyCode == 9) {
+        $("#web-app .mnl button.dl-i").addClass("focus-active");
+
         // If inside a Modal dialog (determined by attribute role="dialog")
         if ($(target).parents('[role=dialog]').length) {
           // Find first or last input element in the dialog parent (depending on whether Shift was pressed).
@@ -1336,6 +1338,13 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
         }
       }
       return true;
+    });
+
+    // Removing hover freeze when tabbing is not active.
+    $(document).on('mousemove', function(e) {
+
+      $("#web-app .mnl button.dl-i").removeClass("focus-active");
+
     });
 
     iFrameResize({

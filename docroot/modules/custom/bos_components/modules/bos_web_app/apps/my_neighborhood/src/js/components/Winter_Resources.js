@@ -45,7 +45,7 @@ class WinterResources extends React.Component {
           <h2 className="sh-title">Winter Resources</h2>
         </div>
         <div className="supporting-text">
-          <p>We will ticket and tow your car if you park on a posted snow emergency artery during a declared snow emergency. If you can't find a spot, some lots and garages offer discounted parking to vehicles with Boston resident parking stickers.</p>
+          <p>We will ticket and tow your car if you park on a posted snow emergency artery during a declared snow emergency. If you can't find a spot, some lots and garages offer discounted parking to vehicles with Boston resident parking stickers. <a href={"/winter-boston"} className="mnl-link">Learn more about winter resources in Boston.</a></p>
         </div>
         <div className="g">
           {/* Emergency Parking */}
