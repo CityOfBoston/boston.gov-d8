@@ -182,8 +182,8 @@ class MNL extends React.Component {
           "mode": "cors",
           "headers": {
             "Content-Type": "application/json",
-            // Needed for CORS google translate. Also changed from googleusercontent.com to google.com
-            "Access-Control-Allow-Origin": "https://translate.google.com"
+            // Needed for CORS google translate.
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
           },
         },
 
@@ -241,7 +241,7 @@ class MNL extends React.Component {
           "headers": {
             "Content-Type": "application/json",
             // Needed for CORS google translate
-            "Access-Control-Allow-Origin": "https://translate.google.com"
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
           },
         },
     )
