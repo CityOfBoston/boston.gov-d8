@@ -51,7 +51,7 @@ class WinterResources extends React.Component {
           {/* Emergency Parking */}
           {(configCards.snow_emergency.display) ? (
             <MnlCard
-              title={"Snow Emergency Parking"}
+              title={"Snow Emergency Parking Near You"}
               image_header={
                 configProps.globals.pathImage+"parking.svg"
               }
