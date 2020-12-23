@@ -106,11 +106,10 @@ const configProps = {
 		const pageGoogle = page.toLowerCase().indexOf("google");
     const pageTranslate = page.toLowerCase().indexOf("translate");
     if (pageGoogle >= 0 || pageTranslate >= 0) {
-      const p3 = page.split('?')[0];
-      //querystring = querystring.replace('?', '');
+      let translateURL = location.href;
+      const p3 = translateURL.split('?')[0];
 
       for(let a of document.querySelectorAll('a')) {
-        //var a = document.querySelectorAll('a');
         a.href = p3 + a.href;
       }
 			return true;
