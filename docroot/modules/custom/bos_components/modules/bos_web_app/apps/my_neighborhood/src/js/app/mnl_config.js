@@ -106,12 +106,6 @@ const configProps = {
 		const pageGoogle = page.toLowerCase().indexOf("google");
     const pageTranslate = page.toLowerCase().indexOf("translate");
     if (pageGoogle >= 0 || pageTranslate >= 0) {
-      let translateURL = window.location.href;
-      const p3 = translateURL.split('&u=')[0];
-
-      for(let a of document.querySelectorAll('a')) {
-        a.href = p3 + "&u=" + a.href;
-      }
 			return true;
 		}else{
       return false;
