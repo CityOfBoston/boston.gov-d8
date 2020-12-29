@@ -183,7 +183,11 @@ class MNL extends React.Component {
           "headers": {
             "Content-Type": "application/json",
             // Needed for CORS google translate.
-            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com",
+            "Access-Control-Allow-Credentials": true,
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "x-requested-with",
+            "Access-Control-Max-Age": "1728000"
           },
         },
 
@@ -241,7 +245,11 @@ class MNL extends React.Component {
           "headers": {
             "Content-Type": "application/json",
             // Needed for CORS google translate
-            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
+            "Access-Control-Allow-Origin": "https://translate.googleusercontent.com",
+            "Access-Control-Allow-Credentials": true,
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "x-requested-with",
+            "Access-Control-Max-Age": "1728000"
           },
         },
     )
