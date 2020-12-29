@@ -31,6 +31,9 @@ const configProps = {
         "state_federal_reps": {
           "display": true,
         },
+        "city_councilor_at_large": {
+          "display": true,
+        },
       },
     },
     "newsletter": {
