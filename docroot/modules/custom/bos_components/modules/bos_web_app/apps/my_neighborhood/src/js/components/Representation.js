@@ -8,10 +8,10 @@ class Representation extends React.Component {
           heading: configMayor.name,
           content: "Mayor"
         },
-        { content: 
+        { content:
             <div>
               Learn more about <a href={configMayor.url} className="mnl-link">Boston's Mayor</a>.
-            </div> 
+            </div>
         }
     ];
     let contentRepArray;
@@ -22,10 +22,10 @@ class Representation extends React.Component {
             content: "City Councilor, District " + this.props.district
           },
           {
-            content: 
+            content:
               <div>
-                To learn more about Boston's City Council and view all members, including at-large councilors, visit the <a href={"/departments/city-council#city-council-members"} className="mnl-link">City Council page</a>.
-              </div> 
+                To learn more about Boston's City Council and view all members, visit the <a href={"/departments/city-council#city-council-members"} className="mnl-link">City Council page</a>.
+              </div>
           }
       ];
     } else {
@@ -128,8 +128,24 @@ class Representation extends React.Component {
     const contentStateFederalReps = [
       {
         content: (
-            <div >For more information on your State and Federal representatives, visit the <a href={"https://malegislature.gov/search/findmylegislator"} target="_blank" rel="noreferrer" className="mnl-link">Find My Legislator tool</a> on <a href={"https://mass.gov"} target="_blank" rel="noreferrer" className="mnl-link">Mass.gov</a>. 
+            <div >For more information on your State and Federal representatives, visit the <a href={"https://malegislature.gov/search/findmylegislator"} target="_blank" rel="noreferrer" className="mnl-link">Find My Legislator tool</a> on <a href={"https://mass.gov"} target="_blank" rel="noreferrer" className="mnl-link">Mass.gov</a>.
             </div>
+        )
+      }
+    ];
+    // Content for Councilors at Large
+    const contentCouncilorsatLargeReps = [
+      {
+        content: (
+          <div class="councilor-at-large">
+            <div class="intro">The four at-large councilors that represent the entire City</div>
+            <div>
+              <a href={"/departments/city-council/annissa-essaibi-george"} className={"mnl-link link_underline"}>Annissa Essaibi George</a>
+              <a href={"/departments/city-council/michael-flaherty"} className={"mnl-link link_underline"}>Michael Flaherty</a>
+              <a href={"/departments/city-council/julia-mejia"} className={"mnl-link link_underline"}>Julia Mejia</a>
+              <a href={"/departments/city-council/michelle-wu"} className={"mnl-link link_underline"}>Michelle Wu</a>
+            </div>
+          </div>
         )
       }
     ];
@@ -139,7 +155,7 @@ class Representation extends React.Component {
     const cardsRepresentation = (
       <div>
         <div className="sh">
-          <h2 className="sh-title">Representation</h2>
+          <h2 className="sh-title">Representation testS</h2>
         </div>
         <div className="supporting-text">
           <p>{secDesc}</p>
@@ -170,24 +186,6 @@ class Representation extends React.Component {
             />
           ) : null}
 
-          {/* City Councilor */}
-          {(configCards.city_councilor.display) ? (
-            <MnlCard
-              title={"Your City Councilor"}
-              image={
-                this.props.councilor_image !== null && this.props.councilor
-                  ? this.props.councilor_image
-                  : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
-              }
-              image_href={
-                this.props.councilor !== null
-                  ? this.props.councilor_webpage
-                  : "departments/city-council"
-              }
-              content_array={contentRepArray}
-            />
-          ) : null}
-
           {/* Neighborhood Contact */}
           {(configCards.neighborhood_contact.display) ? (
             <MnlCard
@@ -206,6 +204,24 @@ class Representation extends React.Component {
             />
           ) : null}
 
+          {/* City Councilor */}
+          {(configCards.city_councilor.display) ? (
+            <MnlCard
+              title={"Your City Councilor"}
+              image={
+                this.props.councilor_image !== null && this.props.councilor
+                  ? this.props.councilor_image
+                  : "https://patterns.boston.gov/images/global/icons/experiential/meet-archaeologist.svg"
+              }
+              image_href={
+                this.props.councilor !== null
+                  ? this.props.councilor_webpage
+                  : "departments/city-council"
+              }
+              content_array={contentRepArray}
+            />
+          ) : null}
+
           {/* Early Voting Info */}
           {(configCards.early_voting.display) ? (
             <MnlCard
@@ -217,7 +233,18 @@ class Representation extends React.Component {
             />
           ): null}
 
-        {/* State and Federal Reps */}
+          {/* City Councillors at Large */}
+          {(configCards.city_councilor_at_large.display) ? (
+            <MnlCard
+              title={"Your At-Large City Councilors"}
+              image_header={
+                "https://patterns.boston.gov/images/global/icons/experiential/podium.svg"
+              }
+              content_array={contentCouncilorsatLargeReps}
+            />
+          ): null}
+
+          {/* State and Federal Reps */}
           {(configCards.state_federal_reps.display) ? (
             <MnlCard
               title={"State and Federal Representatives"}
