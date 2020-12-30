@@ -39,7 +39,7 @@ class WinterResources extends React.Component {
     const contentSnowParkingRestrictions = [
       {
         content: (
-            <div>There may be other snow routes or emergency parking areas in your area. <a href={"/departments/311/snow-emergency-parking"} className="mnl-link">Check here for all of the information.</a></div>
+            <div>There may be other snow routes or emergency parking areas near you. <a href={"/departments/311/snow-emergency-parking"} className="mnl-link">Check here for all of the information.</a></div>
         )
       }
     ];
