@@ -98,6 +98,9 @@ const configProps = {
 				"snow_route": {
 					"display": true,
 				},
+        "snow_parking_restrictions": {
+          "display": true,
+        },
 			},
 		},
 		"bos_311": {
