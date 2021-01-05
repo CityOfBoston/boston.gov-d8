@@ -155,7 +155,7 @@ class Representation extends React.Component {
     const cardsRepresentation = (
       <div>
         <div className="sh">
-          <h2 className="sh-title">Representation testS</h2>
+          <h2 className="sh-title">Representation</h2>
         </div>
         <div className="supporting-text">
           <p>{secDesc}</p>
