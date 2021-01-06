@@ -366,19 +366,13 @@ class EverbridgeSubscriber extends ControllerBase {
       ]
     );
     switch ($type) {
-      case Response::HTTP_CREATED:
-      case Response::HTTP_OK:
-      case Response::HTTP_NON_AUTHORITATIVE_INFORMATION:
+      case "200":
         $json['status'] = 'success';
         $response->setContent(json_encode($json));
         break;
 
-      case Response::HTTP_UNAUTHORIZED:
-      case Response::HTTP_NO_CONTENT:
-      case Response::HTTP_FORBIDDEN:
-      case Response::HTTP_BAD_REQUEST:
-      case Response::HTTP_METHOD_NOT_ALLOWED:
-      case Response::HTTP_INTERNAL_SERVER_ERROR:
+      case "400":
+      case "401":
         $json['status'] = 'error';
         $json['errors'] = $message;
         unset($json['contact']);
