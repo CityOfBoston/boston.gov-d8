@@ -47,7 +47,7 @@ function bos_emergency_alerts_mail($key, &$message, $params) {
     $message['from'] = \Drupal::config('system.site')->get('mail');
     $message['subject'] = "Emergency Alerts Subscription Error.";
     $message['body'] = "
-      <p>There was an issue with a user subscribing to CodeRed Emergency Alerts from boston.gov.</p>
+      <p>There was an issue with a user subscribing to Everbridge Emergency Alerts from boston.gov.</p>
       <p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") . "</p>
       <p>The user was located at: " . \Drupal::request()->getClientIp() . "</p>
       <p>The information completed on the form was:<br/> 
