@@ -1,0 +1,11 @@
+services:
+  node_buildinghousing.pullQueryAlter:
+    class: Drupal\node_buildinghousing\EventSubscriber\SalesforceBuildingHousingUpdateSubscriber
+    arguments: []
+    tags:
+      - { name: event_subscriber }
+  node_buildinghousing.pullPresave:
+    class: Drupal\node_buildinghousing\EventSubscriber\SalesforceBuildingHousingUpdateSubscriber
+    arguments: []
+    tags:
+      - { name: event_subscriber }
