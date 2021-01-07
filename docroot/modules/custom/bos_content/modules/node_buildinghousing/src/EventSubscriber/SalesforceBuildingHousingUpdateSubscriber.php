@@ -106,8 +106,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     switch ($mapping->id()) {
       case 'building_housing_projects':
 
-        $query = $event->getQuery();
-        $query->fields[] = "(SELECT Id, Name FROM Project_Manager__r LIMIT 2)";
+        //$query = $event->getQuery();
+        //$query->fields[] = "(SELECT Id, Name FROM Project_Manager__r LIMIT 2)";
 
         break;
       case 'building_housing_project_update':
