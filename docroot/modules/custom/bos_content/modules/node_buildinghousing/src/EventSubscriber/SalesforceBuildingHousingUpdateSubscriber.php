@@ -145,7 +145,12 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
         //$project->set()
             try {
-              $projectManager = $client->objectRead('User',  $sf_data->field('Project_Manager__c'));
+              $projectManagerId = $sf_data->field('Project_Manager__c') ?? null;
+              if ($projectManagerId) {
+                $projectManager = $client->objectRead('User',  $projectManagerId);
+              }else{
+                $projectManager = null;
+              }
             }
             catch (Exception $exception) {
               $projectManager = null;
