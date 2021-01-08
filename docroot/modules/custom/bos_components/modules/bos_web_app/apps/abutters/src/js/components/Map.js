@@ -378,7 +378,7 @@ class Map extends React.Component {
         // the geojson we have to the necessary format.
         const esriJson = Util.geojsonToArcGIS(this.props.selectedParcel);
         request(
-          'https://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/Geometry/GeometryServer/buffer',
+          'https://awsgeo.boston.gov/arcgis/rest/services/Utilities/Geometry/GeometryServer/buffer',
           {
             geometries: {
               geometryType: 'esriGeometryPolygon',
