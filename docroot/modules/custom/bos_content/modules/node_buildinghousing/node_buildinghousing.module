@@ -212,10 +212,13 @@ function node_buildinghousing_preprocess_field(&$variables)
 
         if (empty($value)) {
           $value = t('To Be Determined');
-        } elseif (is_numeric($value) && $value <= 10 && $value != 0) {
-          //@TODO: Change out the language for the selected site language.
-          $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
-          $value = ucfirst($numberFormatter->format($value));
+        } elseif (is_numeric($value) && $value <= 10  && $value >= 1) {
+          //@TODO: Change out the language for the selected site language. Not using as the intl php ext is not loaded on aquia
+//          $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+//          $value = ucfirst($numberFormatter->format($value));
+          $numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+          $value = ucfirst($numbers[$value]);
+
         }
 
 
