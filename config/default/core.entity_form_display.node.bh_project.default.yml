@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_construction_start_date
     - field.field.node.bh_project.field_bh_conveyance_vote_date
     - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_councilor
     - field.field.node.bh_project.field_bh_disposition_type
     - field.field.node.bh_project.field_bh_dnd_funding_award_date
     - field.field.node.bh_project.field_bh_funding_stage
@@ -21,6 +22,8 @@ dependencies:
     - field.field.node.bh_project.field_bh_predicted_closing_date
     - field.field.node.bh_project.field_bh_project_complete_date
     - field.field.node.bh_project.field_bh_project_images
+    - field.field.node.bh_project.field_bh_project_manager_name
+    - field.field.node.bh_project.field_bh_project_manger_phone
     - field.field.node.bh_project.field_bh_project_name
     - field.field.node.bh_project.field_bh_project_parcels
     - field.field.node.bh_project.field_bh_project_stage
@@ -28,11 +31,17 @@ dependencies:
     - field.field.node.bh_project.field_bh_project_status
     - field.field.node.bh_project.field_bh_project_type
     - field.field.node.bh_project.field_bh_project_updates
+    - field.field.node.bh_project.field_bh_property_size
     - field.field.node.bh_project.field_bh_public_stage
     - field.field.node.bh_project.field_bh_record_type
     - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_units_affordable
+    - field.field.node.bh_project.field_bh_units_for_rent
+    - field.field.node.bh_project.field_bh_units_to_own
+    - field.field.node.bh_project.field_bh_units_total
     - field.field.node.bh_project.field_bh_wysiwyg_photo_a
+    - field.field.node.bh_project.field_project_manager_email
     - node.type.bh_project
   module:
     - content_moderation
@@ -41,6 +50,7 @@ dependencies:
     - media_library
     - path
     - publication_date
+    - telephone
     - text
     - viewfield
     - webform
@@ -96,6 +106,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: geolocation_latlng
+    region: content
+  field_bh_councilor:
+    weight: 50
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
     region: content
   field_bh_disposition_type:
     weight: 24
@@ -187,6 +205,21 @@ content:
       media_types: {  }
     third_party_settings: {  }
     region: content
+  field_bh_project_manager_name:
+    weight: 41
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_bh_project_manger_phone:
+    weight: 42
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+    region: content
   field_bh_project_name:
     weight: 11
     settings:
@@ -243,6 +276,13 @@ content:
     third_party_settings: {  }
     type: viewfield_select
     region: content
+  field_bh_property_size:
+    weight: 49
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
   field_bh_public_stage:
     weight: 36
     settings:
@@ -276,6 +316,34 @@ content:
     third_party_settings: {  }
     type: number
     region: content
+  field_bh_units_affordable:
+    weight: 47
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_bh_units_for_rent:
+    weight: 45
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_bh_units_to_own:
+    weight: 46
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_bh_units_total:
+    weight: 48
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
   field_bh_wysiwyg_photo_a:
     weight: 21
     settings:
@@ -283,6 +351,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea
+    region: content
+  field_project_manager_email:
+    weight: 43
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: email_default
     region: content
   langcode:
     type: language_select

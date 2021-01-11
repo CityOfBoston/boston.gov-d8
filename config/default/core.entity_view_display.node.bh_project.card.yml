@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_construction_start_date
     - field.field.node.bh_project.field_bh_conveyance_vote_date
     - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_councilor
     - field.field.node.bh_project.field_bh_disposition_type
     - field.field.node.bh_project.field_bh_dnd_funding_award_date
     - field.field.node.bh_project.field_bh_funding_stage
@@ -22,6 +23,8 @@ dependencies:
     - field.field.node.bh_project.field_bh_predicted_closing_date
     - field.field.node.bh_project.field_bh_project_complete_date
     - field.field.node.bh_project.field_bh_project_images
+    - field.field.node.bh_project.field_bh_project_manager_name
+    - field.field.node.bh_project.field_bh_project_manger_phone
     - field.field.node.bh_project.field_bh_project_name
     - field.field.node.bh_project.field_bh_project_parcels
     - field.field.node.bh_project.field_bh_project_stage
@@ -29,11 +32,17 @@ dependencies:
     - field.field.node.bh_project.field_bh_project_status
     - field.field.node.bh_project.field_bh_project_type
     - field.field.node.bh_project.field_bh_project_updates
+    - field.field.node.bh_project.field_bh_property_size
     - field.field.node.bh_project.field_bh_public_stage
     - field.field.node.bh_project.field_bh_record_type
     - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_units_affordable
+    - field.field.node.bh_project.field_bh_units_for_rent
+    - field.field.node.bh_project.field_bh_units_to_own
+    - field.field.node.bh_project.field_bh_units_total
     - field.field.node.bh_project.field_bh_wysiwyg_photo_a
+    - field.field.node.bh_project.field_project_manager_email
     - node.type.bh_project
   module:
     - advanced_text_formatter
@@ -162,6 +171,7 @@ hidden:
   field_bh_construction_start_date: true
   field_bh_conveyance_vote_date: true
   field_bh_coordinates: true
+  field_bh_councilor: true
   field_bh_disposition_type: true
   field_bh_dnd_funding_award_date: true
   field_bh_funding_stage: true
@@ -174,12 +184,20 @@ hidden:
   field_bh_predicted_closing_date: true
   field_bh_project_complete_date: true
   field_bh_project_images: true
+  field_bh_project_manager_name: true
+  field_bh_project_manger_phone: true
   field_bh_project_parcels: true
   field_bh_project_type: true
   field_bh_project_updates: true
+  field_bh_property_size: true
   field_bh_public_stage: true
   field_bh_record_type: true
   field_bh_rfp_issued_date: true
+  field_bh_units_affordable: true
+  field_bh_units_for_rent: true
+  field_bh_units_to_own: true
+  field_bh_units_total: true
+  field_project_manager_email: true
   langcode: true
   links: true
   published_at: true
