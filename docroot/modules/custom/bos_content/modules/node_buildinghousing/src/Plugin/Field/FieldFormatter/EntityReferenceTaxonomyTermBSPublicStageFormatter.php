@@ -153,6 +153,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
 
     $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
+
+    //@TODO: RM - temp hide
+    return [];
+
     return $elements;
   }
 
@@ -171,6 +175,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
 
     $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
+
+    //@TODO: RM - temp hide
+    return [];
+
     return $elements;
   }
 
