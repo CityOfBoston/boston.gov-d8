@@ -90,5 +90,8 @@
     "whatwg-fetch": "^3.0.0",
     "xxhash": "^0.3.0"
   },
-  "scripts": {}
+  "scripts": {
+    "dev": "concurrently \"npx http-server -p${WEBAPP_PORT} -c-1 --no-dotfiles\"",
+    "start-container": "concurrently \"npm run dev\" \"cd /app/patterns && npm run dev\""
+  }
 }

@@ -30,6 +30,11 @@
         printout "INFO" "During build, process will be logged to files in ${setup_logs}" &&
         printout "" "     - After build, log files can be accessed from ${LANDO_APP_URL}/sites/default/files/setup/"
 
+    # Remove the flag to indicate that the db is ready
+    if [[ -e ${LANDO_MOUNT}/.dbready ]]; then
+      rm -f ${LANDO_MOUNT}/.dbready
+    fi
+
     printout "ACTION" "Installing linux utilities/apps/packages not present in default container."
     # Installs linux apps and extensions into the appserver container.
     (apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> /dev/null &&

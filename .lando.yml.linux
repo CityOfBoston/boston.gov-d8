@@ -1,7 +1,9 @@
 # Acquia friendly mods from https://github.com/lando/lando/issues/105
 # See readme in ./build/readme.boston.md
+
 name: boston
 recipe: drupal8
+
 config:
   php: '7.3'
   webroot: docroot
@@ -21,6 +23,9 @@ services:
     ssl: true
     scanner: false
     overrides:
+      mem_limit: 5G
+      memswap_limit: 8G
+      mem_reservation: 4G
       environment:
         PORT: "80"
         FRACTAL_PORT: "80"
@@ -45,6 +50,9 @@ services:
     host: localhost
     scanner: false
     overrides:
+      mem_limit: 5G
+      memswap_limit: 8G
+      mem_reservation: 5G
       ports:
         - "32306:3306"
       volumes:
@@ -58,6 +66,7 @@ services:
     run_as_root:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun_as_root\e[0m Event raised on Container 'database'\n"
       - /app/scripts/local/lando-database-customize.sh
+
     creds:
       user: drupal
       password: drupal
@@ -72,20 +81,28 @@ services:
     config:
       php: scripts/local/boston-dev-php.ini
     overrides:
+      mem_limit: 8G
+      memswap_limit: 8G
+      mem_reservation: 5G
       healthcheck:
         test: /app/scripts/local/health.sh appserver
-        interval: 30s
+        interval: 500s
         timeout: 5s
         retries: 3
       environment:
         DRUSH_OPTIONS_URI: "https://boston.lndo.site"
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
         XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
+        COMPOSER_MEMORY_LIMIT: "4G"
+        BACKDROP_SETTINGS: ""
+
     build_as_root:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-appserver-customize.sh
+
     build:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver'\n"
+
     run:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-build-drupal.sh -y
@@ -99,13 +116,13 @@ tooling:
     service: appserver
     description: "Run drush commands in app container: lando drush <command>"
     cmd:
-      - /app/vendor/bin/drush
+    - /app/vendor/bin/drush
 
   drupal:
     service: appserver
     description: "Run drupal-console commands in app container: lando drupal <command>"
     cmd:
-      - drupal
+    - drupal
 
   npm:
     service: node
