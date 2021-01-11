@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.bh_project.field_bh_construction_start_date
     - field.field.node.bh_project.field_bh_conveyance_vote_date
     - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_councilor
     - field.field.node.bh_project.field_bh_disposition_type
     - field.field.node.bh_project.field_bh_dnd_funding_award_date
     - field.field.node.bh_project.field_bh_funding_stage
@@ -23,9 +24,14 @@ dependencies:
     - field.field.node.bh_project.field_bh_project_start_date
     - field.field.node.bh_project.field_bh_project_status
     - field.field.node.bh_project.field_bh_project_type
+    - field.field.node.bh_project.field_bh_property_size
     - field.field.node.bh_project.field_bh_record_type
     - field.field.node.bh_project.field_bh_rfp_issued_date
     - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_units_affordable
+    - field.field.node.bh_project.field_bh_units_for_rent
+    - field.field.node.bh_project.field_bh_units_to_own
+    - field.field.node.bh_project.field_bh_units_total
     - field.field.node.bh_project.field_bh_wysiwyg_photo_a
     - field.storage.node.field_bh_coordinates
     - field.storage.node.field_bh_disposition_type
@@ -225,6 +231,42 @@ field_mappings:
     salesforce_field: Project_Type__c
     direction: sf_drupal
     id: 25
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_property_size
+    salesforce_field: Total_Square_Footage__c
+    direction: sf_drupal
+    id: 26
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_total
+    salesforce_field: Total_No_of_Units__c
+    direction: sf_drupal
+    id: 27
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_affordable
+    salesforce_field: Total_Units_Income__c
+    direction: sf_drupal
+    id: 28
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_for_rent
+    salesforce_field: Rent__c
+    direction: sf_drupal
+    id: 29
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_to_own
+    salesforce_field: Own__c
+    direction: sf_drupal
+    id: 30
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_councilor
+    salesforce_field: Councilor__c
+    direction: sf_drupal
+    id: 31
 push_limit: 0
 push_retries: 3
 push_frequency: 0
