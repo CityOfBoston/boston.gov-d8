@@ -110,22 +110,25 @@
             printout "INFO" "Selecting and copying files from the Release Candidate creats a Deploy Artifact which can be committed/pushed "
             printout "INFO" "to an Acquia Repo.\n"
             printout "ACTION" "Copying files from Release Candidate to create a Deploy Artifact."
-            # First do the entire Drupal
+            # Initially, use rsync to copy everything except webapp files.
             # Files/folders to be copied are specified in the files-from file.
             # Excluding those files/folders in the exclude-from file,
             #  - but always including those in the include-from file.
+            # first, we need to make sure the webapps folder is excluded.
+            tmp_excludes_file=${deploy_dir}/docroot/sites/default/settings/exclude.txt
+            cd ${TRAVIS_BUILD_DIR} &&
+              cp ${deploy_from_file} ${tmp_excludes_file} &&
+              printf "\n${webapps_local_source}/ \n" >> ${tmp_excludes_file}
+            # Now copy.
             cd ${TRAVIS_BUILD_DIR} &&
               rsync \
                   -rlDW \
                   --files-from=${deploy_from_file} \
-                  --exclude-from=${deploy_excludes_file} \
+                  --exclude-from=${tmp_excludes_file} \
                   --include-from=${deploy_includes_file} \
                   . ${deploy_dir}/
-            # Now do the webapp folders which have their own inclusion/exclusion rules
+            # Finally, use rsync to copy the webapp folders which can then have their own inclusion/exclusion rules.
             printout "ACTION" "Removing un-needed webapp source files."
-            webapp_from_file="${!src}"
-            webapp_includes_file="${!src}"
-            webapps_local_source="${!src}"
             cd ${webapps_local_source} &&
               rsync \
                   -rlDW \
@@ -134,6 +137,7 @@
                   --exclude-from=${webapps_rsync_excludes_file} \
                   --include-from=${webapps_rsync_includes_file} \
                   . ${deploy_dir}/${webapps_local_source}
+            rm -f ${tmp_excludes_file}
 
             # Removes any gitignore files in contrib or custom modules.
             printout "ACTION" "Removing un-needed git config files."
