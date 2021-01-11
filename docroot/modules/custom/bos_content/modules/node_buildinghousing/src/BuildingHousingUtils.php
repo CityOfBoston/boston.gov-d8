@@ -28,9 +28,9 @@ class BuildingHousingUtils {
 
     $projectRecordType = self::getProjectRecordType($entity);
 
-    $projectStatus = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_status')->target_id)->name->value ?? null;
+    $projectStatus = $entity->get('field_bh_project_status')->target_id ? \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_status')->target_id)->name->value : null;
 
-    $projectStage = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_stage')->target_id)->name->value ?? null;
+    $projectStage = $entity->get('field_bh_project_stage')->target_id ? \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_stage')->target_id)->name->value : null;
 
     $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? null;
 
