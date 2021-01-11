@@ -365,7 +365,8 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
 
     $vars['label'] = $computedProjectType['label'] ?? null;
     $vars['body'] = $computedProjectType['body'] ?? null;
-    $vars['title'] = t('What are we building?');
+//    $vars['title'] = t('What are we building?');
+    $vars['title'] = null;
     $vars['bgColor'] = $computedProjectType['bgColor'] ?? '#091f2f';
     $vars['icon'] = $computedProjectType['icon'] ?? null;
 
