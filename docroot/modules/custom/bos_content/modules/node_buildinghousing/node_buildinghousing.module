@@ -395,7 +395,7 @@ function _node_buildinghousing_get_computed_project_type($entity)
   if ($projectTypeId = $entity->get('field_bh_project_type')->target_id) {
     $projectTypeParents = $termStorage->loadAllParents($projectTypeId);
 
-    if ($mainType->getName() == 'Housing' || empty($mainType)) {
+    if (empty($mainType) || $mainType->getName() == 'Housing') {
       $mainType = 'Housing';
       $subType = !empty($projectTypeParents) ? array_pop($projectTypeParents) : null;
     }
