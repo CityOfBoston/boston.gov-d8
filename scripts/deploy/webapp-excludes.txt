@@ -5,8 +5,11 @@ _*
 # remove all package.json etc files.
 package*.json
 
+# remove all dev dependencies
+node_modules/
+
 # make sure the src folder is excluded
-docroot/modules/custom/bos_components/modules/bos_web_app/apps/**/src
+**/src
 
 # remove all other files we don't need
 *.html
