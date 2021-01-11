@@ -184,6 +184,59 @@ function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface 
 }
 
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_buildinghousing_preprocess_field(&$variables)
+{
+
+  if ($variables['element']['#bundle'] == 'bh_project') {
+    $fieldName = $variables['field_name'] ?? null;
+    $project = $variables['element']['#object'] ?? null;
+    $projectType = _node_buildinghousing_get_computed_project_type($project)['label'] ?? null;
+    $hidden = false;
+
+    switch ($fieldName) {
+      case 'field_bh_total_num_units':
+      case 'field_bh_units_for_rent':
+      case 'field_bh_units_to_own':
+      case 'field_bh_units_affordable':
+      case 'field_bh_units_total':
+        if ($projectType != 'Housing') {
+          $hidden = true;
+        }
+      case 'field_bh_property_size':
+
+        $value = $variables['items'][0]['content']['#markup'] ?? null;
+
+        if (empty($value)) {
+          $value = t('To Be Determined');
+        } elseif (is_numeric($value) && $value <= 10 && $value != 0) {
+          //@TODO: Change out the language for the selected site language.
+          $numberFormatter = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+          $value = ucfirst($numberFormatter->format($value));
+        }
+
+
+        if ($fieldDescription = $project->getFieldDefinition($fieldName)->get('description')) {
+          //@TODO: Add in the field description as a tooltip to the label, may need to do in a template :/
+          //$variables['label'] = '<div>' . $variables['label'] . ' - ' . '<span class="bh-tooltip">' . $fieldDescription . '</span></div>';
+        }
+
+        $variables['items'][0]['content']['#markup'] = $value;
+
+        break;
+    }
+
+    if ($hidden == true) {
+      $variables['items'] = [];
+      $variables['label_hidden'] = true;
+    }
+
+  }
+
+}
+
 function node_buildinghousing_entity_extra_field_info()
 {
   $extraFields = [];
