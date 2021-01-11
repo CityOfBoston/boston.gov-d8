@@ -21,9 +21,12 @@ class BuildingHousingUtils {
 
   public function setPublicStage (&$entity) {
 
-    $projectRecordType = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_record_type')->target_id)->name->value ?? null;
-    $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
-    $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
+    //@TODO: RM after no issues
+//    $projectRecordType = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_record_type')->target_id)->name->value ?? null;
+//    $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
+//    $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
+
+    $projectRecordType = self::getProjectRecordType($entity);
 
     $projectStatus = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_project_status')->target_id)->name->value ?? null;
 
@@ -169,6 +172,14 @@ class BuildingHousingUtils {
     return $this->publicStage = $publicStage;
   }
 
+
+  public static function getProjectRecordType ($projectEntity) {
+    $projectRecordType = \Drupal\taxonomy\Entity\Term::load($projectEntity->get('field_bh_record_type')->target_id)->name->value ?? null;
+    $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
+    $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
+
+    return $projectRecordType;
+  }
 
   public function setStreetViewPhoto (&$entity, $fieldName =  'field_bh_street_view_photo') {
     $streetViewPhotoSet = false;
