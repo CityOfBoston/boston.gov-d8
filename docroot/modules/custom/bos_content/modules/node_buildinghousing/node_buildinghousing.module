@@ -331,10 +331,17 @@ function _node_buildinghousing_build_render_project_manager_contact($entity)
   $vars['email'] = $entity->get('field_project_manager_email')->value;
   $vars['phone'] = $entity->get('field_bh_project_manger_phone')->value;
 
+  if (empty($vars['name']) || empty($vars['phone']) || empty($vars['email'])) {
+    $vars['name'] = t("To inquire about this parcel, contact the Department of Neighborhood Development (DND).");
+    $vars['email'] = "dnd email address"; //@TODO: change out with correct email address
+    $vars['phone'] = "617-635-3880";
+    $vars['label'] = null;
+  }
+
+
   $render = ['#markup' => \Drupal::theme()->render("bh_project_manager_contact", $vars)];
 
   return $render;
-
 }
 
 function _node_buildinghousing_build_render_computed_project_type($entity)
