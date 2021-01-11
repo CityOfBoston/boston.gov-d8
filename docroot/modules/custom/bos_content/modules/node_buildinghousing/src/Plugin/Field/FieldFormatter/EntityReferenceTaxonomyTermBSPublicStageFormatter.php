@@ -6,6 +6,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
+use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
 
 /**
  * Plugin implementation of the 'entity reference taxonomy term Building Housing Public Stage' formatter.
@@ -48,7 +49,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $stageTitle = $publicStageTerm->get('field_display_title') ?? null;
       $stageIcon = $publicStageTerm->get('field_icon') ?? null;
       $stageDescription = $publicStageTerm->get('description') ?? null;
-      $stageDate = 'Winter 2020';
+      $stageDate = $this->getStageDate($parent_entity, $publicStageTerm);
 
       if ($stageTitle->isEmpty()) {
         continue;
@@ -93,6 +94,45 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $elements])];
 
 //    return $elements;
+  }
+
+
+  private function getStageDate($project, $stage) {
+
+    switch ($stage->getName()){
+      case 'Project Launch':
+        $date = $project->get('field_bh_project_start_date')->value ?? null;
+        break;
+      case 'Selecting Developer':
+        $date = $project->get('field_bh_rfp_issued_date')->value ?? null;
+        break;
+      case 'City Planning Process':
+        switch (BHUtils::getProjectRecordType($project)) {
+          case 'Disposition':
+            $date = $project->get('field_bh_initial_td_vote_date')->value ?? null;
+            break;
+          case 'NHD Development':
+            $date = $project->get('field_bh_dnd_funding_award_date')->value ?? null;
+            break;
+          default:
+            $date = null;
+        }
+        break;
+      case 'In Construction':
+        $date = $project->get('field_bh_construction_start_date')->value ?? null;
+        break;
+      case 'Project Completed':
+        $date = $project->get('field_bh_construct_complete_date')->value ?? null;
+        break;
+      default:
+        $date = null;
+    }
+
+    $stageDate = $date ? $this->dateToSeason($date) : '';
+
+
+
+    return $stageDate ?? $date ?? '';
   }
 
 
@@ -170,6 +210,33 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   private function getPublicStages () {
     $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? null;
     return $publicStages;
+  }
+
+  private function dateToSeason($date) {
+    $season = '';
+    $seasonDate = new \DateTime($date);
+    $monthDayDate = $seasonDate->format('md');
+
+    switch (true) {
+      //spring runs from March 1 (0301) to May 31 (0531)
+      case $monthDayDate >= '0301' && $monthDayDate <= '0531':
+        $season = 'Spring';
+        break;
+      //summer runs from June 1 (0601) to August 31 (0831)
+      case $monthDayDate >= '0601' && $monthDayDate <= '0831':
+        $season = 'Summer';
+        break;
+      //fall (autumn) runs from September 1 (0901) to November 30 (1130)
+      case $monthDayDate >= '0901' && $monthDayDate <= '1130':
+        $season = 'Fall';
+        break;
+      //winter runs from December 1 (1201) to February 28+1 (0229)
+      case $monthDayDate >= '1201' || $monthDayDate <= '0229':
+        $season = 'Winter';
+        break;
+    }
+
+    return $season . ' ' . $seasonDate->format('Y');
   }
 
 }
