@@ -214,7 +214,7 @@ function node_buildinghousing_preprocess_field(&$variables)
           $value = t('To Be Determined');
         } elseif (is_numeric($value) && $value <= 10 && $value != 0) {
           //@TODO: Change out the language for the selected site language.
-          $numberFormatter = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+          $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
           $value = ucfirst($numberFormatter->format($value));
         }
 
