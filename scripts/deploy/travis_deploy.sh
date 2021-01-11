@@ -80,7 +80,7 @@
             printout "ACTION" "Setting permissions on Drupal settings files."
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
             if [[ ! -d ${deploy_dir}/docroot/sites/default/settings ]]; then
-              mkdir ${deploy_dir}/docroot/sites/default/settings
+              mkdir -p ${deploy_dir}/docroot/sites/default/settings
             fi
             chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
 
