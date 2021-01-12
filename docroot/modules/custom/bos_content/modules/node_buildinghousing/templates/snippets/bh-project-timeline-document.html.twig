@@ -22,7 +22,7 @@
 
   <div class="g g--4">
     <div class="g--7">
-      <h6 class="m-v000 bh-timeline-season t--cb">{{ date }}</h6>
+      <h6 class="m-v000 bh-timeline-season t--ob">{{ date }}</h6>
     </div>
     <div typeof="foaf:Image" class="bh-project-timeline-icon g--5">
       {{ icon }}
@@ -30,14 +30,14 @@
   </div>
 
 
-  <div class="g--8 m-b600 m-h100 p-a000  bh-project-timeline-content" style="margin-top: -3.5rem;">
+  <div class="g--8 m-b600 m-h100 p-a000  bh-project-timeline-content" >
 
       {% for document in documents %}
 
         {% if loop.index <= 2 %}
 
           <div class="g--8 m-t400 m-b600 m-h100 p-a000" style="height: 124px;">
-            <div class="fl--l bg--cb p-a200 m-r300" style="height: 124px;">{{ fileIcon }}</div>
+            <div class="fl--l bg--cb m-r300 p-v200 p-r300 p-l300" style="height: 124px; width:124px;">{{ fileIcon }}</div>
             <div class="b b--w p-a300" style="height: 124px; width: 450px;">
               <h6 class="m-v000">{{ document.label }}</h6>
               <div class="t--ob"><a href="{{ document.url }}">{{ document.link }}</a></div>
