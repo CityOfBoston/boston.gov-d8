@@ -70,6 +70,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 //          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
           break;
         case 'future':
+
+
+          $stageDate = $stageDate ? $stageDate : 'To Be Determined';
+
           $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => null]);
           $vars['body'] = t('Predicted Date: ') . $stageDate;
           $vars['date'] = '';
