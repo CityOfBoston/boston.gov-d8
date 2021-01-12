@@ -185,7 +185,7 @@ class PostmarkAPI extends ControllerBase {
         }
         else {
           // Check for blank fields.
-          if ($value == "") {
+          if ($value == "" && $key !== "honey") {
             $error = "Subject and Message fields must have values.";
             break;
           }
