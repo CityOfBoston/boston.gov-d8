@@ -80,12 +80,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       //@TODO: THis is just a temp place to put the meeting for styling dev
       if ($stageCurrentState == 'present') {
-        $elements[] = $this->getMeetings($parent_entity);
-//        $elements[] = $this->getDocuments($parent_entity);
-      }
-
-      if ($stageCurrentState == 'past' && $delta == 2) {
-        $elements[] = $this->getTexts($parent_entity);
+//        $elements[] = $this->getMeetings($parent_entity);
+//        $elements[] = $this->getTexts($parent_entity);
+        $elements[] = $this->getDocuments($parent_entity);
       }
 
     }
@@ -186,14 +183,53 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $elements = [];
 
     $data = [
-      'label' => t('developer presentation'),
-      'title' => t('WillemLevielle RFP Response.pdf'),
-      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'calendar']),
+      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+      "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
       'date' => 'DEC 15, 2020',
-      'link' => '/events',
       'currentState' => 'present',
     ];
 
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - A.pdf',
+      'url' => '/events?a',
+    ];
+
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - B.pdf',
+      'url' => '/events?b',
+    ];
+
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - C.pdf',
+      'url' => '/events?c',
+    ];
+
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - D.pdf',
+      'url' => '/events?d',
+    ];
+
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - D.pdf',
+      'url' => '/events?d',
+    ];
+
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - D.pdf',
+      'url' => '/events?d',
+    ];
+
+    $data['documents'][] = [
+      'label' => t('developer presentation'),
+      'link' => 'WillemLevielle RFP Response - D.pdf',
+      'url' => '/events?d',
+    ];
 
     $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $data)];
     return $elements;
