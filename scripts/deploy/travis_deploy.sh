@@ -122,9 +122,8 @@
               cp ${deploy_from_file} ${tmp_excludes_file} &&
               printf "\n${webapps_local_source}/ \n" >> ${tmp_excludes_file}
             # Now copy.
-            echo "TRAVIS_BUILD_DIR ${TRAVIS_BUILD_DIR}"
-            ls -la ${TRAVIS_BUILD_DIR}
             cd ${TRAVIS_BUILD_DIR} &&
+              pwd &&
               rsync \
                   -rlDW \
                   --files-from=${deploy_from_file} \
@@ -132,9 +131,9 @@
                   --include-from=${deploy_includes_file} \
                   . ${deploy_dir}/
             # Finally, use rsync to copy the webapp folders which can then have their own inclusion/exclusion rules.
-            ls -la ${deploy_dir}/
             printout "ACTION" "Copying across webapp js/css files."
             cd ${TRAVIS_BUILD_DIR}/${webapps_local_source} &&
+              pwd &&
               rsync \
                   -rlDW \
                   --files-from=${webapps_rsync_from_file} \
@@ -142,9 +141,10 @@
                   --include-from=${webapps_rsync_includes_file} \
                   . ${deploy_dir}/${webapps_local_source}
             rm -f ${tmp_excludes_file}
-            ls -la ${deploy_dir}/
+
+            # Force composer.json - or else drush get broken.
+            # TODO: figure out anchoring in rsync include file to make sure the  composer.json file gets copied.
             cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
-            ls -la ${deploy_dir}/
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
@@ -159,8 +159,8 @@
                 printout "ACTION" "Committing code in deploy_dir to local branch."
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
-                    git status &&
                     git add . --all &&
+                    git status &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
                   printout "WARNING" "No changes to the deployed codebase were found."
