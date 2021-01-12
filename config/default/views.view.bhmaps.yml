@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.body
     - field.storage.node.field_bh_coordinates
+    - field.storage.node.field_bh_disposition_type
     - field.storage.node.field_bh_funding_stage
     - field.storage.node.field_bh_parcel_id
     - field.storage.node.field_bh_project_stage
@@ -14,10 +15,23 @@ dependencies:
     - field.storage.node.field_bh_record_type
     - field.storage.node.field_bh_total_num_units
     - node.type.bh_project
+    - taxonomy.vocabulary.bh_disposition_type
     - taxonomy.vocabulary.bh_project_stage
     - taxonomy.vocabulary.bh_project_status
     - taxonomy.vocabulary.bh_public_stage
   content:
+    - 'taxonomy_term:bh_disposition_type:10a68d66-7263-4127-8d25-3ef2e77e2442'
+    - 'taxonomy_term:bh_disposition_type:52c4c5ca-0553-4bbd-b252-100b905bb3e1'
+    - 'taxonomy_term:bh_disposition_type:54069c19-3390-4498-8017-7bdc36dbec0f'
+    - 'taxonomy_term:bh_disposition_type:556966ed-3b2e-4b14-b139-dd4a5d8b0c25'
+    - 'taxonomy_term:bh_disposition_type:646f6b93-08aa-4b4c-bb10-101bc5e27f9b'
+    - 'taxonomy_term:bh_disposition_type:7bf7f8cc-71ad-44f2-85a2-602fa5ffbe8e'
+    - 'taxonomy_term:bh_disposition_type:7c2daebc-e9f6-42e5-b0ad-503bbbab6cab'
+    - 'taxonomy_term:bh_disposition_type:893cb285-055e-4d33-9611-e7df426b37f8'
+    - 'taxonomy_term:bh_disposition_type:a3b7b36d-6211-439d-8496-5b38bf9962a8'
+    - 'taxonomy_term:bh_disposition_type:ba42059b-1dd7-4905-b2be-745899bf0f70'
+    - 'taxonomy_term:bh_disposition_type:c8abb217-9fff-4317-b117-9721b3eb2359'
+    - 'taxonomy_term:bh_disposition_type:ec433cc7-c35c-4d81-aaf0-a2996cc0d96e'
     - 'taxonomy_term:bh_project_stage:03b7f0c1-b52c-4127-99cd-237b5fc4c33d'
     - 'taxonomy_term:bh_project_stage:1c5fe858-da97-499d-ae3a-fe9f27b4d576'
     - 'taxonomy_term:bh_project_stage:718ae635-919c-4d1d-9161-a9ac9dff2fe4'
@@ -2794,7 +2808,7 @@ display:
                 weight: 0
                 settings:
                   image_path: /modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m
-                  styles: "[\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m1.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m2.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m3.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m4.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m5.png\"\r\n  }\r\n]"
+                  styles: "[\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#FFFFFF\",\r\n    \"anchor\": [0, 0],\r\n    \"height\": 21,\r\n    \"width\": 21,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m1.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#FFFFFF\",\r\n    \"anchor\": [0, 0],\r\n    \"height\": 21,\r\n    \"width\": 21,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m2.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m3.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m4.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m5.png\"\r\n  }\r\n]"
                   zoom_on_click: true
                   grid_size: 30
                   minimum_cluster_size: 3
@@ -3988,6 +4002,63 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: string
+        field_bh_disposition_type_target_id:
+          id: field_bh_disposition_type_target_id
+          table: node__field_bh_disposition_type
+          field: field_bh_disposition_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: not
+          value:
+            34236: 34236
+            34031: 34031
+            34006: 34006
+            33906: 33906
+            34111: 34111
+            34011: 34011
+            34041: 34041
+            34016: 34016
+            34001: 34001
+            33976: 33976
+            33981: 33981
+            34096: 34096
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: bh_disposition_type
+          hierarchy: true
+          error_message: true
+          plugin_id: taxonomy_index_tid
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
@@ -5002,6 +5073,69 @@ display:
           empty_zero: false
           hide_alter_empty: false
           plugin_id: custom
+        field_bh_disposition_type:
+          id: field_bh_disposition_type
+          table: node__field_bh_disposition_type
+          field: field_bh_disposition_type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       defaults:
         fields: false
         pager: false
@@ -5287,6 +5421,63 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: string
+        field_bh_disposition_type_target_id:
+          id: field_bh_disposition_type_target_id
+          table: node__field_bh_disposition_type
+          field: field_bh_disposition_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: not
+          value:
+            34236: 34236
+            34031: 34031
+            34006: 34006
+            33906: 33906
+            34111: 34111
+            34011: 34011
+            34041: 34041
+            34016: 34016
+            34001: 34001
+            33976: 33976
+            33981: 33981
+            34096: 34096
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: bh_disposition_type
+          hierarchy: true
+          error_message: true
+          plugin_id: taxonomy_index_tid
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
@@ -5373,9 +5564,9 @@ display:
       tags:
         - 'config:field.storage.node.body'
         - 'config:field.storage.node.field_bh_coordinates'
+        - 'config:field.storage.node.field_bh_disposition_type'
         - 'config:field.storage.node.field_bh_parcel_id'
         - 'config:field.storage.node.field_bh_project_stage'
         - 'config:field.storage.node.field_bh_project_status'
         - 'config:field.storage.node.field_bh_public_stage'
         - 'config:field.storage.node.field_bh_total_num_units'
-
