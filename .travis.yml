@@ -9,7 +9,6 @@ branches:
   only:
     - develop
     - master
-    - contactform_honeypot
     
 php:
   - 7.3
@@ -120,9 +119,4 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: contactform_honeypot
       
