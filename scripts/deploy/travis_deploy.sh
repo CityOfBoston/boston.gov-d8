@@ -143,7 +143,7 @@
                   . ${deploy_dir}/${webapps_local_source}
             rm -f ${tmp_excludes_file}
             ls -la ${deploy_dir}/
-            cp ${TRAVIS_BUILD_DIR}/composer.json ${dist_dir}/composer.json
+            cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
             ls -la ${deploy_dir}/
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
