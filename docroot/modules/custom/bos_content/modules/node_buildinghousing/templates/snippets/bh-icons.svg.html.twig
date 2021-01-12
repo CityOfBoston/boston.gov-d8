@@ -419,6 +419,53 @@
         </clipPath>
       </defs>
   {% endset %}
+{% elseif type == 'timeline-building' %}
+  {% set defaults = {
+    width : 75,
+    heigh: 75,
+    viewBox: '0 0 75 75',
+    fill: '#288BE4'
+  } %}
+
+  {% set svg %}
+      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}"/>
+      <path d="M44.8357 32.413V18.9706H31.0339V16.664H26.4249V18.9706H22.6475V52.3908H32.3H44.8357H54.4882V32.413H44.8357Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
+      <path d="M31.0289 44.0378H26.4199V48.6467H31.0289V44.0378Z" fill="white"/>
+      <path d="M41.2584 44.0378H36.6494V48.6467H41.2584V44.0378Z" fill="white"/>
+      <path d="M51.4879 44.0378H46.8789V48.6467H51.4879V44.0378Z" fill="white"/>
+      <path d="M31.0289 37.0721H26.4199V41.681H31.0289V37.0721Z" fill="white"/>
+      <path d="M41.2584 37.0721H36.6494V41.681H41.2584V37.0721Z" fill="white"/>
+      <path d="M51.4879 37.0721H46.8789V41.681H51.4879V37.0721Z" fill="white"/>
+      <path d="M31.0289 30.1064H26.4199V34.7154H31.0289V30.1064Z" fill="white"/>
+      <path d="M41.2584 30.1064H36.6494V34.7154H41.2584V30.1064Z" fill="white"/>
+      <path d="M31.0289 23.145H26.4199V27.7539H31.0289V23.145Z" fill="white"/>
+      <path d="M41.2584 23.145H36.6494V27.7539H41.2584V23.145Z" fill="white"/>
+  {% endset %}
+{% elseif type == 'rfp-building-permit' %}
+  {% set defaults = {
+    width : 50,
+    heigh: 50,
+    viewBox: '0 0 50 50',
+    fill: 'none'
+  } %}
+
+  {% set svg %}
+      <path d="M7.84288 9.48975V35.5314H4.02344V35.9724C4.03295 37.1593 4.50326 38.2961 5.33509 39.1429C6.16692 39.9896 7.29519 40.48 8.48177 40.5106L41.388 40.4897C42.5688 40.5074 43.7084 40.0566 44.5577 39.2361C45.4069 38.4155 45.8964 37.2919 45.9193 36.1113L45.9818 9.50016L7.84288 9.48975ZM8.51649 39.4863C7.69062 39.4623 6.89936 39.1492 6.28068 38.6016C5.662 38.054 5.25515 37.3066 5.13108 36.4897H36.9019C37.0095 37.6473 37.5698 38.7155 38.4609 39.462L8.51649 39.4863ZM44.8984 36.1113C44.898 36.558 44.8088 37.0002 44.6358 37.4121C44.4629 37.824 44.2098 38.1973 43.8912 38.5105C43.5725 38.8236 43.1948 39.0702 42.78 39.2359C42.3651 39.4017 41.9215 39.4832 41.4748 39.4759C39.447 39.4759 38.0512 38.0071 38.0512 36.0036V35.4897H8.88455V10.5314H44.954L44.8984 36.1113Z" fill="#288BE4"/>
+      <path d="M38.4588 39.4687H8.51432C7.68845 39.4447 6.89719 39.1316 6.27851 38.584C5.65983 38.0364 5.25298 37.289 5.12891 36.4722H36.8997C36.9499 37.0496 37.1135 37.6115 37.381 38.1256C37.6485 38.6398 38.0147 39.0962 38.4588 39.4687Z" fill="white"/>
+      <path d="M44.9523 10.5312L44.8967 36.111C44.8963 36.5579 44.8071 37.0003 44.6342 37.4123C44.4613 37.8244 44.2082 38.198 43.8896 38.5114C43.5711 38.8248 43.1934 39.0718 42.7785 39.2379C42.3637 39.404 41.9199 39.486 41.4731 39.4791C39.4453 39.4791 38.0495 38.0069 38.0495 36.0069V35.493H8.88281V10.5312H44.9523Z" fill="white"/>
+      <path d="M41.1396 14.2397H25.0771V15.2641H41.1396V14.2397Z" fill="#288BE4"/>
+      <path d="M41.1396 18.3404H25.0771V19.3647H41.1396V18.3404Z" fill="#288BE4"/>
+      <path d="M41.1396 22.441H25.0771V23.4653H41.1396V22.441Z" fill="#288BE4"/>
+      <path d="M41.1396 26.5417H25.0771V27.566H41.1396V26.5417Z" fill="#288BE4"/>
+      <path d="M41.1396 30.6423H25.0771V31.6666H41.1396V30.6423Z" fill="#288BE4"/>
+      <path d="M22.23 18.0938H11.7266V30.2014H22.23V18.0938Z" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M10.8633 20.1876H23.1272L22.1758 16.8994H11.8112L10.8633 20.1876Z" fill="white" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M20.1428 15.7049H18.3477V18.0973H20.1428V15.7049Z" fill="white" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M16.385 25.5659H13.2461V30.1979H16.385V25.5659Z" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M16.2387 21.3818H13.3984V24.2221H16.2387V21.3818Z" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M20.7202 21.3819H17.8799V24.2222H20.7202V21.3819Z" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M20.7202 25.566H17.8799V28.4063H20.7202V25.566Z" stroke="#288BE4" stroke-miterlimit="10" stroke-linecap="round"/>
+  {% endset %}
 
 {% else %}
   {% set defaults = {
@@ -436,7 +483,7 @@
 {% set width =  width ?? defaults.width ?? NULL %}
 {% set height =  height ?? defaults.height ?? NULL %}
 {% set viewBox =  viewBox ?? defaults.viewBox ?? NULL %}
-{% set fill =  fill ?? defaults.fill ?? NULL %}
+{% set fill =  fill ?? defaults.fill ?? 'none' %}
 
 
 <svg

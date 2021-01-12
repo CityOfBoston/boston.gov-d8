@@ -112,6 +112,18 @@ function node_buildinghousing_theme()
         "currentState" => 'present',
       ],
     ],
+    'bh_project_timeline_rfp' => [
+      'template' => 'snippets/bh-project-timeline-rfp',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "url" => NULL,
+        "rfpListIcon" => NULL,
+        "currentState" => 'present',
+      ],
+    ],
     'bh_project_timeline_document' => [
       'template' => 'snippets/bh-project-timeline-document',
       'variables' => [
@@ -134,7 +146,7 @@ function node_buildinghousing_theme()
         'width' => NULL,
         'height' => NULL,
         'viewBox' => NULL,
-        'fill' => "none",
+        'fill' => NULL,
       ],
     ],
   ];
