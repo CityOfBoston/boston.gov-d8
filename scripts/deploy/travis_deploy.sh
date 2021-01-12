@@ -114,33 +114,14 @@
             printout "ACTION" "Copying Drupal files from Release Candidate to create a Deploy Artifact."
             # Initially, use rsync to copy everything except webapp files.
             # Files/folders to be copied are specified in the files-from file.
-            # Excluding those files/folders in the exclude-from file,
-            #  - but always including those in the include-from file.
-            # first, we need to make sure the webapps folder is excluded.
-            tmp_excludes_file=${deploy_dir}/docroot/sites/default/settings/exclude.txt
-            cd ${TRAVIS_BUILD_DIR} &&
-              cp ${deploy_from_file} ${tmp_excludes_file} &&
-              printf "\n${webapps_local_source}/ \n" >> ${tmp_excludes_file}
-            # Now copy.
-            cd ${TRAVIS_BUILD_DIR} &&
-              pwd &&
-              rsync \
-                  -rlDW \
-                  --files-from=${deploy_from_file} \
-                  --exclude-from=${tmp_excludes_file} \
-                  --include-from=${deploy_includes_file} \
-                  . ${deploy_dir}/
-            # Finally, use rsync to copy the webapp folders which can then have their own inclusion/exclusion rules.
-            printout "ACTION" "Copying across webapp js/css files."
-            cd ${TRAVIS_BUILD_DIR}/${webapps_local_source} &&
-              pwd &&
-              rsync \
-                  -rlDW \
-                  --files-from=${webapps_rsync_from_file} \
-                  --exclude-from=${webapps_rsync_excludes_file} \
-                  --include-from=${webapps_rsync_includes_file} \
-                  . ${deploy_dir}/${webapps_local_source}
-            rm -f ${tmp_excludes_file}
+            # Excluding those files/folders in the exclude-from file, and deleting files from the
+            # repo which aren't in the delpoy candidate.
+            rsync \
+                -rlDW \
+                --delete-excluded \
+                --files-from=${deploy_from_file} \
+                --exclude-from=${tmp_excludes_file} \
+                ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
 
             # Force composer.json - or else drush get broken.
             # TODO: figure out anchoring in rsync include file to make sure the  composer.json file gets copied.

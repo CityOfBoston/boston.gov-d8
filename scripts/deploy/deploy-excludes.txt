@@ -1,15 +1,40 @@
-.git/
-.idea/
+# IDE generated files
+.idea
+.css*
+.eslint*
+.editorconfig
+
+# Unwanted files from the docroot
+docroot/web.config
 docroot/sites/default/files
 docroot/sites/default/settings/settings.terraform.php
 docroot/sites/default/settings/settings.travis.php
 docroot/example.gitignore
+
+# Acquia hook files that aren't needed
 hooks/samples
 hooks/templates
-.css*
-.eslint*
-.editorconfig
+
+# Git files
+.git
 .gitignore
 .gitattributes
+
+# Any package files
 package.json
-docroot/web.config
+package-lock.json
+
+# Detailed exclusions for webapps.
+#   - must add enough of the full path to ensure accurate removals.
+node_modules
+bos_web_app/apps/**/src
+bos_web_app/apps/**/*.html
+bos_web_app/apps/**/*.json
+bos_web_app/apps/**/postcss*.*
+bos_web_app/apps/**/jest*.*
+bos_web_app/apps/**/gulp*.*
+bos_web_app/apps/**/webpack*.*
+bos_web_app/apps/**/babel*.*
+bos_web_app/apps/**/favicon.ico
+bos_web_app/apps/**/_*
+bos_web_app/apps/**/.*
