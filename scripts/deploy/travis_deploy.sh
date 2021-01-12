@@ -145,7 +145,7 @@
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
-            chmod -R +x ${deploy_dir}/hooks/*.sh
+            chmod -R +x ${deploy_dir}/hooks/
 
             printout "SUCCESS" "All files copied and the Deploy Artifact is now fully constructed and ready.\n"
 
@@ -171,7 +171,7 @@
                 printf "       environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the\n"
                 printf "       deployment to the Acquia environment.\n"
 
-                if [[ "${public_repo_push}" == "true" ]]; then
+                if [[ "${git_public_repo_push}" == "true" ]]; then
                     printout "INFO" "The deployment hand-off to Acquia is complete."
                     printout "INFO" "The Release Candidate will now be sanitized and copied across to the public repo."
                     printout "ACTION" "Select files and copy files into distribution folders at."
