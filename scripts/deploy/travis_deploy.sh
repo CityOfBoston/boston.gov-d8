@@ -95,7 +95,7 @@
 
             printout "ACTION" "Creating and checking-out the <${deploy_branch}> branch in new repo."
             cd ${deploy_dir} &&
-                git checkout -b ${deploy_branch} &
+                git checkout -b ${deploy_branch} &&
                 printout "SUCCESS" "Checked out ${deploy_branch} locally."
 
             printout "ACTION" "Fetching & merging files from remote (Acquia) repo."
@@ -159,10 +159,12 @@
                 printout "ACTION" "Committing code in deploy_dir to local branch."
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
-                    git add . --all &&
-                    git status &&
+                    printf "${Bold}working tree status:${NC}\n" &&
+                    git status --short &&
+                    git add --all &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
+                  git status
                   printout "WARNING" "No changes to the deployed codebase were found."
                   printout "INFO" "There was nothing to deploy to Acquia."
                   exit 0
