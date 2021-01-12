@@ -4,15 +4,13 @@
  * Default theme implementation for detail item.
  *
  * Available variables:
- * - title: The title value of the item.
  * - label: The label value of the item.
- * - body: The content value of the item.
  * - icon: The icon value of the detail item.
+ * - fileIcon: The icon value of the detail item.
  * - date:
- * - time:
  * - link:
- * - addTOCal:
  * - currentState:
+ * - documents:
  *
  * - classes: Array of classes to be applied to detail, icon, label, and body
  *   elements.
@@ -20,48 +18,63 @@
 #}
 
 
-<div class="bh-project-timeline-moment g g--12 timeline-document-{{ currentState }}" >
+<div class="bh-project-timeline-moment g g--12 timeline-documents timeline-document-{{ currentState }}">
 
   <div class="g g--4">
-    <div class="g--7 m-t500">
+    <div class="g--7">
       <h6 class="m-v000 bh-timeline-season t--cb">{{ date }}</h6>
     </div>
-
     <div typeof="foaf:Image" class="bh-project-timeline-icon g--5">
       {{ icon }}
     </div>
-
   </div>
 
-  <div class="g--8 m-t400 m-b600 m-h100 p-a000  bh-project-timeline-content">
-    <h5 class="m-b100 m-t100 t--ob t--bold">{{ label }}</h5>
 
-    <div class="b b--w m-t600 p-a600">
+  <div class="g--8 m-b600 m-h100 p-a000  bh-project-timeline-content" style="margin-top: -3.5rem;">
 
-      <div class="t--title t--ob">{{ title }}</div>
+      {% for document in documents %}
 
-      <h6 class="m-v000">{{ date }} {{ time }}</h6>
+        {% if loop.index <= 2 %}
 
-      <div class=""><p>{{ body }}</p></div>
+          <div class="g--8 m-t400 m-b600 m-h100 p-a000" style="height: 124px;">
+            <div class="fl--l bg--cb p-a200 m-r300" style="height: 124px;">{{ fileIcon }}</div>
+            <div class="b b--w p-a300" style="height: 124px; width: 450px;">
+              <h6 class="m-v000">{{ document.label }}</h6>
+              <div class="t--ob"><a href="{{ document.url }}">{{ document.link }}</a></div>
+            </div>
+          </div>
+        {% endif %}
 
 
-      <div class="g">
+      {% endfor %}
 
-        <div class="m-v200 g--6">
-          <a class="btn btn--b btn--200 btn--c" href="{{ addTOCal }}">Add to Cal</a>
+    {% if documents|length > 2 %}
+      <div class="bh-drawer dr">
+        <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
+        <label for="dr-tr1" class="dr-h">
+          <div class="dr-t show-more-docs">+ View {{ documents|length - 2 }} More Documents</div>
+          <div class="dr-t hide-more-docs">- Hide {{ documents|length - 2 }} More Documents</div>
+        </label>
+        <div class="dr-c">
+
+          {% for document in documents %}
+
+            {% if loop.index > 2 %}
+              <div class="g--8 m-t400 m-b600 m-h100 p-a000" style="height: 124px;">
+                <div class="fl--l bg--cb p-a200 m-r300" style="height: 124px;">{{ fileIcon }}</div>
+                <div class="b b--w p-a300" style="height: 124px; width: 450px;">
+                  <h6 class="m-v000">{{ document.label }}</h6>
+                  <div class="t--ob"><a href="{{ document.url }}">{{ document.link }}</a></div>
+                </div>
+              </div>
+            {% endif %}
+
+          {% endfor %}
+
         </div>
-
-        <div class="m-v200 g--6">
-          <a class="btn btn--b btn--200" href="{{ link }}">Lean More</a>
-        </div>
-
       </div>
 
-    </div>
-
-
-
-
+    {% endif %}
 
   </div>
 
