@@ -122,6 +122,7 @@
               cp ${deploy_from_file} ${tmp_excludes_file} &&
               printf "\n${webapps_local_source}/ \n" >> ${tmp_excludes_file}
             # Now copy.
+            echo "TRAVIS_BUILD_DIR ${TRAVIS_BUILD_DIR}"
             ls -la ${TRAVIS_BUILD_DIR}
             cd ${TRAVIS_BUILD_DIR} &&
               rsync \
@@ -131,18 +132,18 @@
                   --include-from=${deploy_includes_file} \
                   . ${deploy_dir}/
             # Finally, use rsync to copy the webapp folders which can then have their own inclusion/exclusion rules.
+            ls -la ${deploy_dir}/
             printout "ACTION" "Copying across webapp js/css files."
-            cd ${webapps_local_source} &&
+            cd ${TRAVIS_BUILD_DIR}/${webapps_local_source} &&
               rsync \
                   -rlDW \
-                  --delete-excluded \
                   --files-from=${webapps_rsync_from_file} \
                   --exclude-from=${webapps_rsync_excludes_file} \
                   --include-from=${webapps_rsync_includes_file} \
                   . ${deploy_dir}/${webapps_local_source}
             rm -f ${tmp_excludes_file}
             ls -la ${deploy_dir}/
-            cp composer.json ${dist_dir}/composer.json
+            cp ${TRAVIS_BUILD_DIR}/composer.json ${dist_dir}/composer.json
             ls -la ${deploy_dir}/
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
