@@ -80,35 +80,37 @@
             printout "ACTION" "Setting permissions on Drupal settings files."
             chmod -R 777 ${TRAVIS_BUILD_DIR}/docroot/sites/default/settings
             if [[ ! -d ${deploy_dir}/docroot/sites/default/settings ]]; then
-              mkdir ${deploy_dir}/docroot/sites/default/settings
+              mkdir -p ${deploy_dir}/docroot/sites/default/settings
             fi
-            chmod -R 777 ${deploy_dir}/docroot/sites/default/settings
+            chmod -R 777 ${deploy_dir}/docroot/sites/default/settings &&
+              printout "SUCCESS" "Deploy folders prepared."
 
             printout "ACTION" "Initializing a new git repo in deploy directory, and adding remote (to Acquia repo)."
             remote_name=$(echo "${deploy_remote}" | openssl md5 | cut -d' ' -f 2)
             cd ${deploy_dir} &&
                 git init &&
                 git config gc.pruneExpire 3.days.ago &&
-                git remote add ${remote_name} ${deploy_remote}
+                git remote add ${remote_name} ${deploy_remote} &&
+                printout "SUCCESS" "Local repo created, initialized and set with Acquia remote."
 
             printout "ACTION" "Creating and checking-out the <${deploy_branch}> branch in new repo."
             cd ${deploy_dir} &&
-                git checkout -b ${deploy_branch}
+                git checkout -b ${deploy_branch} &
+                printout "SUCCESS" "Checked out ${deploy_branch} locally."
+
 
             printout "ACTION" "Fetching & merging files from remote (Acquia) repo."
             cd ${deploy_dir} &&
                 git fetch ${remote_name} &> /dev/null &&
                 git merge ${remote_name}/${deploy_branch} &> /dev/null &&
                 rm -f .git/gc.log &&
-                git prune &> /dev/null
+                git prune &> /dev/null &&
+                printout "SUCCESS" "Remote repo merged into the local repo."
 
             printout "SUCCESS" "Initialized the Deploy Artifact repo in <${deploy_dir}>.\n"
 
             # Move files from the Deploy Candidate into the Acquia Repo.
-            printout "INFO" "Deployment to Acquia involves taking the Release Candidate (which was created previously) and"
-            printout "INFO" "committing selected files into a branch in the Acquia Repo. "
-            printout "INFO" "Selecting and copying files from the Release Candidate creats a Deploy Artifact which can be committed/pushed "
-            printout "INFO" "to an Acquia Repo.\n"
+            printout "INFO" "Deployment to Acquia involves taking the Release Candidate (which was created previously) and committing selected files into a branch in the Acquia Repo.\nSelecting and copying files from the Release Candidate creates a Deploy Artifact which can be committed/pushed to an Acquia Repo.\n"
             printout "ACTION" "Copying Drupal files from Release Candidate to create a Deploy Artifact."
             # Initially, use rsync to copy everything except webapp files.
             # Files/folders to be copied are specified in the files-from file.
@@ -138,6 +140,7 @@
                   --include-from=${webapps_rsync_includes_file} \
                   . ${deploy_dir}/${webapps_local_source}
             rm -f ${tmp_excludes_file}
+            ls -la ${deploy_dir}/
 
             # Removes any gitignore files in contrib or custom modules.
             printout "ACTION" "Removing un-needed git config files."
@@ -151,29 +154,23 @@
 
             if [[ "${deploy_dry_run}" == "false" ]]; then
 
-                printout "INFO" "As far as this script is concerned, deploying the Deploy Artifact is acheived by pushing it"
-                printout "INFO" "to the <${deploy_branch}> branch of the remote Acquia-hosted repo."
-                printout "INFO" "Acquia's git server monitors commits to branches and uses 'webhooks' to launch scripts in the"
-                printout "INFO" "/hooks folders. Those scripts help customize/complete the deployment onto the actual environments.\n"
+                printout "INFO" "As far as this script is concerned, deploying the Deploy Artifact is acheived by pushing it to the <${deploy_branch}> branch of the remote Acquia-hosted repo.\nAcquia's git server monitors commits to branches and uses 'webhooks' to launch scripts in the /hooks folders. Those scripts help customize/complete the deployment onto the actual environments.\n"
                 printout "ACTION" "Committing code in deploy_dir to local branch."
-                deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to "
+                deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
                     git add --all &&
                     git commit -m "${deploy_commitMsg}" --quiet &&
                     printout "SUCCESS" "Code committed to local git branch.\n"
 
-                printout "INFO" "The Deploy Candidate (in <${TRAVIS_BRANCH}> branch) is now ready to deploy to Acquia as <${deploy_branch}>."
+                printout "INFO" "The Deploy Candidate (in <${TRAVIS_BRANCH}> branch) is now ready to deploy to Acquia as <${deploy_branch}>.\n"
                 printout "ACTION" "Pushing local branch to Acquia repo."
                 cd ${deploy_dir} &&
                     git push ${remote_name} ${deploy_branch} &&
                     printout "SUCCESS" "Branch pushed to Acquia repo.\n"
-                printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an"
-                printf "       environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the\n"
-                printf "       deployment to the Acquia environment.\n"
+                printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the deployment to the Acquia environment.\n"
 
                 if [[ "${git_public_repo_push}" == "true" ]]; then
-                    printout "INFO" "The deployment hand-off to Acquia is complete."
-                    printout "INFO" "The Release Candidate will now be sanitized and copied across to the public repo."
+                    printout "INFO" "The deployment hand-off to Acquia is complete.\nThe Release Candidate will now be sanitized and copied across to the public repo."
                     printout "ACTION" "Select files and copy files into distribution folders at."
 
                     dist_dir="${git_public_repo_dir}"
