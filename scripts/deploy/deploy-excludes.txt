@@ -1,8 +1,8 @@
 # This file excludes files that are not needed on Acquia servers.
 
 # Exclude all IDE & editor config folders.
-.git
-.idea
+.git/
+.idea/
 
 # Exclude all media files we have created or cached locally.
 docroot/sites/default/files
@@ -26,3 +26,6 @@ hooks/templates
 
 # Exclude any package files.
 package*.json
+
+# Microsoft stuff
+docroot/web.config
