@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
 use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
+use Drupal\webform\Plugin\WebformElement\DateTime;
 
 /**
  * Plugin implementation of the 'entity reference taxonomy term Building Housing Public Stage' formatter.
@@ -20,12 +21,14 @@ use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
  *   }
  * )
  */
-class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceFormatterBase {
+class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceFormatterBase
+{
 
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
+  public function viewElements(FieldItemListInterface $items, $langcode)
+  {
     $parent_entity = $items->getEntity();
     $elements = [];
 
@@ -39,7 +42,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       if ($stageCurrentState == 'past' && $stageIsActive) {
         $stageCurrentState = 'present';
-      }elseif ($stageCurrentState == 'present' && !$stageIsActive) {
+      } elseif ($stageCurrentState == 'present' && !$stageIsActive) {
         $stageCurrentState = 'future';
       }
 
@@ -86,6 +89,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       if ($stageCurrentState == 'present') {
 //        $elements[] = $this->getMeetings($parent_entity);
 //        $elements[] = $this->getTexts($parent_entity);
+        $elements[] = $this->getRFP($parent_entity);
         $elements[] = $this->getDocuments($parent_entity);
       }
 
@@ -98,9 +102,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   }
 
 
-  private function getStageDate($project, $stage) {
+  private function getStageDate($project, $stage)
+  {
 
-    switch ($stage->getName()){
+    switch ($stage->getName()) {
       case 'Project Launch':
         $date = $project->get('field_bh_project_start_date')->value ?? null;
         break;
@@ -132,12 +137,12 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $stageDate = $date ? $this->dateToSeason($date) : '';
 
 
-
     return $stageDate ?? $date ?? '';
   }
 
 
-  public function getMeetings($project) {
+  public function getMeetings($project)
+  {
     $elements = [];
 
     $data = [
@@ -155,13 +160,12 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
 
-    //@TODO: RM - temp hide
-    return [];
 
     return $elements;
   }
 
-  public function getTexts($project) {
+  public function getTexts($project)
+  {
     $elements = [];
 
     $data = [
@@ -177,13 +181,43 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
 
-    //@TODO: RM - temp hide
-    return [];
+    return $elements;
+  }
+
+  public function getRFP($project)
+  {
+    $elements = [];
+
+    $today = new \DateTime('now');
+    $rfpDate = $project->get('field_bh_rfp_issued_date')->value ?? null;
+
+    if ($rfpDate) {
+
+      $rfpDate = new \DateTime($rfpDate);
+
+      $data = [
+        'label' => t('Go to RFP list'),
+        'url' => '/departments/neighborhood-development/requests-proposals', //@TODO: change out with config?
+        'title' => t('Request For Proposals (RFP) Open for Bidding'),
+        'body' => t('Visit the link below to learn more.'),
+        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'timeline-building', 'fill' => '#288BE4']),
+        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'timeline-building', 'fill' => '#091F2F']),
+        'rfpListIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
+        'date' => $rfpDate->format('M j, Y'),
+        'currentState' => 'present',
+      ];
+
+//      if ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY
+      if ($today->getTimestamp() >= $rfpDate->getTimestamp()) { //CORRECT
+        $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
+      }
+    }
 
     return $elements;
   }
 
-  public function getDocuments($project) {
+  public function getDocuments($project)
+  {
     $elements = [];
 
     $data = [
@@ -242,7 +276,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   /**
    * {@inheritdoc}
    */
-  public static function isApplicable(FieldDefinitionInterface $field_definition) {
+  public static function isApplicable(FieldDefinitionInterface $field_definition)
+  {
     // This formatter is only available for taxonomy terms.
     $isTaxonomyTerm = $field_definition->getFieldStorageDefinition()->getSetting('target_type') == 'taxonomy_term';
     $isNode = $field_definition->getTargetEntityTypeId();
@@ -250,17 +285,19 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     if ($isTaxonomyTerm && $isNode && $isBHProject) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
 
-  private function getPublicStages () {
+  private function getPublicStages()
+  {
     $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? null;
     return $publicStages;
   }
 
-  private function dateToSeason($date) {
+  private function dateToSeason($date)
+  {
     $season = '';
     $seasonDate = new \DateTime($date);
     $monthDayDate = $seasonDate->format('md');
