@@ -109,7 +109,7 @@
             printout "INFO" "committing selected files into a branch in the Acquia Repo. "
             printout "INFO" "Selecting and copying files from the Release Candidate creats a Deploy Artifact which can be committed/pushed "
             printout "INFO" "to an Acquia Repo.\n"
-            printout "ACTION" "Copying files from Release Candidate to create a Deploy Artifact."
+            printout "ACTION" "Copying Drupal files from Release Candidate to create a Deploy Artifact."
             # Initially, use rsync to copy everything except webapp files.
             # Files/folders to be copied are specified in the files-from file.
             # Excluding those files/folders in the exclude-from file,
@@ -128,7 +128,7 @@
                   --include-from=${deploy_includes_file} \
                   . ${deploy_dir}/
             # Finally, use rsync to copy the webapp folders which can then have their own inclusion/exclusion rules.
-            printout "ACTION" "Removing un-needed webapp source files."
+            printout "ACTION" "Copying across webapp js/css files."
             cd ${webapps_local_source} &&
               rsync \
                   -rlDW \
@@ -145,7 +145,7 @@
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
-            chmod +x ${deploy_dir}/hooks/**/*.sh
+            chmod -R +x ${deploy_dir}/hooks/*.sh
 
             printout "SUCCESS" "All files copied and the Deploy Artifact is now fully constructed and ready.\n"
 
