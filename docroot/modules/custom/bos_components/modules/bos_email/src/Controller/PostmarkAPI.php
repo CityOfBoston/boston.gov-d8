@@ -118,7 +118,7 @@ class PostmarkAPI extends ControllerBase {
       $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
 
-    if ($auth == TRUE) :
+    if ($auth == TRUE && $emailFields["honey"] == "") :
       $data["server"] = $server;
 
       $postmark_ops = new PostmarkOps();
@@ -185,7 +185,7 @@ class PostmarkAPI extends ControllerBase {
         }
         else {
           // Check for blank fields.
-          if ($value == "") {
+          if ($value == "" && $key !== "honey") {
             $error = "Subject and Message fields must have values.";
             break;
           }
