@@ -1,28 +1,40 @@
-# This file excludes files that are not needed on Acquia servers.
-
-# Exclude all IDE & editor config folders.
-.git
+# IDE generated files
 .idea
-
-# Exclude all media files we have created or cached locally.
-docroot/sites/default/files
-
-# Exclude settings which are not relevant to aquia hosted sites.
-docroot/sites/default/settings/settings.terraform.php
-docroot/sites/default/settings/settings.travis.php
-
-# Exclude unwanted hook files (Acquia supplied these templates).
-hooks/samples
-hooks/templates
-
-# Exclude files related to linting, CDI environments etc.
 .css*
 .eslint*
 .editorconfig
 
-# Exclude git generated files.
+# Unwanted files from the docroot
+docroot/web.config
+docroot/sites/default/files
+docroot/sites/default/settings/settings.terraform.php
+docroot/sites/default/settings/settings.travis.php
+docroot/example.gitignore
+
+# Acquia hook files that aren't needed
+hooks/samples
+hooks/templates
+
+# Git files
+.git
 .gitignore
 .gitattributes
 
-# Exclude any package files.
-package*.json
+# Any package files
+package.json
+package-lock.json
+
+# Detailed exclusions for webapps.
+#   - must add enough of the full path to ensure accurate removals.
+node_modules
+bos_web_app/apps/**/src
+bos_web_app/apps/**/*.html
+bos_web_app/apps/**/*.json
+bos_web_app/apps/**/postcss*.*
+bos_web_app/apps/**/jest*.*
+bos_web_app/apps/**/gulp*.*
+bos_web_app/apps/**/webpack*.*
+bos_web_app/apps/**/babel*.*
+bos_web_app/apps/**/favicon.ico
+bos_web_app/apps/**/_*
+bos_web_app/apps/**/.*
