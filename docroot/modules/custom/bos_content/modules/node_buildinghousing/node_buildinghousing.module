@@ -407,13 +407,16 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
 
     if (array_key_exists($computedProjectType['label'], $typeIconMapping)) {
       $vars['icon'] = \Drupal::theme()->render('bh_icons', ['type' => $typeIconMapping[$computedProjectType['label']]]);
-      $render = ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
+    }elseif (isset($computedProjectType['body']) && $computedProjectType['body'] == "Use To Be Determined"){
+      $vars['title'] = t('What are we building?');
+      $vars['label'] = t('To Be Determined'); //@TODO: chang out for field and move logic to above function
+      $vars['bgColor'] = '#58585B';
+      $vars['body'] = null;
     }else{
-      $render = [];
+      return [];
     }
 
-    return $render;
-
+    return ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
   }
 }
 
