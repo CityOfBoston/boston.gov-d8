@@ -50,7 +50,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $vars = [];
 
       $stageTitle = $publicStageTerm->get('field_display_title') ?? null;
-      $stageIcon = $publicStageTerm->get('field_icon') ?? null;
+//      $stageIcon = $publicStageTerm->get('field_icon') ?? null;
+      $stageIcon = $this->getStageIcon($publicStageTerm->getName(), $stageCurrentState) ?? null;
       $stageDescription = $publicStageTerm->get('description') ?? null;
       $stageDate = $this->getStageDate($parent_entity, $publicStageTerm);
 
@@ -58,7 +59,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         continue;
       }
 
-      $vars['icon'] = $stageIcon->view('icon');
+//      $vars['icon'] = $stageIcon->view('icon');
+      $vars['icon'] = $stageIcon;
       $vars['label'] = $stageTitle->view(['label' => 'hidden']);
       $vars['body'] = $stageDescription->view(['label' => 'hidden']);
       $vars['date'] = $stageDate;
@@ -101,6 +103,21 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 //    return $elements;
   }
 
+  private function getStageIcon ($stage, $stageCurrentState) {
+
+    $stageIconMapping = [
+      'Project Launch' => 'community-feedback',
+      'Selecting Developer' => 'selecting-a-developer',
+      'City Planning Process' => 'in-city-planning',
+      'In Construction' => 'in-construction',
+      'Project Completed' => 'completed',
+      'Not Active' => '',
+    ];
+
+    $color = $stageCurrentState == 'present' ? 'ob' : 'cb';
+
+    return \Drupal::theme()->render('bh_icons', ['type' => $stageIconMapping[$stage], 'fill' => $color]) ?? [];
+  }
 
   private function getStageDate($project, $stage)
   {
