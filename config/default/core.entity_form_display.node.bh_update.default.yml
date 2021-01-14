@@ -5,10 +5,14 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_follower_emails
     - field.field.node.bh_update.field_bh_headline
+    - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
+    - field.field.node.bh_update.field_bh_project_web_link
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
+    - field.field.node.bh_update.field_sf_web_update
     - node.type.bh_update
   module:
     - content_moderation
@@ -46,6 +50,14 @@ content:
     third_party_settings: {  }
     type: file_generic
     region: content
+  field_bh_follower_emails:
+    weight: 129
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
   field_bh_headline:
     weight: 123
     settings:
@@ -53,6 +65,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textfield
+    region: content
+  field_bh_project_images:
+    weight: 127
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
   field_bh_project_ref:
     weight: 122
@@ -63,6 +85,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: entity_reference_autocomplete
+    region: content
+  field_bh_project_web_link:
+    weight: 128
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
     region: content
   field_bh_update_posted_date:
     weight: 126
@@ -79,6 +109,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: entity_reference_autocomplete
+    region: content
+  field_sf_web_update:
+    weight: 130
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   langcode:
     type: language_select
