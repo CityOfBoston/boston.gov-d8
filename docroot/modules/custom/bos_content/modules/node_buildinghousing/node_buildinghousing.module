@@ -253,7 +253,7 @@ function node_buildinghousing_preprocess_field(&$variables)
       case 'body':
         $webUpdate = BuildingHousingUtils::getWebUpdate($project);
 
-        if ($webUpdateGoalText = $webUpdate->get('body')->value) {
+        if (!empty($webUpdate) && $webUpdateGoalText = $webUpdate->get('body')->value) {
           $variables["items"][0]["content"]["#text"] = $webUpdateGoalText ?? $variables["items"][0]["content"]["#text"];
         }
 
