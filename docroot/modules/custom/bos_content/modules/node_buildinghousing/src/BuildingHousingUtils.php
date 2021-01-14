@@ -13,10 +13,38 @@ class BuildingHousingUtils {
 
 
   public $publicStage = NULL;
+  public $project = NULL;
+  public $webUpdate = NULL;
+
 
   public static function helloWorld () {
 
     return 'Hello Building Housing World!';
+  }
+
+  public static function getWebUpdate ($projectEntity) {
+    $webUpdate = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+      'field_bh_project_ref' => $projectEntity->id(),
+        'type' => 'bh_update',
+        'field_sf_web_update' => true
+      ])
+      ?? null;
+
+    if ($webUpdate && count($webUpdate) >= 1) {
+      return reset($webUpdate);
+    }
+
+    return false;
+  }
+
+  public function setProjectWebLink (&$entity) {
+
+    $project = $entity->get('field_bh_project_ref')->target_id ? \Drupal::entityTypeManager()->getStorage('node')->load($entity->get('field_bh_project_ref')->target_id) : null;
+
+    $projectWebLink = $project->toLink()->getUrl()->setAbsolute(true)->toString() ?? '';
+    $entity->set('field_bh_project_web_link', $projectWebLink);
+
+    return $projectWebLink;
   }
 
   public function setPublicStage (&$entity) {
@@ -172,7 +200,6 @@ class BuildingHousingUtils {
     return $this->publicStage = $publicStage;
   }
 
-
   public static function getProjectRecordType ($projectEntity) {
     $projectRecordType = \Drupal\taxonomy\Entity\Term::load($projectEntity->get('field_bh_record_type')->target_id)->name->value ?? null;
     $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
@@ -200,9 +227,10 @@ class BuildingHousingUtils {
     return $streetViewPhotoSet;
   }
 
+  public function updateProjectGoalsFieldDisplay (&$entity) {
 
 
-
+  }
 
 
 

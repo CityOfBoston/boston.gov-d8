@@ -186,14 +186,18 @@ function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface 
 {
   if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_project') {
 
-
     $bhUtils = new \Drupal\node_buildinghousing\BuildingHousingUtils();
-
     $publicStage = $bhUtils->setPublicStage($entity);
 
     //$streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
 
 
+  }
+
+
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_update') {
+    $bhUtils = new \Drupal\node_buildinghousing\BuildingHousingUtils();
+    $projectWebLink = $bhUtils->setProjectWebLink($entity);
   }
 
 
@@ -243,6 +247,15 @@ function node_buildinghousing_preprocess_field(&$variables)
         }
 
         $variables['items'][0]['content']['#markup'] = $value;
+
+        break;
+
+      case 'body':
+        $webUpdate = BuildingHousingUtils::getWebUpdate($project);
+
+        if ($webUpdateGoalText = $webUpdate->get('body')->value) {
+          $variables["items"][0]["content"]["#text"] = $webUpdateGoalText ?? $variables["items"][0]["content"]["#text"];
+        }
 
         break;
     }
