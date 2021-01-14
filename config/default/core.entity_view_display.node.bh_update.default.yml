@@ -5,10 +5,14 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_follower_emails
     - field.field.node.bh_update.field_bh_headline
+    - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
+    - field.field.node.bh_update.field_bh_project_web_link
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
+    - field.field.node.bh_update.field_sf_web_update
     - node.type.bh_update
   module:
     - datetime
@@ -37,12 +41,27 @@ content:
     third_party_settings: {  }
     type: file_default
     region: content
+  field_bh_follower_emails:
+    weight: 110
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
   field_bh_headline:
     weight: 104
     label: above
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_bh_project_images:
+    weight: 108
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
   field_bh_project_ref:
     weight: 103
@@ -51,6 +70,14 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_bh_project_web_link:
+    weight: 109
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
     region: content
   field_bh_update_posted_date:
     weight: 107
@@ -69,8 +96,28 @@ content:
     third_party_settings: {  }
     type: entity_reference_label
     region: content
+  field_sf_web_update:
+    weight: 111
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
   links:
     weight: 100
+    region: content
+  salesforce_id:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  salesforce_last_sync:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
     region: content
 hidden:
   langcode: true
