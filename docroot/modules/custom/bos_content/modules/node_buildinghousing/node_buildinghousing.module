@@ -396,9 +396,21 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
 //    $vars['title'] = t('What are we building?');
     $vars['title'] = null;
     $vars['bgColor'] = $computedProjectType['bgColor'] ?? '#091f2f';
-    $vars['icon'] = $computedProjectType['icon'] ?? null;
+//    $vars['icon'] = $computedProjectType['icon'] ?? null;
 
-    $render = ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
+
+    $typeIconMapping = [
+      'Open Space' => 'open-space',
+      'Business' => 'commercial',
+      'Housing' => 'housing',
+    ];
+
+    if (array_key_exists($computedProjectType['label'], $typeIconMapping)) {
+      $vars['icon'] = \Drupal::theme()->render('bh_icons', ['type' => $typeIconMapping[$computedProjectType['label']]]);
+      $render = ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
+    }else{
+      $render = [];
+    }
 
     return $render;
 
