@@ -19,7 +19,7 @@ const L = process.browser ? require('leaflet') : {};
 
 // We set up the ESRI feature service URL for parcels.
 const parcels_url =
-  'https://services.arcgis.com/sFnw0xNflSi8J0uh/arcgis/rest/services/parcels_all_testing/FeatureServer/0';
+  'https://services.arcgis.com/sFnw0xNflSi8J0uh/ArcGIS/rest/services/AbutterParcels_Oct2020/FeatureServer/0';
 
 class Map extends React.Component {
   componentDidMount() {
