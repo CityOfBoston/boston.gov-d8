@@ -87,12 +87,19 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
+
+
+      if ($publicStageTerm->getName() == 'Selecting Developer'){
+        $elements[] = $this->getRFP($parent_entity);
+      }
+
+
+
       //@TODO: THis is just a temp place to put the meeting for styling dev
       if ($stageCurrentState == 'present') {
 //        $elements[] = $this->getMeetings($parent_entity);
 //        $elements[] = $this->getTexts($parent_entity);
-        $elements[] = $this->getRFP($parent_entity);
-        $elements[] = $this->getDocuments($parent_entity);
+        //$elements[] = $this->getDocuments($parent_entity);
       }
 
     }
