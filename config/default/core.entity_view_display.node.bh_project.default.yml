@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_attachments
     - field.field.node.bh_project.field_bh_commitment_letter_date
     - field.field.node.bh_project.field_bh_construct_complete_date
     - field.field.node.bh_project.field_bh_construction_start_date
@@ -340,6 +341,15 @@ content:
         fences_field_item_classes: m-t600
         fences_label_tag: h2
         fences_label_classes: 'sh cl sh-title'
+  field_bh_attachments:
+    type: entity_reference_entity_view
+    weight: 25
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    region: content
   field_bh_coordinates:
     type: geolocation_map
     weight: 6
