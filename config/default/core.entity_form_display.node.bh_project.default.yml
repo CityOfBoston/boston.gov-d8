@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_attachments
     - field.field.node.bh_project.field_bh_commitment_letter_date
     - field.field.node.bh_project.field_bh_construct_complete_date
     - field.field.node.bh_project.field_bh_construction_start_date
@@ -75,6 +76,13 @@ content:
     type: datetime_timestamp
     weight: 3
     settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_bh_attachments:
+    type: media_library_widget
+    weight: 51
+    settings:
+      media_types: {  }
     third_party_settings: {  }
     region: content
   field_bh_commitment_letter_date:
