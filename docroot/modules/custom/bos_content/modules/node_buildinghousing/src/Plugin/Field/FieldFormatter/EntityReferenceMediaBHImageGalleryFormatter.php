@@ -63,7 +63,30 @@ class EntityReferenceMediaBHImageGalleryFormatter extends EntityReferenceFormatt
       ],
     ]);
 
-    array_unshift($elements[0][0], ['#markup' => '<div class="t--subinfo">3</div>']);
+//    array_unshift($elements[0][0], ['#markup' => '<div class="t--subinfo">3</div>']);
+
+    $mainImage = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => [
+          'main-photo-container',
+        ],
+      ],
+    ];
+
+    $mainImage['photo'] = $elements[0][0];
+//    $mainImage['countOverlay'] = [
+//      '#type' => 'html_tag',
+//      '#tag' => 'h4',
+//      '#value' => t('3+ Photos'),
+//      '#attributes' => [
+//        'class' => [
+//          'main-photo-overlay',
+//        ],
+//      ],
+//    ];
+
+    $elements[0][0] = $mainImage;
 
     return $elements;
   }
