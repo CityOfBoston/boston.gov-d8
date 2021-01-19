@@ -12,7 +12,7 @@ id: bh_project_notification_signup
 title: 'Building Housing: Project Notifications Sign-up'
 description: ''
 category: ''
-elements: "enter_email_for_notifications_on_this_project:\n  '#type': email\n  '#title': 'Enter email for notifications on this project'\n  '#wrapper_attributes':\n    style: 'margin: 3rem 0 1rem 0;'\n  '#label_attributes':\n    class:\n      - 'cb-l--sans t--cb lh--200'\n  '#format_items': comma\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#attributes':\n    class:\n      - 'm-b600 p-b600'\n  '#submit__attributes':\n    class:\n      - 'btn btn--sm btn--100'\n    style: 'width: 12rem; height: 3rem;'"
+elements: "title_basic:\n  '#type': webform_markup\n  '#wrapper_attributes':\n    class:\n      - 't--info br br-b200 m-b400 p-b200'\n  '#markup': 'Want project updates?'\ndescription:\n  '#type': processed_text\n  '#wrapper_attributes':\n    class:\n      - 't--subinfo t--cb'\n  '#text': |\n    <p>The Development Officer may contact you about upcoming meetings and major milestones. Check this page for the most up to date information.</p>\n    \n  '#format': filtered_html\nname:\n  '#type': textfield\n  '#title': Name\n  '#format_items': comma\n  '#required': true\nemail_address:\n  '#type': email\n  '#title': 'Email Address'\n  '#format_items': comma\n  '#required': true\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#attributes':\n    class:\n      - 'm-b600 p-b600'\n  '#submit__attributes':\n    class:\n      - 'btn btn--b btn--100'\n    style: 'height: 3rem;'"
 css: ''
 javascript: ''
 settings:
@@ -114,7 +114,7 @@ settings:
   draft_pending_multiple_message: ''
   confirmation_type: inline
   confirmation_title: ''
-  confirmation_message: 'Thank you for signing up for Notifications about this Project. &nbsp;'
+  confirmation_message: "<div class=\"t--info br br-b200 m-b400 p-b200\" id=\"edit-title-basic\">Want project updates?</div>\r\n<h5>email submitted</h5>\r\n<p class=\"t--subinfo\">Thanks for your interest! This is not an automated mailing list, so be sure to check this page for the most up to date information.</p>"
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: false
