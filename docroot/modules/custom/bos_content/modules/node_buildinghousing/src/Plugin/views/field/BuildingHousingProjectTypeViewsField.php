@@ -96,6 +96,9 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase
         case "Business":
           $iconType = 'maplist-business';
           break;
+        case "Abutter Sale":
+          $iconType = 'maplist-sale';
+          break;
         default:
           $iconType = 'maplist-other';
           break;
