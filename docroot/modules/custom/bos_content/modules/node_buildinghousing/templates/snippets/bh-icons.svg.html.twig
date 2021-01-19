@@ -755,7 +755,23 @@
       <path d="M1.82143 45.8218L51.75 45.8218V39.6789L1.82143 39.6789V45.8218Z" fill="white" stroke="white" stroke-width="0.89" stroke-miterlimit="10"/>
   {% endset %}
 
+{% elseif type == 'camera' %}
+  {% set defaults = {
+    width : 77,
+    heigh: 54,
+    viewBox: '0 0 77 54',
+    fill: 'none'
+  } %}
 
+  {% set svg %}
+      <path d="M56.4173 10.1954L51.6394 2H28.5202L24.2668 10.1954H2V52H75.4552V10.1954H56.4173Z" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M18.005 4.45044H5.52344V10.1954H18.005V4.45044Z" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M40.3721 47.6976C50.728 47.6976 59.1231 39.3025 59.1231 28.9466C59.1231 18.5907 50.728 10.1956 40.3721 10.1956C30.0162 10.1956 21.6211 18.5907 21.6211 28.9466C21.6211 39.3025 30.0162 47.6976 40.3721 47.6976Z" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M40.372 43.2638C48.2793 43.2638 54.6893 36.8537 54.6893 28.9465C54.6893 21.0392 48.2793 14.6292 40.372 14.6292C32.4648 14.6292 26.0547 21.0392 26.0547 28.9465C26.0547 36.8537 32.4648 43.2638 40.372 43.2638Z" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M11.3819 19.9478C12.8483 19.9478 14.0372 18.759 14.0372 17.2925C14.0372 15.826 12.8483 14.6372 11.3819 14.6372C9.91538 14.6372 8.72656 15.826 8.72656 17.2925C8.72656 18.759 9.91538 19.9478 11.3819 19.9478Z" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M58.5 23.6111H75.4562" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M2 23.6111H22.2426" stroke="#58585B" stroke-width="3" stroke-miterlimit="10" stroke-linecap="round"/>
+  {% endset %}
 
 
 

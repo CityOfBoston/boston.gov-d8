@@ -316,6 +316,48 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   }
 
+
+  if ($display->getComponent('field_bh_project_images')) {
+
+    if (empty($entity->get('field_bh_project_images')->count())) {
+      $mainImage = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => [
+            'main-photo-container',
+          ],
+        ],
+      ];
+
+      $mainImage['wrapper'] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => [
+            'main-photo-wrapper',
+          ],
+        ],
+      ];
+
+
+      $mainImage['wrapper']['icon'] = [
+        '#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'camera']),
+      ];
+
+      $mainImage['wrapper']['no-photo'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'h4',
+        '#value' => t('No photos uploaded (yet!)'),
+        '#attributes' => [
+          'class' => [
+            'main-photo-placeholder',
+          ],
+        ],
+      ];
+
+      $build['field_bh_project_images'] = $mainImage;
+    }
+  }
+
 }
 
 function _node_buildinghousing_build_render_project_meeting_notice($entity)
