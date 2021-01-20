@@ -460,6 +460,7 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
       return [];
     }
 
+    //@TODO: Move to ent conf and set on term
     if ($computedProjectType['label'] == 'Abutter Sale') {
       $vars['bgColor'] = '#58585B';
     }

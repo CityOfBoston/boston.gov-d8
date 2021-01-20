@@ -3,6 +3,7 @@
 namespace Drupal\node_buildinghousing\EventSubscriber;
 
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\salesforce\Event\SalesforceEvents;
@@ -23,7 +24,8 @@ use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
  *
  * @package Drupal\salesforce_example
  */
-class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterface {
+class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterface
+{
 
   use StringTranslationTrait;
 
@@ -101,13 +103,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    * @param \Drupal\salesforce_mapping\Event\SalesforceQueryEvent $event
    *   The event.
    */
-  public function pullQueryAlter(SalesforceQueryEvent $event) {
+  public function pullQueryAlter(SalesforceQueryEvent $event)
+  {
     $mapping = $event->getMapping();
     switch ($mapping->id()) {
       case 'building_housing_projects':
 
         //$query = $event->getQuery();
         //$query->fields[] = "(SELECT Id, Name FROM Project_Manager__r LIMIT 2)";
+
+        break;
+      case 'bh_website_update':
+        $query = $event->getQuery();
+        $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
+//        $query->fields[] = "(SELECT Id, ContentType, Name FROM Attachments LIMIT 20)";
+        $query->limit = 5;
 
         break;
       case 'building_housing_project_update':
@@ -133,7 +143,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    * @param \Drupal\salesforce_mapping\Event\SalesforcePullEvent $event
    *   The event.
    */
-  public function pullPresave(SalesforcePullEvent $event) {
+  public function pullPresave(SalesforcePullEvent $event)
+  {
     $mapping = $event->getMapping();
     switch ($mapping->id()) {
       case 'building_housing_projects':
@@ -144,27 +155,27 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
 
         //$project->set()
-            try {
-              $projectManagerId = $sf_data->field('Project_Manager__c') ?? null;
-              if ($projectManagerId) {
-                $projectManager = $client->objectRead('User',  $projectManagerId);
-              }else{
-                $projectManager = null;
-              }
-            }
-            catch (Exception $exception) {
-              $projectManager = null;
-            };
+        try {
+          $projectManagerId = $sf_data->field('Project_Manager__c') ?? null;
+          if ($projectManagerId) {
+            $projectManager = $client->objectRead('User', $projectManagerId);
+          } else {
+            $projectManager = null;
+          }
+        } catch (Exception $exception) {
+          $projectManager = null;
+        };
 
 
-            if ($projectManager) {
-              $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
-              $project->set('field_project_manager_email', $projectManager->field('Email'));
-              $project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
-            }
+        if ($projectManager) {
+          $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
+          $project->set('field_project_manager_email', $projectManager->field('Email'));
+          $project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
+        }
 
         break;
       case 'building_housing_project_update':
+      case 'bh_website_update':
         // In this example, given a Contact record, do a just-in-time fetch for
         // Attachment data, if given.
         $update = $event->getEntity();
@@ -176,8 +187,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $attachments = [];
         try {
           $attachments = $sf_data->field('Attachments');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
           // noop, fall through.
         }
         if (@$attachments['totalSize'] < 1) {
@@ -196,8 +206,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           // Fetch the attachment body, via RestClient::httpRequestRaw.
           try {
             $file_data = $client->httpRequestRaw($attachment_url);
-          }
-          catch (\Exception $e) {
+          } catch (\Exception $e) {
             // Unable to fetch file data from SF.
             \Drupal::logger('db')->error($this->t('Failed to fetch attachment for Update @update', ['@update' => $update->id()]));
             return;
@@ -205,7 +214,28 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           // Fetch file destination from account settings.
 
-          $destination = "public://buildinghousing/project-update/" . $sf_data->field('Name') . "-attachment-" . $attachment['Name'];
+          if ($projectName = $update->get('field_bh_project_ref')->referencedEntities()[0]->getTitle()) {
+
+            $fileTypeToDirMappings = [
+              'image/jpeg' => 'image',
+              'image/png' => 'image',
+              'application/pdf' => 'document',
+            ];
+
+            $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
+
+
+
+            $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/" . date('Y-m', time()) . "/";
+            $fileName = $attachment['Name'];
+
+            if (file_prepare_directory($storageDirPath, FILE_CREATE_DIRECTORY)) {
+              $destination = $storageDirPath . $fileName;
+            } else {
+              continue;
+            }
+          }
+
 
           // Attach the new file id to the user entity.
           /* var \Drupal\file\FileInterface */
@@ -213,13 +243,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             //$update->field_bh_attachment->target_id = $file->id();
             if ($key == 0) {
               $update->set('field_bh_attachment', ['target_id' => $file->id()]);
-            }else{
+            } else {
               $update->get('field_bh_attachment')->appendItem(['target_id' => $file->id()]);
             }
 
-          }
-          else {
+          } else {
             \Drupal::logger('db')->error('failed to save Attachment file for BH Update ' . $update->id());
+            continue;
           }
 
         }
@@ -229,13 +259,14 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     }
   }
 
-//  /**
-//   * PULL_PREPULL event subscriber example.
-//   */
-//  public function pullPrepull(SalesforcePullEvent $event) {
-//    // For the "contact" mapping, if the SF record is marked "Inactive", do not
-//    // pull the record and block the user account.
-//    $mapping = $event->getMapping();
+  /**
+   * PULL_PREPULL event subscriber example.
+   */
+  public function pullPrepull(SalesforcePullEvent $event)
+  {
+    // For the "contact" mapping, if the SF record is marked "Inactive", do not
+    // pull the record and block the user account.
+    $mapping = $event->getMapping();
 //    switch ($mapping->id()) {
 //      case 'contact':
 //        $sf_data = $event->getMappedObject()->getSalesforceRecord();
@@ -258,12 +289,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 //          $account->block()->save();
 //        }
 //    }
-//  }
+  }
 
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents()
+  {
     $events = [
 //      SalesforceEvents::PUSH_ALLOWED => 'pushAllowed',
 //      SalesforceEvents::PUSH_PARAMS => 'pushParamsAlter',
@@ -271,7 +303,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 //      SalesforceEvents::PUSH_FAIL => 'pushFail',
       SalesforceEvents::PULL_PRESAVE => 'pullPresave',
       SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
-//      SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+      SalesforceEvents::PULL_PREPULL => 'pullPrepull',
     ];
     return $events;
   }
