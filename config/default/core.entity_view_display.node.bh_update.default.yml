@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.bh_update.field_bh_attachment
     - field.field.node.bh_update.field_bh_follower_emails
     - field.field.node.bh_update.field_bh_headline
+    - field.field.node.bh_update.field_bh_image
     - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
     - field.field.node.bh_update.field_bh_project_web_link
@@ -54,6 +55,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
+    region: content
+  field_bh_image:
+    weight: 112
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    type: file_default
     region: content
   field_bh_project_images:
     weight: 108
