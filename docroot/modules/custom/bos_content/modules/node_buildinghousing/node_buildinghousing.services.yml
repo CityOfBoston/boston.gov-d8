@@ -9,3 +9,8 @@ services:
     arguments: []
     tags:
       - { name: event_subscriber }
+  node_buildinghousing.pullPrepull:
+    class: Drupal\node_buildinghousing\EventSubscriber\SalesforceBuildingHousingUpdateSubscriber
+    arguments: []
+    tags:
+      - { name: event_subscriber }
