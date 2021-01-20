@@ -214,8 +214,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           // Fetch file destination from account settings.
 
-          if ($projectName = $update->get('field_bh_project_ref')->referencedEntities()[0]->getTitle()) {
+          //@TODO: change out title for url alias
+          if ($project = $update->get('field_bh_project_ref')->referencedEntities()[0]) {
 
+            $projectName = basename($project->url()) ?? 'unknown';
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
               'image/png' => 'image',
@@ -235,7 +237,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             }
 
             if ($fileType == 'image') {
-              $fieldName = 'field_bh_project_images';
+              $fieldName = 'field_bh_image';
             } else {
               $fieldName = 'field_bh_attachment';
             }
