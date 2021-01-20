@@ -41,10 +41,12 @@ class BuildingHousingUtils {
 
     $project = $entity->get('field_bh_project_ref')->target_id ? \Drupal::entityTypeManager()->getStorage('node')->load($entity->get('field_bh_project_ref')->target_id) : null;
 
-    $projectWebLink = $project->toLink()->getUrl()->setAbsolute(true)->toString() ?? NULL;
-    $entity->set('field_bh_project_web_link', $projectWebLink);
+    if ($project) {
+      $projectWebLink = $project->toLink()->getUrl()->setAbsolute(true)->toString() ?? NULL;
+      $entity->set('field_bh_project_web_link', $projectWebLink);
 
-    return $projectWebLink;
+      return $projectWebLink;
+    }
   }
 
   public function setPublicStage (&$entity) {
