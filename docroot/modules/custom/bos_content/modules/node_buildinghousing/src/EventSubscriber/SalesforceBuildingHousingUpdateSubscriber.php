@@ -132,7 +132,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // Add a condition:
 //        $query->addCondition('Email', "''", '!=');
         // Add a limit:
-        $query->limit = 5;
+        $query->limit = 50;
         break;
     }
   }
