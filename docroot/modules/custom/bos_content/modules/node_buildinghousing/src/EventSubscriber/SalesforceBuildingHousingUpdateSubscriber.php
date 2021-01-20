@@ -225,7 +225,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
 
 
-
             $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/" . date('Y-m', time()) . "/";
             $fileName = $attachment['Name'];
 
@@ -234,22 +233,27 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             } else {
               continue;
             }
-          }
 
-
-          // Attach the new file id to the user entity.
-          /* var \Drupal\file\FileInterface */
-          if ($file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
-            //$update->field_bh_attachment->target_id = $file->id();
-            if ($key == 0) {
-              $update->set('field_bh_attachment', ['target_id' => $file->id()]);
+            if ($fileType == 'image') {
+              $fieldName = 'field_bh_project_images';
             } else {
-              $update->get('field_bh_attachment')->appendItem(['target_id' => $file->id()]);
+              $fieldName = 'field_bh_attachment';
             }
 
-          } else {
-            \Drupal::logger('db')->error('failed to save Attachment file for BH Update ' . $update->id());
-            continue;
+            // Attach the new file id to the user entity.
+            /* var \Drupal\file\FileInterface */
+            if ($file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
+              //$update->field_bh_attachment->target_id = $file->id();
+              if ($key == 0) {
+                $update->set($fieldName, ['target_id' => $file->id()]);
+              } else {
+                $update->get($fieldName)->appendItem(['target_id' => $file->id()]);
+              }
+
+            } else {
+              \Drupal::logger('db')->error('failed to save Attachment file for BH Update ' . $update->id());
+              continue;
+            }
           }
 
         }
