@@ -39,7 +39,7 @@ class WinterResources extends React.Component {
     const contentSnowParkingRestrictions = [
       {
         content: (
-            <div>There may be other snow routes or emergency parking areas near you. <a href={"/departments/311/snow-emergency-parking"} className="mnl-link">Check here for all of the information.</a></div>
+            <div>There may be other snow emergency arteries or emergency parking areas near you. <a href={"/departments/311/snow-emergency-parking"} className="mnl-link">View all available information.</a></div>
         )
       }
     ];
@@ -68,7 +68,7 @@ class WinterResources extends React.Component {
           {/* Snow Routes */}
           {(configCards.snow_route.display) ? (
             <MnlCard
-              title={"A Snow Route Near You"}
+              title={"A Snow Emergency Artery Near You"}
               image_header={
                 configProps.globals.pathImage+"plan.svg"
               }
