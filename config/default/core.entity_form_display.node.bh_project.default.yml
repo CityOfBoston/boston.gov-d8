@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_attachment
     - field.field.node.bh_project.field_bh_attachments
     - field.field.node.bh_project.field_bh_commitment_letter_date
     - field.field.node.bh_project.field_bh_construct_complete_date
@@ -43,14 +44,17 @@ dependencies:
     - field.field.node.bh_project.field_bh_units_total
     - field.field.node.bh_project.field_bh_wysiwyg_photo_a
     - field.field.node.bh_project.field_project_manager_email
+    - image.style.thumbnail
     - node.type.bh_project
   module:
     - content_moderation
     - datetime
+    - file
     - geolocation
     - media_library
     - path
     - publication_date
+    - svg_image
     - telephone
     - text
     - viewfield
@@ -77,6 +81,13 @@ content:
     weight: 3
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_bh_attachment:
+    weight: 53
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
     region: content
   field_bh_attachments:
     type: media_library_widget
@@ -207,12 +218,13 @@ content:
     type: datetime_default
     region: content
   field_bh_project_images:
-    type: media_library_widget
-    weight: 39
+    type: image_image
+    weight: 52
     settings:
-      media_types: {  }
-    third_party_settings: {  }
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     region: content
+    third_party_settings: {  }
   field_bh_project_manager_name:
     weight: 41
     settings:

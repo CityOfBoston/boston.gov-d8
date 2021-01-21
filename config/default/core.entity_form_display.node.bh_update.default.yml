@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
     - field.field.node.bh_update.field_sf_web_update
+    - image.style.thumbnail
     - node.type.bh_update
   module:
     - content_moderation
@@ -21,6 +22,7 @@ dependencies:
     - file
     - path
     - publication_date
+    - svg_image
     - text
 _core:
   default_config_hash: 1oNBl1Om45boXnW8CY3VjrDC_Sl7-irQBNTeRORTYcY
@@ -75,15 +77,19 @@ content:
     type: file_generic
     region: content
   field_bh_project_images:
-    weight: 127
+    type: entity_browser_file
+    weight: 132
     settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
+      entity_browser: image_browser
+      field_widget_edit: true
+      field_widget_remove: true
+      view_mode: default
+      preview_image_style: thumbnail
+      open: true
+      field_widget_replace: false
+      selection_mode: selection_append
     region: content
+    third_party_settings: {  }
   field_bh_project_ref:
     weight: 122
     settings:

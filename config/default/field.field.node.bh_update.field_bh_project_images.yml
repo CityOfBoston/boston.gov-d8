@@ -1,11 +1,12 @@
-uuid: 35b0174f-fd92-4f51-98d2-8b28a7ecc9e5
+uuid: ade49b4e-5040-41f6-b093-005154a42c46
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_bh_project_images
-    - media.type.image
     - node.type.bh_update
+  module:
+    - image
 id: node.bh_update.field_bh_project_images
 field_name: field_bh_project_images
 entity_type: node
@@ -13,16 +14,25 @@ bundle: bh_update
 label: 'Project Images'
 description: ''
 required: false
-translatable: true
+translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:media'
-  handler_settings:
-    target_bundles:
-      image: image
-    sort:
-      field: _none
-    auto_create: false
-    auto_create_bundle: ''
-field_type: entity_reference
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: false
+  title_field: true
+  title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: image
