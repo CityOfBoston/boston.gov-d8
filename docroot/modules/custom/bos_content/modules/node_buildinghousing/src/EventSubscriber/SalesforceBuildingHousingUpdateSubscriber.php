@@ -245,7 +245,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
             // Attach the new file id to the user entity.
             /* var \Drupal\file\FileInterface */
-            if ( !file_exists($destination) && $file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
+            if (!file_exists($destination) && $file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
               //$update->field_bh_attachment->target_id = $file->id();
               if ($update->get($fieldName)->isEmpty()) {
                 $update->set($fieldName, ['target_id' => $file->id()]);
@@ -263,6 +263,31 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               }
               //$update->save();
 
+
+            } elseif (file_exists($destination)
+              && $file = \Drupal::entityTypeManager()
+                ->getStorage('file')
+                ->loadByProperties(['uri' => $destination])) {
+              $file = reset($file);
+              if ($project->get($fieldName)->isEmpty()) {
+                $project->set($fieldName, ['target_id' => $file->id()]);
+                $project->save();
+              } else {
+                if ($currentFiles = $project->get($fieldName)->getValue()) {
+                  $fileIsAttached = false;
+                  foreach ($currentFiles as $currentFileKey => $currentFile){
+                    if ($currentFile['target_id'] == $file->id()) {
+                      $fileIsAttached = true;
+                    }
+                  }
+
+                  if (!$fileIsAttached) {
+                    $project->get($fieldName)->appendItem(['target_id' => $file->id()]);
+                    $project->save();
+                  }
+                }
+
+              }
 
             } else {
               \Drupal::logger('db')->error('failed to save Attachment file for BH Update ' . $update->id());
