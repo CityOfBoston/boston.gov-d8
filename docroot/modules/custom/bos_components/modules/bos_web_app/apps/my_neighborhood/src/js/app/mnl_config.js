@@ -31,6 +31,9 @@ const configProps = {
         "state_federal_reps": {
           "display": true,
         },
+        "city_councilor_at_large": {
+          "display": true,
+        },
       },
     },
     "newsletter": {
@@ -95,6 +98,9 @@ const configProps = {
 				"snow_route": {
 					"display": true,
 				},
+        "snow_parking_restrictions": {
+          "display": true,
+        },
 			},
 		},
 		"bos_311": {
@@ -108,7 +114,7 @@ const configProps = {
     if (pageGoogle >= 0 || pageTranslate >= 0) {
 			return true;
 		}else{
-			return false;
+      return false;
 		}
 	}
 }
