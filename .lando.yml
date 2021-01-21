@@ -80,7 +80,8 @@ services:
       environment:
         DRUSH_OPTIONS_URI: "https://boston.lndo.site"
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
-        XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
+        XDEBUG_SESSION: "PHPSTORM"
+        XDEBUG_MODE: "debug"
     build_as_root:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild_as_root\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-appserver-customize.sh

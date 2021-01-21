@@ -67,6 +67,16 @@
     (mkdir ${patterns_local_repo_local_dir} &&
       printout "SUCCESS" "Patterns repo removed.\n") || printout "WARN" "Patterns repo was not removed.  Will try again later.\n"
 
+    # Enable Xdebug debugging.
+    # NOTE: for Linux hosts, client_host will be reset in scripts/local/boston-dev-php.ini
+    # which is omounted when container is restarted.
+    printout "ACTION" "Configure XDebug (v3) for use by PHP/Drupal developers"
+    echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&
+      echo "xdebug.client_host=host.docker.internal" >>/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&
+      echo "xdebug.client_port=9003" >>/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&
+      echo "xdebug.start_upon_error=yes" >>/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&
+      printout "SUCCESS" "XDebug is set up.\n" || printout "WARN" "Xdebug could not be reliably configured. see https://www.jetbrains.com/help/phpstorm/configuring-xdebug.html\n"
+
     # Change the permissions on the log file so that non-root user can add to log.
     chmod 777 ${LANDO_MOUNT}/setup/lando.log &>> ${setup_logs}/lando.log
 

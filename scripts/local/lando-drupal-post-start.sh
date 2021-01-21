@@ -94,6 +94,15 @@
 #    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
 #    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
 
+    # When the host is Linux, set the client_host
+    if [[ "${LANDO_HOST_OS}" == "linux" ]]; then
+      printout "ACTION" "Update Xdebug to listen for client_host=${LANDO_HOST_IP}"
+      # first look for an existing IP Match, then look for the local dns match
+      sed -i 's/client_host=[0-9.]{7,15}/client_host=${LANDO_HOST_IP}/' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&
+        sed -i 's/client_host=host.docker.internal/client_host=${LANDO_HOST_IP}/' /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini &&
+        printout "SUCCESS" "Xdebug updated" || printout "WARN" "Could not write to /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini file -see https://www.jetbrains.com/help/phpstorm/configuring-xdebug.html"
+    fi
+
     # Restart apache to get those files loaded.
     printout "ACTION" "Restart Apache service in Drupal container."
     service apache2 stop && service apache2 start &&

@@ -92,7 +92,8 @@ services:
       environment:
         DRUSH_OPTIONS_URI: "https://boston.lndo.site"
         PHP_IDE_CONFIG: "serverName=boston.lndo.site"
-        XDEBUG_CONFIG: "remote_enable=1 idekey=PHPSTORM"
+        XDEBUG_SESSION: "PHPSTORM"
+        XDEBUG_MODE: "debug"
         COMPOSER_MEMORY_LIMIT: "4G"
         BACKDROP_SETTINGS: ""
 
