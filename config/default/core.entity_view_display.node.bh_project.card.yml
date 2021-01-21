@@ -5,6 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.card
     - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_attachment
     - field.field.node.bh_project.field_bh_attachments
     - field.field.node.bh_project.field_bh_commitment_letter_date
     - field.field.node.bh_project.field_bh_construct_complete_date
@@ -167,6 +168,7 @@ content:
         fences_label_tag: div
         fences_label_classes: ''
 hidden:
+  field_bh_attachment: true
   field_bh_attachments: true
   field_bh_commitment_letter_date: true
   field_bh_construct_complete_date: true

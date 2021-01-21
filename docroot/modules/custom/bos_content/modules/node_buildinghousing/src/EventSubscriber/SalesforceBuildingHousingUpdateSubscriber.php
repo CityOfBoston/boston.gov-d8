@@ -237,7 +237,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             }
 
             if ($fileType == 'image') {
-              $fieldName = 'field_bh_image';
+//              $fieldName = 'field_bh_image';
+              $fieldName = 'field_bh_project_images';
             } else {
               $fieldName = 'field_bh_attachment';
             }
@@ -248,9 +249,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               //$update->field_bh_attachment->target_id = $file->id();
               if ($key == 0) {
                 $update->set($fieldName, ['target_id' => $file->id()]);
+                $project->set($fieldName, ['target_id' => $file->id()])->save();
               } else {
                 $update->get($fieldName)->appendItem(['target_id' => $file->id()]);
+                $project->get($fieldName)->appendItem(['target_id' => $file->id()])->save();
               }
+              //$update->save();
+
 
             } else {
               \Drupal::logger('db')->error('failed to save Attachment file for BH Update ' . $update->id());
@@ -259,7 +264,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
 
         }
-        //$update->save();
 
         break;
     }

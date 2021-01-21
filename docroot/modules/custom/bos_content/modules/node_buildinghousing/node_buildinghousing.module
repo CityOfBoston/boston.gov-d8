@@ -319,7 +319,9 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   if ($display->getComponent('field_bh_project_images')) {
 
-    if (empty($entity->get('field_bh_project_images')->count())) {
+    $images = $entity->get('field_bh_project_images');
+
+    if (empty($images->count())) {
       $mainImage = [
         '#type' => 'container',
         '#attributes' => [
