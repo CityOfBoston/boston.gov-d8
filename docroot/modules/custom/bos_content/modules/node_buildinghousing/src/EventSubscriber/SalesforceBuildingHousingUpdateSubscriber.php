@@ -245,14 +245,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
             // Attach the new file id to the user entity.
             /* var \Drupal\file\FileInterface */
-            if ($file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
+            if ( !file_exists($destination) && $file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
               //$update->field_bh_attachment->target_id = $file->id();
-              if ($key == 0) {
+              if ($update->get($fieldName)->isEmpty()) {
                 $update->set($fieldName, ['target_id' => $file->id()]);
-                $project->set($fieldName, ['target_id' => $file->id()])->save();
+                //$update->save();
               } else {
                 $update->get($fieldName)->appendItem(['target_id' => $file->id()]);
-                $project->get($fieldName)->appendItem(['target_id' => $file->id()])->save();
+              }
+
+              if ($project->get($fieldName)->isEmpty()) {
+                $project->set($fieldName, ['target_id' => $file->id()]);
+                $project->save();
+              } else {
+                $project->get($fieldName)->appendItem(['target_id' => $file->id()]);
+                $project->save();
               }
               //$update->save();
 
