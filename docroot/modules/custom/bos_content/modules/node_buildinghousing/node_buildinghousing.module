@@ -293,6 +293,12 @@ function node_buildinghousing_entity_extra_field_info()
         'weight' => 100,
         'visible' => TRUE,
       ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_follower_webform'] = [
+        'label' => t('Project Follower Webform'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
     }
   }
 
@@ -316,6 +322,10 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   }
 
+  if ($display->getComponent('bh_project_follower_webform')) {
+    $build['bh_project_follower_webform'] = _node_buildinghousing_build_render_project_follower_webform($entity);
+
+  }
 
   if ($display->getComponent('field_bh_project_images')) {
 
@@ -541,4 +551,21 @@ function _node_buildinghousing_get_computed_project_type($entity)
   $data['icon'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
 
   return $data;
+}
+
+
+
+function _node_buildinghousing_build_render_project_follower_webform($entity)
+{
+  $render = [];
+
+  $followers_form = \Drupal::entityTypeManager()
+    ->getStorage('webform')
+    ->load('bh_project_notification_signup');
+
+  $render = \Drupal::entityTypeManager()
+    ->getViewBuilder('webform')
+    ->view($followers_form);
+
+  return $render;
 }

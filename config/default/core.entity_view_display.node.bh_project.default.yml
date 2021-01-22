@@ -53,13 +53,11 @@ dependencies:
     - colorbox
     - fences
     - field_group
-    - file
     - geolocation
     - node_buildinghousing
     - text
     - user
     - viewfield
-    - webform
 third_party_settings:
   field_group:
     group_information:
@@ -70,7 +68,7 @@ third_party_settings:
         - group_photos
         - group_parcels
       parent_name: ''
-      weight: 14
+      weight: 15
       format_type: tabs
       region: hidden
       format_settings:
@@ -145,7 +143,7 @@ third_party_settings:
         - field_bh_project_status
         - field_bh_project_type
       parent_name: ''
-      weight: 13
+      weight: 14
       format_type: details
       region: hidden
       format_settings:
@@ -212,7 +210,7 @@ third_party_settings:
       children:
         - bh_computed_project_type
         - bh_project_meeting_notice
-        - field_bh_notification_signup
+        - bh_project_follower_webform
         - bh_project_manager_contact
       parent_name: group_content
       weight: 11
@@ -322,8 +320,13 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  bh_project_manager_contact:
+  bh_project_follower_webform:
     weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_manager_contact:
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -346,14 +349,6 @@ content:
         fences_field_item_classes: m-t600
         fences_label_tag: h2
         fences_label_classes: 'sh cl sh-title'
-  field_bh_attachment:
-    weight: 2
-    label: above
-    settings:
-      use_description_as_link_text: true
-    third_party_settings: {  }
-    type: file_default
-    region: content
   field_bh_coordinates:
     type: geolocation_map
     weight: 6
@@ -680,21 +675,6 @@ content:
         fences_label_classes: m-v200
     type: entity_reference_label
     region: content
-  field_bh_notification_signup:
-    weight: 5
-    label: hidden
-    settings:
-      source_entity: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: ''
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: webform_entity_reference_entity_view
-    region: content
   field_bh_project_images:
     weight: 5
     label: visually_hidden
@@ -896,6 +876,7 @@ content:
     type: advanced_text
     region: content
 hidden:
+  field_bh_attachment: true
   field_bh_attachments: true
   field_bh_commitment_letter_date: true
   field_bh_construct_complete_date: true
@@ -907,6 +888,7 @@ hidden:
   field_bh_initial_comm_mtg_date: true
   field_bh_initial_td_vote_date: true
   field_bh_meetings: true
+  field_bh_notification_signup: true
   field_bh_parcel_id: true
   field_bh_predicted_closing_date: true
   field_bh_project_complete_date: true

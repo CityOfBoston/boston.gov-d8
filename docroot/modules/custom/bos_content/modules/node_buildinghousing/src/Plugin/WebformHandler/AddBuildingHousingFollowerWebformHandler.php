@@ -34,7 +34,13 @@ class AddBuildingHousingFollowerWebformHandler extends WebformHandlerBase {
 
     if ($webform_submission->isCompleted()) {
       $project = $webform_submission->getSourceEntity() ?? null;
-      $webUpdate = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'bh_update', 'field_sf_web_update' => true, 'field_bh_project_ref' => $project->id()]);
+      $webUpdate = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->loadByProperties([
+          'type' => 'bh_update',
+          'field_sf_web_update' => true,
+          'field_bh_project_ref' => $project->id()
+        ]);
       $webUpdate = count($webUpdate) ? reset($webUpdate) : null;
 
       if ($webUpdate) {
