@@ -93,13 +93,15 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         $elements[] = $this->getRFP($parent_entity);
       }
 
+      if ($publicStageTerm->getName() == 'Project Completed') {
+        $elements[] = $this->getDocuments($parent_entity);
+      }
 
 
       //@TODO: THis is just a temp place to put the meeting for styling dev
       if ($stageCurrentState == 'present') {
 //        $elements[] = $this->getMeetings($parent_entity);
 //        $elements[] = $this->getTexts($parent_entity);
-        //$elements[] = $this->getDocuments($parent_entity);
       }
 
     }
@@ -244,54 +246,23 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   {
     $elements = [];
 
+    $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? null;
+
     $data = [
       'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
       "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-      'date' => 'DEC 15, 2020',
+//      'date' => 'DEC 15, 2020',
+      'date' => 'DOCUMENTS', //@TODO: TEMP
       'currentState' => 'present',
     ];
 
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - A.pdf',
-      'url' => '/events?a',
-    ];
-
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - B.pdf',
-      'url' => '/events?b',
-    ];
-
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - C.pdf',
-      'url' => '/events?c',
-    ];
-
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - D.pdf',
-      'url' => '/events?d',
-    ];
-
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - D.pdf',
-      'url' => '/events?d',
-    ];
-
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - D.pdf',
-      'url' => '/events?d',
-    ];
-
-    $data['documents'][] = [
-      'label' => t('developer presentation'),
-      'link' => 'WillemLevielle RFP Response - D.pdf',
-      'url' => '/events?d',
-    ];
+    foreach ($attachments as $key => $attachment) {
+      $data['documents'][] = [
+//        'label' => t('developer presentation'),
+        'link' => $attachment->getFilename(),
+        'url' => $attachment->createFileUrl(),
+      ];
+    }
 
     $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $data)];
     return $elements;
