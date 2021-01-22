@@ -116,8 +116,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       case 'bh_website_update':
         $query = $event->getQuery();
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
+        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
 //        $query->fields[] = "(SELECT Id, ContentType, Name FROM Attachments LIMIT 20)";
-        $query->limit = 5;
+//        $query->limit = 5;
 
         break;
       case 'building_housing_project_update':
@@ -183,6 +184,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $client = \Drupal::service('salesforce.client');
         $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
 
+        if ($mapping->id() == 'bh_website_update') {
+
+          // Fetch the files URL from raw sf data.
+          $attachments = [];
+          try {
+            $attachments = $sf_data->field('ContentDocumentLinks');
+          } catch (\Exception $e) {
+            // noop, fall through.
+          }
+          if (@$attachments['totalSize'] < 1) {
+            // If Attachments field was empty, do nothing.
+            return;
+          }
+        }else{
+
         // Fetch the attachment URL from raw sf data.
         $attachments = [];
         try {
@@ -194,14 +210,23 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           // If Attachments field was empty, do nothing.
           return;
         }
+      }
 
         foreach ($attachments['records'] as $key => $attachment) {
 
           // If Attachments field was set, it will contain a URL from which we can
           // fetch the attached binary. We must append "body" to the retreived URL
           // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_blob_retrieve.htm
-          $attachment_url = $attachment['attributes']['url'];
-          $attachment_url = $authProvider->getProvider()->getInstanceUrl() . $attachment_url . '/Body';
+          if ($mapping->id() == 'bh_website_update') {
+            //  /services/data/v47.0/sobjects/ContentVersion/[Id]/VersionData
+
+            $attachmentVersionId = $attachment['ContentDocument']['LatestPublishedVersionId'] ?? '';
+            $attachment_url = "sobjects/ContentVersion/" . $attachmentVersionId;
+            $attachment_url = $authProvider->getProvider()->getApiEndpoint() . $attachment_url . '/VersionData';
+          }else{
+            $attachment_url = $attachment['attributes']['url'];
+            $attachment_url = $authProvider->getProvider()->getInstanceUrl() . $attachment_url . '/Body';
+          }
 
           // Fetch the attachment body, via RestClient::httpRequestRaw.
           try {
@@ -214,21 +239,33 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           // Fetch file destination from account settings.
 
-          //@TODO: change out title for url alias
           if ($project = $update->get('field_bh_project_ref')->referencedEntities()[0]) {
 
             $projectName = basename($project->url()) ?? 'unknown';
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
+              'JPEG' => 'image',
               'image/png' => 'image',
+              'PNG' => 'image',
               'application/pdf' => 'document',
+              'PDF' => 'document',
             ];
 
-            $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
+            if ($mapping->id() == 'bh_website_update') {
+              $fileType = $fileTypeToDirMappings[$attachment['ContentDocument']['FileType']] ?? 'other';
+            } else {
+              $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
+            }
 
 
             $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/" . date('Y-m', time()) . "/";
-            $fileName = $attachment['Name'];
+
+
+            if ($mapping->id() == 'bh_website_update') {
+              $fileName = $attachment['ContentDocument']['Title'] . '.' . $attachment['ContentDocument']['FileExtension'];
+            } else {
+              $fileName = $attachment['Name'];
+            }
 
             if (file_prepare_directory($storageDirPath, FILE_CREATE_DIRECTORY)) {
               $destination = $storageDirPath . $fileName;
@@ -275,7 +312,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               } else {
                 if ($currentFiles = $project->get($fieldName)->getValue()) {
                   $fileIsAttached = false;
-                  foreach ($currentFiles as $currentFileKey => $currentFile){
+                  foreach ($currentFiles as $currentFileKey => $currentFile) {
                     if ($currentFile['target_id'] == $file->id()) {
                       $fileIsAttached = true;
                     }
