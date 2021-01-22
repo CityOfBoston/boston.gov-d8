@@ -249,22 +249,41 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? null;
 
     $data = [
-      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
-      "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-//      'date' => 'DEC 15, 2020',
-      'date' => 'DOCUMENTS', //@TODO: TEMP
-      'currentState' => 'present',
+//      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+//      "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
+////      'date' => 'DEC 15, 2020',
+//      'date' => 'DOCUMENTS', //@TODO: TEMP
+//      'currentState' => 'present',
     ];
 
     foreach ($attachments as $key => $attachment) {
-      $data['documents'][] = [
+      $date = date('Ymd',  $attachment->getCreatedTime());
+      $data['documents'][$date][] = [
 //        'label' => t('developer presentation'),
         'link' => $attachment->getFilename(),
         'url' => $attachment->createFileUrl(),
       ];
     }
 
-    $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $data)];
+
+
+    foreach ($data['documents'] as $documentDate => $documents) {
+
+      $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
+      $formattedDate = $formattedDate->format('M d Y');
+
+      $documentSet = [
+        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+        'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
+        'date' => $formattedDate,
+        'currentState' => 'present'
+      ];
+      $documentSet['documents'] = $documents;
+      $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
+
+    }
+
+
     return $elements;
   }
 
