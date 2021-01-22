@@ -116,7 +116,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       case 'bh_website_update':
         $query = $event->getQuery();
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
-        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
+        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
 //        $query->fields[] = "(SELECT Id, ContentType, Name FROM Attachments LIMIT 20)";
 //        $query->limit = 5;
 
@@ -306,6 +306,19 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                 ->getStorage('file')
                 ->loadByProperties(['uri' => $destination])) {
               $file = reset($file);
+
+
+              //@TODO: TEMP code to add in the created date for the files - RM and move above.
+              if ($mapping->id() == 'bh_website_update') {
+                $updatedDateTime = strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? $file->get('created')->value ?? time();
+              }else{
+                $updatedDateTime = strtotime($sf_data->field('CreatedDate')) ?? $file->get('created')->value ?? time();
+              }
+              $file->set('created', $updatedDateTime);
+              $file->save();
+              //END TEMP CODE
+
+
               if ($project->get($fieldName)->isEmpty()) {
                 $project->set($fieldName, ['target_id' => $file->id()]);
                 $project->save();
