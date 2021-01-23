@@ -276,7 +276,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
         'date' => $formattedDate,
-        'currentState' => 'present'
+        'currentState' => 'present',
+        'dateId' => $documentDate
       ];
       $documentSet['documents'] = $documents;
       $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
