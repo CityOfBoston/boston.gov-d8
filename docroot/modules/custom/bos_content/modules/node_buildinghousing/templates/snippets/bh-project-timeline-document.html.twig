@@ -8,6 +8,7 @@
  * - icon: The icon value of the detail item.
  * - fileIcon: The icon value of the detail item.
  * - date:
+ * - dateId:
  * - link:
  * - currentState:
  * - documents:
@@ -50,8 +51,8 @@
 
     {% if documents|length > 1 %}
       <div class="bh-drawer dr">
-        <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
-        <label for="dr-tr1" class="dr-h">
+        <input type="checkbox" id="dr-{{ dateId }}" class="dr-tr a11y--h">
+        <label for="dr-{{ dateId }}" class="dr-h">
           <div class="dr-t show-more-docs">+ View {{ documents|length - 1 }} More Documents</div>
           <div class="dr-t hide-more-docs">- Hide {{ documents|length - 1 }} More Documents</div>
         </label>
