@@ -18,9 +18,6 @@
     printout "ACTION" "Installing required Linux packages in Travis container."
 
     # Installs linux apps and extensions into the travis container.
-    printout "WARN" "Temporarily, we are fixing the composer version to 1.x."
-    composer self-update 1.10.13 &&
-      printout "SUCCESS" "Composer is set to v1.10.13."
     sudo apt-get install -y --no-install-recommends libgd-dev openssh-client fontconfig openssl
 
     setup_logs="${TRAVIS_BUILD_DIR}/setup"

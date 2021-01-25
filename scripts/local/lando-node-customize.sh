@@ -18,15 +18,20 @@
   printout "STEP" "Prepare NodeJS env in node: Install patterns and webapps into the node container."
   printf "${Blue}       ================================================================================${NC}\n"
 
-    # Copy the node.js executable file in the container to a location that can be seen on the host.
-    # This way eslint can run from PHPStorm without needing to install node.js on the host.
-    # In PHPStorm point the path for node in eslint settings dialog to /user/.node_js/node
-    if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
-        printf "mkdir /user/.node_js\n"
-        if [[ ! -d /user/.node_js ]]; then mkdir /user/.node_js; fi
-        if [[ ! -e /user/.node_js/node ]]; then cp /usr/local/bin/node /user/.node_js/.; fi
-        printout "INFO" "node.js executable is linked to /user/.node.js/ on the host PC (for IDE linting)"
-    fi
+  # Remove the flag to indicate that the db is ready
+  if [[ -e ${patterns_local_repo_local_dir}/.nodeready ]]; then
+    rm -f ${patterns_local_repo_local_dir}/.nodeready
+  fi
+
+  # Copy the node.js executable file in the container to a location that can be seen on the host.
+  # This way eslint can run from PHPStorm without needing to install node.js on the host.
+  # In PHPStorm point the path for node in eslint settings dialog to /user/.node_js/node
+  if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
+      printf "mkdir /user/.node_js\n"
+      if [[ ! -d /user/.node_js ]]; then mkdir /user/.node_js; fi
+      if [[ ! -e /user/.node_js/node ]]; then cp /usr/local/bin/node /user/.node_js/.; fi
+      printout "INFO" "node.js executable is linked to /user/.node.js/ on the host PC (for IDE linting)"
+  fi
 
   # Run the separate setup scripts for patterns and webapps.
   . "${LANDO_MOUNT}/scripts/local/lando-patterns-customize.sh"
