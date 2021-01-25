@@ -9,8 +9,8 @@
     TEMPLATE_DIR=${REPO_ROOT}/${webapps_local_local_dir}/$1
 
     # Create the root folder if its not there already
-    if (( ! -d ${TEMPLATE_DIR} )); then
-        md -p ${TEMPLATE_DIR}
+    if [[ ! -d ${TEMPLATE_DIR} ]]; then
+        mkdir -p ${TEMPLATE_DIR}
     else
         echo "Template folder already exists !"
         exit 0

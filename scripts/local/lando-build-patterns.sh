@@ -66,6 +66,7 @@
     # Run an initial build to be sure everything is there.
     printout "ACTION" "Building Patterns library."
     (cd ${patterns_local_repo_local_dir} &&
+      echo "$ run build"  &>> ${setup_logs}/patterns_build.log &&
       npm run build &>> ${setup_logs}/patterns_build.log &&
       printout "SUCCESS" "Patterns library built.\n") || (printout "ERROR" "Patterns library NOT built.\n" && exit 1)
 

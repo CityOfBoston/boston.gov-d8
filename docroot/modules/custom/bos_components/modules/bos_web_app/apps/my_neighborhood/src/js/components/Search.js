@@ -15,9 +15,8 @@ class Search extends React.Component {
                 placeholder={this.props.placeholder}
                 className={this.props.searchClass + ' search'}
                 onChange={this.props.handleKeywordChange}
-                onKeyUp={this.props.handleKeywordChange}
             />
-        
+
             <button
               type="button"
               id="mnl-search-button"
