@@ -149,7 +149,7 @@ class BuildingHousingUtils {
     // Rule I
     if (in_array($projectRecordType, ['Disposition'])
       && in_array($projectStatus, ['Completed'])
-      && strtotime($projectCompeteDate) >= strtotime('-2 years') //@TODO: ? What if the ProjectCompleteDate is null?
+      && strtotime($projectCompeteDate) >= strtotime('-1 year') //@TODO: ? What if the ProjectCompleteDate is null?
     ) {
       $publicStage = 'Project Completed';
     }
@@ -181,13 +181,13 @@ class BuildingHousingUtils {
       && in_array($projectStatus, ['Active'])
       && in_array($projectStage, ['Construction complete - Project open'])
     ) {
-      $publicStage = 'In Construction';
+      $publicStage = 'Project Completed';
     }
 
     // Rule M
     if (in_array($projectRecordType, ['NHD Development'])
       && in_array($projectStatus, ['Completed'])
-      && strtotime($projectCompeteDate) >= strtotime('-2 years')
+      && strtotime($projectCompeteDate) >= strtotime('-1 year')
     ) {
       $publicStage = 'Project Completed';
     }
