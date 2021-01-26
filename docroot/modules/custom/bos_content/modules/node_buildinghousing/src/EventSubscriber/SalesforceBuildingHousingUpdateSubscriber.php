@@ -109,8 +109,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     switch ($mapping->id()) {
       case 'building_housing_projects':
 
-        //$query = $event->getQuery();
-        //$query->fields[] = "(SELECT Id, Name FROM Project_Manager__r LIMIT 2)";
+        $query = $event->getQuery();
+//        $query->fields[] = "(SELECT Id, Name FROM Project_Manager__c LIMIT 1)";
+//        $query->fields[] = "Project_Manager__c";
+        $query->fields['Project_Manager__c'] = 'Project_Manager__c';
 
         break;
       case 'bh_website_update':
@@ -153,11 +155,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $project = $event->getEntity();
         $sf_data = $event->getMappedObject()->getSalesforceRecord();
         $client = \Drupal::service('salesforce.client');
-        $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
 
         //$project->set()
         try {
-          $projectManagerId = $sf_data->field('Project_Manager__c') ?? null;
+          $projectManagerId = $sf_data->field('Project_Manager__c')
+            ?? $client->objectRead('Project__c', $sf_data->id())->field('Project_Manager__c')
+            ?? null;
+
           if ($projectManagerId) {
             $projectManager = $client->objectRead('User', $projectManagerId);
           } else {
@@ -172,7 +176,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
           $project->set('field_project_manager_email', $projectManager->field('Email'));
           $project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
-          $project->save();
+//          $project->save();
         }
 
         break;
