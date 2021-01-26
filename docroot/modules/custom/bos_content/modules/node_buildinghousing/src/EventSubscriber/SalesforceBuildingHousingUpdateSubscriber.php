@@ -236,6 +236,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           } catch (\Exception $e) {
             // Unable to fetch file data from SF.
             \Drupal::logger('db')->error($this->t('Failed to get Text updates for Update @update', ['@update' => $update->id()]));
+            \Drupal::logger('db')->error($this->t('Text updates Backtrace @backtrace', ['@backtrace' => $e->getTraceAsString()]));
             //return;
           }
 
