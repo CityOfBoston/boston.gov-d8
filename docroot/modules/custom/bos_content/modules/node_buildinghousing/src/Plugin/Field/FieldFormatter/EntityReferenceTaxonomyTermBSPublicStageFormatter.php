@@ -8,6 +8,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
 use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
 use Drupal\webform\Plugin\WebformElement\DateTime;
+use SAML2\Utils;
 
 /**
  * Plugin implementation of the 'entity reference taxonomy term Building Housing Public Stage' formatter.
@@ -88,8 +89,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
 
-
-      if ($publicStageTerm->getName() == 'Selecting Developer'){
+      if ($publicStageTerm->getName() == 'Selecting Developer') {
         $elements[] = $this->getRFP($parent_entity);
       }
 
@@ -101,7 +101,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       //@TODO: THis is just a temp place to put the meeting for styling dev
       if ($stageCurrentState == 'present') {
 //        $elements[] = $this->getMeetings($parent_entity);
-//        $elements[] = $this->getTexts($parent_entity);
+        $elements[] = $this->getTexts($parent_entity);
       }
 
     }
@@ -112,7 +112,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 //    return $elements;
   }
 
-  private function getStageIcon ($stage, $stageCurrentState) {
+  private function getStageIcon($stage, $stageCurrentState)
+  {
 
     $stageIconMapping = [
       'Project Launch' => 'community-feedback',
@@ -194,18 +195,43 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   {
     $elements = [];
 
-    $data = [
-      'label' => t('Project Manager'),
-      'title' => t('Anne Conway'),
-      'body' => t('The Department of Neighborhood Development (DND) invites you to a virtual community meeting next month to introduce the preferred developer for the Request for Proposals (RFP) regarding 14-14A, 15-15A, and 17 Holborn St, Roxbury.
-'),
-      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
-      'date' => 'NOV 25, 2020',
-      'currentState' => 'present',
-    ];
+
+    $webUpdate = BHUtils::getWebUpdate($project);
+
+    if ($webUpdate) {
+      $textUpdatesField = $webUpdate->field_bh_text_updates;
+      $textUpdatesData = [];
+
+      foreach ($textUpdatesField->getValue() as $key => $currentTextUpdate) {
+//        $textData = $currentTextUpdate->getValue();
+        $textData = json_decode($currentTextUpdate['value']);
+        $formattedDate = new \DateTime('@' . strtotime($textData->date));
+        $formattedDate = $formattedDate->format('Ymd');
+        $textUpdatesData[$textData->id] = $textData;
+      }
+    }
 
 
-    $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
+    if ($textUpdatesData) {
+      foreach ($textUpdatesData as $sfid => $textUpdate) {
+        $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+
+        $data = [
+          'label' => t('Project Manager'),
+          'title' => $textUpdate->author,
+          'body' => $textUpdate->text,
+          'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
+          'date' => $formattedDate->format('M d Y'),
+          'currentState' => 'present',
+        ];
+
+
+        $elements[$formattedDate->format('Ymd')][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
+
+      }
+    }
+
+
 
     return $elements;
   }
@@ -257,14 +283,13 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     ];
 
     foreach ($attachments as $key => $attachment) {
-      $date = date('Ymd',  $attachment->getCreatedTime());
+      $date = date('Ymd', $attachment->getCreatedTime());
       $data['documents'][$date][] = [
 //        'label' => t('developer presentation'),
         'link' => $attachment->getFilename(),
         'url' => $attachment->createFileUrl(),
       ];
     }
-
 
 
     foreach ($data['documents'] as $documentDate => $documents) {

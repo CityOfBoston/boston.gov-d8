@@ -189,7 +189,58 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $client = \Drupal::service('salesforce.client');
         $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
 
+
         if ($mapping->id() == 'bh_website_update') {
+
+
+          //Check for chatter text updates
+          $ChatterFeedURL = $authProvider->getProvider()->getApiEndpoint() . "chatter/feeds/record/" . $sf_data->id() ."/feed-elements";
+          $chatterData = null;
+          try {
+            $chatterData = $client->httpRequestRaw($ChatterFeedURL);
+            $chatterData = $chatterData ? json_decode($chatterData) : null;
+
+            if ($chatterData) {
+              $currentTextUpdates = $update->field_bh_text_updates;
+              $currentTextUpdateIds = [];
+
+              foreach ($currentTextUpdates as $key => $currentTextUpdate) {
+                $textData = $currentTextUpdate->getValue();
+                $textData = json_decode($textData['value']);
+                $currentTextUpdateIds[] = $textData->id;
+              }
+
+              foreach ($chatterData->elements as $post) {
+
+                if ($post->type == 'TextPost' && !in_array($post->id, $currentTextUpdateIds)) {
+
+                  //CREATE AND SET THE UPDATE TEXT FIELD.
+
+                  $drupalPost = [
+                    'text' => $post->body->text ?? '',
+                    'author' => $post->actor->displayName ?? '',
+                    'date' => $post->createdDate ?? now(),
+                    'id' => $post->id ?? '',
+                  ];
+
+                  if ($drupalPost) {
+                    $update->field_bh_text_updates->appendItem(json_encode($drupalPost));
+                  }
+                }
+              }
+            }
+
+
+
+
+          } catch (\Exception $e) {
+            // Unable to fetch file data from SF.
+            \Drupal::logger('db')->error($this->t('Failed to get Text updates for Update @update', ['@update' => $update->id()]));
+            //return;
+          }
+
+
+
 
           // Fetch the files URL from raw sf data.
           $attachments = [];

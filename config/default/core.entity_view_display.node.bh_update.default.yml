@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
     - field.field.node.bh_update.field_bh_project_web_link
+    - field.field.node.bh_update.field_bh_text_updates
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
     - field.field.node.bh_update.field_sf_web_update
@@ -93,6 +94,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
+  field_bh_text_updates:
+    weight: 114
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
     region: content
   field_bh_update_posted_date:
     weight: 107
