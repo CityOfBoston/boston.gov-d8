@@ -31,7 +31,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   public function viewElements(FieldItemListInterface $items, $langcode)
   {
     $parent_entity = $items->getEntity();
+
     $elements = [];
+    $elements['documents'] = $this->getDocuments($parent_entity);
+    $elements['rfp'] = $this->getRFP($parent_entity);
+    $elements['textPosts'] = $this->getTexts($parent_entity);
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
@@ -54,7 +58,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 //      $stageIcon = $publicStageTerm->get('field_icon') ?? null;
       $stageIcon = $this->getStageIcon($publicStageTerm->getName(), $stageCurrentState) ?? null;
       $stageDescription = $publicStageTerm->get('description') ?? null;
-      $stageDate = $this->getStageDate($parent_entity, $publicStageTerm);
+      $stageDate = $this->getStageDate($parent_entity, $publicStageTerm, 'seasonal');
 
       if ($stageTitle->isEmpty()) {
         continue;
@@ -66,6 +70,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $vars['body'] = $stageDescription->view(['label' => 'hidden']);
       $vars['date'] = $stageDate;
       $vars['currentState'] = $stageCurrentState;
+
 
 
       switch ($stageCurrentState) {
@@ -86,28 +91,44 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           break;
       }
 
-      $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
+      $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');;
+      $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
 
-      if ($publicStageTerm->getName() == 'Selecting Developer') {
-        $elements[] = $this->getRFP($parent_entity);
-      }
+//      if ($publicStageTerm->getName() == 'Selecting Developer') {
+//      }
+//
+//      if ($publicStageTerm->getName() == 'Project Completed') {
+//      }
 
-      if ($publicStageTerm->getName() == 'Project Completed') {
-        $elements[] = $this->getDocuments($parent_entity);
-      }
-
+//      $elements['documents'] = $this->getDocuments($parent_entity);
+//      $elements['rfp'] = $this->getRFP($parent_entity);
+//      $elements['textPosts'] = $this->getTexts($parent_entity);
 
       //@TODO: THis is just a temp place to put the meeting for styling dev
-      if ($stageCurrentState == 'present') {
-//        $elements[] = $this->getMeetings($parent_entity);
-        $elements[] = $this->getTexts($parent_entity);
-      }
+//      if ($stageCurrentState == 'present') {
+////        $elements[] = $this->getMeetings($parent_entity);
+//        $elements[] = $this->getTexts($parent_entity);
+//      }
 
     }
 
 
-    return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $elements])];
+
+    $sortedElements = [];
+    $elementCount = 0;
+    foreach ($elements as $elementTypes => $typeElements) {
+
+      foreach ($typeElements as $time => $renderElement)
+      $sortedElements[$time][] = $renderElement;
+    }
+    ksort($sortedElements);
+
+
+
+
+
+    return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $sortedElements])];
 
 //    return $elements;
   }
@@ -129,7 +150,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return \Drupal::theme()->render('bh_icons', ['type' => $stageIconMapping[$stage], 'fill' => $color]) ?? [];
   }
 
-  private function getStageDate($project, $stage)
+  private function getStageDate($project, $stage, $format = 'timestamp')
   {
 
     switch ($stage->getName()) {
@@ -161,7 +182,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         $date = null;
     }
 
-    $stageDate = $date ? $this->dateToSeason($date) : '';
+    if ($format == 'seasonal') {
+      $stageDate = $date ? $this->dateToSeason($date) : '';
+    }else{
+      $stageDate = strtotime($date);
+    }
 
 
     return $stageDate ?? $date ?? '';
@@ -226,7 +251,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         ];
 
 
-        $elements[$formattedDate->format('Ymd')][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
+        $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
 
       }
     }
@@ -261,7 +286,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
 //      if ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY
       if ($today->getTimestamp() >= $rfpDate->getTimestamp()) { //CORRECT
-        $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
+        $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
       }
     }
 
@@ -273,6 +298,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $elements = [];
 
     $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? null;
+
+    if (empty($attachments)) {
+      return $elements;
+    }
 
     $data = [
 //      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
@@ -292,20 +321,20 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     }
 
 
+
     foreach ($data['documents'] as $documentDate => $documents) {
 
       $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
-      $formattedDate = $formattedDate->format('M d Y');
 
       $documentSet = [
         'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-        'date' => $formattedDate,
+        'date' => $formattedDate->format('M d Y'),
         'currentState' => 'present',
         'dateId' => $documentDate
       ];
       $documentSet['documents'] = $documents;
-      $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
+      $elements[$formattedDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
 
     }
 
