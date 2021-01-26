@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_browser
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
     - field.field.node.bh_update.field_bh_follower_emails
@@ -11,18 +12,18 @@ dependencies:
     - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
     - field.field.node.bh_update.field_bh_project_web_link
+    - field.field.node.bh_update.field_bh_text_updates
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
     - field.field.node.bh_update.field_sf_web_update
-    - image.style.thumbnail
     - node.type.bh_update
   module:
     - content_moderation
     - datetime
+    - entity_browser
     - file
     - path
     - publication_date
-    - svg_image
     - text
 _core:
   default_config_hash: 1oNBl1Om45boXnW8CY3VjrDC_Sl7-irQBNTeRORTYcY
@@ -107,6 +108,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_bh_text_updates:
+    weight: 133
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
     region: content
   field_bh_update_posted_date:
     weight: 126
