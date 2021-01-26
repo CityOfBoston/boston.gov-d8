@@ -172,6 +172,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
           $project->set('field_project_manager_email', $projectManager->field('Email'));
           $project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
+          $project->save();
         }
 
         break;
