@@ -45,6 +45,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       //$elements[$delta] = ['#markup' => $publicStage->name];
       $stageIsActive = $parent_entity->get('field_bh_public_stage')->target_id == $publicStage->tid;
 
+
+
+
       if ($stageCurrentState == 'past' && $stageIsActive) {
         $stageCurrentState = 'present';
       } elseif ($stageCurrentState == 'present' && !$stageIsActive) {
@@ -60,8 +63,14 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $stageDescription = $publicStageTerm->get('description') ?? null;
       $stageDate = $this->getStageDate($parent_entity, $publicStageTerm, 'seasonal');
 
-      if ($stageTitle->isEmpty()) {
-        continue;
+      if ($publicStageTerm->getName() == 'Not Active') {
+
+        if ($stageIsActive) {
+          $elements[] = $this->getInactiveProjectContent($publicStageTerm);
+          return $elements;
+        }else{
+          continue;
+        }
       }
 
 //      $vars['icon'] = $stageIcon->view('icon');
@@ -117,6 +126,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $sortedElements = [];
     $elementCount = 0;
+    //@TODO: Add fix for showing items with no date
     foreach ($elements as $elementTypes => $typeElements) {
 
       foreach ($typeElements as $time => $renderElement)
@@ -131,6 +141,17 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $sortedElements])];
 
 //    return $elements;
+  }
+
+
+  private function getInactiveProjectContent($publicStageTerm) {
+    $render = [];
+
+    $copy = $publicStageTerm->description->value ?? 'Inactive Project';
+
+    $render[] = ['#markup' => $copy];
+
+    return $render;
   }
 
   private function getStageIcon($stage, $stageCurrentState)
@@ -234,26 +255,26 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         $formattedDate = $formattedDate->format('Ymd');
         $textUpdatesData[$textData->id] = $textData;
       }
-    }
+
+      if ($textUpdatesData) {
+        foreach ($textUpdatesData as $sfid => $textUpdate) {
+          $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+
+          $data = [
+            'label' => t('Project Manager'),
+            'title' => $textUpdate->author,
+            'body' => $textUpdate->text,
+            'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
+            'date' => $formattedDate->format('M d Y'),
+            'currentState' => 'present',
+          ];
 
 
-    if ($textUpdatesData) {
-      foreach ($textUpdatesData as $sfid => $textUpdate) {
-        $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+          $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
 
-        $data = [
-          'label' => t('Project Manager'),
-          'title' => $textUpdate->author,
-          'body' => $textUpdate->text,
-          'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
-          'date' => $formattedDate->format('M d Y'),
-          'currentState' => 'present',
-        ];
-
-
-        $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
-
+        }
       }
+
     }
 
 
