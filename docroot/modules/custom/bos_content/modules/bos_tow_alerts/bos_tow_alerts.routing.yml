@@ -1,0 +1,7 @@
+load_plates.endpoint:
+  path: '/rest/towalerts/loader/{action}'
+  methods: [POST, GET]
+  defaults:
+    _controller: 'Drupal\bos_tow_alerts\Services\PlateLoader::api'
+  requirements:
+    _permission: 'access content'
