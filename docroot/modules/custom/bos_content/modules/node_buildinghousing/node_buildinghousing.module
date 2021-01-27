@@ -309,7 +309,17 @@ function node_buildinghousing_entity_extra_field_info()
 function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode)
 {
 
-  if ($display->getComponent('bh_computed_project_type')) {
+  $projectIsActive = true;
+  if ($entity->field_bh_public_stage) {
+    $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? null;
+
+    if ($publicStageTerm && $publicStageTerm == 'Not Active') {
+      $projectIsActive = false;
+      $build['field_bh_public_stage']['#label_display'] = 'hidden';
+    }
+  }
+
+  if ($display->getComponent('bh_computed_project_type') && $projectIsActive) {
     $build['bh_computed_project_type'] = _node_buildinghousing_build_render_computed_project_type($entity);
   }
 
@@ -318,12 +328,12 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   }
 
-  if ($display->getComponent('bh_project_meeting_notice')) {
+  if ($display->getComponent('bh_project_meeting_notice') && $projectIsActive) {
     $build['bh_project_meeting_notice'] = _node_buildinghousing_build_render_project_meeting_notice($entity);
 
   }
 
-  if ($display->getComponent('bh_project_follower_webform')) {
+  if ($display->getComponent('bh_project_follower_webform') && $projectIsActive) {
     $build['bh_project_follower_webform'] = _node_buildinghousing_build_render_project_follower_webform($entity);
 
   }
