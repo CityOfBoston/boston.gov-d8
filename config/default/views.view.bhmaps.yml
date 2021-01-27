@@ -11,6 +11,7 @@ dependencies:
     - field.storage.node.field_bh_project_stage
     - field.storage.node.field_bh_project_start_date
     - field.storage.node.field_bh_project_status
+    - field.storage.node.field_bh_property_size
     - field.storage.node.field_bh_public_stage
     - field.storage.node.field_bh_record_type
     - field.storage.node.field_bh_total_num_units
@@ -23,7 +24,6 @@ dependencies:
     - 'taxonomy_term:bh_disposition_type:037d2a91-c7bf-4c98-94a0-901dcc36309b'
     - 'taxonomy_term:bh_disposition_type:06d31f42-7e80-44aa-8eea-4198c0eb2e43'
     - 'taxonomy_term:bh_disposition_type:201cd392-004b-4538-99cd-194c00e5323e'
-    - 'taxonomy_term:bh_disposition_type:2b7441eb-4bf3-4a8d-aa8f-e3a38b95dc34'
     - 'taxonomy_term:bh_disposition_type:2e41f48e-c87b-4371-8a6f-95e5be549274'
     - 'taxonomy_term:bh_disposition_type:2f7e9856-06bf-426a-ac99-999723c76160'
     - 'taxonomy_term:bh_disposition_type:3d969c2b-0d6a-4e6d-9faa-0347a594e97c'
@@ -1286,7 +1286,7 @@ display:
           admin_label: ''
           operator: or
           value:
-            - '34166'
+            - '33786'
           group: 1
           exposed: false
           expose:
@@ -3114,6 +3114,55 @@ display:
           entity_type: node
           entity_field: nid
           plugin_id: field
+        building_housing_project_type_views_field_with_text:
+          id: building_housing_project_type_views_field_with_text
+          table: views
+          field: building_housing_project_type_views_field_with_text
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: building_housing_project_type_views_field_with_text
         title:
           id: title
           table: node_field_data
@@ -3150,8 +3199,8 @@ display:
             trim: false
             preserve_tags: ''
             html: false
-          element_type: h6
-          element_class: 't--cb m-v100'
+          element_type: div
+          element_class: bh-marker-data-project-name
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -3735,6 +3784,182 @@ display:
           hide_alter_empty: true
           counter_start: 1
           plugin_id: counter
+        building_housing_project_type_views_field:
+          id: building_housing_project_type_views_field
+          table: views
+          field: building_housing_project_type_views_field
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: false
+          plugin_id: building_housing_project_type_views_field
+        field_bh_public_stage:
+          id: field_bh_public_stage
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: 't--subinfo t--g300 '
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_entity_view
+          settings:
+            view_mode: teaser
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_bh_property_size:
+          id: field_bh_property_size
+          table: node__field_bh_property_size
+          field: field_bh_property_size
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: 't--subinfo t--g300 m-r400'
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       pager:
         type: full
         options:
@@ -4147,6 +4372,8 @@ display:
         - 'config:field.storage.node.field_bh_project_stage'
         - 'config:field.storage.node.field_bh_project_start_date'
         - 'config:field.storage.node.field_bh_project_status'
+        - 'config:field.storage.node.field_bh_property_size'
+        - 'config:field.storage.node.field_bh_public_stage'
         - 'config:field.storage.node.field_bh_record_type'
         - 'config:field.storage.node.field_bh_total_num_units'
   maplist:
@@ -4655,7 +4882,7 @@ display:
             more_link_path: ''
             strip_tags: false
             trim: false
-            preserve_tags: ''
+            preserve_tags: '<p>'
             html: false
           element_type: div
           element_class: 't--subinfo t--g300 fl--l m-r400'
@@ -4670,9 +4897,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_label
+          type: entity_reference_entity_view
           settings:
-            link: false
+            view_mode: teaser
           group_column: target_id
           group_columns: {  }
           group_rows: true
@@ -5134,6 +5361,70 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_bh_property_size:
+          id: field_bh_property_size
+          table: node__field_bh_property_size
+          field: field_bh_property_size
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: div
+          element_class: 't--subinfo t--g300 m-r400'
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ','
+            prefix_suffix: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       defaults:
         fields: false
         pager: false
@@ -5566,5 +5857,6 @@ display:
         - 'config:field.storage.node.field_bh_parcel_id'
         - 'config:field.storage.node.field_bh_project_stage'
         - 'config:field.storage.node.field_bh_project_status'
+        - 'config:field.storage.node.field_bh_property_size'
         - 'config:field.storage.node.field_bh_public_stage'
         - 'config:field.storage.node.field_bh_total_num_units'
