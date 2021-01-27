@@ -34,5 +34,13 @@ function node_buildinghousing_views_data()
     ],
   ];
 
+  $data['views']['building_housing_project_type_views_field_with_text'] = [
+    'title' => t('Building housing project type marker views field with text'),
+    'help' => t('My awesome custom views field plugin.'),
+    'field' => [
+      'id' => 'building_housing_project_type_views_field_with_text',
+    ],
+  ];
+
   return $data;
 }
