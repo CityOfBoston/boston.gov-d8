@@ -22,6 +22,22 @@ class BuildingHousingUtils {
     return 'Hello Building Housing World!';
   }
 
+
+  public static function getMeetingsFromWebUpdateID ($webUpdateId) {
+    $meetings = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+        'field_bh_update_ref' => $webUpdateId,
+        'type' => 'bh_meeting'
+      ])
+      ?? null;
+
+    if ($meetings && count($meetings) >= 1) {
+      return $meetings;
+    }
+
+    return false;
+  }
+
+
   public static function getWebUpdate ($projectEntity) {
     $webUpdate = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
       'field_bh_project_ref' => $projectEntity->id(),

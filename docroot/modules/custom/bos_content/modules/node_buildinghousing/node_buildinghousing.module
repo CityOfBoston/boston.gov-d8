@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\Entity\NodeType;
+use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
 use Drupal\views\ViewExecutable;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
 
@@ -386,27 +387,46 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 function _node_buildinghousing_build_render_project_meeting_notice($entity)
 {
   $render = [];
+  $webUpdate = BHUtils::getWebUpdate($entity);
+  $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : null;
 
-  return [];
+  if ($meetings) {
 
-  $vars = [
-    'classes' => [
-      'icon' => 'icon-location',
-      'label' => 'detail-item--secondary grid-card__title',
-      'body' => 'detail-item__body--tertiary',
-      'detail' => 'detail-item--middle m-v300 grid-card__title',
-    ],
-  ];
+    foreach ($meetings as $meetingId => $meeting) {
 
-//  $vars['title'] = t("Community Meeting"); //@TODO: Can this be the Event Type?
-  $vars['dateString'] = "Tuesday December 15 2020 | 6-8PM";
-  $vars['detailsLink'] = "/events";
-  $vars['idForAddToCall'] = "";
 
-  $render = ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
+      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+      $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
+      $startDate->setTimezone($timeZoneAdjustment);
+      $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
+      $endDate->setTimezone($timeZoneAdjustment);
+
+      if ($startDate->getTimestamp() > time()) {
+
+//        $dateString = 'Tuesday December 15 2020 | 6-8PM';
+        $dateString = $startDate->format('l F j Y | g:i') . '-' . $endDate->format('g:iA');
+
+        $vars = [
+          'classes' => [
+            'icon' => 'icon-location',
+            'label' => 'detail-item--secondary grid-card__title',
+            'body' => 'detail-item__body--tertiary',
+            'detail' => 'detail-item--middle m-v300 grid-card__title',
+          ],
+        ];
+
+        $vars['title'] = t("Community Meeting"); //@TODO: Can this be the Event Type?
+        $vars['dateString'] = $dateString;
+        $vars['detailsLink'] = "/events";
+        $vars['idForAddToCall'] = "";
+
+        $render = ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
+      }
+    }
+  }
+
 
   return $render;
-
 }
 
 
