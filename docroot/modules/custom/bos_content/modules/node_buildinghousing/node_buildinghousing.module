@@ -310,7 +310,7 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 {
 
   $projectIsActive = true;
-  if ($entity->field_bh_public_stage) {
+  if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()[0]) {
     $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? null;
 
     if ($publicStageTerm && $publicStageTerm == 'Not Active') {
