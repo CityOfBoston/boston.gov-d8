@@ -36,6 +36,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $elements['documents'] = $this->getDocuments($parent_entity);
     $elements['rfp'] = $this->getRFP($parent_entity);
     $elements['textPosts'] = $this->getTexts($parent_entity);
+    $elements['meetings'] = $this->getMeetings($parent_entity);
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
@@ -218,20 +219,66 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   {
     $elements = [];
 
-    $data = [
-      'label' => t('UPCOMING COMMUNITY MEETING'),
-      'title' => t('Warren St 14-17 Public Meeting'),
-      'body' => t('Description of what to expect at this public meeting, maybe a brief overview of the goals of the meeting.'),
-      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'calendar']),
-      'date' => 'DEC 15, 2020',
-      'time' => '6-8PM',
-      'link' => '/events',
-      'currentState' => 'present',
-      'addToCal' => NULL,
-    ];
+    $webUpdate = BHUtils::getWebUpdate($project);
+    $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : null;
+
+    if ($meetings) {
+
+      foreach ($meetings as $meetingId => $meeting) {
+
+        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+        $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
+        $startDate->setTimezone($timeZoneAdjustment);
+        $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
+        $endDate->setTimezone($timeZoneAdjustment);
+
+        if ($startDate->getTimestamp() > time()) {
+          $date = $startDate->format('M d Y');
+          $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
+          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'calendar']);
+          $label = t('UPCOMING COMMUNITY MEETING');
+          $currentState = 'future';
+          $addToCal = 'render-link';
+          $link = '/events';
+          $body = $meeting->body->value ?? '';
+          $attendees = null;
+        }else{
+//          $label = t('PAST COMMUNITY MEETING');
+          $label = t('VIEW WEBEX RECORDINGS');
+          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'timeline-calendar', 'fill' => 'cb']);
+          $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
+          $date = $endDate->format('M d Y');
+          $currentState = 'past';
+          $addToCal = NULL;
+          $link = $meeting->field_bh_post_meeting_recording->value ?? null;
+          $body = $meeting->field_bh_post_meeting_notes->value ?? null;
+          $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : null;
+        }
 
 
-    $elements[] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
+
+        $data = [
+          'label' => $label,
+          'title' => $meeting->getTitle(),
+          'body' => $body,
+          'icon' => $icon,
+          'date' => $date,
+          'time' => $time,
+          'link' => $link,
+          'currentState' => $currentState,
+          'addToCal' => $addToCal,
+          'recordingLinkIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
+          'attendees' => $attendees,
+        ];
+
+
+        $elements[$startDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
+
+
+      }
+
+    }
+
 
 
     return $elements;
