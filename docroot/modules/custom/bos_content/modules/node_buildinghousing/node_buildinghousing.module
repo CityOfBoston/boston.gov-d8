@@ -452,11 +452,12 @@ function _node_buildinghousing_build_render_project_manager_contact($entity)
   $publicStage = $publicStageId ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($publicStageId) : null;
   $publicStage = $publicStage ? $publicStage->getName() : null;
 
-  if (empty($vars['name']) || empty($vars['phone']) || empty($vars['email']) || $publicStage == 'Not Active') {
-    $vars['name'] = t("To inquire about this parcel, contact the Department of Neighborhood Development (DND).");
-    $vars['email'] = "dnd email address"; //@TODO: change out with correct email address
+  if (empty($vars['name']) || $publicStage == 'Not Active') {
+    $vars['name'] = t("Do you have questions about this lot? We're here to help.");
+    $vars['email'] = "neighborhooddevelopment.dnd@boston.gov";
     $vars['phone'] = "617-635-3880";
     $vars['label'] = null;
+    $vars['title'] = t('Contact Information');
   }
 
 
