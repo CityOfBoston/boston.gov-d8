@@ -24,6 +24,10 @@ use SAML2\Utils;
  */
 class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceFormatterBase
 {
+  /**
+   * @var bool
+   */
+  private $isActive = true;
 
   /**
    * {@inheritdoc}
@@ -68,6 +72,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
         if ($stageIsActive) {
           $elements[] = $this->getInactiveProjectContent($publicStageTerm);
+          $this->isActive = false;
           return $elements;
         }else{
           continue;
@@ -144,7 +149,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
 
 
-    return ['#markup' => \Drupal::theme()->render("bh_project_timeline", ['items' => $sortedElements])];
+    return ['#markup' => \Drupal::theme()->render("bh_project_timeline", [
+      'items' => $sortedElements,
+      'label' => $this->isActive ? t('Timeline') : null,
+    ])];
 
 //    return $elements;
   }
