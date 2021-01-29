@@ -101,7 +101,12 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           break;
       }
 
-      $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');;
+      $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');
+      if ($publicStageTerm->getName() == 'Project Launch' && empty($sortTimestamp)) {
+        $sortTimestamp = '999' . $delta;
+      }elseif (empty($sortTimestamp)) {
+        $sortTimestamp = '9999999999' . $delta;
+      }
       $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
 
