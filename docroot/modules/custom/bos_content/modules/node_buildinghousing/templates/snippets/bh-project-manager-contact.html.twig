@@ -29,6 +29,7 @@
     </div>
   </div>
 
+  {% if email %}
   <div class="list-item">
     <div class="detail-item detail-item--middle">
       <div class="detail-item__left t--cb">
@@ -36,12 +37,22 @@
       </div>
       <div class="detail-item__content">
         <div class="detail-item__body detail-item__body--secondary">
-          <a href="mailto:{{ email }}" title="Have a question, or just need help? You can send an email to {{ email }} through the form below.">{{ email }}</a>
+          <a href="mailto:{{ email }}" title="Have a question, or just need help? You can send an email to {{ email }} through the form below.">
+
+            {% if email == 'neighborhooddevelopment.dnd@boston.gov' %}
+              EMAIL US
+            {% else %}
+              {{ email }}
+            {% endif %}
+
+          </a>
         </div>
       </div>
     </div>
   </div>
+  {% endif %}
 
+  {% if phone%}
   <div class="list-item">
     <div class="detail-item detail-item--middle">
       <div class="detail-item__left t--cb">
@@ -54,5 +65,6 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
 </div>
