@@ -995,57 +995,10 @@ display:
     display_options:
       display_extenders: {  }
       fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          entity_type: node
-          entity_field: title
-          label: ''
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            trim: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            html: false
-          hide_empty: false
-          empty_zero: false
-          settings:
-            link_to_entity: true
-          plugin_id: field
-          relationship: none
-          group_type: group
-          admin_label: ''
-          exclude: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-        field_bh_public_stage:
-          id: field_bh_public_stage
-          table: node__field_bh_public_stage
-          field: field_bh_public_stage
+        building_housing_project_type_views_field_with_text:
+          id: building_housing_project_type_views_field_with_text
+          table: views
+          field: building_housing_project_type_views_field_with_text
           relationship: none
           group_type: group
           admin_label: ''
@@ -1089,12 +1042,61 @@ display:
           empty: ''
           hide_empty: 0
           empty_zero: 0
+          hide_alter_empty: 0
+          plugin_id: building_housing_project_type_views_field_with_text
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: 0
+          alter:
+            alter_text: 0
+            text: ''
+            make_link: 0
+            path: ''
+            absolute: 0
+            external: 0
+            replace_spaces: 0
+            path_case: none
+            trim_whitespace: 0
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: 0
+            max_length: '0'
+            word_boundary: 0
+            ellipsis: 0
+            more_link: 0
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: 0
+            trim: 0
+            preserve_tags: ''
+            html: 0
+          element_type: div
+          element_class: bh-marker-data-project-name
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: 0
+          empty: ''
+          hide_empty: 0
+          empty_zero: 0
           hide_alter_empty: 1
-          click_sort_column: target_id
-          type: entity_reference_label
+          click_sort_column: value
+          type: string
           settings:
-            link: 0
-          group_column: target_id
+            link_to_entity: 1
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -1104,16 +1106,18 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: 0
+          entity_type: node
+          entity_field: title
           plugin_id: field
-        field_bh_parcel_id:
-          id: field_bh_parcel_id
-          table: node__field_bh_parcel_id
-          field: field_bh_parcel_id
+        field_bh_public_stage:
+          id: field_bh_public_stage
+          table: node__field_bh_public_stage
+          field: field_bh_public_stage
           relationship: none
           group_type: group
           admin_label: ''
           label: ''
-          exclude: 1
+          exclude: 0
           alter:
             alter_text: 0
             text: ''
@@ -1141,8 +1145,8 @@ display:
             trim: 0
             preserve_tags: ''
             html: 0
-          element_type: ''
-          element_class: ''
+          element_type: div
+          element_class: 't--subinfo t--g300 fl--l'
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -1153,11 +1157,11 @@ display:
           hide_empty: 0
           empty_zero: 0
           hide_alter_empty: 1
-          click_sort_column: value
-          type: string
+          click_sort_column: target_id
+          type: entity_reference_entity_view
           settings:
-            link_to_entity: 0
-          group_column: value
+            view_mode: teaser
+          group_column: target_id
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -1231,6 +1235,70 @@ display:
           field_api_classes: 0
           entity_type: node
           plugin_id: geolocation_field
+        field_bh_property_size:
+          id: field_bh_property_size
+          table: node__field_bh_property_size
+          field: field_bh_property_size
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: 0
+          alter:
+            alter_text: 0
+            text: ''
+            make_link: 0
+            path: ''
+            absolute: 0
+            external: 0
+            replace_spaces: 0
+            path_case: none
+            trim_whitespace: 0
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: 0
+            max_length: '0'
+            word_boundary: 1
+            ellipsis: 1
+            more_link: 0
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: 0
+            trim: 0
+            preserve_tags: ''
+            html: 0
+          element_type: div
+          element_class: 'm-l300 m-t200 t--subinfo t--g300 m-r400 fl--l'
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: 0
+          empty: ''
+          hide_empty: 0
+          empty_zero: 0
+          hide_alter_empty: 1
+          click_sort_column: value
+          type: number_integer
+          settings:
+            thousand_separator: ','
+            prefix_suffix: 1
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: 0
+          plugin_id: field
       defaults:
         fields: false
         filters: false
@@ -1429,7 +1497,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_bh_coordinates'
-        - 'config:field.storage.node.field_bh_parcel_id'
+        - 'config:field.storage.node.field_bh_property_size'
         - 'config:field.storage.node.field_bh_public_stage'
   leafletmap:
     display_plugin: page
@@ -5860,3 +5928,4 @@ display:
         - 'config:field.storage.node.field_bh_property_size'
         - 'config:field.storage.node.field_bh_public_stage'
         - 'config:field.storage.node.field_bh_total_num_units'
+
