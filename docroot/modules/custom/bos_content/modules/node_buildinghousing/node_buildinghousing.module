@@ -311,7 +311,7 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 {
 
   $projectIsActive = true;
-  if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()[0]) {
+  if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()) {
     $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? null;
 
     if ($publicStageTerm && $publicStageTerm == 'Not Active') {
@@ -447,10 +447,10 @@ function _node_buildinghousing_build_render_project_manager_contact($entity)
   $vars['email'] = $entity->get('field_project_manager_email')->value;
   $vars['phone'] = $entity->get('field_bh_project_manger_phone')->value;
 
-  $publicStage = \Drupal::entityTypeManager()
-    ->getStorage('taxonomy_term')
-    ->load($entity->get('field_bh_public_stage')->target_id)
-    ->getName();
+
+  $publicStageId = $entity->get('field_bh_public_stage')->target_id ?? null;
+  $publicStage = $publicStageId ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($publicStageId) : null;
+  $publicStage = $publicStage ? $publicStage->getName() : null;
 
   if (empty($vars['name']) || empty($vars['phone']) || empty($vars['email']) || $publicStage == 'Not Active') {
     $vars['name'] = t("To inquire about this parcel, contact the Department of Neighborhood Development (DND).");

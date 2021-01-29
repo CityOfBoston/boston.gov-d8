@@ -108,9 +108,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');
       if ($publicStageTerm->getName() == 'Project Launch' && empty($sortTimestamp)) {
-        $sortTimestamp = '999' . $delta;
+        $sortTimestamp = $delta;
       }elseif (empty($sortTimestamp)) {
-        $sortTimestamp = '9999999999' . $delta;
+        $sortTimestamp = $delta;
       }
       $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
@@ -136,17 +136,23 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
 
     $sortedElements = [];
-    $elementCount = 0;
     //@TODO: Add fix for showing items with no date
     foreach ($elements as $elementTypes => $typeElements) {
+      foreach ($typeElements as $time => $renderElement) {
 
-      foreach ($typeElements as $time => $renderElement)
-      $sortedElements[$time][] = $renderElement;
+        if ($typeElements = 'moments') {
+          if ($time <= 998) {
+            $lastKey = array_key_last($sortedElements) ?? 0;
+            if ($lastKey > 999999) {
+              $time = $lastKey . '.' . $time;
+            }
+          }
+        }
+
+        $sortedElements[$time][] = $renderElement;
+        ksort($sortedElements);
+      }
     }
-    ksort($sortedElements);
-
-
-
 
 
     return ['#markup' => \Drupal::theme()->render("bh_project_timeline", [
