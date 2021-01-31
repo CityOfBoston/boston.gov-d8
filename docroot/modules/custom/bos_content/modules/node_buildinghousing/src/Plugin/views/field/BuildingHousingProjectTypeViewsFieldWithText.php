@@ -2,6 +2,7 @@
 
 namespace Drupal\node_buildinghousing\Plugin\views\field;
 
+use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Random;
@@ -89,6 +90,10 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
   public function render(ResultRow $values) {
     $mainType = $this->getMainProjectTypeName($values->_entity);
 
+    $publicStageId = $values->_entity->field_bh_public_stage->target_id ?? NULL;
+    $publicStage = $publicStageId ? Term::load($publicStageId) : NULL;
+    $publicStage = $publicStage ? $publicStage->getName() : NULL;
+
     if ($mainType) {
 
       switch ($mainType) {
@@ -114,14 +119,22 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
           $iconType = 'maplist-sale';
           // $pillColor = 'medium-gray';
           $pillColor = 'dark-gray';
-          $pillText = t('DND Owned Land');
+          $pillText = t('Abutter Sale');
           break;
 
+        case "Other":
         default:
-          $iconType = 'maplist-other';
+          // $iconType = 'maplist-other';
+          $iconType = NULL;
           $pillColor = 'dark-gray';
           $pillText = t('To Be Decided');
           break;
+      }
+
+      if ($publicStage == 'Not Active') {
+        $iconType = NULL;
+        $pillColor = 'medium-gray';
+        $pillText = t('DND Owned Land');
       }
 
       $elements = [];
@@ -133,7 +146,9 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
         ],
       ];
 
-      $elements['projectType']['icon']['#markup'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
+      if ($iconType) {
+        $elements['projectType']['icon']['#markup'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
+      }
 
       $elements['projectType']['text'] = [
         '#type' => 'html_tag',

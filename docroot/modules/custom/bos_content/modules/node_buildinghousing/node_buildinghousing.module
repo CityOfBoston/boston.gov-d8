@@ -202,6 +202,11 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
     $projectWebLink = $bhUtils->setProjectWebLink($entity);
   }
 
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_meeting') {
+    $bhUtils = new BHUtils();
+    $meetingEvent = $bhUtils->setMeetingEvent($entity);
+  }
+
 }
 
 /**

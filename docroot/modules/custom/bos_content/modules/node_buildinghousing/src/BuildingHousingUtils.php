@@ -338,4 +338,13 @@ class BuildingHousingUtils {
 
   }
 
+  /**
+   * Set (Create/Update) an Event Entity from a BH Meeting.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Building Housing Meeting Entity.
+   */
+  public function setMeetingEvent(EntityInterface &$entity) {
+  }
+
 }
