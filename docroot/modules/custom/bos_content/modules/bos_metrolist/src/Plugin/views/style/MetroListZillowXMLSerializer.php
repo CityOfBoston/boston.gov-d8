@@ -55,7 +55,6 @@ class MetroListZillowXMLSerializer extends Serializer {
       $content_type = !empty($this->options['formats']) ? reset($this->options['formats']) : 'xml';
     }
 
-
     return $this->serializer->serialize($rows, $content_type, ['views_style_plugin' => $this]);
   }
 
