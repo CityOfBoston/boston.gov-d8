@@ -3,6 +3,7 @@
 /**
  * @file
  * Contains node_buildinghousing\node_buildinghousing.views.inc..
+ *
  * Provide a custom views field data that isn't tied to any other module. */
 
 /**

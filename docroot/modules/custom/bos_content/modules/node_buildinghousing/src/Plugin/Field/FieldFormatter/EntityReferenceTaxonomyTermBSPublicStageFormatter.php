@@ -2,13 +2,12 @@
 
 namespace Drupal\node_buildinghousing\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Url;
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
 use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
-use Drupal\webform\Plugin\WebformElement\DateTime;
-use SAML2\Utils;
 
 /**
  * Plugin implementation of the 'entity reference taxonomy term Building Housing Public Stage' formatter.
@@ -23,10 +22,30 @@ use SAML2\Utils;
  * )
  */
 class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceFormatterBase {
+
   /**
+   * IsActive Project Flag.
+   *
    * @var bool
    */
   private $isActive = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function isApplicable(FieldDefinitionInterface $field_definition) {
+    // This formatter is only available for taxonomy terms.
+    $isTaxonomyTerm = $field_definition->getFieldStorageDefinition()->getSetting('target_type') == 'taxonomy_term';
+    $isNode = $field_definition->getTargetEntityTypeId();
+    $isBHProject = $field_definition->getTargetBundle();
+
+    if ($isTaxonomyTerm && $isNode && $isBHProject) {
+      return TRUE;
+    }
+    else {
+      return FALSE;
+    }
+  }
 
   /**
    * {@inheritdoc}
@@ -36,7 +55,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $elements = [];
     $elements['documents'] = $this->getDocuments($parent_entity);
-    $elements['rfp'] = $this->getRFP($parent_entity);
+    $elements['rfp'] = $this->getRfp($parent_entity);
     $elements['textPosts'] = $this->getTexts($parent_entity);
     $elements['meetings'] = $this->getMeetings($parent_entity);
 
@@ -111,22 +130,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       }
       $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
-      // If ($publicStageTerm->getName() == 'Selecting Developer') {
-      //      }
-      //
-      //      if ($publicStageTerm->getName() == 'Project Completed') {
-      //      }.
-
-      // $elements['documents'] = $this->getDocuments($parent_entity);
-      //      $elements['rfp'] = $this->getRFP($parent_entity);
-      //      $elements['textPosts'] = $this->getTexts($parent_entity);
-
-      // @TODO: THis is just a temp place to put the meeting for styling dev
-      //      if ($stageCurrentState == 'present') {
-      // $elements[] = $this->getMeetings($parent_entity);
-      //        $elements[] = $this->getTexts($parent_entity);
-      //      }
-
     }
 
     $sortedElements = [];
@@ -149,32 +152,275 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     }
 
     return [
-    '#markup' => \Drupal::theme()->render("bh_project_timeline", [
-      'items' => $sortedElements,
-      'label' => $this->isActive ? t('Timeline') : NULL,
-    ])
-];
+      '#markup' => \Drupal::theme()->render("bh_project_timeline", [
+        'items' => $sortedElements,
+        'label' => $this->isActive ? t('Timeline') : NULL,
+      ])
+    ];
 
     // Return $elements;.
   }
 
   /**
+   * Get Project Documents.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Building Housing Project Entity.
+   *
+   * @return array
+   *   Array of Documents
    */
-  private function getInactiveProjectContent($publicStageTerm) {
-    $render = [];
+  public function getDocuments(EntityInterface $project) {
+    $elements = [];
 
-    $copy = $publicStageTerm->description->value ?? 'Inactive Project';
+    $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? NULL;
 
-    $render[] = ['#markup' => $copy];
+    if (empty($attachments)) {
+      return $elements;
+    }
 
-    return $render;
+    $data = [
+      // 'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+      // "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
+      // 'date' => 'DEC 15, 2020',
+      // 'date' => 'DOCUMENTS', //@TODO: TEMP
+      // 'currentState' => 'present',
+    ];
+
+    foreach ($attachments as $key => $attachment) {
+      $date = date('Ymd', $attachment->getCreatedTime());
+      $data['documents'][$date][] = [
+        // 'label' => t('developer presentation'),
+        'link' => $attachment->getFilename(),
+        'url' => $attachment->createFileUrl(),
+      ];
+    }
+
+    foreach ($data['documents'] as $documentDate => $documents) {
+
+      $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
+
+      $documentSet = [
+        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+        'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
+        'date' => $formattedDate->format('M d Y'),
+        'currentState' => 'present',
+        'dateId' => $documentDate
+      ];
+      $documentSet['documents'] = $documents;
+      $elements[$formattedDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
+
+    }
+
+    return $elements;
   }
 
   /**
+   * Get Project RFP.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Building Housing Project Entity.
+   *
+   * @return array
+   *   Array of Documents
+   *
+   * @throws \Exception
    */
-  private function getStageIcon($stage, $stageCurrentState) {
+  public function getRfp(EntityInterface $project) {
+    $elements = [];
+
+    $today = new \DateTime('now');
+    $rfpDate = $project->get('field_bh_rfp_issued_date')->value ?? NULL;
+
+    if ($rfpDate) {
+
+      $rfpDate = new \DateTime($rfpDate);
+
+      $data = [
+        'label' => t('Go to RFP list'),
+        // @TODO: change out with config?
+        'url' => '/departments/neighborhood-development/requests-proposals',
+        'title' => t('Request For Proposals (RFP) Open for Bidding'),
+        'body' => t('Visit the link below to learn more.'),
+        'icon' => \Drupal::theme()->render("bh_icons", [
+          'type' => 'timeline-building',
+          'fill' => '#288BE4'
+        ]),
+        'icon' => \Drupal::theme()->render("bh_icons", [
+          'type' => 'timeline-building',
+          'fill' => '#091F2F'
+        ]),
+        'rfpListIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
+        'date' => $rfpDate->format('M j, Y'),
+        'currentState' => 'present',
+      ];
+
+      // If ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY.
+      // CORRECT.
+      if ($today->getTimestamp() >= $rfpDate->getTimestamp()) {
+        $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
+      }
+    }
+
+    return $elements;
+  }
+
+  /**
+   * Get Project Texts.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Building Housing Project Entity.
+   *
+   * @return array
+   *   Array of Texts
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getTexts(EntityInterface $project) {
+    $elements = [];
+
+    $webUpdate = BHUtils::getWebUpdate($project);
+
+    if ($webUpdate) {
+      $textUpdatesField = $webUpdate->field_bh_text_updates;
+      $textUpdatesData = [];
+
+      foreach ($textUpdatesField->getValue() as $key => $currentTextUpdate) {
+        // $textData = $currentTextUpdate->getValue();
+        $textData = json_decode($currentTextUpdate['value']);
+        $formattedDate = new \DateTime('@' . strtotime($textData->date));
+        $formattedDate = $formattedDate->format('Ymd');
+        $textUpdatesData[$textData->id] = $textData;
+      }
+
+      if ($textUpdatesData) {
+        foreach ($textUpdatesData as $sfid => $textUpdate) {
+          $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+
+          $data = [
+            'label' => t('Project Manager'),
+            'title' => $textUpdate->author,
+            'body' => $textUpdate->text,
+            'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
+            'date' => $formattedDate->format('M d Y'),
+            'currentState' => 'present',
+          ];
+
+          $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
+
+        }
+      }
+
+    }
+
+    return $elements;
+  }
+
+  /**
+   * Get Project Meetings.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Building Housing Project Entity.
+   *
+   * @return array
+   *   Array of Meetings
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getMeetings(EntityInterface $project) {
+    $elements = [];
+
+    $webUpdate = BHUtils::getWebUpdate($project);
+    $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateId($webUpdate->id()) : NULL;
+
+    if ($meetings) {
+
+      foreach ($meetings as $meetingId => $meeting) {
+
+        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+        $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
+        $startDate->setTimezone($timeZoneAdjustment);
+        $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
+        $endDate->setTimezone($timeZoneAdjustment);
+
+        if ($startDate->getTimestamp() > time()) {
+          $date = $startDate->format('M d Y');
+          $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
+          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'calendar']);
+          $label = t('UPCOMING COMMUNITY MEETING');
+          $currentState = 'future';
+          $addToCal = 'render-link';
+          $link = '/events';
+          $body = $meeting->body->value ?? '';
+          $attendees = NULL;
+        }
+        else {
+          // $label = t('PAST COMMUNITY MEETING');
+          $label = t('VIEW WEBEX RECORDINGS');
+          $icon = \Drupal::theme()->render("bh_icons", [
+            'type' => 'timeline-calendar',
+            'fill' => 'cb'
+          ]);
+          $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
+          $date = $endDate->format('M d Y');
+          $currentState = 'past';
+          $addToCal = NULL;
+          $link = $meeting->field_bh_post_meeting_recording->value ?? NULL;
+          $body = $meeting->field_bh_post_meeting_notes->value ?? NULL;
+          $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
+        }
+
+        $data = [
+          'label' => $label,
+          'title' => $meeting->getTitle(),
+          'body' => $body,
+          'icon' => $icon,
+          'date' => $date,
+          'time' => $time,
+          'link' => $link,
+          'currentState' => $currentState,
+          'addToCal' => $addToCal,
+          'recordingLinkIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
+          'attendees' => $attendees,
+        ];
+
+        $elements[$startDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
+
+      }
+
+    }
+
+    return $elements;
+  }
+
+  /**
+   * Get Public Stage.
+   *
+   * @return array
+   *   Array of Public Stages
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private function getPublicStages() {
+    $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? NULL;
+    return $publicStages;
+  }
+
+  /**
+   * Get Stage Icon.
+   *
+   * @param string $stage
+   *   Project Stage string / title.
+   * @param string $stageCurrentState
+   *   Current state of Project.
+   *
+   * @return array|MarkupInterface|string
+   *   Render array for an icon
+   */
+  private function getStageIcon(string $stage, string $stageCurrentState) {
 
     $stageIconMapping = [
       'Project Launch' => 'community-feedback',
@@ -187,13 +433,27 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $color = $stageCurrentState == 'present' ? 'ob' : 'cb';
 
-    return \Drupal::theme()->render('bh_icons', ['type' => $stageIconMapping[$stage], 'fill' => $color]) ?? [];
+    return \Drupal::theme()->render('bh_icons', [
+      'type' => $stageIconMapping[$stage],
+        'fill' => $color
+      ])
+      ?? [];
   }
 
   /**
+   * Get Stage date from major Project dates.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Building Housing Project Entity.
+   * @param \Drupal\Core\Entity\EntityInterface $stage
+   *   Project Stage string / title.
+   * @param string $format
+   *   Format of the display date.
+   *
+   * @return false|int|string|null
+   *   Formatted date string
    */
-  private function getStageDate($project, $stage, $format = 'timestamp') {
+  private function getStageDate(EntityInterface $project, EntityInterface $stage, $format = 'timestamp') {
 
     switch ($stage->getName()) {
       case 'Project Launch':
@@ -242,227 +502,17 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   }
 
   /**
+   * Date string to Season Year string.
    *
-   */
-  public function getMeetings($project) {
-    $elements = [];
-
-    $webUpdate = BHUtils::getWebUpdate($project);
-    $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : NULL;
-
-    if ($meetings) {
-
-      foreach ($meetings as $meetingId => $meeting) {
-
-        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
-        $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
-        $startDate->setTimezone($timeZoneAdjustment);
-        $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
-        $endDate->setTimezone($timeZoneAdjustment);
-
-        if ($startDate->getTimestamp() > time()) {
-          $date = $startDate->format('M d Y');
-          $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
-          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'calendar']);
-          $label = t('UPCOMING COMMUNITY MEETING');
-          $currentState = 'future';
-          $addToCal = 'render-link';
-          $link = '/events';
-          $body = $meeting->body->value ?? '';
-          $attendees = NULL;
-        }
-        else {
-          // $label = t('PAST COMMUNITY MEETING');
-          $label = t('VIEW WEBEX RECORDINGS');
-          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'timeline-calendar', 'fill' => 'cb']);
-          $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
-          $date = $endDate->format('M d Y');
-          $currentState = 'past';
-          $addToCal = NULL;
-          $link = $meeting->field_bh_post_meeting_recording->value ?? NULL;
-          $body = $meeting->field_bh_post_meeting_notes->value ?? NULL;
-          $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
-        }
-
-        $data = [
-          'label' => $label,
-          'title' => $meeting->getTitle(),
-          'body' => $body,
-          'icon' => $icon,
-          'date' => $date,
-          'time' => $time,
-          'link' => $link,
-          'currentState' => $currentState,
-          'addToCal' => $addToCal,
-          'recordingLinkIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
-          'attendees' => $attendees,
-        ];
-
-        $elements[$startDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
-
-      }
-
-    }
-
-    return $elements;
-  }
-
-  /**
+   * @param string $date
+   *   Date timestamp.
    *
-   */
-  public function getTexts($project) {
-    $elements = [];
-
-    $webUpdate = BHUtils::getWebUpdate($project);
-
-    if ($webUpdate) {
-      $textUpdatesField = $webUpdate->field_bh_text_updates;
-      $textUpdatesData = [];
-
-      foreach ($textUpdatesField->getValue() as $key => $currentTextUpdate) {
-        // $textData = $currentTextUpdate->getValue();
-        $textData = json_decode($currentTextUpdate['value']);
-        $formattedDate = new \DateTime('@' . strtotime($textData->date));
-        $formattedDate = $formattedDate->format('Ymd');
-        $textUpdatesData[$textData->id] = $textData;
-      }
-
-      if ($textUpdatesData) {
-        foreach ($textUpdatesData as $sfid => $textUpdate) {
-          $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
-
-          $data = [
-            'label' => t('Project Manager'),
-            'title' => $textUpdate->author,
-            'body' => $textUpdate->text,
-            'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
-            'date' => $formattedDate->format('M d Y'),
-            'currentState' => 'present',
-          ];
-
-          $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
-
-        }
-      }
-
-    }
-
-    return $elements;
-  }
-
-  /**
+   * @return string
+   *   Date string as a season and year
    *
+   * @throws \Exception
    */
-  public function getRFP($project) {
-    $elements = [];
-
-    $today = new \DateTime('now');
-    $rfpDate = $project->get('field_bh_rfp_issued_date')->value ?? NULL;
-
-    if ($rfpDate) {
-
-      $rfpDate = new \DateTime($rfpDate);
-
-      $data = [
-        'label' => t('Go to RFP list'),
-      // @TODO: change out with config?
-        'url' => '/departments/neighborhood-development/requests-proposals',
-        'title' => t('Request For Proposals (RFP) Open for Bidding'),
-        'body' => t('Visit the link below to learn more.'),
-        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'timeline-building', 'fill' => '#288BE4']),
-        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'timeline-building', 'fill' => '#091F2F']),
-        'rfpListIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
-        'date' => $rfpDate->format('M j, Y'),
-        'currentState' => 'present',
-      ];
-
-      // If ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY.
-      // CORRECT.
-      if ($today->getTimestamp() >= $rfpDate->getTimestamp()) {
-        $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
-      }
-    }
-
-    return $elements;
-  }
-
-  /**
-   *
-   */
-  public function getDocuments($project) {
-    $elements = [];
-
-    $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? NULL;
-
-    if (empty($attachments)) {
-      return $elements;
-    }
-
-    $data = [
-    // 'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
-    //      "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-    // 'date' => 'DEC 15, 2020',
-    //      'date' => 'DOCUMENTS', //@TODO: TEMP
-    //      'currentState' => 'present',
-    ];
-
-    foreach ($attachments as $key => $attachment) {
-      $date = date('Ymd', $attachment->getCreatedTime());
-      $data['documents'][$date][] = [
-      // 'label' => t('developer presentation'),
-        'link' => $attachment->getFilename(),
-        'url' => $attachment->createFileUrl(),
-      ];
-    }
-
-    foreach ($data['documents'] as $documentDate => $documents) {
-
-      $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
-
-      $documentSet = [
-        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
-        'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-        'date' => $formattedDate->format('M d Y'),
-        'currentState' => 'present',
-        'dateId' => $documentDate
-      ];
-      $documentSet['documents'] = $documents;
-      $elements[$formattedDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
-
-    }
-
-    return $elements;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function isApplicable(FieldDefinitionInterface $field_definition) {
-    // This formatter is only available for taxonomy terms.
-    $isTaxonomyTerm = $field_definition->getFieldStorageDefinition()->getSetting('target_type') == 'taxonomy_term';
-    $isNode = $field_definition->getTargetEntityTypeId();
-    $isBHProject = $field_definition->getTargetBundle();
-
-    if ($isTaxonomyTerm && $isNode && $isBHProject) {
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
-  }
-
-  /**
-   *
-   */
-  private function getPublicStages() {
-    $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? NULL;
-    return $publicStages;
-  }
-
-  /**
-   *
-   */
-  private function dateToSeason($date) {
+  private function dateToSeason(string $date) {
     $season = '';
     $seasonDate = new \DateTime($date);
     $monthDayDate = $seasonDate->format('md');
@@ -490,6 +540,25 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     }
 
     return $season . ' ' . $seasonDate->format('Y');
+  }
+
+  /**
+   * Get the pre-build Inactive Project render array content.
+   *
+   * @param object $publicStageTerm
+   *   Public Stage Term.
+   *
+   * @return array
+   *   Render array
+   */
+  private function getInactiveProjectContent(object $publicStageTerm) {
+    $render = [];
+
+    $copy = $publicStageTerm->description->value ?? 'Inactive Project';
+
+    $render[] = ['#markup' => $copy];
+
+    return $render;
   }
 
 }
