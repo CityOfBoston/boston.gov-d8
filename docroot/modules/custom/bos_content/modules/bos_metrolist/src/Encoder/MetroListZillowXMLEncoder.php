@@ -2,7 +2,6 @@
 
 namespace Drupal\bos_metrolist\Encoder;
 
-
 use Drupal\serialization\Encoder\XmlEncoder as SerializationXMLEncoder;
 
 /**
@@ -10,8 +9,7 @@ use Drupal\serialization\Encoder\XmlEncoder as SerializationXMLEncoder;
  *
  * @internal
  */
-class MetroListZillowXMLEncoder extends SerializationXMLEncoder
-{
+class MetroListZillowXMLEncoder extends SerializationXMLEncoder {
 
   /**
    * The formats that this Encoder supports.
@@ -23,70 +21,56 @@ class MetroListZillowXMLEncoder extends SerializationXMLEncoder
   /**
    * {@inheritdoc}
    */
-  public function encode($data, $format, array $context = [])
-  {
+  public function encode($data, $format, array $context = []) {
 
-    $XMLDocument = new \DOMDocument('1.0');
-    $XMLDocument->formatOutput = true;
-    $XMLDocument->encoding = 'UTF-8';
+    $xmlDocument = new \DOMDocument('1.0');
+    $xmlDocument->formatOutput = TRUE;
+    $xmlDocument->encoding = 'UTF-8';
 
-    $hotPadItems = $XMLDocument->createElement('hotPadsItems');
-    $XMLDocument->appendChild($hotPadItems);
+    $hotPadItems = $xmlDocument->createElement('hotPadsItems');
+    $xmlDocument->appendChild($hotPadItems);
     $hotPadItems->setAttribute('version', '2.1');
 
-    $company = $XMLDocument->createElement('Company');
+    $company = $xmlDocument->createElement('Company');
     $companyID = 'city_of_boston_dnd_metrolist';
     $company->setAttribute('id', $companyID);
-    $company->appendChild($XMLDocument->createElement('name', 'Boston Metrolist'));
-    $company->appendChild($XMLDocument->createElement('city', 'Boston'));
-    $company->appendChild($XMLDocument->createElement('state', 'MA'));
-    $company->appendChild($XMLDocument->createElement('website', 'https://boston.gov/metrolist'));
+    $company->appendChild($xmlDocument->createElement('name', 'Boston Metrolist'));
+    $company->appendChild($xmlDocument->createElement('city', 'Boston'));
+    $company->appendChild($xmlDocument->createElement('state', 'MA'));
+    $company->appendChild($xmlDocument->createElement('website', 'https://boston.gov/metrolist'));
     $hotPadItems->appendChild($company);
-
 
     foreach ($data as $listingData) {
 
-      $XMLListing = $XMLDocument->createElement('Listing');
-      $hotPadItems->appendChild($XMLListing);
+      $xmlListing = $xmlDocument->createElement('Listing');
+      $hotPadItems->appendChild($xmlListing);
 
       foreach ($listingData as $fieldName => $fieldValue) {
 
         if ($fieldName == 'id') {
-          $XMLListing->setAttribute('id', $fieldValue);
+          $xmlListing->setAttribute('id', $fieldValue);
         }
 
         if ($fieldName == 'street') {
-          $XMLListing->setAttribute('hide', 'false');
+          $xmlListing->setAttribute('hide', 'false');
         }
 
-        //@TODO: Hard coded values, fix this:
-        $XMLListing->setAttribute('type', 'RENTAL');
-        $XMLListing->setAttribute('companyId', $companyID);
-        $XMLListing->setAttribute('propertyType', 'CONDO');
+        // @TODO: Hard coded values, fix this:
+        $xmlListing->setAttribute('type', 'RENTAL');
+        $xmlListing->setAttribute('companyId', $companyID);
+        $xmlListing->setAttribute('propertyType', 'CONDO');
 
-
-        $XMLField = $XMLDocument->createElement($fieldName, $fieldValue);
-        $XMLListing->appendChild($XMLField);
+        $xmlField = $xmlDocument->createElement($fieldName, $fieldValue);
+        $xmlListing->appendChild($xmlField);
       }
     }
 
-    return $XMLDocument->saveXML();
+    return $xmlDocument->saveXML();
 
+    // $parent = parent::encode($data, $format, $context);
+    // do stuff
 
-
-
-
-
-
-//    $parent = parent::encode($data, $format, $context);
-// do stuff
-
-
-
-
-
-
-
-//    return $parent;
+    // Return $parent;.
   }
+
 }

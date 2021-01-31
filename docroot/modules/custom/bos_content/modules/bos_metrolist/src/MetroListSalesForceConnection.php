@@ -270,22 +270,20 @@ class MetroListSalesForceConnection {
     return $values;
   }
 
-
-
   /**
    * Get Attachments by SF ID.
    *
-   * @param string $SFID
+   * @param string $sfId
    *   Object SF ID.
    *
    * @return bool|null
    *   Attachments.
    */
-  public function getAttachmentsBySid(string $SFID) {
+  public function getAttachmentsBySid(string $sfId) {
 
     try {
       $attachmentQuery = new SelectQuery('Attachment');
-      $attachmentQuery->addCondition('ParentId', "'$SFID'");
+      $attachmentQuery->addCondition('ParentId', "'$sfId'");
       $attachmentQuery->fields = ['Id', 'Body'];
 
       return $this->client()->query($attachmentQuery)->records() ?? NULL;
@@ -300,17 +298,17 @@ class MetroListSalesForceConnection {
   /**
    * Get Attachment Body by SF ID.
    *
-   * @param string $SFID
+   * @param string $sfId
    *   Object SF ID.
    *
    * @return bool|null
    *   Attachment Body.
    */
-  public function getAttachmentBody(string $SFID) {
+  public function getAttachmentBody(string $sfId) {
 
     try {
       $attachmentQuery = new SelectQuery('Attachment');
-      $attachmentQuery->addCondition('ParentId', "'$SFID'");
+      $attachmentQuery->addCondition('ParentId', "'$sfId'");
       $attachmentQuery->fields = ['Id', 'Body'];
 
       return $this->client()->query($attachmentQuery)->records() ?? NULL;
@@ -321,7 +319,5 @@ class MetroListSalesForceConnection {
     }
 
   }
-
-
 
 }
