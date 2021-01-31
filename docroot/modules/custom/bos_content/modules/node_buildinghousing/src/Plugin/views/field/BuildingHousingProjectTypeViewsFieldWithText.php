@@ -14,30 +14,26 @@ use Drupal\views\ResultRow;
  *
  * @ViewsField("building_housing_project_type_views_field_with_text")
  */
-class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase
-{
+class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
    */
-  public function usesGroupBy()
-  {
+  public function usesGroupBy() {
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function query()
-  {
+  public function query() {
     // Do nothing -- to override the parent query.
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions()
-  {
+  protected function defineOptions() {
     $options = parent::defineOptions();
 
     $options['hide_alter_empty'] = ['default' => FALSE];
@@ -47,21 +43,21 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase
   /**
    * {@inheritdoc}
    */
-  public function buildOptionsForm(&$form, FormStateInterface $form_state)
-  {
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
   }
 
-  public function getMainProjectTypeName($projectEntity)
-  {
-    $mainType = null;
+  /**
+   *
+   */
+  public function getMainProjectTypeName($projectEntity) {
+    $mainType = NULL;
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
-
     if ($dispositionTypeId = $projectEntity->get('field_bh_disposition_type')->target_id) {
       $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
-      $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : null;
+      $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
     }
 
     if ($projectTypeId = $projectEntity->get('field_bh_project_type')->target_id) {
@@ -80,8 +76,7 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values)
-  {
+  public function render(ResultRow $values) {
     $mainType = $this->getMainProjectTypeName($values->_entity);
 
     if ($mainType) {
@@ -92,22 +87,26 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase
           $pillColor = 'charles-blue';
           $pillText = t('Housing');
           break;
+
         case "Open Space":
           $iconType = 'maplist-open-space';
           $pillColor = 'green';
           $pillText = t('Open Space');
           break;
+
         case "Business":
           $iconType = 'maplist-business';
           $pillColor = 'gray-blue';
           $pillText = t('Business');
           break;
+
         case "Abutter Sale":
           $iconType = 'maplist-sale';
-          //$pillColor = 'medium-gray';
+          // $pillColor = 'medium-gray';
           $pillColor = 'dark-gray';
           $pillText = t('DND Owned Land');
           break;
+
         default:
           $iconType = 'maplist-other';
           $pillColor = 'dark-gray';
@@ -116,7 +115,6 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase
       }
 
       $elements = [];
-
 
       $elements['projectType'] = [
         '#type' => 'container',

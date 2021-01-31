@@ -22,9 +22,6 @@ use Drupal\webform\WebformSubmissionInterface;
  */
 class AddBuildingHousingFollowerWebformHandler extends WebformHandlerBase {
 
-
-
-
   /**
    * {@inheritdoc}
    */
@@ -33,15 +30,15 @@ class AddBuildingHousingFollowerWebformHandler extends WebformHandlerBase {
     $fieldData = $webform_submission->getData();
 
     if ($webform_submission->isCompleted()) {
-      $project = $webform_submission->getSourceEntity() ?? null;
+      $project = $webform_submission->getSourceEntity() ?? NULL;
       $webUpdate = \Drupal::entityTypeManager()
         ->getStorage('node')
         ->loadByProperties([
           'type' => 'bh_update',
-          'field_sf_web_update' => true,
+          'field_sf_web_update' => TRUE,
           'field_bh_project_ref' => $project->id()
         ]);
-      $webUpdate = count($webUpdate) ? reset($webUpdate) : null;
+      $webUpdate = count($webUpdate) ? reset($webUpdate) : NULL;
 
       if ($webUpdate) {
         $currentFollowers = $webUpdate->get('field_bh_follower_emails')->value;
@@ -49,7 +46,8 @@ class AddBuildingHousingFollowerWebformHandler extends WebformHandlerBase {
 
         if ($currentFollowers) {
           $webUpdate->set('field_bh_follower_emails', $currentFollowers . $newEmail);
-        }else{
+        }
+        else {
           $webUpdate->set('field_bh_follower_emails', $newEmail);
         }
 

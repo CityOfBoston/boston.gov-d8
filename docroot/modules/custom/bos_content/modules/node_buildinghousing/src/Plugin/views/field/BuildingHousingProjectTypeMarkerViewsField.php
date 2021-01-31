@@ -14,15 +14,12 @@ use Drupal\views\ResultRow;
  *
  * @ViewsField("building_housing_project_type_marker_views_field")
  */
-class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectTypeViewsField
-{
-
+class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectTypeViewsField {
 
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values)
-  {
+  public function render(ResultRow $values) {
 
     $mainType = $this->getMainProjectTypeName($values->_entity);
 
@@ -32,15 +29,19 @@ class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectT
         case "Housing":
           $projectName = 'housing-marker.svg';
           break;
+
         case "Open Space":
           $projectName = 'open-space-marker.svg';
           break;
+
         case "Business":
           $projectName = 'business-marker.svg';
           break;
+
         case "Abutter Sale":
           $projectName = 'sale-marker.svg';
           break;
+
         default:
           $projectName = 'other-marker.svg';
           break;

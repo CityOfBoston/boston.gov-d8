@@ -16,8 +16,7 @@ use Drupal\node_buildinghousing\BuildingHousingUtils;
 /**
  * Implements hook_help().
  */
-function node_buildinghousing_help($route_name, RouteMatchInterface $route_match)
-{
+function node_buildinghousing_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     // Main module help for the node_buildinghousing module.
     case 'help.page.node_buildinghousing':
@@ -33,8 +32,7 @@ function node_buildinghousing_help($route_name, RouteMatchInterface $route_match
 /**
  * Implements hook_theme().
  */
-function node_buildinghousing_theme()
-{
+function node_buildinghousing_theme() {
   return [
     'node_buildinghousing' => [
       'render element' => 'children',
@@ -154,8 +152,10 @@ function node_buildinghousing_theme()
   ];
 }
 
-function node_buildinghousing_preprocess_page(array &$variables)
-{
+/**
+ *
+ */
+function node_buildinghousing_preprocess_page(array &$variables) {
   if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'bh_project') {
     $variables['#attached']['library'][] = 'node_buildinghousing/buildinghousing_project';
     $variables['attributes']['class'][] = 'mn';
@@ -165,12 +165,11 @@ function node_buildinghousing_preprocess_page(array &$variables)
 /**
  * Implements hook_views_pre_render().
  */
-function node_buildinghousing_views_pre_render(ViewExecutable $view)
-{
+function node_buildinghousing_views_pre_render(ViewExecutable $view) {
   if (isset($view) && (($view->storage->id() == 'building_housing') || ($view->storage->id() == 'bhmaps'))) {
     $view->element['#attached']['library'][] = 'node_buildinghousing/buildinghousing_views';
 
-    //$variables['attributes']['class'][] = 'mn';
+    // $variables['attributes']['class'][] = 'mn';
 
     $cssClass = 'view-id-' . $view->id() . ' view-display-id-' . $view->current_display;
     if ($view->storage->id() == 'bhmaps' && $view->current_display == 'livemap') {
@@ -183,40 +182,36 @@ function node_buildinghousing_views_pre_render(ViewExecutable $view)
   }
 }
 
-
-function node_buildinghousing_entity_presave(Drupal\Core\Entity\EntityInterface $entity)
-{
+/**
+ *
+ */
+function node_buildinghousing_entity_presave(EntityInterface $entity) {
   if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_project') {
 
-    $bhUtils = new \Drupal\node_buildinghousing\BuildingHousingUtils();
+    $bhUtils = new BHUtils();
     $publicStage = $bhUtils->setPublicStage($entity);
 
-    //$streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
-
+    // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
 
   }
 
-
   if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_update') {
-    $bhUtils = new \Drupal\node_buildinghousing\BuildingHousingUtils();
+    $bhUtils = new BHUtils();
     $projectWebLink = $bhUtils->setProjectWebLink($entity);
   }
 
-
 }
-
 
 /**
  * Implements hook_preprocess_HOOK().
  */
-function node_buildinghousing_preprocess_field(&$variables)
-{
+function node_buildinghousing_preprocess_field(&$variables) {
 
   if ($variables['element']['#bundle'] == 'bh_project') {
-    $fieldName = $variables['field_name'] ?? null;
-    $project = $variables['element']['#object'] ?? null;
-    $projectType = _node_buildinghousing_get_computed_project_type($project)['label'] ?? null;
-    $hidden = false;
+    $fieldName = $variables['field_name'] ?? NULL;
+    $project = $variables['element']['#object'] ?? NULL;
+    $projectType = _node_buildinghousing_get_computed_project_type($project)['label'] ?? NULL;
+    $hidden = FALSE;
 
     switch ($fieldName) {
       case 'field_bh_total_num_units':
@@ -225,27 +220,27 @@ function node_buildinghousing_preprocess_field(&$variables)
       case 'field_bh_units_affordable':
       case 'field_bh_units_total':
         if ($projectType != 'Housing') {
-          $hidden = true;
+          $hidden = TRUE;
         }
       case 'field_bh_property_size':
 
-        $value = $variables['items'][0]['content']['#markup'] ?? null;
+        $value = $variables['items'][0]['content']['#markup'] ?? NULL;
 
         if (empty($value)) {
           $value = t('To Be Determined');
-        } elseif (is_numeric($value) && $value <= 10  && $value >= 1) {
-          //@TODO: Change out the language for the selected site language. Not using as the intl php ext is not loaded on aquia
-//          $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
-//          $value = ucfirst($numberFormatter->format($value));
+        }
+        elseif (is_numeric($value) && $value <= 10  && $value >= 1) {
+          // @TODO: Change out the language for the selected site language. Not using as the intl php ext is not loaded on aquia
+          //          $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+          //          $value = ucfirst($numberFormatter->format($value));
           $numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
           $value = ucfirst($numbers[$value]);
 
         }
 
-
         if ($fieldDescription = $project->getFieldDefinition($fieldName)->get('description')) {
-          //@TODO: Add in the field description as a tooltip to the label, may need to do in a template :/
-          //$variables['label'] = '<div>' . $variables['label'] . ' - ' . '<span class="bh-tooltip">' . $fieldDescription . '</span></div>';
+          // @TODO: Add in the field description as a tooltip to the label, may need to do in a template :/
+          // $variables['label'] = '<div>' . $variables['label'] . ' - ' . '<span class="bh-tooltip">' . $fieldDescription . '</span></div>';
         }
 
         $variables['items'][0]['content']['#markup'] = $value;
@@ -262,17 +257,19 @@ function node_buildinghousing_preprocess_field(&$variables)
         break;
     }
 
-    if ($hidden == true) {
+    if ($hidden == TRUE) {
       $variables['items'] = [];
-      $variables['label_hidden'] = true;
+      $variables['label_hidden'] = TRUE;
     }
 
   }
 
 }
 
-function node_buildinghousing_entity_extra_field_info()
-{
+/**
+ *
+ */
+function node_buildinghousing_entity_extra_field_info() {
   $extraFields = [];
 
   foreach (NodeType::loadMultiple() as $bundle) {
@@ -307,15 +304,17 @@ function node_buildinghousing_entity_extra_field_info()
   return $extraFields;
 }
 
-function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode)
-{
+/**
+ *
+ */
+function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
 
-  $projectIsActive = true;
+  $projectIsActive = TRUE;
   if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()) {
-    $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? null;
+    $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? NULL;
 
     if ($publicStageTerm && $publicStageTerm == 'Not Active') {
-      $projectIsActive = false;
+      $projectIsActive = FALSE;
       $build['field_bh_public_stage']['#label_display'] = 'hidden';
     }
   }
@@ -362,7 +361,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
         ],
       ];
 
-
       $mainImage['wrapper']['icon'] = [
         '#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'camera']),
       ];
@@ -384,16 +382,17 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
 }
 
-function _node_buildinghousing_build_render_project_meeting_notice($entity)
-{
+/**
+ *
+ */
+function _node_buildinghousing_build_render_project_meeting_notice($entity) {
   $render = [];
   $webUpdate = BHUtils::getWebUpdate($entity);
-  $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : null;
+  $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : NULL;
 
   if ($meetings) {
 
     foreach ($meetings as $meetingId => $meeting) {
-
 
       $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
       $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
@@ -403,7 +402,7 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity)
 
       if ($startDate->getTimestamp() > time()) {
 
-//        $dateString = 'Tuesday December 15 2020 | 6-8PM';
+        // $dateString = 'Tuesday December 15 2020 | 6-8PM';
         $dateString = $startDate->format('l F j Y | g:i') . '-' . $endDate->format('g:iA');
 
         $vars = [
@@ -415,7 +414,8 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity)
           ],
         ];
 
-        $vars['title'] = t("Community Meeting"); //@TODO: Can this be the Event Type?
+        // @TODO: Can this be the Event Type?
+        $vars['title'] = t("Community Meeting");
         $vars['dateString'] = $dateString;
         $vars['detailsLink'] = "/events";
         $vars['idForAddToCall'] = "";
@@ -425,13 +425,13 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity)
     }
   }
 
-
   return $render;
 }
 
-
-function _node_buildinghousing_build_render_project_manager_contact($entity)
-{
+/**
+ *
+ */
+function _node_buildinghousing_build_render_project_manager_contact($entity) {
   $render = [];
 
   $vars = [
@@ -447,27 +447,27 @@ function _node_buildinghousing_build_render_project_manager_contact($entity)
   $vars['email'] = $entity->get('field_project_manager_email')->value;
   $vars['phone'] = $entity->get('field_bh_project_manger_phone')->value;
 
-
-  $publicStageId = $entity->get('field_bh_public_stage')->target_id ?? null;
-  $publicStage = $publicStageId ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($publicStageId) : null;
-  $publicStage = $publicStage ? $publicStage->getName() : null;
+  $publicStageId = $entity->get('field_bh_public_stage')->target_id ?? NULL;
+  $publicStage = $publicStageId ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($publicStageId) : NULL;
+  $publicStage = $publicStage ? $publicStage->getName() : NULL;
 
   if (empty($vars['name']) || $publicStage == 'Not Active') {
     $vars['name'] = t("Do you have questions about this lot? We're here to help.");
     $vars['email'] = "neighborhooddevelopment.dnd@boston.gov";
     $vars['phone'] = "617-635-3880";
-    $vars['label'] = null;
+    $vars['label'] = NULL;
     $vars['title'] = t('Contact Information');
   }
-
 
   $render = ['#markup' => \Drupal::theme()->render("bh_project_manager_contact", $vars)];
 
   return $render;
 }
 
-function _node_buildinghousing_build_render_computed_project_type($entity)
-{
+/**
+ *
+ */
+function _node_buildinghousing_build_render_computed_project_type($entity) {
   $render = [];
 
   $computedProjectType = _node_buildinghousing_get_computed_project_type($entity);
@@ -482,13 +482,12 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
       ],
     ];
 
-    $vars['label'] = $computedProjectType['label'] ?? null;
-    $vars['body'] = $computedProjectType['body'] ?? null;
-//    $vars['title'] = t('What are we building?');
-    $vars['title'] = null;
+    $vars['label'] = $computedProjectType['label'] ?? NULL;
+    $vars['body'] = $computedProjectType['body'] ?? NULL;
+    // $vars['title'] = t('What are we building?');
+    $vars['title'] = NULL;
     $vars['bgColor'] = $computedProjectType['bgColor'] ?? '#091f2f';
-//    $vars['icon'] = $computedProjectType['icon'] ?? null;
-
+    // $vars['icon'] = $computedProjectType['icon'] ?? null;
 
     $typeIconMapping = [
       'Open Space' => 'open-space',
@@ -499,17 +498,20 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
 
     if (array_key_exists($computedProjectType['label'], $typeIconMapping)) {
       $vars['icon'] = \Drupal::theme()->render('bh_icons', ['type' => $typeIconMapping[$computedProjectType['label']]]);
-    }elseif (isset($computedProjectType['body']) && $computedProjectType['body'] == "Use To Be Determined"){
-//      $vars['title'] = t('What are we building?');
-      $vars['label'] = t('To be Decided'); //@TODO: chang out for field and move logic to above function
+    }
+    elseif (isset($computedProjectType['body']) && $computedProjectType['body'] == "Use To Be Determined") {
+      // $vars['title'] = t('What are we building?');
+      // @TODO: chang out for field and move logic to above function
+      $vars['label'] = t('To be Decided');
       $vars['bgColor'] = '#58585B';
       $vars['icon'] = \Drupal::theme()->render('bh_icons', ['type' => 'to-be-decided']);
-      $vars['body'] = null;
-    }else{
+      $vars['body'] = NULL;
+    }
+    else {
       return [];
     }
 
-    //@TODO: Move to ent conf and set on term
+    // @TODO: Move to ent conf and set on term
     if ($computedProjectType['label'] == 'Abutter Sale') {
       $vars['bgColor'] = '#58585B';
     }
@@ -518,20 +520,21 @@ function _node_buildinghousing_build_render_computed_project_type($entity)
   }
 }
 
-
-function _node_buildinghousing_get_computed_project_type($entity)
-{
+/**
+ *
+ */
+function _node_buildinghousing_get_computed_project_type($entity) {
   $data = [];
-  $mainType = null;
-  $subType = null;
+  $mainType = NULL;
+  $subType = NULL;
 
   $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
   if ($dispositionTypeId = $entity->get('field_bh_disposition_type')->target_id) {
     $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
 
-    $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : null;
-    $subType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : null;
+    $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
+    $subType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
   }
 
   if ($projectTypeId = $entity->get('field_bh_project_type')->target_id) {
@@ -539,14 +542,13 @@ function _node_buildinghousing_get_computed_project_type($entity)
 
     if (empty($mainType) || $mainType->getName() == 'Housing') {
       $mainType = 'Housing';
-      $subType = !empty($projectTypeParents) ? array_pop($projectTypeParents) : null;
+      $subType = !empty($projectTypeParents) ? array_pop($projectTypeParents) : NULL;
     }
   }
 
   if (empty($dispositionTypeId) && empty($projectTypeId)) {
     $mainType = 'Housing';
   }
-
 
   if ($mainType) {
     $data['label'] = is_string($mainType) ? $mainType : $mainType->getName();
@@ -556,48 +558,52 @@ function _node_buildinghousing_get_computed_project_type($entity)
     $subType = $subType->getName();
     if ($subType == 'Mixed Use - Assisted' || $subType == 'Mixed Use - Market') {
       $data['body'] = 'Mixed Use';
-    } elseif ($subType != 'N/A') {
+    }
+    elseif ($subType != 'N/A') {
       $data['body'] = $subType;
     }
   }
 
-
   $iconType = 'house';
 
-  //@TODO: Change all of this out for a color field on the Tax Terms
+  // @TODO: Change all of this out for a color field on the Tax Terms
   switch ($data['label']) {
     case "Other":
       $data['bgColor'] = '#FFC608';
       $iconType = 'building';
       break;
+
     case "Open Space":
       $data['bgColor'] = '#58B754';
       $iconType = 'tree';
       break;
+
     case "Business":
       $data['bgColor'] = '#45789C';
       if ($subType == 'Parking') {
         $iconType = 'parking';
-      } else {
+      }
+      else {
         $iconType = 'shopping';
       }
       break;
+
     default:
       $iconType = 'house';
       break;
 
   }
 
-//  $data['icon'] = ['#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'triple-decker'])];
+  // $data['icon'] = ['#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'triple-decker'])];
   $data['icon'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
 
   return $data;
 }
 
-
-
-function _node_buildinghousing_build_render_project_follower_webform($entity)
-{
+/**
+ *
+ */
+function _node_buildinghousing_build_render_project_follower_webform($entity) {
   $render = [];
 
   $followers_form = \Drupal::entityTypeManager()

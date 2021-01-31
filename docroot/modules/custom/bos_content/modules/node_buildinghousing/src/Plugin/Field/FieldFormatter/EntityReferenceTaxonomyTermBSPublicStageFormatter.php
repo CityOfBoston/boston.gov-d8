@@ -22,18 +22,16 @@ use SAML2\Utils;
  *   }
  * )
  */
-class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceFormatterBase
-{
+class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceFormatterBase {
   /**
    * @var bool
    */
-  private $isActive = true;
+  private $isActive = TRUE;
 
   /**
    * {@inheritdoc}
    */
-  public function viewElements(FieldItemListInterface $items, $langcode)
-  {
+  public function viewElements(FieldItemListInterface $items, $langcode) {
     $parent_entity = $items->getEntity();
 
     $elements = [];
@@ -44,63 +42,61 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
-
-    $stageCurrentState = 'past'; //past, present, future.
+    // past, present, future.
+    $stageCurrentState = 'past';
     foreach ($this->getPublicStages() as $delta => $publicStage) {
-      //$elements[$delta] = ['#markup' => $publicStage->name];
+      // $elements[$delta] = ['#markup' => $publicStage->name];
       $stageIsActive = $parent_entity->get('field_bh_public_stage')->target_id == $publicStage->tid;
-
-
-
 
       if ($stageCurrentState == 'past' && $stageIsActive) {
         $stageCurrentState = 'present';
-      } elseif ($stageCurrentState == 'present' && !$stageIsActive) {
+      }
+      elseif ($stageCurrentState == 'present' && !$stageIsActive) {
         $stageCurrentState = 'future';
       }
 
       $publicStageTerm = $termStorage->load($publicStage->tid);
       $vars = [];
 
-      $stageTitle = $publicStageTerm->get('field_display_title') ?? null;
-//      $stageIcon = $publicStageTerm->get('field_icon') ?? null;
-      $stageIcon = $this->getStageIcon($publicStageTerm->getName(), $stageCurrentState) ?? null;
-      $stageDescription = $publicStageTerm->get('description') ?? null;
+      $stageTitle = $publicStageTerm->get('field_display_title') ?? NULL;
+      // $stageIcon = $publicStageTerm->get('field_icon') ?? null;
+      $stageIcon = $this->getStageIcon($publicStageTerm->getName(), $stageCurrentState) ?? NULL;
+      $stageDescription = $publicStageTerm->get('description') ?? NULL;
       $stageDate = $this->getStageDate($parent_entity, $publicStageTerm, 'seasonal');
 
       if ($publicStageTerm->getName() == 'Not Active') {
 
         if ($stageIsActive) {
           $elements[] = $this->getInactiveProjectContent($publicStageTerm);
-          $this->isActive = false;
+          $this->isActive = FALSE;
           return $elements;
-        }else{
+        }
+        else {
           continue;
         }
       }
 
-//      $vars['icon'] = $stageIcon->view('icon');
+      // $vars['icon'] = $stageIcon->view('icon');
       $vars['icon'] = $stageIcon;
       $vars['label'] = $stageTitle->view(['label' => 'hidden']);
       $vars['body'] = $stageDescription->view(['label' => 'hidden']);
       $vars['date'] = $stageDate;
       $vars['currentState'] = $stageCurrentState;
 
-
-
       switch ($stageCurrentState) {
         case 'past':
-//          $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
+          // $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
           break;
-        case 'present':
-//          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
-          break;
-        case 'future':
 
+        case 'present':
+          // $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
+          break;
+
+        case 'future':
 
           $stageDate = $stageDate ? $stageDate : 'To Be Determined';
 
-          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => null]);
+          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => NULL]);
           $vars['body'] = t('Predicted Date: ') . $stageDate;
           $vars['date'] = '';
           break;
@@ -109,34 +105,32 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');
       if ($publicStageTerm->getName() == 'Project Launch' && empty($sortTimestamp)) {
         $sortTimestamp = $delta;
-      }elseif (empty($sortTimestamp)) {
+      }
+      elseif (empty($sortTimestamp)) {
         $sortTimestamp = $delta;
       }
       $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
 
+      // If ($publicStageTerm->getName() == 'Selecting Developer') {
+      //      }
+      //
+      //      if ($publicStageTerm->getName() == 'Project Completed') {
+      //      }.
 
-//      if ($publicStageTerm->getName() == 'Selecting Developer') {
-//      }
-//
-//      if ($publicStageTerm->getName() == 'Project Completed') {
-//      }
+      // $elements['documents'] = $this->getDocuments($parent_entity);
+      //      $elements['rfp'] = $this->getRFP($parent_entity);
+      //      $elements['textPosts'] = $this->getTexts($parent_entity);
 
-//      $elements['documents'] = $this->getDocuments($parent_entity);
-//      $elements['rfp'] = $this->getRFP($parent_entity);
-//      $elements['textPosts'] = $this->getTexts($parent_entity);
-
-      //@TODO: THis is just a temp place to put the meeting for styling dev
-//      if ($stageCurrentState == 'present') {
-////        $elements[] = $this->getMeetings($parent_entity);
-//        $elements[] = $this->getTexts($parent_entity);
-//      }
+      // @TODO: THis is just a temp place to put the meeting for styling dev
+      //      if ($stageCurrentState == 'present') {
+      // $elements[] = $this->getMeetings($parent_entity);
+      //        $elements[] = $this->getTexts($parent_entity);
+      //      }
 
     }
 
-
-
     $sortedElements = [];
-    //@TODO: Add fix for showing items with no date
+    // @TODO: Add fix for showing items with no date
     foreach ($elements as $elementTypes => $typeElements) {
       foreach ($typeElements as $time => $renderElement) {
 
@@ -154,16 +148,19 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       }
     }
 
-
-    return ['#markup' => \Drupal::theme()->render("bh_project_timeline", [
+    return [
+    '#markup' => \Drupal::theme()->render("bh_project_timeline", [
       'items' => $sortedElements,
-      'label' => $this->isActive ? t('Timeline') : null,
-    ])];
+      'label' => $this->isActive ? t('Timeline') : NULL,
+    ])
+];
 
-//    return $elements;
+    // Return $elements;.
   }
 
-
+  /**
+   *
+   */
   private function getInactiveProjectContent($publicStageTerm) {
     $render = [];
 
@@ -174,8 +171,10 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return $render;
   }
 
-  private function getStageIcon($stage, $stageCurrentState)
-  {
+  /**
+   *
+   */
+  private function getStageIcon($stage, $stageCurrentState) {
 
     $stageIconMapping = [
       'Project Launch' => 'community-feedback',
@@ -191,55 +190,65 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return \Drupal::theme()->render('bh_icons', ['type' => $stageIconMapping[$stage], 'fill' => $color]) ?? [];
   }
 
-  private function getStageDate($project, $stage, $format = 'timestamp')
-  {
+  /**
+   *
+   */
+  private function getStageDate($project, $stage, $format = 'timestamp') {
 
     switch ($stage->getName()) {
       case 'Project Launch':
-        $date = $project->get('field_bh_project_start_date')->value ?? null;
+        $date = $project->get('field_bh_project_start_date')->value ?? NULL;
         break;
+
       case 'Selecting Developer':
-        $date = $project->get('field_bh_rfp_issued_date')->value ?? null;
+        $date = $project->get('field_bh_rfp_issued_date')->value ?? NULL;
         break;
+
       case 'City Planning Process':
         switch (BHUtils::getProjectRecordType($project)) {
           case 'Disposition':
-            $date = $project->get('field_bh_initial_td_vote_date')->value ?? null;
+            $date = $project->get('field_bh_initial_td_vote_date')->value ?? NULL;
             break;
+
           case 'NHD Development':
-            $date = $project->get('field_bh_dnd_funding_award_date')->value ?? null;
+            $date = $project->get('field_bh_dnd_funding_award_date')->value ?? NULL;
             break;
+
           default:
-            $date = null;
+            $date = NULL;
         }
         break;
+
       case 'In Construction':
-        $date = $project->get('field_bh_construction_start_date')->value ?? null;
+        $date = $project->get('field_bh_construction_start_date')->value ?? NULL;
         break;
+
       case 'Project Completed':
-        $date = $project->get('field_bh_construct_complete_date')->value ?? null;
+        $date = $project->get('field_bh_construct_complete_date')->value ?? NULL;
         break;
+
       default:
-        $date = null;
+        $date = NULL;
     }
 
     if ($format == 'seasonal') {
       $stageDate = $date ? $this->dateToSeason($date) : '';
-    }else{
+    }
+    else {
       $stageDate = strtotime($date);
     }
-
 
     return $stageDate ?? $date ?? '';
   }
 
-
-  public function getMeetings($project)
-  {
+  /**
+   *
+   */
+  public function getMeetings($project) {
     $elements = [];
 
     $webUpdate = BHUtils::getWebUpdate($project);
-    $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : null;
+    $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : NULL;
 
     if ($meetings) {
 
@@ -260,21 +269,20 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $addToCal = 'render-link';
           $link = '/events';
           $body = $meeting->body->value ?? '';
-          $attendees = null;
-        }else{
-//          $label = t('PAST COMMUNITY MEETING');
+          $attendees = NULL;
+        }
+        else {
+          // $label = t('PAST COMMUNITY MEETING');
           $label = t('VIEW WEBEX RECORDINGS');
           $icon = \Drupal::theme()->render("bh_icons", ['type' => 'timeline-calendar', 'fill' => 'cb']);
           $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
           $date = $endDate->format('M d Y');
           $currentState = 'past';
           $addToCal = NULL;
-          $link = $meeting->field_bh_post_meeting_recording->value ?? null;
-          $body = $meeting->field_bh_post_meeting_notes->value ?? null;
-          $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : null;
+          $link = $meeting->field_bh_post_meeting_recording->value ?? NULL;
+          $body = $meeting->field_bh_post_meeting_notes->value ?? NULL;
+          $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
         }
-
-
 
         $data = [
           'label' => $label,
@@ -290,23 +298,20 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           'attendees' => $attendees,
         ];
 
-
         $elements[$startDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_meeting", $data)];
-
 
       }
 
     }
 
-
-
     return $elements;
   }
 
-  public function getTexts($project)
-  {
+  /**
+   *
+   */
+  public function getTexts($project) {
     $elements = [];
-
 
     $webUpdate = BHUtils::getWebUpdate($project);
 
@@ -315,7 +320,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $textUpdatesData = [];
 
       foreach ($textUpdatesField->getValue() as $key => $currentTextUpdate) {
-//        $textData = $currentTextUpdate->getValue();
+        // $textData = $currentTextUpdate->getValue();
         $textData = json_decode($currentTextUpdate['value']);
         $formattedDate = new \DateTime('@' . strtotime($textData->date));
         $formattedDate = $formattedDate->format('Ymd');
@@ -335,7 +340,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
             'currentState' => 'present',
           ];
 
-
           $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
 
         }
@@ -343,17 +347,17 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     }
 
-
-
     return $elements;
   }
 
-  public function getRFP($project)
-  {
+  /**
+   *
+   */
+  public function getRFP($project) {
     $elements = [];
 
     $today = new \DateTime('now');
-    $rfpDate = $project->get('field_bh_rfp_issued_date')->value ?? null;
+    $rfpDate = $project->get('field_bh_rfp_issued_date')->value ?? NULL;
 
     if ($rfpDate) {
 
@@ -361,7 +365,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $data = [
         'label' => t('Go to RFP list'),
-        'url' => '/departments/neighborhood-development/requests-proposals', //@TODO: change out with config?
+      // @TODO: change out with config?
+        'url' => '/departments/neighborhood-development/requests-proposals',
         'title' => t('Request For Proposals (RFP) Open for Bidding'),
         'body' => t('Visit the link below to learn more.'),
         'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'timeline-building', 'fill' => '#288BE4']),
@@ -371,8 +376,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         'currentState' => 'present',
       ];
 
-//      if ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY
-      if ($today->getTimestamp() >= $rfpDate->getTimestamp()) { //CORRECT
+      // If ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY.
+      // CORRECT.
+      if ($today->getTimestamp() >= $rfpDate->getTimestamp()) {
         $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
       }
     }
@@ -380,34 +386,34 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     return $elements;
   }
 
-  public function getDocuments($project)
-  {
+  /**
+   *
+   */
+  public function getDocuments($project) {
     $elements = [];
 
-    $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? null;
+    $attachments = $project->get('field_bh_attachment')->referencedEntities() ?? NULL;
 
     if (empty($attachments)) {
       return $elements;
     }
 
     $data = [
-//      'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
-//      "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-////      'date' => 'DEC 15, 2020',
-//      'date' => 'DOCUMENTS', //@TODO: TEMP
-//      'currentState' => 'present',
+    // 'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+    //      "fileIcon" => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
+    // 'date' => 'DEC 15, 2020',
+    //      'date' => 'DOCUMENTS', //@TODO: TEMP
+    //      'currentState' => 'present',
     ];
 
     foreach ($attachments as $key => $attachment) {
       $date = date('Ymd', $attachment->getCreatedTime());
       $data['documents'][$date][] = [
-//        'label' => t('developer presentation'),
+      // 'label' => t('developer presentation'),
         'link' => $attachment->getFilename(),
         'url' => $attachment->createFileUrl(),
       ];
     }
-
-
 
     foreach ($data['documents'] as $documentDate => $documents) {
 
@@ -425,53 +431,59 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     }
 
-
     return $elements;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function isApplicable(FieldDefinitionInterface $field_definition)
-  {
+  public static function isApplicable(FieldDefinitionInterface $field_definition) {
     // This formatter is only available for taxonomy terms.
     $isTaxonomyTerm = $field_definition->getFieldStorageDefinition()->getSetting('target_type') == 'taxonomy_term';
     $isNode = $field_definition->getTargetEntityTypeId();
     $isBHProject = $field_definition->getTargetBundle();
 
     if ($isTaxonomyTerm && $isNode && $isBHProject) {
-      return true;
-    } else {
-      return false;
+      return TRUE;
+    }
+    else {
+      return FALSE;
     }
   }
 
-  private function getPublicStages()
-  {
-    $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? null;
+  /**
+   *
+   */
+  private function getPublicStages() {
+    $publicStages = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('bh_public_stage') ?? NULL;
     return $publicStages;
   }
 
-  private function dateToSeason($date)
-  {
+  /**
+   *
+   */
+  private function dateToSeason($date) {
     $season = '';
     $seasonDate = new \DateTime($date);
     $monthDayDate = $seasonDate->format('md');
 
-    switch (true) {
-      //spring runs from March 1 (0301) to May 31 (0531)
+    switch (TRUE) {
+      // Spring runs from March 1 (0301) to May 31 (0531)
       case $monthDayDate >= '0301' && $monthDayDate <= '0531':
         $season = 'Spring';
         break;
-      //summer runs from June 1 (0601) to August 31 (0831)
+
+      // Summer runs from June 1 (0601) to August 31 (0831)
       case $monthDayDate >= '0601' && $monthDayDate <= '0831':
         $season = 'Summer';
         break;
-      //fall (autumn) runs from September 1 (0901) to November 30 (1130)
+
+      // Fall (autumn) runs from September 1 (0901) to November 30 (1130)
       case $monthDayDate >= '0901' && $monthDayDate <= '1130':
         $season = 'Fall';
         break;
-      //winter runs from December 1 (1201) to February 28+1 (0229)
+
+      // Winter runs from December 1 (1201) to February 28+1 (0229)
       case $monthDayDate >= '1201' || $monthDayDate <= '0229':
         $season = 'Winter';
         break;
