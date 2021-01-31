@@ -5,12 +5,10 @@
  * Contains node_buildinghousing\node_buildinghousing.views.inc..
  * Provide a custom views field data that isn't tied to any other module. */
 
-
 /**
  * Implements hook_views_data().
  */
-function node_buildinghousing_views_data()
-{
+function node_buildinghousing_views_data() {
 
   $data['views']['table']['group'] = t('Custom Global');
   $data['views']['table']['join'] = [
