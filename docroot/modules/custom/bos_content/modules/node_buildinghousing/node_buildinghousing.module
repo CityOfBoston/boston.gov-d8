@@ -5,6 +5,8 @@
  * Contains node_buildinghousing.module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -153,7 +155,7 @@ function node_buildinghousing_theme() {
 }
 
 /**
- *
+ * Implements hook_preprocess_page()
  */
 function node_buildinghousing_preprocess_page(array &$variables) {
   if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'bh_project') {
@@ -183,7 +185,7 @@ function node_buildinghousing_views_pre_render(ViewExecutable $view) {
 }
 
 /**
- *
+ * Implements hook_entity_presave().
  */
 function node_buildinghousing_entity_presave(EntityInterface $entity) {
   if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_project') {
@@ -231,9 +233,22 @@ function node_buildinghousing_preprocess_field(&$variables) {
         }
         elseif (is_numeric($value) && $value <= 10  && $value >= 1) {
           // @TODO: Change out the language for the selected site language. Not using as the intl php ext is not loaded on aquia
-          //          $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
-          //          $value = ucfirst($numberFormatter->format($value));
-          $numbers = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+          // $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+          // $value = ucfirst($numberFormatter->format($value));
+          $numbers = [
+            'zero',
+            'one',
+            'two',
+            'three',
+            'four',
+            'five',
+            'six',
+            'seven',
+            'eight',
+            'nine',
+            'ten',
+          ];
+
           $value = ucfirst($numbers[$value]);
 
         }
@@ -267,7 +282,7 @@ function node_buildinghousing_preprocess_field(&$variables) {
 }
 
 /**
- *
+ * Implements hook_entity_extra_field_info().
  */
 function node_buildinghousing_entity_extra_field_info() {
   $extraFields = [];
@@ -305,9 +320,21 @@ function node_buildinghousing_entity_extra_field_info() {
 }
 
 /**
+ * Implements hook_entity_view().
  *
+ * @param array $build
+ *   Build array for render.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Main Entity about to be viewed.
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+ *   View display for this entity type.
+ * @param string $view_mode
+ *   Current View Mode.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode) {
 
   $projectIsActive = TRUE;
   if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()) {
@@ -383,12 +410,21 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 }
 
 /**
+ * Helper function to render project meeting notices.
  *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _node_buildinghousing_build_render_project_meeting_notice($entity) {
+function _node_buildinghousing_build_render_project_meeting_notice(EntityInterface $entity) {
   $render = [];
   $webUpdate = BHUtils::getWebUpdate($entity);
-  $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateID($webUpdate->id()) : NULL;
+  $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateId($webUpdate->id()) : NULL;
 
   if ($meetings) {
 
@@ -429,9 +465,18 @@ function _node_buildinghousing_build_render_project_meeting_notice($entity) {
 }
 
 /**
+ * Helper function to render project manager contact info.
  *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _node_buildinghousing_build_render_project_manager_contact($entity) {
+function _node_buildinghousing_build_render_project_manager_contact(EntityInterface $entity) {
   $render = [];
 
   $vars = [
@@ -465,9 +510,18 @@ function _node_buildinghousing_build_render_project_manager_contact($entity) {
 }
 
 /**
+ * Helper function to render the project type.
  *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _node_buildinghousing_build_render_computed_project_type($entity) {
+function _node_buildinghousing_build_render_computed_project_type(EntityInterface $entity) {
   $render = [];
 
   $computedProjectType = _node_buildinghousing_get_computed_project_type($entity);
@@ -521,9 +575,18 @@ function _node_buildinghousing_build_render_computed_project_type($entity) {
 }
 
 /**
+ * Helper function to get the type of a project.
  *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _node_buildinghousing_get_computed_project_type($entity) {
+function _node_buildinghousing_get_computed_project_type(EntityInterface $entity) {
   $data = [];
   $mainType = NULL;
   $subType = NULL;
@@ -601,9 +664,18 @@ function _node_buildinghousing_get_computed_project_type($entity) {
 }
 
 /**
+ * Helper function to render and attach the project follower webform.
  *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _node_buildinghousing_build_render_project_follower_webform($entity) {
+function _node_buildinghousing_build_render_project_follower_webform(EntityInterface $entity) {
   $render = [];
 
   $followers_form = \Drupal::entityTypeManager()

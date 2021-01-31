@@ -2,6 +2,11 @@
 
 namespace Drupal\node_buildinghousing;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\EntityInterface as EntityInterface;
+use Drupal\Core\Entity\EntityMalformedException;
+use Drupal\Core\GeneratedUrl;
 use Drupal\taxonomy\Entity\Term;
 use http\Client\Request;
 
@@ -10,23 +15,42 @@ use http\Client\Request;
  */
 class BuildingHousingUtils {
 
-
+  /**
+   * Project Public Stage.
+   *
+   * @var string|null
+   */
   public $publicStage = NULL;
+
+
+  /**
+   * Project Entity.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface|null
+   */
   public $project = NULL;
+
+
+  /**
+   * Project Web Update Entity.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface|null
+   */
   public $webUpdate = NULL;
 
   /**
+   * Get any meetings from a WebUpdateId.
    *
-   */
-  public static function helloWorld() {
-
-    return 'Hello Building Housing World!';
-  }
-
-  /**
+   * @param string $webUpdateId
+   *   Project Web Update ID.
    *
+   * @return bool|EntityInterface[]|null
+   *   False, Null, array or Entities
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getMeetingsFromWebUpdateID($webUpdateId) {
+  public static function getMeetingsFromWebUpdateId(string $webUpdateId) {
     $meetings = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
         'field_bh_update_ref' => $webUpdateId,
         'type' => 'bh_meeting'
@@ -41,9 +65,18 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Get a Project's WebUpdate.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $projectEntity
+   *   Building Housing Project Entity.
+   *
+   * @return bool|mixed
+   *   False, Web Update Entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getWebUpdate($projectEntity) {
+  public static function getWebUpdate(EntityInterface $projectEntity) {
     $webUpdate = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
       'field_bh_project_ref' => $projectEntity->id(),
         'type' => 'bh_update',
@@ -59,9 +92,19 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Set the Project Weblink onto a Web Update to write back to SF.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Building Housing Project Entity.
+   *
+   * @return \Drupal\Core\GeneratedUrl|string|null
+   *   URL Object, URL String, or null
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function setProjectWebLink(&$entity) {
+  public function setProjectWebLink(EntityInterface &$entity) {
 
     $project = $entity->get('field_bh_project_ref')->target_id ? \Drupal::entityTypeManager()->getStorage('node')->load($entity->get('field_bh_project_ref')->target_id) : NULL;
 
@@ -74,14 +117,23 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Set the Public Stage of a Project.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Building Housing Project Entity.
+   *
+   * @return string|null
+   *   False or Public Stage that was set.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function setPublicStage(&$entity) {
+  public function setPublicStage(EntityInterface &$entity) {
 
     // @TODO: RM after no issues
-    //    $projectRecordType = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_record_type')->target_id)->name->value ?? null;
-    //    $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
-    //    $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
+    // $projectRecordType = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_record_type')->target_id)->name->value ?? null;
+    // $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
+    // $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
 
     $projectRecordType = self::getProjectRecordType($entity);
 
@@ -231,9 +283,15 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Get a Project's Record Type (Disposition or Development)
    *
+   * @param \Drupal\Core\Entity\EntityInterface $projectEntity
+   *   Building Housing Project Entity.
+   *
+   * @return string|null
+   *   Record Type of Project or null.
    */
-  public static function getProjectRecordType($projectEntity) {
+  public static function getProjectRecordType(EntityInterface $projectEntity) {
     $projectRecordType = Term::load($projectEntity->get('field_bh_record_type')->target_id)->name->value ?? NULL;
     $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
     $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
@@ -242,9 +300,17 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Set a Street View Photo given coordinates.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Building Housing Project or Parcel Entity.
+   * @param string $fieldName
+   *   Name of the field to save the Street View Photo.
+   *
+   * @return bool
+   *   True or False is a street view was found and saved to the project.
    */
-  public function setStreetViewPhoto(&$entity, $fieldName = 'field_bh_street_view_photo') {
+  public function setStreetViewPhoto(EntityInterface &$entity, string $fieldName = 'field_bh_street_view_photo') {
     $streetViewPhotoSet = FALSE;
 
     if ($this->publicStage && $coordinates = $entity->get('field_bh_coordinates')->value) {
@@ -263,9 +329,12 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Update project goals field display.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Building Housing Project Entity.
    */
-  public function updateProjectGoalsFieldDisplay(&$entity) {
+  public function updateProjectGoalsFieldDisplay(EntityInterface &$entity) {
 
   }
 

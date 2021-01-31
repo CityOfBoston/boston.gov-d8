@@ -2,6 +2,7 @@
 
 namespace Drupal\node_buildinghousing\Plugin\views\field;
 
+use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Random;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -48,9 +49,18 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
   }
 
   /**
+   * Get Main Project Type Name.
    *
+   * @param \Drupal\Core\Entity\EntityInterface $projectEntity
+   *   Project Entity.
+   *
+   * @return mixed|string|null
+   *   Main Project Type name string
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getMainProjectTypeName($projectEntity) {
+  public function getMainProjectTypeName(EntityInterface $projectEntity) {
     $mainType = NULL;
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');

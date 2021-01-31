@@ -2,18 +2,13 @@
 
 namespace Drupal\node_buildinghousing\EventSubscriber;
 
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\salesforce\Event\SalesforceEvents;
 use Drupal\salesforce\Exception;
-use Drupal\salesforce\SelectQuery;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
-use Drupal\salesforce_mapping\Event\SalesforcePushOpEvent;
-use Drupal\salesforce_mapping\Event\SalesforcePushAllowedEvent;
-use Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class SalesforceExampleSubscriber.
@@ -28,72 +23,88 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   use StringTranslationTrait;
 
   // /**
-  //   * SalesforcePushAllowedEvent callback.
-  //   *
-  //   * @param \Drupal\salesforce_mapping\Event\SalesforcePushAllowedEvent $event
-  //   *   The push allowed event.
-  //   */
-  //  public function pushAllowed(SalesforcePushAllowedEvent $event) {
-  //    /** @var \Drupal\Core\Entity\Entity $entity */
-  //    $entity = $event->getEntity();
-  //    if ($entity && $entity->getEntityTypeId() == 'unpushable_entity') {
-  //      $event->disallowPush();
-  //    }
-  //  }
+  // * SalesforcePushAllowedEvent callback.
+  // *
+  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushAllowedEvent $event
+  // *  The push allowed event.
+  // */
+  // public function pushAllowed(SalesforcePushAllowedEvent $event) {
+  // /** @var \Drupal\Core\Entity\Entity $entity */
+  // $entity = $event->getEntity();
+  // if ($entity && $entity->getEntityTypeId() == 'unpushable_entity') {
+  // $event->disallowPush();
+  // }
+  // }
 
   // /**
-  //   * SalesforcePushParamsEvent callback.
-  //   *
-  //   * @param \Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent $event
-  //   *   The event.
-  //   */
-  //  public function pushParamsAlter(SalesforcePushParamsEvent $event) {
-  //    $mapping = $event->getMapping();
-  //    $mapped_object = $event->getMappedObject();
-  //    $params = $event->getParams();
+  // * SalesforcePushParamsEvent callback.
+  // *
+  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent $event
+  // *   The event.
+  // */
+  // public function pushParamsAlter(SalesforcePushParamsEvent $event) {
+  // $mapping = $event->getMapping();
+  // $mapped_object = $event->getMappedObject();
+  // $params = $event->getParams();
   //
-  //    /** @var \Drupal\Core\Entity\Entity $entity */
-  //    $entity = $event->getEntity();
-  //    if ($entity->getEntityTypeId() != 'user') {
-  //      return;
-  //    }
-  //    if ($mapping->id() != 'salesforce_example_contact') {
-  //      return;
-  //    }
-  //    if ($mapped_object->isNew()) {
-  //      return;
-  //    }
-  //    $params->setParam('FirstName', 'SalesforceExample');
-  //  }
+  // /** @var \Drupal\Core\Entity\Entity $entity */
+  // $entity = $event->getEntity();
+  // if ($entity->getEntityTypeId() != 'user') {
+  // return;
+  // }
+  // if ($mapping->id() != 'salesforce_example_contact') {
+  // return;
+  // }
+  // if ($mapped_object->isNew()) {
+  // return;
+  // }
+  // $params->setParam('FirstName', 'SalesforceExample');
+  // }
 
   // /**
-  //   * SalesforcePushParamsEvent push success callback.
-  //   *
-  //   * @param \Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent $event
-  //   *   The event.
-  //   */
-  //  public function pushSuccess(SalesforcePushParamsEvent $event) {
-  //    switch ($event->getMappedObject()->getMapping()->id()) {
-  //      case 'mapping1':
-  //        // Do X.
-  //        break;
+  // * SalesforcePushParamsEvent push success callback.
+  // *
+  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent $event
+  // *   The event.
+  // */
+  // public function pushSuccess(SalesforcePushParamsEvent $event) {
+  // switch ($event->getMappedObject()->getMapping()->id()) {
+  // case 'mapping1':
+  // // Do X.
+  // break;
   //
-  //      case 'mapping2':
-  //        // Do Y.
-  //        break;
-  //    }
-  //    \Drupal::messenger()->addStatus('push success example subscriber!: ' . $event->getMappedObject()->sfid());
-  //  }
+  //  case 'mapping2':
+  //  // Do Y.
+  //  break;
+  // }
+  // \Drupal::messenger()->addStatus('push success example subscriber!: ' . $event->getMappedObject()->sfid());
+  // }
 
   // /**
-  //   * SalesforcePushParamsEvent push fail callback.
-  //   *
-  //   * @param \Drupal\salesforce_mapping\Event\SalesforcePushOpEvent $event
-  //   *   The event.
-  //   */
-  //  public function pushFail(SalesforcePushOpEvent $event) {
-  //    \Drupal::messenger()->addStatus('push fail example: ' . $event->getMappedObject()->id());
-  //  }
+  // * SalesforcePushParamsEvent push fail callback.
+  // *
+  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushOpEvent $event
+  // *   The event.
+  // */
+  // public function pushFail(SalesforcePushOpEvent $event) {
+  // \Drupal::messenger()->addStatus('push fail example: ' . $event->getMappedObject()->id());
+  // }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getSubscribedEvents() {
+    $events = [
+      // SalesforceEvents::PUSH_ALLOWED => 'pushAllowed',
+      // SalesforceEvents::PUSH_PARAMS => 'pushParamsAlter',
+      // SalesforceEvents::PUSH_SUCCESS => 'pushSuccess',
+      // SalesforceEvents::PUSH_FAIL => 'pushFail',.
+      SalesforceEvents::PULL_PRESAVE => 'pullPresave',
+      SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
+      SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+    ];
+    return $events;
+  }
 
   /**
    * SalesforceQueryEvent pull query alter event callback.
@@ -108,7 +119,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
         $query = $event->getQuery();
         // $query->fields[] = "(SELECT Id, Name FROM Project_Manager__c LIMIT 1)";
-        //        $query->fields[] = "Project_Manager__c";
+        // $query->fields[] = "Project_Manager__c";
         $query->fields['Project_Manager__c'] = 'Project_Manager__c';
 
         break;
@@ -118,7 +129,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
         $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
         // $query->fields[] = "(SELECT Id, ContentType, Name FROM Attachments LIMIT 20)";
-        //        $query->limit = 5;
+        // $query->limit = 5;
 
         break;
 
@@ -130,9 +141,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
         // $query->fields[] = "(SELECT Id FROM Attachments WHERE Name = 'example.jpg' LIMIT 1)";
         // Add a field from lookup:
-        //        $query->fields[] = "Account.Name";
+        // $query->fields[] = "Account.Name";
         // Add a condition:
-        //        $query->addCondition('Email', "''", '!=');
+        // $query->addCondition('Email', "''", '!=');
         // Add a limit:
         // $query->limit = 50;
         break;
@@ -144,6 +155,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    *
    * @param \Drupal\salesforce_mapping\Event\SalesforcePullEvent $event
    *   The event.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function pullPresave(SalesforcePullEvent $event) {
     $mapping = $event->getMapping();
@@ -169,7 +183,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
         catch (Exception $exception) {
           $projectManager = NULL;
-        };
+        }
 
         if ($projectManager) {
           $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
@@ -192,10 +206,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         if ($mapping->id() == 'bh_website_update') {
 
           // Check for chatter text updates.
-          $ChatterFeedURL = $authProvider->getProvider()->getApiEndpoint() . "chatter/feeds/record/" . $sf_data->id() . "/feed-elements";
+          $chatterFeedURL = $authProvider->getProvider()->getApiEndpoint() . "chatter/feeds/record/" . $sf_data->id() . "/feed-elements";
           $chatterData = NULL;
           try {
-            $chatterData = $client->httpRequestRaw($ChatterFeedURL);
+            $chatterData = $client->httpRequestRaw($chatterFeedURL);
             $chatterData = $chatterData ? json_decode($chatterData) : NULL;
 
             if ($chatterData) {
@@ -233,7 +247,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             // Unable to fetch file data from SF.
             \Drupal::logger('db')->error($this->t('Failed to get Text updates for Update @update', ['@update' => $update->id()]));
             \Drupal::logger('db')->error($this->t('Text updates Backtrace @backtrace', ['@backtrace' => $e->getTraceAsString()]));
-            \Drupal::logger('db')->error($this->t('Chatter Feed URL @url', ['@url' => $ChatterFeedURL]));
+            \Drupal::logger('db')->error($this->t('Chatter Feed URL @url', ['@url' => $chatterFeedURL]));
             // return;.
           }
 
@@ -413,50 +427,37 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   }
 
   /**
-   * PULL_PREPULL event subscriber example.
+   * PULL_PREPULL event subscriber.
+   *
+   * @param \Drupal\salesforce_mapping\Event\SalesforcePullEvent $event
+   *   SF Pull Event.
    */
   public function pullPrepull(SalesforcePullEvent $event) {
     // For the "contact" mapping, if the SF record is marked "Inactive", do not
     // pull the record and block the user account.
     $mapping = $event->getMapping();
     // Switch ($mapping->id()) {
-    //      case 'contact':
-    //        $sf_data = $event->getMappedObject()->getSalesforceRecord();
-    //        /** @var \Drupal\user\Entity\User $account */
-    //        $account = $event->getEntity();
-    //        try {
-    //          if (!$sf_data->field('Inactive__c')) {
-    //            // If the SF record is not marked "Inactive", proceed as normal.
-    //            return;
-    //          }
-    //        }
-    //        catch (\Exception $e) {
-    //          // Fall through if "Inactive" field was not found.
-    //        }
-    //        // If we got here, SF record is marked inactive. Don't pull it.
-    //        $event->disallowPull();
-    //        if (!$account->isNew()) {
-    //          // If this is an update to an existing account, block the account.
-    //          // If this is a new account, it won't be created.
-    //          $account->block()->save();
-    //        }
-    //    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getSubscribedEvents() {
-    $events = [
-    // SalesforceEvents::PUSH_ALLOWED => 'pushAllowed',
-    //      SalesforceEvents::PUSH_PARAMS => 'pushParamsAlter',
-    //      SalesforceEvents::PUSH_SUCCESS => 'pushSuccess',
-    //      SalesforceEvents::PUSH_FAIL => 'pushFail',.
-      SalesforceEvents::PULL_PRESAVE => 'pullPresave',
-      SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
-      SalesforceEvents::PULL_PREPULL => 'pullPrepull',
-    ];
-    return $events;
+    // case 'contact':
+    // $sf_data = $event->getMappedObject()->getSalesforceRecord();
+    // /** @var \Drupal\user\Entity\User $account */
+    // $account = $event->getEntity();
+    // try {
+    // if (!$sf_data->field('Inactive__c')) {
+    // // If the SF record is not marked "Inactive", proceed as normal.
+    // return;
+    // }
+    // }
+    // catch (\Exception $e) {
+    // // Fall through if "Inactive" field was not found.
+    // }
+    // // If we got here, SF record is marked inactive. Don't pull it.
+    // $event->disallowPull();
+    // if (!$account->isNew()) {
+    // // If this is an update to an existing account, block the account.
+    // // If this is a new account, it won't be created.
+    // $account->block()->save();
+    // }
+    // }
   }
 
 }
