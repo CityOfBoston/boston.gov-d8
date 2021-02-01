@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - node.type.article
+    - node.type.bh_project
     - node.type.department_profile
     - node.type.event
     - node.type.how_to
@@ -311,6 +312,7 @@ display:
           operator: in
           value:
             article: article
+            bh_project: bh_project
             department_profile: department_profile
             topic_page: topic_page
             how_to: how_to
@@ -329,6 +331,8 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
@@ -337,8 +341,6 @@ display:
               authenticated: authenticated
             reduce: false
             argument: null
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
