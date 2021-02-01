@@ -352,7 +352,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $label = t('UPCOMING COMMUNITY MEETING');
           $currentState = 'future';
           $addToCal = 'render-link';
-          $link = '/events';
+          $link = $meeting->field_bh_event_ref->isEmpty()
+            ? '/events'
+            : $meeting->field_bh_event_ref->referencedEntities()[0]->toURL()->toString();
           $body = $meeting->body->value ?? '';
           $attendees = NULL;
         }
