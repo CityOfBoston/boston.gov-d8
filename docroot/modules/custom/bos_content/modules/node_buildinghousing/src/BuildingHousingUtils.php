@@ -343,8 +343,58 @@ class BuildingHousingUtils {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Building Housing Meeting Entity.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function setMeetingEvent(EntityInterface &$entity) {
+
+    // GET WEB UPDATE.
+    $webUpdate = !$entity->field_bh_update_ref->isEmpty() ? $entity->field_bh_update_ref->referencedEntities()[0] : NULL;
+    // GET PROJECT.
+    $project = !$webUpdate->field_bh_project_ref->isEmpty() ? $webUpdate->field_bh_project_ref->referencedEntities()[0] : NULL;
+
+    // @TODO: Change  out for value on meeting import
+    $contactEmail = $project->field_project_manager_email->value ?? 'DND.email@boston.dev';
+    $contactName = $project->field_bh_project_manager_name->value ?? 'DND';
+
+    if (!$entity->field_bh_event_ref->isEmpty()) {
+      $event = $entity->field_bh_event_ref->referencedEntities()[0];
+    }
+    else {
+      $event = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->create([
+          'type' => 'event',
+          'title' => $entity->getTitle() ?? '',
+          'body' => $entity->get('body')->value ?? '',
+          'field_intro_text' => t('The Department of Neighborhood Development is looking for feedback from the community. Join us to see the latest plans and share your thoughts.'),
+          'field_address' => [
+            'country_code' => 'US',
+            'address_line1' => t('THIS MEETING WILL BE HELD VIRTUALLY.'),
+            'locality' => 'Boston',
+            'administrative_area' => 'MA',
+            'postal_code' => '02201',
+          ],
+          'field_event_contact' => $contactName,
+          'field_email' => $contactEmail,
+            // Event Type: "Civic Engagement".
+          'field_event_type' => [['target_id' => 1831]],
+          'field_event_date_recur' => [
+            'value' => $entity->field_bh_meeting_start_time->value ?? '',
+            'end_value' => $entity->field_bh_meeting_end_time->value ?? '',
+            // 'timezone' => 'Etc/GMT+10',
+            'timezone' => 'Pacific/Honolulu',
+          ],
+        ]);
+
+      $event->setPublished(TRUE);
+      $event->set('moderation_state', 'published');
+      $event->save();
+
+      $entity->set('field_bh_event_ref', ['target_id' => $event->id()]);
+    }
   }
 
 }

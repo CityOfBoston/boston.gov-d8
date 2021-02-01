@@ -412,6 +412,19 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     }
   }
 
+  if ($entity->getType() == 'event') {
+    $meeting = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+        'field_bh_event_ref' => $entity->id(),
+        'type' => 'bh_meeting'
+      ])
+      ?? NULL;
+    $meeting = is_array($meeting) ? reset($meeting) : NULL;
+
+    if ($meeting) {
+
+    }
+  }
+
 }
 
 /**
@@ -455,10 +468,14 @@ function _node_buildinghousing_build_render_project_meeting_notice(EntityInterfa
           ],
         ];
 
+        $link = $meeting->field_bh_event_ref->isEmpty()
+          ? '/events'
+          : $meeting->field_bh_event_ref->referencedEntities()[0]->toURL()->toString();
+
         // @TODO: Can this be the Event Type?
         $vars['title'] = t("Community Meeting");
         $vars['dateString'] = $dateString;
-        $vars['detailsLink'] = "/events";
+        $vars['detailsLink'] = $link;
         $vars['idForAddToCall'] = "";
 
         $render = ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
