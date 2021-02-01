@@ -412,19 +412,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     }
   }
 
-  if ($entity->getType() == 'event') {
-    $meeting = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-        'field_bh_event_ref' => $entity->id(),
-        'type' => 'bh_meeting'
-      ])
-      ?? NULL;
-    $meeting = is_array($meeting) ? reset($meeting) : NULL;
-
-    if ($meeting) {
-
-    }
-  }
-
 }
 
 /**
