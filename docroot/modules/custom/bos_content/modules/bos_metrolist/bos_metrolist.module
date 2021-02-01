@@ -715,6 +715,11 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
 
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--neighborhood') {
     $salesForce = new MetroListSalesForceConnection();
+    $attachments = $salesForce->getAttachmentsBySid('a2lV0000001eRfs');
+
+    $test = $salesForce->client()->apiCall("sobjects/Attachment/00PV0000006bjExMAI/Body");
+    // $test = $salesForce->client()->httpRequestRaw("https://boston-dnd--fullcopy.my.salesforce.com/services/data/v44.0/sobjects/Attachment/00PV0000006bjExMAI/Body");
+
     $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? NULL;
 
     if ($neighborhoodOptions) {
