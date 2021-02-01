@@ -270,4 +270,54 @@ class MetroListSalesForceConnection {
     return $values;
   }
 
+  /**
+   * Get Attachments by SF ID.
+   *
+   * @param string $sfId
+   *   Object SF ID.
+   *
+   * @return bool|null
+   *   Attachments.
+   */
+  public function getAttachmentsBySid(string $sfId) {
+
+    try {
+      $attachmentQuery = new SelectQuery('Attachment');
+      $attachmentQuery->addCondition('ParentId', "'$sfId'");
+      $attachmentQuery->fields = ['Id', 'Body'];
+
+      return $this->client()->query($attachmentQuery)->records() ?? NULL;
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+      return FALSE;
+    }
+
+  }
+
+  /**
+   * Get Attachment Body by SF ID.
+   *
+   * @param string $sfId
+   *   Object SF ID.
+   *
+   * @return bool|null
+   *   Attachment Body.
+   */
+  public function getAttachmentBody(string $sfId) {
+
+    try {
+      $attachmentQuery = new SelectQuery('Attachment');
+      $attachmentQuery->addCondition('ParentId', "'$sfId'");
+      $attachmentQuery->fields = ['Id', 'Body'];
+
+      return $this->client()->query($attachmentQuery)->records() ?? NULL;
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+      return FALSE;
+    }
+
+  }
+
 }
