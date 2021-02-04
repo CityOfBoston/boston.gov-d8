@@ -421,3 +421,64 @@
 /*#edit-title-basic {*/
 /*  margin: unset;*/
 /*}*/
+
+
+.read-more-state {
+  display: none;
+}
+
+.read-more-target {
+  opacity: 0;
+  max-height: 0;
+  font-size: 0;
+  transition: .25s ease;
+}
+
+.read-more-wrap {
+  display: inline;
+}
+
+.read-more-state:checked ~ .read-more-wrap .read-more-target {
+  opacity: 1;
+  font-size: inherit;
+  max-height: 999em;
+}
+
+.read-more-state ~ p .read-more-trigger:before,
+.read-more-state ~ .read-more-trigger:before {
+  content: '...Read More';
+}
+
+.read-more-state:checked ~ p .read-more-trigger:before,
+.read-more-state:checked ~ .read-more-trigger:before {
+  content: 'Show Less';
+}
+
+.read-more-trigger {
+  cursor: pointer;
+  padding: 0 .5em;
+  margin-top: 0;
+  display: inline;
+}
+
+.bh-project-meeting-notice .addtocal-container,
+.bh-project-timeline-moment .addtocal-container {
+  position: relative;
+  display: block;
+}
+
+.bh-project-timeline-moment .addtocal-container .addtocal {
+  border-radius: unset;
+}
+
+.bh-project-meeting-notice .addtocal-container .addtocal {
+  display: block;
+  text-align: center;
+  width: 100%;
+  padding: 1.25rem;
+  border-radius: unset;
+}
+
+.bh-project-timeline-moment .bh-add-to-cal {
+  margin-top: 0.75rem !important;
+}
