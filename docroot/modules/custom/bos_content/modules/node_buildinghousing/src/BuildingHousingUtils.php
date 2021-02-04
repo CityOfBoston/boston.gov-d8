@@ -65,6 +65,32 @@ class BuildingHousingUtils {
   }
 
   /**
+   * Get a meetings from an EventId.
+   *
+   * @param string $eventId
+   *   Event ID.
+   *
+   * @return bool|EntityInterface[]|null
+   *   False, Null, array or Entities
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function getMeetingFromEventId(string $eventId) {
+    $meetings = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
+        'field_bh_event_ref' => $eventId,
+        'type' => 'bh_meeting'
+      ])
+      ?? NULL;
+
+    if ($meetings && count($meetings) >= 1) {
+      return array_shift($meetings);
+    }
+
+    return FALSE;
+  }
+
+  /**
    * Get a Project's WebUpdate.
    *
    * @param \Drupal\Core\Entity\EntityInterface $projectEntity
@@ -361,6 +387,32 @@ class BuildingHousingUtils {
 
     if (!$entity->field_bh_event_ref->isEmpty()) {
       $event = $entity->field_bh_event_ref->referencedEntities()[0];
+
+      if ($entity->field_bh_virt_meeting_web_addr->value) {
+        $event->set('field_details_link', [
+          'uri' => $entity->field_bh_virt_meeting_web_addr->value,
+          'title' => t('Join Meeting'),
+          'options' => [
+            'attributes' => [
+              'target' => '_blank',
+            ],
+          ],
+        ]);
+      }
+
+      $event->set('title', $entity->getTitle() ?? '');
+      $event->set('body', $entity->get('body')->value ?? '');
+      $event->set('field_event_contact', $contactName);
+      $event->set('field_email', $contactEmail);
+      $event->set('field_event_date_recur', [
+        'value' => $entity->field_bh_meeting_start_time->value ?? '',
+        'end_value' => $entity->field_bh_meeting_end_time->value ?? '',
+        // 'timezone' => 'Etc/GMT+10',
+        'timezone' => 'Pacific/Honolulu',
+      ]);
+
+      $event->save();
+
     }
     else {
       $event = \Drupal::entityTypeManager()
@@ -388,6 +440,18 @@ class BuildingHousingUtils {
             'timezone' => 'Pacific/Honolulu',
           ],
         ]);
+
+      if ($entity->field_bh_virt_meeting_web_addr->value) {
+        $event->set('field_details_link', [
+          'uri' => $entity->field_bh_virt_meeting_web_addr->value,
+          'title' => t('Register for Event'),
+          'options' => [
+            'attributes' => [
+              'target' => '_blank',
+            ],
+          ],
+        ]);
+      }
 
       $event->setPublished(TRUE);
       $event->set('moderation_state', 'published');

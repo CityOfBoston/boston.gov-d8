@@ -49,7 +49,7 @@
         <h6 class="m-v000">{{ date }} {{ time }}</h6>
       {% endif %}
 
-      <div class=""><p>{{ body }}</p></div>
+      <div class=""><p>{{ body | raw }}</p></div>
 
 
       <div class="g">
@@ -62,9 +62,10 @@
             </a>
           </div>
         {% else %}
-          <div class="m-v200 g--6">
+          <div class="m-v200 g--6 bh-add-to-cal">
             {% if addToCal %}
-              <a class="btn btn--b btn--200 btn--c" href="{{ addToCal }}">Add to Cal</a>
+              {{ addToCal }}
+{#              <a class="btn btn--b btn--200 btn--c" href="{{ addToCal }}">Add to Cal</a>#}
             {% endif %}
           </div>
 

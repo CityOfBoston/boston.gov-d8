@@ -103,6 +103,14 @@ function node_buildinghousing_theme() {
         "addToCal" => NULL,
       ],
     ],
+    'bh_read_more_text' => [
+      'template' => 'snippets/bh-read-more-text',
+      'variables' => [
+        "textId" => NULL,
+        "lessText" => NULL,
+        "moreText" => NULL,
+      ],
+    ],
     'bh_project_timeline_text' => [
       'template' => 'snippets/bh-project-timeline-text',
       'variables' => [
@@ -412,6 +420,28 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     }
   }
 
+  if ($display->getTargetBundle() == 'event'
+    && $display->getComponent('field_sidebar_components')
+    && $display->getMode() == 'default') {
+
+    $meeting = $entity ? BHUtils::getMeetingFromEventId($entity->id()) : NULL;
+
+    if ($meeting) {
+      if ($meeting->field_bh_languages_supported->value) {
+        $supportedLang['classes'] = [
+          'label' => 'detail-item--left',
+          'body' => 'detail-item--secondary',
+          'detail' => 'detail-item--secondary list-item',
+        ];
+        $supportedLang['label'] = t('Language Support:');
+        $supportedLang['body'] = $meeting->field_bh_languages_supported->value;
+        $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $supportedLang)];
+      }
+
+      unset($build['field_event_type']);
+      unset($build['field_cost']);
+    }
+  }
 }
 
 /**
@@ -427,7 +457,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function _node_buildinghousing_build_render_project_meeting_notice(EntityInterface $entity) {
-  $render = [];
   $webUpdate = BHUtils::getWebUpdate($entity);
   $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateId($webUpdate->id()) : NULL;
 
@@ -455,22 +484,29 @@ function _node_buildinghousing_build_render_project_meeting_notice(EntityInterfa
           ],
         ];
 
-        $link = $meeting->field_bh_event_ref->isEmpty()
-          ? '/events'
-          : $meeting->field_bh_event_ref->referencedEntities()[0]->toURL()->toString();
+        $event = $meeting->field_bh_event_ref->isEmpty() ? NULL : $meeting->field_bh_event_ref->referencedEntities()[0];
 
-        // @TODO: Can this be the Event Type?
+        $addToCal = $event->field_event_date_recur->view('add_to_calendar');
+        unset($addToCal[0]['start_date']);
+        unset($addToCal[0]['separator']);
+        unset($addToCal[0]['end_date']);
+        $addToCal[0]['addtocal']['#id'] = $addToCal[0]['addtocal']['#id'] . '-notice';
+
+        $link = $event
+          ? $event->toURL()->toString()
+          : '/events';
+
         $vars['title'] = t("Community Meeting");
         $vars['dateString'] = $dateString;
         $vars['detailsLink'] = $link;
-        $vars['idForAddToCall'] = "";
+        $vars['idForAddToCal'] = $addToCal;
 
-        $render = ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
+        return ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
       }
     }
   }
 
-  return $render;
+  return [];
 }
 
 /**
