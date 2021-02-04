@@ -19,9 +19,11 @@
 
   <h4 class="t--w m-t200">{{ dateString }}</h4>
 
+  {% if idForAddToCal %}
   <div class="m-v600">
-    <a class="btn btn--b btn--w" href="{{ idForAddToCal }}">Add to Calendar</a>
+    {{ idForAddToCal }}
   </div>
+  {% endif %}
 
   <div class="m-v400">
     <a class="btn btn--b btn--w" href="{{ detailsLink }}">Details</a>
