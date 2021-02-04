@@ -346,16 +346,29 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         $endDate->setTimezone($timeZoneAdjustment);
 
         if ($startDate->getTimestamp() > time()) {
+          $event = $meeting->field_bh_event_ref->isEmpty() ? NULL : $meeting->field_bh_event_ref->referencedEntities()[0];
+
+          $addToCal = $event->field_event_date_recur->view('add_to_calendar');
+          unset($addToCal[0]['start_date']);
+          unset($addToCal[0]['separator']);
+          unset($addToCal[0]['end_date']);
+
           $date = $startDate->format('M d Y');
           $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
           $icon = \Drupal::theme()->render("bh_icons", ['type' => 'calendar']);
           $label = t('UPCOMING COMMUNITY MEETING');
           $currentState = 'future';
-          $addToCal = 'render-link';
-          $link = $meeting->field_bh_event_ref->isEmpty()
-            ? '/events'
-            : $meeting->field_bh_event_ref->referencedEntities()[0]->toURL()->toString();
-          $body = $meeting->body->value ?? '';
+          $link = $event ? $event->toURL()->toString() : '/events';
+
+          $bodyFieldView = $meeting->body->view('default');
+          $bodyFieldView[0]['#text'] = $this->renderReadMoreText($bodyFieldView[0]['#text'], 200);
+          $bodyFieldView[0]['#format'] = 'full_html';
+
+          $body = render($bodyFieldView);
+          // $body = str_replace('<p><label',  '<label', $body);
+          // $body = str_replace('label></p>', 'label>', $body);
+          $body = strip_tags($body, '<div><span><label><input><a>');
+
           $attendees = NULL;
         }
         else {
@@ -370,7 +383,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $currentState = 'past';
           $addToCal = NULL;
           $link = $meeting->field_bh_post_meeting_recording->value ?? NULL;
-          $body = $meeting->field_bh_post_meeting_notes->value ?? NULL;
+          // $event->field_event_date_recur->view('add_to_calendar');
+          $body = $this->renderReadMoreText($meeting->field_bh_post_meeting_notes->value, 200) ?? '';
           $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
         }
 
@@ -395,6 +409,37 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     }
 
     return $elements;
+  }
+
+  /**
+   * Split Text field into two parts with read more action.
+   *
+   * @param string $text
+   *   Text to split.
+   * @param int $maxChars
+   *   Max chart to split the text at.
+   *
+   * @return array|MarkupInterface|string
+   *   String with new read-more html added.
+   */
+  private function renderReadMoreText(string $text, int $maxChars = 200) {
+
+    if (strlen($text) <= $maxChars) {
+      return ['#markup' => $text];
+    }
+
+    $text = strip_tags($text, '<a><div><span>');
+
+    $lessText = substr($text, 0, $maxChars);
+    $moreText = substr($text, $maxChars);
+
+    $readMoreText = \Drupal::theme()->render("bh_read_more_text", [
+      'textId' => 'read-more-text-' . rand(1000, 9999),
+      'lessText' => $lessText,
+      'moreText' => $moreText,
+    ]);
+
+    return $readMoreText;
   }
 
   /**
