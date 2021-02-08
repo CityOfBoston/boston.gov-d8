@@ -510,10 +510,16 @@
 
 #edit-qual-short-answer {
   width: 100%;
+  padding: 0.5rem;
 }
 
 .webform-submission-building-housing-feedback-form .webform-button--submit {
   height: 3rem;
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 10rem;
 }
 
 .webform-submission-building-housing-feedback-form h5 {
@@ -524,19 +530,10 @@
   display: flex;
 }
 
-/*.webform-options-display-one-column:before {*/
-/*  content: "";*/
-/*  !* display: block; *!*/
-/*  height: 3px;*/
-/*  width: 40rem;*/
-/*  background-color: red;*/
-/*  position: absolute;*/
-/*  margin: 0.9rem 2rem;*/
-/*}*/
 
 .js-form-type-radio:after {
   content: '';
-  border-bottom: 3px solid #1871bd;
+  /*border-bottom: 3px solid #1871bd;*/
   width: 6.0rem;
   height: 1px;
   position: absolute;

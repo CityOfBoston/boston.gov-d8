@@ -768,5 +768,10 @@ function _node_buildinghousing_build_render_project_feedback_webform(EntityInter
     ->getViewBuilder('webform')
     ->view($feedback_form);
 
+  $render['#prefix'] = '<div class="clearfix b b--fw b--w">';
+  $render['#suffix'] = '</div>';
+
+  $render['#attributes']['class'][] = 'clearfix b-c bh-content-container';
+
   return $render;
 }

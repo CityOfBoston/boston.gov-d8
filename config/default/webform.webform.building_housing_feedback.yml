@@ -12,7 +12,7 @@ id: building_housing_feedback
 title: 'Building Housing: Feedback'
 description: ''
 category: ''
-elements: "'#attributes':\n  class:\n    - print-none\nprocessed_text:\n  '#type': processed_text\n  '#wrapper_attributes':\n    style: 'margin: 3rem 0 0 0;'\n  '#admin_title': Title\n  '#text': |\n    <div class=\"sh\">\n    <h2 class=\"sh-title\">SITE FEEDBACK</h2>\n    </div>\n    \n  '#format': full_html\nflexbox:\n  '#type': webform_flexbox\n  '#align_items': center\n  form:\n    '#type': container\n    '#flex': 2\n    customer_effort_score_radios:\n      '#type': radios\n      '#title': 'Customer Effort Score'\n      '#description': '<p class=\"supporting-text\">How helpful was the information on this page?</p>'\n      '#title_display': invisible\n      '#description_display': before\n      '#options': likert_comparison_bh_5\n      '#required': true\n    qual_short_answer:\n      '#type': textarea\n      '#title': 'Qual Short Answer'\n      '#title_display': invisible\n      '#size': 100\n      '#rows': 2\n      '#placeholder': 'Why did you give that rating?'\n      '#required': true\n      '#required_error': 'Please tell us why you feel that way...'\n      '#format_items': comma\n    actions:\n      '#type': webform_actions\n      '#title': 'Submit button(s)'\n      '#submit__label': Submit\n      '#submit__attributes':\n        style: 'text-transform: uppercase; float:right;'"
+elements: "'#attributes':\n  class:\n    - print-none\nprocessed_text:\n  '#type': processed_text\n  '#wrapper_attributes':\n    style: 'margin: 3rem 0 0 0;'\n  '#admin_title': Title\n  '#text': |\n    <div class=\"sh\">\n    <h2 class=\"sh-title\">SITE FEEDBACK</h2>\n    </div>\n    \n  '#format': full_html\nflexbox:\n  '#type': webform_flexbox\n  '#align_items': center\n  form:\n    '#type': container\n    '#flex': 2\n    customer_effort_score_radios:\n      '#type': radios\n      '#title': 'Customer Effort Score'\n      '#description': '<p class=\"supporting-text\">How helpful was the information on this page?</p>'\n      '#title_display': invisible\n      '#description_display': before\n      '#options': likert_comparison_bh_5\n      '#required': true\n    qual_short_answer:\n      '#type': textarea\n      '#title': 'Qual Short Answer'\n      '#title_display': invisible\n      '#size': 100\n      '#rows': 2\n      '#placeholder': 'Why did you give that rating?'\n      '#required': true\n      '#required_error': 'Please tell us why you feel that way...'\n      '#format_items': comma\n    actions:\n      '#type': webform_actions\n      '#title': 'Submit button(s)'\n      '#submit__label': Submit\n      '#submit__attributes':\n        style: 'text-transform: uppercase;'"
 css: ".webform-submission-form #edit-customer-effort-score-radios--wrapper .description {\n  text-align: center;\n}\n"
 javascript: ''
 settings:
@@ -203,7 +203,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: 'amy.wipfler@boston.gov, dana.smith@boston.gov'
+      to_mail: amy.wipfler@boston.gov
       to_options: {  }
       cc_mail: alex.dora@boston.gov
       cc_options: {  }
@@ -211,8 +211,8 @@ handlers:
       bcc_options: {  }
       from_mail: noreply@boston.gov
       from_options: {  }
-      from_name: 'Boston MetroList'
-      subject: 'Webform submission from: Metrolist Feedback on [webform_submission:source-title]'
+      from_name: 'Boston Building Housing'
+      subject: 'Webform submission from: Building Housing Feedback on [webform_submission:source-title]'
       body: _default
       excluded_elements: {  }
       ignore_access: false
