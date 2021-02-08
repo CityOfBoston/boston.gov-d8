@@ -326,6 +326,12 @@ function node_buildinghousing_entity_extra_field_info() {
         'weight' => 100,
         'visible' => TRUE,
       ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_feedback_webform'] = [
+        'label' => t('Project Feedback Webform'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
     }
   }
 
@@ -375,6 +381,11 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   if ($display->getComponent('bh_project_follower_webform') && $projectIsActive) {
     $build['bh_project_follower_webform'] = _node_buildinghousing_build_render_project_follower_webform($entity);
+
+  }
+
+  if ($display->getComponent('bh_project_feedback_webform')) {
+    $build['bh_project_feedback_webform'] = _node_buildinghousing_build_render_project_feedback_webform($entity);
 
   }
 
@@ -730,6 +741,32 @@ function _node_buildinghousing_build_render_project_follower_webform(EntityInter
   $render = \Drupal::entityTypeManager()
     ->getViewBuilder('webform')
     ->view($followers_form);
+
+  return $render;
+}
+
+/**
+ * Helper function to render and attach the project feedback webform.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_project_feedback_webform(EntityInterface $entity) {
+  $render = [];
+
+  $feedback_form = \Drupal::entityTypeManager()
+    ->getStorage('webform')
+    ->load('building_housing_feedback');
+
+  $render = \Drupal::entityTypeManager()
+    ->getViewBuilder('webform')
+    ->view($feedback_form);
 
   return $render;
 }
