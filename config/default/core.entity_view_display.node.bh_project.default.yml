@@ -78,8 +78,8 @@ third_party_settings:
     group_dates:
       children:
         - field_bh_commitment_letter_date
-        - field_bh_construct_complete_date
         - field_bh_construction_start_date
+        - field_bh_construct_complete_date
         - field_bh_conveyance_vote_date
         - field_bh_dnd_funding_award_date
         - field_bh_initial_comm_mtg_date
@@ -249,6 +249,7 @@ third_party_settings:
       children:
         - group_sidebar
         - group_main_content
+        - bh_project_feedback_webform
       parent_name: group_container_full_width
       weight: 2
       format_type: html_element
@@ -331,6 +332,11 @@ mode: default
 content:
   bh_computed_project_type:
     weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_feedback_webform:
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
