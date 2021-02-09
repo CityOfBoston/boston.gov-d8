@@ -11,7 +11,7 @@ use Drupal\webform\WebformSubmissionInterface;
  * Create a new node entity from a webform submission.
  *
  * @WebformHandler(
- *   id = "Create a MetroList Listing",
+ *   id = "Add a Building Housing Follower",
  *   label = @Translation("Add a Building Housing Follower"),
  *   category = "Building Housing",
  *   description = @Translation("Add a Building Housing Follower on SF via a Webform."),
