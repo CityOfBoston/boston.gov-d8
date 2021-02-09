@@ -1,0 +1,51 @@
+{% if not is_expired %}
+
+<div class="g--6 b--w" style="margin-right: 0;">
+  <div class="p-a800" style="padding-top: 0;">
+    <ul class="dl">
+      <li class="dl-i evt-dl-i">
+        <a href="{{ event_link }}" class="{{ type_class }} featured-item-details--relative evt" title="{{ event_link }}" aria-label="{{ fields.title.content }}">
+          <div class="evt-c">
+            <div class="evt-t">
+              {{ fields.title.content }}
+            </div>
+          </div>
+          {% if date_recur %}
+            <div class="date-flag">
+              {{ date_recur }}
+            </div>
+          {% endif %}
+        </a>
+      </li>
+      <li class="dl-i evt-dl-i">
+        <span class="dl-t">When</span>
+        <span class="dl-d">{{ dates }}</span>
+      </li>
+      <li class="dl-i evt-dl-i">
+        <span class="dl-t">Where</span>
+        <span class="dl-d">{{ fields.field_address.content }}</span>
+      </li>
+      <li class="dl-i evt-dl-i">
+        <span class="dl-t">Contact</span>
+        <span class="dl-d">{{ fields.field_event_contact.content }}</span>
+      </li>
+      <li class="dl-i evt-dl-i">
+        <span class="dl-t">Phone</span>
+        <span class="dl-d">{{ fields.field_phone_number.content }}</span>
+      </li>
+      <li class="dl-i evt-dl-i">
+        <span class="dl-t">Price</span>
+        <span class="dl-d">{{ fields.field_cost.content }}</span>
+      </li>
+    </ul>
+    <div class="m-t600">
+      <a class="button inter" href="{{ event_link }}" title="{{ event_link }}" aria-label="{{ fields.title.content }}">See Events Details<span class="a11y--hidden"> for {{ fields.title.content }}</span></a>
+    </div>
+  </div>
+</div>
+
+<div class="g--6 evt-thumbnails" style="width: 100%; background-color: #fff;">
+  {{ thumbnail }}
+</div>
+
+{% endif %}
