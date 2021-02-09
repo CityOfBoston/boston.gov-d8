@@ -384,7 +384,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $addToCal = NULL;
           $link = $meeting->field_bh_post_meeting_recording->value ?? NULL;
           // $event->field_event_date_recur->view('add_to_calendar');
-          $body = $this->renderReadMoreText($meeting->field_bh_post_meeting_notes->value, 200) ?? '';
+          $body = $this->renderReadMoreText($meeting->field_bh_post_meeting_notes->value ?? '', 200) ?? '';
           $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
         }
 
