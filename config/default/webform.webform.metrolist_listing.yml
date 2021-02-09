@@ -209,6 +209,7 @@ handlers:
   email:
     id: email
     label: 'New Submission Notice'
+    notes: ''
     handler_id: email
     status: true
     conditions: {  }
@@ -216,7 +217,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: 'amy.wipfler@boston.gov, dana.smith@boston.gov, metrolist@boston.gov'
+      to_mail: 'amy.wipfler@boston.gov, dana.smith@boston.gov, metrolist@boston.gov, katie.forde@boston.gov'
       to_options: {  }
       cc_mail: alex.dora@boston.gov
       cc_options: {  }
@@ -245,10 +246,10 @@ handlers:
   create_a_metrolist_listing:
     id: 'Create a MetroList Listing'
     label: 'Create a MetroList Listing'
+    notes: ''
     handler_id: create_a_metrolist_listing
     status: true
     conditions: {  }
     weight: 0
     settings: {  }
 variants: {  }
-
