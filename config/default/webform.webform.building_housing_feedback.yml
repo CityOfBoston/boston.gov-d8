@@ -1,34 +1,32 @@
-uuid: cefe5f53-d75d-4f63-95fc-89f97c56690d
+uuid: 122abfb9-3299-44e8-bdb1-c5473fa77278
 langcode: en
 status: open
-dependencies:
-  module:
-    - node_buildinghousing
+dependencies: {  }
 open: null
 close: null
 weight: 0
 uid: 1
 template: false
 archive: false
-id: bh_project_notification_signup
-title: 'Building Housing: Project Notifications Sign-up'
+id: building_housing_feedback
+title: 'Building Housing: Feedback'
 description: ''
 category: ''
-elements: "title_basic:\n  '#type': webform_markup\n  '#wrapper_attributes':\n    class:\n      - 't--info br br-b200 m-b400 p-b200'\n  '#markup': 'Want project updates?'\ndescription:\n  '#type': processed_text\n  '#wrapper_attributes':\n    class:\n      - 't--subinfo t--cb'\n  '#text': |\n    <p>The Development Officer may contact you about upcoming meetings and major milestones. Check this page for the most up to date information.</p>\n    \n  '#format': filtered_html\nname:\n  '#type': textfield\n  '#title': Name\n  '#format_items': comma\n  '#required': true\nemail_address:\n  '#type': email\n  '#title': 'Email Address'\n  '#format_items': comma\n  '#required': true\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#attributes':\n    class:\n      - 'm-b600 p-b600'\n  '#submit__attributes':\n    class:\n      - 'btn btn--b btn--100'\n    style: 'height: 3rem;'"
-css: ''
+elements: "'#attributes':\n  class:\n    - print-none\nprocessed_text:\n  '#type': processed_text\n  '#wrapper_attributes':\n    style: 'margin: 3rem 0 0 0;'\n  '#admin_title': Title\n  '#text': |\n    <div class=\"sh\">\n    <h2 class=\"sh-title\">SITE FEEDBACK</h2>\n    </div>\n    \n  '#format': full_html\nflexbox:\n  '#type': webform_flexbox\n  '#align_items': center\n  form:\n    '#type': container\n    '#flex': 2\n    customer_effort_score_radios:\n      '#type': radios\n      '#title': 'Customer Effort Score'\n      '#description': '<p class=\"supporting-text\">How helpful was the information on this page?</p>'\n      '#title_display': invisible\n      '#description_display': before\n      '#options': likert_comparison_bh_5\n      '#required': true\n    qual_short_answer:\n      '#type': textarea\n      '#title': 'Qual Short Answer'\n      '#title_display': invisible\n      '#size': 100\n      '#rows': 2\n      '#placeholder': 'Why did you give that rating?'\n      '#required': true\n      '#required_error': 'Please tell us why you feel that way...'\n      '#format_items': comma\n    actions:\n      '#type': webform_actions\n      '#title': 'Submit button(s)'\n      '#submit__label': Submit\n      '#submit__attributes':\n        style: 'text-transform: uppercase;'"
+css: ".webform-submission-form #edit-customer-effort-score-radios--wrapper .description {\n  text-align: center;\n}\n"
 javascript: ''
 settings:
   ajax: true
-  ajax_scroll_top: ''
+  ajax_scroll_top: form
   ajax_progress_type: fullscreen
   ajax_effect: fade
-  ajax_speed: 500
-  page: false
+  ajax_speed: 1000
+  page: true
   page_submit_path: ''
   page_confirm_path: ''
   page_theme_name: ''
-  form_title: both
-  form_submit_once: false
+  form_title: source_entity_webform
+  form_submit_once: true
   form_exception_message: ''
   form_open_message: ''
   form_close_message: ''
@@ -81,14 +79,12 @@ settings:
   autofill: false
   autofill_message: ''
   autofill_excluded_elements: {  }
-  wizard_progress_bar: true
+  wizard_progress_bar: false
   wizard_progress_pages: false
   wizard_progress_percentage: false
   wizard_progress_link: false
   wizard_progress_states: false
   wizard_auto_forward: true
-  wizard_auto_forward_hide_next_button: false
-  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
@@ -116,7 +112,7 @@ settings:
   draft_pending_multiple_message: ''
   confirmation_type: inline
   confirmation_title: ''
-  confirmation_message: "<div class=\"t--info br br-b200 m-b400 p-b200\" id=\"edit-title-basic\">Want project updates?</div>\r\n<h5>email submitted</h5>\r\n<p class=\"t--subinfo\">Thanks for your interest! This is not an automated mailing list, so be sure to check this page for the most up to date information.</p>"
+  confirmation_message: "<div class=\"clearfix b-c bh-content-container\">\r\n<div class=\"m-v400 p-v300\">\r\n<div class=\"sh m-v300\">\r\n<h2 class=\"sh-title\">SITE FEEDBACK</h2>\r\n</div>\r\n\r\n<div class=\"m-v400 p-v300\">\r\n<p class=\"supporting-text\">Thanks for sharing your feedback!</p>\r\n</div>\r\n</div>\r\n</div>"
   confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: false
@@ -144,6 +140,9 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -193,13 +192,41 @@ access:
     users: {  }
     permissions: {  }
 handlers:
-  add_a_building_housing_follower:
-    id: 'Add a Building Housing Follower'
-    label: 'Add a Building Housing Follower'
+  email:
+    id: email
+    label: Email
     notes: ''
-    handler_id: add_a_building_housing_follower
+    handler_id: email
     status: true
     conditions: {  }
     weight: 0
-    settings: {  }
+    settings:
+      states:
+        - completed
+      to_mail: 'amy.wipfler@boston.gov, carol.owens@boston.gov'
+      to_options: {  }
+      cc_mail: 'alex.dora@boston.gov, elizabeth.cormack@boston.gov'
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: noreply@boston.gov
+      from_options: {  }
+      from_name: 'Boston Building Housing'
+      subject: 'Webform submission from: Building Housing Feedback on [webform_submission:source-title]'
+      body: _default
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
 variants: {  }
