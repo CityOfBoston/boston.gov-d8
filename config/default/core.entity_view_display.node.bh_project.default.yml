@@ -289,7 +289,7 @@ third_party_settings:
     group_container_full_width:
       children:
         - group_content
-        - bh_project_feedback_webform
+        - group_feedback
       parent_name: ''
       weight: 1
       format_type: html_element
@@ -323,6 +323,24 @@ third_party_settings:
         effect: none
         speed: fast
       label: 'Header Full Width Container'
+    group_feedback:
+      children:
+        - bh_project_feedback_webform
+      parent_name: group_container_full_width
+      weight: 3
+      format_type: html_element
+      region: content
+      format_settings:
+        id: ''
+        classes: 'clearfix b b--fw b--w'
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Feedback
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -336,7 +354,7 @@ content:
     settings: {  }
     third_party_settings: {  }
   bh_project_feedback_webform:
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
