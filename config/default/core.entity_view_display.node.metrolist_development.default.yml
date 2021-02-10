@@ -26,7 +26,6 @@ dependencies:
     - fences
     - user
     - viewfield
-    - webform
 _core:
   default_config_hash: rVt_KmMQhTpjQATrolxFdGbj9bV0hMdSwJJXizCybmo
 id: node.metrolist_development.default
@@ -51,13 +50,6 @@ content:
         fences_label_classes: ''
     type: viewfield_default
     region: content
-  field_ml_manager_email:
-    weight: 2
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    type: basic_string
-    region: content
 hidden:
   body: true
   field_ml_address: true
@@ -68,6 +60,7 @@ hidden:
   field_ml_city: true
   field_ml_due_at_signing: true
   field_ml_features: true
+  field_ml_manager_email: true
   field_ml_neighborhood: true
   field_ml_num_of_ownership_units: true
   field_ml_number_of_rental_units: true
