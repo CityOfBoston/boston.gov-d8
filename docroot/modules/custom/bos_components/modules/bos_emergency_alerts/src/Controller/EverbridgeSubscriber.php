@@ -156,8 +156,8 @@ class EverbridgeSubscriber extends ControllerBase {
         "phone":"219910915489799",
         "email":"241901148045317",
         "language_id":"487225385025538",
-        "api_user":"digital-dev@boston.gov",
-        "api_password":"Boston1!"
+        "api_user":"xxxx",
+        "api_password":"xxxx"
       }';
     }
     $everbridge_env = json_decode($everbridge_env);
