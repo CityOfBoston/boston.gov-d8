@@ -32,8 +32,14 @@ class WinterResources extends React.Component {
         content: (
           <div>
             <div>During a declared snow emergency, we will ticket and tow your car if you park on a snow route.</div>
-            <div className="no-heading">There may be other snow routes in your area, <a href={"/departments/311/snow-emergency-parking"} className="mnl-link"> check here for all snow emergency parking restrictions.</a></div>
           </div>
+        )
+      }
+    ];
+    const contentSnowParkingRestrictions = [
+      {
+        content: (
+            <div>There may be other snow emergency arteries or emergency parking areas near you. <a href={"/departments/311/snow-emergency-parking"} className="mnl-link">View all available information.</a></div>
         )
       }
     ];
@@ -45,13 +51,13 @@ class WinterResources extends React.Component {
           <h2 className="sh-title">Winter Resources</h2>
         </div>
         <div className="supporting-text">
-          <p>We will ticket and tow your car if you park on a posted snow emergency artery during a declared snow emergency. If you can't find a spot, some lots and garages offer discounted parking to vehicles with Boston resident parking stickers.</p>
+          <p>We will ticket and tow your car if you park on a posted snow emergency artery during a declared snow emergency. If you can't find a spot, some lots and garages offer discounted parking to vehicles with Boston resident parking stickers. <a href={"/winter-boston"} className="mnl-link">Learn more about winter resources in Boston.</a></p>
         </div>
         <div className="g">
           {/* Emergency Parking */}
           {(configCards.snow_emergency.display) ? (
             <MnlCard
-              title={"Snow Emergency Parking"}
+              title={"Snow Emergency Parking Near You"}
               image_header={
                 configProps.globals.pathImage+"parking.svg"
               }
@@ -62,11 +68,22 @@ class WinterResources extends React.Component {
           {/* Snow Routes */}
           {(configCards.snow_route.display) ? (
             <MnlCard
-              title={"A Snow Route Near You"}
+              title={"A Snow Emergency Artery Near You"}
               image_header={
                 configProps.globals.pathImage+"plan.svg"
               }
               content_array={contentSnowRoutes}
+            />
+          ) : null}
+
+          {/* Snow Routes */}
+          {(configCards.snow_parking_restrictions.display) ? (
+            <MnlCard
+              title={"Additional snow parking resources"}
+              image_header={
+                configProps.globals.pathImage+"snow_parking.svg"
+              }
+              content_array={contentSnowParkingRestrictions}
             />
           ) : null}
 
