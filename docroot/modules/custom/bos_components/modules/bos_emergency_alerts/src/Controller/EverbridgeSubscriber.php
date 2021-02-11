@@ -427,7 +427,7 @@ class EverbridgeSubscriber extends ControllerBase {
    */
   private function mailAlert() {
     $request = $this->request->request->all();
-    $config_settings = $this->config("emergency_alert_settings");
+    $config_settings = $this->config("emergency_alerts_settings");
 
     if (empty($config_settings["email_alerts"])) {
       $this->log->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
