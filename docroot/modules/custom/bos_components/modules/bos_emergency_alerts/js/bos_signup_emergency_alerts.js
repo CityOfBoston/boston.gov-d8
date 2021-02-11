@@ -33,7 +33,7 @@ var BostonEmergencyAlerts = (function () {
         data: data,
         success: function (req) {
           if (req.status == "success") {
-            handleSuccess;
+            handleSuccess();
           } 
           else {
             jQuery('#message').append('<div class="t--subinfo t--err m-t100">There was an error. Please try again or email <a href="mailto:feedback@boston.gov">feedback@boston.gov</a>.</div>').show();
@@ -54,14 +54,6 @@ var BostonEmergencyAlerts = (function () {
   }
 
   function handleSuccess(data) {
-    triggerSuccess(email, data.contact.email);
-    triggerSuccess(phone_number, data.contact.phone_number);
-    triggerSuccess(first_name, data.contact.first_name);
-    triggerSuccess(last_name, data.contact.last_name);
-    triggerSuccess(zip_code, data.contact.zip);
-    triggerSuccess(language, data.contact.language_name);
-    triggerSuccess(call, data.contact.call ? 'Yes' : 'No');
-    triggerSuccess(text, data.contact.text ? 'Yes' : 'No');
     form.find('#message, #button').remove();
     form.find('.t--subinfo').remove();
     form.css("visibility", "hidden");
@@ -134,22 +126,6 @@ var BostonEmergencyAlerts = (function () {
     jQuery('.txt-f,select').css({borderColor: ''});
   }
 
-  function triggerSuccess(el, msg) {
-    var parent = el.closest('.txt, .sel');
-
-    if (msg) {
-      parent.find('input, .sel-c').remove();
-      parent.append('<div class="t--info" style="text-transform: none">' + msg + '</div>');
-
-      if (parent.hasClass('cb')) {
-        parent.css({'display': 'block'});
-        parent.find('.cb-l').css({'margin-left': 0});
-      }
-    }
-    else {
-      parent.remove();
-    }
-  }
 
   function triggerError(el, msg, className) {
     var el = jQuery(el);
