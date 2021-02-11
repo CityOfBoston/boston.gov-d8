@@ -30,7 +30,7 @@ function bos_emergency_alerts_preprocess_paragraph(&$variables) {
     return;
   }
   $variables['#attached']['library'][] = "bos_emergency_alerts/signup.alerts";
-  $variables['emergency_alerts_url'] = '/rest/codered/subscribe';
+  $variables['emergency_alerts_url'] = '/rest/emergency_alerts/subscribe';
   if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
     $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
     $variables['component_theme'] = $component_theme;
