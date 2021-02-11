@@ -1,0 +1,126 @@
+uuid: 0824ce34-dfbe-4900-a3ac-75846121785f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.bh_meeting.body
+    - field.field.node.bh_meeting.field_bh_contact_person_sfid
+    - field.field.node.bh_meeting.field_bh_languages_supported
+    - field.field.node.bh_meeting.field_bh_meeting_end_time
+    - field.field.node.bh_meeting.field_bh_meeting_goal
+    - field.field.node.bh_meeting.field_bh_meeting_recording_pass
+    - field.field.node.bh_meeting.field_bh_meeting_start_time
+    - field.field.node.bh_meeting.field_bh_number_of_attendees
+    - field.field.node.bh_meeting.field_bh_post_meeting_notes
+    - field.field.node.bh_meeting.field_bh_post_meeting_recording
+    - field.field.node.bh_meeting.field_bh_update_ref
+    - field.field.node.bh_meeting.field_bh_virt_meeting_web_addr
+    - field.storage.node.field_bh_update_ref
+    - node.type.bh_meeting
+    - node.type.bh_update
+  module:
+    - salesforce_pull
+id: bh_community_meeting_event
+label: 'BH Community Meeting Event'
+weight: -7
+type: salesforce_mapping
+key: ''
+async: false
+push_standalone: false
+pull_standalone: false
+pull_trigger_date: LastModifiedDate
+pull_where_clause: ''
+sync_triggers:
+  push_create: false
+  push_update: false
+  push_delete: false
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Community_Meeting_Event__c
+drupal_entity_type: node
+drupal_bundle: bh_meeting
+field_mappings:
+  0:
+    drupal_field_type: properties
+    drupal_field_value: title
+    salesforce_field: Title__c
+    direction: sf_drupal
+    id: 0
+  1:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_meeting_start_time
+    salesforce_field: Meeting_Date_Time_Start__c
+    direction: sf_drupal
+    id: 1
+  2:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_meeting_end_time
+    salesforce_field: Meeting_Date_Time_End__c
+    direction: sf_drupal
+    id: 2
+  3:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_languages_supported
+    salesforce_field: Languages_supported__c
+    direction: sf_drupal
+    id: 3
+  4:
+    drupal_field_type: properties
+    drupal_field_value: body
+    salesforce_field: Meeting_Description__c
+    direction: sf_drupal
+    id: 4
+  6:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_contact_person_sfid
+    salesforce_field: Contact_person__c
+    direction: sf_drupal
+    id: 6
+  7:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_meeting_goal
+    salesforce_field: Meeting_Goal__c
+    direction: sf_drupal
+    id: 7
+  8:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_meeting_recording_pass
+    salesforce_field: Meeting_Recording_Password__c
+    direction: sf_drupal
+    id: 8
+  9:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_number_of_attendees
+    salesforce_field: Number_of_attendees__c
+    direction: sf_drupal
+    id: 9
+  10:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_post_meeting_notes
+    salesforce_field: Post_meeting_Notes__c
+    direction: sf_drupal
+    id: 10
+  11:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_post_meeting_recording
+    salesforce_field: Post_meeting_recording__c
+    direction: sf_drupal
+    id: 11
+  12:
+    drupal_field_type: properties
+    drupal_field_value: field_bh_virt_meeting_web_addr
+    salesforce_field: Virtual_meeting_web_address__c
+    direction: sf_drupal
+    id: 12
+  13:
+    drupal_field_type: RelatedIDs
+    drupal_field_value: field_bh_update_ref
+    salesforce_field: Website_Update__c
+    direction: sf_drupal
+    id: 13
+push_limit: 0
+push_retries: 3
+push_frequency: 0
+pull_frequency: 0
+always_upsert: false

@@ -24,12 +24,12 @@ class MNL extends React.Component {
     jQuery(".resize").css('height', inputHeight + 'px');
     jQuery(".resize").css('width', inputWidth + 'px');
     jQuery("#web-app input").css('height', inputHeight + 'px');
-    
+
     let that = this;
     window.addEventListener('popstate', function (event) {
       if (that.state.submittedAddress !== null && that.state.section !== null) {
         that.displaySection(null);
-      } 
+      }
       else if (that.state.submittedAddress !== null && that.state.section == null ) {
         that.setDefaults();
       }
@@ -79,19 +79,20 @@ class MNL extends React.Component {
 
   scaleInputText = op => {
       jQuery(".resize").textfill({
+      minFontPixels: 20,
       maxFontPixels: 75,
       success: function() {
         let fontReSize = jQuery(".resize span").css('fontSize');
         jQuery("#web-app input").css('font-size', fontReSize);
       }
-    }) 
+    })
   }
 
   handleKeywordChange = event => {
     event.preventDefault();
     let inputChars = event.target.value.length;
-    let typingTimer;                
-    let doneTypingInterval = 3000;  
+    let typingTimer;
+    let doneTypingInterval = 3000;
     this.setState({
       currentKeywords: event.target.value,
       submittedKeywords: null,
@@ -172,7 +173,7 @@ class MNL extends React.Component {
         paramsQuery.value +
         "&fields" +
         paramsQuery.fields +
-        "&page[limit]=" + 
+        "&page[limit]=" +
         paramsQuery.limit +
         "&sort=" +
         paramsQuery.sort,
@@ -181,11 +182,11 @@ class MNL extends React.Component {
           "mode": "cors",
           "headers": {
             "Content-Type": "application/json",
-            // Needed for CORS google translate
+            // Needed for CORS google translate.
             "Access-Control-Allow-Origin": "https://translate.googleusercontent.com"
           },
         },
-        
+
     )
       .then(res => res.json())
       .then(
@@ -318,7 +319,7 @@ class MNL extends React.Component {
                   className="mnl-address addr addr--s"
                   style={{
                     whiteSpace: "pre-line",
-                    display: "inline-block",
+                    display: "block",
                     verticalAlign: "middle",
                     lineHeight: "1.4"
                   }}
@@ -338,10 +339,36 @@ class MNL extends React.Component {
     let recollectEvents = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect);
     let configSection = configProps.sections;
     let mnlDisplay = this.state.submittedAddress ? (
-      
+
       <div>
       {(!configProps.frame_google() ? history.pushState({id: 'sections'}, '', configProps.globals.path+'?p2') : null)}
       <div className="g">
+        {(configSection.representation.display) ? (
+          <Representation
+            councilor={this.state.itemsDisplay.city_council_councilor}
+            district={this.state.itemsDisplay.city_council_district}
+            councilor_image={this.state.itemsDisplay.city_council_image}
+            councilor_webpage={this.state.itemsDisplay.city_council_webpage}
+            liason_name={this.state.itemsDisplay.ons_liaison_name}
+            liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
+            liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
+            liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
+            voting_location={this.state.itemsDisplay.polling_locations_location2}
+            voting_address={this.state.itemsDisplay.polling_locations_location3}
+            early_voting_active={this.state.earlyVoting}
+            early_voting_dates={this.state.itemsDisplay.early_voting_dates}
+            early_voting_times={this.state.itemsDisplay.early_voting_times}
+            early_voting_address={this.state.itemsDisplay.early_voting_address}
+            early_voting_location={this.state.itemsDisplay.early_voting_location}
+            early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
+            early_voting_notes={this.state.itemsDisplay.early_voting_notes}
+            ward={this.state.itemsDisplay.ward_name}
+            precinct={this.state.itemsDisplay.precincts_name}
+            section={this.state.section}
+            displaySection={this.displaySection}
+          />
+        ) : null}
+
         {(configSection.city_services.display) ? (
           <CityServices
             recollect_events={recollectEvents}
@@ -374,48 +401,12 @@ class MNL extends React.Component {
           />
         ) : null}
 
-        {(configSection.representation.display) ? (
-          <Representation
-            councilor={this.state.itemsDisplay.city_council_councilor}
-            district={this.state.itemsDisplay.city_council_district}
-            councilor_image={this.state.itemsDisplay.city_council_image}
-            councilor_webpage={this.state.itemsDisplay.city_council_webpage}
-            liason_name={this.state.itemsDisplay.ons_liaison_name}
-            liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
-            liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
-            liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
-            voting_location={this.state.itemsDisplay.polling_locations_location2}
-            voting_address={this.state.itemsDisplay.polling_locations_location3}
-            early_voting_active={this.state.earlyVoting}
-            early_voting_dates={this.state.itemsDisplay.early_voting_dates}
-            early_voting_times={this.state.itemsDisplay.early_voting_times}
-            early_voting_address={this.state.itemsDisplay.early_voting_address}
-            early_voting_location={this.state.itemsDisplay.early_voting_location}
-            early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
-            early_voting_notes={this.state.itemsDisplay.early_voting_notes}
-            ward={this.state.itemsDisplay.ward_name}
-            precinct={this.state.itemsDisplay.precincts_name}
+        {(configSection.newsletter.display) ? (
+          <Newsletter
             section={this.state.section}
-            displaySection={this.displaySection}
           />
         ) : null}
 
-        {(configSection.public_safety.display) ? (
-          <PublicSafety
-            police_station_name={this.state.itemsDisplay.police_dept_police_station}
-            police_station_address={this.state.itemsDisplay.police_dept_address}
-            police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
-            police_station_zip={this.state.itemsDisplay.police_dept_zip}
-            police_district={this.state.itemsDisplay.police_district}
-            fire_station_name={this.state.itemsDisplay.fire_dept_name}
-            fire_station_address={this.state.itemsDisplay.fire_dept_address}
-            fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
- 
-        
         {(configSection.summer.display) ? (
           <SummerResources
             tot_name={this.state.itemsDisplay.tot_sprays_name}
@@ -442,14 +433,23 @@ class MNL extends React.Component {
           />
         ) : null}
 
-        {(configSection.newsletter.display) ? (
-          <Newsletter 
+        {(configSection.public_safety.display) ? (
+          <PublicSafety
+            police_station_name={this.state.itemsDisplay.police_dept_police_station}
+            police_station_address={this.state.itemsDisplay.police_dept_address}
+            police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
+            police_station_zip={this.state.itemsDisplay.police_dept_zip}
+            police_district={this.state.itemsDisplay.police_district}
+            fire_station_name={this.state.itemsDisplay.fire_dept_name}
+            fire_station_address={this.state.itemsDisplay.fire_dept_address}
+            fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
             section={this.state.section}
+            displaySection={this.displaySection}
           />
         ) : null}
 
         {(configSection.bos_311.display) ? (
-          <Bos311 
+          <Bos311
             section={this.state.section}
           />
         ) : null}
@@ -470,7 +470,7 @@ class MNL extends React.Component {
             currentKeywords={this.state.currentKeywords}
           />
         </div>
-        <div style={{ paddingTop: "50px" }}>
+        <div style={{ paddingTop: "30px" }}>
           {this.state.isLoading ? (
             <div className="supporting-text">Loading ... </div>
           ) : (
@@ -479,7 +479,7 @@ class MNL extends React.Component {
               <div>{mnlDisplay}</div>
             </div>
           )}
-        </div>      
+        </div>
       </div>
     );
   }
