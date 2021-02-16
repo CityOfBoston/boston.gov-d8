@@ -1,0 +1,274 @@
+uuid: fc182a2a-6521-4b1d-b26d-0cce406a5f02
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_commitment_letter_date
+    - field.field.node.bh_project.field_bh_construct_complete_date
+    - field.field.node.bh_project.field_bh_construction_start_date
+    - field.field.node.bh_project.field_bh_conveyance_vote_date
+    - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_councilor
+    - field.field.node.bh_project.field_bh_disposition_type
+    - field.field.node.bh_project.field_bh_dnd_funding_award_date
+    - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_initial_comm_mtg_date
+    - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_neighborhood
+    - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_predicted_closing_date
+    - field.field.node.bh_project.field_bh_project_complete_date
+    - field.field.node.bh_project.field_bh_project_name
+    - field.field.node.bh_project.field_bh_project_stage
+    - field.field.node.bh_project.field_bh_project_start_date
+    - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_type
+    - field.field.node.bh_project.field_bh_property_size
+    - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_rfp_issued_date
+    - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_units_affordable
+    - field.field.node.bh_project.field_bh_units_for_rent
+    - field.field.node.bh_project.field_bh_units_to_own
+    - field.field.node.bh_project.field_bh_units_total
+    - field.field.node.bh_project.field_bh_wysiwyg_photo_a
+    - field.storage.node.field_bh_coordinates
+    - field.storage.node.field_bh_disposition_type
+    - field.storage.node.field_bh_funding_stage
+    - field.storage.node.field_bh_neighborhood
+    - field.storage.node.field_bh_project_stage
+    - field.storage.node.field_bh_project_status
+    - field.storage.node.field_bh_project_type
+    - field.storage.node.field_bh_record_type
+    - field.storage.node.field_bh_wysiwyg_photo_a
+    - node.type.bh_project
+    - taxonomy.vocabulary.bh_disposition_type
+    - taxonomy.vocabulary.bh_funding_stage
+    - taxonomy.vocabulary.bh_neighborhood
+    - taxonomy.vocabulary.bh_project_stage
+    - taxonomy.vocabulary.bh_project_status
+    - taxonomy.vocabulary.bh_project_type
+    - taxonomy.vocabulary.bh_record_type
+  module:
+    - geolocation
+    - salesforce_pull
+    - text
+id: building_housing_projects
+label: 'Building Housing - Projects'
+weight: -10
+type: salesforce_mapping
+key: ''
+async: false
+push_standalone: true
+pull_standalone: false
+pull_trigger_date: LastModifiedDate
+pull_where_clause: 'RecordTypeID IN (''0120y0000007rw7'', ''012C0000000Hqw0'')'
+sync_triggers:
+  push_create: false
+  push_update: false
+  push_delete: false
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Project__c
+drupal_entity_type: node
+drupal_bundle: bh_project
+field_mappings:
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_name
+    salesforce_field: Name
+    direction: sf_drupal
+    id: 0
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_parcel_id
+    salesforce_field: Parcel_ID__c
+    direction: sf_drupal
+    id: 1
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_total_num_units
+    salesforce_field: Total_No_of_Units__c
+    direction: sf_drupal
+    id: 2
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_start_date
+    salesforce_field: Project_Start_Date__c
+    direction: sf_drupal
+    id: 3
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_record_type
+    salesforce_field: RecordTypeId
+    direction: sf_drupal
+    id: 4
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_project_stage
+    salesforce_field: Project_Stage__c
+    direction: sf_drupal
+    id: 5
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_project_status
+    salesforce_field: Project_Status__c
+    direction: sf_drupal
+    id: 6
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_funding_stage
+    salesforce_field: NHD_Stage__c
+    direction: sf_drupal
+    id: 7
+  -
+    drupal_field_type: properties
+    drupal_field_value: title
+    salesforce_field: Name
+    direction: sf_drupal
+    id: 8
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_coordinates.lat
+    salesforce_field: Parcel_Y_Coordinate__c
+    direction: sf_drupal
+    id: 9
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_coordinates.lng
+    salesforce_field: Parcel_X_Coordinate__c
+    direction: sf_drupal
+    id: 10
+  -
+    drupal_field_type: properties_extended
+    drupal_field_value: field_bh_wysiwyg_photo_a.value
+    salesforce_field: Project_Photo_1__c
+    direction: sf_drupal
+    id: 11
+  -
+    drupal_field_type: properties
+    drupal_field_value: body
+    salesforce_field: Narrative__c
+    direction: sf_drupal
+    id: 12
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_neighborhood
+    salesforce_field: Neighborhood_computed__c
+    direction: sf_drupal
+    id: 13
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_disposition_type
+    salesforce_field: Disposition_Type__c
+    direction: sf_drupal
+    id: 14
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_complete_date
+    salesforce_field: Actual_Finish_Date__c
+    direction: sf_drupal
+    id: 15
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_initial_comm_mtg_date
+    salesforce_field: Initial_Cmnty_Meeting_Complete_Actual__c
+    direction: sf_drupal
+    id: 16
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_rfp_issued_date
+    salesforce_field: RFP_Issued_Actual__c
+    direction: sf_drupal
+    id: 17
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_initial_td_vote_date
+    salesforce_field: Initial_TD_Vote_Actual__c
+    direction: sf_drupal
+    id: 18
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_dnd_funding_award_date
+    salesforce_field: Award_Enroll__c
+    direction: sf_drupal
+    id: 19
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_conveyance_vote_date
+    salesforce_field: Conveyance_Vote_Actual__c
+    direction: sf_drupal
+    id: 20
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_commitment_letter_date
+    salesforce_field: Commitment_Letter_Date__c
+    direction: sf_drupal
+    id: 21
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_predicted_closing_date
+    salesforce_field: Finance_Closing__c
+    direction: sf_drupal
+    id: 22
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_construction_start_date
+    salesforce_field: Construction_Start_Date__c
+    direction: sf_drupal
+    id: 23
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_construct_complete_date
+    salesforce_field: Construction_Finish_Actual__c
+    direction: sf_drupal
+    id: 24
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_project_type
+    salesforce_field: Project_Type__c
+    direction: sf_drupal
+    id: 25
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_property_size
+    salesforce_field: Total_Square_Footage__c
+    direction: sf_drupal
+    id: 26
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_total
+    salesforce_field: Total_No_of_Units__c
+    direction: sf_drupal
+    id: 27
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_affordable
+    salesforce_field: Total_Units_Income__c
+    direction: sf_drupal
+    id: 28
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_for_rent
+    salesforce_field: Rent__c
+    direction: sf_drupal
+    id: 29
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_units_to_own
+    salesforce_field: Own__c
+    direction: sf_drupal
+    id: 30
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_councilor
+    salesforce_field: Councilor__c
+    direction: sf_drupal
+    id: 31
+push_limit: 0
+push_retries: 3
+push_frequency: 0
+pull_frequency: 0
+always_upsert: false
