@@ -31,7 +31,19 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_emergency_alerts.settings');
-    $codered = $config->get('codered_settings');
+    $config_settings = $config->get('emergency_alerts_settings');
+
+    if (isset($_ENV['EVERBRIDGE_SETTINGS'])) {
+      $everbridge_env = (object) [];
+      $get_vars = explode(",", $_ENV['EVERBRIDGE_SETTINGS']);
+      foreach ($get_vars as $item) {
+        $json = explode(":", $item);
+        $everbridge_env->{$json[0]} = $json[1];
+      }
+      $everbridge_env = json_encode($everbridge_env);
+      $everbridge_env = json_decode($everbridge_env);
+    }
+    
 
     $form = [
       '#tree' => TRUE,
@@ -41,44 +53,42 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
         '#description' => 'Configuration for Emergency Alerts.',
         '#collapsible' => FALSE,
 
-        'codered_settings' => [
+        'emergency_alerts_settings' => [
           '#type' => 'details',
-          '#title' => 'CodeRed API Endpoint',
-          '#description' => 'Configuration for Emergency Alert Subscriptions on CodeRed System.',
+          '#title' => 'API Endpoint',
+          '#description' => 'Configuration for Emergency Alert Subscriptions via vendor API.',
           '#open' => TRUE,
 
           'api_base' => [
             '#type' => 'textfield',
-            '#title' => t('CodeRed API URL'),
-            '#description' => t('Enter the full (remote) URL for the CodeRed API used to register subscriptions.'),
-            '#default_value' => $codered['api_base'],
+            '#title' => t('API URL'),
+            '#description' => t('Enter the full (remote) URL for the endpoint / API used to register subscriptions.'),
+            '#default_value' => isset($config_settings['api_base']) ? $config_settings['api_base']  : "",
             '#attributes' => [
-              "placeholder" => 'e.g. https://api.coderedweb.com',
+              "placeholder" => 'e.g. https://api.everbridge.com',
             ],
             '#required' => FALSE,
           ],
 
           'api_user' => [
             '#type' => 'textfield',
-            '#title' => t('CodeRed API Username'),
-            '#description' => t('Enter the CodeRed username used to authenticate subscriptions.'),
-            '#default_value' => isset($codered['api_user']) ? $codered['api_user'] : "",
+            '#title' => t('API Username'),
+            '#description' => t('Username set as Environment variable.'),
+            '#default_value' => isset($_ENV['EVERBRIDGE_SETTINGS']) ? $everbridge_env->api_user : "",
+            '#attributes' => [
+              "readonly" => 'readonly',
+            ],
             '#required' => FALSE,
           ],
 
           'api_pass' => [
             '#type' => 'textfield',
-            '#title' => t('CodeRed API Password'),
-            '#description' => t('Enter the password for the CodeRed user.'),
-            '#default_value' => isset($codered['api_pass']) ? $codered['api_pass'] : "",
-            '#required' => FALSE,
-          ],
-
-          'api_group' => [
-            '#type' => 'textfield',
-            '#title' => t('CodeRed Subscriber Group'),
-            '#description' => t('Enter the group name (string) in which subscribers are to be added.'),
-            '#default_value' => isset($codered['api_group']) ? $codered['api_group'] : "",
+            '#title' => t('API Password'),
+            '#description' => t('Password set as Environment variable.'),
+            '#default_value' => isset($_ENV['EVERBRIDGE_SETTINGS']) ? $everbridge_env->api_password : "",
+            '#attributes' => [
+              "readonly" => 'readonly',
+            ],
             '#required' => FALSE,
           ],
 
@@ -86,7 +96,7 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
             '#type' => 'textfield',
             '#title' => t('module Error Alerts'),
             '#description' => t('Enter an email to which module errors will be advised.'),
-            '#default_value' => isset($codered['email_alerts']) ? $codered['email_alerts'] : "",
+            '#default_value' => isset($config_settings['email_alerts']) ? $config_settings['email_alerts'] : "",
             '#required' => FALSE,
             '#attributes' => [
               "placeholder" => 'e.g. digital@boston.gov',
@@ -105,15 +115,12 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
     $settings = $form_state->getValue('bos_emergency_alerts');
 
     $newValues = [
-      'api_base' => $settings['codered_settings']['api_base'],
-      'api_user' => $settings['codered_settings']['api_user'],
-      'api_pass' => $settings['codered_settings']['api_pass'],
-      'api_group' => $settings['codered_settings']['api_group'],
-      'email_alerts' => $settings['codered_settings']['email_alerts'],
+      'api_base' => $settings['emergency_alerts_settings']['api_base'],
+      'email_alerts' => $settings['emergency_alerts_settings']['email_alerts'],
     ];
 
     $this->config('bos_emergency_alerts.settings')
-      ->set('codered_settings', $newValues)
+      ->set('emergency_alerts_settings', $newValues)
       ->save();
 
     parent::submitForm($form, $form_state);
