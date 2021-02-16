@@ -29,13 +29,13 @@ patterns:
     build: false
 
 webapps:
-  # Definition of files that will and wont be copied from build to deploy.
-  rsync_from_file: ${REPO_ROOT}/scripts/deploy/webapp-from.txt
-  rsync_includes_file: ${REPO_ROOT}/scripts/deploy/webapp-includes.txt
-  rsync_excludes_file: ${REPO_ROOT}/scripts/deploy/webapp-excludes.txt
   local:
-    # Make paths relative to repo root.
+    # This is the source folder where webapp files are saved (i.e. in the repo)
+    # Note: Path is relative to repo root.
     source: docroot/modules/custom/bos_components/modules/bos_web_app/apps
+    # This is the name of the link (folder) for the source folder defined above,
+    # it is the folder used by devs and linked to webservers in the node container.
+    # Note: this is relative to the repo root too.
     local_dir: web_apps
 
 build:
@@ -107,7 +107,6 @@ deploy:
     drush_alias: "@bostond8.dev"
     # Definition of files that will and wont be copied from build to deploy.
     from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
-    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     # Dry-run (for testing).
     dry_run: false
@@ -127,7 +126,6 @@ deploy:
     drush_alias: "@bostond8.test"
     # Definition of files that will and wont be copied from build to deploy.
     from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
-    includes_file: ${REPO_ROOT}/scripts/deploy/deploy-includes.txt
     excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
     # Dry-run (for testing).
     dry_run: false
@@ -167,7 +165,6 @@ git:
 
     deploy:
       from_file: ${REPO_ROOT}/scripts/deploy/pubrepo-from.txt
-      includes_file: ${REPO_ROOT}/scripts/deploy/pubrepo-includes.txt
       excludes_file: ${REPO_ROOT}/scripts/deploy/pubrepo-excludes.txt
 
 composer:
