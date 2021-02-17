@@ -307,8 +307,6 @@ class EverbridgeSubscriber extends ControllerBase {
     try {
       $user = $everbridge_env->api_user;
       $pass = $everbridge_env->api_password;
-      #$user = 'digital-dev@boston.gov';
-      #$pass = 'Boston1!';
       $user_pass = base64_encode($user . ':' . $pass);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
