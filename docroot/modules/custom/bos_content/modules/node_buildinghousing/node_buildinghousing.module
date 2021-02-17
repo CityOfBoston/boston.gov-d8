@@ -215,6 +215,11 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
     $meetingEvent = $bhUtils->setMeetingEvent($entity);
   }
 
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_parcel') {
+    $bhUtils = new BHUtils();
+    $geoData = $bhUtils->setParcelGeoPolyData($entity);
+  }
+
 }
 
 /**
@@ -734,13 +739,51 @@ function _node_buildinghousing_get_computed_project_type(EntityInterface $entity
 function _node_buildinghousing_build_render_project_follower_webform(EntityInterface $entity) {
   $render = [];
 
+  $render = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => 'co',
+    ],
+  ];
+
+  $render['input'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'input',
+    '#attributes' => [
+      'class' => 'co-f d-n',
+      'type' => 'checkbox',
+      'aria-hidden' => 'true',
+      'id' => 'collapsible-bh-follower-webform',
+    ],
+  ];
+
+
+  $render['label'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'label',
+    '#value' => t('Want Updates?'),
+    '#attributes' => [
+      'class' => 'co-t',
+      'for' => 'collapsible-bh-follower-webform'
+    ],
+  ];
+
+  $render['webform'] = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => 'co-b',
+    ],
+  ];
+
   $followers_form = \Drupal::entityTypeManager()
     ->getStorage('webform')
     ->load('bh_project_notification_signup');
 
-  $render = \Drupal::entityTypeManager()
+  $render['webform'][] = \Drupal::entityTypeManager()
     ->getViewBuilder('webform')
     ->view($followers_form);
+
+
 
   return $render;
 }

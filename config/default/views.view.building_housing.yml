@@ -24,6 +24,7 @@ dependencies:
     - field.storage.node.field_bh_update_posted_date
     - field.storage.node.field_bh_update_type_ref
     - field.storage.node.field_bh_wysiwyg_photo_a
+    - field.storage.node.field_parcel_geo_polygon
     - filter.format.plain_text
     - node.type.bh_parcel_project_assoc
     - node.type.bh_project
@@ -41,6 +42,7 @@ dependencies:
     - better_exposed_filters
     - datetime
     - geolocation
+    - geolocation_geometry
     - node
     - taxonomy
     - text
@@ -6234,18 +6236,18 @@ display:
                   close_other: 0
                 enabled: false
               control_streetview:
+                enabled: true
                 weight: 0
                 settings:
-                  position: LEFT_TOP
+                  position: RIGHT_TOP
                   behavior: default
-                enabled: false
               control_zoom:
+                enabled: true
                 weight: 0
                 settings:
-                  position: LEFT_TOP
+                  position: RIGHT_TOP
                   behavior: default
                   style: SMALL
-                enabled: false
               map_restriction:
                 weight: 0
                 settings:
@@ -6259,7 +6261,7 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  style: "[\r\n    {\r\n        \"elementType\": \"labels.text\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"landscape.natural\",\r\n        \"elementType\": \"geometry.fill\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#f5f5f2\"\r\n            },\r\n            {\r\n                \"visibility\": \"on\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"administrative\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"transit\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.attraction\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"landscape.man_made\",\r\n        \"elementType\": \"geometry.fill\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            },\r\n            {\r\n                \"visibility\": \"on\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.business\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.medical\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.place_of_worship\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.school\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.sports_complex\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.highway\",\r\n        \"elementType\": \"geometry\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            },\r\n            {\r\n                \"visibility\": \"simplified\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.arterial\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"simplified\"\r\n            },\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.highway\",\r\n        \"elementType\": \"labels.icon\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            },\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.highway\",\r\n        \"elementType\": \"labels.icon\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.arterial\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.local\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.park\",\r\n        \"elementType\": \"labels.icon\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi\",\r\n        \"elementType\": \"labels.icon\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"water\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#71c8d4\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"landscape\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#e5e8e7\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.park\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#8ba129\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#ffffff\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.sports_complex\",\r\n        \"elementType\": \"geometry\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#c7c7c7\"\r\n            },\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"water\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#a0d3d3\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.park\",\r\n        \"stylers\": [\r\n            {\r\n                \"color\": \"#91b65d\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.park\",\r\n        \"stylers\": [\r\n            {\r\n                \"gamma\": 1.51\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.local\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.local\",\r\n        \"elementType\": \"geometry\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"on\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"poi.government\",\r\n        \"elementType\": \"geometry\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"landscape\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road\",\r\n        \"elementType\": \"labels\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"off\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.arterial\",\r\n        \"elementType\": \"geometry\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"simplified\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road.local\",\r\n        \"stylers\": [\r\n            {\r\n                \"visibility\": \"simplified\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"featureType\": \"road\"\r\n    },\r\n    {\r\n        \"featureType\": \"road\"\r\n    },\r\n    {},\r\n    {\r\n        \"featureType\": \"road.highway\"\r\n    }\r\n]"
+                  style: "[\r\n  {\r\n    \"featureType\": \"poi\",\r\n    \"stylers\": [\r\n      {\r\n        \"visibility\": \"off\"\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"featureType\": \"poi.park\",\r\n    \"stylers\": [\r\n      {\r\n        \"visibility\": \"on\"\r\n      }\r\n    ]\r\n  },\r\n  {\r\n    \"featureType\": \"transit\",\r\n    \"stylers\": [\r\n      {\r\n        \"visibility\": \"on\"\r\n      }\r\n    ]\r\n  }\r\n]"
               marker_clusterer:
                 weight: 0
                 settings:
@@ -6275,7 +6277,7 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  marker_icon_path: 'https://patterns.boston.gov/images/global/icons/mapping/waypoint-optimistic-blue.svg'
+                  marker_icon_path: test.svg
                   anchor:
                     x: null
                     'y': null
@@ -6286,11 +6288,11 @@ display:
                     x: null
                     'y': null
                   size:
-                    width: 32
-                    height: 32
+                    width: null
+                    height: null
                   scaled_size:
-                    width: 32
-                    height: 32
+                    width: null
+                    height: null
               marker_infowindow:
                 weight: 0
                 settings:
@@ -6384,8 +6386,8 @@ display:
                 weight: 0
                 enabled: false
               map_disable_user_interaction:
-                enabled: true
                 weight: 0
+                enabled: false
               drawing:
                 weight: 0
                 settings:
@@ -6432,11 +6434,11 @@ display:
                   loading_label: ''
                 enabled: false
               google_maps_layer_transit:
-                enabled: true
                 weight: 0
+                enabled: false
             height: '400'
             width: '800'
-            type: ROADMAP
+            type: HYBRID
             zoom: 20
             maxZoom: 0
             minZoom: 0
@@ -6850,7 +6852,7 @@ display:
           group_type: group
           admin_label: ''
           label: ''
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -6905,6 +6907,351 @@ display:
           field_api_classes: false
           entity_type: node
           plugin_id: geolocation_field
+        field_parcel_geo_polygon:
+          id: field_parcel_geo_polygon
+          table: node__field_parcel_geo_polygon
+          field: field_parcel_geo_polygon
+          relationship: field_bh_parcel_ref
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: geometry
+          type: geolocation_geometry
+          settings:
+            data_provider_settings:
+              stroke_color: '#ff0044'
+              stroke_color_randomize: false
+              stroke_width: 2
+              stroke_opacity: 0.95
+              fill_color: '#ff2600'
+              fill_color_randomize: false
+              fill_opacity: 0.35
+            centre:
+              fit_bounds:
+                settings:
+                  min_zoom: null
+                  reset_zoom: false
+                weight: -101
+                enable: false
+                map_center_id: fit_bounds
+              client_location:
+                weight: 0
+                enable: false
+                map_center_id: client_location
+              fixed_boundaries:
+                settings:
+                  north: ''
+                  east: ''
+                  south: ''
+                  west: ''
+                weight: 0
+                enable: false
+                map_center_id: fixed_boundaries
+              fixed_value:
+                settings:
+                  latitude: null
+                  longitude: null
+                  location_option_id: fixed_value
+                weight: 0
+                enable: false
+                map_center_id: location_plugins
+              freeogeoip:
+                weight: 0
+                enable: false
+                map_center_id: location_plugins
+                settings:
+                  location_option_id: freeogeoip
+              ipstack:
+                settings:
+                  access_key: ''
+                  location_option_id: ipstack
+                weight: 0
+                enable: false
+                map_center_id: location_plugins
+            map_provider_id: google_maps
+            map_provider_settings:
+              map_features:
+                marker_infobubble:
+                  weight: 0
+                  settings:
+                    close_button_src: ''
+                    shadow_style: 0
+                    padding: 10
+                    border_radius: 8
+                    border_width: 2
+                    border_color: '#039be5'
+                    background_color: '#fff'
+                    min_width: null
+                    max_width: 550
+                    min_height: null
+                    max_height: null
+                    arrow_style: 2
+                    arrow_position: 30
+                    arrow_size: 10
+                    close_button: 0
+                    close_other: 0
+                  enabled: false
+                control_streetview:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                    behavior: default
+                  enabled: false
+                control_zoom:
+                  weight: 0
+                  settings:
+                    position: RIGHT_CENTER
+                    behavior: default
+                    style: LARGE
+                  enabled: false
+                map_restriction:
+                  weight: 0
+                  settings:
+                    north: ''
+                    south: ''
+                    east: ''
+                    west: ''
+                    strict: false
+                  enabled: false
+                map_type_style:
+                  weight: 0
+                  settings:
+                    style: '[]'
+                  enabled: false
+                marker_clusterer:
+                  weight: 0
+                  settings:
+                    image_path: ''
+                    styles: ''
+                    grid_size: 60
+                    minimum_cluster_size: 2
+                    max_zoom: 15
+                    zoom_on_click: false
+                    average_center: false
+                  enabled: false
+                marker_icon:
+                  weight: 0
+                  settings:
+                    marker_icon_path: ''
+                    anchor:
+                      x: 0
+                      'y': 0
+                    origin:
+                      x: 0
+                      'y': 0
+                    label_origin:
+                      x: 0
+                      'y': 0
+                    size:
+                      width: null
+                      height: null
+                    scaled_size:
+                      width: null
+                      height: null
+                  enabled: false
+                marker_infowindow:
+                  weight: 0
+                  settings:
+                    max_width: null
+                    info_window_solitary: false
+                    info_auto_display: false
+                    disable_auto_pan: false
+                  enabled: false
+                control_recenter:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                  enabled: false
+                marker_label:
+                  weight: 0
+                  settings:
+                    color: ''
+                    font_family: ''
+                    font_size: ''
+                    font_weight: ''
+                  enabled: false
+                marker_opacity:
+                  weight: 0
+                  settings:
+                    opacity: !!float 1
+                  enabled: false
+                geolocation_marker_scroll_to_id:
+                  weight: 0
+                  settings:
+                    scroll_target_id: ''
+                  enabled: false
+                marker_zoom_to_animate:
+                  weight: 0
+                  settings:
+                    marker_zoom_anchor_id: ''
+                  enabled: false
+                spiderfying:
+                  weight: 0
+                  settings:
+                    spiderfiable_marker_path: /modules/contrib/geolocation/modules/geolocation_google_maps/images/marker-plus.svg
+                    nearbyDistance: 20
+                    circleSpiralSwitchover: 9
+                    circleFootSeparation: 23
+                    spiralFootSeparation: 26
+                    spiralLengthStart: 11
+                    spiralLengthFactor: 4
+                    legWeight: 1.5
+                    markersWontMove: false
+                    markersWontHide: false
+                    keepSpiderfied: false
+                    ignoreMapClick: false
+                  enabled: false
+                google_maps_layer_traffic:
+                  weight: 0
+                  enabled: false
+                control_rotate:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                    behavior: default
+                  enabled: false
+                control_maptype:
+                  weight: 0
+                  settings:
+                    position: RIGHT_BOTTOM
+                    behavior: default
+                    style: DEFAULT
+                  enabled: false
+                context_popup:
+                  weight: 0
+                  settings:
+                    content:
+                      value: ''
+                      format: filtered_html
+                  enabled: false
+                google_maps_layer_bicycling:
+                  weight: 0
+                  enabled: false
+                client_location_indicator:
+                  weight: 0
+                  enabled: false
+                map_disable_tilt:
+                  weight: 0
+                  enabled: false
+                control_locate:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                  enabled: false
+                map_disable_poi:
+                  weight: 0
+                  enabled: false
+                map_disable_user_interaction:
+                  weight: 0
+                  enabled: false
+                drawing:
+                  weight: 0
+                  settings:
+                    strokeColor: '#FF0000'
+                    strokeOpacity: '0.8'
+                    strokeWeight: '2'
+                    fillColor: '#FF0000'
+                    fillOpacity: '0.35'
+                    polyline: false
+                    geodesic: false
+                    polygon: false
+                  enabled: false
+                control_fullscreen:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                    behavior: default
+                  enabled: false
+                control_geocoder:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                    geocoder: google_geocoding_api
+                    settings:
+                      label: Address
+                      description: 'Enter an address to be localized.'
+                      autocomplete_min_length: 1
+                      component_restrictions:
+                        route: ''
+                        locality: ''
+                        administrative_area: ''
+                        postal_code: ''
+                        country: ''
+                      boundary_restriction:
+                        south: ''
+                        west: ''
+                        north: ''
+                        east: ''
+                  enabled: false
+                control_loading_indicator:
+                  weight: 0
+                  settings:
+                    position: TOP_LEFT
+                    loading_label: Loading
+                  enabled: false
+                google_maps_layer_transit:
+                  weight: 0
+                  enabled: false
+              height: 400px
+              width: 100%
+              type: ROADMAP
+              zoom: 10
+              maxZoom: 20
+              minZoom: 12
+              gestureHandling: auto
+            use_overridden_map_settings: false
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          entity_type: node
+          plugin_id: field
       relationships:
         field_bh_parcel_ref:
           id: field_bh_parcel_ref
@@ -6989,6 +7336,7 @@ display:
         - 'config:field.storage.node.field_bh_owned_by_dnd'
         - 'config:field.storage.node.field_bh_parcel_header'
         - 'config:field.storage.node.field_bh_street_address_temp'
+        - 'config:field.storage.node.field_parcel_geo_polygon'
   embed_3:
     display_plugin: embed
     id: embed_3
@@ -7998,6 +8346,8 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:core.entity_view_display.node.bh_project.default'
+        - 'config:core.entity_view_display.node.bh_project.teaser'
         - 'config:core.entity_view_display.node.article.article'
         - 'config:core.entity_view_display.node.article.calendar_listing'
         - 'config:core.entity_view_display.node.article.contact'
@@ -8016,11 +8366,15 @@ display:
         - 'config:core.entity_view_display.node.bh_account.teaser'
         - 'config:core.entity_view_display.node.bh_contact.default'
         - 'config:core.entity_view_display.node.bh_contact.teaser'
+        - 'config:core.entity_view_display.node.bh_meeting.default'
+        - 'config:core.entity_view_display.node.bh_meeting.teaser'
         - 'config:core.entity_view_display.node.bh_parcel.default'
         - 'config:core.entity_view_display.node.bh_parcel.teaser'
         - 'config:core.entity_view_display.node.bh_parcel_project_assoc.default'
         - 'config:core.entity_view_display.node.bh_parcel_project_assoc.teaser'
         - 'config:core.entity_view_display.node.bh_project.card'
+        - 'config:core.entity_view_display.node.bh_update.default'
+        - 'config:core.entity_view_display.node.bh_update.teaser'
         - 'config:core.entity_view_display.node.change.default'
         - 'config:core.entity_view_display.node.change.teaser'
         - 'config:core.entity_view_display.node.department_profile.article'
@@ -8041,6 +8395,7 @@ display:
         - 'config:core.entity_view_display.node.department_profile.topics_list'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
+        - 'config:core.entity_view_display.node.event.add_to_calendar'
         - 'config:core.entity_view_display.node.event.default'
         - 'config:core.entity_view_display.node.event.featured_item'
         - 'config:core.entity_view_display.node.how_to.article'
@@ -8128,6 +8483,7 @@ display:
         - 'config:core.entity_view_display.node.public_notice.teaser'
         - 'config:core.entity_view_display.node.script_page.default'
         - 'config:core.entity_view_display.node.script_page.listing'
+        - 'config:core.entity_view_display.node.site_alert.default'
         - 'config:core.entity_view_display.node.site_alert.embed'
         - 'config:core.entity_view_display.node.site_alert.teaser'
         - 'config:core.entity_view_display.node.status_item.default'
@@ -8141,11 +8497,6 @@ display:
         - 'config:core.entity_view_display.node.topic_page.listing_long'
         - 'config:core.entity_view_display.node.transaction.default'
         - 'config:core.entity_view_display.node.transaction.listing'
-        - 'config:core.entity_view_display.node.bh_project.default'
-        - 'config:core.entity_view_display.node.bh_project.teaser'
-        - 'config:core.entity_view_display.node.bh_update.default'
-        - 'config:core.entity_view_display.node.bh_update.teaser'
-        - 'config:core.entity_view_display.node.site_alert.default'
   embed_updates:
     display_plugin: embed
     id: embed_updates
