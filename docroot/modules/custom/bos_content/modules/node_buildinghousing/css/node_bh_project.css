@@ -112,14 +112,6 @@
 
 
 
-@media screen and (max-width: 360px) {
-  .container {
-    padding-left: 2% !important;
-    padding-right: 2% !important;
-  }
-}
-
-
 .timeline-moment-past {
   /*background-color: red;*/
 }
@@ -613,3 +605,77 @@
   -moz-appearance:none;
   height: 2.5rem;
 }
+
+
+
+
+.field--name-field-bh-project-parcels .geolocation-map-container {
+  max-width: 800px !important;
+  width: calc(100vw - 2rem) !important;
+}
+
+
+@media screen and (max-width: 1280px) {
+
+  .b-c {
+    padding: 2rem !important;
+  }
+
+  .field--name-field-bh-project-parcels .geolocation-map-container {
+    max-width: unset !important;
+    width: calc(100vw - 3rem) !important;
+  }
+
+  .field-name-field-bh-project-images img {
+    float: left;
+    margin-right: 1rem;
+    width: calc(50% - 0.5rem) !important;
+  }
+
+  .field-name-field-bh-coordinates .geolocation-map-container {
+    height: 230px !important;
+    width: calc(50% - 0.5rem) !important;
+  }
+
+}
+
+
+
+
+@media screen and (max-width: 768px) {
+
+  .b-c {
+    padding: 2rem 10px !important;
+  }
+
+  .field--name-field-bh-project-parcels .geolocation-map-container {
+    width: calc(100vw - 1rem) !important;
+  }
+
+}
+
+@media screen and (max-width: 480px) {
+
+  .container {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .b-c {
+    padding: 2rem 20px !important;
+  }
+
+}
+
+@media screen and (max-width: 360px) {
+
+  .field--name-field-bh-project-parcels .geolocation-map-container {
+    height: 180px !important;
+  }
+
+  .b-c {
+    padding: 2rem 10px !important;
+  }
+
+}
+

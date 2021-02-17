@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.bh_parcel.body
     - field.field.node.bh_parcel.field_bh_assessing_lot_size
     - field.field.node.bh_parcel.field_bh_coordinates
     - field.field.node.bh_parcel.field_bh_owned_by_dnd
@@ -10,10 +11,12 @@ dependencies:
     - field.field.node.bh_parcel.field_bh_parcel_name
     - field.field.node.bh_parcel.field_bh_property_type
     - field.field.node.bh_parcel.field_bh_street_address_temp
+    - field.field.node.bh_parcel.field_parcel_geo_polygon
     - node.type.bh_parcel
   module:
     - content_moderation
     - geolocation
+    - geolocation_geometry
     - path
     - publication_date
 _core:
@@ -82,6 +85,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_parcel_geo_polygon:
+    weight: 128
+    settings: {  }
+    third_party_settings: {  }
+    type: geolocation_geometry_wkt
     region: content
   langcode:
     type: language_select
@@ -152,4 +161,5 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  body: true

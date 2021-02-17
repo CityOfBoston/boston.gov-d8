@@ -461,4 +461,28 @@ class BuildingHousingUtils {
     }
   }
 
+
+
+  public function setParcelGeoPolyData(EntityInterface &$entity) {
+    $geoPolySet = FALSE;
+
+    if ($entity) {
+
+      $parcelId = '1100085010';
+
+      $endpoint = "https://services.arcgis.com/sFnw0xNflSi8J0uh/arcgis/rest/services/Parcels_2020/FeatureServer/8/query?outFields='geometry'&f=pgeojson&where=PID_LONG%20%3D%20'$parcelId'";
+
+      $client = \Drupal::httpClient();
+      $geoPolyMetaData = $client->get("$endpoint");
+      $geoPolyMetaData = $geoPolyMetaData->getBody() ? json_decode($geoPolyMetaData->getBody()) : NULL;
+
+    }
+
+    return $geoPolySet;
+
+
+  }
+
+
+
 }

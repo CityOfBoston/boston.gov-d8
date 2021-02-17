@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.bh_parcel.body
     - field.field.node.bh_parcel.field_bh_assessing_lot_size
     - field.field.node.bh_parcel.field_bh_coordinates
     - field.field.node.bh_parcel.field_bh_owned_by_dnd
@@ -11,6 +12,7 @@ dependencies:
     - field.field.node.bh_parcel.field_bh_parcel_name
     - field.field.node.bh_parcel.field_bh_property_type
     - field.field.node.bh_parcel.field_bh_street_address_temp
+    - field.field.node.bh_parcel.field_parcel_geo_polygon
     - node.type.bh_parcel
   module:
     - user
@@ -33,5 +35,6 @@ hidden:
   field_bh_parcel_name: true
   field_bh_property_type: true
   field_bh_street_address_temp: true
+  field_parcel_geo_polygon: true
   langcode: true
   published_at: true
