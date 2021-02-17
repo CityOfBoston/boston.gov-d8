@@ -2,6 +2,7 @@ bos_web_app:
   version: 1.x
   dependencies:
     - core/drupalSettings
+
 metrolist:
   version: 2.4.1836640024
   js:
@@ -21,5 +22,15 @@ my_neighborhood:
   css:
     layout:
       apps/my_neighborhood/dist/mnl_styles.css: {attributes: {media: screen, type: text/css}}
+  dependencies:
+    - core/drupalSettings
+
+abutters:
+  version: abutters.1610734993621
+  js:
+    apps/abutters/dist/index.js: {attributes: {type: text/javascript}}
+  css:
+    layout:
+      apps/abutters/dist/styles.css: {attributes: {media: screen, type: text/css}}
   dependencies:
     - core/drupalSettings
