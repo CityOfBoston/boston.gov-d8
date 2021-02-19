@@ -11,9 +11,8 @@
             </div>
           </div>
           {% if date_recur %}
-            <div class="date-flag">
-              {{ date_recur }}
-            </div>
+            <svg class="svg-date-flag" style="width:90px;" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34.08 44.31"><path d="M32.26,42.16l-15.3-7-15.3,7v-40h30.6Z" fill="#288be4" stroke="#000" stroke-miterlimit="10"/></svg>
+            <p class="svg-date-flag date-flag-text">{{ date_recur }}</p>
           {% endif %}
         </a>
       </li>
@@ -29,10 +28,12 @@
         <span class="dl-t">Contact</span>
         <span class="dl-d">{{ fields.field_event_contact.content }}</span>
       </li>
+      {% if phone %}
       <li class="dl-i evt-dl-i">
         <span class="dl-t">Phone</span>
         <span class="dl-d">{{ fields.field_phone_number.content }}</span>
       </li>
+      {% endif %}
       <li class="dl-i evt-dl-i">
         <span class="dl-t">Price</span>
         <span class="dl-d">{{ fields.field_cost.content }}</span>
@@ -44,7 +45,7 @@
   </div>
 </div>
 
-<div class="g--6 evt-thumbnails" style="width: 100%; background-color: #fff;">
+<div class="g--6 evt-thumbnails" style="width: 100%;">
   {{ thumbnail }}
 </div>
 

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.date_format.date_format_boston_featured
+    - core.date_format.long
     - date_recur.interpreter.default_interpreter
     - field.storage.node.field_address
     - field.storage.node.field_cancel_event
@@ -648,6 +649,7 @@ display:
           1: AND
           2: OR
       show_admin_links: false
+      css_class: ''
     cache_metadata:
       max-age: -1
       contexts:
@@ -686,6 +688,7 @@ display:
         filter_groups: false
         title: false
         pager: false
+        css_class: false
       fields:
         field_cancel_event:
           id: field_cancel_event
@@ -1206,8 +1209,8 @@ display:
           type: date_recur_basic_formatter
           settings:
             format_type: date_format_boston_featured
-            occurrence_format_type: date_format_boston_featured
-            same_end_date_format_type: date_format_boston_featured
+            occurrence_format_type: long
+            same_end_date_format_type: long
             separator: '-'
             timezone_override: ''
             interpreter: ''
@@ -1779,6 +1782,7 @@ display:
           offset: 0
       displays:
         upcoming_auto: upcoming_auto
+      css_class: display-large-attachment
     cache_metadata:
       max-age: -1
       contexts:
@@ -1825,6 +1829,7 @@ display:
         pager: false
         style: false
         row: false
+        css_class: false
       fields:
         field_cancel_event:
           id: field_cancel_event
@@ -2991,6 +2996,7 @@ display:
       displays:
         upcoming_auto: upcoming_auto
       inherit_pager: false
+      css_class: display-medium-attachment
     cache_metadata:
       max-age: -1
       contexts:
@@ -5777,6 +5783,7 @@ display:
         pager: false
         style: false
         row: false
+        css_class: false
       fields:
         field_cancel_event:
           id: field_cancel_event
@@ -6626,6 +6633,7 @@ display:
       row:
         type: fields
         options: {  }
+      css_class: display-auto
     cache_metadata:
       max-age: -1
       contexts:
@@ -6666,6 +6674,7 @@ display:
         filter_groups: false
         title: false
         pager: false
+        css_class: false
       fields:
         field_cancel_event:
           id: field_cancel_event
@@ -7757,6 +7766,7 @@ display:
         options:
           items_per_page: 1
           offset: 0
+      css_class: display-large
     cache_metadata:
       max-age: -1
       contexts:
@@ -7803,6 +7813,7 @@ display:
         pager: false
         style: false
         row: false
+        css_class: false
       fields:
         field_cancel_event:
           id: field_cancel_event
@@ -8282,7 +8293,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_event_date_recur__value }}'
+            text: '{{ field_event_date_recur__value }} '
             make_link: false
             path: ''
             absolute: false
@@ -8352,7 +8363,7 @@ display:
           exclude: false
           alter:
             alter_text: false
-            text: ''
+            text: '{{ field_event_date_recur_value }}'
             make_link: false
             path: ''
             absolute: false
@@ -8966,6 +8977,7 @@ display:
       row:
         type: fields
         options: {  }
+      css_class: display-medium
     cache_metadata:
       max-age: -1
       contexts:
@@ -9013,6 +9025,7 @@ display:
         pager: false
         style: false
         row: false
+        css_class: false
       fields:
         field_cancel_event:
           id: field_cancel_event
@@ -9862,6 +9875,7 @@ display:
       row:
         type: fields
         options: {  }
+      css_class: display-small
     cache_metadata:
       max-age: -1
       contexts:
