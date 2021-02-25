@@ -200,11 +200,15 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
 
+      $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
+
       $documentSet = [
-        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26]),
+        'icon' => $currentState == 'past'
+          ? \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26, 'fill' => '#091f2f'])
+          : \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26]),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
         'date' => $formattedDate->format('M d Y'),
-        'currentState' => 'present',
+        'currentState' => $currentState,
         'dateId' => $documentDate
       ];
       $documentSet['documents'] = $documents;
@@ -236,23 +240,26 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $rfpDate = new \DateTime($rfpDate);
 
+      $currentState = time() > $rfpDate->getTimestamp() ? 'past' : 'future';
+
       $data = [
         'label' => t('Go to RFP list'),
         // @TODO: change out with config?
         'url' => '/departments/neighborhood-development/requests-proposals',
         'title' => t('Request For Proposals (RFP) Open for Bidding'),
         'body' => t('Visit the link below to learn more.'),
-        'icon' => \Drupal::theme()->render("bh_icons", [
-          'type' => 'timeline-building',
-          'fill' => '#288BE4'
-        ]),
-        'icon' => \Drupal::theme()->render("bh_icons", [
+        'icon' => $currentState == 'past'
+          ? \Drupal::theme()->render("bh_icons", [
           'type' => 'timeline-building',
           'fill' => '#091F2F'
-        ]),
+          ])
+          : \Drupal::theme()->render("bh_icons", [
+          'type' => 'timeline-building',
+          'fill' => '#288BE4'
+          ]),
         'rfpListIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
         'date' => $rfpDate->format('M j, Y'),
-        'currentState' => 'present',
+        'currentState' => $currentState,
       ];
 
       // If ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY.
@@ -294,9 +301,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         $textUpdatesData[$textData->id] = $textData;
       }
 
+
       if ($textUpdatesData) {
         foreach ($textUpdatesData as $sfid => $textUpdate) {
           $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+          $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
 
           $data = [
             'label' => t('Project Manager'),
@@ -304,7 +313,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
             'body' => $textUpdate->text,
             'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
             'date' => $formattedDate->format('M d Y'),
-            'currentState' => 'present',
+            'currentState' => $currentState,
           ];
 
           $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
@@ -355,7 +364,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
           $date = $startDate->format('M d Y');
           $time = $startDate->format('g:i') . '-' . $endDate->format('g:iA');
-          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'calendar']);
+          $icon = \Drupal::theme()->render("bh_icons", ['type' => 'calendar', 'fill' => 'ob']);
           $label = t('UPCOMING COMMUNITY MEETING');
           $currentState = 'future';
           $link = $event ? $event->toURL()->toString() : '/events';
