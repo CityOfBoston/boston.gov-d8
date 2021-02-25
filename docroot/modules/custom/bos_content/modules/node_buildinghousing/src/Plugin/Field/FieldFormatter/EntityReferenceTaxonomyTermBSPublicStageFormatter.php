@@ -201,7 +201,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
 
       $documentSet = [
-        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled']),
+        'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26]),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
         'date' => $formattedDate->format('M d Y'),
         'currentState' => 'present',

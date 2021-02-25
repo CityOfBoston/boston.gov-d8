@@ -22,24 +22,22 @@
 
 <div class="bh-project-timeline-moment g g--12 timeline-meeting-{{ currentState }}" >
 
-  <div class="g g--4">
-    <div class="g--7 m-t500">
-      <h6 class="m-v000 bh-timeline-season t--cb">{{ date }}</h6>
-    </div>
+  <div class="g g--2">
 
-    <div typeof="foaf:Image" class="bh-project-timeline-icon g--5">
+    <div typeof="foaf:Image" class="bh-project-timeline-icon">
       {{ icon }}
     </div>
 
   </div>
 
-  <div class="g--8 m-t400 m-b600 m-h100 p-a000  bh-project-timeline-content">
+  <div class="g--10 m-t400 m-b600 m-h100 p-a000  bh-project-timeline-content">
+    <h6 class="m-t000 m-b100 bh-timeline-season t--cb">{{ date }}</h6>
 
     {% if currentState != 'past' %}
       <h5 class="m-b100 m-t100 t--ob t--bold">{{ label }}</h5>
     {% endif %}
 
-    <div class="b b--w m-t600 p-a600">
+    <div class="b b--w m-t200 p-a600">
 
       <div class="t--title t--ob">{{ title }}</div>
 
