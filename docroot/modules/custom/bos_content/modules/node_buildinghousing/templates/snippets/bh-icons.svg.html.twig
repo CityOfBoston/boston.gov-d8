@@ -311,11 +311,11 @@
     width : 35,
     heigh: 35,
     viewBox: '0 0 35 35',
-    fill: 'none'
+    fill: '#288BE4'
   } %}
 
   {% set svg %}
-    <circle cx="17.5" cy="17.5" r="17.5" fill="#288BE4"/>
+    <circle cx="17.5" cy="17.5" r="17.5" fill="{{ fill ?? defaults.fill }}"/>
   {% endset %}
 {% elseif type == 'file-pdf' %}
   {% set defaults = {

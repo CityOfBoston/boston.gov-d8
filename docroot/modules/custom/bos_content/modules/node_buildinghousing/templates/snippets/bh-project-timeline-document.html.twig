@@ -21,19 +21,17 @@
 
 <div class="bh-project-timeline-moment g g--12 timeline-documents timeline-document-{{ currentState }}">
 
-  <div class="g g--4">
-    <div class="g--7">
-      <h6 class="m-v000 bh-timeline-season t--ob">{{ date }}</h6>
-    </div>
-    <div typeof="foaf:Image" class="bh-project-timeline-icon g--5">
+  <div class="g g--2">
+    <div typeof="foaf:Image" class="bh-project-timeline-icon">
       {{ icon }}
     </div>
   </div>
 
 
-  <div class="g--8 m-b600 m-h100 p-a000  bh-project-timeline-content" >
+  <div class="g--10 m-b600 m-h100 p-a000  bh-project-timeline-content" >
 
-      {% for document in documents %}
+    <h6 class="m-v000 bh-timeline-season t--ob">{{ date }}</h6>
+    {% for document in documents %}
 
         {% if loop.index == 1 %}
 
