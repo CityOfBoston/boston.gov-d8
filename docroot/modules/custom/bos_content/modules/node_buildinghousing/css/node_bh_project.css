@@ -112,14 +112,6 @@
 
 
 
-@media screen and (max-width: 360px) {
-  .container {
-    padding-left: 2% !important;
-    padding-right: 2% !important;
-  }
-}
-
-
 .timeline-moment-past {
   /*background-color: red;*/
 }
@@ -247,18 +239,23 @@
 }
 
 .timeline-rfp .bh-timeline-season {
-  padding-top: 2rem;
+  /*padding-top: 2rem;*/
 }
 
 .timeline-documents .bh-timeline-season {
-  padding-top: 4rem;
+  /*padding-top: 4rem;*/
 }
 
 .timeline-documents .bh-project-timeline-icon {
-  padding-top: 3.5rem;
+  /*padding-top: 3.5rem;*/
 }
 
-.timeline-documents .bh-project-timeline-icon:after {
+.timeline-document-past .bh-timeline-season{
+ color: #091f2f;
+}
+
+.timeline-document-present .bh-project-timeline-icon:after,
+.timeline-document-future .bh-project-timeline-icon:after {
   border-color: #288BE4;
 }
 
@@ -608,3 +605,172 @@
   -moz-appearance:none;
   height: 2.5rem;
 }
+
+
+
+
+.field--name-field-bh-project-parcels .geolocation-map-container {
+  max-width: 800px !important;
+  width: calc(100vw - 2rem) !important;
+}
+
+@media screen and (max-width: 840px) {
+  .bh-project-timeline-moment .g--2 {
+    -ms-flex-preferred-size: calc(99.9% * 2 / 12 - 0rem);
+    flex-basis: calc(99.9% * 2 / 12 - 0rem);
+    max-width: calc(99.9% * 2 / 12 - 0rem);
+    width: calc(99.9% * 2/12 - 0rem);
+  }
+
+  .bh-project-timeline-moment .g--10 {
+    -ms-flex-preferred-size: calc(99.9% * 9 / 12 - 0rem);
+    flex-basis: calc(99.9% * 9 / 12 - 0rem);
+    max-width: calc(99.9% * 9 / 12 - 0rem);
+    width: calc(99.9% * 9 / 12 - 0rem);
+  }
+}
+
+@media screen and (max-width: 1300px) {
+
+  .b-c {
+    /*padding: 0.5vw !important;*/
+  }
+
+  .field-name-field-bh-coordinates .geolocation-map-container,
+  .field-name-field-bh-project-images img {
+    /*width: calc(46vw - 5px) !important;*/
+    /*width: calc(46vw - 6px) !important;*/
+    /*height: 180px !important;*/
+  }
+
+
+}
+
+@media screen and (max-width: 1280px) {
+
+  .g--2:nth-child(1n) {
+    margin-right: 0.5rem;
+  }
+  .b-c {
+    padding: 1.0vw !important;
+  }
+
+  .field--name-field-bh-project-parcels .geolocation-map-container {
+    max-width: unset !important;
+    width: calc(100vw - 2rem) !important;
+  }
+
+  .field-name-field-bh-project-images img {
+    float: left;
+    margin-right: 1vw;
+    height: 32vw !important;
+    width: calc(48vw - 5px) !important;
+  }
+
+  .field-name-field-bh-coordinates .geolocation-map-container {
+    /*height: 230px !important;*/
+    height: 32vw !important;
+    width: calc(48vw - 5px) !important;
+  }
+
+  .webform-submission-building-housing-feedback-form .webform-button--submit {
+    margin-bottom: 2rem;
+  }
+
+  .webform-submission-bh-project-notification-signup-form .form-item-title-basic {
+    margin-top: 0;
+    padding-top: 1rem;
+  }
+
+  .bh-project-manager-contact {
+    padding-top: 1rem;
+  }
+
+}
+
+
+
+
+@media screen and (max-width: 768px) {
+
+  .b-c {
+    /*padding: 2rem 10px !important;*/
+    padding: 1.0vw !important;
+  }
+
+  .field--name-field-bh-project-parcels .geolocation-map-container {
+    width: calc(100vw - 1rem) !important;
+  }
+
+  .field-name-field-bh-project-images img,
+  .field-name-field-bh-coordinates .geolocation-map-container {
+    /*width: calc(45vw - 2px) !important;*/
+    /*height: 230px !important;*/
+    /*height: calc(33vw - 0.5rem) !important;*/
+    /*width: calc(50vw - 2rem) !important;*/
+    /*width: calc(45vw - 5%) !important;*/
+  }
+
+  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
+  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
+    width: 52px;
+  }
+
+}
+
+@media screen and (max-width: 480px) {
+
+  .container {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .field-name-field-bh-coordinates .geolocation-map-container,
+  .field-name-field-bh-project-images img {
+    /*width: calc(46vw - 6px) !important;*/
+    /*height: 180px !important;*/
+  }
+
+  .b-c {
+    /*padding: 2rem 20px !important;*/
+  }
+
+  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
+  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
+    width: 42px;
+  }
+
+  .webform-submission-building-housing-feedback-form .webform-options-display-one-column {
+    flex-direction: column-reverse;
+  }
+}
+
+@media screen and (max-width: 360px) {
+
+  .field--name-field-bh-project-parcels .geolocation-map-container {
+    height: 180px !important;
+  }
+
+  .field-name-field-bh-coordinates .geolocation-map-container,
+  .field-name-field-bh-project-images img {
+    /*height: 120px !important;*/
+  }
+
+  .b-c {
+    /*padding: 2rem 10px !important;*/
+  }
+
+  .g--2:nth-child(1n) {
+    margin-right: 0.5rem;
+  }
+
+  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
+  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
+   width: 42px;
+  }
+
+}
+
