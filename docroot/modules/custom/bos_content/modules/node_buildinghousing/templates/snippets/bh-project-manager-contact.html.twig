@@ -14,57 +14,63 @@
  */
 #}
 
+<div class="co">
 
-<div class="bh-project-manager-contact m-b300 m-b500--xxl ">
-  <div class="t--info br br-b200 m-b400">{{ title }}</div>
+  <input id="collapsible-project-manager-contact" type="checkbox" class="co-f d-n" aria-hidden=true>
+  <label for="collapsible-project-manager-contact" class="co-t">Contact Information</label>
+
+  <div class="bh-project-manager-contact m-b300 m-b500--xxl co-b">
+    <div class="t--info br br-b200 m-b400">{{ title }}</div>
 
 
-  <div class="list-item">
-    <div class="detail-item detail-item--middle">
-      <div class="detail-item__content">
-        <div class="detail-item__body t--cb">
-          {{ name }}{% if label %}, {{ label }}{% endif %}
+    <div class="list-item">
+      <div class="detail-item detail-item--middle">
+        <div class="detail-item__content">
+          <div class="detail-item__body t--cb">
+            {{ name }}{% if label %}, {{ label }}{% endif %}
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  {% if email %}
-  <div class="list-item">
-    <div class="detail-item detail-item--middle">
-      <div class="detail-item__left t--cb">
-        <div class="icon icon-email"></div>
-      </div>
-      <div class="detail-item__content">
-        <div class="detail-item__body detail-item__body--secondary">
-          <a href="mailto:{{ email }}" title="Have a question, or just need help? You can send an email to {{ email }} through the form below.">
+    {% if email %}
+      <div class="list-item">
+        <div class="detail-item detail-item--middle">
+          <div class="detail-item__left t--cb">
+            <div class="icon icon-email"></div>
+          </div>
+          <div class="detail-item__content">
+            <div class="detail-item__body detail-item__body--secondary">
+              <a href="mailto:{{ email }}"
+                 title="Have a question, or just need help? You can send an email to {{ email }} through the form below.">
 
-            {% if email == 'neighborhooddevelopment.dnd@boston.gov' %}
-              EMAIL US
-            {% else %}
-              {{ email }}
-            {% endif %}
+                {% if email == 'neighborhooddevelopment.dnd@boston.gov' %}
+                  EMAIL US
+                {% else %}
+                  {{ email }}
+                {% endif %}
 
-          </a>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  {% endif %}
+    {% endif %}
 
-  {% if phone%}
-  <div class="list-item">
-    <div class="detail-item detail-item--middle">
-      <div class="detail-item__left t--cb">
-        <div class="icon icon-phone"></div>
-      </div>
-      <div class="detail-item__content">
-        <div class="detail-item__body detail-item__body--secondary">
-          <a href="tel:{{ phone }}">{{ phone }}</a>
+    {% if phone %}
+      <div class="list-item">
+        <div class="detail-item detail-item--middle">
+          <div class="detail-item__left t--cb">
+            <div class="icon icon-phone"></div>
+          </div>
+          <div class="detail-item__content">
+            <div class="detail-item__body detail-item__body--secondary">
+              <a href="tel:{{ phone }}">{{ phone }}</a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-  {% endif %}
+    {% endif %}
 
+  </div>
 </div>
