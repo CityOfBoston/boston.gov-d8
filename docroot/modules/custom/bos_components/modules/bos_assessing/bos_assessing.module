@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Module file for bos_assessing.
+ */
+
+use Drupal\Core\Render\Markup;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_assessing_theme() {
+  $theme['bos_assessing'] = [
+    //'base hook' => 'node',
+    //'path' => 'modules/custom/bos_components/modules/bos_assessing/templates',
+    'variables' => ['test_var' => NULL]
+  ];
+  return $theme;
+
+
+}
