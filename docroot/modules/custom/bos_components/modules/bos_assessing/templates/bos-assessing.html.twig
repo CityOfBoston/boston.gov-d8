@@ -1,0 +1,82 @@
+{#
+ * @file
+ * Default theme implementation for a single paragraph item.
+ *
+ * Available variables:
+ * - $content: An array of content items. Use render($content) to print them
+ *   all, or print a subset such as render($content['field_example']). Use
+ *   hide($content['field_example']) to temporarily suppress the printing of a
+ *   given element.
+ * - $classes: String of classes that can be used to style contextually through
+ *   CSS. It can be manipulated through the variable $classes_array from
+ *   preprocess functions. By default the following classes are available, where
+ *   the parts enclosed by {} are replaced by the appropriate values:
+ *   - entity
+ *   - entity-paragraphs-item
+ *   - paragraphs-item-{bundle}
+ *
+ * Other variables:
+ * - $classes_array: Array of html class attribute values. It is flattened into
+ *   a string within the variable $classes.
+ *
+ * @see template_preprocess()
+ * @see template_preprocess_entity()
+ * @see template_process()
+#}
+<div class="container content entity entity-paragraphs-item paragraphs-item-text component-sectionS">
+   	<div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
+   			{% set data = test_var.result.records[0] %}
+      		<!--<div class="supporting-text">{{ attribute(data,'GROSS_TAX') }}</div>
+      		<div class="supporting-text">{{ attribute(data,'MAIL CS') }}</div>-->
+    	<div id="web-app">
+    		<div class="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full mnl">
+      			<div style="padding-top: 30px;">
+      				<div>
+      					<div>
+      						<div>
+      							<div class="g">
+      								<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
+      									<div class="pointer-mnl" tabindex="0">
+      									<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
+      										<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
+      									</div>
+	      								<div class="cd-c">
+	      									<span class="h3 t--upper">Representation</span>
+	      									<div class="cdp-st">{{ attribute(data,'GROSS_TAX') }}.</div>
+	      								</div>
+      									</div>
+      								</a>
+      								<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
+      									<div class="pointer-mnl" tabindex="0">
+      									<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
+      										<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
+      									</div>
+	      								<div class="cd-c">
+	      									<span class="h3 t--upper">Representation</span>
+	      									<div class="cdp-st">Your representation and voting information.</div>
+	      								</div>
+      									</div>
+      								</a>
+      								<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
+      									<div class="pointer-mnl" tabindex="0">
+      									<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
+      										<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
+      									</div>
+	      								<div class="cd-c">
+	      									<span class="h3 t--upper">Representation</span>
+	      									<div class="cdp-st">Your representation and voting information.</div>
+	      								</div>
+      									</div>
+      								</a>
+      							</div>
+ 							</div>
+  						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- end web app -->
+		<div>&nbsp;</div>
+	</div>
+</div>
+<!-- end container -->
