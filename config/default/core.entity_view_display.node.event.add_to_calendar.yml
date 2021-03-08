@@ -50,7 +50,7 @@ content:
       separator: '-'
       event_title: '[node:title]'
       location: '[node:field_address:address_line1] [node:field_address:address_line2] [node:field_address:locality] [node:field_address:postal_code]'
-      description: '[node:field_intro_text]'
+      description: "[node:field_intro_text]\r\n\r\n[node:field_address:address_line1]\r\n[node:field_address:address_line2]\r\n\r\nDetails on how to join this event:\r\n[node:url]"
       past_events: '1'
     third_party_settings:
       fences:
