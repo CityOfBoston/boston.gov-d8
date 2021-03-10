@@ -27,19 +27,22 @@ function bos_events_and_notices_theme() {
   $theme['viewfield__paragraph__events_and_notices'] = [
     'base hook' => 'viewfield',
   ];
-  $theme['views_view_fields__events_and_notices__upcoming_small'] = [
-    'base hook' => 'view',
-  ];
   $theme['views_view_fields__events_and_notices__upcoming_medium'] = [
     'base hook' => 'view',
   ];
   $theme['views_view_fields__events_and_notices__upcoming_large'] = [
     'base hook' => 'view',
   ];
-  $theme['views_view_fields__events_and_notices__large_attachment'] = [
+  $theme['views_view_fields__events_and_notices__related_medium'] = [
     'base hook' => 'view',
   ];
-  $theme['views_view_fields__events_and_notices__medium_attachment'] = [
+  $theme['views_view_fields__events_and_notices__related_large'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__upcoming_large_attachment'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__upcoming_medium_attachment'] = [
     'base hook' => 'view',
   ];
   $theme['views_view_fields__events_and_notices__related_attachment_large'] = [
@@ -52,15 +55,6 @@ function bos_events_and_notices_theme() {
     'base hook' => 'view',
   ];
   $theme['views_view_fields__events_and_notices__referenced_medium_attachment'] = [
-    'base hook' => 'view',
-  ];
-  $theme['views_view_fields__events_and_notices__upcoming_auto'] = [
-    'base hook' => 'view',
-  ];
-  $theme['views_view_fields__events_and_notices__related_auto'] = [
-    'base hook' => 'view',
-  ];
-  $theme['views_view_fields__events_and_notices__referenced_auto'] = [
     'base hook' => 'view',
   ];
   return $theme;
@@ -260,7 +254,7 @@ function bos_events_and_notices_views_pre_render(ViewExecutable $view) {
  * Implements hook_views_query_alter().
  */
 function bos_events_and_notices_views_query_alter(ViewExecutable $view, Sql $query) {
-  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'upcoming' || $view->getDisplay()->display['id'] == 'related' || $view->getDisplay()->display['id'] == 'upcoming_small' || $view->getDisplay()->display['id'] == 'upcoming_medium' || $view->getDisplay()->display['id'] == 'upcoming_large' || $view->getDisplay()->display['id'] == 'upcoming_auto' || $view->getDisplay()->display['id'] == 'related_auto' || $view->getDisplay()->display['id'] == 'referenced_auto')) {
+  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'related_small' || $view->getDisplay()->display['id'] == 'upcoming_small' || $view->getDisplay()->display['id'] == 'upcoming_medium' || $view->getDisplay()->display['id'] == 'upcoming_large' || $view->getDisplay()->display['id'] == 'related_medium' || $view->getDisplay()->display['id'] == 'related_large' || $view->getDisplay()->display['id'] == 'upcoming_auto' || $view->getDisplay()->display['id'] == 'related_auto' || $view->getDisplay()->display['id'] == 'referenced_auto')) {
     $sql = "CASE
         WHEN node__field_public_notice_date.field_public_notice_date_value IS NOT NULL THEN node__field_public_notice_date.field_public_notice_date_value
         WHEN date_recur__node__field_event_date_recur_node_field_data.field_event_date_recur_value IS NOT NULL THEN date_recur__node__field_event_date_recur_node_field_data.field_event_date_recur_value

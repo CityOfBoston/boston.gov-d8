@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Default view template to display related medium all the fields in a row.
+ * Default view template to display upcoming medium all the fields in a row.
  *
  * Available variables:
  * - view: The view in use.
@@ -59,16 +59,16 @@
         <span class="dl-d">{{ fields.field_event_contact.content }}</span>
       </li>
       {% if phone %}
-        <li class="dl-i evt-dl-i">
+      <li class="dl-i evt-dl-i">
           <span class="dl-t">Phone</span>
           <span class="dl-d">{{ fields.field_phone_number.content }}</span>
-        </li>
+      </li>
       {% endif %}
       {% if cost %}
-        <li class="dl-i evt-dl-i">
-          <span class="dl-t">Price</span>
-          <span class="dl-d">{{ fields.field_cost.content }}</span>
-        </li>
+      <li class="dl-i evt-dl-i">
+        <span class="dl-t">Price</span>
+        <span class="dl-d">{{ fields.field_cost.content }}</span>
+      </li>
       {% endif %}
     </ul>
   </div>
