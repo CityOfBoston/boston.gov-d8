@@ -45,8 +45,8 @@
 }
 
 .view-display-id-livemap header {
-  position: sticky;
-  top: 0;
+  /*position: sticky;*/
+  /*top: 0;*/
   z-index: 1;
 }
 
@@ -58,28 +58,38 @@
   position: sticky;
   /*top: 0;*/
   z-index: 2;
-  top: 6.9rem;
+  top: -1rem;
   background-color: #F2F2F2;
 }
 
 .view-display-id-livemap .views-element-container {
-  width: 24%;
-  float: left;
+  min-width: 20rem;
+  max-width: calc(25vw - 8rem);
+  z-index: 1;
+  /*float: left;*/
   margin-right: 1%;
   margin-left: 1%;
+  position: absolute;
+  /*background-color: #F2F2F2;*/
+  overflow: hidden;
+  margin-top: 5.75rem;
+}
+
+.view-display-id-livemap .views-element-container .dr .dr-c{
+  padding: 0;
 }
 
 .view-display-id-livemap .geolocation-map-wrapper {
-  width: 74%;
-  float: right;
+  /*width: 74%;*/
+  /*float: right;*/
   /*margin-left: 2%;*/
-  position: sticky;
-  position: -webkit-sticky;
-  top: 7.0rem;
+  /*position: sticky;*/
+  /*position: -webkit-sticky;*/
+  /*top: 7.0rem;*/
   height: calc(100vh - 8rem);
   /*margin-top: -4.5rem;*/
-  margin-top: 0rem;
-  z-index: 0;
+  /*margin-top: 0rem;*/
+  /*z-index: 0;*/
 }
 
 .bg--w {
@@ -88,8 +98,10 @@
 
 
 .view-display-id-maplist {
-  /*overflow: scroll;*/
-  /*height: 800px;*/
+  padding: 1rem;
+  background-color: #F2F2F2;
+  overflow: scroll;
+  height: calc(70vh);
 }
 
 .view-display-id-maplist .bh-maplist-project {
@@ -266,4 +278,36 @@
 
 .view-id-bhmaps .gm-style .gm-style-iw-t::after {
  display: none;
+}
+
+
+
+@media screen and (min-width: 769px) {
+  .bh-show-on-mobile {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .bh-hide-on-mobile {
+    display: none;
+  }
+
+  .view-display-id-livemap .views-element-container {
+    /*min-width: 20rem;*/
+    max-width: calc(100vw);
+    /*z-index: 1;*/
+    /*float: left;*/
+    /*margin-right: 1%;*/
+    /*margin-left: 1%;*/
+    /*position: absolute;*/
+    /*background-color: #F2F2F2;*/
+    /*overflow: hidden;*/
+    /*margin-top: 5.75rem;*/
+    bottom: 0;
+  }
+
+  header.bh-show-on-mobile {
+    width: calc(100vw);
+  }
 }
