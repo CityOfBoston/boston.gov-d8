@@ -9,7 +9,7 @@
 * [Install Instructions](https://github.com/CityOfBoston/boston.gov-d8/wiki/Installation-Instructions)
 * [On-demand (terraform) Instances](https://github.com/CityOfBoston/boston.gov-d8/wiki/Terraform)
 
-**04/11/2002: Migrated to travis-ci.com**
+**04/11/2002: Migrated to travis-ci.com.**
 *Archived build info found at: https://travis-ci.org/github/CityOfBoston/boston.gov-d8*
 
 
