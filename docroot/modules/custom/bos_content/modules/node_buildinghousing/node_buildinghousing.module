@@ -1,0 +1,817 @@
+<?php
+
+/**
+ * @file
+ * Contains node_buildinghousing.module.
+ */
+
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\NodeType;
+use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
+use Drupal\views\ViewExecutable;
+use Drupal\node_buildinghousing\BuildingHousingUtils;
+
+/**
+ * Implements hook_help().
+ */
+function node_buildinghousing_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the node_buildinghousing module.
+    case 'help.page.node_buildinghousing':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Building Housing Entities and Features') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function node_buildinghousing_theme() {
+  return [
+    'node_buildinghousing' => [
+      'render element' => 'children',
+    ],
+    'bh_project_type' => [
+      'template' => 'snippets/bh-project-type',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "bgColor" => '#091f2f',
+      ],
+    ],
+    'bh_project_manager_contact' => [
+      'template' => 'snippets/bh-project-manager-contact',
+      'variables' => [
+        "title" => t("Get In Touch"),
+        "label" => t("Project Manager"),
+        "name" => NULL,
+        "email" => NULL,
+        "phone" => NULL,
+        "classes" => NULL,
+      ],
+    ],
+    'bh_project_meeting_notice' => [
+      'template' => 'snippets/bh-project-meeting-notice',
+      'variables' => [
+        "title" => t("Community Meeting"),
+        "dateString" => NULL,
+        "detailsLink" => NULL,
+        "idForAddToCal" => NULL,
+        "classes" => NULL,
+      ],
+    ],
+    'bh_project_timeline' => [
+      'template' => 'snippets/bh-project-timeline',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "bgColor" => '#091f2f',
+      ],
+    ],
+    'bh_project_timeline_moment' => [
+      'template' => 'snippets/bh-project-timeline-moment',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "currentState" => NULL,
+        "bgColor" => '#091f2f',
+      ],
+    ],
+    'bh_project_timeline_meeting' => [
+      'template' => 'snippets/bh-project-timeline-meeting',
+      'variables' => [
+        "label" => NULL,
+        "title" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "time" => NULL,
+        "link" => NULL,
+        "currentState" => 'present',
+        "addToCal" => NULL,
+      ],
+    ],
+    'bh_read_more_text' => [
+      'template' => 'snippets/bh-read-more-text',
+      'variables' => [
+        "textId" => NULL,
+        "lessText" => NULL,
+        "moreText" => NULL,
+      ],
+    ],
+    'bh_project_timeline_text' => [
+      'template' => 'snippets/bh-project-timeline-text',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "currentState" => 'present',
+      ],
+    ],
+    'bh_project_timeline_rfp' => [
+      'template' => 'snippets/bh-project-timeline-rfp',
+      'variables' => [
+        "label" => NULL,
+        "body" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "url" => NULL,
+        "rfpListIcon" => NULL,
+        "currentState" => 'present',
+      ],
+    ],
+    'bh_project_timeline_document' => [
+      'template' => 'snippets/bh-project-timeline-document',
+      'variables' => [
+        "label" => NULL,
+        "link" => NULL,
+        "url" => NULL,
+        "icon" => NULL,
+        "date" => NULL,
+        "dateId" => NULL,
+        "fileIcon" => NULL,
+        "documents" => NULL,
+        "currentState" => 'present',
+      ],
+    ],
+
+    'bh_icons' => [
+      'template' => 'snippets/bh-icons.svg',
+      'variables' => [
+        'type' => 'triple-decker',
+        'title' => NULL,
+        'width' => NULL,
+        'height' => NULL,
+        'viewBox' => NULL,
+        'fill' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_page()
+ */
+function node_buildinghousing_preprocess_page(array &$variables) {
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'bh_project') {
+    $variables['#attached']['library'][] = 'node_buildinghousing/buildinghousing_project';
+    $variables['attributes']['class'][] = 'mn';
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function node_buildinghousing_views_pre_render(ViewExecutable $view) {
+  if (isset($view) && (($view->storage->id() == 'building_housing') || ($view->storage->id() == 'bhmaps'))) {
+    $view->element['#attached']['library'][] = 'node_buildinghousing/buildinghousing_views';
+
+    // $variables['attributes']['class'][] = 'mn';
+
+    $cssClass = 'view-id-' . $view->id() . ' view-display-id-' . $view->current_display;
+    if ($view->storage->id() == 'bhmaps' && $view->current_display == 'livemap') {
+      $cssClass = $cssClass . ' b b--fw';
+    }
+    if ($view->storage->id() == 'bhmaps' && $view->current_display == 'maplist') {
+      $cssClass = $cssClass . '';
+    }
+    $view->display_handler->setOption('css_class', $cssClass);
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function node_buildinghousing_entity_presave(EntityInterface $entity) {
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_project') {
+
+    $bhUtils = new BHUtils();
+    $publicStage = $bhUtils->setPublicStage($entity);
+
+    // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
+
+  }
+
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_update') {
+    $bhUtils = new BHUtils();
+    $projectWebLink = $bhUtils->setProjectWebLink($entity);
+  }
+
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_meeting') {
+    $bhUtils = new BHUtils();
+    $meetingEvent = $bhUtils->setMeetingEvent($entity);
+  }
+
+  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_parcel') {
+    $bhUtils = new BHUtils();
+    $geoData = $bhUtils->setParcelGeoPolyData($entity);
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_buildinghousing_preprocess_field(&$variables) {
+
+  if ($variables['element']['#bundle'] == 'bh_project') {
+    $fieldName = $variables['field_name'] ?? NULL;
+    $project = $variables['element']['#object'] ?? NULL;
+    $projectType = _node_buildinghousing_get_computed_project_type($project)['label'] ?? NULL;
+    $hidden = FALSE;
+
+    switch ($fieldName) {
+      case 'field_bh_total_num_units':
+      case 'field_bh_units_for_rent':
+      case 'field_bh_units_to_own':
+      case 'field_bh_units_affordable':
+      case 'field_bh_units_total':
+        if ($projectType != 'Housing') {
+          $hidden = TRUE;
+        }
+      case 'field_bh_property_size':
+
+        $value = $variables['items'][0]['content']['#markup'] ?? NULL;
+
+        if (empty($value)) {
+          $value = t('To Be Determined');
+        }
+        elseif (is_numeric($value) && $value <= 10  && $value >= 1) {
+          // @TODO: Change out the language for the selected site language. Not using as the intl php ext is not loaded on aquia
+          // $numberFormatter = new \NumberFormatter("en", \NumberFormatter::SPELLOUT);
+          // $value = ucfirst($numberFormatter->format($value));
+          $numbers = [
+            'zero',
+            'one',
+            'two',
+            'three',
+            'four',
+            'five',
+            'six',
+            'seven',
+            'eight',
+            'nine',
+            'ten',
+          ];
+
+          $value = ucfirst($numbers[$value]);
+
+        }
+
+        if ($fieldDescription = $project->getFieldDefinition($fieldName)->get('description')) {
+          // @TODO: Add in the field description as a tooltip to the label, may need to do in a template :/
+          // $variables['label'] = '<div>' . $variables['label'] . ' - ' . '<span class="bh-tooltip">' . $fieldDescription . '</span></div>';
+        }
+
+        $variables['items'][0]['content']['#markup'] = $value;
+
+        break;
+
+      case 'body':
+        $webUpdate = BuildingHousingUtils::getWebUpdate($project);
+
+        if (!empty($webUpdate) && $webUpdateGoalText = $webUpdate->get('body')->value) {
+          $variables["items"][0]["content"]["#text"] = $webUpdateGoalText ?? $variables["items"][0]["content"]["#text"];
+        }
+
+        break;
+    }
+
+    if ($hidden == TRUE) {
+      $variables['items'] = [];
+      $variables['label_hidden'] = TRUE;
+    }
+
+  }
+
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function node_buildinghousing_entity_extra_field_info() {
+  $extraFields = [];
+
+  foreach (NodeType::loadMultiple() as $bundle) {
+
+    if ($bundle->id() == 'bh_project') {
+      $extraFields['node'][$bundle->id()]['display']['bh_computed_project_type'] = [
+        'label' => t('Computed Project Type'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_manager_contact'] = [
+        'label' => t('Project Manager Contact Information'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_meeting_notice'] = [
+        'label' => t('Project Meeting Notice'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_follower_webform'] = [
+        'label' => t('Project Follower Webform'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_feedback_webform'] = [
+        'label' => t('Project Feedback Webform'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+    }
+  }
+
+  return $extraFields;
+}
+
+/**
+ * Implements hook_entity_view().
+ *
+ * @param array $build
+ *   Build array for render.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Main Entity about to be viewed.
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+ *   View display for this entity type.
+ * @param string $view_mode
+ *   Current View Mode.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode) {
+
+  $projectIsActive = TRUE;
+  if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()) {
+    $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? NULL;
+
+    if ($publicStageTerm && $publicStageTerm == 'Not Active') {
+      $projectIsActive = FALSE;
+      $build['field_bh_public_stage']['#label_display'] = 'hidden';
+    }
+  }
+
+  if ($display->getComponent('bh_computed_project_type') && $projectIsActive) {
+    $build['bh_computed_project_type'] = _node_buildinghousing_build_render_computed_project_type($entity);
+  }
+
+  if ($display->getComponent('bh_project_manager_contact')) {
+    $build['bh_project_manager_contact'] = _node_buildinghousing_build_render_project_manager_contact($entity);
+
+  }
+
+  if ($display->getComponent('bh_project_meeting_notice') && $projectIsActive) {
+    $build['bh_project_meeting_notice'] = _node_buildinghousing_build_render_project_meeting_notice($entity);
+
+  }
+
+  if ($display->getComponent('bh_project_follower_webform') && $projectIsActive) {
+    $build['bh_project_follower_webform'] = _node_buildinghousing_build_render_project_follower_webform($entity);
+
+  }
+
+  if ($display->getComponent('bh_project_feedback_webform')) {
+    $build['bh_project_feedback_webform'] = _node_buildinghousing_build_render_project_feedback_webform($entity);
+
+  }
+
+  if ($display->getComponent('field_bh_project_images')) {
+
+    $images = $entity->get('field_bh_project_images');
+
+    if (empty($images->count())) {
+      $mainImage = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => [
+            'main-photo-container',
+          ],
+        ],
+      ];
+
+      $mainImage['wrapper'] = [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => [
+            'main-photo-wrapper',
+          ],
+        ],
+      ];
+
+      $mainImage['wrapper']['icon'] = [
+        '#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'camera']),
+      ];
+
+      $mainImage['wrapper']['no-photo'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'h4',
+        '#value' => t('No photos uploaded (yet!)'),
+        '#attributes' => [
+          'class' => [
+            'main-photo-placeholder',
+          ],
+        ],
+      ];
+
+      $build['field_bh_project_images'] = $mainImage;
+    }
+  }
+
+  if ($display->getTargetBundle() == 'event'
+    && $display->getComponent('field_sidebar_components')
+    && $display->getMode() == 'default') {
+
+    $meeting = $entity ? BHUtils::getMeetingFromEventId($entity->id()) : NULL;
+
+    if ($meeting) {
+      if ($meeting->field_bh_languages_supported->value) {
+        $supportedLang['classes'] = [
+          'label' => 'detail-item--left',
+          'body' => 'detail-item--secondary',
+          'detail' => 'detail-item--secondary list-item',
+        ];
+        $supportedLang['label'] = t('Language Support:');
+        $supportedLang['body'] = $meeting->field_bh_languages_supported->value;
+        $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $supportedLang)];
+      }
+
+      unset($build['field_event_type']);
+      unset($build['field_cost']);
+    }
+  }
+}
+
+/**
+ * Helper function to render project meeting notices.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_project_meeting_notice(EntityInterface $entity) {
+  $webUpdate = BHUtils::getWebUpdate($entity);
+  $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateId($webUpdate->id()) : NULL;
+
+  if ($meetings) {
+
+    foreach ($meetings as $meetingId => $meeting) {
+
+      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+      $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
+      $startDate->setTimezone($timeZoneAdjustment);
+      $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
+      $endDate->setTimezone($timeZoneAdjustment);
+
+      if ($startDate->getTimestamp() > time()) {
+
+        // $dateString = 'Tuesday December 15 2020 | 6-8PM';
+        $dateString = $startDate->format('l F j Y | g:i') . '-' . $endDate->format('g:iA');
+
+        $vars = [
+          'classes' => [
+            'icon' => 'icon-location',
+            'label' => 'detail-item--secondary grid-card__title',
+            'body' => 'detail-item__body--tertiary',
+            'detail' => 'detail-item--middle m-v300 grid-card__title',
+          ],
+        ];
+
+        $event = $meeting->field_bh_event_ref->isEmpty() ? NULL : $meeting->field_bh_event_ref->referencedEntities()[0];
+
+        $addToCal = $event->field_event_date_recur->view('add_to_calendar');
+        unset($addToCal[0]['start_date']);
+        unset($addToCal[0]['separator']);
+        unset($addToCal[0]['end_date']);
+        $addToCal[0]['addtocal']['#id'] = $addToCal[0]['addtocal']['#id'] . '-notice';
+
+        $link = $event
+          ? $event->toURL()->toString()
+          : '/events';
+
+        $vars['title'] = t("Community Meeting");
+        $vars['dateString'] = $dateString;
+        $vars['detailsLink'] = $link;
+        $vars['idForAddToCal'] = $addToCal;
+
+        return ['#markup' => \Drupal::theme()->render("bh_project_meeting_notice", $vars)];
+      }
+    }
+  }
+
+  return [];
+}
+
+/**
+ * Helper function to render project manager contact info.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_project_manager_contact(EntityInterface $entity) {
+  $render = [];
+
+  $vars = [
+    'classes' => [
+      'icon' => 'icon-location',
+      'label' => 'detail-item--secondary grid-card__title',
+      'body' => 'detail-item__body--tertiary',
+      'detail' => 'detail-item--middle m-v300 grid-card__title',
+    ],
+  ];
+
+  $vars['name'] = $entity->get('field_bh_project_manager_name')->value;
+  $vars['email'] = $entity->get('field_project_manager_email')->value;
+  $vars['phone'] = $entity->get('field_bh_project_manger_phone')->value;
+
+  $publicStageId = $entity->get('field_bh_public_stage')->target_id ?? NULL;
+  $publicStage = $publicStageId ? \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($publicStageId) : NULL;
+  $publicStage = $publicStage ? $publicStage->getName() : NULL;
+
+  if (empty($vars['name']) || $publicStage == 'Not Active') {
+    $vars['name'] = t("Do you have questions about this lot? We're here to help.");
+    $vars['email'] = "neighborhooddevelopment.dnd@boston.gov";
+    $vars['phone'] = "617-635-3880";
+    $vars['label'] = NULL;
+    $vars['title'] = t('Contact Information');
+  }
+
+  $render = ['#markup' => \Drupal::theme()->render("bh_project_manager_contact", $vars)];
+
+  return $render;
+}
+
+/**
+ * Helper function to render the project type.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_computed_project_type(EntityInterface $entity) {
+  $render = [];
+
+  $computedProjectType = _node_buildinghousing_get_computed_project_type($entity);
+
+  if ($computedProjectType) {
+    $vars = [
+      'classes' => [
+        'icon' => 'icon-location',
+        'label' => 'detail-item--secondary grid-card__title',
+        'body' => 'detail-item__body--tertiary',
+        'detail' => 'detail-item--middle m-v300 grid-card__title',
+      ],
+    ];
+
+    $vars['label'] = $computedProjectType['label'] ?? NULL;
+    $vars['body'] = $computedProjectType['body'] ?? NULL;
+    // $vars['title'] = t('What are we building?');
+    $vars['title'] = NULL;
+    $vars['bgColor'] = $computedProjectType['bgColor'] ?? '#091f2f';
+    // $vars['icon'] = $computedProjectType['icon'] ?? null;
+
+    $typeIconMapping = [
+      'Open Space' => 'open-space',
+      'Business' => 'commercial',
+      'Housing' => 'housing',
+      'Abutter Sale' => 'abutter-sale',
+    ];
+
+    if (array_key_exists($computedProjectType['label'], $typeIconMapping)) {
+      $vars['icon'] = \Drupal::theme()->render('bh_icons', ['type' => $typeIconMapping[$computedProjectType['label']]]);
+    }
+    elseif (isset($computedProjectType['body']) && $computedProjectType['body'] == "Use To Be Determined") {
+      // $vars['title'] = t('What are we building?');
+      // @TODO: chang out for field and move logic to above function
+      $vars['label'] = t('To be Decided');
+      $vars['bgColor'] = '#58585B';
+      $vars['icon'] = \Drupal::theme()->render('bh_icons', ['type' => 'to-be-decided']);
+      $vars['body'] = NULL;
+    }
+    else {
+      return [];
+    }
+
+    // @TODO: Move to ent conf and set on term
+    if ($computedProjectType['label'] == 'Abutter Sale') {
+      $vars['bgColor'] = '#58585B';
+    }
+
+    return ['#markup' => \Drupal::theme()->render("bh_project_type", $vars)];
+  }
+}
+
+/**
+ * Helper function to get the type of a project.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_get_computed_project_type(EntityInterface $entity) {
+  $data = [];
+  $mainType = NULL;
+  $subType = NULL;
+
+  $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  if ($dispositionTypeId = $entity->get('field_bh_disposition_type')->target_id) {
+    $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
+
+    $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
+    $subType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
+  }
+
+  if ($projectTypeId = $entity->get('field_bh_project_type')->target_id) {
+    $projectTypeParents = $termStorage->loadAllParents($projectTypeId);
+
+    if (empty($mainType) || $mainType->getName() == 'Housing') {
+      $mainType = 'Housing';
+      $subType = !empty($projectTypeParents) ? array_pop($projectTypeParents) : NULL;
+    }
+  }
+
+  if (empty($dispositionTypeId) && empty($projectTypeId)) {
+    $mainType = 'Housing';
+  }
+
+  if ($mainType) {
+    $data['label'] = is_string($mainType) ? $mainType : $mainType->getName();
+  }
+
+  if ($subType) {
+    $subType = $subType->getName();
+    if ($subType == 'Mixed Use - Assisted' || $subType == 'Mixed Use - Market') {
+      $data['body'] = 'Mixed Use';
+    }
+    elseif ($subType != 'N/A') {
+      $data['body'] = $subType;
+    }
+  }
+
+  $iconType = 'house';
+
+  // @TODO: Change all of this out for a color field on the Tax Terms
+  switch ($data['label']) {
+    case "Other":
+      $data['bgColor'] = '#FFC608';
+      $iconType = 'building';
+      break;
+
+    case "Open Space":
+      $data['bgColor'] = '#58B754';
+      $iconType = 'tree';
+      break;
+
+    case "Business":
+      $data['bgColor'] = '#45789C';
+      if ($subType == 'Parking') {
+        $iconType = 'parking';
+      }
+      else {
+        $iconType = 'shopping';
+      }
+      break;
+
+    default:
+      $iconType = 'house';
+      break;
+
+  }
+
+  // $data['icon'] = ['#markup' => \Drupal::theme()->render("bh_icons", ['type' => 'triple-decker'])];
+  $data['icon'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
+
+  return $data;
+}
+
+/**
+ * Helper function to render and attach the project follower webform.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_project_follower_webform(EntityInterface $entity) {
+  $render = [];
+
+  $render = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => 'co',
+    ],
+  ];
+
+  $render['input'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'input',
+    '#attributes' => [
+      'class' => 'co-f d-n',
+      'type' => 'checkbox',
+      'aria-hidden' => 'true',
+      'id' => 'collapsible-bh-follower-webform',
+    ],
+  ];
+
+
+  $render['label'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'label',
+    '#value' => t('Want Updates?'),
+    '#attributes' => [
+      'class' => 'co-t',
+      'for' => 'collapsible-bh-follower-webform'
+    ],
+  ];
+
+  $render['webform'] = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => 'co-b',
+    ],
+  ];
+
+  $followers_form = \Drupal::entityTypeManager()
+    ->getStorage('webform')
+    ->load('bh_project_notification_signup');
+
+  $render['webform'][] = \Drupal::entityTypeManager()
+    ->getViewBuilder('webform')
+    ->view($followers_form);
+
+
+
+  return $render;
+}
+
+/**
+ * Helper function to render and attach the project feedback webform.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_project_feedback_webform(EntityInterface $entity) {
+  $render = [];
+
+  $feedback_form = \Drupal::entityTypeManager()
+    ->getStorage('webform')
+    ->load('building_housing_feedback');
+
+  $render = \Drupal::entityTypeManager()
+    ->getViewBuilder('webform')
+    ->view($feedback_form);
+
+  $render['#attributes']['class'][] = 'clearfix b-c bh-content-container';
+
+  return $render;
+}

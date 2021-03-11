@@ -1,0 +1,900 @@
+uuid: 9b84d757-c81e-41f1-99f8-1a12f963de03
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.bh_project.body
+    - field.field.node.bh_project.field_bh_attachment
+    - field.field.node.bh_project.field_bh_attachments
+    - field.field.node.bh_project.field_bh_commitment_letter_date
+    - field.field.node.bh_project.field_bh_construct_complete_date
+    - field.field.node.bh_project.field_bh_construction_start_date
+    - field.field.node.bh_project.field_bh_conveyance_vote_date
+    - field.field.node.bh_project.field_bh_coordinates
+    - field.field.node.bh_project.field_bh_councilor
+    - field.field.node.bh_project.field_bh_disposition_type
+    - field.field.node.bh_project.field_bh_dnd_funding_award_date
+    - field.field.node.bh_project.field_bh_funding_stage
+    - field.field.node.bh_project.field_bh_initial_comm_mtg_date
+    - field.field.node.bh_project.field_bh_initial_td_vote_date
+    - field.field.node.bh_project.field_bh_meetings
+    - field.field.node.bh_project.field_bh_neighborhood
+    - field.field.node.bh_project.field_bh_notification_signup
+    - field.field.node.bh_project.field_bh_parcel_id
+    - field.field.node.bh_project.field_bh_predicted_closing_date
+    - field.field.node.bh_project.field_bh_project_complete_date
+    - field.field.node.bh_project.field_bh_project_images
+    - field.field.node.bh_project.field_bh_project_manager_name
+    - field.field.node.bh_project.field_bh_project_manger_phone
+    - field.field.node.bh_project.field_bh_project_name
+    - field.field.node.bh_project.field_bh_project_parcels
+    - field.field.node.bh_project.field_bh_project_stage
+    - field.field.node.bh_project.field_bh_project_start_date
+    - field.field.node.bh_project.field_bh_project_status
+    - field.field.node.bh_project.field_bh_project_type
+    - field.field.node.bh_project.field_bh_project_updates
+    - field.field.node.bh_project.field_bh_property_size
+    - field.field.node.bh_project.field_bh_public_stage
+    - field.field.node.bh_project.field_bh_record_type
+    - field.field.node.bh_project.field_bh_rfp_issued_date
+    - field.field.node.bh_project.field_bh_total_num_units
+    - field.field.node.bh_project.field_bh_units_affordable
+    - field.field.node.bh_project.field_bh_units_for_rent
+    - field.field.node.bh_project.field_bh_units_to_own
+    - field.field.node.bh_project.field_bh_units_total
+    - field.field.node.bh_project.field_bh_wysiwyg_photo_a
+    - field.field.node.bh_project.field_project_manager_email
+    - filter.format.plain_text
+    - image.style.card_grid_2w_vertical_1x
+    - node.type.bh_project
+  module:
+    - advanced_text_formatter
+    - colorbox
+    - fences
+    - field_group
+    - geolocation
+    - node_buildinghousing
+    - text
+    - user
+    - viewfield
+third_party_settings:
+  field_group:
+    group_information:
+      children:
+        - group_meetings
+        - group_dates
+        - group_stats
+        - group_photos
+        - group_parcels
+      parent_name: ''
+      weight: 18
+      format_type: tabs
+      region: hidden
+      format_settings:
+        id: ''
+        classes: ''
+        direction: horizontal
+      label: Information
+    group_dates:
+      children:
+        - field_bh_commitment_letter_date
+        - field_bh_construction_start_date
+        - field_bh_construct_complete_date
+        - field_bh_conveyance_vote_date
+        - field_bh_dnd_funding_award_date
+        - field_bh_initial_comm_mtg_date
+        - field_bh_initial_td_vote_date
+        - field_bh_predicted_closing_date
+        - field_bh_project_complete_date
+        - field_bh_project_start_date
+        - field_bh_rfp_issued_date
+      parent_name: group_information
+      weight: 21
+      format_type: tab
+      region: hidden
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: Dates
+    group_photos:
+      children: {  }
+      parent_name: group_information
+      weight: 23
+      format_type: tab
+      region: hidden
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: Photos
+    group_parcels:
+      children: {  }
+      parent_name: group_information
+      weight: 24
+      format_type: tab
+      region: hidden
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: Parcels
+    group_stats:
+      children:
+        - field_bh_project_updates
+      parent_name: group_information
+      weight: 22
+      format_type: tab
+      region: hidden
+      format_settings:
+        description: ''
+        formatter: open
+        id: ''
+        classes: ''
+      label: Updates
+    group_sidebar_info:
+      children:
+        - field_bh_disposition_type
+        - field_bh_project_stage
+        - field_bh_project_status
+        - field_bh_project_type
+      parent_name: ''
+      weight: 17
+      format_type: details
+      region: hidden
+      format_settings:
+        description: 'Bellow are more details about this Project.'
+        id: ''
+        classes: m-v400
+        open: false
+      label: 'Additional Details and Information'
+    group_meetings:
+      children:
+        - field_bh_meetings
+      parent_name: group_information
+      weight: 20
+      format_type: tab
+      region: hidden
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+      label: Meetings
+    group_hero_placeholder:
+      children:
+        - field_bh_wysiwyg_photo_a
+      parent_name: group_header
+      weight: 7
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: 'height="300"'
+        effect: none
+        speed: fast
+        id: hero-placeholder
+        classes: g--8
+      label: 'Hero Placeholder'
+    group_header:
+      children:
+        - field_bh_project_name
+        - field_bh_project_parcels
+        - field_bh_project_images
+        - field_bh_coordinates
+        - group_hero_placeholder
+        - group_info_list
+      parent_name: group_header_full_width_containe
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'clearfix b-c'
+      label: 'Header Content'
+    group_sidebar:
+      children:
+        - bh_computed_project_type
+        - bh_project_meeting_notice
+        - bh_project_manager_contact
+        - bh_project_follower_webform
+      parent_name: group_content
+      weight: 11
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'column mobile-100 desktop-33-right sidebar'
+      label: 'Sidebar Content'
+    group_main_content:
+      children:
+        - body
+        - field_bh_public_stage
+      parent_name: group_content
+      weight: 12
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'column mobile-100 desktop-66-left'
+      label: 'Main Content'
+    group_content:
+      children:
+        - group_sidebar
+        - group_main_content
+      parent_name: group_container_full_width
+      weight: 2
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'clearfix b-c bh-content-container'
+      label: Content
+    group_info_list:
+      children:
+        - field_bh_neighborhood
+        - field_bh_councilor
+        - field_bh_units_total
+        - field_bh_units_affordable
+        - field_bh_property_size
+      parent_name: group_header
+      weight: 8
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: ''
+      label: 'Info List'
+    group_container_full_width:
+      children:
+        - group_content
+        - group_feedback
+      parent_name: ''
+      weight: 1
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: 'clearfix b b--fw b--g'
+      label: 'Container - Full Width'
+    group_header_full_width_containe:
+      children:
+        - group_header
+      parent_name: ''
+      weight: 0
+      format_type: html_element
+      region: content
+      format_settings:
+        id: ''
+        classes: 'clearfix b b--fw b--w'
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+      label: 'Header Full Width Container'
+    group_feedback:
+      children:
+        - bh_project_feedback_webform
+      parent_name: group_container_full_width
+      weight: 3
+      format_type: html_element
+      region: content
+      format_settings:
+        id: ''
+        classes: 'clearfix b b--fw b--w'
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+      label: Feedback
+_core:
+  default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
+id: node.bh_project.default
+targetEntityType: node
+bundle: bh_project
+mode: default
+content:
+  bh_computed_project_type:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_feedback_webform:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_follower_webform:
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_manager_contact:
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  bh_project_meeting_notice:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  body:
+    type: text_default
+    weight: 3
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: m-t600
+        fences_label_tag: h2
+        fences_label_classes: 'sh cl sh-title'
+  field_bh_coordinates:
+    type: geolocation_map
+    weight: 6
+    region: content
+    label: hidden
+    settings:
+      set_marker: true
+      title: ''
+      info_text:
+        value: ''
+        format: plain_text
+      centre:
+        fit_bounds:
+          enable: true
+          settings:
+            min_zoom: null
+            reset_zoom: true
+          weight: -101
+          map_center_id: fit_bounds
+        client_location:
+          weight: 0
+          enable: false
+          map_center_id: client_location
+        fixed_boundaries:
+          settings:
+            north: ''
+            east: ''
+            south: ''
+            west: ''
+          weight: 0
+          enable: false
+          map_center_id: fixed_boundaries
+        fixed_value:
+          settings:
+            latitude: null
+            longitude: null
+            location_option_id: fixed_value
+          weight: 0
+          enable: false
+          map_center_id: location_plugins
+        ipstack:
+          settings:
+            access_key: ''
+            location_option_id: ipstack
+          weight: 0
+          enable: false
+          map_center_id: location_plugins
+        freeogeoip:
+          weight: 0
+          enable: false
+          map_center_id: location_plugins
+          settings:
+            location_option_id: freeogeoip
+      map_provider_id: google_maps
+      map_provider_settings:
+        height: 157px
+        width: 335px
+        type: ROADMAP
+        zoom: 16
+        maxZoom: 20
+        minZoom: 0
+        gestureHandling: auto
+        map_features:
+          marker_infobubble:
+            weight: 0
+            settings:
+              close_other: 1
+              close_button_src: ''
+              shadow_style: 0
+              padding: 10
+              border_radius: 8
+              border_width: 2
+              border_color: '#039be5'
+              background_color: '#fff'
+              min_width: null
+              max_width: 550
+              min_height: null
+              max_height: null
+              arrow_style: 2
+              arrow_position: 30
+              arrow_size: 10
+              close_button: 0
+            enabled: false
+          control_streetview:
+            enabled: true
+            weight: 0
+            settings:
+              position: TOP_LEFT
+              behavior: default
+          control_zoom:
+            enabled: true
+            weight: 0
+            settings:
+              position: RIGHT_TOP
+              behavior: default
+              style: SMALL
+          map_restriction:
+            weight: 0
+            settings:
+              north: ''
+              south: ''
+              east: ''
+              west: ''
+              strict: true
+            enabled: false
+          map_type_style:
+            weight: 0
+            settings:
+              style: '[]'
+            enabled: false
+          marker_clusterer:
+            weight: 0
+            settings:
+              image_path: ''
+              styles: ''
+              zoom_on_click: true
+              grid_size: 60
+              minimum_cluster_size: 2
+              max_zoom: 15
+              average_center: false
+            enabled: false
+          marker_icon:
+            weight: 0
+            settings:
+              marker_icon_path: ''
+              anchor:
+                x: 0
+                'y': 0
+              origin:
+                x: 0
+                'y': 0
+              label_origin:
+                x: 0
+                'y': 0
+              size:
+                width: null
+                height: null
+              scaled_size:
+                width: null
+                height: null
+            enabled: false
+          marker_infowindow:
+            weight: 0
+            settings:
+              info_window_solitary: true
+              disable_auto_pan: true
+              max_width: null
+              info_auto_display: false
+            enabled: false
+          control_recenter:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+            enabled: false
+          marker_label:
+            weight: 0
+            settings:
+              color: ''
+              font_family: ''
+              font_size: ''
+              font_weight: ''
+            enabled: false
+          marker_opacity:
+            weight: 0
+            settings:
+              opacity: !!float 1
+            enabled: false
+          geolocation_marker_scroll_to_id:
+            weight: 0
+            settings:
+              scroll_target_id: ''
+            enabled: false
+          marker_zoom_to_animate:
+            weight: 0
+            settings:
+              marker_zoom_anchor_id: ''
+            enabled: false
+          spiderfying:
+            weight: 0
+            settings:
+              spiderfiable_marker_path: /modules/contrib/geolocation/modules/geolocation_google_maps/images/marker-plus.svg
+              markersWontMove: true
+              keepSpiderfied: true
+              nearbyDistance: 20
+              circleSpiralSwitchover: 9
+              circleFootSeparation: 23
+              spiralFootSeparation: 26
+              spiralLengthStart: 11
+              spiralLengthFactor: 4
+              legWeight: 1.5
+              markersWontHide: false
+              ignoreMapClick: false
+            enabled: false
+          google_maps_layer_traffic:
+            weight: 0
+            enabled: false
+          control_rotate:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+              behavior: default
+            enabled: false
+          control_maptype:
+            weight: 0
+            settings:
+              position: RIGHT_BOTTOM
+              behavior: default
+              style: DEFAULT
+            enabled: false
+          context_popup:
+            weight: 0
+            settings:
+              content:
+                value: ''
+                format: filtered_html
+            enabled: false
+          google_maps_layer_bicycling:
+            weight: 0
+            enabled: false
+          client_location_indicator:
+            weight: 0
+            enabled: false
+          map_disable_tilt:
+            weight: 0
+            enabled: false
+          control_locate:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+            enabled: false
+          map_disable_poi:
+            weight: 0
+            enabled: false
+          map_disable_user_interaction:
+            weight: 0
+            enabled: false
+          drawing:
+            weight: 0
+            settings:
+              strokeColor: '#FF0000'
+              strokeOpacity: '0.8'
+              strokeWeight: '2'
+              fillColor: '#FF0000'
+              fillOpacity: '0.35'
+              polyline: false
+              geodesic: false
+              polygon: false
+            enabled: false
+          control_fullscreen:
+            enabled: true
+            weight: 0
+            settings:
+              position: TOP_LEFT
+              behavior: default
+          control_geocoder:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+              geocoder: google_geocoding_api
+              settings:
+                label: Address
+                description: 'Enter an address to be localized.'
+                autocomplete_min_length: 1
+                component_restrictions:
+                  route: ''
+                  locality: ''
+                  administrative_area: ''
+                  postal_code: ''
+                  country: ''
+                boundary_restriction:
+                  south: ''
+                  west: ''
+                  north: ''
+                  east: ''
+            enabled: false
+          control_loading_indicator:
+            weight: 0
+            settings:
+              position: TOP_LEFT
+              loading_label: Loading
+            enabled: false
+          google_maps_layer_transit:
+            enabled: true
+            weight: 0
+      use_overridden_map_settings: false
+      common_map: true
+      show_delta_label: false
+      data_provider_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: clearfix
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+  field_bh_councilor:
+    weight: 8
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'fl--l m-r600'
+        fences_field_item_tag: div
+        fences_field_item_classes: t--info
+        fences_label_tag: h6
+        fences_label_classes: m-v200
+    type: string
+    region: content
+  field_bh_neighborhood:
+    weight: 7
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'fl--l m-r600'
+        fences_field_item_tag: div
+        fences_field_item_classes: t--info
+        fences_label_tag: h6
+        fences_label_classes: m-v200
+    type: entity_reference_label
+    region: content
+  field_bh_project_images:
+    weight: 5
+    label: visually_hidden
+    settings:
+      colorbox_node_style: hide
+      colorbox_node_style_first: card_grid_2w_vertical_1x
+      colorbox_image_style: ''
+      colorbox_gallery: page
+      colorbox_gallery_custom: ''
+      colorbox_caption: title
+      colorbox_caption_custom: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    type: colorbox
+    region: content
+  field_bh_project_name:
+    weight: 3
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: h1
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    type: string
+    region: content
+  field_bh_project_parcels:
+    type: viewfield_default
+    weight: 4
+    region: content
+    label: visually_hidden
+    settings:
+      view_title: hidden
+      always_build_output: true
+      empty_view_title: hidden
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: fl--l
+        fences_field_item_tag: div
+        fences_field_item_classes: fl--l
+        fences_label_tag: div
+        fences_label_classes: ''
+  field_bh_property_size:
+    weight: 14
+    label: above
+    settings:
+      thousand_separator: ','
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'fl--l m-r600'
+        fences_field_item_tag: div
+        fences_field_item_classes: t--info
+        fences_label_tag: h6
+        fences_label_classes: m-v200
+    type: number_integer
+    region: content
+  field_bh_public_stage:
+    weight: 4
+    label: above
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: h2
+        fences_label_classes: 'sh cl sh-title'
+    type: entity_reference_bh_public_stage
+    region: content
+  field_bh_units_affordable:
+    weight: 10
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'fl--l m-r600'
+        fences_field_item_tag: div
+        fences_field_item_classes: t--info
+        fences_label_tag: h6
+        fences_label_classes: m-v200
+    type: number_integer
+    region: content
+  field_bh_units_total:
+    weight: 9
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'fl--l m-r600'
+        fences_field_item_tag: div
+        fences_field_item_classes: t--info
+        fences_label_tag: h6
+        fences_label_classes: m-v200
+    type: number_integer
+    region: content
+  field_bh_wysiwyg_photo_a:
+    weight: 1
+    label: visually_hidden
+    settings:
+      trim_length: '0'
+      filter: drupal
+      format: full_html
+      allowed_html:
+        - a
+        - b
+        - br
+        - dd
+        - dl
+        - dt
+        - em
+        - i
+        - li
+        - ol
+        - p
+        - strong
+        - u
+        - ul
+      ellipsis: 0
+      word_boundary: 0
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: d-n
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    type: advanced_text
+    region: content
+hidden:
+  field_bh_attachment: true
+  field_bh_attachments: true
+  field_bh_commitment_letter_date: true
+  field_bh_construct_complete_date: true
+  field_bh_construction_start_date: true
+  field_bh_conveyance_vote_date: true
+  field_bh_disposition_type: true
+  field_bh_dnd_funding_award_date: true
+  field_bh_funding_stage: true
+  field_bh_initial_comm_mtg_date: true
+  field_bh_initial_td_vote_date: true
+  field_bh_meetings: true
+  field_bh_notification_signup: true
+  field_bh_parcel_id: true
+  field_bh_predicted_closing_date: true
+  field_bh_project_complete_date: true
+  field_bh_project_manager_name: true
+  field_bh_project_manger_phone: true
+  field_bh_project_stage: true
+  field_bh_project_start_date: true
+  field_bh_project_status: true
+  field_bh_project_type: true
+  field_bh_project_updates: true
+  field_bh_record_type: true
+  field_bh_rfp_issued_date: true
+  field_bh_total_num_units: true
+  field_bh_units_for_rent: true
+  field_bh_units_to_own: true
+  field_project_manager_email: true
+  langcode: true
+  links: true
+  published_at: true

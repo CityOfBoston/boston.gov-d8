@@ -1,0 +1,65 @@
+uuid: 9f9e5448-b0a7-4732-8f16-a718cd86cc35
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.bh_public_stage.field_display_title
+    - field.field.taxonomy_term.bh_public_stage.field_icon
+    - taxonomy.vocabulary.bh_public_stage
+  module:
+    - text
+id: taxonomy_term.bh_public_stage.default
+targetEntityType: taxonomy_term
+bundle: bh_public_stage
+mode: default
+content:
+  description:
+    type: text_textarea
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+      rows: 5
+    third_party_settings: {  }
+  field_display_title:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_icon:
+    weight: 6
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  langcode:
+    type: language_select
+    weight: 3
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 4
+    region: content
+    third_party_settings: {  }
+hidden:
+  path: true
