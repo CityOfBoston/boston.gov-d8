@@ -30,7 +30,7 @@ function bos_emergency_alerts_preprocess_paragraph(&$variables) {
     return;
   }
   $variables['#attached']['library'][] = "bos_emergency_alerts/signup.alerts";
-  $variables['emergency_alerts_url'] = '/rest/codered/subscribe';
+  $variables['emergency_alerts_url'] = '/rest/emergency_alerts/subscribe';
   if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {
     $component_theme = $variables['paragraph']->get('field_component_theme')->getValue()['0']['value'];
     $variables['component_theme'] = $component_theme;
@@ -47,7 +47,7 @@ function bos_emergency_alerts_mail($key, &$message, $params) {
     $message['from'] = \Drupal::config('system.site')->get('mail');
     $message['subject'] = "Emergency Alerts Subscription Error.";
     $message['body'] = "
-      <p>There was an issue with a user subscribing to CodeRed Emergency Alerts from boston.gov.</p>
+      <p>There was an issue with a user subscribing to Everbridge Emergency Alerts from boston.gov.</p>
       <p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") . "</p>
       <p>The user was located at: " . \Drupal::request()->getClientIp() . "</p>
       <p>The information completed on the form was:<br/> 
