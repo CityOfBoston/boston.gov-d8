@@ -19,12 +19,47 @@
 }
 
 .t--title {
-  color: #1871bd;
+  color: #288BE4;
   font-family: Lora,Georgia,serif;
   font-size: 26px;
   font-style: italic;
   line-height: 1.5;
 }
+
+.bh-project-timeline-moment .dr-t,
+.bh-project-timeline-moment .t--ob {
+  color: #288BE4 !important;
+}
+
+
+/*.overflow {*/
+/*  --max-lines: 2;*/
+/*  position: relative;*/
+/*  max-height: calc(2rem * var(--max-lines));*/
+/*  overflow: hidden;*/
+/*  padding-right: 1rem; !* space for ellipsis *!*/
+/*  max-width: 16rem;*/
+/*}*/
+/*.overflow::after {*/
+/*  position: absolute;*/
+/*  content: "...";*/
+/*  !*inset-block-end: 0;*!*/
+/*  !*inset-inline-end: 0;*!*/
+/*  !*bottom: 0;*!*/
+/*  !*right: 0;*!*/
+/*}*/
+/*.overflow::after {*/
+/*  content: "";*/
+/*  position: absolute;*/
+/*  !*   inset-inline-end: 0; *!*/
+/*  right: 0;*/
+/*  width: 1rem;*/
+/*  height: 1rem;*/
+/*  background: white;*/
+/*}*/
+
+
+
 
 .fl--r {
   float: right;
@@ -197,7 +232,7 @@
 
 .bh-timeline-season {
   white-space: nowrap;
-  font-size: 16px;
+  /*font-size: 16px;*/
 }
 
 .bh-project-timeline-content {
@@ -215,18 +250,18 @@
 
 
 /* Add arrows to the right container (pointing left) */
-.timeline-text .bh-project-timeline-content::before {
-  content: " ";
-  height: 0;
-  position: absolute;
-  top: 7.25rem;
-  width: 0;
-  z-index: 1;
-  left: -16px;
-  border: medium solid #ffffff;
-  border-width: 16px 16px 16px 0;
-  border-color: transparent #ffffff transparent transparent;
-}
+/*.timeline-text .bh-project-timeline-content::before {*/
+/*  content: " ";*/
+/*  height: 0;*/
+/*  position: absolute;*/
+/*  top: 7.25rem;*/
+/*  width: 0;*/
+/*  z-index: 1;*/
+/*  left: -16px;*/
+/*  border: medium solid #ffffff;*/
+/*  border-width: 16px 16px 16px 0;*/
+/*  border-color: transparent #ffffff transparent transparent;*/
+/*}*/
 
 
 .timeline-documents .hide-more-docs,
@@ -649,28 +684,31 @@
 @media screen and (max-width: 1280px) {
 
   .g--2:nth-child(1n) {
-    margin-right: 0.5rem;
+    /*margin-right: 0.5rem;*/
   }
+
   .b-c {
-    padding: 1.0vw !important;
+    /*padding: 1.0vw !important;*/
+    padding: 1rem !important;
   }
 
   .field--name-field-bh-project-parcels .geolocation-map-container {
     max-width: unset !important;
-    width: calc(100vw - 2rem) !important;
+    width: calc(99vw - 1.5rem) !important;
   }
 
   .field-name-field-bh-project-images img {
     float: left;
-    margin-right: 1vw;
+    /*margin-right: 0.5rem;*/
     height: 32vw !important;
-    width: calc(48vw - 5px) !important;
+    width: calc(46vw - 5px) !important;
   }
 
   .field-name-field-bh-coordinates .geolocation-map-container {
+    float: right;
     /*height: 230px !important;*/
     height: 32vw !important;
-    width: calc(48vw - 5px) !important;
+    width: calc(46vw - 5px) !important;
   }
 
   .webform-submission-building-housing-feedback-form .webform-button--submit {
@@ -695,11 +733,11 @@
 
   .b-c {
     /*padding: 2rem 10px !important;*/
-    padding: 1.0vw !important;
+    /*padding: 1.0vw !important;*/
   }
 
   .field--name-field-bh-project-parcels .geolocation-map-container {
-    width: calc(100vw - 1rem) !important;
+    /*width: calc(100vw - 1rem) !important;*/
   }
 
   .field-name-field-bh-project-images img,
@@ -711,6 +749,8 @@
     /*width: calc(45vw - 5%) !important;*/
   }
 
+  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
   .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
   .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
   .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
@@ -736,6 +776,8 @@
     /*padding: 2rem 20px !important;*/
   }
 
+  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
   .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
   .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
   .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
@@ -744,6 +786,15 @@
 
   .webform-submission-building-housing-feedback-form .webform-options-display-one-column {
     flex-direction: column-reverse;
+  }
+
+  .sh-title {
+    font-size: 30px;
+  }
+
+  .field-name-field-bh-project-name h1 {
+    font-size: 40px;
+    line-height: 40px;
   }
 }
 
@@ -759,13 +810,15 @@
   }
 
   .b-c {
-    /*padding: 2rem 10px !important;*/
+    padding: 2rem 10px !important;
   }
 
   .g--2:nth-child(1n) {
     margin-right: 0.5rem;
   }
 
+  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
   .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
   .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
   .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
