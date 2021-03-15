@@ -2765,7 +2765,7 @@ display:
             enabled: 1
             update_handler: boundary_filter_field_bh_coordinates_boundary
             hide_form: 1
-            views_refresh_delay: '500'
+            views_refresh_delay: '200'
           centre:
             client_location:
               weight: -10
@@ -2856,7 +2856,6 @@ display:
                   behavior: default
                   style: LARGE
               map_restriction:
-                enabled: true
                 weight: 0
                 settings:
                   north: '42.401'
@@ -2864,6 +2863,7 @@ display:
                   east: '-70.750'
                   west: '-71.191'
                   strict: false
+                enabled: false
               map_type_style:
                 enabled: true
                 weight: 0
@@ -2873,10 +2873,10 @@ display:
                 enabled: true
                 weight: 0
                 settings:
-                  image_path: /modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m
-                  styles: "[\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#FFFFFF\",\r\n    \"anchor\": [0, 0],\r\n    \"height\": 21,\r\n    \"width\": 21,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m1.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#FFFFFF\",\r\n    \"anchor\": [0, 0],\r\n    \"height\": 21,\r\n    \"width\": 21,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m2.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m3.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m4.png\"\r\n  },\r\n  {\r\n    \"textSize\": 14,\r\n    \"textColor\": \"#58585B\",\r\n    \"anchor\": [-10, 0],\r\n    \"height\": 42,\r\n    \"width\": 32,\r\n    \"url\": \"/modules/custom/bos_content/modules/node_buildinghousing/images/cluster/m5.png\"\r\n  }\r\n]"
+                  image_path: ''
+                  styles: ''
                   zoom_on_click: true
-                  grid_size: 30
+                  grid_size: 15
                   minimum_cluster_size: 3
                   max_zoom: 15
                   average_center: false
@@ -2905,9 +2905,9 @@ display:
                 weight: 0
                 settings:
                   info_window_solitary: true
-                  disable_auto_pan: true
-                  max_width: 250
+                  max_width: 0
                   info_auto_display: false
+                  disable_auto_pan: false
               control_recenter:
                 weight: 0
                 settings:
@@ -2942,7 +2942,7 @@ display:
                   spiderfiable_marker_path: /modules/contrib/geolocation/modules/geolocation_google_maps/images/marker-plus.svg
                   markersWontMove: true
                   keepSpiderfied: true
-                  nearbyDistance: 20
+                  nearbyDistance: 0
                   circleSpiralSwitchover: 9
                   circleFootSeparation: 23
                   spiralFootSeparation: 26
@@ -3651,9 +3651,26 @@ display:
           field_api_classes: false
           plugin_id: field
       pager:
-        type: none
+        type: full
         options:
+          items_per_page: 60
           offset: 0
+          id: 0
+          total_pages: null
+          tags:
+            previous: ‹
+            next: ›
+            first: «
+            last: »
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 2
       header:
         area_text_custom:
           id: area_text_custom
@@ -3818,20 +3835,28 @@ display:
           group: 1
           exposed: false
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: field_bh_public_stage_target_id_op
+            label: 'Public Stage (field_bh_public_stage)'
             description: ''
             use_operator: false
-            operator: ''
+            operator: field_bh_public_stage_target_id_op
             operator_limit_selection: false
             operator_list: {  }
-            identifier: ''
+            identifier: field_bh_public_stage_target_id
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            reduce: false
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: true
           is_grouped: false
           group_info:
             label: ''
@@ -3937,8 +3962,8 @@ display:
             remember: false
             multiple: false
             remember_roles:
-              authenticated: authenticated
               anonymous: '0'
+              authenticated: '0'
               administrator: '0'
               site_administrator: '0'
               developer: '0'
@@ -3989,6 +4014,7 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - url.query_args
         - user
         - 'user.node_grants:view'
         - user.permissions
@@ -4515,23 +4541,9 @@ display:
         empty: false
         use_ajax: false
       pager:
-        type: mini
+        type: none
         options:
-          items_per_page: 5
           offset: 0
-          id: 0
-          total_pages: null
-          tags:
-            previous: '‹ Previous'
-            next: 'Next ›'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
       display_description: ''
       style:
         type: default
@@ -4823,8 +4835,8 @@ display:
             remember: false
             multiple: false
             remember_roles:
-              authenticated: authenticated
               anonymous: '0'
+              authenticated: '0'
               administrator: '0'
               site_administrator: '0'
               developer: '0'
@@ -4869,13 +4881,13 @@ display:
         groups:
           1: AND
       use_ajax: true
+      inherit_arguments: false
     cache_metadata:
       max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - url.query_args
         - user
         - 'user.node_grants:view'
         - user.permissions
