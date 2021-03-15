@@ -12,8 +12,6 @@ function screenSize(x) {
   let changeHeight = document.querySelectorAll(".cob-ckeditor .cob-ckeditor-bg");
 
   if (x.matches) { // If media query matches.
-
-    document.body.style.backgroundColor = "yellow";
     for (let i = 0; i < changeHeight.length; i++) {
       let show = changeHeight[i].getAttribute("data-cob-ckeditor");
       changeHeight[i].style.height = show - 100 + "px";
