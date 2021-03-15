@@ -27,6 +27,36 @@ function bos_events_and_notices_theme() {
   $theme['viewfield__paragraph__events_and_notices'] = [
     'base hook' => 'viewfield',
   ];
+  $theme['views_view_fields__events_and_notices__upcoming_medium'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__upcoming_large'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__related_medium'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__related_large'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__upcoming_large_attachment'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__upcoming_medium_attachment'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__related_attachment_large'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__referenced_large_attachment'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__related_attachment_medium'] = [
+    'base hook' => 'view',
+  ];
+  $theme['views_view_fields__events_and_notices__referenced_medium_attachment'] = [
+    'base hook' => 'view',
+  ];
   return $theme;
 }
 
@@ -54,6 +84,20 @@ function bos_events_and_notices_preprocess_views_view_fields__events_and_notices
       $variables["thumbnail"] = $fields["field_intro_image"]->content;
     }
 
+    if ($node->hasField("field_phone_number") && $node->get("field_phone_number")->value) {
+
+      if (!empty($fields["field_phone_number"])) {
+        $variables["phone"] = $fields["field_phone_number"]->content;
+      }
+    }
+
+    if ($node->hasField("field_cost") && $node->get("field_cost")->value) {
+
+      if (!empty($fields["field_cost"])) {
+        $variables["cost"] = $fields["field_cost"]->content;
+      }
+    }
+
     if ($node->hasField("field_public_notice_date") && $node->get("field_public_notice_date")->value) {
       $variables["date_recur"] = strip_tags(str_replace("\n", "", $fields["field_public_notice_date"]->content));
     }
@@ -71,6 +115,59 @@ function bos_events_and_notices_preprocess_views_view_fields__events_and_notices
       $variables["date_recur"] = \Drupal::service('date.formatter')->format(strtotime($variables["date_recur"]), "date_format_boston_featured");
     }
 
+    if ($node->hasField("field_public_notice_date") && $node->get("field_public_notice_date")->value) {
+      $start_date = "";
+      if (isset($node->get("field_public_notice_date")->value)) {
+        $start_date = $node->get("field_public_notice_date")->value;
+        if (is_string($start_date)) {
+          $start_date = new DateTime($start_date . "+0000");
+          $start_date->setTimezone(new DateTimeZone("America/new_york"));
+        }
+        $stdt = $start_date->format("F d, Y, g:iA");
+        $edt = "";
+      }
+      if (isset($node->get("field_public_notice_date")->end_value)) {
+        $end_date = $node->get("field_public_notice_date")->end_date;
+        $end_date->setTimezone(new DateTimeZone("America/new_york"));
+        if ($start_date->format("ymd") == $end_date->format("ymd")) {
+          if ($start_date->format("g:iA") != $end_date->format("g:iA")) {
+            $edt = $end_date->format(" - g:iA");
+          }
+        }
+        else {
+          $edt = " to " . $end_date->format("F d, Y, g:iA");
+        }
+      }
+      $variables["dates"] = $stdt . $edt;
+    }
+    elseif ($node->hasField("field_event_date_recur") && $node->get("field_event_date_recur")->value) {
+      if (!empty($fields["field_event_date_recur_value"]) && $fields["field_event_date_recur_value"]->raw) {
+        $start_date = "";
+        if (isset($node->get("field_event_date_recur")->value)) {
+          $start_date = $fields["field_event_date_recur_value"]->raw;
+          if (is_string($start_date)) {
+            $start_date = new DateTime($start_date . "+0000");
+            $start_date->setTimezone(new DateTimeZone("America/new_york"));
+          }
+          $stdt = $start_date->format("F d, Y, g:i A");
+          $edt = "";
+        }
+        if (isset($node->get("field_event_date_recur")->end_value)) {
+          $end_date = $node->get("field_event_date_recur")->end_date;
+          $end_date->setTimezone(new DateTimeZone("America/new_york"));
+          if ($start_date->format("ymd") == $end_date->format("ymd")) {
+            if ($start_date->format("g:i A") != $end_date->format("g:i A")) {
+              $edt = $end_date->format(" - g:i A");
+            }
+          }
+          else {
+            $edt = $end_date->format("F d, Y, g:i A");
+          }
+        }
+        $variables["dates"] = $stdt . $edt;
+      }
+    }
+
     $variables["event_link"] = strip_tags(trim(str_replace("\n", "", $fields["view_node"]->content)));
   }
 }
@@ -85,10 +182,79 @@ function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
 }
 
 /**
+ * Implements hook_views_pre_render()
+ */
+function bos_events_and_notices_views_pre_render(ViewExecutable $view) {
+  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'upcoming_auto')) {
+    $result_count = count($view->result);
+    //Show upcoming large cards
+    if ($result_count == 1){
+      unset($view->attachment_before[1]);
+      $view->result = [];
+      $view->empty = [];
+    }
+    //show medium cards
+    elseif ($result_count > 1 && $result_count < 4) {
+      unset($view->attachment_before[0]);
+      $view->result = [];
+      $view->empty = [];
+    }
+    else {
+      //show small cards
+      unset($view->attachment_before[0]);
+      unset($view->attachment_before[1]);
+    }
+  }
+
+  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'related_auto')) {
+    $result_count = count($view->result);
+    //Show large cards
+    if ($result_count == 1){
+      unset($view->attachment_before[1]);
+      $view->result = [];
+      $view->empty = [];
+    }
+    //show medium cards
+    elseif ($result_count > 1 && $result_count < 4) {
+      unset($view->attachment_before[0]);
+      $view->result = [];
+      $view->empty = [];
+    }
+    else {
+      //show small cards
+      unset($view->attachment_before[1]);
+      unset($view->attachment_before[0]);
+    }
+  }
+
+  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'referenced_auto')) {
+    $result_count = count($view->result);
+    //Show large cards
+    if ($result_count == 1){
+      unset($view->attachment_before[1]);
+      $view->result = [];
+      $view->empty = [];
+    }
+    //show medium cards
+    elseif ($result_count > 1 && $result_count < 4) {
+      unset($view->attachment_before[0]);
+      $view->result = [];
+      $view->empty = [];
+    }
+    else {
+      //show small cards
+      unset($view->attachment_before[1]);
+      unset($view->attachment_before[0]);
+    }
+  }
+
+}
+
+/**
  * Implements hook_views_query_alter().
  */
 function bos_events_and_notices_views_query_alter(ViewExecutable $view, Sql $query) {
-  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'upcoming' || $view->getDisplay()->display['id'] == 'related')) {
+  if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'related' || $view->getDisplay()->display['id'] == 'upcoming' || $view->getDisplay()->display['id'] == 'upcoming_medium' || $view->getDisplay()->display['id'] == 'upcoming_large' || $view->getDisplay()->display['id'] == 'related_medium' || $view->getDisplay()->display['id'] == 'related_large' || $view->getDisplay()->display['id'] == 'upcoming_auto' || $view->getDisplay()->display['id'] == 'related_auto' || $view->getDisplay()->display['id'] == 'referenced_auto')) {
     $sql = "CASE
         WHEN node__field_public_notice_date.field_public_notice_date_value IS NOT NULL THEN node__field_public_notice_date.field_public_notice_date_value
         WHEN date_recur__node__field_event_date_recur_node_field_data.field_event_date_recur_value IS NOT NULL THEN date_recur__node__field_event_date_recur_node_field_data.field_event_date_recur_value
