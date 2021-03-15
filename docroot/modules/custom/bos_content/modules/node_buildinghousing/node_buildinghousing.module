@@ -163,7 +163,6 @@ function node_buildinghousing_theme() {
       'render element' => 'elements',
       'base hook' => 'view'
     ],
-
   ];
 }
 
@@ -297,6 +296,11 @@ function node_buildinghousing_preprocess_field(&$variables) {
           $variables["items"][0]["content"]["#text"] = $webUpdateGoalText ?? $variables["items"][0]["content"]["#text"];
         }
 
+        break;
+
+      case 'field_bh_project_images':
+
+        $variables['items'] = array_reverse($variables['items']);
         break;
     }
 
@@ -453,6 +457,20 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $meeting = $entity ? BHUtils::getMeetingFromEventId($entity->id()) : NULL;
 
     if ($meeting) {
+
+
+      if ($meeting->field_bh_host_organization->value) {
+        $hostOrg['classes'] = [
+          'label' => 'detail-item--left',
+          'body' => 'detail-item--secondary',
+          'detail' => 'detail-item--secondary list-item',
+        ];
+        $hostOrg['label'] = t('Host Organization:');
+        $hostOrg['body'] = $meeting->field_bh_host_organization->value;
+        $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $hostOrg)];
+      }
+
+
       if ($meeting->field_bh_languages_supported->value) {
         $supportedLang['classes'] = [
           'label' => 'detail-item--left',
@@ -464,10 +482,21 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
         $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $supportedLang)];
       }
 
+
+
       unset($build['field_event_type']);
       unset($build['field_cost']);
     }
   }
+
+  if ($display->getTargetBundle() == 'event'
+    && $display->getOriginalMode() == 'calendar_listing') {
+
+
+    $test = 'test';
+  }
+
+
 }
 
 /**
@@ -490,7 +519,8 @@ function _node_buildinghousing_build_render_project_meeting_notice(EntityInterfa
 
     foreach ($meetings as $meetingId => $meeting) {
 
-      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+//      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+8");
       $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
       $startDate->setTimezone($timeZoneAdjustment);
       $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);

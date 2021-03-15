@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.bh_meeting.field_address
     - field.field.node.bh_meeting.field_bh_contact_person_sfid
     - field.field.node.bh_meeting.field_bh_event_ref
+    - field.field.node.bh_meeting.field_bh_host_organization
     - field.field.node.bh_meeting.field_bh_languages_supported
     - field.field.node.bh_meeting.field_bh_meeting_contact_email
     - field.field.node.bh_meeting.field_bh_meeting_end_time
@@ -58,6 +59,14 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_bh_host_organization:
+    weight: 15
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
     region: content
   field_bh_languages_supported:
     type: string
