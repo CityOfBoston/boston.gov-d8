@@ -204,8 +204,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $documentSet = [
         'icon' => $currentState == 'past'
-          ? \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26, 'fill' => '#091f2f'])
-          : \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26]),
+          ? \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'cb'])
+          : \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'ob']),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
         'date' => $formattedDate->format('M d Y'),
         'currentState' => $currentState,
@@ -243,11 +243,12 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $currentState = time() > $rfpDate->getTimestamp() ? 'past' : 'future';
 
       $data = [
-        'label' => t('Go to RFP list'),
+        'label' => t('GO TO RFP LISTINGS'),
         // @TODO: change out with config?
         'url' => '/departments/neighborhood-development/requests-proposals',
-        'title' => t('Request For Proposals (RFP) Open for Bidding'),
-        'body' => t('Visit the link below to learn more.'),
+        'title' => t('Request for Proposals (RFP) Opened for Bidding'),
+//        'body' => t('Visit the link below to learn more.'),
+        'body' => null,
         'icon' => $currentState == 'past'
           ? \Drupal::theme()->render("bh_icons", [
           'type' => 'timeline-building',
@@ -266,6 +267,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       // CORRECT.
       if ($today->getTimestamp() >= $rfpDate->getTimestamp()) {
         $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
+//        $elements[$rfpDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
       }
     }
 
@@ -348,7 +350,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       foreach ($meetings as $meetingId => $meeting) {
 
-        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+8");
+//        $timeZoneAdjustment = new \DateTimeZone("America/New_York");
         $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
         $startDate->setTimezone($timeZoneAdjustment);
         $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
