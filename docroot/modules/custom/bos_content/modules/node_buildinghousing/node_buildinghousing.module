@@ -253,6 +253,11 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
  */
 function node_buildinghousing_preprocess_field(&$variables) {
 
+  if ($variables['element']['#bundle'] == 'program_initiative_profile') {
+
+    $test = 'test';
+  }
+
   if ($variables['element']['#bundle'] == 'bh_project') {
     $fieldName = $variables['field_name'] ?? NULL;
     $project = $variables['element']['#object'] ?? NULL;
