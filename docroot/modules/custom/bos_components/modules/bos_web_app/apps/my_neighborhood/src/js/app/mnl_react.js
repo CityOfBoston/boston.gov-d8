@@ -40,30 +40,30 @@ class MNL extends React.Component {
   }
 
   setDefaults = () => {
-      this.setState({
-        error: null,
-        isLoading: false,
-        isLoadingRecollect: null,
-        itemsLookup: [],
-        itemsDisplay: null,
-        itemsRecollect: [],
-        currentKeywords: "",
-        submittedAddress: null,
-        submittedKeywords: null,
-      });
-      {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path) : null)}
+    this.setState({
+      error: null,
+      isLoading: false,
+      isLoadingRecollect: null,
+      itemsLookup: [],
+      itemsDisplay: null,
+      itemsRecollect: [],
+      currentKeywords: "",
+      submittedAddress: null,
+      submittedKeywords: null,
+    });
+    {(!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path) : null)}
   }
 
   setCheckLocalStorage = (sam_id, sam_address, section) => {
     if (!configProps.frame_google()) {
-      if(localStorage.getItem("sam_data")){
+      if (localStorage.getItem("sam_data")){
         let localSAM = JSON.parse(localStorage.getItem("sam_data"));
         this.displayAddress(localSAM[0].sam_id,localSAM[0].sam_address,localSAM[0].section);
+        
         if(localSAM[0].section !== null){
           this.setState({section:localSAM[0].section});
         }
-      }
-      else {
+      } else {
         let samId = (sam_id ? sam_id : null);
         let samAddress = (sam_address ? sam_address : null);
         let cardSection = (section ? section : null);
@@ -78,7 +78,7 @@ class MNL extends React.Component {
   }
 
   scaleInputText = op => {
-      jQuery(".resize").textfill({
+    jQuery(".resize").textfill({
       minFontPixels: 20,
       maxFontPixels: 75,
       success: function() {
@@ -126,10 +126,11 @@ class MNL extends React.Component {
     let address = {"address":this.state.submittedAddress};
     fetch(
       "rest/recollect",
-    {
-      method: "POST",
-      body: JSON.stringify(address),
-    })
+      {
+        method: "POST",
+        body: JSON.stringify(address),
+      }
+    )
       .then(res => res.json())
       .then(
         result => {
@@ -167,7 +168,7 @@ class MNL extends React.Component {
       sort: "field_sam_address"
     };
     fetch(
-      "/jsonapi/node/neighborhood_lookup?filter" +
+      "https://www.boston.gov/jsonapi/node/neighborhood_lookup?filter" +
         paramsQuery.condition +
         "&filter" +
         paramsQuery.value +
@@ -231,7 +232,7 @@ class MNL extends React.Component {
     };
     let jsonData = "none";
     fetch(
-      "/jsonapi/node/neighborhood_lookup?filter" +
+      "https://www.boston.gov/jsonapi/node/neighborhood_lookup?filter" +
         paramsSamGet.value +
         "&fields" +
         paramsSamGet.fields,
@@ -336,124 +337,124 @@ class MNL extends React.Component {
         itemsLookupMarkup = <div className="supporting-text">No address was found by that name.</div>;
       }
     }
+
     let recollectEvents = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect);
     let configSection = configProps.sections;
     let mnlDisplay = this.state.submittedAddress ? (
-
       <div>
-      {(!configProps.frame_google() ? history.pushState({id: 'sections'}, '', configProps.globals.path+'?p2') : null)}
-      <div className="g">
-        {(configSection.representation.display) ? (
-          <Representation
-            councilor={this.state.itemsDisplay.city_council_councilor}
-            district={this.state.itemsDisplay.city_council_district}
-            councilor_image={this.state.itemsDisplay.city_council_image}
-            councilor_webpage={this.state.itemsDisplay.city_council_webpage}
-            liason_name={this.state.itemsDisplay.ons_liaison_name}
-            liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
-            liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
-            liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
-            voting_location={this.state.itemsDisplay.polling_locations_location2}
-            voting_address={this.state.itemsDisplay.polling_locations_location3}
-            early_voting_active={this.state.earlyVoting}
-            early_voting_dates={this.state.itemsDisplay.early_voting_dates}
-            early_voting_times={this.state.itemsDisplay.early_voting_times}
-            early_voting_address={this.state.itemsDisplay.early_voting_address}
-            early_voting_location={this.state.itemsDisplay.early_voting_location}
-            early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
-            early_voting_notes={this.state.itemsDisplay.early_voting_notes}
-            ward={this.state.itemsDisplay.ward_name}
-            precinct={this.state.itemsDisplay.precincts_name}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+        {(!configProps.frame_google() ? history.pushState({id: 'sections'}, '', configProps.globals.path+'?p2') : null)}
+        <div className="g">
+          {(configSection.representation.display) ? (
+            <Representation
+              councilor={this.state.itemsDisplay.city_council_councilor}
+              district={this.state.itemsDisplay.city_council_district}
+              councilor_image={this.state.itemsDisplay.city_council_image}
+              councilor_webpage={this.state.itemsDisplay.city_council_webpage}
+              liason_name={this.state.itemsDisplay.ons_liaison_name}
+              liason_image={this.state.itemsDisplay.ons_liaison_pic_url}
+              liason_webpage={this.state.itemsDisplay.ons_liaison_webpage}
+              liason_neighborhood={this.state.itemsDisplay.ons_liaison_neighborhood}
+              voting_location={this.state.itemsDisplay.polling_locations_location2}
+              voting_address={this.state.itemsDisplay.polling_locations_location3}
+              early_voting_active={this.state.earlyVoting}
+              early_voting_dates={this.state.itemsDisplay.early_voting_dates}
+              early_voting_times={this.state.itemsDisplay.early_voting_times}
+              early_voting_address={this.state.itemsDisplay.early_voting_address}
+              early_voting_location={this.state.itemsDisplay.early_voting_location}
+              early_voting_neighborhood={this.state.itemsDisplay.early_voting_neighborhood}
+              early_voting_notes={this.state.itemsDisplay.early_voting_notes}
+              ward={this.state.itemsDisplay.ward_name}
+              precinct={this.state.itemsDisplay.precincts_name}
+              section={this.state.section}
+              displaySection={this.displaySection}
+            />
+          ) : null}
 
-        {(configSection.city_services.display) ? (
-          <CityServices
-            recollect_events={recollectEvents}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+          {(configSection.city_services.display) ? (
+            <CityServices
+              recollect_events={recollectEvents}
+              section={this.state.section}
+              displaySection={this.displaySection}
+            />
+          ) : null}
 
-        {(configSection.city_spaces.display) ? (
-          <CitySpaces
-            library_branch={this.state.itemsDisplay.public_libraries_branch}
-            library_address={this.state.itemsDisplay.public_libraries_address}
-            library_zipcode={this.state.itemsDisplay.public_libraries_zipcode}
-            comm_center={this.state.itemsDisplay.community_centers_name}
-            comm_address={this.state.itemsDisplay.community_centers_address}
-            comm_hours={this.state.itemsDisplay.community_centers_school_year_hours}
-            comm_summer_hours={this.state.itemsDisplay.community_centers_summer_hours}
-            park_name={this.state.itemsDisplay.parks_name}
-            park_district={this.state.itemsDisplay.parks_district}
-            park_ownership={this.state.itemsDisplay.parks_ownership}
-            park_type={this.state.itemsDisplay.parks_type}
-            hist_name={this.state.itemsDisplay.historic_districts_name}
-            hist_place_name={this.state.itemsDisplay.historic_districts_place_name}
-            hist_status={this.state.itemsDisplay.historic_districts_status}
-            hist_year={this.state.itemsDisplay.historic_districts_year}
-            hist_use_type={this.state.itemsDisplay.historic_districts_use_type}
-            zoning_district={this.state.itemsDisplay.zoning_districts_district}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+          {(configSection.city_spaces.display) ? (
+            <CitySpaces
+              library_branch={this.state.itemsDisplay.public_libraries_branch}
+              library_address={this.state.itemsDisplay.public_libraries_address}
+              library_zipcode={this.state.itemsDisplay.public_libraries_zipcode}
+              comm_center={this.state.itemsDisplay.community_centers_name}
+              comm_address={this.state.itemsDisplay.community_centers_address}
+              comm_hours={this.state.itemsDisplay.community_centers_school_year_hours}
+              comm_summer_hours={this.state.itemsDisplay.community_centers_summer_hours}
+              park_name={this.state.itemsDisplay.parks_name}
+              park_district={this.state.itemsDisplay.parks_district}
+              park_ownership={this.state.itemsDisplay.parks_ownership}
+              park_type={this.state.itemsDisplay.parks_type}
+              hist_name={this.state.itemsDisplay.historic_districts_name}
+              hist_place_name={this.state.itemsDisplay.historic_districts_place_name}
+              hist_status={this.state.itemsDisplay.historic_districts_status}
+              hist_year={this.state.itemsDisplay.historic_districts_year}
+              hist_use_type={this.state.itemsDisplay.historic_districts_use_type}
+              zoning_district={this.state.itemsDisplay.zoning_districts_district}
+              section={this.state.section}
+              displaySection={this.displaySection}
+            />
+          ) : null}
 
-        {(configSection.newsletter.display) ? (
-          <Newsletter
-            section={this.state.section}
-          />
-        ) : null}
+          {(configSection.newsletter.display) ? (
+            <Newsletter
+              section={this.state.section}
+            />
+          ) : null}
 
-        {(configSection.summer.display) ? (
-          <SummerResources
-            tot_name={this.state.itemsDisplay.tot_sprays_name}
-            tot_address={this.state.itemsDisplay.tot_sprays_address}
-            bcyf_pool_center_name={this.state.itemsDisplay.bcyf_pool_centers_name}
-            bcyf_pool_center_address={this.state.itemsDisplay.bcyf_pool_centers_address}
-            bcyf_pool_center_hours={this.state.itemsDisplay.bcyf_pool_centers_school_year_hours}
-            bcyf_pool_center_hours_summer={this.state.itemsDisplay.bcyf_pool_centers_summer_hours}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+          {(configSection.summer.display) ? (
+            <SummerResources
+              tot_name={this.state.itemsDisplay.tot_sprays_name}
+              tot_address={this.state.itemsDisplay.tot_sprays_address}
+              bcyf_pool_center_name={this.state.itemsDisplay.bcyf_pool_centers_name}
+              bcyf_pool_center_address={this.state.itemsDisplay.bcyf_pool_centers_address}
+              bcyf_pool_center_hours={this.state.itemsDisplay.bcyf_pool_centers_school_year_hours}
+              bcyf_pool_center_hours_summer={this.state.itemsDisplay.bcyf_pool_centers_summer_hours}
+              section={this.state.section}
+              displaySection={this.displaySection}
+            />
+          ) : null}
 
-        {(configSection.winter.display) ? (
-          <WinterResources
-            snow_routes={this.state.itemsDisplay.snow_routes_name}
-            snow_routes_respsonsibility={this.state.itemsDisplay.snow_routes_responsibility}
-            snow_parking_lots_name={this.state.itemsDisplay.snow_parking_lots_name}
-            snow_parking_lots_address={this.state.itemsDisplay.snow_parking_lots_address}
-            snow_parking_lots_fee={this.state.itemsDisplay.snow_parking_lots_fee}
-            snow_parking_lots_comments={this.state.itemsDisplay.snow_parking_lots_comments}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+          {(configSection.winter.display) ? (
+            <WinterResources
+              snow_routes={this.state.itemsDisplay.snow_routes_name}
+              snow_routes_respsonsibility={this.state.itemsDisplay.snow_routes_responsibility}
+              snow_parking_lots_name={this.state.itemsDisplay.snow_parking_lots_name}
+              snow_parking_lots_address={this.state.itemsDisplay.snow_parking_lots_address}
+              snow_parking_lots_fee={this.state.itemsDisplay.snow_parking_lots_fee}
+              snow_parking_lots_comments={this.state.itemsDisplay.snow_parking_lots_comments}
+              section={this.state.section}
+              displaySection={this.displaySection}
+            />
+          ) : null}
 
-        {(configSection.public_safety.display) ? (
-          <PublicSafety
-            police_station_name={this.state.itemsDisplay.police_dept_police_station}
-            police_station_address={this.state.itemsDisplay.police_dept_address}
-            police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
-            police_station_zip={this.state.itemsDisplay.police_dept_zip}
-            police_district={this.state.itemsDisplay.police_district}
-            fire_station_name={this.state.itemsDisplay.fire_dept_name}
-            fire_station_address={this.state.itemsDisplay.fire_dept_address}
-            fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
-            section={this.state.section}
-            displaySection={this.displaySection}
-          />
-        ) : null}
+          {(configSection.public_safety.display) ? (
+            <PublicSafety
+              police_station_name={this.state.itemsDisplay.police_dept_police_station}
+              police_station_address={this.state.itemsDisplay.police_dept_address}
+              police_station_neighborhood={this.state.itemsDisplay.police_dept_neighborhood}
+              police_station_zip={this.state.itemsDisplay.police_dept_zip}
+              police_district={this.state.itemsDisplay.police_district}
+              fire_station_name={this.state.itemsDisplay.fire_dept_name}
+              fire_station_address={this.state.itemsDisplay.fire_dept_address}
+              fire_station_neighborhood={this.state.itemsDisplay.fire_dept_neighborhood}
+              section={this.state.section}
+              displaySection={this.displaySection}
+            />
+          ) : null}
 
-        {(configSection.bos_311.display) ? (
-          <Bos311
-            section={this.state.section}
-          />
-        ) : null}
-      </div>
+          {(configSection.bos_311.display) ? (
+            <Bos311
+              section={this.state.section}
+            />
+          ) : null}
+        </div>
       </div>
     ) : (
       ""
