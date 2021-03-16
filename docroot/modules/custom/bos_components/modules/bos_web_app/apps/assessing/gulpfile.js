@@ -17,13 +17,13 @@ const connect = require('gulp-connect');
 
 // File paths
 const files = {
-    cssPath: 'src/css/mnl_styles.css', 
+    cssPath: 'src/css/styles.css', 
     scssPath: 'src/components/**/*.scss',
     react: 'node_modules/react/umd/react.production.min.js',
     reactDom: 'node_modules/react-dom/umd/react-dom.production.min.js',
-    jsReactConfig: 'src/js/app/mnl_config.js',
+    jsReactConfig: 'src/js/app/config.js',
     jsReactComponents: 'src/js/components/*.js',
-    jsReactApp: 'src/js/app/mnl_react.js',
+    jsReactApp: 'src/js/app/index.js',
 }
 
 // Sass task: compiles the style.scss file into style.css
@@ -41,7 +41,7 @@ function scssTask(){
 function cssTask(){    
     return src(files.cssPath)
         .pipe(cleanCSS({compatibility: 'ie11'}))
-        .pipe(concat('mnl_styles.css'))
+        .pipe(concat('styles.css'))
         .pipe(dest('dist')
     ); // put final CSS in dist folder
 }
@@ -55,7 +55,7 @@ function jsTask(){
         files.jsReactComponents,
         files.jsReactApp
         //,'!' + 'includes/js/jquery.min.js', // to exclude any specific files
-        ])
+        ], {allowEmpty:true})
         .pipe(babel())
         .pipe(concat('index.js'))
         .pipe(uglify())
@@ -65,9 +65,11 @@ function jsTask(){
 
 // Cachebust
 function cacheBustTask(){
-    var cbString = new Date().getTime();
+    const cbString = new Date().getTime();
+    const appName = "assessing"; // edit and your app name (i.e. my_neighborhood or abutters)
+    let re = new RegExp("/"+appName+".\d+","g");
     return src(['../../bos_web_app.libraries.yml'])
-        .pipe(replace(/my_neighborhood.\d+/g, 'my_neighborhood.' + cbString))
+        .pipe(replace(appName+".", appName+"."+cbString))
         .pipe(dest('../../'));
 }
 
@@ -83,10 +85,10 @@ function watchTask(){
     );    
 }
 
-function runLocalHttp () {
+function runLocalHttp() {
     connect.server({
         host: 'localhost',
-        port: 5001
+        port: 5000
     });
 }
 
