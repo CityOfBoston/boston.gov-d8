@@ -1,7 +1,7 @@
 {% if not is_expired %}
 
 <div class="g--6 b--w" style="margin-right: 0;">
-  <div class="p-a800">
+  <div class="p-a800" style="padding-top: 0;">
     <ul class="dl">
       <li class="dl-i evt-dl-i">
         <a href="{{ event_link }}" class="{{ type_class }} featured-item-details--relative evt" title="{{ event_link }}" aria-label="{{ fields.title.content }}">
@@ -48,8 +48,8 @@
 </div>
 
 <div class="g--6 evt-thumbnails {{ type_class }}" style="width: 100%;">
-  {% if intro_image %}
-      {{ intro_image }}
+  {% if thumbnail %}
+      {{ thumbnail }}
   {% else %}
     <div class=" news-item-default-image">
     </div>
