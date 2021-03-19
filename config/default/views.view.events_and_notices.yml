@@ -19,6 +19,7 @@ dependencies:
     - field.storage.node.field_public_notice_date
     - field.storage.node.field_thumbnail
     - image.style.card_grid_2w_horizonal_1x
+    - image.style.max_1300x1300
     - node.type.event
     - node.type.public_notice
   module:
@@ -30,6 +31,7 @@ dependencies:
     - media
     - node
     - svg_image
+    - taxonomy
     - user
 _core:
   default_config_hash: bYQSPj_mviXKy0oTsR0_psiB3eBxBWTgt5-DGjPqoYQ
@@ -2208,9 +2210,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_entity_view
+          type: entity_reference_rss_category
           settings:
-            view_mode: full
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -2326,7 +2328,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -6516,9 +6518,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_entity_view
+          type: entity_reference_rss_category
           settings:
-            view_mode: full
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -6634,7 +6636,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -9847,9 +9849,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_entity_view
+          type: entity_reference_rss_category
           settings:
-            view_mode: full
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -9965,7 +9967,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -13731,9 +13733,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_entity_view
+          type: entity_reference_rss_category
           settings:
-            view_mode: full
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -13849,7 +13851,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -14874,9 +14876,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_entity_view
+          type: entity_reference_rss_category
           settings:
-            view_mode: full
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -14992,7 +14994,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
