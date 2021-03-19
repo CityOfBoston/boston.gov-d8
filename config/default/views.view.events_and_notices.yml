@@ -19,6 +19,7 @@ dependencies:
     - field.storage.node.field_public_notice_date
     - field.storage.node.field_thumbnail
     - image.style.card_grid_2w_horizonal_1x
+    - image.style.max_1300x1300
     - node.type.event
     - node.type.public_notice
   module:
@@ -30,6 +31,7 @@ dependencies:
     - media
     - node
     - svg_image
+    - taxonomy
     - user
 _core:
   default_config_hash: bYQSPj_mviXKy0oTsR0_psiB3eBxBWTgt5-DGjPqoYQ
@@ -2208,14 +2210,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: image
+          type: entity_reference_rss_category
           settings:
-            image_style: topic_thumbnail
-            image_link: ''
-            svg_render_as_image: true
-            svg_attributes:
-              width: null
-              height: null
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -2331,7 +2328,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -6521,14 +6518,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: image
+          type: entity_reference_rss_category
           settings:
-            image_style: topic_thumbnail
-            image_link: ''
-            svg_render_as_image: true
-            svg_attributes:
-              width: null
-              height: null
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -6644,7 +6636,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -9857,14 +9849,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: image
+          type: entity_reference_rss_category
           settings:
-            image_style: topic_thumbnail
-            image_link: ''
-            svg_render_as_image: true
-            svg_attributes:
-              width: null
-              height: null
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -9980,7 +9967,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -13746,14 +13733,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: image
+          type: entity_reference_rss_category
           settings:
-            image_style: topic_thumbnail
-            image_link: ''
-            svg_render_as_image: true
-            svg_attributes:
-              width: null
-              height: null
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -13869,7 +13851,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
@@ -14894,14 +14876,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: image
+          type: entity_reference_rss_category
           settings:
-            image_style: topic_thumbnail
-            image_link: ''
-            svg_render_as_image: true
-            svg_attributes:
-              width: null
-              height: null
+            link: 1
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -15017,7 +14994,7 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: card_grid_2w_horizonal_1x
+            image_style: max_1300x1300
             image_link: ''
           group_column: ''
           group_columns: {  }
