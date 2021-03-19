@@ -161,7 +161,7 @@ function bos_events_and_notices_preprocess_views_view_fields__events_and_notices
             }
           }
           else {
-            $edt = $end_date->format("F d, Y, g:i A");
+            $edt = $end_date->format(" - g:i A");
           }
         }
         $variables["dates"] = $stdt . $edt;
