@@ -21,6 +21,9 @@
   <h2 class="sh cl sh-title p-t400">{{ label }}</h2>
 {% endif %}
 <div class="bh-project-timeline g m-v600 p-a300">
+  {% if isDevelopment %}
+  <p class="t--subinfo">We're funding this project to create more affordable housing. We don't own this land.</p>
+  {% endif %}
   {{ items }}
 </div>
 
