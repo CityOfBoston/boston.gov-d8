@@ -159,6 +159,10 @@ function node_buildinghousing_theme() {
         'fill' => NULL,
       ],
     ],
+    'views_view__bhmaps__maplist' => [
+      'render element' => 'elements',
+      'base hook' => 'view'
+    ],
   ];
 }
 
@@ -189,7 +193,7 @@ function node_buildinghousing_views_pre_render(ViewExecutable $view) {
   if (isset($view) && (($view->storage->id() == 'building_housing') || ($view->storage->id() == 'bhmaps'))) {
     $view->element['#attached']['library'][] = 'node_buildinghousing/buildinghousing_views';
 
-    //$variables['attributes']['class'][] = 'mn';
+//     $variables['attributes']['class'][] = 'mn';
 
     $cssClass = 'view-id-' . $view->id() . ' view-display-id-' . $view->current_display;
     if ($view->storage->id() == 'bhmaps' && $view->current_display == 'livemap') {
@@ -856,3 +860,4 @@ function _node_buildinghousing_build_render_project_feedback_webform(EntityInter
 
   return $render;
 }
+
