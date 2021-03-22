@@ -315,6 +315,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
               'JPEG' => 'image',
+              'image/jpg' => 'image',
+              'JPG' => 'image',
               'image/png' => 'image',
               'PNG' => 'image',
               'application/pdf' => 'document',
