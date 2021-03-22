@@ -121,8 +121,27 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           break;
       }
 
+      if ($recordType = BHUtils::getProjectRecordType($parent_entity) == 'NHD Development') {
+
+        if ($publicStageTerm->getName() == 'Project Launch') {
+          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'funding-awarded']);
+          $vars['body'] = t('The Department of Neighborhood Development approved funding for this project.');
+          $vars['label'] = t('Funding awarded');
+//          $vars['icon'] = $stageIcon;
+//          $vars['label'] = $stageTitle->view(['label' => 'hidden']);
+//          $vars['body'] = $stageDescription->view(['label' => 'hidden']);
+//          $vars['date'] = $stageDate;
+//          $vars['currentState'] = $stageCurrentState;
+        }
+
+        if ($publicStageTerm->getName() == 'Selecting Developer') {
+         continue;
+        }
+
+      }
+
       $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');
-      if ($publicStageTerm->getName() == 'Project Launch' && empty($sortTimestamp)) {
+      if ($publicStageTerm->getName() == 'Project Launch' && (empty($sortTimestamp) || $recordType == 'NHD Development')) {
         $sortTimestamp = $delta;
       }
       elseif (empty($sortTimestamp)) {
@@ -155,6 +174,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       '#markup' => \Drupal::theme()->render("bh_project_timeline", [
         'items' => $sortedElements,
         'label' => $this->isActive ? t('Timeline') : NULL,
+        'isDevelopment' => BHUtils::getProjectRecordType($parent_entity) == 'NHD Development' ? true : false,
       ])
     ];
 
@@ -516,7 +536,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     switch ($stage->getName()) {
       case 'Project Launch':
-        $date = $project->get('field_bh_project_start_date')->value ?? NULL;
+        if (BHUtils::getProjectRecordType($project) == 'NHD Development') {
+          $date = $project->get('field_bh_dnd_funding_award_date')->value ?? NULL;
+        }else{
+          $date = $project->get('field_bh_project_start_date')->value ?? NULL;
+        }
         break;
 
       case 'Selecting Developer':
