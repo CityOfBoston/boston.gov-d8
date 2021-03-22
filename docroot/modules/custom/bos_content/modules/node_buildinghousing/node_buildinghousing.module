@@ -51,7 +51,7 @@ function node_buildinghousing_theme() {
     'bh_project_manager_contact' => [
       'template' => 'snippets/bh-project-manager-contact',
       'variables' => [
-        "title" => t("Get In Touch"),
+        "title" => t("Contact Information"),
         "label" => t("Project Manager"),
         "name" => NULL,
         "email" => NULL,
@@ -171,8 +171,13 @@ function node_buildinghousing_preprocess_page(array &$variables) {
     $variables['attributes']['class'][] = 'mn';
   }
 
-  if (isset($variables['page']) && isset($variables['page']['#title']) && $variables['page']['#title'] == 'Building Housing') {
-    $variables['attributes']['class'][] = 'mn';
+//  if (isset($variables['page']) && isset($variables['page']['#title']) && ($variables['page']['#title'] == 'Building Housing' || $variables['page']['#title'] == 'Building In Boston')) {
+//    $variables['attributes']['class'][] = 'mn';
+//  }
+
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->getTitle() == 'Building Housing Map') {
+    $variables['#attached']['library'][] = 'node_buildinghousing/buildinghousing_landing_page';
+//    $variables['attributes']['class'][] = 'mn';
   }
 
 }
