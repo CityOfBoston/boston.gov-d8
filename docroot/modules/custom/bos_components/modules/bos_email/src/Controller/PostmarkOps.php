@@ -11,6 +11,26 @@ use Drupal\Core\Site\Settings;
 class PostmarkOps extends ControllerBase {
 
   /**
+   * Check auth.
+   */
+  public function checkAuth($post) {
+
+   $match = 0;
+   $token = $this->getVars()["auth"];
+   $post_token = explode("Token ",$post);
+   $quad_chunk = str_split($post_token[1], 4);
+   
+   foreach ($quad_chunk as $item) {
+        $pos = strpos($token, $item);
+        if ($pos !== false) {
+          $match++;
+        }
+    }
+
+    return $valid = ($match >= 15 ? TRUE : FALSE);
+  }
+
+  /**
    * Get vars for Postmark servers.
    */
   public function getVars() {
