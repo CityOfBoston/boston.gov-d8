@@ -69,8 +69,9 @@ class PostmarkAPI extends ControllerBase {
    */
   public function formatData(array $emailFields, string $server) {
 
-    $postmark_env = new PostmarkOps();
-    $auth = ($_SERVER['HTTP_AUTHORIZATION'] == "Token " . $postmark_env->getVars()["auth"] ? TRUE : FALSE);
+    $postmark_auth = new PostmarkOps();
+    $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
+    
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
