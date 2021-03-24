@@ -15,7 +15,7 @@ class PostmarkOps extends ControllerBase {
    */
   public function checkAuth($post) {
 
-   $match = 0;
+   $matches = [];
    $token = $this->getVars()["auth"];
    $post_token = explode("Token ",$post);
    $quad_chunk = str_split($post_token[1], 4);
@@ -23,11 +23,11 @@ class PostmarkOps extends ControllerBase {
    foreach ($quad_chunk as $item) {
         $pos = strpos($token, $item);
         if ($pos !== false) {
-          $match++;
+          array_push($matches, $item);
         }
     }
 
-    return $valid = ($match >= 15 ? TRUE : FALSE);
+    return $valid = (count(array_unique($matches)) == 15 ? TRUE : FALSE);
   }
 
   /**
