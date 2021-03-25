@@ -11,7 +11,7 @@ use Drupal\Core\Site\Settings;
 class PostmarkOps extends ControllerBase {
 
   /**
-   * Check auth.
+   * Check token and authenticate.
    */
   public function checkAuth($post) {
 
