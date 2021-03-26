@@ -52,11 +52,13 @@
 
       <div class="g">
 
-        {% if currentState == 'past' %}
+        {% if currentState == 'past' and link %}
           <div class="m-v200 bc--r t--nowrap t--s100 g--1">
             <a href="{{ link }}" class="g">
-              <div typeof="foaf:Image" class=""> {{ recordingLinkIcon }} </div>
               <span  class="t--sans t--bold m-t100 m-l200">{{ label }}</span>
+              {% if recordingPassword %}
+                <span  class="m-l200" style="line-height: 0.5rem;">Password: {{ recordingPassword }}</span>
+              {% endif %}
             </a>
           </div>
         {% else %}
