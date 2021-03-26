@@ -317,6 +317,11 @@ function node_buildinghousing_preprocess_field(&$variables) {
       case 'field_bh_project_images':
 
         $variables['items'] = array_reverse($variables['items']);
+
+        if (($photoCount = count($variables['items'])) >= 1) {
+          $variables['items'][0]['content']['#prefix'] = "<h4 class='main-photo-overlay'>+$photoCount PHOTOS</h4>";
+        }
+
         break;
     }
 
