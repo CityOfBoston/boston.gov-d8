@@ -78,6 +78,16 @@ function node_buildinghousing_theme() {
         "bgColor" => '#091f2f',
       ],
     ],
+    'bh_project_developer_info' => [
+      'template' => 'snippets/bh-project-developer-info',
+      'variables' => [
+        "label" => NULL,
+        "icon" => NULL,
+        "title" => NULL,
+        "link" => NULL,
+        "tags" => NULL,
+      ],
+    ],
     'bh_project_timeline_moment' => [
       'template' => 'snippets/bh-project-timeline-moment',
       'variables' => [
@@ -172,6 +182,7 @@ function node_buildinghousing_theme() {
 function node_buildinghousing_preprocess_page(array &$variables) {
   if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'bh_project') {
     $variables['#attached']['library'][] = 'node_buildinghousing/buildinghousing_project';
+    $variables['#attached']['library'][] = 'node_buildinghousing/buildinghousing_landing_page';
     $variables['attributes']['class'][] = 'mn';
   }
 
@@ -356,6 +367,25 @@ function node_buildinghousing_entity_extra_field_info() {
         'weight' => 100,
         'visible' => TRUE,
       ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_bh_homepage_link'] = [
+        'label' => t('Building Housing Homepage Link'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_map_link'] = [
+        'label' => t('Building Housing Map Link'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
+      $extraFields['node'][$bundle->id()]['display']['bh_project_developer_info'] = [
+        'label' => t('Building Housing Project Developer Info'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
     }
   }
 
@@ -412,6 +442,19 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $build['bh_project_feedback_webform'] = _node_buildinghousing_build_render_project_feedback_webform($entity);
 
   }
+
+  if ($display->getComponent('bh_project_bh_homepage_link')) {
+    $build['bh_project_bh_homepage_link'] = _node_buildinghousing_build_render_homepage_link($entity);
+  }
+
+  if ($display->getComponent('bh_project_map_link')) {
+    $build['bh_project_map_link'] = _node_buildinghousing_build_render_map_link($entity);
+  }
+
+  if ($display->getComponent('bh_project_developer_info')) {
+    $build['bh_project_developer_info'] = _node_buildinghousing_build_render_developer_info($entity);
+  }
+
 
   if ($display->getComponent('field_bh_project_images')) {
 
@@ -859,4 +902,139 @@ function _node_buildinghousing_build_render_project_feedback_webform(EntityInter
   $render['#attributes']['class'][] = 'clearfix b-c bh-content-container';
 
   return $render;
+}
+
+/**
+ * Helper function to render and attach back to homepage link.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_homepage_link(EntityInterface $entity) {
+  $render = [];
+
+  $alias = \Drupal::service('path.alias_manager')->getPathByAlias('/buildinghousing');
+  $url = \Drupal\Core\Url::fromUri("internal:" . $alias);
+
+  $render['link'] = [
+    '#title' => t('< Go to Building Housing Homepage'),
+    '#type' => 'link',
+    '#url' => $url,
+    '#attributes' => [
+      'class' => 't--bold'
+    ]
+  ];
+
+  return $render;
+}
+
+/**
+ * Helper function to render and attach map link.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_map_link(EntityInterface $entity) {
+  $render = [];
+
+  $alias = \Drupal::service('path.alias_manager')->getPathByAlias('/buildinghousing');
+  $url = \Drupal\Core\Url::fromUri("internal:" . $alias);
+
+
+  $render['wrapper'] = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => [
+        'buildinghousing-map-link',
+      ],
+    ],
+  ];
+
+  $render['wrapper']['overlay'] = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => [
+        'buildinghousing-map-link-background-overlay',
+      ],
+    ],
+  ];
+
+  $render['wrapper']['overlay']['background'] = [
+    '#type' => 'container',
+    '#attributes' => [
+      'class' => [
+        'buildinghousing-map-link-background',
+      ],
+    ],
+  ];
+
+  $render['wrapper']['link'] = [
+    '#title' => t('SHOW MAP'),
+    '#type' => 'link',
+    '#url' => $url,
+    '#attributes' => [
+      'class' => 'use-ajax btn',
+      'data-dialog-options' => '{"closeText": "X"}',
+      'data-dialog-type' => 'modal',
+      'data-ajax-progress' => 'fullscreen',
+    ]
+  ];
+
+//  $render['hello'] = [
+//    '#type' => 'html_tag',
+//    '#tag' => 'p',
+//    '#value' => $this
+//      ->t('Hello World'),
+//  ];
+
+//  $render['#markup'] = 'use-ajax btn'
+
+  return $render;
+}
+
+/**
+ * Helper function to render and attach map link.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   Building Housing Project Entity.
+ *
+ * @return array
+ *   Render array
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _node_buildinghousing_build_render_developer_info(EntityInterface $entity) {
+  $vars = [
+    "label" => 'Developer',
+    "icon" => \Drupal::theme()->render('bh_icons', [
+      'type' => 'selecting-a-developer',
+      'fill' => 'cb',
+      'height' => 35,
+      'width' => 35,
+    ]),
+    "tagIcon" => \Drupal::theme()->render('bh_icons', [
+      'type' => 'checkmark',
+      'fill' => 'cb',
+      'height' => 20,
+      'width' => 20,
+    ]),
+    "title" => 'The People’s Academy',
+    "link" => 'https://www.boston.gov',
+    "tags" => ['Minority Owned Business', 'Women Owned Business', 'Veteran Owned Business', 'Boston-Based Business']
+  ];
+
+  return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
 }
