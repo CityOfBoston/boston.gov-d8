@@ -139,9 +139,11 @@
          {% endif %}
 
          {% if content.field_email %}
-            <div class="list-item">
-               {{ content.field_email }}
-            </div>
+            {% if node.field_hide_contact_form.value == false %}
+               <div class="list-item">
+                  {{ content.field_email }}
+               </div>
+            {% endif %}
          {% endif %}
 
          {% if content.field_address %}
