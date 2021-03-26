@@ -29,9 +29,11 @@
 
     <div >
 
-      <div class="t--subinfo t--cb fl--l m-r300" style="text-decoration: underline; font-weight: 500;">
-        <a href="{{ link }}">Company Website</a>
-      </div>
+      {% if link %}
+        <div class="t--subinfo t--cb fl--l m-r300" style="text-decoration: underline; font-weight: 500;">
+          <a href="{{ link }}">Company Website</a>
+        </div>
+      {% endif %}
 
 
       {% for tag in tags %}
