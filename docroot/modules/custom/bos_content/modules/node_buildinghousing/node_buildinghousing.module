@@ -318,8 +318,8 @@ function node_buildinghousing_preprocess_field(&$variables) {
 
         $variables['items'] = array_reverse($variables['items']);
 
-        if (($photoCount = count($variables['items'])) >= 1) {
-          $variables['items'][0]['content']['#prefix'] = "<h4 class='main-photo-overlay'>+$photoCount PHOTOS</h4>";
+        if (($photoCount = count($variables['items'])) > 1) {
+          $variables['items'][0]['content']['#prefix'] = "<h4 class='main-photo-overlay'>$photoCount PHOTOS</h4>";
         }
 
         break;
@@ -1057,7 +1057,7 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
       'height' => 20,
       'width' => 20,
     ]),
-    "title" => NULL,
+    "title" => t('To Be Decided'),
     "link" => NULL,
     "tags" => NULL,
   ];
@@ -1066,7 +1066,8 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
 
   if ($webUpdate) {
 
-    $vars['title'] = $webUpdate->get('field_bh_developer_name')->value ?? NULL;
+    $vars['title'] = $webUpdate->get('field_bh_developer_name')->value ?? t('To Be Decided');
+    $vars['title'] = $vars['title'] == 'NHD TBD - Developer to be Selected' ? t('To Be Decided') : $vars['title'];
     $vars['link'] = $webUpdate->get('field_bh_developer_website')->value ?? NULL;
 
     $vars['tags'] = NULL;
@@ -1087,13 +1088,7 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
       $vars['tags'][] = t('Women Owned Business');
     }
 
-    //$vars['title'] = $webUpdate->get('field_bh_developer_name')->value ?? NULL;
-
-
-
-
-    return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
-  }else{
-    return NULL;
   }
+
+  return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
 }
