@@ -1036,5 +1036,22 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
     "tags" => ['Minority Owned Business', 'Women Owned Business', 'Veteran Owned Business', 'Boston-Based Business']
   ];
 
-  return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
+  $webUpdate = BHUtils::getWebUpdate($entity);
+
+  if ($webUpdate) {
+
+    $vars['title'] = $webUpdate->get('field_bh_developer_name')->value ?? NULL;
+    $vars['link'] = $webUpdate->get('field_bh_developer_website')->value ?? NULL;
+
+    $vars['tags'] = NULL;
+
+    //$vars['title'] = $webUpdate->get('field_bh_developer_name')->value ?? NULL;
+
+
+
+
+    return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
+  }else{
+    return NULL;
+  }
 }
