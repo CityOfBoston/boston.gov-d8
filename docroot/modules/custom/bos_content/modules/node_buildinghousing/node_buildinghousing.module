@@ -530,6 +530,27 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
         $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $supportedLang)];
       }
 
+      if ($project = $meeting->field_bh_update_ref->referencedEntities()[0]->field_bh_project_ref->referencedEntities()[0] ?? false) {
+
+
+        $link = [
+          '#title' => $project->getTitle(),
+          '#type' => 'link',
+          '#url' => $project->toUrl(),
+          '#attributes' => [
+            'class' => ''
+          ]
+        ];
+
+        $projectHomepage['classes'] = [
+          'label' => 'detail-item--left',
+          'body' => 'detail-item--secondary',
+          'detail' => 'detail-item--secondary list-item',
+        ];
+        $projectHomepage['label'] = t('Project Homepage:');
+        $projectHomepage['body'] = $link;
+        $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $projectHomepage)];
+      }
 
 
       unset($build['field_event_type']);
