@@ -1031,9 +1031,9 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
       'height' => 20,
       'width' => 20,
     ]),
-    "title" => 'The People’s Academy',
-    "link" => 'https://www.boston.gov',
-    "tags" => ['Minority Owned Business', 'Women Owned Business', 'Veteran Owned Business', 'Boston-Based Business']
+    "title" => NULL,
+    "link" => NULL,
+    "tags" => NULL,
   ];
 
   $webUpdate = BHUtils::getWebUpdate($entity);
@@ -1044,6 +1044,22 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
     $vars['link'] = $webUpdate->get('field_bh_developer_website')->value ?? NULL;
 
     $vars['tags'] = NULL;
+
+    if ($webUpdate->get('field_bh_minority_owned_business')->value) {
+      $vars['tags'][] = t('Minority Owned Business');
+    }
+
+    if ($webUpdate->get('field_bh_boston_based_business')->value) {
+      $vars['tags'][] = t('Boston-Based Business');
+    }
+
+    if ($webUpdate->get('field_bh_veteran_owned_business')->value) {
+      $vars['tags'][] = t('Veteran Owned Business');
+    }
+
+    if ($webUpdate->get('field_bh_women_owned_business')->value) {
+      $vars['tags'][] = t('Women Owned Business');
+    }
 
     //$vars['title'] = $webUpdate->get('field_bh_developer_name')->value ?? NULL;
 
