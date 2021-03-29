@@ -818,6 +818,19 @@
 
   {% endset %}
 
+{% elseif type == 'checkmark' %}
+  {% set defaults = {
+    width : 20,
+    heigh: 20,
+    viewBox: '0 0 20 20',
+    fill: '#091F2F'
+  } %}
+
+  {% set svg %}
+      <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9479 6.99628C15.3551 7.41441 15.3305 8.06889 14.8931 8.4581L8.34338 14.2857L4.76172 11.0989L6.23629 9.58476L8.34338 11.4596L13.4185 6.94393C13.856 6.55472 14.5407 6.57816 14.9479 6.99628Z" fill="white"/>
+  {% endset %}
+
 {% elseif type == 'timeline-document' %}
   {% set defaults = {
     width : 75,

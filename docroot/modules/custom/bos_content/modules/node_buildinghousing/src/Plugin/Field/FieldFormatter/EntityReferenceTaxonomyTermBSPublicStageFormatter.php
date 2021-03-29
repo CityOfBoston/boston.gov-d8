@@ -401,6 +401,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           // $body = str_replace('label></p>', 'label>', $body);
           $body = strip_tags($body, '<div><span><label><input><a>');
 
+          $recordingPassword = NULL;
           $attendees = NULL;
         }
         else {
@@ -418,6 +419,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           // $event->field_event_date_recur->view('add_to_calendar');
           $body = $this->renderReadMoreText($meeting->field_bh_post_meeting_notes->value ?? '', 200) ?? '';
           $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
+          $recordingPassword = $meeting->field_bh_meeting_recording_pass->value ?? NULL;
         }
 
         $data = [
@@ -430,7 +432,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           'link' => $link,
           'currentState' => $currentState,
           'addToCal' => $addToCal,
-          'recordingLinkIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
+          'recordingLinkIcon' => NULL,
+          'recordingPassword' => $recordingPassword,
           'attendees' => $attendees,
         ];
 
