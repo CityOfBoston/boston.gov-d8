@@ -415,16 +415,18 @@
 
 .field-name-field-bh-project-images .main-photo-overlay{
   position: absolute;
-  bottom: -26px;
+  /*bottom: -26px;*/
+  /*top: 10px;*/
   background: rgb(0, 0, 0);
   background: rgba(0, 0, 0, 0.5);
   color: #fff;
   font-size: 20px;
-  padding: 20px;
+  padding: 0.5rem;
   text-align: center;
   width: 335px;
-  right: 47px;
-  height: 230px;
+  right: 2.65rem;
+  /*height: 230px;*/
+  margin: 178px 0 0 0;
 }
 
 .main-photo-placeholder {
@@ -447,8 +449,44 @@
   margin-left: 6.5rem;
 }
 
+.buildinghousing-map-link {
+  width: 335px;
+  height: 157px;
+  float: right;
+  margin-right: 2.5rem;
 
+}
 
+.buildinghousing-map-link .throbber{
+  position: absolute;
+  -ms-transform: translate(-60%, -70%);
+  transform: translate(-60%, -70%);
+}
+
+.buildinghousing-map-link-background {
+  width: 335px;
+  height: 157px;
+  background-image: url("/modules/custom/bos_content/modules/node_buildinghousing/images/building-housing-background-sm.png");
+  opacity: 0.5;
+  float: right;
+}
+
+.buildinghousing-map-link-background-overlay {
+  width: 335px;
+  height: 157px;
+  background-color: #0A1F2F;
+  opacity: 1;
+  float: right;
+}
+
+.buildinghousing-map-link a {
+  margin: 0;
+  position: absolute;
+  /*top: 50%;*/
+  /*left: 50%;*/
+  -ms-transform: translate(60%, 70%);
+  transform: translate(60%, 70%);
+}
 
 /*#edit-title-basic {*/
 /*  margin: unset;*/
@@ -514,6 +552,11 @@
 .bh-project-timeline-moment .bh-add-to-cal {
   margin-top: 0.75rem !important;
 }
+
+
+
+
+
 
 .webform-submission-building-housing-feedback-form {
   clear: both;
