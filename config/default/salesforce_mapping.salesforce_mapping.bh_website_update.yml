@@ -4,9 +4,15 @@ status: true
 dependencies:
   config:
     - field.field.node.bh_update.body
+    - field.field.node.bh_update.field_bh_boston_based_business
+    - field.field.node.bh_update.field_bh_developer_name
+    - field.field.node.bh_update.field_bh_developer_website
     - field.field.node.bh_update.field_bh_follower_emails
+    - field.field.node.bh_update.field_bh_minority_owned_business
     - field.field.node.bh_update.field_bh_project_ref
     - field.field.node.bh_update.field_bh_project_web_link
+    - field.field.node.bh_update.field_bh_veteran_owned_business
+    - field.field.node.bh_update.field_bh_women_owned_business
     - field.storage.node.field_bh_project_ref
     - node.type.bh_project
     - node.type.bh_update
@@ -20,7 +26,7 @@ type: salesforce_mapping
 key: ''
 async: false
 push_standalone: false
-pull_standalone: false
+pull_standalone: true
 pull_trigger_date: LastModifiedDate
 pull_where_clause: ''
 sync_triggers:
@@ -70,6 +76,42 @@ field_mappings:
     direction: sf_drupal
     drupal_constant: '1'
     id: 5
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_developer_name
+    salesforce_field: Project_Developer_Formula__c
+    direction: sf_drupal
+    id: 6
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_developer_website
+    salesforce_field: Account_Website__c
+    direction: sf_drupal
+    id: 7
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_boston_based_business
+    salesforce_field: Boston_Based_Buiness__c
+    direction: sf_drupal
+    id: 8
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_minority_owned_business
+    salesforce_field: Minority_Owned_Business2__c
+    direction: sf_drupal
+    id: 9
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_veteran_owned_business
+    salesforce_field: Veteran_Owned_Business2__c
+    direction: sf_drupal
+    id: 10
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_women_owned_business
+    salesforce_field: Woman_Owned_Buiness2__c
+    direction: sf_drupal
+    id: 11
 push_limit: 0
 push_retries: 3
 push_frequency: 0
