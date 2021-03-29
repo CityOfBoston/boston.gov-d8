@@ -2,18 +2,15 @@
 
 namespace Drupal\node_buildinghousing;
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
-use Drupal\Core\Entity\EntityMalformedException;
-use Drupal\Core\GeneratedUrl;
+use Drupal\salesforce\Exception;
 use Drupal\taxonomy\Entity\Term;
-use http\Client\Request;
 
 /**
  * BuildingHousingUtils - Utilities and helper functions for Building Housing.
  */
-class BuildingHousingUtils {
+class BuildingHousingUtils
+{
 
   /**
    * Project Public Stage.
@@ -50,7 +47,8 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getMeetingsFromWebUpdateId(string $webUpdateId) {
+  public static function getMeetingsFromWebUpdateId(string $webUpdateId)
+  {
     $meetings = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
         'field_bh_update_ref' => $webUpdateId,
         'type' => 'bh_meeting'
@@ -76,7 +74,8 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getMeetingFromEventId(string $eventId) {
+  public static function getMeetingFromEventId(string $eventId)
+  {
     $meetings = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
         'field_bh_event_ref' => $eventId,
         'type' => 'bh_meeting'
@@ -102,9 +101,10 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function getWebUpdate(EntityInterface $projectEntity) {
+  public static function getWebUpdate(EntityInterface $projectEntity)
+  {
     $webUpdate = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties([
-      'field_bh_project_ref' => $projectEntity->id(),
+        'field_bh_project_ref' => $projectEntity->id(),
         'type' => 'bh_update',
         'field_sf_web_update' => TRUE
       ])
@@ -130,13 +130,14 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
-  public function setProjectWebLink(EntityInterface &$entity) {
+  public function setProjectWebLink(EntityInterface &$entity)
+  {
 
     $project = $entity->get('field_bh_project_ref')->target_id ? \Drupal::entityTypeManager()->getStorage('node')->load($entity->get('field_bh_project_ref')->target_id) : NULL;
 
     if ($project) {
-      $projectWebLink = $project->toLink()->getUrl()->setAbsolute(TRUE)->toString() ?? NULL;
-      $entity->set('field_bh_project_web_link', $projectWebLink);
+      $projectWebLink = $project->toLink()->getUrl()->setAbsolute(FALSE)->toString() ?? NULL;
+      $entity->set('field_bh_project_web_link', 'https://www.boston.gov/' . $projectWebLink);
 
       return $projectWebLink;
     }
@@ -154,7 +155,8 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function setPublicStage(EntityInterface &$entity) {
+  public function setPublicStage(EntityInterface &$entity)
+  {
 
     // @TODO: RM after no issues
     // $projectRecordType = \Drupal\taxonomy\Entity\Term::load($entity->get('field_bh_record_type')->target_id)->name->value ?? null;
@@ -253,7 +255,7 @@ class BuildingHousingUtils {
     // Rule I.
     if (in_array($projectRecordType, ['Disposition'])
       && in_array($projectStatus, ['Completed'])
-    // @TODO: ? What if the ProjectCompleteDate is null?
+      // @TODO: ? What if the ProjectCompleteDate is null?
       && strtotime($projectCompeteDate) >= strtotime('-1 year')
     ) {
       $publicStage = 'Project Completed';
@@ -300,8 +302,7 @@ class BuildingHousingUtils {
     // Set the Public Stage on the Project or unset it if no rules apply.
     if ($publicStage) {
       $entity->set('field_bh_public_stage', [$publicStages[$publicStage]]);
-    }
-    else {
+    } else {
       $entity->set('field_bh_public_stage', []);
     }
 
@@ -317,7 +318,8 @@ class BuildingHousingUtils {
    * @return string|null
    *   Record Type of Project or null.
    */
-  public static function getProjectRecordType(EntityInterface $projectEntity) {
+  public static function getProjectRecordType(EntityInterface $projectEntity)
+  {
     $projectRecordType = Term::load($projectEntity->get('field_bh_record_type')->target_id)->name->value ?? NULL;
     $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
     $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
@@ -336,7 +338,8 @@ class BuildingHousingUtils {
    * @return bool
    *   True or False is a street view was found and saved to the project.
    */
-  public function setStreetViewPhoto(EntityInterface &$entity, string $fieldName = 'field_bh_street_view_photo') {
+  public function setStreetViewPhoto(EntityInterface &$entity, string $fieldName = 'field_bh_street_view_photo')
+  {
     $streetViewPhotoSet = FALSE;
 
     if ($this->publicStage && $coordinates = $entity->get('field_bh_coordinates')->value) {
@@ -360,7 +363,8 @@ class BuildingHousingUtils {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Building Housing Project Entity.
    */
-  public function updateProjectGoalsFieldDisplay(EntityInterface &$entity) {
+  public function updateProjectGoalsFieldDisplay(EntityInterface &$entity)
+  {
 
   }
 
@@ -374,7 +378,8 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function setMeetingEvent(EntityInterface &$entity) {
+  public function setMeetingEvent(EntityInterface &$entity)
+  {
 
     // GET WEB UPDATE.
     $webUpdate = !$entity->field_bh_update_ref->isEmpty() ? $entity->field_bh_update_ref->referencedEntities()[0] : NULL;
@@ -402,26 +407,27 @@ class BuildingHousingUtils {
 
       $event->set('title', $entity->getTitle() ?? '');
       $event->set('body', $entity->get('body')->value ?? '');
+      $event->set('field_intro_text', $entity->get('field_bh_meeting_goal')->value ?? '');
       $event->set('field_event_contact', $contactName);
       $event->set('field_email', $contactEmail);
       $event->set('field_event_date_recur', [
         'value' => $entity->field_bh_meeting_start_time->value ?? '',
         'end_value' => $entity->field_bh_meeting_end_time->value ?? '',
         // 'timezone' => 'Etc/GMT+10',
-        'timezone' => 'Pacific/Honolulu',
+//        'timezone' => 'Pacific/Honolulu',
+        'timezone' => 'America/New_York',
       ]);
 
       $event->save();
 
-    }
-    else {
+    } else {
       $event = \Drupal::entityTypeManager()
         ->getStorage('node')
         ->create([
           'type' => 'event',
           'title' => $entity->getTitle() ?? '',
           'body' => $entity->get('body')->value ?? '',
-          'field_intro_text' => t('The Department of Neighborhood Development is looking for feedback from the community. Join us to see the latest plans and share your thoughts.'),
+          'field_intro_text' => $entity->get('field_bh_meeting_goal')->value ?? '',
           'field_address' => [
             'country_code' => 'US',
             'address_line1' => t('THIS MEETING WILL BE HELD VIRTUALLY.'),
@@ -431,13 +437,14 @@ class BuildingHousingUtils {
           ],
           'field_event_contact' => $contactName,
           'field_email' => $contactEmail,
-            // Event Type: "Civic Engagement".
+          // Event Type: "Civic Engagement".
           'field_event_type' => [['target_id' => 1831]],
           'field_event_date_recur' => [
             'value' => $entity->field_bh_meeting_start_time->value ?? '',
             'end_value' => $entity->field_bh_meeting_end_time->value ?? '',
             // 'timezone' => 'Etc/GMT+10',
-            'timezone' => 'Pacific/Honolulu',
+//            'timezone' => 'Pacific/Honolulu',
+            'timezone' => 'America/New_York',
           ],
         ]);
 
@@ -460,5 +467,56 @@ class BuildingHousingUtils {
       $entity->set('field_bh_event_ref', ['target_id' => $event->id()]);
     }
   }
+
+
+  public function setParcelGeoPolyData(EntityInterface &$entity)
+  {
+    $geoPolySet = FALSE;
+
+    if ($entity) {
+
+      try {
+
+        $parcelId = $entity->getTitle();
+
+        $endpoint = "https://services.arcgis.com/sFnw0xNflSi8J0uh/arcgis/rest/services/Parcels_2020/FeatureServer/8/query?outFields='geometry'&f=pgeojson&where=PID_LONG%20%3D%20'$parcelId'";
+
+        $client = \Drupal::httpClient();
+        $geoPolyMetaData = $client->get("$endpoint");
+        $geoPolyMetaData = $geoPolyMetaData->getBody() ? json_decode($geoPolyMetaData->getBody()) : NULL;
+
+        $points = [];
+
+        if ($geoPolyMetaData && $geoPolyMetaData->features) {
+
+          $coordinates = isset($geoPolyMetaData
+              ->features[0]
+              ->geometry
+              ->coordinates)
+            ? $geoPolyMetaData
+              ->features[0]
+              ->geometry
+              ->coordinates[0]
+            : [];
+
+          foreach ($coordinates as $geoPoint) {
+            $points[] = implode(' ', $geoPoint);
+          }
+          $points = implode(', ', $points);
+
+          $polyString = "POLYGON (($points))";
+          $entity->set('field_parcel_geo_polygon', ['wkt' => $polyString]);
+          $geoPolySet = TRUE;
+        }
+
+      } catch (Exception $exception) {
+        //@TODO: Add error log msg
+        return $geoPolySet;
+      }
+    }
+    return $geoPolySet;
+  }
+
+
 
 }

@@ -1,5 +1,5 @@
 signup.endpoint:
-  path: '/rest/codered/{action}'
+  path: '/rest/emergency_alerts/{action}'
   methods: [POST,GET]
   defaults:
     _controller: '\Drupal\bos_emergency_alerts\Controller\EverbridgeSubscriber::api'

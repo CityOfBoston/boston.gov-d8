@@ -5,15 +5,21 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_boston_based_business
+    - field.field.node.bh_update.field_bh_developer_name
+    - field.field.node.bh_update.field_bh_developer_website
     - field.field.node.bh_update.field_bh_follower_emails
     - field.field.node.bh_update.field_bh_headline
     - field.field.node.bh_update.field_bh_image
+    - field.field.node.bh_update.field_bh_minority_owned_business
     - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
     - field.field.node.bh_update.field_bh_project_web_link
     - field.field.node.bh_update.field_bh_text_updates
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
+    - field.field.node.bh_update.field_bh_veteran_owned_business
+    - field.field.node.bh_update.field_bh_women_owned_business
     - field.field.node.bh_update.field_sf_web_update
     - image.style.thumbnail
     - node.type.bh_update
@@ -55,6 +61,22 @@ content:
     third_party_settings: {  }
     type: file_generic
     region: content
+  field_bh_developer_name:
+    weight: 134
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_bh_developer_website:
+    weight: 135
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_bh_follower_emails:
     weight: 129
     settings:
@@ -77,6 +99,13 @@ content:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
+    region: content
+  field_bh_minority_owned_business:
+    weight: 136
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   field_bh_project_images:
     type: image_image
@@ -204,4 +233,7 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_bh_boston_based_business: true
+  field_bh_veteran_owned_business: true
+  field_bh_women_owned_business: true
