@@ -15,9 +15,9 @@ const configProps = {
         },
         "mayor": {
           "display": true,
-          "name": "Martin J. Walsh",
-          "image": "https://www.boston.gov/sites/default/files/styles/person_photo_profile_large_360x360_/public/img/2016/w/walsh-bio.jpg",
-          "url": "/departments/mayors-office/martin-j-walsh",
+          "name": "Kim Janey",
+          "image": "https://www.boston.gov/sites/default/files/styles/person_profile_card_173x173_/public/img/library/photos/2021/03/new-janey-headshot.jpg",
+          "url": "/departments/mayors-office",
         },
         "city_councilor": {
           "display": true,
