@@ -22,9 +22,16 @@
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
 
+        {% if hide_form == TRUE %}
+            {% set hide_class = "class=hide-form" %} 
+        {% else %}
+            {% set hide_class = "" %}
+        {% endif%} 
+
+
         <div class="detail-item__content">
             <div class="detail-item__body detail-item__body--secondary">
-              <a href="mailto:{{ item.content }}" title="Have a question, or just need help? You can send an email to {{ item.content }} through the form below.">{{ item.content }}</a>
+                <a href="mailto:{{ item.content }}" title="Have a question, or just need help? You can send an email to {{ item.content }} through the form below." {{ hide_class }} >{{ item.content }}</a>
             </div>
         </div>
 
