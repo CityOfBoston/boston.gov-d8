@@ -1347,7 +1347,7 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
 
     });
 
-    //Adding _target attribute to all external URL
+    //Adding _target attribute to all external URL.
     $('a[href^="https://"],a[href^="http://"]').attr('target', function() {
       if(this.host != location.host) return '_blank'
     });
