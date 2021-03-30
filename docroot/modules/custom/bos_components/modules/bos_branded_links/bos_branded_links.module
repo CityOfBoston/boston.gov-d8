@@ -31,7 +31,7 @@ function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables
   $variables['attributes']->addClass("b");
   $variables['attributes']->addClass("b--fw");
   $variables['attributes']->addClass("b--b");
-  $variables['attributes']->addClass("b--by");
+  //$variables['attributes']->addClass("b--by");
 
 
   // Change out background color based on field value
@@ -54,7 +54,7 @@ function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables
   //@TODO: move to other locations and logic
   $style_overrides = [];
   $style_overrides[] = 'padding: unset;'; //cleanup so spacing that is not needed without a text title
-  $style_overrides[] = 'border-top: .444rem solid #c9ab80;'; //custom top boarder for BPHC - DEMO ONLY
+  //$style_overrides[] = 'border-top: .444rem solid #c9ab80;'; //custom top boarder for BPHC - DEMO ONLY
 
   $variables['attributes']->setAttribute('style', $style_overrides);
 }
