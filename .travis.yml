@@ -9,6 +9,7 @@ branches:
   only:
     - develop
     - master
+    - buildinghousing_ci
 
 php:
   - 7.3
@@ -91,14 +92,11 @@ notifications:
       template:
         - "Deployment of <%{build_url}|#%{build_number}> from GitHub to Acquia <https://d8-dev.boston.gov|develop environment> has been started."
         - "_Check the #drupal channel for the deploy completion notice._"
-
 before_install:
   # Add in some required packages (ref: <reporoot>/.lando.yml
   - ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_server_customize.sh
-
 install:
   - travis_wait 40 ${TRAVIS_BUILD_DIR}/scripts/deploy/travis_build.sh
-
 script:
   # D7's .travis.yml ran basic validation and Behat/PHPUnit tests in parallel.  We don't do this in D8 because it
   # causes multiple containers to be created, and if tests pass, multiple (near simultaneous) deployments (to Acquia)
@@ -106,7 +104,6 @@ script:
   # NOTE: If you do not specify a script, then a PHPUnit command will be executed, and fail.
   - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
   # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
-
 deploy:
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   - provider: script
@@ -119,3 +116,8 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
+  - provider: script
+    skip_cleanup: true
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: buildinghousing_ci
