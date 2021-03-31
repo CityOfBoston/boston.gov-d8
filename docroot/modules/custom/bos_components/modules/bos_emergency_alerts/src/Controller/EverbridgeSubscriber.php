@@ -136,8 +136,9 @@ class EverbridgeSubscriber extends ControllerBase {
    *   Response from the Everbridge remote API.
    */
   private function subscribe($payload) {
-    $everbridge = $this->config("codered_settings");
+    $config_settings = $this->config("emergency_alerts_settings");
 
+    $everbridge_env = (object) [];
     if (isset($_ENV['EVERBRIDGE_SETTINGS'])) {
       $everbridge_env = (object) [];
       $get_vars = explode(",", $_ENV['EVERBRIDGE_SETTINGS']);
@@ -149,17 +150,19 @@ class EverbridgeSubscriber extends ControllerBase {
     }
     else {
       $everbridge_env = '{
-        "org_id":454102597238915,
-        "rec_type_id":487225385025537,
-        "text":241901148045324,
-        "phone":219910915489799,
-        "email":241901148045317,
-        "language_id":487225385025538
+        "org_id": "454102597238915",
+        "rec_type_id":"487225385025537",
+        "text":"241901148045324",
+        "phone":"219910915489799",
+        "email":"241901148045317",
+        "language_id":"487225385025538",
+        "api_user":"xxxx",
+        "api_password":"xxxx"
       }';
     }
     $everbridge_env = json_decode($everbridge_env);
 
-    if (!empty($everbridge['api_base']) && !empty($everbridge['api_pass']) && !empty($everbridge['api_user'])) {
+    if (!empty($config_settings['api_base']) && !empty($everbridge_env->api_password) && !empty($everbridge_env->api_user)) {
       // Track this page.
       $this->gapost->pageview($this->request->getRequestUri(), "CoB REST | Everbridge Subscription");
 
@@ -255,8 +258,8 @@ class EverbridgeSubscriber extends ControllerBase {
     }
     else {
       $result = [
-        "output" => "Missing Drupal Configuration.",
-        "HTTP_CODE" => "500",
+        "output" => 'Configuration error',
+        "http_code" => "500",
       ];
     }
 
@@ -282,8 +285,8 @@ class EverbridgeSubscriber extends ControllerBase {
    */
   private function post($uri, array $fields, object $everbridge_env, $cachebuster = FALSE) {
 
-    $everbridge = $this->config("codered_settings");
-    $url = "https://api.everbridge.net/rest/contacts/" . $everbridge_env->org_id;
+    $config_settings = $this->config("emergency_alerts_settings");
+    $url = $config_settings['api_base'] . '/rest/contacts/' . $everbridge_env->org_id;
 
     // Add a random string at end of post to bust any caches.
     if (isset($cachebuster) && $cachebuster) {
@@ -302,8 +305,8 @@ class EverbridgeSubscriber extends ControllerBase {
 
     // Make the post and return the response.
     try {
-      $user = $everbridge['api_user'];
-      $pass = $everbridge['api_pass'];
+      $user = $everbridge_env->api_user;
+      $pass = $everbridge_env->api_password;
       $user_pass = base64_encode($user . ':' . $pass);
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
@@ -351,6 +354,7 @@ class EverbridgeSubscriber extends ControllerBase {
    *   Full Response object to be returned to caller.
    */
   private function responseOutput($message, $type) {
+    
     $json = [
       'status' => 'error',
       'contact' => $message,
@@ -365,20 +369,15 @@ class EverbridgeSubscriber extends ControllerBase {
         'Content-Language' => 'en',
       ]
     );
+    
     switch ($type) {
-      case Response::HTTP_CREATED:
-      case Response::HTTP_OK:
-      case Response::HTTP_NON_AUTHORITATIVE_INFORMATION:
+      case "200":
         $json['status'] = 'success';
         $response->setContent(json_encode($json));
         break;
 
-      case Response::HTTP_UNAUTHORIZED:
-      case Response::HTTP_NO_CONTENT:
-      case Response::HTTP_FORBIDDEN:
-      case Response::HTTP_BAD_REQUEST:
-      case Response::HTTP_METHOD_NOT_ALLOWED:
-      case Response::HTTP_INTERNAL_SERVER_ERROR:
+      case "400":
+      case "401":
         $json['status'] = 'error';
         $json['errors'] = $message;
         unset($json['contact']);
@@ -388,6 +387,10 @@ class EverbridgeSubscriber extends ControllerBase {
           ->error("Internal Error");
         // Send email.
         $this->mailAlert();
+        break;
+      default:
+        $json['status'] = 'error';
+        $json['errors'] = $message;
         break;
     }
     return $response;
@@ -422,15 +425,15 @@ class EverbridgeSubscriber extends ControllerBase {
    */
   private function mailAlert() {
     $request = $this->request->request->all();
-    $everbridge = $this->config("codered_settings");
+    $config_settings = $this->config("emergency_alerts_settings");
 
-    if (empty($everbridge["email_alerts"])) {
+    if (empty($config_settings["email_alerts"])) {
       $this->log->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
       return;
     }
 
     $params['message'] = $request;
-    $result = $this->mail->mail("bos_emergency_alerts", "subscribe_error", $everbridge["email_alerts"], "en", $params, NULL, TRUE);
+    $result = $this->mail->mail("bos_emergency_alerts", "subscribe_error", $config_settings["email_alerts"], "en", $params, NULL, TRUE);
 
     if ($result['result'] !== TRUE) {
       $this->log->warning("There was a problem sending your message and it was not sent.");

@@ -34,19 +34,46 @@ dependencies:
     - field.field.node.event.field_updated_date
     - node.type.event
   module:
+    - address
     - advanced_text_formatter
     - date_recur
     - fences
     - link
+    - smart_trim
+    - taxonomy
     - user
 id: node.event.featured_item
 targetEntityType: node
 bundle: event
 mode: featured_item
 content:
+  field_address:
+    type: address_default
+    weight: 8
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_cost:
+    type: smart_trim
+    weight: 7
+    region: content
+    label: above
+    settings:
+      trim_length: 600
+      trim_type: chars
+      trim_suffix: ''
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options: {  }
+    third_party_settings: {  }
   field_details_link:
     type: link
-    weight: 4
+    weight: 3
     region: content
     label: hidden
     settings:
@@ -55,6 +82,31 @@ content:
       url_plain: false
       rel: ''
       target: ''
+    third_party_settings: {  }
+  field_email:
+    type: string
+    weight: 9
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_event_contact:
+    type: smart_trim
+    weight: 6
+    region: content
+    label: above
+    settings:
+      trim_length: 600
+      trim_type: chars
+      trim_suffix: ''
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options: {  }
     third_party_settings: {  }
   field_event_date_recur:
     type: date_recur_basic_formatter
@@ -106,6 +158,21 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+  field_multiple_neighborhoods:
+    type: entity_reference_rss_category
+    weight: 5
+    region: content
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  field_phone_number:
+    type: string
+    weight: 4
+    region: content
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   field_thumbnail:
     type: entity_reference_entity_view
     weight: 0
@@ -125,15 +192,11 @@ content:
 hidden:
   body: true
   content_moderation_control: true
-  field_address: true
   field_cancel_event: true
   field_city_hall: true
   field_city_sponsored: true
   field_components: true
   field_contacts: true
-  field_cost: true
-  field_email: true
-  field_event_contact: true
   field_event_type: true
   field_extra_info_event: true
   field_featured: true
@@ -141,8 +204,6 @@ hidden:
   field_links: true
   field_manual_date: true
   field_metatags: true
-  field_multiple_neighborhoods: true
-  field_phone_number: true
   field_published_date: true
   field_related: true
   field_sidebar_components: true
