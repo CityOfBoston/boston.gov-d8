@@ -23,28 +23,22 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div{{ attributes }}>
-
-  <div class="b-c">
-    {{ content.contextual_links }}
-
-    {% if content.field_short_title %}
-      <div class="sh sh--y sh--b0 m-b200 cl">
-        {{ content.field_short_title }}
-      </div>
-    {% endif %}
 
 
+{#<div class="b b--fw"{{ attributes }}>#}
+{#  <div class="b-c">#}
+{#    <div class="sh sh--y sh--b0 m-b200">#}
+{#      {{ content.field_component_title }}#}
+{#      {% if content.field_short_title %}#}
+{#        {{ content.field_short_title }}#}
+{#      {% endif %}#}
+{#    </div>#}
+{#    <div class="g">#}
+{#      {{ content }}#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
 
-    <div class="g">
-
-      <div class="g--4 g--hc g--vc">{{ content.field_image }}</div>
-      <div class=" g g--8">
-        {{ content|without('field_short_title')|without('field_component_title')|without('contextual_links')|without('field_image') }}
-      </div>
-
-    </div>
-
-  </div>
-
+<div>
+  {{ content }}
 </div>
