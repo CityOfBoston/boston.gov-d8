@@ -156,6 +156,10 @@ function node_how_to_preprocess_page(&$variables) {
         // Make responsive to menu appearing on right by adding class mn.
         $variables["attributes"]->addClass("mn");
         $variables["attributes"]->addClass("page--fp");
+
+        // Attach custom CSS for overrides
+        $variables['#attached']['library'][] = 'node_how_to/node_how_to_styles';
+
       }
 
     }
