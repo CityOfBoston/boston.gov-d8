@@ -24,15 +24,66 @@
  * @see template_process()
  #}
 
-<div class="tab-p tab-p-{{ how_to_tabs_count }}" id="how_to_tab_content">
-  <div class="steps">
-  {% if content.field_how_to_steps %}
-    {{ content.field_how_to_steps }}
-  {% endif %}
-  </div>
-  <div class="keep-in-mind">
-  {% if content.field_keep_in_mind %}
-    {{ content.field_keep_in_mind }}
-  {% endif %}
+{#<div class="tab-p tab-p-{{ how_to_tabs_count }}" id="how_to_tab_content">#}
+{#  <div class="steps">#}
+{#  {% if content.field_how_to_steps %}#}
+{#    {{ content.field_how_to_steps }}#}
+{#  {% endif %}#}
+{#  </div>#}
+{#  <div class="keep-in-mind">#}
+{#  {% if content.field_keep_in_mind %}#}
+{#    {{ content.field_keep_in_mind }}#}
+{#  {% endif %}#}
+{#  </div>#}
+{#</div>#}
+
+<div {{ attributes.addClass(['dr', 'contextual-region']) }}>
+
+  <input type="checkbox" id="tab-p-{{ how_to_tabs_count }}" class="dr-tr a11y--h">
+
+  <label for="tab-p-{{ how_to_tabs_count }}" class="dr-h">
+
+    <div class="dr-ic">
+
+      <div class="dr-closed g g--hc g--vc">
+        <div class="g--4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path xmlns="http://www.w3.org/2000/svg" d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z"/>
+          </svg>
+        </div>
+        <div class="g--8 t--subinfo">show</div>
+      </div>
+
+      <div class="dr-opened g g--hc g--vc">
+        <div class="g--4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path xmlns="http://www.w3.org/2000/svg" d="M0 10h24v4h-24z"/>
+          </svg>
+        </div>
+        <div class="g--8 t--subinfo">hide</div>
+      </div>
+
+
+
+    </div>
+
+    <div class="dr-t">{{ content.field_how_to_title }}</div>
+
+{#    {% if content.field_short_description['#items'].getValue() %}#}
+{#      <div class="dr-st">{{ content.field_short_description }}</div>#}
+{#    {% endif %}#}
+  </label>
+
+  <div class="dr-c">
+    <div class="steps">
+      {% if content.field_how_to_steps %}
+        {{ content.field_how_to_steps }}
+      {% endif %}
+    </div>
+    <div class="keep-in-mind">
+      {% if content.field_keep_in_mind %}
+        {{ content.field_keep_in_mind }}
+      {% endif %}
+    </div>
   </div>
 </div>
