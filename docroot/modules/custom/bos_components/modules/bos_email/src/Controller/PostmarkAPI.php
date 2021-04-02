@@ -46,6 +46,17 @@ class PostmarkAPI extends ControllerBase {
   }
 
   /**
+   * Check / set valid session token.
+   *
+   */
+  public function token() {
+    $session = \Drupal::request()->getSession();
+    $token = $session->get('token_session');
+
+    return $token;
+  }
+
+  /**
    * Perform Drupal Queue tasks.
    *
    * @param array $data

@@ -68,6 +68,13 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'render element' => 'form',
       'template' => 'templates/snippets/user_login',
     ],
+    'contactFormTemplate' => [
+      'render element' => 'form',
+      'template' => 'templates/snippets/contactFormTemplate',
+      'variables' => [
+        'token_session' => '',
+      ],
+    ],
     'logo' => [
       'template' => 'snippets/logo',
       'variables' => [
@@ -176,7 +183,11 @@ function bos_theme_preprocess(array &$variables, $hook) {
     $mode = _bos_theme_library();
     $lib = \Drupal::service('library.discovery')
       ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
+    $date = new DateTime();
+    $session = drupal::request()->getSession();
+    $session->set('token_session', $date->getTimestamp());
     $variables['asset_url'] = $lib['remote'];
+    $variables['token_session'] = $date->getTimestamp();
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
     if (!is_null(Drupal::requestStack()
@@ -1118,6 +1129,7 @@ function _bos_theme_render_snippets(array &$variables) {
     '#front_page' => $variables['front_page'],
     '#asset_url' => $variables['asset_url'],
     '#asset_name' => $variables['asset_name'],
+    '#token_session' => $variables['token_session'],
     '#cache_buster' => $variables['cache_buster'],
     '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
     '#secondary_menu' => $variables['secondary_menu'],
@@ -1133,6 +1145,8 @@ function _bos_theme_render_snippets(array &$variables) {
   $variables['search'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'seal']);
   $variables['seal'] = \Drupal::service('renderer')->render($vars);
+
+  
 }
 
 /**

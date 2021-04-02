@@ -40,11 +40,17 @@
                                 <div class="txt visually-hidden">
                                     <label for="email[honey]" class="txt-l">Gotcha</label>
                                     <input name="email[honey]" id="email[honey]" type="text" value="" placeholder="Honey">
+                                    <input name="token" value="{{ token_session }}">
                                 </div>
                             </div>
                             <div class="bc bc--r p-t500">
                                 <button id="contactFormSubmitBtn" type="submit" class="btn btn--700" name="Send Message">Send Message</button>
                             </div>
+                            <ol>
+                                {% for key, value in _context  %}
+                                  <li>{{ key }}</li>
+                                {% endfor %}
+                            </ol>
                         </div>
                     </form>
                 </div>
