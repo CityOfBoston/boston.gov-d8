@@ -4,6 +4,7 @@ status: false
 dependencies:
   config:
     - core.entity_view_mode.paragraph.listing
+    - field.field.paragraph.cabinet.field_component_theme
     - field.field.paragraph.cabinet.field_contacts
     - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
@@ -35,6 +36,7 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_component_theme: true
   field_description: true
   field_short_title: true
   field_title: true
