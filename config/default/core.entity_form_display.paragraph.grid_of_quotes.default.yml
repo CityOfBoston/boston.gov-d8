@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.grid_of_quotes.field_component_theme
     - field.field.paragraph.grid_of_quotes.field_component_title
     - field.field.paragraph.grid_of_quotes.field_grid_of_quotes
     - field.field.paragraph.grid_of_quotes.field_short_title
@@ -14,8 +15,14 @@ targetEntityType: paragraph
 bundle: grid_of_quotes
 mode: default
 content:
+  field_component_theme:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
   field_component_title:
-    weight: 3
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -23,7 +30,7 @@ content:
     third_party_settings: {  }
     region: content
   field_grid_of_quotes:
-    weight: 5
+    weight: 3
     type: paragraphs
     settings:
       title: Quote
@@ -36,13 +43,13 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
     region: content
   field_short_title:
-    weight: 4
+    weight: 2
     type: string_textfield
     settings:
       size: 60
