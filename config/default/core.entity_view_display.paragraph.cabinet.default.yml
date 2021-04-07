@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.cabinet.field_component_theme
     - field.field.paragraph.cabinet.field_contacts
     - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
@@ -71,4 +72,5 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  field_component_theme: true

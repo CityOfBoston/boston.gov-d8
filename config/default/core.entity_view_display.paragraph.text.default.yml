@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.text.field_background_image
+    - field.field.paragraph.text.field_component_theme
     - field.field.paragraph.text.field_component_title
     - field.field.paragraph.text.field_contact
     - field.field.paragraph.text.field_hide_title_bar
@@ -23,14 +24,14 @@ mode: default
 content:
   field_background_image:
     label: above
-    weight: 5
+    weight: 4
     type: list_default
     settings: {  }
     third_party_settings: {  }
     region: content
   field_component_title:
     label: hidden
-    weight: 3
+    weight: 2
     type: string
     settings:
       link_to_entity: false
@@ -38,7 +39,7 @@ content:
     region: content
   field_contact:
     label: hidden
-    weight: 2
+    weight: 1
     type: entity_reference_label
     settings:
       link: true
@@ -53,7 +54,7 @@ content:
     region: content
   field_hide_title_bar:
     label: above
-    weight: 6
+    weight: 5
     type: boolean
     settings:
       format: default
@@ -63,7 +64,7 @@ content:
     region: content
   field_short_title:
     label: hidden
-    weight: 1
+    weight: 0
     type: string
     settings:
       link_to_entity: false
@@ -78,7 +79,7 @@ content:
     region: content
   field_text_blocks:
     label: hidden
-    weight: 4
+    weight: 3
     type: entity_reference_revisions_entity_view
     settings:
       view_mode: full
@@ -92,4 +93,5 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     region: content
-hidden: {  }
+hidden:
+  field_component_theme: true
