@@ -102,6 +102,7 @@ function bos_text_preprocess_paragraph(&$variables) {
   if ($variables["paragraph"]->bundle() == "text") {
     $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
 
+    //@TODO: Move to a new class and method
     // set this block to be centered if it gets wrapped in a full width block for the theme change
     if ($variables["paragraph"]->field_component_theme->value) {
       $variables['attributes']['class'][] = "b-fv";
