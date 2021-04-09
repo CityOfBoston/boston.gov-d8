@@ -1,5 +1,5 @@
 bos_email.token:
-  path: '/rest/email_token'
+  path: '/rest/email_token/{operation}'
   defaults:
     _controller: '\Drupal\bos_email\Controller\PostmarkAPI::token'
   methods: [POST]

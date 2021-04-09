@@ -18,6 +18,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
 use Drupal\bos_core\Controllers\Login\LoginController;
+use Drupal\bos_email\Controller\TokenOps;
 use Drupal\node\Entity\Node;
 
 /**
@@ -183,11 +184,12 @@ function bos_theme_preprocess(array &$variables, $hook) {
     $mode = _bos_theme_library();
     $lib = \Drupal::service('library.discovery')
       ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
-    $date = new DateTime();
-    $session = drupal::request()->getSession();
-    $session->set('token_session', $date->getTimestamp());
+    
     $variables['asset_url'] = $lib['remote'];
-    $variables['token_session'] = $date->getTimestamp();
+
+    $token = new TokenOps();
+    $token_session = $token->tokenCreate();
+    $variables['token_session'] = $token_session['token_session'];
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
     if (!is_null(Drupal::requestStack()
