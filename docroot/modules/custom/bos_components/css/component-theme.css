@@ -1,100 +1,437 @@
 /*# Styles for Component Themes (Blue, White, Grey) - START #*/
+/* ##  theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+/* ### Blue theme ### */
+/* ### White theme ### */
+/* ##  styles - END ## */
 
-  /* ## Grid of Links Mini Grid theme styles - START ## */
-    /* ### White theme - Works with the default, do not do anything ### */
 
-    /* ### Blue theme ### */
-      .paragraphs-item-group-of-links-mini-grid.b--b .sh-title {
-        color: #f2f2f2;
-      }
 
-      .paragraphs-item-group-of-links-mini-grid.b--b .sh {
-        border-color: #f2f2f2;
-      }
 
-    /* ### Grey theme ### */
-      .paragraphs-item-group-of-links-mini-grid.b--g .field-grid-links {
-        background-color: #fff;
-      }
 
-  /* ## Grid of Links Mini Grid theme styles - END ## */
+/* ##  Grid of Quotes theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+/* ### White theme ### */
+.paragraphs-item-grid-of-quotes.b--w {
+  background-color: #fff;
+}
 
-  /* ## Text theme styles - START ## */
-    /* ### Grey theme - Works with the default, do not do anything ### */
-    /* ### White theme - Works with the default, do not do anything ### */
+.paragraphs-item-grid-of-quotes.b--w .quote {
+  background-color: #F2F2F2;
+}
 
-    /* ### Blue theme ### */
-      .paragraphs-item-text.b--b .sh-title {
-        color: #f2f2f2;
-      }
+/* ### Blue theme ### */
+.paragraphs-item-grid-of-quotes.b--b {
+  background-color: #091f2f;
+}
 
-      .paragraphs-item-text.b--b .sh {
-        border-color: #f2f2f2;
-      }
+.paragraphs-item-grid-of-quotes.b--b .sh-title {
+  color: #f2f2f2;
+}
 
-  /* ## Text theme styles - END ## */
+.paragraphs-item-grid-of-quotes.b--b .sh {
+  border-color: #f2f2f2;
+}
+/* ##  Grid of Quotes styles - END ## */
 
-  /* ## Drawer theme styles - START ## */
-    /* ### Grey theme - Grey is the default, do not do anything ### */
 
-    /* ### Blue theme ### */
-      .paragraphs-item-drawers.b--b {
-        background-color: #091f2f;
-        color: #58585b;
-      }
+/* ##  Grid of Guides theme styles - START ## */
+/* ### Blue theme - Works with the default, do not do anything ### */
+/* ### Grey theme ### */
+.paragraphs-item-grid-of-topics.b--g {
+  background-color: #F2F2F2;
+}
 
-      .paragraphs-item-drawers.b--b .dr-tr:checked~.dr-h {
-        background-color: #1871bd;
-      }
+.paragraphs-item-grid-of-topics.b--g .sh-title {
+  color: #091f2f;
+}
 
-      .paragraphs-item-drawers.b--b .sh-title,
-      .paragraphs-item-drawers.b--b .dr-tr:checked~.dr-h .dr-t {
-        color: #f2f2f2;
-      }
+.paragraphs-item-grid-of-topics.b--g .sh {
+  border-color: #091f2f;
+}
 
-      .paragraphs-item-drawers.b--b .dr-tr:checked~.dr-h .dr-i{
-        fill: #f2f2f2;
-      }
+/* ### White theme ### */
+.paragraphs-item-grid-of-topics.b--w {
+  background-color: #fff;
+}
 
-      .paragraphs-item-drawers.b--b .sh {
-        border-color: #f2f2f2;
-      }
+.paragraphs-item-grid-of-topics.b--w .sh-title {
+  color: #091f2f;
+}
 
-    /* ### White theme ### */
-      .paragraphs-item-drawers.b--w {
-        background-color: #fff;
-      }
+.paragraphs-item-grid-of-topics.b--w .sh {
+  border-color: #091f2f;
+}
 
-      .paragraphs-item-drawers.b--w .dr-h {
-        background-color: #f2f2f2;
-      }
+/* ##  Grid of Guides styles - END ## */
 
-      .paragraphs-item-drawers.b--w .dr-h:focus .dr-t,
-      .paragraphs-item-drawers.b--w .dr-h:hover .dr-t {
-        color: #091f2f;
-      }
 
-      .paragraphs-item-drawers.b--w .dr-h:hover .dr-i {
-        fill: #091f2f;
-      }
+/* ##  Cabinet theme styles - START ## */
+/* ### White theme - Works with the default, do not do anything ### */
+/* ### Grey theme - Works with the default, do not do anything  ### */
+/* ### Blue theme ### */
+.paragraphs-item-cabinet.b--b h5,
+.paragraphs-item-cabinet.b--b .t--intro{
+  color: #fff;
+}
+/* ##  Cabinet styles - END ## */
 
-      .paragraphs-item-drawers.b--w .dr-h:focus .dr-t,
-      .paragraphs-item-drawers.b--w .dr-tr:checked~.dr-h:hover .dr-t{
-        color: #1871bd;
-      }
 
-      .paragraphs-item-drawers.b--w .dr-h:focus .dr-i,
-      .paragraphs-item-drawers.b--w .dr-tr:checked~.dr-h:hover .dr-i {
-        fill: #1871bd;
-      }
+/*@TODO: Needs to be finished, only partially complete. */
+/* ##  Group of Links - Quick Links theme styles - START ## */
+/* ### Blue theme - Works with the default, do not do anything ### */
+/* ### Grey theme ### */
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-str-c,
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-tr:checked~.dr-ql-h,
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-h,
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-c,
+.paragraphs-item-group-of-links-quick-links.b--g {
+  background-color: #F2F2F2;
+  color: #091f2f;
+}
 
-      .paragraphs-item-drawers.b--w .dr-tr:checked~.dr-h:focus .dr-t {
-        color: #f2f2f2;
-      }
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-lwa--w,
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-lwa--w:link,
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-lwa--w:visited,
+.paragraphs-item-group-of-links-quick-links.b--g .sh-title {
+  color: #091f2f;
+}
 
-      .paragraphs-item-drawers.b--w .dr-tr:checked~.dr-h:focus .dr-i {
-        fill: #f2f2f2;
-      }
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-lwa--w:hover {
+  color: #288BE4;
+}
 
-  /* ## Drawer then styles - END ## */
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-lwa--w .dr-ql-lwa-i {
+  fill: #091f2f;
+}
+
+.paragraphs-item-group-of-links-quick-links.b--g .dr-ql-lwa--w:hover .dr-ql-lwa-i {
+  fill: #288BE4;
+}
+
+/* ### White theme ### */
+/* ##  Group of Links - Quick Links styles - END ## */
+
+
+/* ##  Group of Links - List theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+.paragraphs-item-group-of-links-list.b--g {
+  padding: 2rem 0;
+}
+
+/* ### Blue theme ### */
+.paragraphs-item-group-of-links-list.b--b {
+  background-color: #091f2f;
+  padding: 2rem 0;
+}
+
+.paragraphs-item-group-of-links-list.b--b .links-grid-left-rail .links-grid-field-subheader,
+.paragraphs-item-group-of-links-list.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-group-of-links-list.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### White theme ### */
+.paragraphs-item-group-of-links-list.b--w {
+  background-color: #fff;
+  padding: 2rem 0;
+}
+
+.paragraphs-item-group-of-links-list.b--w .links-grid-field-list-links .paragraphs-item-gol-list-links {
+  background-color: #f2f2f2;
+}
+
+/* ##  Group of Links - List styles - END ## */
+
+
+/* ##  Upcoming events theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+.paragraphs-item-events-and-notices.b--g {
+  padding: 2rem 0;
+}
+
+/* ### Blue theme ### */
+.paragraphs-item-events-and-notices.b--b {
+  background-color: #091f2f;
+  padding: 2rem 0;
+}
+
+.paragraphs-item-events-and-notices.b--b .events-notices {
+  background-color: #091f2f;
+}
+
+.paragraphs-item-events-and-notices.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-events-and-notices.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### White theme ### */
+.paragraphs-item-events-and-notices.b--w {
+  background-color: #fff;
+  padding: 2rem 0;
+}
+
+.paragraphs-item-events-and-notices.b--w .events-notices {
+  background-color: #fff;
+}
+
+.paragraphs-item-events-and-notices.b--w .evt {
+  background-color: #f2f2f2;
+}
+/* ##  Upcoming events styles - END ## */
+
+
+/* ##  Transaction Grid theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+/* ### Blue theme ### */
+.paragraphs-item-transaction-grid.b--b {
+  background-color: #091f2f;
+}
+
+.paragraphs-item-transaction-grid.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-transaction-grid.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### White theme ### */
+.paragraphs-item-transaction-grid.b--w .lwi {
+  background-color: #f2f2f2;
+}
+
+.paragraphs-item-transaction-grid.b--w .lwi:focus,
+.paragraphs-item-transaction-grid.b--w .lwi:hover {
+  background-color: #288be4;
+  color: #fff;
+}
+
+/* ##  Transaction Grid styles - END ## */
+
+
+/* ##  News/Announcements theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+.paragraphs-item-news-and-announcements.b--g {
+  padding: 2rem 0;
+}
+
+/* ### Blue theme ### */
+.paragraphs-item-news-and-announcements.b--b {
+  background-color: #091f2f;
+  padding: 2rem 0;
+}
+
+.paragraphs-item-news-and-announcements.b--b .news-item-news .news-item-default-image {
+  filter: brightness(4) sepia(1) hue-rotate(900deg) saturate(10);
+}
+
+.paragraphs-item-news-and-announcements.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-news-and-announcements.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### White theme ### */
+.paragraphs-item-news-and-announcements.b--w {
+  background-color: #fff;
+  padding: 2rem 0;
+}
+
+.paragraphs-item-news-and-announcements.b--w .news-item-wrapper {
+  background-color: #f2f2f2;
+}
+
+.paragraphs-item-news-and-announcements.b--w .news-item .department-title {
+  color: #58585b;
+}
+
+/* ##  News/Announcements styles - END ## */
+
+
+/* ## Three column with image theme styles - START ## */
+/* ### Blue theme - Works with the default, do not do anything ### */
+.paragraphs-item-3-column-w-image.b--b {
+  padding-top: 2rem;
+}
+
+/* ### Grey theme ### */
+.paragraphs-item-3-column-w-image.b--g {
+  background-color: #f2f2f2;
+  padding-top: 2rem;
+}
+
+.paragraphs-item-3-column-w-image.b--g .sh-title {
+  color: #091f2f;
+}
+
+.paragraphs-item-3-column-w-image.b--g .sh {
+  border-color: #091f2f;
+}
+
+.paragraphs-item-3-column-w-image.b--g .column-wrapper {
+  background-color: #f2f2f2;
+  color: #58585b;
+}
+
+/* ### White theme ### */
+.paragraphs-item-3-column-w-image.b--w {
+  background-color: #fff;
+  padding-top: 2rem;
+}
+
+.paragraphs-item-3-column-w-image.b--w .sh-title {
+  color: #091f2f;
+}
+
+.paragraphs-item-3-column-w-image.b--w .sh {
+  border-color: #091f2f;
+}
+
+.paragraphs-item-3-column-w-image.b--w .column-wrapper {
+  background-color: #fff;
+  color: #58585b;
+}
+
+/* ##  Three column with image styles - END ## */
+
+
+/* ## Grid of Links Mini Grid theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+.paragraphs-item-group-of-links-grid.b--g {
+  padding-top: 2rem;
+}
+
+/* ### Blue theme ### */
+.paragraphs-item-group-of-links-grid.b--b {
+  background-color: #091f2f;
+  padding-top: 2rem;
+}
+
+.paragraphs-item-group-of-links-grid.b--b .links-grid-left-rail .links-grid-field-subheader,
+.paragraphs-item-group-of-links-grid.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-group-of-links-grid.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### White theme ### */
+.paragraphs-item-group-of-links-grid.b--w {
+  background-color: #fff;
+  padding-top: 2rem;
+}
+
+.paragraphs-item-group-of-links-grid.b--w .links-grid-field-grid-links .paragraphs-item-grid-links {
+  background-color: #f2f2f2;
+}
+
+/* ## Grid of Links Mini Grid theme styles - END ## */
+
+/* ## Grid of Links Mini Grid theme styles - START ## */
+/* ### White theme - Works with the default, do not do anything ### */
+
+/* ### Blue theme ### */
+.paragraphs-item-group-of-links-mini-grid.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-group-of-links-mini-grid.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### Grey theme ### */
+.paragraphs-item-group-of-links-mini-grid.b--g .field-grid-links {
+  background-color: #fff;
+}
+
+/* ## Grid of Links Mini Grid theme styles - END ## */
+
+/* ## Text theme styles - START ## */
+/* ### Grey theme - Works with the default, do not do anything ### */
+/* ### White theme - Works with the default, do not do anything ### */
+
+/* ### Blue theme ### */
+.paragraphs-item-text.b--b .sh-title {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-text.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ## Text theme styles - END ## */
+
+/* ## Drawer theme styles - START ## */
+/* ### Grey theme - Grey is the default, do not do anything ### */
+
+/* ### Blue theme ### */
+.paragraphs-item-drawers.b--b {
+  background-color: #091f2f;
+  color: #58585b;
+}
+
+.paragraphs-item-drawers.b--b .dr-tr:checked ~ .dr-h {
+  background-color: #1871bd;
+}
+
+.paragraphs-item-drawers.b--b .sh-title,
+.paragraphs-item-drawers.b--b .dr-tr:checked ~ .dr-h .dr-t {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-drawers.b--b .dr-tr:checked ~ .dr-h .dr-i {
+  fill: #f2f2f2;
+}
+
+.paragraphs-item-drawers.b--b .sh {
+  border-color: #f2f2f2;
+}
+
+/* ### White theme ### */
+.paragraphs-item-drawers.b--w {
+  background-color: #fff;
+}
+
+.paragraphs-item-drawers.b--w .dr-h {
+  background-color: #f2f2f2;
+}
+
+.paragraphs-item-drawers.b--w .dr-h:focus .dr-t,
+.paragraphs-item-drawers.b--w .dr-h:hover .dr-t {
+  color: #091f2f;
+}
+
+.paragraphs-item-drawers.b--w .dr-h:hover .dr-i {
+  fill: #091f2f;
+}
+
+.paragraphs-item-drawers.b--w .dr-h:focus .dr-t,
+.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:hover .dr-t {
+  color: #1871bd;
+}
+
+.paragraphs-item-drawers.b--w .dr-h:focus .dr-i,
+.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:hover .dr-i {
+  fill: #1871bd;
+}
+
+.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:focus .dr-t {
+  color: #f2f2f2;
+}
+
+.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:focus .dr-i {
+  fill: #f2f2f2;
+}
+
+/* ## Drawer then styles - END ## */
 /*# Styles for Component Themes (Blue, White, Grey) - END #*/
