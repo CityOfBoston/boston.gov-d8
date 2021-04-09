@@ -1319,6 +1319,9 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       // If TAB key pressed
       if (e.keyCode == 9) {
         $("#web-app .mnl button.dl-i").addClass("focus-active");
+        $("a").css("pointer-events", "none");
+        $(".dr").css("pointer-events", "none");
+        $(".dr-h").css("pointer-events", "none");
 
         // If inside a Modal dialog (determined by attribute role="dialog")
         if ($(target).parents('[role=dialog]').length) {
@@ -1344,7 +1347,16 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
     $(document).on('mousemove', function(e) {
 
       $("#web-app .mnl button.dl-i").removeClass("focus-active");
+      $("a").css("pointer-events", "auto");
+      $(".dr").css("pointer-events", "auto");
+      $(".dr-h").css("pointer-events", "auto");
 
+    });
+
+    //remove ids attribute in svg icons
+    $('svg').each(function() {
+      $(this).removeAttr("id");
+      $(this).removeAttr("data-name");
     });
 
     //Adding _target attribute to all external URL
