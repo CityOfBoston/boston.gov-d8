@@ -186,10 +186,6 @@ function bos_theme_preprocess(array &$variables, $hook) {
       ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
     
     $variables['asset_url'] = $lib['remote'];
-
-    $token = new TokenOps();
-    $token_session = $token->tokenCreate();
-    $variables['token_session'] = $token_session['token_session'];
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
     if (!is_null(Drupal::requestStack()
