@@ -18,7 +18,6 @@ use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\Core\Site\Settings;
 use Drupal\bos_core\Controllers\Login\LoginController;
-use Drupal\bos_email\Controller\TokenOps;
 use Drupal\node\Entity\Node;
 
 /**
@@ -68,13 +67,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
     'user_login' => [
       'render element' => 'form',
       'template' => 'templates/snippets/user_login',
-    ],
-    'contactFormTemplate' => [
-      'render element' => 'form',
-      'template' => 'templates/snippets/contactFormTemplate',
-      'variables' => [
-        'token_session' => '',
-      ],
     ],
     'logo' => [
       'template' => 'snippets/logo',
@@ -186,10 +178,6 @@ function bos_theme_preprocess(array &$variables, $hook) {
       ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
     
     $variables['asset_url'] = $lib['remote'];
-
-    $token = new TokenOps();
-    $token_session = $token->tokenCreate();
-    $variables['token_session'] = $token_session['token_session'];
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
     if (!is_null(Drupal::requestStack()
@@ -1131,7 +1119,6 @@ function _bos_theme_render_snippets(array &$variables) {
     '#front_page' => $variables['front_page'],
     '#asset_url' => $variables['asset_url'],
     '#asset_name' => $variables['asset_name'],
-    '#token_session' => $variables['token_session'],
     '#cache_buster' => $variables['cache_buster'],
     '#hide_logo' => !empty($variables['hide_logo']) ? $variables['hide_logo'] : '',
     '#secondary_menu' => $variables['secondary_menu'],
