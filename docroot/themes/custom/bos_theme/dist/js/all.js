@@ -1319,9 +1319,12 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       // If TAB key pressed
       if (e.keyCode == 9) {
         $("#web-app .mnl button.dl-i").addClass("focus-active");
-        $("a").css("pointer-events", "none");
-        $(".dr").css("pointer-events", "none");
-        $(".dr-h").css("pointer-events", "none");
+        $("a").addClass("focus-active");
+        $(".dr").addClass("focus-active");
+        $(".dr-h").addClass("focus-active");
+        $(".field-grid-links").addClass("focus-active");
+        $(".cd").addClass("focus-active");
+        $(".news-item").addClass("focus-active");
 
         // If inside a Modal dialog (determined by attribute role="dialog")
         if ($(target).parents('[role=dialog]').length) {
@@ -1347,9 +1350,12 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
     $(document).on('mousemove', function(e) {
 
       $("#web-app .mnl button.dl-i").removeClass("focus-active");
-      $("a").css("pointer-events", "auto");
-      $(".dr").css("pointer-events", "auto");
-      $(".dr-h").css("pointer-events", "auto");
+      $("a").removeClass("focus-active");
+      $(".dr").removeClass("focus-active");
+      $(".dr-h").removeClass("focus-active");
+      $(".field-grid-links").removeClass("focus-active");
+      $(".cd").removeClass("focus-active");
+      $(".news-item").removeClass("focus-active");
 
     });
 
@@ -1357,6 +1363,7 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
     $('svg').each(function() {
       $(this).removeAttr("id");
       $(this).removeAttr("data-name");
+      //$(this).addClass("dataname")
     });
 
     //Adding _target attribute to all external URL
