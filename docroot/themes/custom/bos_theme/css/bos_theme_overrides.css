@@ -1327,6 +1327,22 @@ body.no-s .md-c:focus-within {
 
 .node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
 
+.scrollToTopBtn {
+  width: 48px;
+  position: fixed;
+  bottom: 160px;
+  right: 30px;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: all .5s ease
+}
+
+.showBtn {
+  opacity: 1;
+  transform: translateY(0)
+}
+
 .sr-only {
   position:absolute;
   left:-10000px;
