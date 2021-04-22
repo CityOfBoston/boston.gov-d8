@@ -1322,7 +1322,7 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
         $("a").addClass("focus-active");
         $(".dr").addClass("focus-active");
         $(".dr-h").addClass("focus-active");
-        $(".field-grid-links").addClass("focus-active");
+        $(".field-grid-links, .component-section").addClass("focus-active");
         $(".cd").addClass("focus-active");
         $(".news-item").addClass("focus-active");
 
@@ -1353,7 +1353,7 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       $("a").removeClass("focus-active");
       $(".dr").removeClass("focus-active");
       $(".dr-h").removeClass("focus-active");
-      $(".field-grid-links").removeClass("focus-active");
+      $(".field-grid-links, .component-section").removeClass("focus-active");
       $(".cd").removeClass("focus-active");
       $(".news-item").removeClass("focus-active");
 
