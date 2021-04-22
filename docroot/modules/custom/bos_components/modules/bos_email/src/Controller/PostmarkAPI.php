@@ -29,13 +29,6 @@ class PostmarkAPI extends ControllerBase {
   public $server;
 
   /**
-   * Hosted source of request (i.e drupal).
-   *
-   * @var string
-   */
-  public $source;
-
-  /**
    * Public construct for Request.
    */
   public function __construct(RequestStack $request) {
