@@ -39,6 +39,7 @@ class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectT
           break;
 
         case "Abutter Sale":
+        case "For Sale":
           $projectName = 'sale-marker.svg';
           break;
 

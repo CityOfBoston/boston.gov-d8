@@ -47,7 +47,6 @@ dependencies:
     - image.style.card_grid_2w_vertical_1x
     - node.type.bh_project
   module:
-    - advanced_text_formatter
     - colorbox
     - fences
     - field_group
@@ -165,10 +164,10 @@ third_party_settings:
     group_hero_placeholder:
       children:
         - field_bh_wysiwyg_photo_a
-      parent_name: group_header
-      weight: 106
+      parent_name: ''
+      weight: 2
       format_type: html_element
-      region: content
+      region: hidden
       format_settings:
         element: div
         show_label: false
@@ -185,9 +184,7 @@ third_party_settings:
         - bh_project_bh_homepage_link
         - field_bh_project_name
         - field_bh_project_parcels
-        - field_bh_project_images
-        - bh_project_map_link
-        - group_hero_placeholder
+        - group_header_images_and_map
         - group_info_list
       parent_name: group_header_full_width_containe
       weight: 1
@@ -272,7 +269,7 @@ third_party_settings:
         - field_bh_units_affordable
         - field_bh_property_size
       parent_name: group_header
-      weight: 107
+      weight: 106
       format_type: html_element
       region: content
       format_settings:
@@ -341,6 +338,25 @@ third_party_settings:
         effect: none
         speed: fast
       label: Feedback
+    group_header_images_and_map:
+      children:
+        - field_bh_project_images
+        - bh_project_map_link
+      parent_name: group_header
+      weight: 103
+      format_type: html_element
+      region: content
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: bh-project-header-img-map
+      label: 'Header Images and Map'
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -433,7 +449,7 @@ content:
     type: entity_reference_label
     region: content
   field_bh_project_images:
-    weight: 103
+    weight: 104
     label: visually_hidden
     settings:
       colorbox_node_style: hide
@@ -547,43 +563,6 @@ content:
         fences_label_classes: m-v200
     type: number_integer
     region: content
-  field_bh_wysiwyg_photo_a:
-    weight: 1
-    label: visually_hidden
-    settings:
-      trim_length: '0'
-      filter: drupal
-      format: full_html
-      allowed_html:
-        - a
-        - b
-        - br
-        - dd
-        - dl
-        - dt
-        - em
-        - i
-        - li
-        - ol
-        - p
-        - strong
-        - u
-        - ul
-      ellipsis: 0
-      word_boundary: 0
-      use_summary: 0
-      token_replace: 0
-      autop: 0
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: d-n
-        fences_field_item_tag: div
-        fences_field_item_classes: ''
-        fences_label_tag: div
-        fences_label_classes: ''
-    type: advanced_text
-    region: content
 hidden:
   field_bh_attachment: true
   field_bh_attachments: true
@@ -614,6 +593,7 @@ hidden:
   field_bh_total_num_units: true
   field_bh_units_for_rent: true
   field_bh_units_to_own: true
+  field_bh_wysiwyg_photo_a: true
   field_project_manager_email: true
   langcode: true
   links: true
