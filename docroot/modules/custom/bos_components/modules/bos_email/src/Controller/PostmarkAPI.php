@@ -29,6 +29,13 @@ class PostmarkAPI extends ControllerBase {
   public $server;
 
   /**
+   * Hosted source of request (i.e drupal).
+   *
+   * @var string
+   */
+  public $source;
+
+  /**
    * Public construct for Request.
    */
   public function __construct(RequestStack $request) {
@@ -52,37 +59,6 @@ class PostmarkAPI extends ControllerBase {
    *
    */
   public function token(string $operation) {
-    /*$session = \Drupal::request()->getSession();
-    if ($operation == "create") {
-      $date_time = \Drupal::time()->getCurrentTime();
-      $token_name = 'token_session_'.$date_time;
-    
-      $session->set($token_name, $date_time);
-      $response_token =  [
-        'token_session' => $date_time
-      ];
-    } elseif ($operation == "remove") {
-      $data = $this->request->getCurrentRequest()->get('data');
-      $session->remove('token_session_'.$data);
-      $response_token =  [
-        'token_session' => "removed"
-      ];
-    } else {
-      $data = $this->request->getCurrentRequest()->get('data');
-        if ($data !== NULL) {
-          if ($session->get('token_session_'.$data)) {
-
-            $response_token =  [
-              'token_session' => TRUE,
-            ];
-          } else {
-            $response_token =  [
-              'token_session' => FALSE,
-            ];
-
-          }
-        }
-    }*/
     $data = $this->request->getCurrentRequest()->get('data');
     $token = new tokenOps();
     
@@ -127,7 +103,6 @@ class PostmarkAPI extends ControllerBase {
 
     $postmark_auth = new PostmarkOps();
     $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
-    
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
@@ -180,7 +155,7 @@ class PostmarkAPI extends ControllerBase {
 
       $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($data);
-
+      
       if (!$postmark_send) {
         // Add email data to queue because of Postmark failure.
         $this->addQueueItem($data);
@@ -201,7 +176,7 @@ class PostmarkAPI extends ControllerBase {
 
       $response_array = [
         'status' => 'error',
-        'response' => 'wrong token could not authenticate',
+        'response' => 'could not authenticate',
       ];
 
     endif;
@@ -273,11 +248,46 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
+  public function beginSession(string $server) {
+    $token = new tokenOps();
+    $data = $this->request->getCurrentRequest()->get('email');
+    $data_token = $token->tokenGet($data["token_session"]);
+ 
+    if ($data_token["token_session"] == TRUE) {
+
+      // remove token session from DB to prevent reuse
+      $token->tokenRemove($data["token_session"]);
+      // begin normal email submission
+      $response = $this->begin();
+
+    } else {
+
+      $response_array = [
+        'status' => 'error',
+        'response' => 'invalid token',
+      ];
+
+      $response = new CacheableJsonResponse($response_array);
+      
+    }
+
+    return $response;
+
+  }
+
+
+  /**
+   * Begin script and API operations.
+   *
+   * @param string $server
+   *   The server being called via the endpoint uri.
+   */
   public function begin(string $server = 'contactform') {
     // Get POST data and check auth.
     $this->server = $server;
 
     $request_method = $this->request->getCurrentRequest()->getMethod();
+    
     if ($request_method == "POST") :
       $data = $this->request->getCurrentRequest()->get('email');
       $response_array = $this->validateParams($data, $server);
@@ -290,7 +300,7 @@ class PostmarkAPI extends ControllerBase {
       ];
 
     endif;
-
+    
     $response = new CacheableJsonResponse($response_array);
     return $response;
   }
