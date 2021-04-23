@@ -3,6 +3,8 @@
 namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Site\Settings;
+use Drupal\bos_email\Templates\Contactform;
 
 /**
  * Create, remove, and get valid session token.
@@ -32,7 +34,7 @@ class TokenOps extends ControllerBase {
 
   public function tokenRemove(string $data) {
     $test = $this->session->remove('token_session_'.$data);
-    if ($test !== NULL) {
+    if ($test !== null) {
       $response_token =  [
         'token_session' => "removed"
       ];
@@ -52,6 +54,7 @@ class TokenOps extends ControllerBase {
 
           $response_token =  [
             'token_session' => TRUE,
+            'token_value' => 'token_session_'.$data,
           ];
         } else {
           $response_token =  [

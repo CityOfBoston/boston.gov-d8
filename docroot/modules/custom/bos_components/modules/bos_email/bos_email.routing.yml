@@ -18,6 +18,17 @@ bos_email.send:
   requirements:
     _access: 'TRUE'
 
+bos_email.send_token_session:
+  path: '/rest/email_session/{server}'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::beginSession'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+
+
 bos_email.send_legacy:
   path: '/emails'
   defaults:
