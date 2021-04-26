@@ -4,6 +4,7 @@ namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\bos_email\Templates\Contactform;
+use Drupal\bos_email\Controller\TokenOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -45,6 +46,30 @@ class PostmarkAPI extends ControllerBase {
     );
   }
 
+
+  /**
+   * Check / set valid session token.
+   *
+   */
+  public function token(string $operation) {
+    $data = $this->request->getCurrentRequest()->get('data');
+    $token = new tokenOps();
+    
+    if ($operation == "create") {
+      $response_token = $token->tokenCreate();
+
+    } elseif ($operation == "remove") {
+      $response_token = $token->tokenRemove($data);
+
+    } else {
+      $response_token = $token->tokenGet($data);
+
+    }
+    
+    $response = new CacheableJsonResponse($response_token);
+    return $response;
+  }
+
   /**
    * Perform Drupal Queue tasks.
    *
@@ -71,7 +96,6 @@ class PostmarkAPI extends ControllerBase {
 
     $postmark_auth = new PostmarkOps();
     $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
-    
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
@@ -124,7 +148,7 @@ class PostmarkAPI extends ControllerBase {
 
       $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($data);
-
+      
       if (!$postmark_send) {
         // Add email data to queue because of Postmark failure.
         $this->addQueueItem($data);
@@ -145,7 +169,7 @@ class PostmarkAPI extends ControllerBase {
 
       $response_array = [
         'status' => 'error',
-        'response' => 'wrong token could not authenticate',
+        'response' => 'could not authenticate',
       ];
 
     endif;
@@ -186,7 +210,7 @@ class PostmarkAPI extends ControllerBase {
         }
         else {
           // Check for blank fields.
-          if ($value == "" && $key !== "honey") {
+          if ($value == "" && ($key !== "honey" && $key !== "token_session")) {
             $error = "Subject and Message fields must have values.";
             break;
           }
@@ -217,11 +241,46 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
+  public function beginSession(string $server) {
+    $token = new tokenOps();
+    $data = $this->request->getCurrentRequest()->get('email');
+    $data_token = $token->tokenGet($data["token_session"]);
+ 
+    if ($data_token["token_session"] == TRUE) {
+
+      // remove token session from DB to prevent reuse
+      $token->tokenRemove($data["token_session"]);
+      // begin normal email submission
+      $response = $this->begin();
+
+    } else {
+
+      $response_array = [
+        'status' => 'error',
+        'response' => 'invalid token',
+      ];
+
+      $response = new CacheableJsonResponse($response_array);
+      
+    }
+
+    return $response;
+
+  }
+
+
+  /**
+   * Begin script and API operations.
+   *
+   * @param string $server
+   *   The server being called via the endpoint uri.
+   */
   public function begin(string $server = 'contactform') {
     // Get POST data and check auth.
     $this->server = $server;
 
     $request_method = $this->request->getCurrentRequest()->getMethod();
+    
     if ($request_method == "POST") :
       $data = $this->request->getCurrentRequest()->get('email');
       $response_array = $this->validateParams($data, $server);
@@ -234,7 +293,7 @@ class PostmarkAPI extends ControllerBase {
       ];
 
     endif;
-
+    
     $response = new CacheableJsonResponse($response_array);
     return $response;
   }
