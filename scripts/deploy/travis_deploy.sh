@@ -120,7 +120,7 @@
                 -rlDW \
                 --delete-excluded \
                 --files-from=${deploy_from_file} \
-                --exclude-from=${tmp_excludes_file} \
+                --exclude-from=${deploy_excludes_file} \
                 ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
 
             # Force composer.json - or else drush get broken.
