@@ -116,14 +116,6 @@ function bos_components_preprocess_paragraph(&$variables) {
 
     if ($themeStyle = $paragraph->field_component_theme->value) {
 
-//      $variables['attributes']['class'][] = "b";
-//      $variables['attributes']['class'][] = "b--fw";
-//      $variables['attributes']['class'][] = "b-fv";
-
-      //@TODO: ? change out ot render arrays?
-//      $variables['prefix']['#markup'] = '<div class="b b--fw">';
-//      $variables['suffix']['#markup'] = '</div>';
-
       switch ($themeStyle) {
         case 'g':
           //$variables['attributes']->addClass("b--g");
