@@ -4,6 +4,7 @@ namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\bos_email\Templates\Contactform;
+use Drupal\bos_email\Controller\TokenOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -43,6 +44,61 @@ class PostmarkAPI extends ControllerBase {
       // Load the service required to construct this class.
       $container->get('request_stack')
     );
+  }
+
+
+  /**
+   * Check / set valid session token.
+   *
+   */
+  public function token(string $operation) {
+    /*$session = \Drupal::request()->getSession();
+    if ($operation == "create") {
+      $date_time = \Drupal::time()->getCurrentTime();
+      $token_name = 'token_session_'.$date_time;
+    
+      $session->set($token_name, $date_time);
+      $response_token =  [
+        'token_session' => $date_time
+      ];
+    } elseif ($operation == "remove") {
+      $data = $this->request->getCurrentRequest()->get('data');
+      $session->remove('token_session_'.$data);
+      $response_token =  [
+        'token_session' => "removed"
+      ];
+    } else {
+      $data = $this->request->getCurrentRequest()->get('data');
+        if ($data !== NULL) {
+          if ($session->get('token_session_'.$data)) {
+
+            $response_token =  [
+              'token_session' => TRUE,
+            ];
+          } else {
+            $response_token =  [
+              'token_session' => FALSE,
+            ];
+
+          }
+        }
+    }*/
+    $data = $this->request->getCurrentRequest()->get('data');
+    $token = new tokenOps();
+    
+    if ($operation == "create") {
+      $response_token = $token->tokenCreate();
+
+    } elseif ($operation == "remove") {
+      $response_token = $token->tokenRemove($data);
+
+    } else {
+      $response_token = $token->tokenGet($data);
+
+    }
+    
+    $response = new CacheableJsonResponse($response_token);
+    return $response;
   }
 
   /**
@@ -186,7 +242,7 @@ class PostmarkAPI extends ControllerBase {
         }
         else {
           // Check for blank fields.
-          if ($value == "" && $key !== "honey") {
+          if ($value == "" && ($key !== "honey" && $key !== "token_session")) {
             $error = "Subject and Message fields must have values.";
             break;
           }
