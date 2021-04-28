@@ -24,6 +24,10 @@
  * @see template_process()
  #}
 
+{% if prefix %}
+  {{ prefix }}
+{% endif %}
+
 <div {{ attributes.addClass('component-section') }}>
 
   <div class="content container"{{ content_attributes }}>
@@ -61,3 +65,7 @@
   </div>
 
 </div>
+
+{% if suffix %}
+  {{ suffix }}
+{% endif %}

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.cabinet.field_component_theme
     - field.field.paragraph.cabinet.field_contacts
     - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
@@ -18,6 +19,7 @@ bundle: cabinet
 mode: paragraphs_editor_preview
 content: {  }
 hidden:
+  field_component_theme: true
   field_contacts: true
   field_description: true
   field_person: true

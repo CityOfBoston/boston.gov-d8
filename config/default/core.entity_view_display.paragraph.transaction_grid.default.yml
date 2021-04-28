@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.transaction_grid.field_component_theme
     - field.field.paragraph.transaction_grid.field_component_title
     - field.field.paragraph.transaction_grid.field_contact
     - field.field.paragraph.transaction_grid.field_short_title
@@ -72,4 +73,5 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-hidden: {  }
+hidden:
+  field_component_theme: true

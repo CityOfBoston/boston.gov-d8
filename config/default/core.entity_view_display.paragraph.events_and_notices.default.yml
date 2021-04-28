@@ -3,6 +3,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - field.field.paragraph.events_and_notices.field_component_theme
     - field.field.paragraph.events_and_notices.field_component_title
     - field.field.paragraph.events_and_notices.field_featured_item
     - field.field.paragraph.events_and_notices.field_link
@@ -85,4 +86,5 @@ content:
     third_party_settings: {  }
     type: string
     region: content
-hidden: {  }
+hidden:
+  field_component_theme: true

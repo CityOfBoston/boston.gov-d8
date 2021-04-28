@@ -25,6 +25,11 @@
  * @see template_process()
  */
 #}
+
+{% if prefix %}
+  {{ prefix }}
+{% endif %}
+
 <div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
 {#  {{ content.contextual_links }}#}
   <div{{ content_attributes.addClass("content") }}>
@@ -56,3 +61,7 @@
     {% endif %}
   </div>
 </div>
+
+{% if suffix %}
+  {{ suffix }}
+{% endif %}

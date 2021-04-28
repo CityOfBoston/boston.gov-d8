@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.grid_of_quotes.field_component_theme
     - field.field.paragraph.grid_of_quotes.field_component_title
     - field.field.paragraph.grid_of_quotes.field_grid_of_quotes
     - field.field.paragraph.grid_of_quotes.field_short_title
@@ -14,6 +15,7 @@ bundle: grid_of_quotes
 mode: paragraphs_editor_preview
 content: {  }
 hidden:
+  field_component_theme: true
   field_component_title: true
   field_grid_of_quotes: true
   field_short_title: true

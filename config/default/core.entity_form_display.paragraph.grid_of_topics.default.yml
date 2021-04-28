@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.grid_of_topics.field_component_theme
     - field.field.paragraph.grid_of_topics.field_component_title
     - field.field.paragraph.grid_of_topics.field_contact
     - field.field.paragraph.grid_of_topics.field_short_title
@@ -15,8 +16,14 @@ targetEntityType: paragraph
 bundle: grid_of_topics
 mode: default
 content:
+  field_component_theme:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
   field_component_title:
-    weight: 4
+    weight: 0
     type: string_textfield
     settings:
       size: 60
@@ -24,16 +31,17 @@ content:
     third_party_settings: {  }
     region: content
   field_contact:
-    weight: 6
+    weight: 3
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
   field_short_title:
-    weight: 5
+    weight: 2
     type: string_textfield
     settings:
       size: 60
@@ -41,12 +49,13 @@ content:
     third_party_settings: {  }
     region: content
   field_topics:
-    weight: 8
+    weight: 4
     type: entity_reference_autocomplete
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
   moderation_state:

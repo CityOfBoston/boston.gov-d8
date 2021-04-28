@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.paragraphs_editor_preview
+    - field.field.paragraph.transaction_grid.field_component_theme
     - field.field.paragraph.transaction_grid.field_component_title
     - field.field.paragraph.transaction_grid.field_contact
     - field.field.paragraph.transaction_grid.field_short_title
@@ -25,6 +26,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
 hidden:
+  field_component_theme: true
   field_contact: true
   field_short_title: true
   field_transactions: true

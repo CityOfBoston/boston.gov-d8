@@ -26,6 +26,10 @@
  */
 #}
 
+{% if prefix %}
+  {{ prefix }}
+{% endif %}
+
 <div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
   <div class="content"{{ content_attributes }}>
     {% if content.field_component_title and not hideTitle %}
@@ -43,3 +47,7 @@
     {% endif %}
   </div>
 </div>
+
+{% if suffix %}
+  {{ suffix }}
+{% endif %}
