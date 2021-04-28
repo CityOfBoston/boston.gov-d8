@@ -1,0 +1,92 @@
+uuid: ddc78b7b-7c60-4ee6-add5-40e3fcacfe59
+langcode: en
+status: true
+dependencies:
+  config:
+    - entity_browser.browser.image_entity_browser
+    - field.field.paragraph.branded_links.field_component_theme
+    - field.field.paragraph.branded_links.field_component_title
+    - field.field.paragraph.branded_links.field_contact
+    - field.field.paragraph.branded_links.field_image
+    - field.field.paragraph.branded_links.field_links
+    - field.field.paragraph.branded_links.field_short_title
+    - paragraphs.paragraphs_type.branded_links
+  module:
+    - entity_browser
+    - paragraphs
+_core:
+  default_config_hash: OCy113n6k3kVIc5ZgIzHvlmSq1IKSwzB8wiX1i9Ytuk
+id: paragraph.branded_links.default
+targetEntityType: paragraph
+bundle: branded_links
+mode: default
+content:
+  field_component_theme:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_component_title:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_contact:
+    weight: 3
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_image:
+    weight: 4
+    settings:
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_display_settings:
+        view_mode: thumbnail
+      field_widget_edit: true
+      field_widget_remove: true
+      selection_mode: selection_append
+      field_widget_replace: false
+      open: false
+    third_party_settings: {  }
+    type: entity_browser_entity_reference
+    region: content
+  field_links:
+    weight: 5
+    settings:
+      title: Link
+      title_plural: Links
+      edit_mode: closed
+      closed_mode: summary
+      autocollapse: all
+      closed_mode_threshold: 0
+      add_mode: select
+      form_display_mode: default
+      default_paragraph_type: _none
+      features:
+        add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
+    third_party_settings: {  }
+    type: paragraphs
+    region: content
+  field_short_title:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+hidden:
+  created: true
+  status: true
