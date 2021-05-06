@@ -17,18 +17,37 @@ dependencies:
     - field.storage.node.field_multiple_neighborhoods
     - field.storage.node.field_public_notice_date
     - field.storage.node.field_published_date
+    - field.storage.node.field_thumbnail
     - field.storage.node.field_time
+    - field.storage.node.field_updated_date
     - node.type.event
     - node.type.post
     - node.type.public_notice
     - taxonomy.vocabulary.contact
     - taxonomy.vocabulary.event_type
+  content:
+    - 'taxonomy_term:event_type:024804c4-bce5-46c0-bd84-256de68f5f2f'
+    - 'taxonomy_term:event_type:1abce186-a63f-4420-b85c-915efd4c0e04'
+    - 'taxonomy_term:event_type:28c76af0-3b0e-4b9f-b9f8-25b8d050c8d0'
+    - 'taxonomy_term:event_type:4a6fe7c2-6f32-402b-995a-63ac421f4226'
+    - 'taxonomy_term:event_type:516b81ce-79df-4268-9b1b-ab02426a289a'
+    - 'taxonomy_term:event_type:52db552e-4b10-4541-87b3-d444bbbd3e69'
+    - 'taxonomy_term:event_type:5a54ce7a-ae14-426b-bdf6-8523bc74135c'
+    - 'taxonomy_term:event_type:626907fe-951e-4998-8a0f-f4f112ff3420'
+    - 'taxonomy_term:event_type:9986446b-bdf9-44c5-9bfc-5660dd26b733'
+    - 'taxonomy_term:event_type:9b4bbe1c-8509-4fb0-bfb3-760204593f4d'
+    - 'taxonomy_term:event_type:a4baef91-ca5a-4423-9232-778b10dd685a'
+    - 'taxonomy_term:event_type:b756ea97-c8d5-438b-a1f9-f1b77c99e9fe'
+    - 'taxonomy_term:event_type:e02e7e62-3006-4bee-a7de-88715d48094a'
+    - 'taxonomy_term:event_type:e17f6768-d62c-43d6-b205-54c274a8fba7'
+    - 'taxonomy_term:event_type:fde7e7b6-73ec-43f1-b7b6-1dc55600caba'
   module:
     - address
     - date_recur
     - datetime
     - datetime_range
     - entity_reference_revisions
+    - media
     - node
     - taxonomy
     - text
@@ -1001,15 +1020,32 @@ display:
           group_type: group
           admin_label: ''
           operator: or
-          value: {  }
+          value:
+            146: 146
+            32971: 32971
+            1831: 1831
+            1156: 1156
+            151: 151
+            156: 156
+            161: 161
+            1436: 1436
+            166: 166
+            176: 176
+            1836: 1836
+            181: 181
+            1826: 1826
+            186: 186
+            191: 191
           group: 1
-          exposed: true
+          exposed: false
           expose:
             operator_id: field_event_type_target_id_op
             label: 'Event Type (field_event_type)'
             description: ''
             use_operator: false
             operator: field_event_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: field_event_type_target_id
             required: false
             remember: false
@@ -1024,8 +1060,6 @@ display:
               content_reviewer: '0'
               content_author: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -1039,7 +1073,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
+          type: select
           limit: true
           vid: event_type
           hierarchy: false
@@ -1185,6 +1219,70 @@ display:
           field_api_classes: false
           entity_type: node
           entity_field: published_at
+          plugin_id: field
+        field_updated_date:
+          id: field_updated_date
+          table: node__field_updated_date
+          field: field_updated_date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: datetime_custom
+          settings:
+            timezone_override: ''
+            date_format: 'D, d M Y G:i:s T'
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
           plugin_id: field
         field_event_date_recur:
           id: field_event_date_recur
@@ -1519,14 +1617,14 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% if field_published_date %}\r\n{{ field_published_date }}\r\n{% else %}\r\n{{ published_at }}\r\n{% endif %}"
+            text: "{% if field_updated_date %}\r\n{{ field_updated_date }}\r\n{% elseif field_published_date %}\r\n{{ field_published_date }}\r\n{% else %}\r\n{{ published_at }}\r\n{% endif %}"
             make_link: false
             path: ''
             absolute: false
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -1557,10 +1655,10 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: datetime_default
+          type: datetime_custom
           settings:
             timezone_override: ''
-            format_type: html_datetime
+            date_format: 'D, d M Y G:i:s T'
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1709,7 +1807,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '/news/{{ view_node }}'
+            text: '{{ view_node }}'
             make_link: false
             path: ''
             absolute: false
@@ -1775,7 +1873,6 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - user
         - 'user.node_grants:view'
         - user.permissions
@@ -1786,6 +1883,7 @@ display:
         - 'config:field.storage.node.field_event_date_recur'
         - 'config:field.storage.node.field_intro_text'
         - 'config:field.storage.node.field_published_date'
+        - 'config:field.storage.node.field_updated_date'
   rss_news:
     display_plugin: feed
     id: rss_news
@@ -1949,6 +2047,70 @@ display:
           entity_type: node
           entity_field: published_at
           plugin_id: field
+        field_thumbnail:
+          id: field_thumbnail
+          table: node__field_thumbnail
+          field: field_thumbnail
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: false
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: media_thumbnail
+          settings:
+            image_style: ''
+            image_link: ''
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -2095,7 +2257,7 @@ display:
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -2120,16 +2282,16 @@ display:
           element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: datetime_default
+          type: datetime_custom
           settings:
             timezone_override: ''
-            format_type: html_datetime
+            date_format: 'D, d M Y G:i:s T'
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -2152,7 +2314,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{{ body }}\r\n{% if field_contact %}\r\n<p><b>Contact Department:</b> {{ field_contact }}</p>\r\n{% endif %}\r\n{% if field_published_date_1 %}\r\n<p><b>Publish Date:</b> {{ field_published_date_1 }}</p>\r\n{% endif %}"
+            text: "{{ field_contact_1 }}\r\n{{ field_thumbnail }}\r\n{{ body }}\r\n{% if field_contact %}\r\n<p><b>Contact Department:</b> {{ field_contact }}</p>\r\n{% endif %}\r\n{% if field_published_date_1 %}\r\n<p><b>Publish Date:</b> {{ field_published_date_1 }}</p>\r\n{% endif %}"
             make_link: false
             path: ''
             absolute: false
@@ -2184,7 +2346,7 @@ display:
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
@@ -2278,7 +2440,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '/news/{{ view_node }}'
+            text: '{{ view_node }}'
             make_link: false
             path: ''
             absolute: false
@@ -2333,6 +2495,7 @@ display:
         - 'config:field.storage.node.body'
         - 'config:field.storage.node.field_contact'
         - 'config:field.storage.node.field_published_date'
+        - 'config:field.storage.node.field_thumbnail'
   rss_public_notices:
     display_plugin: feed
     id: rss_public_notices
@@ -2812,7 +2975,7 @@ display:
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
@@ -2843,10 +3006,10 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: datetime_default
+          type: datetime_custom
           settings:
             timezone_override: ''
-            format_type: html_datetime
+            date_format: 'D, d M Y G:i:s T'
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -3443,7 +3606,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '/news/{{ view_node }}'
+            text: '{{ view_node }}'
             make_link: false
             path: ''
             absolute: false
