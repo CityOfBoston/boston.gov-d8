@@ -183,6 +183,10 @@ function template_preprocess_procurement_advertisement(array &$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function node_procurement_advertisement_form_node_procurement_advertisement_edit_form_alter(&$form, &$form_state, $form_id) {
+
+  // Remove text field auto-complete for this form
+  $form['#attributes']['autocomplete'] = 'off';
+
   // Add custom validation since above required states are client-side only.
   $form['#validate'][] = 'node_procurement_advertisement_form_validate';
   $form['actions']['submit']['#submit'][] = 'node_procurement_advertisement_form_submit';
