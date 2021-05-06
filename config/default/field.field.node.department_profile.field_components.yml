@@ -8,6 +8,7 @@ dependencies:
     - paragraphs.paragraphs_type.3_column_w_image
     - paragraphs.paragraphs_type.bos311
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
+    - paragraphs.paragraphs_type.branded_links
     - paragraphs.paragraphs_type.cabinet
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_search
@@ -15,6 +16,7 @@ dependencies:
     - paragraphs.paragraphs_type.drawers
     - paragraphs.paragraphs_type.events_and_notices
     - paragraphs.paragraphs_type.featured_topics
+    - paragraphs.paragraphs_type.from_library
     - paragraphs.paragraphs_type.fyi
     - paragraphs.paragraphs_type.grid_of_cards
     - paragraphs.paragraphs_type.grid_of_people
@@ -83,7 +85,9 @@ settings:
       bos_signup_emergency_alerts: bos_signup_emergency_alerts
       transaction_grid: transaction_grid
       video: video
+      branded_links: branded_links
       commission_search: commission_search
+      from_library: from_library
       events_and_notices: events_and_notices
       group_of_links_quick_links: group_of_links_quick_links
     target_bundles_drag_drop:
@@ -99,6 +103,9 @@ settings:
       bos_signup_emergency_alerts:
         enabled: true
         weight: -55
+      branded_links:
+        enabled: true
+        weight: 73
       cabinet:
         enabled: true
         weight: -93
@@ -157,8 +164,8 @@ settings:
         enabled: true
         weight: -89
       from_library:
+        enabled: true
         weight: 87
-        enabled: false
       fyi:
         enabled: true
         weight: -58
