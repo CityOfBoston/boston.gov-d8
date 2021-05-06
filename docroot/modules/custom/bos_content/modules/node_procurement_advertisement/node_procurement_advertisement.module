@@ -5,6 +5,8 @@
  * Provides an script_page entity type.
  */
 
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
@@ -244,4 +246,53 @@ function node_procurement_advertisement_form_submit($variables, $form_state) {
       $node->save();
     }
   }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function node_procurement_advertisement_element_info_alter(array &$info)
+{
+  $info['datetime']['#value_callback'] = 'node_procurement_advertisement_datetime_value';
+  $info['datetime']['#process'][] = 'node_procurement_advertisement_datetime_set_format';
+}
+
+/**
+ *  Set a default value for the time sub-field on field_award_date edit forms on Procurement Advertisement nodes.
+ *
+ * @param $element
+ * @param $input
+ * @param FormStateInterface $form_state
+ * @return array|mixed
+ */
+function node_procurement_advertisement_datetime_value(&$element, $input, FormStateInterface $form_state) {
+  if ($input !== FALSE) {
+    try {
+      if ($form_state->getBuildInfo()['form_id'] == 'node_procurement_advertisement_edit_form'
+            && $element['#name'] == 'field_award_date[0][value]'
+            && $input['date']
+            && empty($input['time'])) {
+        $input['time'] = '12:01:01';
+      }
+    }
+    catch (\Exception $e) {
+      // nothing to do.
+    }
+  }
+  return \Drupal\Core\Datetime\Element\Datetime::valueCallback($element, $input, $form_state);
+}
+
+/**
+ * Hide the time sub-field on field_award_date edit forms on Procurement Advertisement nodes.
+ *
+ * @param $element
+ * @return mixed
+ */
+function node_procurement_advertisement_datetime_set_format($element) {
+
+  if (isset($element['#name']) && $element['#name'] == 'field_award_date[0][value]') {
+    $element['time']['#attributes']['style'][] = 'display:none';
+  }
+
+  return $element;
 }
