@@ -3,14 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.bh_meeting.body
     - field.field.node.bh_meeting.field_bh_contact_person_sfid
     - field.field.node.bh_meeting.field_bh_host_organization
     - field.field.node.bh_meeting.field_bh_languages_supported
-    - field.field.node.bh_meeting.field_bh_meeting_end_time
     - field.field.node.bh_meeting.field_bh_meeting_goal
     - field.field.node.bh_meeting.field_bh_meeting_recording_pass
-    - field.field.node.bh_meeting.field_bh_meeting_start_time
     - field.field.node.bh_meeting.field_bh_number_of_attendees
     - field.field.node.bh_meeting.field_bh_post_meeting_notes
     - field.field.node.bh_meeting.field_bh_post_meeting_recording
@@ -28,7 +25,7 @@ type: salesforce_mapping
 key: ''
 async: false
 push_standalone: false
-pull_standalone: false
+pull_standalone: true
 pull_trigger_date: LastModifiedDate
 pull_where_clause: ''
 sync_triggers:
@@ -47,84 +44,98 @@ field_mappings:
     drupal_field_value: title
     salesforce_field: Title__c
     direction: sf_drupal
+    description: ''
     id: 0
   -
     drupal_field_type: properties
-    drupal_field_value: field_bh_meeting_start_time
+    drupal_field_value: field_bh_meeting_start_time.value
     salesforce_field: Meeting_Date_Time_Start__c
     direction: sf_drupal
+    description: ''
     id: 1
   -
     drupal_field_type: properties
-    drupal_field_value: field_bh_meeting_end_time
+    drupal_field_value: field_bh_meeting_end_time.value
     salesforce_field: Meeting_Date_Time_End__c
     direction: sf_drupal
+    description: ''
     id: 2
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_languages_supported
     salesforce_field: Languages_supported__c
     direction: sf_drupal
+    description: ''
     id: 3
   -
     drupal_field_type: properties
-    drupal_field_value: body
+    drupal_field_value: body.value
     salesforce_field: Meeting_Description__c
     direction: sf_drupal
+    description: ''
     id: 4
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_contact_person_sfid
     salesforce_field: Contact_person__c
     direction: sf_drupal
+    description: ''
     id: 5
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_meeting_goal
     salesforce_field: Meeting_Goal__c
     direction: sf_drupal
+    description: ''
     id: 6
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_meeting_recording_pass
     salesforce_field: Meeting_Recording_Password__c
     direction: sf_drupal
+    description: ''
     id: 7
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_number_of_attendees
     salesforce_field: Number_of_attendees__c
     direction: sf_drupal
+    description: ''
     id: 8
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_post_meeting_notes
     salesforce_field: Post_meeting_Notes__c
     direction: sf_drupal
+    description: ''
     id: 9
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_post_meeting_recording
     salesforce_field: Post_meeting_recording__c
     direction: sf_drupal
+    description: ''
     id: 10
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_virt_meeting_web_addr
     salesforce_field: Virtual_meeting_web_address__c
     direction: sf_drupal
+    description: ''
     id: 11
   -
     drupal_field_type: RelatedIDs
     drupal_field_value: field_bh_update_ref
     salesforce_field: Website_Update__c
     direction: sf_drupal
+    description: ''
     id: 12
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_host_organization
     salesforce_field: Host_Organization2__c
     direction: sf_drupal
+    description: ''
     id: 13
 push_limit: 0
 push_retries: 3
