@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_boston_based_business
     - field.field.node.bh_update.field_bh_developer_name
     - field.field.node.bh_update.field_bh_developer_website
@@ -42,38 +41,44 @@ drupal_bundle: bh_update
 field_mappings:
   -
     drupal_field_type: properties
-    drupal_field_value: body
+    drupal_field_value: body.value
     salesforce_field: Project_Goals__c
     direction: sf_drupal
+    description: ''
     id: 0
   -
     drupal_field_type: properties
     drupal_field_value: title
     salesforce_field: Name
     direction: sf_drupal
+    description: ''
     id: 1
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_project_web_link
     salesforce_field: Boston_gov_Link__c
     direction: drupal_sf
+    description: ''
     id: 2
   -
     drupal_field_type: RelatedIDs
     drupal_field_value: field_bh_project_ref
     salesforce_field: Project__c
     direction: sf_drupal
+    description: ''
     id: 3
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_follower_emails
     salesforce_field: Follower_emails__c
     direction: drupal_sf
+    description: ''
     id: 4
   -
     drupal_field_type: DrupalConstant
     drupal_field_value: field_sf_web_update
     direction: sf_drupal
+    description: ''
     drupal_constant: '1'
     id: 5
   -
@@ -81,36 +86,42 @@ field_mappings:
     drupal_field_value: field_bh_developer_name
     salesforce_field: Project_Developer_Formula__c
     direction: sf_drupal
+    description: ''
     id: 6
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_developer_website
     salesforce_field: Account_Website__c
     direction: sf_drupal
+    description: ''
     id: 7
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_boston_based_business
     salesforce_field: Boston_Based_Buiness__c
     direction: sf_drupal
+    description: ''
     id: 8
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_minority_owned_business
     salesforce_field: Minority_Owned_Business2__c
     direction: sf_drupal
+    description: ''
     id: 9
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_veteran_owned_business
     salesforce_field: Veteran_Owned_Business2__c
     direction: sf_drupal
+    description: ''
     id: 10
   -
     drupal_field_type: properties
     drupal_field_value: field_bh_women_owned_business
     salesforce_field: Woman_Owned_Buiness2__c
     direction: sf_drupal
+    description: ''
     id: 11
 push_limit: 0
 push_retries: 3
