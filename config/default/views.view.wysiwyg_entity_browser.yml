@@ -68,9 +68,9 @@ display:
             first: '« First'
             last: 'Last »'
           expose:
-            items_per_page: false
+            items_per_page: true
             items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options: '5, 10, 25, 50, 100'
             items_per_page_options_all: false
             items_per_page_options_all_label: '- All -'
             offset: false
@@ -193,10 +193,10 @@ display:
           settings:
             image_style: media_fixed_width_250px
             image_link: ''
-            svg_render_as_image: 0
+            svg_render_as_image: false
             svg_attributes:
-              width: ''
-              height: ''
+              width: null
+              height: null
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -263,10 +263,10 @@ display:
           settings:
             image_style: media_fixed_width_250px
             image_link: ''
-            svg_render_as_image: 0
+            svg_render_as_image: false
             svg_attributes:
-              width: ''
-              height: ''
+              width: null
+              height: null
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -734,8 +734,33 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: boolean
-      sorts: {  }
-      header: {  }
+      sorts:
+        changed:
+          id: changed
+          table: media_field_data
+          field: changed
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          entity_type: media
+          entity_field: changed
+          plugin_id: date
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: 'Displaying @start - @end of @total'
+          plugin_id: result
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -1667,6 +1692,21 @@ display:
           entity_type: media
           entity_field: name
           plugin_id: standard
+        created:
+          id: created
+          table: media_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: true
+          expose:
+            label: 'Created date'
+          granularity: second
+          entity_type: media
+          entity_field: created
+          plugin_id: date
       style:
         type: default
         options:
@@ -1889,6 +1929,61 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: boolean
+        created:
+          id: created
+          table: media_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: between
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: created_op
+            label: 'Authored between'
+            description: ''
+            use_operator: false
+            operator: created_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: created
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: media
+          entity_field: created
+          plugin_id: date
       defaults:
         filters: false
         filter_groups: false
