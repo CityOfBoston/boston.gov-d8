@@ -17,6 +17,9 @@ function bos_branded_links_theme() {
   $theme['paragraph__branded_links__full'] = [
     'base hook' => 'paragraph',
   ];
+  $theme['paragraph__from_library'] = [
+    'base hook' => 'paragraph',
+  ];
   $theme['field__field_links'] = [
     'base hook' => 'field',
   ];
@@ -27,6 +30,19 @@ function bos_branded_links_theme() {
  * Implements hook_preprocess_HOOK().
  */
 function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables) {
+  _bos_branded_links_add_classes($variables);
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_branded_links_preprocess_paragraph__branded_links__default(&$variables) {
+  _bos_branded_links_add_classes($variables);
+}
+
+
+function _bos_branded_links_add_classes (array &$variables) {
   _bos_components_fix_attributes($variables);
   $variables['attributes']->addClass("b");
   $variables['attributes']->addClass("b--fw");
@@ -59,6 +75,8 @@ function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables
   $variables['attributes']->setAttribute('style', $style_overrides);
 }
 
+
+
 /**
  * Implements hook_paragraph_HOOK_summary_alter().
  */
@@ -85,6 +103,14 @@ function bos_branded_links_paragraph_branded_links_summary_alter(array $form_wid
     'attributes' => $attributes,
     'content' => $markup,
   ];
+}
+
+
+
+function bos_branded_links_preprocess_paragraph(&$variables) {
+  if ($variables["paragraph"]->getType() == 'from_library') {
+
+  }
 }
 
 
