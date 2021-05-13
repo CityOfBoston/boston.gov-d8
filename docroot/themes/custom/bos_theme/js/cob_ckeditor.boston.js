@@ -13,9 +13,11 @@ function screenSize(x) {
 
   if (x.matches) { // If media query matches.
     for (let i = 0; i < changeHeight.length; i++) {
-      let show = changeHeight[i].getAttribute("data-cob-ckeditor");
-      changeHeight[i].style.height = show - 100 + "px";
-      changeHeight[i].style.minHeight = show - 100 + "px";
+      if (changeHeight[i].parent().is(":not(.no-resize)")) {
+        let show = changeHeight[i].getAttribute("data-cob-ckeditor");
+        changeHeight[i].style.height = show - 100 + "px";
+        changeHeight[i].style.minHeight = show - 100 + "px";
+      }
     }
 
   }
