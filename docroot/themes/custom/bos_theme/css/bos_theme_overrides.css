@@ -1397,7 +1397,7 @@ What: Fix inherited title styles
   font-family: "Open Sans",Roboto, sans-serif;
   font-weight: 600;
   line-height: 100%;
-  background: #fff;
+  background: #fafafa;
   font-size: 15px;
   text-decoration: none;
   border: 1px solid transparent;
@@ -1415,13 +1415,14 @@ What: Fix inherited title styles
   background-position: left center;
   background-repeat: no-repeat;
   background-size: contain;
+  text-transform: uppercase;
 }
 
 .addtocal-container button.addtocal:hover,
 .addtocal-container button.addtocal:focus,
 .addtocal-container button.addtocal:active {
   text-decoration: none;
-  background: #fafafa url(https://assets.boston.gov/icons/experiential_icons/calendar.svg) no-repeat left center;
+  background: #ffffff url(https://assets.boston.gov/icons/experiential_icons/calendar.svg) no-repeat left center;
   background-size: contain;
 }
 
@@ -1442,7 +1443,7 @@ What: Fix inherited title styles
 /**
 Stella
 Where: MNL Page Phase two
-What: MNL Specific and some general CSS. For now anyway. This should apply to all pages
+What: MNL Specific and some general CSS. For now anyway. This should apply to all pages.
  */
 
 html {
@@ -1469,3 +1470,19 @@ html {
 
 #web-app .mnl .dl-i:hover,
 #web-app .mnl .dl-i:focus {padding-left: 10px;}
+
+/**
+Stella
+Where: Events UI
+What: Overrides to some drupal injected tags
+ */
+.events-notices .b-c, .events-notices .p-a800, .events-notices .p-a300 {padding-top: 0;}
+.evt-thumbnails img {width: 100%; height: 100%; object-fit: cover;}
+.evt-thumbnails article.contextual-region, .evt-thumbnails article {display: inline;}
+.g--4.b--w .evt-c {padding-left: 0; padding-right: 0;}
+.evt-dl-i .dl-d .address {margin-top: 0;}
+.display-large .g, .display-large-attachment .g, .display-related-large .g, .display-referenced-large .g  {background-color: #ffffff;}
+
+@media screen and (max-width: 480px) {
+  .events-notices .p-a800 {padding: 0 20px 20px;}
+}

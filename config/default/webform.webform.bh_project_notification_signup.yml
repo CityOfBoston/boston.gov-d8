@@ -202,4 +202,86 @@ handlers:
     conditions: {  }
     weight: 0
     settings: {  }
+  email_bh_follower_do:
+    id: email
+    label: 'Email - Alert to Development Officers'
+    notes: ''
+    handler_id: email_bh_follower_do
+    status: true
+    conditions: {  }
+    weight: 0
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:source-entity:field_project_manager_email]'
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: noreply@boston.gov
+      from_options: {  }
+      from_name: 'Building Housing'
+      subject: 'New Follower on [webform_submission:source-title]'
+      body: "You have a new follower on [webform_submission:source-title]. \r\n\r\nName: [webform_submission:values:name]\r\nEmail: [webform_submission:values:email_address]\r\n\r\nTheir email will now appear under “Follower emails” on the [webform_submission:source-title] Website Update\r\nin Salesforce.\r\n\r\n--\r\nThis is an automatically generated email from Drupal. To filter messages like these, create a filter in Gmail: https://support.google.com/mail/answer/6579?hl=en&ref_topic=3394656"
+      excluded_elements:
+        title_basic: title_basic
+        description: description
+        name: name
+        email_address: email_address
+      ignore_access: false
+      exclude_empty: false
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
+  email_confirmation_to_user:
+    id: email
+    label: 'Email - Confirmation to User'
+    notes: ''
+    handler_id: email_confirmation_to_user
+    status: true
+    conditions: {  }
+    weight: 2
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:email_address:raw]'
+      to_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      from_mail: noreply@boston.gov
+      from_options: {  }
+      from_name: 'Building Housing'
+      subject: 'Thanks for signing up for updates on [webform_submission:source-title]'
+      body: "Hi there,\r\n\r\nYour name has been added to Boston’s Department of Neighborhood Development list for the project [webform_submission:source-title]. \r\n\r\nTo see the latest information on this project, visit the page here: [webform_submission:source-url].\r\n\r\nFind out more about upcoming events at the City of Boston at https://www.boston.gov/events\r\n\r\nIf you’re interested in additional information about the Department of Neighborhood Development, please visit https://www.boston.gov/departments/neighborhood-development\r\n\r\nThanks for participating in the development process, and we hope to see you at an upcoming community meeting!\r\n\r\nDepartment of Neighborhood Development (DND)\r\n\r\n--\r\nTo be removed from this list, please send an email request to the Development Officer for this project, [webform_submission:source-entity:field_bh_project_manager_name], at [webform_submission:source-entity:field_project_manager_email].\r\n"
+      excluded_elements:
+        title_basic: title_basic
+        description: description
+        name: name
+        email_address: email_address
+      ignore_access: false
+      exclude_empty: false
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: false
+      attachments: false
+      twig: false
+      debug: false
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      theme_name: ''
+      parameters: {  }
 variants: {  }
