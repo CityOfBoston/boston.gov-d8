@@ -1,0 +1,7 @@
+assessing.endpoint:
+  path: '/rest/assessing/{parcel_id}'
+  methods: [POST,GET]
+  defaults:
+    _controller: '\Drupal\bos_assessing\Controller\Assessing::lookupParcel'
+  requirements:
+    _permission: 'access content'

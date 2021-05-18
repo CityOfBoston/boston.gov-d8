@@ -9,6 +9,7 @@ branches:
   only:
     - develop
     - master
+    - assessing
 
 php:
   - 7.3
@@ -107,6 +108,7 @@ script:
   - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
   # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
 
+
 deploy:
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   - provider: script
@@ -114,6 +116,11 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: assessing
   - provider: script
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
