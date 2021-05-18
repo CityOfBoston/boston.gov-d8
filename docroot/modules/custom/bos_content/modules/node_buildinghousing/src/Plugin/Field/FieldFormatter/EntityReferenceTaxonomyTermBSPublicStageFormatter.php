@@ -121,8 +121,27 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           break;
       }
 
+      if ($recordType = BHUtils::getProjectRecordType($parent_entity) == 'NHD Development') {
+
+        if ($publicStageTerm->getName() == 'Project Launch') {
+          $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'funding-awarded']);
+          $vars['body'] = t('The Department of Neighborhood Development approved funding for this project.');
+          $vars['label'] = t('Funding awarded');
+//          $vars['icon'] = $stageIcon;
+//          $vars['label'] = $stageTitle->view(['label' => 'hidden']);
+//          $vars['body'] = $stageDescription->view(['label' => 'hidden']);
+//          $vars['date'] = $stageDate;
+//          $vars['currentState'] = $stageCurrentState;
+        }
+
+        if ($publicStageTerm->getName() == 'Selecting Developer') {
+         continue;
+        }
+
+      }
+
       $sortTimestamp = $this->getStageDate($parent_entity, $publicStageTerm, 'timestamp');
-      if ($publicStageTerm->getName() == 'Project Launch' && empty($sortTimestamp)) {
+      if ($publicStageTerm->getName() == 'Project Launch' && (empty($sortTimestamp) || $recordType == 'NHD Development')) {
         $sortTimestamp = $delta;
       }
       elseif (empty($sortTimestamp)) {
@@ -155,6 +174,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       '#markup' => \Drupal::theme()->render("bh_project_timeline", [
         'items' => $sortedElements,
         'label' => $this->isActive ? t('Timeline') : NULL,
+        'isDevelopment' => BHUtils::getProjectRecordType($parent_entity) == 'NHD Development' ? true : false,
       ])
     ];
 
@@ -204,8 +224,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       $documentSet = [
         'icon' => $currentState == 'past'
-          ? \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26, 'fill' => '#091f2f'])
-          : \Drupal::theme()->render("bh_icons", ['type' => 'dot-filled', 'width' => 26]),
+          ? \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'cb'])
+          : \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'ob']),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
         'date' => $formattedDate->format('M d Y'),
         'currentState' => $currentState,
@@ -243,11 +263,12 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $currentState = time() > $rfpDate->getTimestamp() ? 'past' : 'future';
 
       $data = [
-        'label' => t('Go to RFP list'),
+        'label' => t('GO TO RFP LISTINGS'),
         // @TODO: change out with config?
         'url' => '/departments/neighborhood-development/requests-proposals',
-        'title' => t('Request For Proposals (RFP) Open for Bidding'),
-        'body' => t('Visit the link below to learn more.'),
+        'title' => t('Request for Proposals (RFP) Opened for Bidding'),
+//        'body' => t('Visit the link below to learn more.'),
+        'body' => null,
         'icon' => $currentState == 'past'
           ? \Drupal::theme()->render("bh_icons", [
           'type' => 'timeline-building',
@@ -266,6 +287,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       // CORRECT.
       if ($today->getTimestamp() >= $rfpDate->getTimestamp()) {
         $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
+//        $elements[$rfpDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
       }
     }
 
@@ -348,7 +370,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       foreach ($meetings as $meetingId => $meeting) {
 
-        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
+        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+8");
+//        $timeZoneAdjustment = new \DateTimeZone("America/New_York");
         $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
         $startDate->setTimezone($timeZoneAdjustment);
         $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
@@ -378,6 +401,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           // $body = str_replace('label></p>', 'label>', $body);
           $body = strip_tags($body, '<div><span><label><input><a>');
 
+          $recordingPassword = NULL;
           $attendees = NULL;
         }
         else {
@@ -395,6 +419,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           // $event->field_event_date_recur->view('add_to_calendar');
           $body = $this->renderReadMoreText($meeting->field_bh_post_meeting_notes->value ?? '', 200) ?? '';
           $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
+          $recordingPassword = $meeting->field_bh_meeting_recording_pass->value ?? NULL;
         }
 
         $data = [
@@ -407,7 +432,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           'link' => $link,
           'currentState' => $currentState,
           'addToCal' => $addToCal,
-          'recordingLinkIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'rfp-building-permit']),
+          'recordingLinkIcon' => NULL,
+          'recordingPassword' => $recordingPassword,
           'attendees' => $attendees,
         ];
 
@@ -513,7 +539,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     switch ($stage->getName()) {
       case 'Project Launch':
-        $date = $project->get('field_bh_project_start_date')->value ?? NULL;
+        if (BHUtils::getProjectRecordType($project) == 'NHD Development') {
+          $date = $project->get('field_bh_dnd_funding_award_date')->value ?? NULL;
+        }else{
+          $date = $project->get('field_bh_project_start_date')->value ?? NULL;
+        }
         break;
 
       case 'Selecting Developer':

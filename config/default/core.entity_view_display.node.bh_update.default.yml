@@ -5,15 +5,21 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_boston_based_business
+    - field.field.node.bh_update.field_bh_developer_name
+    - field.field.node.bh_update.field_bh_developer_website
     - field.field.node.bh_update.field_bh_follower_emails
     - field.field.node.bh_update.field_bh_headline
     - field.field.node.bh_update.field_bh_image
+    - field.field.node.bh_update.field_bh_minority_owned_business
     - field.field.node.bh_update.field_bh_project_images
     - field.field.node.bh_update.field_bh_project_ref
     - field.field.node.bh_update.field_bh_project_web_link
     - field.field.node.bh_update.field_bh_text_updates
     - field.field.node.bh_update.field_bh_update_posted_date
     - field.field.node.bh_update.field_bh_update_type_ref
+    - field.field.node.bh_update.field_bh_veteran_owned_business
+    - field.field.node.bh_update.field_bh_women_owned_business
     - field.field.node.bh_update.field_sf_web_update
     - node.type.bh_update
   module:
@@ -44,6 +50,22 @@ content:
     third_party_settings: {  }
     type: file_default
     region: content
+  field_bh_developer_name:
+    weight: 115
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_bh_developer_website:
+    weight: 116
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
   field_bh_follower_emails:
     weight: 110
     label: above
@@ -65,6 +87,16 @@ content:
       use_description_as_link_text: true
     third_party_settings: {  }
     type: file_default
+    region: content
+  field_bh_minority_owned_business:
+    weight: 117
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
   field_bh_project_images:
     weight: 113
@@ -143,5 +175,8 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_bh_boston_based_business: true
+  field_bh_veteran_owned_business: true
+  field_bh_women_owned_business: true
   langcode: true
   published_at: true

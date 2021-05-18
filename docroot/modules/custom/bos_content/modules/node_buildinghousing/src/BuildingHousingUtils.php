@@ -136,8 +136,8 @@ class BuildingHousingUtils
     $project = $entity->get('field_bh_project_ref')->target_id ? \Drupal::entityTypeManager()->getStorage('node')->load($entity->get('field_bh_project_ref')->target_id) : NULL;
 
     if ($project) {
-      $projectWebLink = $project->toLink()->getUrl()->setAbsolute(TRUE)->toString() ?? NULL;
-      $entity->set('field_bh_project_web_link', $projectWebLink);
+      $projectWebLink = $project->toLink()->getUrl()->setAbsolute(FALSE)->toString() ?? NULL;
+      $entity->set('field_bh_project_web_link', 'https://www.boston.gov/' . $projectWebLink);
 
       return $projectWebLink;
     }
@@ -407,13 +407,15 @@ class BuildingHousingUtils
 
       $event->set('title', $entity->getTitle() ?? '');
       $event->set('body', $entity->get('body')->value ?? '');
+      $event->set('field_intro_text', $entity->get('field_bh_meeting_goal')->value ?? '');
       $event->set('field_event_contact', $contactName);
       $event->set('field_email', $contactEmail);
       $event->set('field_event_date_recur', [
         'value' => $entity->field_bh_meeting_start_time->value ?? '',
         'end_value' => $entity->field_bh_meeting_end_time->value ?? '',
         // 'timezone' => 'Etc/GMT+10',
-        'timezone' => 'Pacific/Honolulu',
+//        'timezone' => 'Pacific/Honolulu',
+        'timezone' => 'America/New_York',
       ]);
 
       $event->save();
@@ -425,7 +427,7 @@ class BuildingHousingUtils
           'type' => 'event',
           'title' => $entity->getTitle() ?? '',
           'body' => $entity->get('body')->value ?? '',
-          'field_intro_text' => t('The Department of Neighborhood Development is looking for feedback from the community. Join us to see the latest plans and share your thoughts.'),
+          'field_intro_text' => $entity->get('field_bh_meeting_goal')->value ?? '',
           'field_address' => [
             'country_code' => 'US',
             'address_line1' => t('THIS MEETING WILL BE HELD VIRTUALLY.'),
@@ -441,7 +443,8 @@ class BuildingHousingUtils
             'value' => $entity->field_bh_meeting_start_time->value ?? '',
             'end_value' => $entity->field_bh_meeting_end_time->value ?? '',
             // 'timezone' => 'Etc/GMT+10',
-            'timezone' => 'Pacific/Honolulu',
+//            'timezone' => 'Pacific/Honolulu',
+            'timezone' => 'America/New_York',
           ],
         ]);
 

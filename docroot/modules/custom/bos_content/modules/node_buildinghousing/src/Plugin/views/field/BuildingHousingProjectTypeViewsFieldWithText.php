@@ -116,10 +116,11 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
           break;
 
         case "Abutter Sale":
+        case "For Sale":
           $iconType = 'maplist-sale';
           // $pillColor = 'medium-gray';
           $pillColor = 'dark-gray';
-          $pillText = t('Abutter Sale');
+          $pillText = t('For Sale');
           break;
 
         case "Other":
