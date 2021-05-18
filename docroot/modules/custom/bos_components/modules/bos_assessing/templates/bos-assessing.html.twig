@@ -24,273 +24,263 @@
  * @see template_process()
 #}
 <style>
-#web-app .dl-d {
+#assessing {
+	margin-top:50px;
+}
+#assessing .dl-d {
 	text-align:right;
 }
-#web-app .squiggle-border-bottom{
+#assessing .squiggle-border-bottom{
 	padding-top:10px;
 }
+#assessing #parcel_info .dl-i{
+	border-bottom:0;
+	/*padding:8px 0;*/
+}
+#assessing #parcel_info .detail-item{
+	line-height: normal;
+    font-size: 90%;
+}
+#map-container{
+	width:100%;
+	height:400px;
+	margin-bottom:20px;
+}
 </style>
-<div class="container content entity entity-paragraphs-item paragraphs-item-text component-sections">
-	
-   	<div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
-   			{% set data = test_var.result.records[0] %}
-      		<!--<div class="supporting-text">{{ attribute(data,'GROSS_TAX') }}</div>
-      		<div class="supporting-text">{{ attribute(data,'MAIL CS') }}</div>-->
-    	<div id="web-app">
-    		<div class="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full">
-    			<div>&nbsp;</div>
-      			<div>
-      				<div class="g component-section">
-						<div class="g--8 m-b300">
-						  	<div class="sh cl">
-			        			<h2 class="sh-title">Property Attributes</h2>
-			        		</div>
-			        		<ul class="dl">
-			        			<li class="dl-i">
-			        				<div class="detail-item__label">Condo</div>
-			        			</li>
-							    <li class="dl-i">
-							        <span class="dl-t">Master Parcel</span>
-							        <span class="dl-d">{{ attribute(data,'GIS_ID') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Grade</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Exterior Condtion</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Exterior Finish</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Foundation</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Roof Cover</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Roof Structure</span>
-							        <span class="dl-d"></span>
-							    </li>
-							</ul>
-							<div class="squiggle-border-bottom">&nbsp;</div>
-							<ul class="dl">
-			        			<li class="dl-i">
-			        				<div class="detail-item__label">Unit</div>
-			        			</li>
-							    <li class="dl-i">
-							        <span class="dl-t">Complex</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Land Use</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Year Built</span>
-							        <span class="dl-d">{{ attribute(data,'YR_BUILT') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Story Height</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Floor</span>
-							        <span class="dl-d">{{ attribute(data,'NUM_FLOORS') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Orientation</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">View</span>
-							        <span class="dl-d">{{ attribute(data,'U_VIEW') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Story Height</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Floor</span>
-							        <span class="dl-d">{{ attribute(data,'NUM_FLOORS') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Orientation</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">View</span>
-							        <span class="dl-d">{{ attribute(data,'U_VIEW') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Corner Unit</span>
-							        <span class="dl-d">{{ attribute(data,'U_CORNER') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Penthouse Unit</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">AC Type</span>
-							        <span class="dl-d">{{ attribute(data,'U_AC') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Heat Type</span>
-							        <span class="dl-d">{{ attribute(data,'U_HEAT_TYP') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Fireplaces</span>
-							        <span class="dl-d">{{ attribute(data,'U_FPLACE') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Interior Condition</span>
-							        <span class="dl-d">{{ attribute(data,'U_INT_CND') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Total Rooms</span>
-							        <span class="dl-d">{{ attribute(data,'U_TOT_RMS') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Bedrooms</span>
-							        <span class="dl-d">{{ attribute(data,'U_BDRMS') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Bedroom Type</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Full Bathrooms</span>
-							        <span class="dl-d">{{ attribute(data,'U_FULL_BTH') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Half Bathrooms</span>
-							        <span class="dl-d">{{ attribute(data,'U_HALF_BTH') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Bath Style 1</span>
-							        <span class="dl-d">{{ attribute(data,'U_BTH_STYL') }}</span>
-							    </li>
-							     <li class="dl-i">
-							        <span class="dl-t">Bath Style 2</span>
-							        <span class="dl-d">{{ attribute(data,'U_BTH_STYL2') }}</span>
-							    </li>
-							     <li class="dl-i">
-							        <span class="dl-t">Bath Style 3</span>
-							        <span class="dl-d">{{ attribute(data,'U_BTH_STY3') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Kitchens</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Kitchen Type</span>
-							        <span class="dl-d">{{ attribute(data,'U_KITCH_TYPE') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Kitchen Style</span>
-							        <span class="dl-d">{{ attribute(data,'U_KITCH_STYLE') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Parking Spots</span>
-							        <span class="dl-d">{{ attribute(data,'U_NUM_PARK') }}</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Parking Type</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Parking Ownership</span>
-							        <span class="dl-d"></span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Tandem Parking</span>
-							        <span class="dl-d"></span>
-							    </li>
-							</ul>
-							<div class="squiggle-border-bottom">&nbsp;</div>
-						</div>
-						<div class="g--4 m-b300">
-						  	<div class="sh cl">
-			        			<h2 class="sh-title">Value Tax</h2>
-			        		</div>
-			        		<ul class="dl">
-			        			<li class="dl-i">
-			        				<div class="detail-item__label">Condo</div>
-			        			</li>
-							    <li class="dl-i">
-							        <span class="dl-t">Test</span>
-							        <span class="dl-d">April 15, 2015 4:00PM - 6:00PM</span>
-							    </li>
-							    <li class="dl-i">
-							        <span class="dl-t">Other</span>
-							        <span class="dl-d">
-							            <div class="addr" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-							                <div itemprop="streetAddress" class="addr-a">
-							                    Boston City Hall, Room #241
-							                </div>
-							                <div class="addr-l">
-							                    <span itemprop="addressLocality">Boston</span>, <span itemprop="addressRegion">MA</span> <span itemprop="postalCode">02201</span>
-							                </div>
-							            </div>
-							        </span>
-							    </li>
-							</ul>
-						</div>
-					</div>
-      				<div class="sh ">
-	        			<h2 class="sh-title">How To File For A</h2>
-	        		</div>
-					<div class="g">
-						<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-							<div class="pointer-mnl" tabindex="0">
-							<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-								<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-							</div>
-							<div class="cd-c">
-								<span class="h3 t--upper">
-									{% include '@bos_assessing/section.html.twig' %}
-									 Abatement
-								</span>
-								<div class="cdp-st">
-									Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups
-								</div>
-							</div>
-							</div>
-						</a>
-						<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-							<div class="pointer-mnl" tabindex="0">
-							<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-								<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-							</div>
-							<div class="cd-c">
-								<span class="h3 t--upper">Personal Exemption</span>
-								<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
-							</div>
-							</div>
-						</a>
-						<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-							<div class="pointer-mnl" tabindex="0">
-							<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-								<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-							</div>
-							<div class="cd-c">
-								<span class="h3 t--upper">Residential Exemption</span>
-								<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
-							</div>
-							</div>
-						</a>
-					</div>
+
+{% set data = data_full.result.records[0] %}
+{% set coords = data_coords.features[0].geometry.coordinates %}
+
+{% set dataCondo = {
+    "Master Parcel" : attribute(data,'GIS_ID'),
+    "Grade" : "",
+    "Exterior Condition" : "",
+    "Exterior Finish" : "",
+    "Foundation" : "",
+    "Roof Cover" : "",
+    "Roof Structure" : "",
+
+}%}
+{% set pType = (attribute(data,'PTYPE')  == '0102') ? 'U' : 'R' %}
+{% set dataUnit = {
+    "Complex" : "",
+    "Land Use" : "",
+    "Year Built" : attribute(data,'YEAR_BUILT'),
+    "Story Height" : "",
+    "Floor" : attribute(data,'NUM_FLOORS'),
+    "Orientation" : attribute(data,'GIS_ID'),
+    "View" : attribute(data, pType ~ '_VIEW'),
+    "Corner Unit" : attribute(data, pType ~ '_CORNER'),
+    "Penthouse Unit" : attribute(data,'GIS_ID'),
+    "AC Type" : attribute(data, pType ~ '_AC'),
+    "Heat Type" : attribute(data, pType ~ '_HEAT_TYP'),
+    "Fireplaces" : attribute(data, pType ~ '_FPLACE'),
+    "Interior Condition" : attribute(data, pType ~ '_INT_CND'),
+    "Total Rooms" : attribute(data, pType ~ '_TOT_RMS'),
+    "Bedrooms" : attribute(data, pType ~ '_BDRMS'),
+    "Bedroom Type" : "",
+    "Full Bathrooms" : attribute(data, pType ~ '_FULL_BTH'),
+    "Half Bathrooms" : attribute(data, pType ~ '_HALF_BTH'),
+    "Bath Style 1" : attribute(data, pType ~ '_BTH_STYLE'),
+    "Bath Style 2" : attribute(data, pType ~ '_BTH_STYLe2'),
+    "Bath Style 3" : attribute(data, pType ~ '_BTH_STYLe3'),
+    "Number of Kitchens" : "",
+    "Kitchen Type" : "",
+    "Kitchen Style 1" : attribute(data, pType ~ '_KITCH_STYLE'),
+    "Kitchen Style 2" : attribute(data, pType ~ '_KITCH_STYLE2'),
+    "Kitchen Style 3" : attribute(data, pType ~ '_KITCH_STYLE3'),
+    "Parking Spots" : attribute(data, pType ~ '_NUM_PARK'),
+    "Parking Type" : "",
+    "Parking OwnerShip" : "",
+    "Tandem Parking" : "",
+}%}
+
+<div id="assessing">
+	<div class="desktop-100">
+		<h1 class="title">Assessing Online</h1>
+
+		<div class="column mobile-100 desktop-66-left">
+			<div id="parcel_info" class="component-section m-b600">
+				<div class="sh cl">
+        			<h2 class="sh-title">Parcel Information</h2>
+        		</div>
+    		
+				<div id="map-container" class="geolocation-map-wrapper">
+					{# % include '@bos_assessing/map.html.twig' % #}
+					{% set drupal_settings = {
+					  '#attached': {
+					    'drupalSettings': {
+					      'bos_assessing': {
+					        'coords': coords
+					      }
+					    }
+					  }
+					} %}
+					{{ drupal_settings }}
+					{{ attach_library('bos_assessing/assessing_map') }}
+					{{ drupal_view('assessing', 'block_1') }}
+					{#{ drupal_dump(fields) }#}
 				</div>
+
+				<div class="desktop-100">
+					<ul class="dl column desktop-50">
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">PARCEL ID</div>
+	        				<div class="detail-item">545435G4544</div>
+	        			</li>
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">ADDRESS</div>
+	        				<div class="detail-item">{{ attribute(data,'MAIL_ADDRESS') ~' '~ attribute(data,'MAIL CS') }}</div>
+	        			</li>
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">PROPERTY TYPE</div>
+	        				<div class="detail-item">545435G4544</div>
+	        			</li>
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">CLASSIFICATION CODE</div>
+	        				<div class="detail-item">{{ attribute(data,'PTYPE') }}</div>
+	        			</li>
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">GROSS AREA</div>
+	        				<div class="detail-item">{{ attribute(data,'GROSS_AREA') }} sq ft</div>
+	        			</li>
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">LOT SIZE</div>
+	        				<div class="detail-item">32,545 sq ft</div>
+	        			</li>
+						<li class="dl-i">
+	        				<div class="detail-item__label">YEAR BUILT</div>
+	        				<div class="detail-item">1920</div>
+	        			</li>
+					</ul>
+					<ul class="dl column desktop-50">
+						<li class="dl-i">
+	        				<div class="detail-item__label">OWNER</div>
+	        				<div class="detail-item">MATT SMITH</div>
+	        			</li>
+	        			<li>
+	        				<div class="detail-item">Owner information may not reflect any changes submitted to City of Boston Assessing after October 20, 2020. Only Primary owner is displayed</div>
+	        			</li>
+	        			<li class="dl-i">
+	        				<div class="detail-item__label">OWNER'S MAILING ADDRESS</div>
+	        				<div class="detail-item">545435G4544</div>
+	        			</li>
+					</ul>
+					<div class="clearfix"></div>
+				</div>
+
+			</div>
+			<div class="component-section m-b600">
+			  	<div class="sh cl">
+        			<h2 class="sh-title">Property Attributes</h2>
+        		</div>
+        		<ul class="dl">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Condo</div>
+        			</li>
+				    {% for key,value in dataCondo %}
+				    <li class="dl-i">
+				        <span class="dl-t">{{ key }}</span>
+				        <span class="dl-d">{{ value }}</span>
+				    </li>
+				    {% endfor %}
+				</ul>
+				<div class="squiggle-border-bottom">&nbsp;</div>
+				<ul class="dl">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Unit</div>
+        			</li>
+				   {% for key,value in dataUnit %}
+				    <li class="dl-i">
+				        <span class="dl-t">{{ key }}</span>
+				        <span class="dl-d">{{ value }}</span>
+				    </li>
+				    {% endfor %}
+				</ul>
+				<div class="squiggle-border-bottom">&nbsp;</div>
 			</div>
 		</div>
-		<!-- end web app -->
-		<div>&nbsp;</div>
+		<div class="column mobile-100 desktop-33-right">
+			<div class="component-section">
+			  	<div class="sh cl">
+        			<h2 class="sh-title">Value Tax</h2>
+        		</div>
+        		<ul class="dl">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Condo</div>
+        			</li>
+				    <li class="dl-i">
+				        <span class="dl-t">Test</span>
+				        <span class="dl-d">April 15, 2015 4:00PM - 6:00PM</span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Other</span>
+				        <span class="dl-d">
+				            <div class="addr" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+				                <div itemprop="streetAddress" class="addr-a">
+				                    Boston City Hall, Room #241
+				                </div>
+				                <div class="addr-l">
+				                    <span itemprop="addressLocality">Boston</span>, <span itemprop="addressRegion">MA</span> <span itemprop="postalCode">02201</span>
+				                </div>
+				            </div>
+				        </span>
+				    </li>
+				</ul>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	<!-- end columns -->
+</div>
+
+<!-- end Assessing section -->
+<div class="b--fw b--g">
+	<div class="b-c">
+		<div class="sh cl">
+			<h2 class="sh-title">How To File For A</h2>
+		</div>
+		<div class="g">
+			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
+				<div class="pointer-mnl" tabindex="0">
+				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
+					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
+				</div>
+				<div class="cd-c">
+					<span class="h3 t--upper">
+						{% include '@bos_assessing/section.html.twig' %}
+						 Abatement
+					</span>
+					<div class="cdp-st">
+						Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups
+					</div>
+				</div>
+				</div>
+			</a>
+			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
+				<div class="pointer-mnl" tabindex="0">
+				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
+					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
+				</div>
+				<div class="cd-c">
+					<span class="h3 t--upper">Personal Exemption</span>
+					<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
+				</div>
+				</div>
+			</a>
+			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
+				<div class="pointer-mnl" tabindex="0">
+				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
+					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
+				</div>
+				<div class="cd-c">
+					<span class="h3 t--upper">Residential Exemption</span>
+					<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
+				</div>
+				</div>
+			</a>
+		</div>
 	</div>
 </div>
+
 <!-- end container -->
