@@ -5,6 +5,8 @@ namespace Drupal\bos_assessing\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\geolocation\Element;
+
 
 
 /**
@@ -20,6 +22,30 @@ class Assessing extends ControllerBase {
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected $log;
+
+  /**
+   * Get poly coordinates from arcGIS layer
+   * @param string $parcel_id
+   *   The id of the parcel requested by user
+   */
+  public function getPolyCoords($parcel_id) {
+
+      $url = 'https://services.arcgis.com/sFnw0xNflSi8J0uh/ArcGIS/rest/services/AbutterParcels_Oct2020/FeatureServer/0/query?where=PID%3D%27'.$parcel_id.'%27&f=pgeojson';
+      // Make the request and return the response.
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($ch, CURLOPT_HTTPGET, true);
+      $info = curl_exec($ch);
+
+      if (isset($info)) {
+        //$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        return $coords = json_decode($info);
+      } else {
+        return $coords = NULL;
+      }
+
+  }
 
   /**
    * Get parcel info from endpoint
@@ -38,11 +64,16 @@ class Assessing extends ControllerBase {
       if (isset($info)) {
         //$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $data = json_decode($info);
+      } else {
+        $data = NULL;
       }
+
+      $coords = $this->getPolyCoords($parcel_id);
   
       return [
         '#theme' => 'bos_assessing',
-        '#test_var' => $data,
+        '#data_full' => $data,
+        '#data_coords' => $coords,
       ];
   }
   
