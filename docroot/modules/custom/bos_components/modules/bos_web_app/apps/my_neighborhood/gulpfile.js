@@ -12,7 +12,6 @@ const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 var replace = require('gulp-replace');
-const connect = require('gulp-connect');
 
 
 // File paths
@@ -83,18 +82,11 @@ function watchTask(){
     );    
 }
 
-function runLocalHttp () {
-    connect.server({
-        host: 'localhost',
-        port: 5001
-    });
-}
-
 // Export the default Gulp task so it can be run
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
 exports.default = series(
-    parallel(cssTask, scssTask, jsTask, runLocalHttp),
+    parallel(cssTask, scssTask, jsTask), 
     cacheBustTask,
     watchTask
 );
