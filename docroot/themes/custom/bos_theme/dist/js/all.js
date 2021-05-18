@@ -1371,8 +1371,8 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
     });
 
     //back to top button
-    var scrollToTopBtn = document.querySelector(".scrollToTopBtn")
-    var rootElement = document.documentElement
+    var scrollToTopBtn = document.querySelector(".scrollToTopBtn");
+    var rootElement = document.documentElement;
 
     function handleScroll() {
       // Do something on scroll
@@ -1393,8 +1393,8 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
         behavior: "smooth"
       })
     }
-    scrollToTopBtn.addEventListener("click", scrollToTop)
-    document.addEventListener("scroll", handleScroll)
+    scrollToTopBtn.addEventListener("click", scrollToTop);
+    document.addEventListener("scroll", handleScroll);
 
     iFrameResize({
       log : false, // disable console logging
