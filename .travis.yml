@@ -108,6 +108,7 @@ script:
   - ${TRAVIS_BUILD_DIR}/scripts/local/validate.sh "none" "${TRAVIS_EVENT_TYPE}"
   # Verifcation is NOT done here but is now done in <travis_build.sh> for PR's only..
 
+
 deploy:
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   - provider: script
