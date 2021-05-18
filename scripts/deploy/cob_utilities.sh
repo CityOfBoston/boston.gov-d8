@@ -249,7 +249,15 @@ cleanup_tables() {
 
     # Remove Neighborhoodlookup data (+/-1.4GB each table), and compress.
     ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node__field_sam_neighborhood_data; OPTIMIZE TABLE node__field_sam_neighborhood_data;"
-    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node_revision__field_sam_neighborhood_data; ; OPTIMIZE TABLE node_revision__field_sam_neighborhood_data;"
+    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node_revision__field_sam_neighborhood_data; OPTIMIZE TABLE node_revision__field_sam_neighborhood_data;"
+
+    # cleanout the queues
+    ${drush_cmd} ${ALIAS} queue:delete mnl_cleanup
+    ${drush_cmd} ${ALIAS} queue:delete mnl_import
+    ${drush_cmd} ${ALIAS} queue:delete mnl_update
+
+    # Prune salesforce
+    ${drush_cmd} ${ALIAS}  salesforce_mapping:prune-revision
 }
 
 cleanup_backups() {

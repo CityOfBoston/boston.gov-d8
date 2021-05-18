@@ -162,6 +162,22 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   public function pullPresave(SalesforcePullEvent $event) {
     $mapping = $event->getMapping();
     switch ($mapping->id()) {
+      case 'bh_community_meeting_event':
+
+        try {
+          $project = $event->getEntity();
+          $sf_data = $event->getMappedObject()->getSalesforceRecord();
+
+          if ($supportedLanguages = $sf_data->field('Languages_supported__c')) {
+            $supportedLanguages = explode(';', $supportedLanguages);
+            $supportedLanguages = implode(', ', $supportedLanguages);
+            $project->set('field_bh_languages_supported', $supportedLanguages);
+          }
+        }catch (Exception $exception) {
+          // nothing to do
+        }
+
+        break;
       case 'building_housing_projects':
 
         $project = $event->getEntity();
