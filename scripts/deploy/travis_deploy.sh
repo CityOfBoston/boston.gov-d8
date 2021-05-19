@@ -132,6 +132,7 @@
             printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > ${deploy_dir}/.gitignore
             cat ${deploy_dir}/.gitignore
             git status --short
+            ls -la ${deploy_dir}/docroot/modules/contributed/config_update
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
@@ -162,6 +163,7 @@
                   printout "INFO" "The Deploy Candidate (in <${TRAVIS_BRANCH}> branch) is now ready to deploy to Acquia as <${deploy_branch}>.\n"
                   printout "ACTION" "Pushing local branch to Acquia repo."
                   cd ${deploy_dir} &&
+                      git status &&
 #                      git push ${remote_name} ${deploy_branch} &&
                       printout "SUCCESS" "Branch pushed to Acquia repo.\n"
                   printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the deployment to the Acquia environment.\n"
