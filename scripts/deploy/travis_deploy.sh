@@ -128,7 +128,8 @@
             cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
 
             # Adds gitignore to ensure git repos in modules are not accidentially merged
-            printf "modules/**/.git\n" > ${deploy_dir}/.gitignore
+            printf "docroot/modules/**/.git\n" > ${deploy_dir}/.gitignore
+            printf "docroot/libraries/**/.git\n" >> ${deploy_dir}/.gitignore
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
@@ -144,6 +145,10 @@
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
+                    git submodule status &&
+                    git submodule deinit --all
+                cd ${deploy_dir} &&
+                    git submodule status &&
                     git status --short &&
                     git add --all &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
@@ -157,7 +162,7 @@
                   printout "INFO" "The Deploy Candidate (in <${TRAVIS_BRANCH}> branch) is now ready to deploy to Acquia as <${deploy_branch}>.\n"
                   printout "ACTION" "Pushing local branch to Acquia repo."
                   cd ${deploy_dir} &&
-                      git push ${remote_name} ${deploy_branch} &&
+#                      git push ${remote_name} ${deploy_branch} &&
                       printout "SUCCESS" "Branch pushed to Acquia repo.\n"
                   printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the deployment to the Acquia environment.\n"
                 fi
