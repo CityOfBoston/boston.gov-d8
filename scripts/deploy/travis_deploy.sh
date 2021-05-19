@@ -128,7 +128,7 @@
             cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
 
             # Adds gitignore to ensure git repos in modules are not accidentially merged
-            printf "modules/.git\n" > ${deploy_dir}/.gitignore
+            printf "modules/**/.git\n" > ${deploy_dir}/.gitignore
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
