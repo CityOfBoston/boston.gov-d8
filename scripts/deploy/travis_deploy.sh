@@ -148,7 +148,7 @@
                     git submodule deinit --all
                 cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
-                    git status --short &&
+                    git status &&
                     git add --all &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
