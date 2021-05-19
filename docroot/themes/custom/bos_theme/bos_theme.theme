@@ -176,6 +176,7 @@ function bos_theme_preprocess(array &$variables, $hook) {
     $mode = _bos_theme_library();
     $lib = \Drupal::service('library.discovery')
       ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
+
     $variables['asset_url'] = $lib['remote'];
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
@@ -491,7 +492,7 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   global $_bos_theme_cob;
 
   if (!isset($_bos_theme_cob["display_breadcrumb"])) {
-    $$_bos_theme_cob["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $_bos_theme_cob["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
     $_bos_theme_cob["display_breadcrumb"] = ($_bos_theme_cob["display_breadcrumb"] == 'yes' || $_bos_theme_cob["display_breadcrumb"] == 'admin' && arg(0) == 'admin');
   }
   $_bos_theme_cob["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
@@ -1133,6 +1134,8 @@ function _bos_theme_render_snippets(array &$variables) {
   $variables['search'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'seal']);
   $variables['seal'] = \Drupal::service('renderer')->render($vars);
+
+
 }
 
 /**

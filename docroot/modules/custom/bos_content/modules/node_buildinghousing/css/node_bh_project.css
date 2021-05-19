@@ -243,9 +243,9 @@
   position: relative;
 }
 
-.timeline-text .bh-timeline-season,
+/*.timeline-text .bh-timeline-season,*/
 .timeline-text .bh-project-timeline-icon{
-  padding-top: 6rem;
+  padding-top: 0;
 }
 
 
@@ -413,10 +413,16 @@
   position: relative;
 }
 
+.field-name-field-bh-project-images div:nth-child(2){
+  display: flex;
+  align-items: flex-end;
+}
+
 .field-name-field-bh-project-images .main-photo-overlay{
   position: absolute;
-  /*bottom: -26px;*/
-  /*top: 10px;*/
+  /*bottom: 15rem;*/
+  /*top: 0;*/
+  /*left: 0;*/
   background: rgb(0, 0, 0);
   background: rgba(0, 0, 0, 0.5);
   color: #fff;
@@ -424,9 +430,13 @@
   padding: 0.5rem;
   text-align: center;
   width: 335px;
-  right: 2.65rem;
+  /*right: 2.65rem;*/
   /*height: 230px;*/
-  margin: 178px 0 0 0;
+  /*margin: 178px 0 0 0;*/
+}
+
+.field-name-field-bh-project-images h4.main-photo-overlay {
+  margin-top: -0.75rem;
 }
 
 .main-photo-placeholder {
@@ -479,13 +489,20 @@
   float: right;
 }
 
+
+.buildinghousing-map-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .buildinghousing-map-link a {
   margin: 0;
   position: absolute;
   /*top: 50%;*/
   /*left: 50%;*/
-  -ms-transform: translate(60%, 70%);
-  transform: translate(60%, 70%);
+  /*-ms-transform: translate(60%, 70%);*/
+  /*transform: translate(60%, 70%);*/
 }
 
 /*#edit-title-basic {*/
@@ -560,6 +577,7 @@
 
 .webform-submission-building-housing-feedback-form {
   clear: both;
+  margin-bottom: 3rem;
 }
 
 .webform-submission-building-housing-feedback-form input[type=radio] {
@@ -692,21 +710,9 @@
   width: calc(100vw - 2rem) !important;
 }
 
-@media screen and (max-width: 840px) {
-  .bh-project-timeline-moment .g--2 {
-    -ms-flex-preferred-size: calc(99.9% * 2 / 12 - 0rem);
-    flex-basis: calc(99.9% * 2 / 12 - 0rem);
-    max-width: calc(99.9% * 2 / 12 - 0rem);
-    width: calc(99.9% * 2/12 - 0rem);
-  }
 
-  .bh-project-timeline-moment .g--10 {
-    -ms-flex-preferred-size: calc(99.9% * 9 / 12 - 0rem);
-    flex-basis: calc(99.9% * 9 / 12 - 0rem);
-    max-width: calc(99.9% * 9 / 12 - 0rem);
-    width: calc(99.9% * 9 / 12 - 0rem);
-  }
-}
+
+
 
 @media screen and (max-width: 1300px) {
 
@@ -716,8 +722,8 @@
 
   .field-name-field-bh-coordinates .geolocation-map-container,
   .field-name-field-bh-project-images img {
-    /*width: calc(46vw - 5px) !important;*/
-    /*width: calc(46vw - 6px) !important;*/
+    /*width: calc(45vw - 5px) !important;*/
+    /*width: calc(45vw - 6px) !important;*/
     /*height: 180px !important;*/
   }
 
@@ -725,6 +731,11 @@
 }
 
 @media screen and (max-width: 1280px) {
+
+  .bh-project-header-img-map {
+    flex-direction: row;
+    clear: both;
+  }
 
   .g--2:nth-child(1n) {
     /*margin-right: 0.5rem;*/
@@ -740,18 +751,44 @@
     width: calc(99vw - 1.5rem) !important;
   }
 
+  .field-name-field-bh-project-images .main-photo-overlay {
+    width: 45vw;
+    /*bottom: 2.4rem;*/
+  }
+
+  .main-photo-container,
+  .field-name-field-bh-project-images,
   .field-name-field-bh-project-images img {
     float: left;
     /*margin-right: 0.5rem;*/
-    height: 32vw !important;
-    width: calc(46vw - 5px) !important;
+    height: 32vw;
+    width: 45vw;
   }
 
+  .buildinghousing-map-link-background,
+  .buildinghousing-map-link,
+  .buildinghousing-map-link-background-overlay,
   .field-name-field-bh-coordinates .geolocation-map-container {
     float: right;
     /*height: 230px !important;*/
-    height: 32vw !important;
-    width: calc(46vw - 5px) !important;
+    height: 32vw;
+    width: 45vw;
+  }
+
+  .main-photo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 32vw;
+    width: 45vw;
+    float: unset;
+    margin: unset;
+    padding: 0.25rem;
+  }
+
+  .main-photo-wrapper svg {
+    margin-left: unset;
   }
 
   .webform-submission-building-housing-feedback-form .webform-button--submit {
@@ -767,9 +804,66 @@
     padding-top: 1rem;
   }
 
+  .buildinghousing-map-link {
+    margin-right: 0;
+  }
+
+  .field-name-field-bh-project-images h4.main-photo-overlay {
+    margin-top: 0;
+  }
+
 }
 
 
+@media screen and (max-width: 840px) {
+  .bh-project-timeline-moment .g--2 {
+    -ms-flex-preferred-size: calc(99.9% * 2 / 12 - 0rem);
+    flex-basis: calc(99.9% * 2 / 12 - 0rem);
+    max-width: calc(99.9% * 2 / 12 - 0rem);
+    width: calc(99.9% * 2/12 - 0rem);
+  }
+
+  .bh-project-timeline-moment .g--10 {
+    -ms-flex-preferred-size: calc(99.9% * 9 / 12 - 0rem);
+    flex-basis: calc(99.9% * 9 / 12 - 0rem);
+    max-width: calc(99.9% * 9 / 12 - 0rem);
+    width: calc(99.9% * 9 / 12 - 0rem);
+  }
+
+  .field-name-field-bh-project-images .main-photo-overlay {
+    /*bottom: 6rem !important;*/
+  }
+
+  .webform-submission-bh-project-notification-signup-form div.t--info,
+  .bh-project-manager-contact div.t--info {
+    display: none;
+  }
+
+  .webform-submission-bh-project-notification-signup-form,
+  .bh-project-manager-contact {
+    padding:  0.25rem 1rem;
+  }
+
+  /*.field-name-field-bh-project-images,*/
+  /*.field-name-field-bh-project-images img {*/
+  /*  float: left;*/
+  /*  !*margin-right: 0.5rem;*!*/
+  /*  height: 32vw;*/
+  /*  width: calc(45vw - 5px);*/
+  /*}*/
+
+  /*.buildinghousing-map-link-background,*/
+  /*.buildinghousing-map-link,*/
+  /*.buildinghousing-map-link-background-overlay,*/
+  /*.field-name-field-bh-coordinates .geolocation-map-container {*/
+  /*  float: right;*/
+  /*  !*height: 230px !important;*!*/
+  /*  height: 32vw;*/
+  /*  width: calc(45vw - 5px);*/
+  /*}*/
+
+
+}
 
 
 @media screen and (max-width: 768px) {
@@ -800,6 +894,24 @@
     width: 52px;
   }
 
+  /*.field-name-field-bh-project-images,*/
+  /*.field-name-field-bh-project-images img {*/
+  /*  float: left;*/
+  /*  !*margin-right: 0.5rem;*!*/
+  /*  height: 32vw;*/
+  /*  width: calc(45vw - 5%);*/
+  /*}*/
+
+  /*.buildinghousing-map-link-background,*/
+  /*.buildinghousing-map-link,*/
+  /*.buildinghousing-map-link-background-overlay,*/
+  /*.field-name-field-bh-coordinates .geolocation-map-container {*/
+  /*  float: right;*/
+  /*  !*height: 230px !important;*!*/
+  /*  height: 32vw;*/
+  /*  width: calc(45vw - 5%);*/
+  /*}*/
+
 }
 
 @media screen and (max-width: 480px) {
@@ -811,7 +923,7 @@
 
   .field-name-field-bh-coordinates .geolocation-map-container,
   .field-name-field-bh-project-images img {
-    /*width: calc(46vw - 6px) !important;*/
+    /*width: calc(45vw - 6px) !important;*/
     /*height: 180px !important;*/
   }
 
@@ -839,6 +951,17 @@
     font-size: 40px;
     line-height: 40px;
   }
+
+  .field-name-field-bh-project-images .main-photo-overlay {
+    width: 45vw;
+    /*bottom: 2.4rem;*/
+  }
+
+  .main-photo-placeholder {
+    font-size: 16px;
+    line-height: 25px;
+  }
+
 }
 
 @media screen and (max-width: 360px) {
@@ -870,3 +993,21 @@
 
 }
 
+.field-name-field-bh-project-images {
+  display: flex;
+}
+
+.bh-project-header-img-map {
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+#collapsible-project-manager-contact~ .co-t,
+#collapsible-bh-follower-webform~ .co-t {
+  background-color: #fff;
+  color: #1871bd;
+}
+
+.co-t:after {
+  filter: brightness(1) sepia(293) hue-rotate(100deg) saturate(1470);
+}
