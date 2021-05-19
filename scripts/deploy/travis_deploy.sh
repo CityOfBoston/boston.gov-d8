@@ -127,6 +127,9 @@
             # TODO: figure out anchoring in rsync include file to make sure the  composer.json file gets copied.
             cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
 
+            # Adds gitignore to ensure git repos in modules are not accidentially merged
+            printf "modules/.git\n" > ${TRAVIS_BUILD_DIR}/.gitignore
+
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
             chmod -R +x ${deploy_dir}/hooks/
