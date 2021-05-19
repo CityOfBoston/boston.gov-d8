@@ -37,11 +37,14 @@
 {#  </div>#}
 {#</div>#}
 
+{% set isChecked = (how_to_tabs_total == 1) ? 'checked' : ''%}
+{% set isExpanded = (how_to_tabs_total == 1) ? 'expanded' : ''%}
+
 <div {{ attributes.addClass(['dr', 'contextual-region']) }}>
 
-  <input type="checkbox" id="tab-p-{{ how_to_tabs_count }}" class="dr-tr a11y--h">
+  <input type="checkbox" id="tab-p-{{ how_to_tabs_count }}" class="dr-tr a11y--h" {{ isChecked }}>
 
-  <label for="tab-p-{{ how_to_tabs_count }}" class="dr-h">
+  <label for="tab-p-{{ how_to_tabs_count }}" class="dr-h {{ isExpanded }}">
 
     <div class="dr-ic">
 

@@ -176,6 +176,7 @@ function node_how_to_preprocess_paragraph(&$variables) {
   static $tabs_counter = -1;
   if ($paragraph_type == 'how_to_tab') {
     $variables['how_to_tabs_count'] = ++$tabs_counter;
+    $variables['how_to_tabs_total'] = $paragraph->getParentEntity()->field_how_to_tabs->count() ?? 0;
   }
   elseif ($paragraph_type == 'how_to_text_step' || $paragraph_type == 'how_to_contact_step') {
     static $steps_counter;
