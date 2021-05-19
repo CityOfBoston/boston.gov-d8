@@ -3,9 +3,11 @@ langcode: en
 status: true
 dependencies:
   module:
+    - bos_text_editor
     - editor
     - entity_embed
     - linkit
+    - media
     - shortcode
     - token_filter
 _core:
@@ -102,6 +104,12 @@ filters:
   entity_embed:
     id: entity_embed
     provider: entity_embed
+    status: true
+    weight: 0
+    settings: {  }
+  filter_bos_text_editor_tables:
+    id: filter_bos_text_editor_tables
+    provider: bos_text_editor
     status: true
     weight: 0
     settings: {  }
