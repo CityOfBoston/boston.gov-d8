@@ -118,7 +118,7 @@
             # repo which aren't in the delpoy candidate.
             rsync \
                 -rlDW \
-                --delete-excluded \
+                --delete \
                 --files-from=${deploy_from_file} \
                 --exclude-from=${deploy_excludes_file} \
                 ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
@@ -129,8 +129,7 @@
 
             # Adds gitignore to ensure git repos in modules are not accidentially merged
             rm -f ${deploy_dir}/.gitignore
-            printf "docroot/modules/**/.git\n" > ${deploy_dir}/.gitignore
-            printf "docroot/libraries/**/.git\n" >> ${deploy_dir}/.gitignore
+            printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > ${deploy_dir}/.gitignore
             cat ${deploy_dir}/.gitignore
             git status --short
 
