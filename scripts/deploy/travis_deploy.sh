@@ -130,7 +130,6 @@
             # Adds gitignore to ensure git repos in modules are not accidentially merged
             rm -f ${deploy_dir}/.gitignore
             printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > ${deploy_dir}/.gitignore
-            ls -la ${deploy_dir}/docroot/modules/contrib/config_update
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
