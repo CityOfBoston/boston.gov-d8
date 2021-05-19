@@ -144,11 +144,9 @@
                 printout "ACTION" "Committing code in deploy_dir to local branch."
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
-                    printf "${Bold}working tree status:${NC}\n" &&
-                    git submodule status &&
                     git submodule deinit --all
                 cd ${deploy_dir} &&
-                    git submodule status &&
+                    printf "${Bold}working tree status:${NC}\n" &&
                     git status --short &&
                     git add --all &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
