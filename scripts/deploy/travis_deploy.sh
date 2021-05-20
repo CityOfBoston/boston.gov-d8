@@ -118,7 +118,7 @@
             # repo which aren't in the delpoy candidate.
             rsync \
                 -rlDW \
-                --delete-excluded \
+                --delete \
                 --files-from=${deploy_from_file} \
                 --exclude-from=${deploy_excludes_file} \
                 ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
@@ -126,6 +126,10 @@
             # Force composer.json - or else drush get broken.
             # TODO: figure out anchoring in rsync include file to make sure the  composer.json file gets copied.
             cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
+
+            # Adds gitignore to ensure git repos in modules are not accidentially merged
+            rm -f ${deploy_dir}/.gitignore
+            printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > ${deploy_dir}/.gitignore
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
@@ -140,8 +144,10 @@
                 printout "ACTION" "Committing code in deploy_dir to local branch."
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
+                    git submodule deinit --all
+                cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
-                    git status --short &&
+                    git status &&
                     git add --all &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
