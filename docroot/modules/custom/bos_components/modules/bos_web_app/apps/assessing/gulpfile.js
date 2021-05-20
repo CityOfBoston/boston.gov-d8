@@ -12,6 +12,8 @@ const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 var replace = require('gulp-replace');
+const connect = require('gulp-connect');
+
 
 
 // File paths
@@ -20,9 +22,9 @@ const files = {
     scssPath: 'src/components/**/*.scss',
     react: 'node_modules/react/umd/react.production.min.js',
     reactDom: 'node_modules/react-dom/umd/react-dom.production.min.js',
-    jsReactConfig: 'src/js/config.js',
+    jsReactConfig: 'src/js/app/config.js',
     jsReactComponents: 'src/js/components/*.js',
-    jsReactApp: 'src/js/index.js',
+    jsReactApp: 'src/js/app/index.js',
 }
 
 // Sass task: compiles the style.scss file into style.css
@@ -84,11 +86,18 @@ function watchTask(){
     );    
 }
 
+function runLocalHttp() {
+    connect.server({
+        host: 'localhost',
+        port: 5000
+    });
+}
+
 // Export the default Gulp task so it can be run
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
 exports.default = series(
-    parallel(cssTask, scssTask, jsTask), 
+    parallel(cssTask, scssTask, jsTask, runLocalHttp),
     cacheBustTask,
     watchTask
 );
