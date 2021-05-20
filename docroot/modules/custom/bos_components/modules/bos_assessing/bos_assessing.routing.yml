@@ -1,5 +1,5 @@
 assessing.endpoint:
-  path: '/rest/assessing/{parcel_id}'
+  path: '/assessing-online/{parcel_id}'
   methods: [POST,GET]
   defaults:
     _controller: '\Drupal\bos_assessing\Controller\Assessing::lookupParcel'
