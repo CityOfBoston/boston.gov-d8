@@ -573,6 +573,19 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
 }
 
+
+/**
+ * Implements hook_preprocess().
+ */
+function node_buildinghousing_preprocess(&$variables, $hook) {
+  if ($hook == 'node'
+    && isset($variables["elements"]["#node"])
+    && $variables["elements"]["#view_mode"] == 'calendar_listing'
+    && BHUtils::getMeetingFromEventId($variables["elements"]["#node"]->id())) {
+    $variables['showTwoCTAs'] = true;
+  }
+}
+
 /**
  * Helper function to render project meeting notices.
  *
