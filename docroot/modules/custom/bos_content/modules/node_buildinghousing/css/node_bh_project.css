@@ -756,6 +756,7 @@
     /*bottom: 2.4rem;*/
   }
 
+  .main-photo-container,
   .field-name-field-bh-project-images,
   .field-name-field-bh-project-images img {
     float: left;
@@ -772,6 +773,22 @@
     /*height: 230px !important;*/
     height: 32vw;
     width: 45vw;
+  }
+
+  .main-photo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 32vw;
+    width: 45vw;
+    float: unset;
+    margin: unset;
+    padding: 0.25rem;
+  }
+
+  .main-photo-wrapper svg {
+    margin-left: unset;
   }
 
   .webform-submission-building-housing-feedback-form .webform-button--submit {
@@ -938,6 +955,11 @@
   .field-name-field-bh-project-images .main-photo-overlay {
     width: 45vw;
     /*bottom: 2.4rem;*/
+  }
+
+  .main-photo-placeholder {
+    font-size: 16px;
+    line-height: 25px;
   }
 
 }
