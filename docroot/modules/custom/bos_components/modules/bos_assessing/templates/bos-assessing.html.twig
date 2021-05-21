@@ -37,7 +37,7 @@
 	border-bottom:0;
 	/*padding:8px 0;*/
 }
-#assessing #parcel_info .detail-item{
+#assessing .custom .detail-item{
 	line-height: normal;
     font-size: 90%;
 }
@@ -94,6 +94,11 @@
     "Parking OwnerShip" : "",
     "Tandem Parking" : "",
 }%}
+
+
+<div class="breadcrumb" data-swiftype-index="false">
+  {{ drupal_block('system_breadcrumb_block') }}
+</div>
 
 <div id="assessing">
 	<div class="desktop-100">
@@ -153,7 +158,7 @@
 	        				<div class="detail-item">1920</div>
 	        			</li>
 					</ul>
-					<ul class="dl column desktop-50">
+					<ul class="dl column desktop-50 custom">
 						<li class="dl-i">
 	        				<div class="detail-item__label">OWNER</div>
 	        				<div class="detail-item">MATT SMITH</div>
@@ -201,18 +206,16 @@
 			</div>
 		</div>
 		<div class="column mobile-100 desktop-33-right">
-			<div class="component-section">
+			<div class="component-section custom">
 			  	<div class="sh cl">
         			<h2 class="sh-title">Value Tax</h2>
         		</div>
         		<ul class="dl">
         			<li class="dl-i">
-        				<div class="detail-item__label">Condo</div>
+        				<div class="detail-item__label">Fiscal Year 2021 Assessment Breakdown</div>
+        				<div class="detail-item">Assessment as of Wednesday, January 1, 2021, statutory lien date.</div>
         			</li>
-				    <li class="dl-i">
-				        <span class="dl-t">Test</span>
-				        <span class="dl-d">April 15, 2015 4:00PM - 6:00PM</span>
-				    </li>
+       
 				    <li class="dl-i">
 				        <span class="dl-t">Other</span>
 				        <span class="dl-d">
