@@ -6,8 +6,7 @@ class SearchFilters extends React.Component {
   render () {
     const RadioBtnElems = () => {
       const fn_onChange = this.props.onChange;
-      // console.log('onChange: ', this.props.onChange());
-
+      
       return this.props.searchFilters.map((obj, index) => {
         let attributes = {
           id: `radio[${index}]`,

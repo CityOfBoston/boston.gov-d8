@@ -7,14 +7,12 @@ function RadioBtn(props) {
     onchange: props.onChange,
   };
   
-  // console.log('props.onchange: type =', typeof props.onchange, ' : ', props.onchange);
-  
   if (props.checked)
     attributes['checked'] = props.checked;
 
   return (
     <label
-      className="ra" 
+      className="ra"
       for={`radio[${props.index}]`}
     >
       <input {...attributes}/>
