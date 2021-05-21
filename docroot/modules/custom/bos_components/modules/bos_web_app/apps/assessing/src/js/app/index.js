@@ -293,19 +293,16 @@ class MNL extends React.Component {
       if (itemsLookupArray.length > 0) {
         for (const [index, value] of itemsLookupArray.entries()) {
           resultItem = (
-            <button
+            <a
               className="cd dl-i"
               tabIndex='0'
               style={{ cursor: "pointer" }}
-              onClick={this.displayAddress.bind(
-                this,
-                itemsLookupArray[index].PID,
-                itemsLookupArray[index].MAIL_ADDRESS,
-                null
-              )}
               key={index}
+              href={`assessing-online/${itemsLookupArray[index].PID}`}
             >
               <li className="css-1tksw0t">
+                <div>{itemsLookupArray[index].MAIL_ADDRESS}</div>
+
                 <div
                   className="mnl-address addr addr--s"
                   style={{
@@ -317,9 +314,14 @@ class MNL extends React.Component {
                 >
                   {itemsLookupArray[index].OWNER}
                 </div>
+
+                <div>{itemsLookupArray[index].PID}</div>
+
+                <div>${itemsLookupArray[index].AV_TOTAL}</div>
+
                 <div style={{ clear: "both" }} />
               </li>
-            </button>
+            </a>
           );
           itemsLookupMarkup.push(resultItem);
         }
