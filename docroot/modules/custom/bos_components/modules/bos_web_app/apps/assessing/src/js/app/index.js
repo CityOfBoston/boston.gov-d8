@@ -2,6 +2,7 @@
 class MNL extends React.Component {
   constructor (props) {
     super(props);
+    
     this.state = {
       error: null,
       isLoading: false,
@@ -15,7 +16,12 @@ class MNL extends React.Component {
       submittedAddress: null,
       submittedKeywords: null,
       searchColor: null,
-      searchType: 'owner',
+      searchByFilter: 0,
+      searchFilters: [
+        { value: 'owner', label: "Owner" },
+        { value: 'address', label: 'Address' },
+        { value: 'id', label: 'Property ID' }
+      ],
     };
   }
 
@@ -51,12 +57,18 @@ class MNL extends React.Component {
       currentKeywords: "",
       submittedAddress: null,
       submittedKeywords: null,
+      searchByFilter: 0,
+      searchFilters: [
+        {value: 'owner', label: "Owner", index: 0},
+        {value: 'address', label: 'Address', index: 1},
+        {value: 'id', label: 'Property ID', index: 2}
+      ],
     });
     { (!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path) : null) }
   }
 
   setCheckLocalStorage = (sam_id, sam_address, section) => {
-    console.log('setCheckLocalStorage: ', localStorage.getItem("sam_data"));
+    // console.log('setCheckLocalStorage: ', localStorage.getItem("sam_data"));
     if (!configProps.frame_google()) {
       if (localStorage.getItem("sam_data")) {
         let localSAM = JSON.parse(localStorage.getItem("sam_data"));
@@ -268,6 +280,10 @@ class MNL extends React.Component {
     }
   };
 
+  searchFilterHandler = () => {
+    console.log('EVENT FIRED (searchFilterHandler): ');
+  };
+
   render () {
     // Set and retreieve lookup items
     let itemsLookupArray = this.state.itemsLookup;
@@ -277,19 +293,16 @@ class MNL extends React.Component {
       if (itemsLookupArray.length > 0) {
         for (const [index, value] of itemsLookupArray.entries()) {
           resultItem = (
-            <button
+            <a
               className="cd dl-i"
               tabIndex='0'
               style={{ cursor: "pointer" }}
-              onClick={this.displayAddress.bind(
-                this,
-                itemsLookupArray[index].PID,
-                itemsLookupArray[index].MAIL_ADDRESS,
-                null
-              )}
               key={index}
+              href={`assessing-online/${itemsLookupArray[index].PID}`}
             >
               <li className="css-1tksw0t">
+                <div>{itemsLookupArray[index].MAIL_ADDRESS}</div>
+
                 <div
                   className="mnl-address addr addr--s"
                   style={{
@@ -301,9 +314,14 @@ class MNL extends React.Component {
                 >
                   {itemsLookupArray[index].OWNER}
                 </div>
+
+                <div>{itemsLookupArray[index].PID}</div>
+
+                <div>${itemsLookupArray[index].AV_TOTAL}</div>
+
                 <div style={{ clear: "both" }} />
               </li>
-            </button>
+            </a>
           );
           itemsLookupMarkup.push(resultItem);
         }
@@ -326,42 +344,11 @@ class MNL extends React.Component {
     );
     return (
       <div className="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full mnl">
-        <div className="search-filters">
-          <label className="filters-label">Search By:</label>
-
-          <label className="ra" for="radio[0]">
-            <input
-              id="radio[0]"
-              type="radio"
-              name="search_filter"
-              value="Public Notices"
-              className="ra-f"
-            />
-            <span className="ra-l">Owner</span>
-          </label>
-
-          <label className="ra" for="radio[1]">
-            <input
-              id="radio[1]"
-              type="radio"
-              name="search_filter"
-              value={1}
-              className="ra-f"
-            />
-            <span className="ra-l">Address</span>
-          </label>
-
-          <label className="ra" for="radio[2]">
-            <input
-              id="radio[2]"
-              type="radio"
-              name="search_filter"
-              value={2}
-              className="ra-f"
-            />
-            <span className="ra-l">ID</span>
-          </label>
-        </div>
+        <SearchFilters
+          searchByFilter={this.state.searchByFilter}
+          searchFilters={this.state.searchFilters}
+          onChange={this.searchFilterHandler}
+        />
         
         <div>
           <Search
