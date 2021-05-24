@@ -5,7 +5,7 @@
  *
 #}
 <article {{ attributes.addClass('cdp m-t500 g--1 g--3--sl').removeClass('node-person-profile') }}>
-  <a href="{{ person_link }}" class="cdp-l d-b p-a300">
+  <a href="{{ person_link }}" class="cdp-l d-b p-a300" role="group">
 
     {{ content.field_person_photo }}
 
@@ -16,7 +16,7 @@
       </div>
 
       {% if content.field_position_title['#items'].getValue() %}
-        <div class="cdp-st t--subinfo t--g300">
+        <div class="cdp-st t--subinfo t--gd">
           {{ content.field_position_title }}
         </div>
       {% endif %}
