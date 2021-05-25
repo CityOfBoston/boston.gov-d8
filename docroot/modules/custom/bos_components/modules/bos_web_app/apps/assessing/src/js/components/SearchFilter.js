@@ -5,16 +5,16 @@ class SearchFilters extends React.Component {
 
   render () {
     const RadioBtnElems = () => {
-      const fn_onChange = this.props.onChange;
       
       return this.props.searchFilters.map((obj, index) => {
         let attributes = {
           id: `radio[${index}]`,
           type: 'radio',
-          name: index,
+          name: `assessing_searchFilters`,
           className: 'ra-f',
           labelText: obj.label,
-          onChange: {fn_onChange},
+          index,
+          onChange: this.props.onChange,
         };
 
         if (this.props.searchByFilter === index)
