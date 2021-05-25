@@ -41,6 +41,19 @@
 	line-height: normal;
     font-size: 90%;
 }
+.assessing-right-column li.dl-i{
+	border-bottom:0;
+}
+.assessing-right-column li.dotted{
+	border-bottom: 1px dashed #e0e0e0;
+}
+.assessing-right-column .dl-t{
+	width:80%;
+}
+.assessing-right-column .dl-d{
+	width:20%;
+}
+
 #map-container{
 	width:100%;
 	height:400px;
@@ -212,24 +225,101 @@
         		</div>
         		<ul class="dl">
         			<li class="dl-i">
-        				<div class="detail-item__label">Fiscal Year 2021 Assessment Breakdown</div>
+        				<div class="detail-item__label m-b300">Fiscal Year 2021 Assessment Breakdown</div>
         				<div class="detail-item">Assessment as of Wednesday, January 1, 2021, statutory lien date.</div>
         			</li>
-       
+        		</ul>
+       			<ul class="dl assessing-right-column">
+       				<li class="dl-i dotted">
+				        <span class="dl-t"></span>
+				        <span class="dl-d"></span>
+				    </li>
 				    <li class="dl-i">
-				        <span class="dl-t">Other</span>
-				        <span class="dl-d">
-				            <div class="addr" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-				                <div itemprop="streetAddress" class="addr-a">
-				                    Boston City Hall, Room #241
-				                </div>
-				                <div class="addr-l">
-				                    <span itemprop="addressLocality">Boston</span>, <span itemprop="addressRegion">MA</span> <span itemprop="postalCode">02201</span>
-				                </div>
-				            </div>
-				        </span>
+				        <span class="dl-t">Total Full Valuation</span>
+				        <span class="dl-d">{{ attribute(data,'AV_BLDG') }}</span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Residential Exemption</span>
+				        <span class="dl-d"></span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Total Taxable Valuation</span>
+				        <span class="dl-d"></span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Residential Tax Rate *</span>
+				        <span class="dl-d">10.99</span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Commercial Tax Rate *</span>
+				        <span class="dl-d">12.99</span>
+				    </li>
+				     <li class="dl-i">
+				        <span class="dl-t">* Per Thousand</span>
+				        <span class="dl-d"></span>
 				    </li>
 				</ul>
+				<ul class="dl assessing-right-column">
+					<li class="dl-i dotted">
+				        <span class="dl-t"></span>
+				        <span class="dl-d"></span>
+				    </li>
+					<li class="dl-i">
+				        <span class="dl-t">Community Preservation Act</span>
+				        <span class="dl-d"></span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Special Assessments</span>
+				        <span class="dl-d"></span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Total Tax &amp; Spec Assmnt Due</span>
+				        <span class="dl-d"></span>
+				    </li>
+				    <li class="dl-i">
+				        <span class="dl-t">Personal Exemptions</span>
+				        <span class="dl-d"></span>
+				    </li>
+				</ul>
+				<ul class="dl assessing-right-column">
+					<li class="dl-i dotted">
+				        <span class="dl-t"></span>
+				        <span class="dl-d"></span>
+				    </li>
+				    <li class="dl-i">
+        				<div class="dl-t detail-item__label">FY2021 Net Tax</div>
+        				<span class="dl-d"> xxxx.xx</span>
+        			</li>
+
+				</ul>
+				<div class="squiggle-border-bottom">&nbsp;</div>
+				<ul class="dl assessing-right-column">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Residential Exemption</div>
+        				<div class="detail-item m-b300">No</div>
+        				<div class="detail-item m-b300">The deadline for a Residential Exemption submission is April 1, 2021.</div>
+        				<div>
+					        <a class="btn btn--sm btn--100">file residential exemption</a>
+					    </div>
+					    <div class="squiggle-border-bottom">&nbsp;</div>
+        			</li>
+        		</ul>
+        		<ul class="dl assessing-right-column">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Personal Exemption</div>
+        				<div class="detail-item m-b300">No</div>
+        				<div class="detail-item m-b300">The deadline for a Personal Exemption submission is April 1, 2021.</div>
+        				<div>
+					        <a class="btn btn--sm btn--100">file personal exemption</a>
+					    </div>
+					    <div class="squiggle-border-bottom">&nbsp;</div>
+        			</li>
+        		</ul>
+        		<div>
+        			<div class="detail-item m-b300">View Quarterly Tax Bill and Payment Information for this parcel for FY2020 and FY2021.</div>
+        			<div class="detail-item m-b300">View approved building permits associated with this parcel.</div>
+        			<div class="detail-item m-b300">View Quarterly Tax Bill and Payment Information for this parcel for FY2020 and FY2021.</div>
+        		</div>
 			</div>
 		</div>
 		<div class="clearfix"></div>
