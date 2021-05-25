@@ -176,15 +176,31 @@ class MNL extends React.Component {
 
   };
 
-  lookupAddress = event => {
+  lookupAddress = () => {
     let addressQuery = encodeURI(this.state.currentKeywords.toUpperCase());
+    // console.log('addressQuery: ', addressQuery);
+    let queryStr = {
+      base: `https://data.boston.gov/api/3/action/datastore_search_sql`,
+      sql: {
+        pre: `?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22`,
+        filters: [
+          `OWNER%22%20LIKE%20%27${addressQuery}%%27`,
+          `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
+          `PID%22%20LIKE%20%27${addressQuery}%27`,
+        ],
+      },
+    };
+
+    // console.log('queryStr: ', queryStr);
+    // console.log(`${queryStr.base}${queryStr.pre}${queryStr.filters[this.state.searchFilters]}`);
+    
     fetch(
+      // `${queryStr.base}${queryStr.pre}${queryStr.filters[this.state.searchFilters]}`,
       `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22OWNER%22%20LIKE%20%27${addressQuery}%%27`,
       {
         method: 'GET',
         redirect: 'follow',
       },
-
     )
       .then(res => res.json())
       .then(
@@ -280,8 +296,10 @@ class MNL extends React.Component {
     }
   };
 
-  searchFilterHandler = () => {
-    console.log('EVENT FIRED (searchFilterHandler): ');
+  searchFilterHandler = ev => {
+    this.setState({
+      searchByFilter: ev.currentTarget.value
+    });
   };
 
   render () {
