@@ -4,7 +4,8 @@ function RadioBtn(props) {
     type: 'radio',
     name: props.name,
     className: 'ra-f',
-    onchange: props.onChange,
+    onChange: props.onChange,
+    value: props.index,
   };
   
   if (props.checked)
@@ -15,13 +16,11 @@ function RadioBtn(props) {
       className="ra"
       for={`radio[${props.index}]`}
     >
-      <input {...attributes}/>
+      <input
+        {...attributes}
+      />
       <span className="ra-l">{props.labelText}</span>
     </label>
   );
 }
-
-RadioBtn.defaultProps = {
-  index: 0,
-};
 
