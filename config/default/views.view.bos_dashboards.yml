@@ -13,6 +13,7 @@ dependencies:
     - field.storage.node.field_event_project_number
     - field.storage.node.field_unspsc
     - node.type.procurement_advertisement
+    - system.menu.workbench
     - taxonomy.vocabulary.bid_type
     - taxonomy.vocabulary.contact
   module:
@@ -570,12 +571,12 @@ display:
   rfp_dashboard:
     display_plugin: page
     id: rfp_dashboard
-    display_title: 'RFP Dashboard'
+    display_title: 'Bids & RFPs Dashboard'
     position: 3
     display_options:
       display_extenders: {  }
       display_description: ''
-      path: admin/content/rfp
+      path: admin/workbench/content/bids-rfps
       style:
         type: table
         options:
@@ -1876,7 +1877,16 @@ display:
           content: 'Displaying @start - @end of @total'
           plugin_id: result
       group_by: true
-      title: 'RFP Dashboard'
+      title: 'Procurement Advertisement Dashboard'
+      menu:
+        type: normal
+        title: 'Bids & RFPs'
+        description: 'Procurement Advertisement Dashboard'
+        expanded: false
+        parent: ''
+        weight: 10
+        context: '0'
+        menu_name: workbench
     cache_metadata:
       max-age: -1
       contexts:
