@@ -44,7 +44,7 @@
           {{ fields.field_thumbnail.content }}
         {% else %}
           <div class="news-item-default-image">
-            <span>Image for {{ fields.title.content }}</span>
+            <span>{{ fields.title.content }}</span>
           </div>
         {% endif %}
 
@@ -54,7 +54,7 @@
 
       <div class="text-wrapper">
 
-        <h3 class="title">{{ fields.title.content }}</h3>
+        <h3 class="title"><span>{{ fields.title.content }}</span></h3>
         <div class="department-title">{{ fields.field_contact.content }}</div>
       </div>
 

@@ -6,6 +6,7 @@ dependencies:
     - field.storage.node.field_sidebar_components
     - node.type.article
     - paragraphs.paragraphs_type.commission_contact_info
+    - paragraphs.paragraphs_type.from_library
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.sidebar_item
     - paragraphs.paragraphs_type.sidebar_item_w_icon
@@ -34,9 +35,46 @@ settings:
       social_media_links: social_media_links
       commission_contact_info: commission_contact_info
       newsletter: newsletter
+      from_library: from_library
     target_bundles_drag_drop:
       3_column_w_image:
         weight: 2
+        enabled: false
+      bid:
+        weight: 92
+        enabled: false
+      bos311:
+        weight: 34
+        enabled: false
+      bos_signup_emergency_alerts:
+        weight: 94
+        enabled: false
+      branded_links:
+        weight: 73
+        enabled: false
+      cabinet:
+        weight: 35
+        enabled: false
+      card:
+        weight: 36
+        enabled: false
+      city_score_dashboard:
+        weight: 37
+        enabled: false
+      columns:
+        weight: 134
+        enabled: false
+      commission_contact_info:
+        enabled: true
+        weight: 68
+      commission_members:
+        weight: 99
+        enabled: false
+      commission_search:
+        weight: 75
+        enabled: false
+      commission_summary:
+        weight: 136
         enabled: false
       custom_hours_text:
         weight: 3
@@ -44,8 +82,26 @@ settings:
       daily_hours:
         weight: 4
         enabled: false
+      discussion_topic:
+        weight: 40
+        enabled: false
       document:
         weight: 5
+        enabled: false
+      drawer:
+        weight: 42
+        enabled: false
+      drawers:
+        weight: 43
+        enabled: false
+      election_results:
+        weight: 44
+        enabled: false
+      embed_view:
+        weight: 89
+        enabled: false
+      events_and_notices:
+        weight: 140
         enabled: false
       external_link:
         weight: 6
@@ -53,11 +109,23 @@ settings:
       featured_topics:
         weight: 8
         enabled: false
-      feedback:
-        weight: 9
+      from_library:
+        enabled: true
+        weight: 87
+      fyi:
+        weight: 49
         enabled: false
       gol_list_links:
         weight: 10
+        enabled: false
+      grid_links:
+        weight: 137
+        enabled: false
+      grid_of_cards:
+        weight: 51
+        enabled: false
+      grid_of_people:
+        weight: 52
         enabled: false
       grid_of_places:
         weight: 11
@@ -65,11 +133,23 @@ settings:
       grid_of_programs_initiatives:
         weight: 12
         enabled: false
+      grid_of_quotes:
+        weight: 55
+        enabled: false
+      grid_of_topics:
+        weight: 56
+        enabled: false
       group_of_links_grid:
         weight: 13
         enabled: false
       group_of_links_list:
         weight: 14
+        enabled: false
+      group_of_links_mini_grid:
+        weight: 59
+        enabled: false
+      group_of_links_quick_links:
+        weight: 106
         enabled: false
       header_text:
         weight: 15
@@ -86,14 +166,38 @@ settings:
       how_to_text_step:
         weight: 19
         enabled: false
+      iframe:
+        weight: 65
+        enabled: false
       internal_link:
         weight: 20
+        enabled: false
+      lightbox_link:
+        weight: 138
         enabled: false
       list:
         weight: 21
         enabled: false
+      map:
+        weight: 130
+        enabled: false
+      message_for_the_day:
+        weight: 68
+        enabled: false
+      news_and_announcements:
+        weight: 70
+        enabled: false
+      newsletter:
+        enabled: true
+        weight: 69
       photo:
         weight: 22
+        enabled: false
+      quote:
+        weight: 72
+        enabled: false
+      seamless_doc:
+        weight: 75
         enabled: false
       sidebar_item:
         enabled: true
@@ -106,6 +210,12 @@ settings:
         weight: 25
       social_networking:
         weight: 26
+        enabled: false
+      status_overrides:
+        weight: 127
+        enabled: false
+      tabbed_content_tab:
+        weight: 128
         enabled: false
       text:
         weight: 27
@@ -122,106 +232,13 @@ settings:
       transaction_grid:
         weight: 31
         enabled: false
-      bos311:
-        weight: 34
-        enabled: false
-      cabinet:
-        weight: 35
-        enabled: false
-      card:
-        weight: 36
-        enabled: false
-      city_score_dashboard:
-        weight: 37
-        enabled: false
-      discussion_topic:
-        weight: 40
-        enabled: false
-      drawer:
-        weight: 42
-        enabled: false
-      drawers:
-        weight: 43
-        enabled: false
-      election_results:
-        weight: 44
-        enabled: false
-      fyi:
-        weight: 49
-        enabled: false
-      grid_of_cards:
-        weight: 51
-        enabled: false
-      grid_of_people:
-        weight: 52
-        enabled: false
-      grid_of_quotes:
-        weight: 55
-        enabled: false
-      grid_of_topics:
-        weight: 56
-        enabled: false
-      group_of_links_mini_grid:
-        weight: 59
-        enabled: false
-      iframe:
-        weight: 65
-        enabled: false
-      commission_contact_info:
-        enabled: true
-        weight: 68
-      message_for_the_day:
-        weight: 68
-        enabled: false
-      newsletter:
-        enabled: true
-        weight: 69
-      news_and_announcements:
-        weight: 70
-        enabled: false
-      quote:
-        weight: 72
-        enabled: false
-      seamless_doc:
-        weight: 75
-        enabled: false
-      commission_search:
-        weight: 75
-        enabled: false
-      from_library:
-        weight: 87
+      transactions:
+        weight: 139
         enabled: false
       video:
         weight: 89
         enabled: false
-      bid:
-        weight: 92
-        enabled: false
-      bos_signup_emergency_alerts:
-        weight: 94
-        enabled: false
-      commission_members:
-        weight: 99
-        enabled: false
-      map:
-        weight: 130
-        enabled: false
-      columns:
-        weight: 134
-        enabled: false
-      commission_summary:
+      web_app:
         weight: 136
-        enabled: false
-      grid_links:
-        weight: 137
-        enabled: false
-      lightbox_link:
-        weight: 138
-        enabled: false
-      transactions:
-        weight: 139
-        enabled: false
-      events_and_notices:
-        weight: 140
         enabled: false
 field_type: entity_reference_revisions
