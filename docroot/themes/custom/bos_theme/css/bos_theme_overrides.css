@@ -1322,8 +1322,26 @@ a[href^="mailto:"] {
 body.no-s .md-c:focus-within {
   transition: background-color 0.01s;
 }
+.news-item-default-image span {visibility: hidden;}
+.news-item-wrapper h3 span {margin: 8.97px 0 39px; margin: 8.969px 0 39px; margin: .49833rem 0 2.16667rem; display: block;}
 
 .node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
+
+.scrollToTopBtn {
+  width: 48px;
+  position: fixed;
+  bottom: 160px;
+  right: 30px;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: all .5s ease
+}
+
+.showBtn {
+  opacity: 1;
+  transform: translateY(0)
+}
 
 .sr-only {
   position:absolute;
@@ -1336,7 +1354,7 @@ body.no-s .md-c:focus-within {
 
 @media (min-width: 980px) {
   .node-type-how-to .component-sectio.paragraphs-item-internal-linkn {
-    padding: 0;
+    padding: 0 0 0 0;
   }
 
   .oh-display-label {
@@ -1474,7 +1492,7 @@ html {
 /**
 Stella
 Where: Events UI
-What: Overrides to some drupal injected tags
+What: Overrides to some drupal injected tags.
  */
 .events-notices .b-c, .events-notices .p-a800, .events-notices .p-a300 {padding-top: 0;}
 .evt-thumbnails img {width: 100%; height: 100%; object-fit: cover;}
