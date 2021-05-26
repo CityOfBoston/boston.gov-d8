@@ -33,8 +33,8 @@
   Filter
 </div>
 <div class="views-exposed-form drawer mobile-only">
-  <bu class="views-exposed-widgets clearfix">
-    {% for i,filter in form['#info'] %}   
+  <div class="views-exposed-widgets clearfix">
+    {% for i,filter in form['#info'] %}
       {% set filter_name = filter.value %}
       <button type="button" aria-expanded="true/false" aria-controls="drawer-<?php print $counter; ?>" class="drawer-trigger">
         <div class="drawer-trigger-chevron"></div>
