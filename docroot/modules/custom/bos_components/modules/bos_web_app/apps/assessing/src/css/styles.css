@@ -1,6 +1,6 @@
 #web-app {
-	padding:50px 0 30px;
-	min-height:500px;
+	padding: 50px 0 30px;
+	min-height: 500px;
 }
 #web-app .supporting-text,
 #web-app .supporting-text p{
@@ -150,10 +150,6 @@
   color:#ffffff;
 }
 
-/* #web-app .mnl-address {
-  color:#ffffff;
-} */
-
 #web-app .search-result li {
 	display: flex;
 	color: #091f2f;
@@ -162,7 +158,6 @@
 #web-app .dl .header, #web-app .dl .rows {
 	display: flex;
 	justify-content: space-evenly;
-	padding: .7em .3em;
 	line-height: 1.25em;
 }
 
@@ -199,37 +194,43 @@
 	padding: 0.5em 0.5em 0 0;
 }
 
-@media (max-width: 980px) {
-	#web-app div.cd{
-		display:block;
-	}
-	#web-app .cd-c img{
-		margin: 0 auto 10px;
-	}
-  #web-app .sf-i-f.search {
-    font-size:28px;
-  }
-}
-@media (max-width: 480px) {
-  #web-app .sf-i-f.search {
-    font-size:20px;
-  }
+#web-app .dl .rows .mobile {
+	display: none;
 }
 
-@media (max-width: 1050px) {
-	#web-app .sf-i-b{
-		background-size:70%;
-	}
+#web-app .dl .rows .desktop {
+	display: block;
 }
 
-@media (min-width: 980px) {
-	#web-app .sf-i-f.search {
-		font-size:58px;
+@media (max-width: 767px) {
+	#web-app .dl .header {
+		display: none;
 	}
-}
 
-/** for local debug **/
-.bos-messages-wrapper{
-	display:none !important;
+	#web-app .dl .rows {
+		display: list-item;
+		justify-content: start;
+	}
+	
+	#web-app .dl .rows .prop-value {
+		flex: inherit;
+	}
+
+	#web-app .dl .rows .column-value {
+		display: flex;
+	}
+
+	#web-app .dl .rows .column-value {
+		flex: inherit;
+	}
+
+	#web-app .dl .rows .mobile {
+		display: block;
+		float: right;
+	}
+
+	#web-app .dl .rows .desktop {
+		display: none;
+	}
 }
 
