@@ -73,42 +73,45 @@ class MNL extends React.Component {
     })
   }
 
+  handleKeywordChange = event => {
+    event.preventDefault();
+    let inputChars = event.target.value.length;
+    this.setState({
+      currentKeywords: event.target.value,
+      submittedKeywords: null,
+      searchColor: null
+    });
+
+    console.log('handleKeywordChange: ', event.target.value, ' | ', this.state.currentKeywords);
+
+    if (inputChars >= 5 || event.keyCode === 13) {
+      this.setState({
+        isLoading: true,
+        submittedKeywords: true,
+        submittedAddress: null
+      });
+    }
+  }
+
   handleKeywordSubmit = event => {
     event.preventDefault();
     this.setState({
       isLoading: true,
       submittedKeywords: true,
-      submittedAddress: null
+      submittedAddress: null,
     });
     this.lookupAddress();
-    // this.scaleInputText();
   };
 
   lookupAddress = () => {
     let addressSt = this.state.currentKeywords;
+    let qryParams = this.state.queryStr;
     let addressQuery = addressSt ? encodeURI(this.state.currentKeywords.toUpperCase()) : '';
 
-    console.log('addressQuery: ', addressQuery);
-
-    let queryStr = {
-      base: `https://data.boston.gov/api/3/action/datastore_search_sql`,
-      sql: {
-        pre: `?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22`,
-        filters: [
-          `OWNER%22%20LIKE%20%27${addressQuery}%%27`,
-          `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
-          `PID%22%20LIKE%20%27${addressQuery}%27`,
-        ],
-      },
-    };
-
-    console.log('queryStr: ', queryStr);
-    console.log(`${queryStr.base}${queryStr.pre}${queryStr.filters}`);
-    // console.log(`${queryStr.base}${queryStr.pre}${queryStr.filters[this.state.searchFilters]}`);
+    const qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
     
     fetch(
-      // `${queryStr.base}${queryStr.pre}${queryStr.filters[this.state.searchFilters]}`,
-      `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22OWNER%22%20LIKE%20%27${addressQuery}%%27`,
+      qryUrl,
       {
         method: 'GET',
         redirect: 'follow',
@@ -117,7 +120,6 @@ class MNL extends React.Component {
       .then(res => res.json())
       .then(
         result => {
-          // console.log(`result: `, result);
           if (result.result.records.length > 0)
             this.setState({
               isLoading: false,
@@ -145,11 +147,13 @@ class MNL extends React.Component {
     this.setState({
       searchByFilter: ev.currentTarget.value
     });
+    
+    console.log(`searchFilterHandler > ${this.state.searchFilters[ev.currentTarget.value].label}`);
   };
 
   render () {
     // Set and retreieve lookup items
-    let itemsLookupArray = this.state.itemsLookup.slice(1, 10);
+    let itemsLookupArray = this.state.itemsLookup.slice(0, 9);
     let itemsLookupMarkup = [];
     let resultItem;
     if (this.state.submittedKeywords) {
@@ -215,7 +219,7 @@ class MNL extends React.Component {
         
         <div>
           <Search
-            handleKeywordChange={() => {}}
+            handleKeywordChange={this.handleKeywordChange}
             handleKeywordSubmit={this.handleKeywordSubmit}
             placeholder="Enter your address"
             searchClass="sf-i-f"
