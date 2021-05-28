@@ -150,12 +150,49 @@
   color:#ffffff;
 }
 
+/* #web-app .mnl-address {
+  color:#ffffff;
+} */
+
+#web-app .search-result li {
+	display: flex;
+	color: #091f2f;
+}
+
+#web-app .dl .header, #web-app .dl .rows {
+	display: flex;
+	justify-content: space-evenly;
+	padding: .7em .3em;
+	line-height: 1.25em;
+}
+
+#web-app .dl .header .header-label, 
+#web-app .dl .rows .prop-value
+{
+	flex: 1;
+	text-align: left;
+}
+
+#web-app .dl .header .header-label {
+	font-family: Montserrat, Helvetica, Arial, sans-serif;
+	text-transform: uppercase;
+	color: #091f2f;
+}
+
+#web-app .dl .rows .column-property  {
+	color: #288BE4;
+}
+
 #web-app .search-filters {
 	display: flex;
 }
 
 #web-app label {
 	margin-right: 0.5em;
+}
+
+#web-app a.search-result:hover, #web-app a.search-result:hover .rows .column-property {
+	color: #fff;
 }
 
 #web-app label:first-child {
@@ -193,6 +230,6 @@
 
 /** for local debug **/
 .bos-messages-wrapper{
-display:none !important;
+	display:none !important;
 }
 

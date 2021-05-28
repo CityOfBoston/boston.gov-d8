@@ -6,12 +6,10 @@ class MNL extends React.Component {
     this.state = {
       error: null,
       isLoading: false,
-      isLoadingRecollect: null,
       section: null,
       sam_id: null,
       itemsLookup: [],
       itemsDisplay: null,
-      itemsRecollect: [],
       currentKeywords: null,
       submittedAddress: null,
       submittedKeywords: null,
@@ -22,6 +20,28 @@ class MNL extends React.Component {
         { value: 'address', label: 'Address' },
         { value: 'id', label: 'Property ID' }
       ],
+      // `OWNER%22%20LIKE%20%27${addressQuery}%%27`
+      // `PID%22%20LIKE%20%27${addressQuery}%27`,
+      queryStr: {
+        base: `https://data.boston.gov/api/3/action/datastore_search_sql`,
+        sql: {
+          pre: `?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22`,
+          filters: [
+            {
+              pre: `OWNER%22%20LIKE%20%27`,
+              post: `%%27`
+            },
+            {
+              pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
+              post: ``,
+            },
+            {
+              pre: `PID%22%20LIKE%20%27`,
+              post: `%27`,
+            },
+          ],
+        },
+      },
     };
   }
 
@@ -33,65 +53,16 @@ class MNL extends React.Component {
     jQuery("#web-app input").css('height', inputHeight + 'px');
 
     let that = this;
-    window.addEventListener('popstate', function (event) {
-      if (that.state.submittedAddress !== null && that.state.section !== null) {
-        that.displaySection(null);
-      }
-      else if (that.state.submittedAddress !== null && that.state.section == null) {
-        that.setDefaults();
-      }
+    window.addEventListener('popstate', function () {
+      that.setDefaults();
     }, false);
-
-    // Check for local storage SAM data;
-    this.setCheckLocalStorage();
   }
 
   setDefaults = () => {
-    this.setState({
-      error: null,
-      isLoading: false,
-      isLoadingRecollect: null,
-      itemsLookup: [],
-      itemsDisplay: null,
-      itemsRecollect: [],
-      currentKeywords: "",
-      submittedAddress: null,
-      submittedKeywords: null,
-      searchByFilter: 0,
-      searchFilters: [
-        {value: 'owner', label: "Owner", index: 0},
-        {value: 'address', label: 'Address', index: 1},
-        {value: 'id', label: 'Property ID', index: 2}
-      ],
-    });
     { (!configProps.frame_google() ? history.pushState(null, null, configProps.globals.path) : null) }
   }
 
-  setCheckLocalStorage = (sam_id, sam_address, section) => {
-    // console.log('setCheckLocalStorage: ', localStorage.getItem("sam_data"));
-    if (!configProps.frame_google()) {
-      if (localStorage.getItem("sam_data")) {
-        let localSAM = JSON.parse(localStorage.getItem("sam_data"));
-        this.displayAddress(localSAM[0].sam_id, localSAM[0].sam_address, localSAM[0].section);
-
-        if (localSAM[0].section !== null) {
-          this.setState({ section: localSAM[0].section });
-        }
-      } else {
-        let samId = (sam_id ? sam_id : null);
-        let samAddress = (sam_address ? sam_address : null);
-        let cardSection = (section ? section : null);
-        let mnl = [{
-          "sam_id": samId,
-          "sam_address": samAddress,
-          "section": cardSection
-        }];
-        localStorage.setItem("sam_data", JSON.stringify(mnl));
-      }
-    }
-  }
-
-  scaleInputText = op => {
+  scaleInputText = () => {
     jQuery(".resize").textfill({
       minFontPixels: 20,
       maxFontPixels: 75,
@@ -102,29 +73,6 @@ class MNL extends React.Component {
     })
   }
 
-  handleKeywordChange = event => {
-    event.preventDefault();
-    let inputChars = event.target.value.length;
-    let typingTimer;
-    let doneTypingInterval = 3000;
-    this.setState({
-      currentKeywords: event.target.value,
-      submittedKeywords: null,
-      searchColor: null
-    });
-
-    if (inputChars >= 5 || event.keyCode === 13) {
-      this.setState({
-        isLoading: true,
-        submittedKeywords: true,
-        submittedAddress: null
-      });
-      clearTimeout(typingTimer);
-      typingTimer = setTimeout(this.lookupAddress(), doneTypingInterval);
-    }
-    this.scaleInputText();
-  };
-
   handleKeywordSubmit = event => {
     event.preventDefault();
     this.setState({
@@ -133,52 +81,15 @@ class MNL extends React.Component {
       submittedAddress: null
     });
     this.lookupAddress();
-    this.scaleInputText();
-  };
-
-  lookupRecollect = event => {
-    let address = { "address": this.state.submittedAddress };
-    fetch(
-      "rest/recollect",
-      {
-        method: "POST",
-        body: JSON.stringify(address),
-      }
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          if (result.response && result.response.events.length > 0) {
-            this.setState({
-              isLoadingRecollect: false,
-              itemsRecollect: result.response.events,
-            });
-          } else {
-            this.setState({
-              itemsRecollect: null
-            });
-          }
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        error => {
-          this.setState({
-            itemsRecollect: "error",
-            error
-          });
-        }
-      );
-
-  };
-
-  ownerStr = str => {
-
+    // this.scaleInputText();
   };
 
   lookupAddress = () => {
-    let addressQuery = encodeURI(this.state.currentKeywords.toUpperCase());
-    // console.log('addressQuery: ', addressQuery);
+    let addressSt = this.state.currentKeywords;
+    let addressQuery = addressSt ? encodeURI(this.state.currentKeywords.toUpperCase()) : '';
+
+    console.log('addressQuery: ', addressQuery);
+
     let queryStr = {
       base: `https://data.boston.gov/api/3/action/datastore_search_sql`,
       sql: {
@@ -191,7 +102,8 @@ class MNL extends React.Component {
       },
     };
 
-    // console.log('queryStr: ', queryStr);
+    console.log('queryStr: ', queryStr);
+    console.log(`${queryStr.base}${queryStr.pre}${queryStr.filters}`);
     // console.log(`${queryStr.base}${queryStr.pre}${queryStr.filters[this.state.searchFilters]}`);
     
     fetch(
@@ -229,73 +141,6 @@ class MNL extends React.Component {
       );
   };
 
-  displayAddress = (sam_id, sam_address, section) => {
-    this.setState({
-      isLoading: true,
-      isLoadingRecollect: true,
-      searchColor: "#288BE4",
-      section: null,
-      sam_id: sam_id,
-      currentKeywords: sam_address
-    });
-    
-    let jsonData = "none";
-    fetch(
-      'https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20"8de4e3a0-c1d2-47cb-8202-98b9cbe3bd04"%20WHERE%20"ST_NUM"%20LIKE%20%27100%27%20AND%20"ST_NAME"%20LIKE%20%27HOWARD%27',
-      {
-        method: 'GET',
-        redirect: 'follow',
-      },
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          if (result.data[0]) {
-            jsonData = JSON.parse(result.records);
-            let newState = { ...this.state.itemsDisplay };
-            newState.data = jsonData;
-            this.setState({
-              isLoading: false,
-              // submittedAddress: result.data[0].attributes.field_sam_address,
-              submittedAddress: `${jsonData.MAIL_ADDRESS}}`,
-              submittedKeywords: false,
-              itemsLookup: [],
-              itemsDisplay: newState.data
-            });
-            this.lookupRecollect();
-            this.scaleInputText();
-            localStorage.removeItem("sam_data");
-            this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, section);
-          } else {
-            this.setState({
-              itemsDisplay: null,
-              isLoading: false
-            });
-          }
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        error => {
-          this.setState({
-            isLoading: false,
-            itemsDisplay: null,
-            error
-          });
-        }
-      );
-  };
-
-  displaySection = (display, event) => {
-    if (event && event.keyCode === 13 || event == null) {
-      this.setState({
-        section: display
-      });
-      localStorage.removeItem("sam_data");
-      this.setCheckLocalStorage(this.state.sam_id, this.state.submittedAddress, display);
-    }
-  };
-
   searchFilterHandler = ev => {
     this.setState({
       searchByFilter: ev.currentTarget.value
@@ -304,40 +149,34 @@ class MNL extends React.Component {
 
   render () {
     // Set and retreieve lookup items
-    let itemsLookupArray = this.state.itemsLookup;
+    let itemsLookupArray = this.state.itemsLookup.slice(1, 10);
     let itemsLookupMarkup = [];
     let resultItem;
     if (this.state.submittedKeywords) {
       if (itemsLookupArray.length > 0) {
         for (const [index, value] of itemsLookupArray.entries()) {
+          console.log('render > value: ', value);
           resultItem = (
             <a
-              className="cd dl-i"
+              className="cd dl-i search-result"
               tabIndex='0'
               style={{ cursor: "pointer" }}
               key={index}
               href={`assessing-online/${itemsLookupArray[index].PID}`}
             >
-              <li className="css-1tksw0t">
-                <div>{itemsLookupArray[index].MAIL_ADDRESS}</div>
-
-                <div
-                  className="mnl-address addr addr--s"
-                  style={{
-                    whiteSpace: "pre-line",
-                    display: "block",
-                    verticalAlign: "middle",
-                    lineHeight: "1.4"
-                  }}
-                >
+              <li className="address-item rows">
+                <div className="prop-value column-property">
+                  {itemsLookupArray[index].MAIL_ADDRESS}
+                </div>
+                <div className="prop-value column-owner">
                   {itemsLookupArray[index].OWNER}
                 </div>
-
-                <div>{itemsLookupArray[index].PID}</div>
-
-                <div>${itemsLookupArray[index].AV_TOTAL}</div>
-
-                <div style={{ clear: "both" }} />
+                <div className="prop-value column-parcel">
+                  {itemsLookupArray[index].PID}
+                </div>
+                <div className="prop-value column-value">
+                  ${itemsLookupArray[index].AV_TOTAL}
+                </div>
               </li>
             </a>
           );
@@ -348,18 +187,21 @@ class MNL extends React.Component {
       }
     }
 
-    // let recollectEvents = (this.state.isLoadingRecollect ? null : this.state.itemsRecollect);
-    // let configSection = configProps.sections;
-    let mnlDisplay = this.state.submittedAddress ? (
-      <div>
-        {(!configProps.frame_google() ? history.pushState({ id: 'sections' }, '', configProps.globals.path + '?p2') : null)}
-        <div className="g">
-          Text ...
-        </div>
-      </div>
-    ) : (
-      ""
-    );
+    const renderListHeaders = () => {
+      let retElem = '';
+      if (itemsLookupMarkup.length > 0) {
+        retElem = (
+          <li className="header">
+            <div className="header-label">Property</div>
+            <div className="header-label">Owner</div>
+            <div className="header-label">Parcel ID</div>
+            <div className="header-label">Value</div>
+          </li>
+        );
+      }
+      return retElem;
+    };
+
     return (
       <div className="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full mnl">
         <SearchFilters
@@ -370,7 +212,7 @@ class MNL extends React.Component {
         
         <div>
           <Search
-            handleKeywordChange={this.handleKeywordChange}
+            handleKeywordChange={() => {}}
             handleKeywordSubmit={this.handleKeywordSubmit}
             placeholder="Enter your address"
             searchClass="sf-i-f"
@@ -383,8 +225,10 @@ class MNL extends React.Component {
             <div className="supporting-text">Loading ... </div>
           ) : (
             <div>
-              <ul className="dl">{itemsLookupMarkup}</ul>
-              <div>{mnlDisplay}</div>
+              <ul className="dl">
+                {renderListHeaders()}
+                {itemsLookupMarkup}
+              </ul>
             </div>
           )}
         </div>
