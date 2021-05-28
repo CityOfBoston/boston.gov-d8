@@ -7,9 +7,7 @@ class MyWebApp extends React.Component {
 
   render() {
       return(
-      	<div>
-          <div>Hello World Phil!</div>
-        </div>
+      	<div></div>
       ) 
   }
 }
