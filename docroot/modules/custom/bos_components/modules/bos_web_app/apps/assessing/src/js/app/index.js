@@ -117,7 +117,7 @@ class MNL extends React.Component {
       .then(res => res.json())
       .then(
         result => {
-          console.log(`result: `, result);
+          // console.log(`result: `, result);
           if (result.result.records.length > 0)
             this.setState({
               isLoading: false,
@@ -165,6 +165,9 @@ class MNL extends React.Component {
               href={`assessing-online/${itemsLookupArray[index].PID}`}
             >
               <li className="address-item rows">
+                <div className="prop-value column-value mobile">
+                  ${itemsLookupArray[index].AV_TOTAL}
+                </div>
                 <div className="prop-value column-property">
                   {itemsLookupArray[index].MAIL_ADDRESS}
                 </div>
@@ -174,7 +177,7 @@ class MNL extends React.Component {
                 <div className="prop-value column-parcel">
                   {itemsLookupArray[index].PID}
                 </div>
-                <div className="prop-value column-value">
+                <div className="prop-value column-value desktop">
                   ${itemsLookupArray[index].AV_TOTAL}
                 </div>
               </li>
