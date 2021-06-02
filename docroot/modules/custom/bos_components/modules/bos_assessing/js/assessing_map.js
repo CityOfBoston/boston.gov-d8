@@ -15,7 +15,7 @@
                 });
 
                 const map = new google.maps.Map(document.getElementById("map-container"), {
-                    zoom: 19,
+                    zoom: 18,
                     center: polyCoords[0],
                     mapTypeId: 'satellite',
                     tilt: 0,

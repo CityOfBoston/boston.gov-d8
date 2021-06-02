@@ -68,59 +68,56 @@
 
 {% set data = data_full.result.records[0] %}
 {% set coords = data_coords.features[0].geometry.coordinates %}
-{% set pType = (attribute(data,'PTYPE')  == '0102') 
-	? {'type':'U', 'name':'Apartment Building', 'alt':'S'} 
-	: {'type':'R', 'name':'Single Family Home', 'alt':'R'}
-%}
-{% set unitDisplay = (attribute(data,'PTYPE') == '0102') ? ' #'~attribute(data,'UNIT_NUM') : '' %}
+{% set unitDisplay = (attribute(data,'LUC') == '102') ? ' #'~attribute(data,'UNIT_NUM') : '' %}
+{% set propertyType = (attribute(data,'LUC') == '102') ? 'Apartment Building' : 'Single Family Home' %}
+
 {% set masterParcelId = attribute(data,'GIS_ID') %}
 {% set masterParcelLink = "<a href="~attribute(data,'GIS_ID')~">"~attribute(data,'GIS_ID')~"</a>" %}
 
 {% set dataMain = {
     "Grade" : "",
-    "Exterior Condition" : attribute(data, pType.alt ~ '_EXT_CND'),
-    "Exterior Style" : attribute(data, pType.alt ~ '_BLDG_STYL'),
-    "Exterior Finish" : attribute(data, pType.alt ~ '_EXT_FIN'),
+    "Exterior Condition" : attribute(data, 'EXT_COND'),
+    "Exterior Style" : attribute(data, 'BLDG_TYPE'),
+    "Exterior Finish" : attribute(data, 'EXT_FININISHED'),
     "Foundation" : "",
-    "Roof Cover" : "",
-    "Roof Structure" : attribute(data, pType.alt ~ '_ROOF_TYP')}
+    "Roof Cover" : attribute(data, 'ROOF_COVER'),
+    "Roof Structure" : attribute(data, 'ROOF_STRUCTURE')}
 %}
 
-{% set dataCondo= {
+{% set dataCondo = {
 	"Master Parcel" : masterParcelLink,
-	"Corner Unit" : attribute(data, 'U_CORNER'),
+	"Corner Unit" : attribute(data, 'CORNER_UNIT'),
     "Penthouse Unit" : "",
-    "Floor" : attribute(data,'U_BASE_FLOOR'),}
+    "Floor" : "" ,}
 %}
 
 {% set dataUnit = {
-    "Land Use" : "",
-    "Story Height" : attribute(data,'NUM_FLOORS'),
-    "Orientation" : attribute(data, pType.type ~ '_ORIENT'),
-    "View" : attribute(data, pType.type ~ '_VIEW'),
-    "AC Type" : attribute(data, pType.type ~ '_AC'),
-    "Heat Type" : attribute(data, pType.type ~ '_HEAT_TYP'),
-    "Fireplaces" : attribute(data, pType.type ~ '_FPLACE'),
-    "Interior Condition" : attribute(data, pType.type ~ '_INT_CND'),
-    "Total Rooms" : attribute(data, pType.type ~ '_TOT_RMS'),
-    "Bedrooms" : attribute(data, pType.type ~ '_BDRMS'),
-    "Bedroom Type" : "",
-    "Full Bathrooms" : attribute(data, pType.type ~ '_FULL_BTH'),
-    "Half Bathrooms" : attribute(data, pType.type ~ '_HALF_BTH'),
-    "Bath Style 1" : attribute(data, pType.type ~ '_BTH_STYLE'),
-    "Bath Style 2" : attribute(data, pType.type ~ '_BTH_STYLE2'),
-    "Bath Style 3" : attribute(data, pType.type ~ '_BTH_STYLE3'),
-    "Number of Kitchens" : "",
-    "Kitchen Type" : "",
-    "Kitchen Style 1" : attribute(data, pType.type ~ '_KITCH_STYLE'),
-    "Kitchen Style 2" : attribute(data, pType.type ~ '_KITCH_STYLE2'),
-    "Kitchen Style 3" : attribute(data, pType.type ~ '_KITCH_STYLE3'),
-    "Parking Spots" : attribute(data, pType.type ~ '_NUM_PARK'),
+    "Land Use" : attribute(data,'LU_DESC'),
+    "Story Height" : attribute(data,'RES_FLOORS'),
+    "Orientation" : "",
+    "View" : attribute(data, 'PROP_VIEW'),
+    "AC Type" : attribute(data, 'AC_TYPE'),
+    "Heat Type" : attribute(data, 'HEAT_TYPE'),
+    "Fireplaces" : attribute(data, 'FIRE_PLACE'),
+    "Plumbing" : attribute(data, 'PlUMBING'),
+    "Interior Condition" : attribute(data, 'INT_COND'),
+    "Total Rooms" : attribute(data, 'TT_RMS'),
+    "Bedrooms" : attribute(data, 'BED_RMS'),
+    "Full Bathrooms" : attribute(data, 'FULL_BTH'),
+    "Half Bathrooms" : attribute(data, 'HLF_BTH'),
+    "Bath Style 1" : attribute(data, 'BTHRM_STYLE1'),
+    "Bath Style 2" : attribute(data, 'BTHRM_STYLE2'),
+    "Bath Style 3" : attribute(data, 'BTHRM_STYLE3'),
+    "Number of Kitchens" : attribute(data, 'KITCHEN'),
+    "Kitchen Type" : attribute(data, 'KITCHEN_TYPE'),
+    "Kitchen Style 1" : attribute(data, 'KITCHEN_STYLE1'),
+    "Kitchen Style 2" : attribute(data, 'KITCHEN_STYLE2'),
+    "Kitchen Style 3" : attribute(data, 'KITCHEN_STYLE3'),
+    "Parking Spots" : attribute(data, 'NUM_PARKING'),
     "Parking Type" : "",
     "Parking Ownership" : "",
     "Tandem Parking" : "",}
 %}
-
 
 <div class="breadcrumb" data-swiftype-index="false">
   {{ drupal_block('system_breadcrumb_block') }}
@@ -137,7 +134,6 @@
         		</div>
     		
 				<div id="map-container" class="geolocation-map-wrapper">
-					{# % include '@bos_assessing/map.html.twig' % #}
 					{% set drupal_settings = {
 					  '#attached': {
 					    'drupalSettings': {
@@ -165,11 +161,11 @@
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">PROPERTY TYPE</div>
-	        				<div class="detail-item">{{ pType.name }}</div>
+	        				<div class="detail-item">{{ propertyType }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">CLASSIFICATION CODE</div>
-	        				<div class="detail-item">{{ attribute(data,'PTYPE') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'LUC') }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">GROSS AREA</div>
@@ -206,7 +202,7 @@
         			<h2 class="sh-title">Property Attributes</h2>
         		</div>
         		<ul class="dl">
-				    {% if (pType.type == 'U') %}
+				    {% if (propertyType == 'Apartment Building') %}
 					    <li class="dl-i">
 	        				<div class="detail-item__label">Condo</div>
 	        			</li>
@@ -224,13 +220,13 @@
 				    </li>
 				    {% endfor %}
 
-				    {% if (pType.type == 'U') %}
+				    {% if (propertyType == 'Apartment Building') %}
 				    <div class="squiggle-border-bottom">&nbsp;</div>
 				    {% endif %}
 
 				</ul>
 				<ul class="dl">
-					{% if (pType.type == 'U') %}
+					{% if (propertyType == 'Apartment Building') %}
         			<li class="dl-i">
         				<div class="detail-item__label">Unit</div>
         			</li>
@@ -265,7 +261,8 @@
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Total Full Valuation</span>
-				        <span class="dl-d">{{ attribute(data,'AV_BLDG')|number_format(2, '.', ',') }}</span>
+				        <span class="dl-d">{{ attribute(data,'TOTAL_VALUE') }}</span>
+				        <!--<span class="dl-d">{{ attribute(data,'TOTAL_VALUE')|number_format(2, '.', ',') }}</span>-->
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Residential Exemption</span>
@@ -317,7 +314,7 @@
 				    </li>
 				    <li class="dl-i">
         				<div class="dl-t detail-item__label">FY2021 Net Tax</div>
-        				<span class="dl-d"> {{ attribute(data,'GROSS_TAX')|number_format(2, '.', ',') }}</span>
+        				<span class="dl-d"> {{ attribute(data,'GROSS_TAX') }}</span>
         			</li>
 
 				</ul>
