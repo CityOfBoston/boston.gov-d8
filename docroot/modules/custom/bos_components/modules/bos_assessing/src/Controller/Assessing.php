@@ -30,7 +30,7 @@ class Assessing extends ControllerBase {
    */
   public function getPolyCoords($parcel_id) {
 
-      $url = 'https://services.arcgis.com/sFnw0xNflSi8J0uh/ArcGIS/rest/services/AbutterParcels_Oct2020/FeatureServer/0/query?where=PID%3D%27'.$parcel_id.'%27&f=pgeojson';
+      $url = 'https://services.arcgis.com/sFnw0xNflSi8J0uh/ArcGIS/rest/services/AbutterParcels_Oct2020/FeatureServer/0/query?where=PID_LONG%3D%27'.$parcel_id.'%27&f=pgeojson';
       // Make the request and return the response.
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_URL, $url);
