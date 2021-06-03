@@ -199,7 +199,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: 'amy.wipfler@boston.gov, dana.smith@boston.gov, kelsey.bruun@boston.gov'
+      to_mail: 'dana.smith@boston.gov, kelsey.bruun@boston.gov, nolin.greene@boston.gov, carol.owens@boston.gov'
       to_options: {  }
       cc_mail: alex.dora@boston.gov
       cc_options: {  }
@@ -209,7 +209,7 @@ handlers:
       from_options: {  }
       from_name: 'Boston MetroList'
       subject: 'Webform submission from: Metrolist Feedback on [webform_submission:source-title]'
-      body: _default
+      body: "<p>Submitted on [webform_submission:created]</p>\r\n<p>Submitted by: [webform_submission:user]</p>\r\n<p>Submitted values are:</p>\r\n[webform_submission:values]\r\n<p>Project:</p>\r\n[webform_submission:source-url]"
       excluded_elements: {  }
       ignore_access: false
       exclude_empty: true
