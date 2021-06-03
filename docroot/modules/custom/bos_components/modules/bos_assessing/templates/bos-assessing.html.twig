@@ -88,12 +88,12 @@
 	"Master Parcel" : masterParcelLink,
 	"Corner Unit" : attribute(data, 'CORNER_UNIT'),
     "Penthouse Unit" : "",
-    "Floor" : "" ,}
+    "Floor" : attribute(data, 'CD_FLOOR') ,}
 %}
 
 {% set dataUnit = {
     "Land Use" : attribute(data,'LU_DESC'),
-    "Story Height" : attribute(data,'RES_FLOORS'),
+    "Story Height" : attribute(data,'RES_FLOOR'),
     "Orientation" : "",
     "View" : attribute(data, 'PROP_VIEW'),
     "AC Type" : attribute(data, 'AC_TYPE'),
@@ -138,14 +138,15 @@
 					  '#attached': {
 					    'drupalSettings': {
 					      'bos_assessing': {
-					        'coords': coords
+					        'coords': coords,
+					        'test': 'hello'
 					      }
 					    }
 					  }
 					} %}
 					{{ drupal_settings }}
 					{{ drupal_view('assessing', 'block_1') }}
-					{#{ drupal_dump(fields) }#}
+					{#{ drupal_dump(data_coords) }#}
 				</div>
 
 				<div class="desktop-100">
