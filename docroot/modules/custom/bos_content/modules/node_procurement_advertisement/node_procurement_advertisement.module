@@ -106,7 +106,8 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
     if ($node->bundle() == "procurement_advertisement") {
       $variables['field_department'] = $variables["content"]["field_department"][0]["#context"]["value"];
       $variables['field_email'] = $variables["content"]["field_email"][0];
-      $variables['field_phone_number'] = bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]);
+      $variables['field_phone_number'] = isset($variables["content"]["field_phone_number"][0])
+        ? bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]) : NULL;
       $variables['field_not_awarded'] = $variables["content"]["field_not_awarded"][0];
       $variables['field_bid_type'] = $variables["content"]['field_bid_type'][0]['#title'];
       $variables["start_date"] = "";
