@@ -1141,14 +1141,19 @@ Where: rich text fields.
 What: Adds style for entity embed images.
  */
 div[class*=embedded-ckeditor].align-right {
-  margin: 0 0 10px 20px;
+  margin: 10px 0 10px 20px;
 }
 div[class*=embedded-ckeditor].align-center {
   /*margin: 0 20px 10px 20px;*/
 }
 div[class*=embedded-ckeditor].align-left {
-  margin: 0 20px 10px 0;
+  margin: 10px 20px 10px 0;
 }
+div[class*=embedded-ckeditor].g--6:nth-child(1n),
+div[class*=embedded-ckeditor].g--6:nth-child(2n) {
+  margin: unset;
+}
+
 .cob-150-embedded-ckeditor {
   width: 150px;
   height: 150px;
