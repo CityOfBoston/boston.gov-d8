@@ -4,3 +4,37 @@
  * @file
  * Install file for bos_core.
  */
+
+/**
+ * Add a custom index to the 'date_recur__node__field_event_date_recur' table to help with performance (slow query)
+ */
+function bos_core_update_8001() {
+
+  $schema = \Drupal\Core\Database\Database::getConnection()->schema();
+  $tableName = 'date_recur__node__field_event_date_recur';
+  $newIndexName = 'date_recur__node__field_event_date_recur_revision_index';
+  $fieldName = 'field_event_date_recur_value';
+
+  if ($schema->tableExists($tableName)) {
+    $fields = ['revision_id', $fieldName];
+    $spec = [];
+
+    $spec['fields']['revision_id'] = [
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'description' => 'The entity revision id this data is attached to',
+    ];
+
+    $spec['fields']['field_event_date_recur_value'] = [
+      'type' => 'varchar',
+      'description' => 'The start date value.',
+      'length' => 20,
+      'not null' => FALSE,
+    ];
+
+    $spec['indexes'][$newIndexName] = $fields;
+
+    $schema->addIndex($tableName, $newIndexName, $fields, $spec);
+  }
+}
