@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_theme().
@@ -36,11 +37,11 @@ function bos_featured_topics_preprocess_paragraph__featured_topics(&$variables, 
   $paragraph = $variables['paragraph'];
   // @var $field_topics Drupal\Core\Field\EntityReferenceFieldItemList.
   $field_topics = $paragraph->get('field_topics');
+
+  $imageStyle = ImageStyle::load('bos_text_responsive'); //scales 800px wide
   // @var $guide \Drupal\node\Entity\Node.
   foreach ($field_topics->referencedEntities() as $guide) {
-    $guide_uri = $guide->get('field_intro_image')->entity->get('image')->entity->uri->value;
-    // $guide_url = Url::fromUri($guide_uri)->toString();
-    $guide_url = file_create_url($guide_uri);
-    $variables['guide_url'][] = $guide_url;
+    $image = $guide->get('field_intro_image')->entity->get('image')->entity;
+    $variables['guide_url'][] = $imageStyle->buildUrl($image->getFileUri());
   }
 }
