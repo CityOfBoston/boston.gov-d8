@@ -121,7 +121,7 @@ deploy:
     on:
       branch: master
   - provider: script
-      skip_cleanup: true
-      script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-      on:
-        branch: drupal_patterns_update_uat
+    skip_cleanup: true
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    on:
+      branch: drupal_patterns_update_uat
