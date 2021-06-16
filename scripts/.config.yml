@@ -92,7 +92,7 @@ build:
         sync: "true"
     buildinghousing_ci:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
-      type: dev
+      type: none
       suppress_output: 0
       database:
         # Set source to 'initialize' to start a fresh install.
@@ -103,7 +103,7 @@ build:
         # define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
         # aquia require ./config/default:
         #     @see https://docs.acquia.com/acquia-cloud/develop/config-d8/
-        sync: "true"
+        sync: "false"
 
 deploy:
   # Each element of this deploy node is a branch in the main CoB repo.
