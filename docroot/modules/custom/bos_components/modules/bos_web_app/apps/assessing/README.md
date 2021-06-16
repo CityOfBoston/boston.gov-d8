@@ -170,6 +170,9 @@ Search Queries Needed
 
     - https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22OWNER%22%20LIKE%20%27%KELLY%20JUDY%%27
 
+  - PID
+    https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22PID%22%20LIKE%20%271300080000%27
+
 
 rest/assessing/2001717000
 /assessing-online/2001717000
