@@ -16,9 +16,24 @@ class MNL extends React.Component {
       searchColor: null,
       searchByFilter: 0,
       searchFilters: [
-        { value: 'owner', label: "Owner" },
-        { value: 'address', label: 'Address' },
-        { value: 'id', label: 'Property ID' }
+        {
+          value: 'owner',
+          label: "Property Owner",
+          instructions: "Enter the property owner's name (last, first)",
+          placeholder: "ex. Last Name, First Name",
+        },
+        {
+          value: 'id',
+          label: 'Property ID',
+          instructions: "Enter the Property ID number",
+          placeholder: "ex. 0504203000",
+        },
+        {
+          value: 'address',
+          label: 'Address',
+          instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc)",
+          placeholder: "ex. 1 City Hall Sq",
+        }
       ],
       // `OWNER%22%20LIKE%20%27${addressQuery}%%27`
       // `PID%22%20LIKE%20%27${addressQuery}%27`,
@@ -216,12 +231,16 @@ class MNL extends React.Component {
           searchFilters={this.state.searchFilters}
           onChange={this.searchFilterHandler}
         />
+
+        <div className="filterBy-desc">
+          {this.state.searchFilters[this.state.searchByFilter].instructions}
+        </div>
         
         <div>
           <Search
             handleKeywordChange={this.handleKeywordChange}
             handleKeywordSubmit={this.handleKeywordSubmit}
-            placeholder="Enter your address"
+            placeholder={this.state.searchFilters[this.state.searchByFilter].placeholder}
             searchClass="sf-i-f"
             styleInline={{ color: this.state.searchColor }}
             currentKeywords={this.state.currentKeywords}
