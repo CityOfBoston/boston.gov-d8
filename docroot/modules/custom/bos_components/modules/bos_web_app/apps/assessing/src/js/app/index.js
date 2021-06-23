@@ -17,38 +17,43 @@ class MNL extends React.Component {
       searchByFilter: 0,
       searchFilters: [
         {
+          value: 'address',
+          label: 'Address',
+          instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc) ex. 1 City Hall Sq",
+          placeholder: "Search by address",
+        },
+        {
           value: 'owner',
           label: "Property Owner",
-          instructions: "Enter the property owner's name (last, first)",
-          placeholder: "ex. Last Name, First Name",
+          instructions: "Enter the property owner's name (last, first) ex. Last name, First Name",
+          placeholder: "Search by Last name, First name",
         },
         {
           value: 'id',
-          label: 'Property ID',
-          instructions: "Enter the Property ID number",
-          placeholder: "ex. 0504203000",
+          label: 'Parcel ID',
+          instructions: "Enter the Property ID number ex. 0504203000",
+          placeholder: "Search by Property ID",
         },
-        {
-          value: 'address',
-          label: 'Address',
-          instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc)",
-          placeholder: "ex. 1 City Hall Sq",
-        }
       ],
-      // `OWNER%22%20LIKE%20%27${addressQuery}%%27`
-      // `PID%22%20LIKE%20%27${addressQuery}%27`,
       queryStr: {
         base: `https://data.boston.gov/api/3/action/datastore_search_sql`,
         sql: {
           pre: `?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22`,
           filters: [
             {
-              pre: `OWNER%22%20LIKE%20%27`,
-              post: `%%27`
-            },
-            {
+              // pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
               pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
               post: ``,
+              parseObj: {
+                bridge: `%20AND%20`,
+                st_num: `ST_NUM%22%20LIKE%20%27__value__%27`,
+                st_name: `%22ST_NAME%22%20LIKE%20%27__value__%27`,
+                st_name_suffix: `%22ST_NAME_SUF%22%20LIKE%20%27__value__%27`,
+              },
+            },
+            {
+              pre: `OWNER%22%20LIKE%20%27`,
+              post: `%%27`
             },
             {
               pre: `PID%22%20LIKE%20%27`,
@@ -57,6 +62,28 @@ class MNL extends React.Component {
           ],
         },
       },
+      st_suffix: [
+        { abbr: 'AL', label: 'Alley' },
+        { abbr: 'AV', label: 'Avenue' },
+        { abbr: 'AV', label: 'Ave' },
+        { abbr: 'AVE', label: 'Avenue' },
+        { abbr: 'BL', label: 'BLDV' },
+        { abbr: 'CI', label: 'Circle' },
+        { abbr: 'CT', label: 'Court' },
+        { abbr: 'DM', label: 'Dam' },
+        { abbr: 'DR', label: 'Drive' },
+        { abbr: 'HW', label: 'Highway' },
+        { abbr: 'PK', label: 'Park' },
+        { abbr: 'PW', label: 'Parkway' },
+        { abbr: 'PL', label: 'Place' },
+        { abbr: 'PZ', label: 'Plaza' },
+        { abbr: 'RD', label: 'Road' },
+        { abbr: 'RO', label: 'Row' },
+        { abbr: 'SQ', label: 'Square' },
+        { abbr: 'ST', label: 'Street' },
+        { abbr: 'TE', label: 'Terrace' },
+        { abbr: 'WY', label: 'Way' },
+      ],
     };
   }
 
@@ -97,7 +124,7 @@ class MNL extends React.Component {
       searchColor: null
     });
 
-    console.log('handleKeywordChange: ', event.target.value, ' | ', this.state.currentKeywords);
+    // console.log('handleKeywordChange: ', event.target.value, ' | ', this.state.currentKeywords);
 
     if (inputChars >= 5 || event.keyCode === 13) {
       this.setState({
@@ -122,8 +149,33 @@ class MNL extends React.Component {
     let addressSt = this.state.currentKeywords;
     let qryParams = this.state.queryStr;
     let addressQuery = addressSt ? encodeURI(this.state.currentKeywords.toUpperCase()) : '';
+    let qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    const currSearchFilterObj = this.state.searchFilters[this.state.searchByFilter];
 
-    const qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    if (currSearchFilterObj.value === 'address') {
+      let addressStr = decodeURIComponent(addressQuery);
+      let addressArr = addressStr.split(' ');
+      let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
+        const lastObj = addressArr[addressArr.length-1];
+        return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
+      });
+
+      if (
+        addressArr.length > 2 &&
+        parseInt(addressArr[0]) !== 'NaN' &&
+        typeof getMatchingSuffixObj === 'object'
+      ) {
+        const sqlParams = qryParams.sql.filters[this.state.searchByFilter];
+        const st_num = sqlParams.parseObj.st_num.replace('__value__', addressArr[0]);
+        const st_name_suffix = sqlParams.parseObj.st_name_suffix.replace('__value__', getMatchingSuffixObj.abbr);
+        const stName = addressArr.length === 3 ? encodeURIComponent(addressArr[1]) : encodeURIComponent(addressArr.slice(1, addressArr.length - 1).join(' '));
+        const st_name = sqlParams.parseObj.st_name.replace('__value__', stName);
+        const qry = `${st_num}${sqlParams.parseObj.bridge}${st_name}${sqlParams.parseObj.bridge}${st_name_suffix}`;
+        
+        qryUrl = `${qryParams.base}${qryParams.sql.pre}${qry}`;
+        // qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}`;
+      }
+    }
     
     fetch(
       qryUrl,
@@ -163,7 +215,7 @@ class MNL extends React.Component {
       searchByFilter: ev.currentTarget.value
     });
     
-    console.log(`searchFilterHandler > ${this.state.searchFilters[ev.currentTarget.value].label}`);
+    // console.log(`searchFilterHandler > ${this.state.searchFilters[ev.currentTarget.value].label}`);
   };
 
   render () {
@@ -174,7 +226,7 @@ class MNL extends React.Component {
     if (this.state.submittedKeywords) {
       if (itemsLookupArray.length > 0) {
         for (const [index, value] of itemsLookupArray.entries()) {
-          console.log('render > value: ', value);
+          // console.log('render > value: ', value);
           resultItem = (
             <a
               className="cd dl-i search-result"
