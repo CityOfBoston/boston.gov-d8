@@ -121,17 +121,17 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           break;
       }
 
+      if (_node_buildinghousing_get_computed_project_type($parent_entity)['label'] == 'Open Space'
+        && $publicStageTerm->getName() == 'City Planning Process') {
+        $vars['body'] = t("We're working with the developer on the final design, budget, and financing.");
+      }
+
       if ($recordType = BHUtils::getProjectRecordType($parent_entity) == 'NHD Development') {
 
         if ($publicStageTerm->getName() == 'Project Launch') {
           $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'funding-awarded']);
           $vars['body'] = t('The Department of Neighborhood Development approved funding for this project.');
           $vars['label'] = t('Funding awarded');
-//          $vars['icon'] = $stageIcon;
-//          $vars['label'] = $stageTitle->view(['label' => 'hidden']);
-//          $vars['body'] = $stageDescription->view(['label' => 'hidden']);
-//          $vars['date'] = $stageDate;
-//          $vars['currentState'] = $stageCurrentState;
         }
 
         if ($publicStageTerm->getName() == 'Selecting Developer') {
