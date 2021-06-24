@@ -132,7 +132,7 @@
   } %}
 
   {% set svg %}
-    <circle cx="37.5" cy="37.5" r="37.5" fill="#091F2F"/>
+    <circle cx="37.5" cy="37.5" r="37.5" fill="#091F2F" class="svg-fill-color"/>
     <path
       d="M56.9578 39.6856C58.8378 37.5616 59.8248 34.8712 59.8248 32.0392C59.8248 25.5728 54.6078 20.3808 48.2158 20.3808C45.3488 20.3808 42.7638 21.4664 40.7428 23.2128C38.1108 21.4192 34.9618 20.3808 31.5778 20.3808C22.5068 20.3808 15.1748 27.744 15.1748 36.8536C15.1748 40.96 16.6788 44.8304 19.4048 47.8984C18.8878 49.5032 18.1828 51.0136 17.3368 52.3352C16.6318 53.4208 16.7258 54.7424 17.5248 55.7336C18.0888 56.4416 18.9348 56.8192 19.7808 56.8192C20.1568 56.8192 20.5328 56.772 20.8618 56.5832C22.9768 55.7336 25.3268 54.4592 27.7708 52.8072C29.0398 53.0904 30.3088 53.2792 31.5778 53.2792C38.2518 53.2792 43.9388 49.2672 46.5238 43.556C47.8868 43.7448 49.2968 43.7448 50.7538 43.4144C52.4458 44.5472 53.9968 45.3968 55.4538 45.9632C55.7358 46.1048 56.0178 46.152 56.3468 46.152C57.0518 46.152 57.7098 45.8216 58.1798 45.3024C58.8378 44.5 58.8848 43.3672 58.3678 42.5176C57.7568 41.6208 57.3338 40.6768 56.9578 39.6856ZM27.8648 50.4C27.5358 50.3056 27.1598 50.3528 26.8778 50.5888C24.3868 52.288 22.0838 53.6096 20.0158 54.412C19.6868 54.5536 19.4518 54.3648 19.4048 54.2704C19.3108 54.1288 19.2168 53.94 19.3578 53.6568C20.4858 51.9104 21.3318 50.0224 21.8958 47.8984C22.0368 47.4736 21.8958 47.0488 21.6138 46.7184C19.0288 44.0752 17.5718 40.5824 17.5718 36.8536C17.5718 29.1128 23.8698 22.788 31.5778 22.788C39.2858 22.788 45.5838 29.1128 45.5838 36.8536C45.5838 45.8216 37.0298 52.9016 27.8648 50.4ZM51.6468 41.1488C51.4588 41.0072 51.2238 40.9128 50.9888 40.9128C50.8948 40.9128 50.7538 40.9128 50.6598 40.96C49.5318 41.2904 48.4038 41.3376 47.3228 41.2432C47.6988 39.8272 47.9338 38.364 47.9338 36.8064C47.9338 31.992 45.8658 27.6968 42.6228 24.676C44.1738 23.4488 46.1008 22.7408 48.2158 22.7408C53.2918 22.7408 57.4278 26.8944 57.4278 31.992C57.4278 34.4464 56.4878 36.7592 54.7958 38.5056C54.4668 38.836 54.3728 39.2608 54.4668 39.6856C54.8898 41.1488 55.5008 42.5176 56.2998 43.6976C54.8898 43.1784 53.2918 42.2816 51.6468 41.1488Z"
       fill="white"/>
@@ -173,7 +173,7 @@
   {% set svg %}
     <path
       d="M37.5 73.2045C57.219 73.2045 73.2045 57.219 73.2045 37.5C73.2045 17.7809 57.219 1.79541 37.5 1.79541C17.7809 1.79541 1.79541 17.7809 1.79541 37.5C1.79541 57.219 17.7809 73.2045 37.5 73.2045Z"
-      stroke="#288BE4" stroke-width="3" stroke-miterlimit="10"/>
+      />
     <path d="M53.3502 23.7063H20.6501V54.4263H53.3502V23.7063Z" fill="white"/>
     <path fill-rule="evenodd" clip-rule="evenodd"
           d="M20.1118 23.1682H53.8881V54.9645H20.1118V23.1682ZM21.1881 24.2445V53.8882H52.8118V24.2445H21.1881Z"
@@ -315,7 +315,7 @@
   } %}
 
   {% set svg %}
-    <circle cx="17.5" cy="17.5" r="17.5" fill="{{ fill ?? defaults.fill }}"/>
+    <circle cx="17.5" cy="17.5" r="17.5" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
   {% endset %}
 {% elseif type == 'file-pdf' %}
   {% set defaults = {
@@ -352,7 +352,7 @@
 
   {% set svg %}
     <circle cx="12.5" cy="12.5" r="12" fill="#478033" stroke="white"/>
-    <path d="M11.7837 18L12.058 13.0885H13.1023V16.3363L13.1996 18H11.7837Z" fill="#091F2F" stroke="#0C1F2E"
+    <path d="M11.7837 18L12.058 13.0885H13.1023V16.3363L13.1996 18H11.7837Z" fill="#091F2F" class="svg-fill-color" stroke="#0C1F2E"
           stroke-width="1.03" stroke-miterlimit="10"/>
     <path d="M13.1996 18H11.7837L12.058 13.0885H13.1023L13.1996 18Z" fill="white" stroke="white" stroke-width="1.03"
           stroke-miterlimit="10"/>
@@ -384,7 +384,7 @@
   } %}
 
   {% set svg %}
-    <circle cx="12.5" cy="12.5" r="12" fill="#091F2F" stroke="white"/>
+    <circle cx="12.5" cy="12.5" r="12" fill="#091F2F" class="svg-fill-color" stroke="white"/>
     <path
       d="M17.5129 9.57786L16.6273 8.93137V6.53137H14.8561V7.68266L12.5181 6L7.28413 9.62214L6 10.5077L6.5048 11.2339L7.10701 10.8177V18H9.17934V13.4037H12.0576V17.9911H17.6812V10.7823L18.2834 11.2162L18.8059 10.4989L17.5129 9.57786ZM16.1579 15.9542H13.6162V13.4037H16.1579V15.9542Z"
       fill="white"/>
@@ -444,10 +444,10 @@
   } %}
 
   {% set svg %}
-    <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}"/>
+    <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
     <path
       d="M44.8357 32.413V18.9706H31.0339V16.664H26.4249V18.9706H22.6475V52.3908H32.3H44.8357H54.4882V32.413H44.8357Z"
-      fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
+      fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
     <path d="M31.0289 44.0378H26.4199V48.6467H31.0289V44.0378Z" fill="white"/>
     <path d="M41.2584 44.0378H36.6494V48.6467H41.2584V44.0378Z" fill="white"/>
     <path d="M51.4879 44.0378H46.8789V48.6467H51.4879V44.0378Z" fill="white"/>
@@ -468,27 +468,27 @@
   } %}
 
   {% set svg %}
-      <path d="M37.4995 73.2045C57.2185 73.2045 73.204 57.219 73.204 37.5C73.204 17.7809 57.2185 1.79541 37.4995 1.79541C17.7804 1.79541 1.79492 17.7809 1.79492 37.5C1.79492 57.219 17.7804 73.2045 37.4995 73.2045Z" fill="{{ fill ?? defaults.fill }}" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
+      <path d="M37.4995 73.2045C57.2185 73.2045 73.204 57.219 73.204 37.5C73.204 17.7809 57.2185 1.79541 37.4995 1.79541C17.7804 1.79541 1.79492 17.7809 1.79492 37.5C1.79492 57.219 17.7804 73.2045 37.4995 73.2045Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" />
       <path d="M53.3504 24.7063H20.6504V55.4263H53.3504V24.7063Z" fill="white"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 24.1682H53.8876V55.9645H20.1113V24.1682ZM21.1876 25.2445V54.8882H52.8113V25.2445H21.1876Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 29.9151C20.1113 29.6179 20.3523 29.377 20.6495 29.377H53.3495C53.6467 29.377 53.8876 29.6179 53.8876 29.9151C53.8876 30.2123 53.6467 30.4532 53.3495 30.4532H20.6495C20.3523 30.4532 20.1113 30.2123 20.1113 29.9151Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 31.9231H28.6613V38.1293H22.4551V31.9231ZM23.5313 32.9993V37.0531H27.5851V32.9993H23.5313Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 31.9231H36.2902V38.1293H30.084V31.9231ZM31.1602 32.9993V37.0531H35.214V32.9993H31.1602Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 31.9231H43.9172V38.1293H37.7109V31.9231ZM38.7872 32.9993V37.0531H42.8409V32.9993H38.7872Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 31.9231H51.548V38.1293H45.3418V31.9231ZM46.418 32.9993V37.0531H50.4718V32.9993H46.418Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path d="M28.1241 39.8301H22.9941V44.9601H28.1241V39.8301Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 39.2917H28.6613V45.498H22.4551V39.2917ZM23.5313 40.368V44.4218H27.5851V40.368H23.5313Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path d="M35.7511 39.8301H30.6211V44.9601H35.7511V39.8301Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 39.2917H36.2902V45.498H30.084V39.2917ZM31.1602 40.368V44.4218H35.214V40.368H31.1602Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 39.2917H43.9172V45.498H37.7109V39.2917ZM38.7872 40.368V44.4218H42.8409V40.368H38.7872Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 39.2917H51.548V45.498H45.3418V39.2917ZM46.418 40.368V44.4218H50.4718V40.368H46.418Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 46.6606H28.6613V52.8669H22.4551V46.6606ZM23.5313 47.7369V51.7906H27.5851V47.7369H23.5313Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 46.6606H36.2902V52.8669H30.084V46.6606ZM31.1602 47.7369V51.7906H35.214V47.7369H31.1602Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 46.6606H43.9172V52.8669H37.7109V46.6606ZM38.7872 47.7369V51.7906H42.8409V47.7369H38.7872Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 24.1682H53.8876V55.9645H20.1113V24.1682ZM21.1876 25.2445V54.8882H52.8113V25.2445H21.1876Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 29.9151C20.1113 29.6179 20.3523 29.377 20.6495 29.377H53.3495C53.6467 29.377 53.8876 29.6179 53.8876 29.9151C53.8876 30.2123 53.6467 30.4532 53.3495 30.4532H20.6495C20.3523 30.4532 20.1113 30.2123 20.1113 29.9151Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 31.9231H28.6613V38.1293H22.4551V31.9231ZM23.5313 32.9993V37.0531H27.5851V32.9993H23.5313Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 31.9231H36.2902V38.1293H30.084V31.9231ZM31.1602 32.9993V37.0531H35.214V32.9993H31.1602Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 31.9231H43.9172V38.1293H37.7109V31.9231ZM38.7872 32.9993V37.0531H42.8409V32.9993H38.7872Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 31.9231H51.548V38.1293H45.3418V31.9231ZM46.418 32.9993V37.0531H50.4718V32.9993H46.418Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path d="M28.1241 39.8301H22.9941V44.9601H28.1241V39.8301Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 39.2917H28.6613V45.498H22.4551V39.2917ZM23.5313 40.368V44.4218H27.5851V40.368H23.5313Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path d="M35.7511 39.8301H30.6211V44.9601H35.7511V39.8301Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 39.2917H36.2902V45.498H30.084V39.2917ZM31.1602 40.368V44.4218H35.214V40.368H31.1602Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 39.2917H43.9172V45.498H37.7109V39.2917ZM38.7872 40.368V44.4218H42.8409V40.368H38.7872Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 39.2917H51.548V45.498H45.3418V39.2917ZM46.418 40.368V44.4218H50.4718V40.368H46.418Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 46.6606H28.6613V52.8669H22.4551V46.6606ZM23.5313 47.7369V51.7906H27.5851V47.7369H23.5313Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 46.6606H36.2902V52.8669H30.084V46.6606ZM31.1602 47.7369V51.7906H35.214V47.7369H31.1602Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 46.6606H43.9172V52.8669H37.7109V46.6606ZM38.7872 47.7369V51.7906H42.8409V47.7369H38.7872Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path d="M32.3156 20.5737H30.1855V27.3162H32.3156V20.5737Z" fill="white"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M29.623 20.0112H32.878V27.8787H29.623V20.0112ZM30.748 21.1362V26.7537H31.753V21.1362H30.748Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M29.623 20.0112H32.878V27.8787H29.623V20.0112ZM30.748 21.1362V26.7537H31.753V21.1362H30.748Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path d="M43.8175 20.5737H41.6875V27.3162H43.8175V20.5737Z" fill="white"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M41.125 20.0112H44.38V27.8787H41.125V20.0112ZM42.25 21.1362V26.7537H43.255V21.1362H42.25Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M41.125 20.0112H44.38V27.8787H41.125V20.0112ZM42.25 21.1362V26.7537H43.255V21.1362H42.25Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
   {% endset %}
 {% elseif type == 'timeline-calendar-outline' %}
   {% set defaults = {
@@ -501,25 +501,25 @@
   {% set svg %}
       <path d="M37.4995 73.2045C57.2185 73.2045 73.204 57.219 73.204 37.5C73.204 17.7809 57.2185 1.79541 37.4995 1.79541C17.7804 1.79541 1.79492 17.7809 1.79492 37.5C1.79492 57.219 17.7804 73.2045 37.4995 73.2045Z" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
       <path d="M53.3504 23.7063H20.6504V54.4263H53.3504V23.7063Z" fill="white"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 23.1682H53.8876V54.9645H20.1113V23.1682ZM21.1876 24.2445V53.8882H52.8113V24.2445H21.1876Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 28.9151C20.1113 28.6179 20.3523 28.377 20.6495 28.377H53.3495C53.6467 28.377 53.8876 28.6179 53.8876 28.9151C53.8876 29.2123 53.6467 29.4532 53.3495 29.4532H20.6495C20.3523 29.4532 20.1113 29.2123 20.1113 28.9151Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 30.9231H28.6613V37.1293H22.4551V30.9231ZM23.5313 31.9993V36.0531H27.5851V31.9993H23.5313Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 30.9231H36.2902V37.1293H30.084V30.9231ZM31.1602 31.9993V36.0531H35.214V31.9993H31.1602Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 30.9231H43.9172V37.1293H37.7109V30.9231ZM38.7872 31.9993V36.0531H42.8409V31.9993H38.7872Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 30.9231H51.548V37.1293H45.3418V30.9231ZM46.418 31.9993V36.0531H50.4718V31.9993H46.418Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path d="M28.1241 38.8301H22.9941V43.9601H28.1241V38.8301Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 38.2917H28.6613V44.498H22.4551V38.2917ZM23.5313 39.368V43.4218H27.5851V39.368H23.5313Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path d="M35.7511 38.8301H30.6211V43.9601H35.7511V38.8301Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 38.2917H36.2902V44.498H30.084V38.2917ZM31.1602 39.368V43.4218H35.214V39.368H31.1602Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 38.2917H43.9172V44.498H37.7109V38.2917ZM38.7872 39.368V43.4218H42.8409V39.368H38.7872Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 38.2917H51.548V44.498H45.3418V38.2917ZM46.418 39.368V43.4218H50.4718V39.368H46.418Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 45.6606H28.6613V51.8669H22.4551V45.6606ZM23.5313 46.7369V50.7906H27.5851V46.7369H23.5313Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 45.6606H36.2902V51.8669H30.084V45.6606ZM31.1602 46.7369V50.7906H35.214V46.7369H31.1602Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 45.6606H43.9172V51.8669H37.7109V45.6606ZM38.7872 46.7369V50.7906H42.8409V46.7369H38.7872Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 23.1682H53.8876V54.9645H20.1113V23.1682ZM21.1876 24.2445V53.8882H52.8113V24.2445H21.1876Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M20.1113 28.9151C20.1113 28.6179 20.3523 28.377 20.6495 28.377H53.3495C53.6467 28.377 53.8876 28.6179 53.8876 28.9151C53.8876 29.2123 53.6467 29.4532 53.3495 29.4532H20.6495C20.3523 29.4532 20.1113 29.2123 20.1113 28.9151Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 30.9231H28.6613V37.1293H22.4551V30.9231ZM23.5313 31.9993V36.0531H27.5851V31.9993H23.5313Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 30.9231H36.2902V37.1293H30.084V30.9231ZM31.1602 31.9993V36.0531H35.214V31.9993H31.1602Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 30.9231H43.9172V37.1293H37.7109V30.9231ZM38.7872 31.9993V36.0531H42.8409V31.9993H38.7872Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 30.9231H51.548V37.1293H45.3418V30.9231ZM46.418 31.9993V36.0531H50.4718V31.9993H46.418Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path d="M28.1241 38.8301H22.9941V43.9601H28.1241V38.8301Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 38.2917H28.6613V44.498H22.4551V38.2917ZM23.5313 39.368V43.4218H27.5851V39.368H23.5313Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path d="M35.7511 38.8301H30.6211V43.9601H35.7511V38.8301Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 38.2917H36.2902V44.498H30.084V38.2917ZM31.1602 39.368V43.4218H35.214V39.368H31.1602Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 38.2917H43.9172V44.498H37.7109V38.2917ZM38.7872 39.368V43.4218H42.8409V39.368H38.7872Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M45.3418 38.2917H51.548V44.498H45.3418V38.2917ZM46.418 39.368V43.4218H50.4718V39.368H46.418Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M22.4551 45.6606H28.6613V51.8669H22.4551V45.6606ZM23.5313 46.7369V50.7906H27.5851V46.7369H23.5313Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M30.084 45.6606H36.2902V51.8669H30.084V45.6606ZM31.1602 46.7369V50.7906H35.214V46.7369H31.1602Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M37.7109 45.6606H43.9172V51.8669H37.7109V45.6606ZM38.7872 46.7369V50.7906H42.8409V46.7369H38.7872Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path d="M32.3156 19.5737H30.1855V26.3162H32.3156V19.5737Z" fill="white"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M29.623 19.0112H32.878V26.8787H29.623V19.0112ZM30.748 20.1362V25.7537H31.753V20.1362H30.748Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M29.623 19.0112H32.878V26.8787H29.623V19.0112ZM30.748 20.1362V25.7537H31.753V20.1362H30.748Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path d="M43.8175 19.5737H41.6875V26.3162H43.8175V19.5737Z" fill="white"/>
-      <path fill-rule="evenodd" clip-rule="evenodd" d="M41.125 19.0112H44.38V26.8787H41.125V19.0112ZM42.25 20.1362V25.7537H43.255V20.1362H42.25Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M41.125 19.0112H44.38V26.8787H41.125V19.0112ZM42.25 20.1362V25.7537H43.255V20.1362H42.25Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
   {% endset %}
 {% elseif type == 'timeline-chat' %}
   {% set defaults = {
@@ -530,7 +530,7 @@
   } %}
 
   {% set svg %}
-      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}"/>
+      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path d="M17.5039 38.1247H22.9266L23.3724 43.9731L27.1106 38.1247H41.9976L42.151 20.499H17.5039V38.1247Z" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linejoin="round"/>
       <path d="M58.9987 50.1516H53.5759L53.1301 55.9999L49.392 50.1516H34.505L34.3516 32.5259H58.9987V50.1516Z" fill="white"/>
   {% endset %}
@@ -597,13 +597,13 @@
   } %}
 
   {% set svg %}
-      <path d="M37.5004 73.2045C57.2195 73.2045 73.205 57.219 73.205 37.5C73.205 17.7809 57.2195 1.79541 37.5004 1.79541C17.7814 1.79541 1.7959 17.7809 1.7959 37.5C1.7959 57.219 17.7814 73.2045 37.5004 73.2045Z" fill="{{ fill ?? defaults.fill }}" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
-      <path d="M30.0387 32.0808H23.2527L18.4297 35.7461V48.3458H34.827V35.8899L30.0387 32.0808Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M26.4845 28.995C28.8873 28.995 30.8351 27.0359 30.8351 24.6193C30.8351 22.2027 28.8873 20.2437 26.4845 20.2437C24.0816 20.2437 22.1338 22.2027 22.1338 24.6193C22.1338 27.0359 24.0816 28.995 26.4845 28.995Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M52.8717 32.0808H46.0857L41.2627 35.7461V48.3458H57.6557V35.8899L52.8717 32.0808Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M49.3126 28.995C51.7154 28.995 53.6632 27.0359 53.6632 24.6193C53.6632 22.2027 51.7154 20.2437 49.3126 20.2437C46.9098 20.2437 44.9619 22.2027 44.9619 24.6193C44.9619 27.0359 46.9098 28.995 49.3126 28.995Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M41.4576 36.4956H34.6673L29.8486 40.1609V52.7562H46.2416V40.3003L41.4576 36.4956Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M37.8985 33.41C40.3013 33.41 42.2492 31.451 42.2492 29.0344C42.2492 26.6177 40.3013 24.6587 37.8985 24.6587C35.4957 24.6587 33.5479 26.6177 33.5479 29.0344C33.5479 31.451 35.4957 33.41 37.8985 33.41Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M37.5004 73.2045C57.2195 73.2045 73.205 57.219 73.205 37.5C73.205 17.7809 57.2195 1.79541 37.5004 1.79541C17.7814 1.79541 1.7959 17.7809 1.7959 37.5C1.7959 57.219 17.7814 73.2045 37.5004 73.2045Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
+      <path d="M30.0387 32.0808H23.2527L18.4297 35.7461V48.3458H34.827V35.8899L30.0387 32.0808Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M26.4845 28.995C28.8873 28.995 30.8351 27.0359 30.8351 24.6193C30.8351 22.2027 28.8873 20.2437 26.4845 20.2437C24.0816 20.2437 22.1338 22.2027 22.1338 24.6193C22.1338 27.0359 24.0816 28.995 26.4845 28.995Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M52.8717 32.0808H46.0857L41.2627 35.7461V48.3458H57.6557V35.8899L52.8717 32.0808Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M49.3126 28.995C51.7154 28.995 53.6632 27.0359 53.6632 24.6193C53.6632 22.2027 51.7154 20.2437 49.3126 20.2437C46.9098 20.2437 44.9619 22.2027 44.9619 24.6193C44.9619 27.0359 46.9098 28.995 49.3126 28.995Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M41.4576 36.4956H34.6673L29.8486 40.1609V52.7562H46.2416V40.3003L41.4576 36.4956Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M37.8985 33.41C40.3013 33.41 42.2492 31.451 42.2492 29.0344C42.2492 26.6177 40.3013 24.6587 37.8985 24.6587C35.4957 24.6587 33.5479 26.6177 33.5479 29.0344C33.5479 31.451 35.4957 33.41 37.8985 33.41Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
   {% endset %}
 {% elseif type == 'selecting-a-developer' %}
   {% set defaults = {
@@ -614,15 +614,15 @@
   } %}
 
   {% set svg %}
-      <path d="M37.5004 73.2045C57.2195 73.2045 73.205 57.219 73.205 37.5C73.205 17.7809 57.2195 1.79541 37.5004 1.79541C17.7814 1.79541 1.7959 17.7809 1.7959 37.5C1.7959 57.219 17.7814 73.2045 37.5004 73.2045Z" fill="{{ fill ?? defaults.fill }}" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
+      <path d="M37.5004 73.2045C57.2195 73.2045 73.205 57.219 73.205 37.5C73.205 17.7809 57.2195 1.79541 37.5004 1.79541C17.7814 1.79541 1.7959 17.7809 1.7959 37.5C1.7959 57.219 17.7814 73.2045 37.5004 73.2045Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
       <g clip-path="url(#clip0)">
-        <path d="M42.9136 25.8723C42.9136 26.9513 42.5859 28.0061 41.9721 28.9031C41.3583 29.8 40.4859 30.4988 39.4654 30.911C38.4449 31.3231 37.3222 31.4301 36.2394 31.2184C35.1567 31.0066 34.1626 30.4857 33.383 29.7215C32.6034 28.9574 32.0733 27.9843 31.86 26.9256C31.6467 25.8669 31.7596 24.7701 32.1845 23.7742C32.6095 22.7782 33.3273 21.9279 34.247 21.3309C35.1668 20.7338 36.2472 20.4169 37.3514 20.4202C38.8276 20.4264 40.2413 21.0034 41.2835 22.025C42.3258 23.0466 42.9118 24.4298 42.9136 25.8723Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
-        <path d="M44.7024 23.1461V24.7394H29.9697V23.1461H31.0498C31.2002 21.9912 31.6761 20.9 32.4244 19.9942C33.1728 19.0884 34.1641 18.4037 35.2877 18.0167L35.1879 16.7595H39.6321L39.5324 18.0167C40.6589 18.4015 41.6536 19.0851 42.4051 19.9911C43.1566 20.897 43.6353 21.9894 43.7874 23.1461H44.7024Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
+        <path d="M42.9136 25.8723C42.9136 26.9513 42.5859 28.0061 41.9721 28.9031C41.3583 29.8 40.4859 30.4988 39.4654 30.911C38.4449 31.3231 37.3222 31.4301 36.2394 31.2184C35.1567 31.0066 34.1626 30.4857 33.383 29.7215C32.6034 28.9574 32.0733 27.9843 31.86 26.9256C31.6467 25.8669 31.7596 24.7701 32.1845 23.7742C32.6095 22.7782 33.3273 21.9279 34.247 21.3309C35.1668 20.7338 36.2472 20.4169 37.3514 20.4202C38.8276 20.4264 40.2413 21.0034 41.2835 22.025C42.3258 23.0466 42.9118 24.4298 42.9136 25.8723Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
+        <path d="M44.7024 23.1461V24.7394H29.9697V23.1461H31.0498C31.2002 21.9912 31.6761 20.9 32.4244 19.9942C33.1728 19.0884 34.1641 18.4037 35.2877 18.0167L35.1879 16.7595H39.6321L39.5324 18.0167C40.6589 18.4015 41.6536 19.0851 42.4051 19.9911C43.1566 20.897 43.6353 21.9894 43.7874 23.1461H44.7024Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
         <path d="M35.3115 18.0303L35.6177 22.1345" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
         <path d="M39.5459 18.0303L39.2363 22.1345" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
         <path d="M48.1317 55.2303H26.54V39.0959L32.8418 34.4404H41.8712L48.1317 39.2774V55.2303Z" fill="white" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
-        <path d="M48.1317 39.2774V55.2337H26.54V39.0959L32.8418 34.4404H41.8712L48.1317 39.2774Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
-        <path d="M32.9688 34.4404L37.3339 41.0925L41.699 34.4404H32.9688Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M48.1317 39.2774V55.2337H26.54V39.0959L32.8418 34.4404H41.8712L48.1317 39.2774Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
+        <path d="M32.9688 34.4404L37.3339 41.0925L41.699 34.4404H32.9688Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-linejoin="round"/>
         <path d="M48.1351 44.0774H26.54V47.3312H48.1351V44.0774Z" fill="white"/>
         <path d="M48.1351 49.0354H26.54V52.2892H48.1351V49.0354Z" fill="white"/>
         <path d="M37.334 41.0925V55.19" stroke="white" stroke-width="2" stroke-linejoin="round"/>
@@ -643,11 +643,11 @@
   } %}
 
   {% set svg %}
-      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}"/>
+      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path d="M60.3591 32.107L48.8838 20.6116L43.1795 26.3059L54.6549 37.8013L60.3591 32.107Z" fill="white" stroke="{{ fill ?? defaults.fill }}" stroke-miterlimit="10"/>
       <path d="M52.8083 34.425L51.8261 33.84C49.9919 32.7508 48.4579 31.2218 47.3628 29.3911L46.7344 28.3367C45.6319 27.2429 44.1419 26.6292 42.5889 26.6292C41.0359 26.6292 39.5458 27.2429 38.4433 28.3367L32.355 34.3889C31.2612 35.4914 30.6475 36.9814 30.6475 38.5344C30.6475 40.0874 31.2612 41.5775 32.355 42.68L38.4289 48.7683C39.5304 49.8639 41.0208 50.4788 42.5744 50.4788C44.128 50.4788 45.6184 49.8639 46.72 48.7683L52.8083 42.6944C53.8955 41.5929 54.5051 40.1074 54.5051 38.5597C54.5051 37.012 53.8955 35.5266 52.8083 34.425Z" fill="white" stroke="{{ fill ?? defaults.fill }}" stroke-miterlimit="10"/>
-      <path d="M23.2113 40.2968L28.9891 46.414C29.4708 46.9252 30.044 47.3416 30.6791 47.6418L39.0785 56.5612C39.227 56.7186 39.4061 56.844 39.6048 56.9297C39.8036 57.0154 40.0177 57.0596 40.2341 57.0596C40.4505 57.0596 40.6646 57.0154 40.8633 56.9297C41.062 56.844 41.2411 56.7186 41.3896 56.5612L42.0252 55.839C42.3302 55.5071 42.4995 55.0728 42.4995 54.6221C42.4995 54.1713 42.3302 53.737 42.0252 53.4051L36.1102 47.1146C36.275 46.9976 36.4318 46.8697 36.5796 46.7318L44.1124 54.7701C44.2604 54.9284 44.4393 55.0547 44.6381 55.141C44.8369 55.2273 45.0512 55.2718 45.268 55.2718C45.4847 55.2718 45.699 55.2273 45.8978 55.141C46.0966 55.0547 46.2755 54.9284 46.4235 54.7701L47.0591 54.0912C47.3646 53.7582 47.5341 53.3226 47.5341 52.8707C47.5341 52.4187 47.3646 51.9832 47.0591 51.6501L39.4974 43.6334L39.9163 43.1929L48.8646 52.6829C49.0108 52.843 49.1887 52.9708 49.3871 53.0583C49.5854 53.1458 49.7998 53.1909 50.0166 53.1909C50.2333 53.1909 50.4477 53.1458 50.6461 53.0583C50.8444 52.9708 51.0223 52.843 51.1685 52.6829L51.8113 52.004C52.1184 51.6717 52.2889 51.2359 52.2889 50.7834C52.2889 50.331 52.1184 49.8952 51.8113 49.5629L42.8557 40.0657C42.993 39.914 43.1085 39.7479 43.2313 39.5818L51.2768 48.1112C51.4254 48.2686 51.6045 48.394 51.8032 48.4797C52.0019 48.5654 52.216 48.6096 52.4324 48.6096C52.6488 48.6096 52.8629 48.5654 53.0616 48.4797C53.2603 48.394 53.4394 48.2686 53.5879 48.1112L54.1657 47.389C54.4713 47.0559 54.6408 46.6204 54.6408 46.1684C54.6408 45.7165 54.4713 45.2809 54.1657 44.9479L43.9174 34.064C43.6482 33.2847 43.2175 32.571 42.6535 31.9696L36.8757 25.8451C36.374 25.302 35.7652 24.8686 35.0878 24.5722C34.4104 24.2758 33.679 24.1228 32.9396 24.1228C32.2002 24.1228 31.4688 24.2758 30.7914 24.5722C30.114 24.8686 29.5053 25.302 29.0035 25.8451L28.4474 26.8346C27.4368 28.6574 25.987 30.1991 24.2296 31.3196L23.2257 31.9551C22.1823 33.0927 21.6023 34.5795 21.5996 36.1231C21.5969 37.6668 22.1718 39.1556 23.2113 40.2968Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-miterlimit="10"/>
-      <path d="M27.8731 18.3646L15.9023 30.3145L21.5966 36.0187L33.5674 24.0688L27.8731 18.3646Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-miterlimit="10"/>
+      <path d="M23.2113 40.2968L28.9891 46.414C29.4708 46.9252 30.044 47.3416 30.6791 47.6418L39.0785 56.5612C39.227 56.7186 39.4061 56.844 39.6048 56.9297C39.8036 57.0154 40.0177 57.0596 40.2341 57.0596C40.4505 57.0596 40.6646 57.0154 40.8633 56.9297C41.062 56.844 41.2411 56.7186 41.3896 56.5612L42.0252 55.839C42.3302 55.5071 42.4995 55.0728 42.4995 54.6221C42.4995 54.1713 42.3302 53.737 42.0252 53.4051L36.1102 47.1146C36.275 46.9976 36.4318 46.8697 36.5796 46.7318L44.1124 54.7701C44.2604 54.9284 44.4393 55.0547 44.6381 55.141C44.8369 55.2273 45.0512 55.2718 45.268 55.2718C45.4847 55.2718 45.699 55.2273 45.8978 55.141C46.0966 55.0547 46.2755 54.9284 46.4235 54.7701L47.0591 54.0912C47.3646 53.7582 47.5341 53.3226 47.5341 52.8707C47.5341 52.4187 47.3646 51.9832 47.0591 51.6501L39.4974 43.6334L39.9163 43.1929L48.8646 52.6829C49.0108 52.843 49.1887 52.9708 49.3871 53.0583C49.5854 53.1458 49.7998 53.1909 50.0166 53.1909C50.2333 53.1909 50.4477 53.1458 50.6461 53.0583C50.8444 52.9708 51.0223 52.843 51.1685 52.6829L51.8113 52.004C52.1184 51.6717 52.2889 51.2359 52.2889 50.7834C52.2889 50.331 52.1184 49.8952 51.8113 49.5629L42.8557 40.0657C42.993 39.914 43.1085 39.7479 43.2313 39.5818L51.2768 48.1112C51.4254 48.2686 51.6045 48.394 51.8032 48.4797C52.0019 48.5654 52.216 48.6096 52.4324 48.6096C52.6488 48.6096 52.8629 48.5654 53.0616 48.4797C53.2603 48.394 53.4394 48.2686 53.5879 48.1112L54.1657 47.389C54.4713 47.0559 54.6408 46.6204 54.6408 46.1684C54.6408 45.7165 54.4713 45.2809 54.1657 44.9479L43.9174 34.064C43.6482 33.2847 43.2175 32.571 42.6535 31.9696L36.8757 25.8451C36.374 25.302 35.7652 24.8686 35.0878 24.5722C34.4104 24.2758 33.679 24.1228 32.9396 24.1228C32.2002 24.1228 31.4688 24.2758 30.7914 24.5722C30.114 24.8686 29.5053 25.302 29.0035 25.8451L28.4474 26.8346C27.4368 28.6574 25.987 30.1991 24.2296 31.3196L23.2257 31.9551C22.1823 33.0927 21.6023 34.5795 21.5996 36.1231C21.5969 37.6668 22.1718 39.1556 23.2113 40.2968Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-miterlimit="10"/>
+      <path d="M27.8731 18.3646L15.9023 30.3145L21.5966 36.0187L33.5674 24.0688L27.8731 18.3646Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-miterlimit="10"/>
       <path d="M28.5618 41.5916L28.5567 41.5865C27.6409 40.669 26.1547 40.6677 25.2373 41.5836L24.0156 42.8031C23.0982 43.7189 23.0969 45.2051 24.0127 46.1225L24.0179 46.1276C24.9337 47.0451 26.4199 47.0464 27.3373 46.1305L28.5589 44.9111C29.4764 43.9952 29.4777 42.509 28.5618 41.5916Z" fill="white" stroke="{{ fill ?? defaults.fill }}" stroke-miterlimit="10"/>
       <path d="M32.2728 44.5901L32.2677 44.585C31.3518 43.6676 29.8656 43.6663 28.9482 44.5821L26.3567 47.169C25.4393 48.0849 25.438 49.5711 26.3538 50.4885L26.3589 50.4936C27.2748 51.4111 28.761 51.4124 29.6784 50.4965L32.2699 47.9096C33.1873 46.9937 33.1886 45.5076 32.2728 44.5901Z" fill="white" stroke="{{ fill ?? defaults.fill }}" stroke-miterlimit="10"/>
       <path d="M35.5609 48.0279L35.5557 48.0228C34.6399 47.1053 33.1537 47.104 32.2363 48.0199L29.057 51.1936C28.1396 52.1094 28.1383 53.5956 29.0541 54.513L29.0592 54.5182C29.9751 55.4356 31.4613 55.4369 32.3787 54.521L35.558 51.3473C36.4754 50.4315 36.4767 48.9453 35.5609 48.0279Z" fill="white" stroke="{{ fill ?? defaults.fill }}" stroke-miterlimit="10"/>
@@ -664,15 +664,15 @@
   } %}
 
   {% set svg %}
-      <path d="M37.5004 73.2045C57.2195 73.2045 73.205 57.219 73.205 37.5C73.205 17.7809 57.2195 1.79541 37.5004 1.79541C17.7814 1.79541 1.7959 17.7809 1.7959 37.5C1.7959 57.219 17.7814 73.2045 37.5004 73.2045Z" fill="{{ fill ?? defaults.fill }}" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
-      <path d="M55.9457 23.6799H44.6835L39.3857 29.1288V31.2399H25.7812V42.0577H55.9324L55.9457 23.6799Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M25.7858 38.96H21.3369V41.9688H25.7858V38.96Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M42.1603 30.3999L45.8536 26.7065H52.9025V36.071H42.1514L42.1603 30.3999Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M23.151 46.24H11.4043L17.2621 40.1245L18.2532 34.0178H23.151V46.24Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M54.032 38.791H28.6498C27.0003 38.791 25.6631 40.1282 25.6631 41.7777V43.3332C25.6631 44.9827 27.0003 46.3199 28.6498 46.3199H54.032C55.6815 46.3199 57.0186 44.9827 57.0186 43.3332V41.7777C57.0186 40.1282 55.6815 38.791 54.032 38.791Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M29.1287 46.3199C31.2077 46.3199 32.8931 44.6345 32.8931 42.5555C32.8931 40.4764 31.2077 38.791 29.1287 38.791C27.0497 38.791 25.3643 40.4764 25.3643 42.5555C25.3643 44.6345 27.0497 46.3199 29.1287 46.3199Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M41.4441 46.3199C43.5232 46.3199 45.2086 44.6345 45.2086 42.5555C45.2086 40.4764 43.5232 38.791 41.4441 38.791C39.3651 38.791 37.6797 40.4764 37.6797 42.5555C37.6797 44.6345 39.3651 46.3199 41.4441 46.3199Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
-      <path d="M53.3162 46.3199C55.3952 46.3199 57.0807 44.6345 57.0807 42.5555C57.0807 40.4764 55.3952 38.791 53.3162 38.791C51.2372 38.791 49.5518 40.4764 49.5518 42.5555C49.5518 44.6345 51.2372 46.3199 53.3162 46.3199Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M37.5004 73.2045C57.2195 73.2045 73.205 57.219 73.205 37.5C73.205 17.7809 57.2195 1.79541 37.5004 1.79541C17.7814 1.79541 1.7959 17.7809 1.7959 37.5C1.7959 57.219 17.7814 73.2045 37.5004 73.2045Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="{{ fill ?? defaults.fill }}" stroke-width="3" stroke-miterlimit="10"/>
+      <path d="M55.9457 23.6799H44.6835L39.3857 29.1288V31.2399H25.7812V42.0577H55.9324L55.9457 23.6799Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M25.7858 38.96H21.3369V41.9688H25.7858V38.96Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M42.1603 30.3999L45.8536 26.7065H52.9025V36.071H42.1514L42.1603 30.3999Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M23.151 46.24H11.4043L17.2621 40.1245L18.2532 34.0178H23.151V46.24Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M54.032 38.791H28.6498C27.0003 38.791 25.6631 40.1282 25.6631 41.7777V43.3332C25.6631 44.9827 27.0003 46.3199 28.6498 46.3199H54.032C55.6815 46.3199 57.0186 44.9827 57.0186 43.3332V41.7777C57.0186 40.1282 55.6815 38.791 54.032 38.791Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M29.1287 46.3199C31.2077 46.3199 32.8931 44.6345 32.8931 42.5555C32.8931 40.4764 31.2077 38.791 29.1287 38.791C27.0497 38.791 25.3643 40.4764 25.3643 42.5555C25.3643 44.6345 27.0497 46.3199 29.1287 46.3199Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M41.4441 46.3199C43.5232 46.3199 45.2086 44.6345 45.2086 42.5555C45.2086 40.4764 43.5232 38.791 41.4441 38.791C39.3651 38.791 37.6797 40.4764 37.6797 42.5555C37.6797 44.6345 39.3651 46.3199 41.4441 46.3199Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
+      <path d="M53.3162 46.3199C55.3952 46.3199 57.0807 44.6345 57.0807 42.5555C57.0807 40.4764 55.3952 38.791 53.3162 38.791C51.2372 38.791 49.5518 40.4764 49.5518 42.5555C49.5518 44.6345 51.2372 46.3199 53.3162 46.3199Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/>
  {% endset %}
 
 {% elseif type == 'completed' %}
@@ -684,8 +684,8 @@
   } %}
 
   {% set svg %}
-      <path d="M38.2969 75.7954C59.0076 75.7954 75.7969 59.0061 75.7969 38.2954C75.7969 17.5847 59.0076 0.79541 38.2969 0.79541C17.5862 0.79541 0.796875 17.5847 0.796875 38.2954C0.796875 59.0061 17.5862 75.7954 38.2969 75.7954Z" fill="{{ fill ?? defaults.fill }}"/>
-      <path d="M38.1921 52.6577C45.8873 52.6577 52.1255 46.4195 52.1255 38.7244C52.1255 31.0292 45.8873 24.791 38.1921 24.791C30.497 24.791 24.2588 31.0292 24.2588 38.7244C24.2588 46.4195 30.497 52.6577 38.1921 52.6577Z" fill="{{ fill ?? defaults.fill }}" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
+      <path d="M38.2969 75.7954C59.0076 75.7954 75.7969 59.0061 75.7969 38.2954C75.7969 17.5847 59.0076 0.79541 38.2969 0.79541C17.5862 0.79541 0.796875 17.5847 0.796875 38.2954C0.796875 59.0061 17.5862 75.7954 38.2969 75.7954Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+      <path d="M38.1921 52.6577C45.8873 52.6577 52.1255 46.4195 52.1255 38.7244C52.1255 31.0292 45.8873 24.791 38.1921 24.791C30.497 24.791 24.2588 31.0292 24.2588 38.7244C24.2588 46.4195 30.497 52.6577 38.1921 52.6577Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
       <path d="M38.1914 19.6667V24.7912" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
       <path d="M24.7471 39.0845H51.6404" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
       <path d="M26.707 30.8401H49.6804" stroke="white" stroke-width="2" stroke-miterlimit="10"/>
@@ -716,7 +716,7 @@
   } %}
 
   {% set svg %}
-      <path d="M19.707 61.0001L21.0787 36.4424H26.3V52.6815L26.7867 61.0001H19.707Z" fill="#091F2F" stroke="#0C1F2E" stroke-width="1.03" stroke-miterlimit="10"/>
+      <path d="M19.707 61.0001L21.0787 36.4424H26.3V52.6815L26.7867 61.0001H19.707Z" fill="#091F2F" class="svg-fill-color" stroke="#0C1F2E" stroke-width="1.03" stroke-miterlimit="10"/>
       <path d="M26.7867 61.0001H19.707L21.0787 36.4424H26.3L26.7867 61.0001Z" fill="white" stroke="white" stroke-width="1.03" stroke-miterlimit="10"/>
       <path d="M45.0584 26.664C45.126 26.0612 45.126 25.4527 45.0584 24.8498C45.0516 23.2234 44.5298 21.6408 43.568 20.3292C42.6061 19.0176 41.2536 18.0443 39.7044 17.5489C40.2204 16.5741 40.5364 15.5059 40.6336 14.4073C40.6395 13.3518 40.4366 12.3056 40.0367 11.3288C39.6369 10.352 39.0478 9.46385 38.3036 8.71546C37.5593 7.96707 36.6744 7.37318 35.6998 6.96793C34.7253 6.56268 33.6802 6.35407 32.6247 6.35408C32.2277 6.31024 31.827 6.31024 31.43 6.35408C31.0529 4.82178 30.1716 3.46076 28.9277 2.48972C27.6838 1.51868 26.1495 0.994024 24.5715 1.00005C23.0015 0.994449 21.4737 1.50763 20.2254 2.45984C18.9771 3.41205 18.0784 4.74995 17.6688 6.26559C15.8368 6.25848 14.0336 6.72153 12.4317 7.61045C10.8297 8.49936 9.48266 9.78441 8.51927 11.3427C7.55589 12.901 7.00843 14.6804 6.92923 16.5107C6.85004 18.341 7.24176 20.161 8.06695 21.7967C6.72421 22.1843 5.48013 22.8552 4.41857 23.7642C3.35701 24.6732 2.50262 25.7991 1.91297 27.0662C1.32333 28.3333 1.01213 29.712 1.00035 31.1096C0.988565 32.5071 1.27647 33.8909 1.84467 35.1677C2.41286 36.4446 3.24815 37.5848 4.29423 38.5115C5.34031 39.4383 6.57289 40.1301 7.90891 40.5402C9.24493 40.9504 10.6533 41.0694 12.0393 40.8893C13.4252 40.7091 14.7563 40.234 15.9431 39.496C17.205 40.0804 18.5791 40.3824 19.9697 40.3809C22.1295 40.3714 24.227 39.6567 25.9432 38.3455C27.6594 39.6567 29.757 40.3714 31.9167 40.3809C34.3792 40.36 36.7395 39.3937 38.5097 37.6818C39.605 38.5486 40.9626 39.0167 42.3593 39.0093C44.0609 39.0093 45.6929 38.3333 46.8961 37.1301C48.0993 35.9268 48.7753 34.2949 48.7753 32.5933C48.8076 31.3489 48.4723 30.1227 47.8111 29.068C47.15 28.0134 46.1925 27.1772 45.0584 26.664Z" fill="white" stroke="white" stroke-width="1.03" stroke-miterlimit="10"/>
   {% endset %}
@@ -796,17 +796,17 @@
   } %}
 
   {% set svg %}
-      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}"/>
+      <circle cx="37.5" cy="37.5" r="37.5" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <g clip-path="url(#clip0)">
-        <path d="M38.6056 18.3924L15.4204 42.9336L26.7192 53.1915L49.9044 28.6503L38.6056 18.3924Z" fill="{{ fill ?? defaults.fill }}"/>
+        <path d="M38.6056 18.3924L15.4204 42.9336L26.7192 53.1915L49.9044 28.6503L38.6056 18.3924Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
         <path fill-rule="evenodd" clip-rule="evenodd" d="M14.0225 42.9858L38.5523 17.0214L51.3036 28.5979L26.7737 54.5624L14.0225 42.9858ZM16.8195 42.8812L26.6659 51.8205L48.5065 28.7025L38.6601 19.7633L16.8195 42.8812Z" fill="white"/>
-        <path d="M32.7527 40.9272C35.6354 40.9272 37.9723 38.6364 37.9723 35.8105C37.9723 32.9847 35.6354 30.6938 32.7527 30.6938C29.8701 30.6938 27.5332 32.9847 27.5332 35.8105C27.5332 38.6364 29.8701 40.9272 32.7527 40.9272Z" fill="{{ fill ?? defaults.fill }}"/>
-        <path d="M49.4046 25.0183L19.4565 41.0469L26.8361 54.2969L56.7841 38.2683L49.4046 25.0183Z" fill="{{ fill ?? defaults.fill }}"/>
+        <path d="M32.7527 40.9272C35.6354 40.9272 37.9723 38.6364 37.9723 35.8105C37.9723 32.9847 35.6354 30.6938 32.7527 30.6938C29.8701 30.6938 27.5332 32.9847 27.5332 35.8105C27.5332 38.6364 29.8701 40.9272 32.7527 40.9272Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+        <path d="M49.4046 25.0183L19.4565 41.0469L26.8361 54.2969L56.7841 38.2683L49.4046 25.0183Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
         <path fill-rule="evenodd" clip-rule="evenodd" d="M18.113 40.6621L49.8005 23.7026L58.1273 38.6532L26.4398 55.6128L18.113 40.6621ZM20.7997 41.4318L27.2321 52.9811L55.4406 37.8835L49.0082 26.3342L20.7997 41.4318Z" fill="white"/>
-        <path d="M38.1448 45.1562C41.0275 45.1562 43.3643 42.8654 43.3643 40.0395C43.3643 37.2137 41.0275 34.9229 38.1448 34.9229C35.2622 34.9229 32.9253 37.2137 32.9253 40.0395C32.9253 42.8654 35.2622 45.1562 38.1448 45.1562Z" fill="{{ fill ?? defaults.fill }}"/>
-        <path d="M57.5712 34.8904L24.0029 40.8877L26.7641 55.7394L60.3323 49.7421L57.5712 34.8904Z" fill="{{ fill ?? defaults.fill }}"/>
+        <path d="M38.1448 45.1562C41.0275 45.1562 43.3643 42.8654 43.3643 40.0395C43.3643 37.2137 41.0275 34.9229 38.1448 34.9229C35.2622 34.9229 32.9253 37.2137 32.9253 40.0395C32.9253 42.8654 35.2622 45.1562 38.1448 45.1562Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
+        <path d="M57.5712 34.8904L24.0029 40.8877L26.7641 55.7394L60.3323 49.7421L57.5712 34.8904Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
         <path fill-rule="evenodd" clip-rule="evenodd" d="M22.8496 40.1099L58.3695 33.7639L61.4848 50.52L25.9648 56.866L22.8496 40.1099ZM25.1553 41.6656L27.5625 54.6129L59.179 48.9642L56.7719 36.017L25.1553 41.6656Z" fill="white"/>
-        <path d="M41.7403 50.4418C44.6229 50.4418 46.9598 48.151 46.9598 45.3251C46.9598 42.4993 44.6229 40.2085 41.7403 40.2085C38.8576 40.2085 36.5208 42.4993 36.5208 45.3251C36.5208 48.151 38.8576 50.4418 41.7403 50.4418Z" fill="{{ fill ?? defaults.fill }}"/>
+        <path d="M41.7403 50.4418C44.6229 50.4418 46.9598 48.151 46.9598 45.3251C46.9598 42.4993 44.6229 40.2085 41.7403 40.2085C38.8576 40.2085 36.5208 42.4993 36.5208 45.3251C36.5208 48.151 38.8576 50.4418 41.7403 50.4418Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
         <path fill-rule="evenodd" clip-rule="evenodd" d="M41.7401 41.1762C39.41 41.1762 37.5127 43.0292 37.5127 45.3251C37.5127 47.621 39.41 49.474 41.7401 49.474C44.0703 49.474 45.9676 47.621 45.9676 45.3251C45.9676 43.0292 44.0703 41.1762 41.7401 41.1762ZM35.5286 45.3251C35.5286 41.9693 38.305 39.2407 41.7401 39.2407C45.1753 39.2407 47.9517 41.9693 47.9517 45.3251C47.9517 48.6809 45.1753 51.4095 41.7401 51.4095C38.305 51.4095 35.5286 48.6809 35.5286 45.3251Z" fill="white"/>
         <path d="M41.8664 48.5494L41.7298 47.8235C41.2049 47.8939 40.6729 47.8481 40.3458 47.7318L40.4141 46.798C40.7736 46.9143 41.2625 46.9918 41.7693 46.9037C42.2115 46.8262 42.4847 46.6007 42.4271 46.2976C42.3732 46.0087 42.0892 45.8677 41.4781 45.7796C40.5938 45.6528 39.954 45.3744 39.8174 44.6344C39.6916 43.9613 40.0762 43.3517 40.8814 43.0416L40.7448 42.3157L41.5069 42.1782L41.6327 42.8478C42.1575 42.7773 42.5278 42.8231 42.8082 42.8971L42.7435 43.7992C42.5242 43.7499 42.136 43.6406 41.5752 43.7393C41.0683 43.8309 40.9461 44.0741 40.9857 44.2855C41.0324 44.5357 41.3343 44.6485 42.0425 44.7753C43.0275 44.9304 43.4804 45.2827 43.6062 45.9699C43.732 46.65 43.351 47.316 42.4847 47.6296L42.6284 48.4084L41.8664 48.5494Z" fill="white"/>
       </g>
@@ -827,7 +827,7 @@
   } %}
 
   {% set svg %}
-      <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10Z" fill="{{ fill ?? defaults.fill }}"/>
+      <path d="M20 10C20 15.5228 15.5228 20 10 20C4.47715 20 0 15.5228 0 10C0 4.47715 4.47715 0 10 0C15.5228 0 20 4.47715 20 10Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
       <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9479 6.99628C15.3551 7.41441 15.3305 8.06889 14.8931 8.4581L8.34338 14.2857L4.76172 11.0989L6.23629 9.58476L8.34338 11.4596L13.4185 6.94393C13.856 6.55472 14.5407 6.57816 14.9479 6.99628Z" fill="white"/>
   {% endset %}
 
@@ -840,7 +840,7 @@
   } %}
 
   {% set svg %}
-    <path d="M37.5014 73.2047C57.2205 73.2047 73.206 57.2193 73.206 37.5002C73.206 17.7811 57.2205 1.79565 37.5014 1.79565C17.7823 1.79565 1.79688 17.7811 1.79688 37.5002C1.79688 57.2193 17.7823 73.2047 37.5014 73.2047Z" fill="{{ fill ?? defaults.fill }}"/>
+    <path d="M37.5014 73.2047C57.2205 73.2047 73.206 57.2193 73.206 37.5002C73.206 17.7811 57.2205 1.79565 37.5014 1.79565C17.7823 1.79565 1.79688 17.7811 1.79688 37.5002C1.79688 57.2193 17.7823 73.2047 37.5014 73.2047Z" fill="{{ fill ?? defaults.fill }}" class="svg-fill-color"/>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M42.0572 19.1492H23.9941V55.3889H51.7729V28.3199C51.7729 28.3163 51.7729 28.3127 51.7729 28.3092C51.7729 28.3056 51.7729 28.302 51.7729 28.2985V27.5916L51.2656 27.1208C51.2555 27.1112 51.2453 27.1018 51.235 27.0924L43.1463 19.586C43.1361 19.5763 43.1257 19.5667 43.1152 19.5572L42.6756 19.1492H42.0572ZM40.4609 22.3992H27.1866V52.1389H48.5804V29.9342H40.4609V22.3992ZM43.6534 24.4544V26.6842H46.0561L43.6534 24.4544Z" fill="white"/>
   {% endset %}
 
