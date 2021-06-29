@@ -65,7 +65,11 @@
 	margin-bottom:20px;
 }
 </style>
+<!-- vars changed for yearly tax rates -->
+{% set rateRes = 10.67 %}
+{% set rateCom = 24.55 %}
 
+<!-- other vars that shouldn't have to change -->
 {% set data = data_full.result.records[0] %}
 {% set coords = data_coords.features[0].geometry.coordinates %}
 {% set unitDisplay = (attribute(data,'LUC') == '102') ? ' #'~attribute(data,'UNIT_NUM') : '' %}
@@ -206,17 +210,21 @@
 	        				<div class="detail-item__label">Condo</div>
 	        			</li>
 					    {% for key,value in dataCondo %}
-					    <li class="dl-i">
-					        <span class="dl-t">{{ key }}</span>
-					        <span class="dl-d">{{ value|raw }}</span>
-					    </li>
+						    {% if value != "" %}
+							    <li class="dl-i">
+							        <span class="dl-t">{{ key }}</span>
+							        <span class="dl-d">{{ value|raw }}</span>
+							    </li>
+						    {% endif %}
 					    {% endfor %}
 					{% endif %}
 					{% for key,value in dataMain %}
-				    <li class="dl-i">
-				        <span class="dl-t">{{ key }}</span>
-				        <span class="dl-d">{{ value }}</span>
-				    </li>
+						{% if value != "" %}
+						    <li class="dl-i">
+						        <span class="dl-t">{{ key }}</span>
+						        <span class="dl-d">{{ value }}</span>
+						    </li>
+						{% endif %}
 				    {% endfor %}
 
 				    {% if (propertyType == 'Apartment Building') %}
@@ -233,9 +241,10 @@
         			<li class="dl-i"></li>
         			{% endif %}
 				    {% for key,value in dataUnit %}
-				    <li class="dl-i">
-				        <span class="dl-t">{{ key }}</span>
-				        <span class="dl-d">{{ value }}</span>
+				    	{% if value != "" %}<li class="dl-i">
+				        	<span class="dl-t">{{ key }}</span>
+				        	<span class="dl-d">{{ value }}</span>
+				        {% endif %}
 				    </li>
 				    {% endfor %}
 				</ul>
@@ -259,30 +268,25 @@
 				        <span class="dl-d"></span>
 				    </li>
 				    <li class="dl-i">
-				        <span class="dl-t">Total Full Valuation</span>
+				        <span class="dl-t detail-item__label">Total Full Valuation</span>
 				        <span class="dl-d">{{ attribute(data,'TOTAL_VALUE') }}</span>
-				        <!--<span class="dl-d">{{ attribute(data,'TOTAL_VALUE')|number_format(2, '.', ',') }}</span>-->
-				    </li>
-				    <li class="dl-i">
-				        <span class="dl-t">Residential Exemption</span>
-				        <span class="dl-d"></span>
-				    </li>
-				    <li class="dl-i">
-				        <span class="dl-t">Total Taxable Valuation</span>
-				        <span class="dl-d"></span>
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Residential Tax Rate *</span>
-				        <span class="dl-d">xx.xx</span>
+				        <span class="dl-d">${{ rateRes }}</span>
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Commercial Tax Rate *</span>
-				        <span class="dl-d">xx.xx</span>
+				        <span class="dl-d">${{ rateCom }}</span>
 				    </li>
 				     <li class="dl-i">
 				        <span class="dl-t">* Per Thousand</span>
 				        <span class="dl-d"></span>
 				    </li>
+				    <li class="dl-i">
+        				<div class="dl-t detail-item__label">FY2021 Gross Tax</div>
+        				<span class="dl-d"> {{ attribute(data,'GROSS_TAX') }}</span>
+        			</li>
 				</ul>
 				<ul class="dl assessing-right-column">
 					<li class="dl-i dotted">
@@ -294,11 +298,7 @@
 				        <span class="dl-d"></span>
 				    </li>
 				    <li class="dl-i">
-				        <span class="dl-t">Special Assessments</span>
-				        <span class="dl-d"></span>
-				    </li>
-				    <li class="dl-i">
-				        <span class="dl-t">Total Tax &amp; Spec Assmnt Due</span>
+				        <span class="dl-t">Residential Exemption</span>
 				        <span class="dl-d"></span>
 				    </li>
 				    <li class="dl-i">
@@ -313,7 +313,7 @@
 				    </li>
 				    <li class="dl-i">
         				<div class="dl-t detail-item__label">FY2021 Net Tax</div>
-        				<span class="dl-d"> {{ attribute(data,'GROSS_TAX') }}</span>
+        				<span class="dl-d"> $x,xxx.xx</span>
         			</li>
 
 				</ul>
