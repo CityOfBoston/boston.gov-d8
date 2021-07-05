@@ -20,6 +20,7 @@
     cd ${TEMPLATE_DIR} && \
         mkdir -p src/css && \
         mkdir -p src/js && \
+        mkdir -p src/tests && \
         mkdir -p dist
 
     # Now create the template files.
@@ -31,6 +32,8 @@
     touch ${TEMPLATE_DIR}/manifest.json
     touch ${TEMPLATE_DIR}/gulpfile.js
     touch ${TEMPLATE_DIR}/babel.config.json
+    touch ${TEMPLATE_DIR}/src/css/styles.css
+    touch ${TEMPLATE_DIR}/src/js/index.js
 
     # Now link in the fixed resources
     ln -s  ${LANDO_MOUNT}/scripts/local/template/index.html ${TEMPLATE_DIR}/index.html
