@@ -62,6 +62,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
     // past, present, future.
+    $moments = [];
     $stageCurrentState = 'past';
     foreach ($this->getPublicStages() as $delta => $publicStage) {
       // $elements[$delta] = ['#markup' => $publicStage->name];
@@ -78,7 +79,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $vars = [];
 
       $stageTitle = $publicStageTerm->get('field_display_title') ?? NULL;
-      // $stageIcon = $publicStageTerm->get('field_icon') ?? null;
       $stageIcon = $this->getStageIcon($publicStageTerm->getName(), $stageCurrentState) ?? NULL;
       $stageDescription = $publicStageTerm->get('description') ?? NULL;
       $stageDate = $this->getStageDate($parent_entity, $publicStageTerm, 'seasonal');
@@ -95,9 +95,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         }
       }
 
-      // $vars['icon'] = $stageIcon->view('icon');
       $vars['icon'] = $stageIcon;
       $vars['label'] = $stageTitle->view(['label' => 'hidden']);
+      $vars['stage'] = $publicStageTerm->getName() ?? '';
       $vars['body'] = $stageDescription->view(['label' => 'hidden']);
       $vars['date'] = $stageDate;
       $vars['currentState'] = $stageCurrentState;
@@ -122,7 +122,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       }
 
       if (_node_buildinghousing_get_computed_project_type($parent_entity)['label'] == 'Open Space'
-        && $publicStageTerm->getName() == 'City Planning Process') {
+        && $publicStageTerm->getName() == 'City Planning Process'
+        && $stageCurrentState != 'future') {
         $vars['body'] = t("We're working with the developer on the final design, budget, and financing.");
       }
 
@@ -147,32 +148,40 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       elseif (empty($sortTimestamp)) {
         $sortTimestamp = $delta;
       }
-      $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
-
+//      $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
+      $vars['timeStamp'] = $sortTimestamp;
+      $moments[] = $vars;
     }
 
-    $sortedElements = [];
-    // @TODO: Add fix for showing items with no date
-    foreach ($elements as $elementTypes => $typeElements) {
-      foreach ($typeElements as $time => $renderElement) {
 
-        if ($typeElements = 'moments') {
-          if ($time <= 998) {
-            $lastKey = array_key_last($sortedElements) ?? 0;
-            if ($lastKey > 999999) {
-              $time = $lastKey . '.' . $time;
-            }
+    $moments = array_reverse($moments);
+    foreach ($moments as $delta => $moment) {
+      $sortedElements = [];
+      // @TODO: Add fix for showing items with no date
+      foreach ($elements as $elementTypes => $typeElements) {
+        foreach ($typeElements as $time => $renderElement) {
+
+          if ($time >= $moment['timeStamp'] && $moment['timeStamp'] > 999) {
+            $sortedElements[$time][] = $renderElement;
+            unset($elements[$elementTypes][$time]);
+          }elseif ($moment['stage'] == 'Project Launch') {
+            $sortedElements[$time][] = $renderElement;
+            unset($elements[$elementTypes][$time]);
           }
-        }
 
-        $sortedElements[$time][] = $renderElement;
-        ksort($sortedElements);
+          ksort($sortedElements);
+        }
       }
+
+      $moment['items'] = $sortedElements;
+      $moments[$delta] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $moment)];
     }
+
+
 
     return [
       '#markup' => \Drupal::theme()->render("bh_project_timeline", [
-        'items' => $sortedElements,
+        'items' => array_reverse($moments),
         'label' => $this->isActive ? t('Timeline') : NULL,
         'isDevelopment' => BHUtils::getProjectRecordType($parent_entity) == 'NHD Development' ? true : false,
       ])
@@ -233,7 +242,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       ];
       $documentSet['documents'] = $documents;
       $elements[$formattedDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
-
     }
 
     return $elements;
