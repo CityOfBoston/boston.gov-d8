@@ -1,5 +1,4 @@
 const UsersController = require('./users.controller');
-const connController = require('../connections/connections.controller');
 const ValidationMiddleware = require('../authorization/auth.validation.middeware');
 const PermissionMiddleware = require('../authorization/auth.permission.middleware');
 const config = require('../../common/env.config');

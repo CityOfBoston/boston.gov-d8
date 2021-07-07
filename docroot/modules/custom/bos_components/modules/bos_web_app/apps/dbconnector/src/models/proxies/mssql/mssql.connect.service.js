@@ -1,7 +1,7 @@
-const Connection = require('tedious').Connection;
+const TediousConnection = require('tedious').Connection;
 
-const config = {
-  server: "172.22.0.5",
+const mssqlConfig = {
+  server: "172.18.0.2",
   options: {
     "port": 1433,
     "database": "dbconnector",
@@ -19,13 +19,23 @@ const config = {
   }
 };
 
-const connection = new Connection(config);
+const connection;
 
-connection.connect(connected);
-connection.on('infoMessage', infoError);
-connection.on('errorMessage', infoError);
-connection.on('end', end);
-connection.on('debug', debug);
+/**
+ * Makes a connection to the server specified in config object.
+ * @param {mssqlConfig} config Configuration obecjt for tedious.Connection
+ */
+exports.connect = (config) => {
+
+  connection = new TediousConnection(config);
+
+  connection.connect(connected);
+  connection.on('infoMessage', infoError);
+  connection.on('errorMessage', infoError);
+  connection.on('end', end);
+  connection.on('debug', debug);
+
+}
 
 function connected(err) {
   if (err) {
@@ -59,4 +69,4 @@ function debug(message) {
   // console.log(message);
 }
 
-exports.connection = connection
+exports.connection = connection;
