@@ -13,6 +13,8 @@ exports.exec = (sql, callbacker) => {
 
   sql = sql.toString();
 
+  // console.log(sql);
+
   const request = new Request(sql, statementComplete);
   request.on('doneInProc', requestDone);
   request.on('error', tediousReturn);

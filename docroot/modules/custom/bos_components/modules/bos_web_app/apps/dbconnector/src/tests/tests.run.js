@@ -58,6 +58,12 @@ function doTest (testOrd) {
       if (options.path != "/auth") {
         options.headers["Authorization"] = `Bearer ${config.creds[test.use_creds].token}`;
       }
+      if (options.path == "/auth/refresh") {
+        test.method.payload = {
+          "id" : config.creds[test.use_creds].userid,
+          "refresh_token": config.creds[test.use_creds].refreshToken,
+        };
+      }
 
       if (test.method.type == "GET") {
         // Need to define any payload as a querystring.
@@ -76,7 +82,6 @@ function doTest (testOrd) {
 
         // Request payload is always json.
         options.headers["Content-Type"] = "application/json";
-
       }
 
       const execTest = async () => {
@@ -95,12 +100,14 @@ function doTest (testOrd) {
             }
             else {
               console.log(`Narrative: ${test.expected_response.narrative}\n`)
+              console.log("\nTESTS FAILED".black.bgRed + "\n");
+              process.exit();
             }
           })
 
           .catch((reason) => {
-
-            msg = JSON.stringify(reason.data.error);
+            console.log(JSON.stringify(reason));
+            msg = JSON.stringify(reason);
             if ('data' in reason && 'error' in reason.data) {
               msg = reason.data.error;
               if (Array.isArray(reason.data.error)) {
@@ -110,7 +117,7 @@ function doTest (testOrd) {
 
             // Validate the error message - some tests are expected to fail.
             if (validate(reason, test)) {
-              console.log(`NOTE: Expected failure: \"${msg}\"`.grey);
+              // console.log(`NOTE: Expected failure: \"${msg}\"`.grey);
               console.log("\u2714 [SUCCESS]".green);
               testOrd++;
               doTest(testOrd);
@@ -126,6 +133,17 @@ function doTest (testOrd) {
       };
 
       const validate = (result, test) => {
+
+        if (parseInt(test.expected_response.code) >= 400) {
+          msg = JSON.stringify(result);
+          if ('data' in result && 'error' in result.data) {
+            msg = result.data.error;
+            if (Array.isArray(result.data.error)) {
+              msg = result.data.error.join(", ");
+            }
+          }
+          console.log(`NOTE: Test failed as expected: \"${msg}\"`.grey);
+        }
 
         if (test.expected_response.code != result.status) {
           // We did not get the status expected.
@@ -153,6 +171,18 @@ function doTest (testOrd) {
         }
 
         if ('exact' in test.expected_response) {
+          // This is a dated column and will only cause issues...
+          ord = 0;
+          result.data.forEach(row => {
+            if ('LastUse' in row) {
+              delete result.data[ord].LastUse;
+            }
+            if ('CreatedDate' in row) {
+              delete result.data[ord].CreatedDate;
+            }
+            ord++;
+          });
+
 
           if (JSON.stringify(test.expected_response.exact) != JSON.stringify(result.data)) {
             // Response does not match.

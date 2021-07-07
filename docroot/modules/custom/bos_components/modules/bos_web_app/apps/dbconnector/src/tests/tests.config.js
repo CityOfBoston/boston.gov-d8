@@ -1,3 +1,4 @@
+const config = require('../common/env.config');
 module.exports = {
   config: {
     debug: false,
@@ -127,7 +128,7 @@ module.exports = {
         payload: {
           "username": "someone@somewhere.com",
           "password": "123",
-          "role": 2048
+          "role": config.permissionLevels.NORMAL_USER
         }
       },
       expected_response: {
@@ -156,6 +157,22 @@ module.exports = {
       }
     },
     {
+      description: "Try to fetch a user that is not yourself when not an admin",
+      enabled: true,
+      debug: false,
+      path: "/users/1",
+      use_creds: 4,
+      method: {
+        type: "GET",
+        querystring: {}
+      },
+      expected_response: {
+        narrative: "Should get a 403 - forbidden",
+        code: 403,
+        json_data: false,
+      }
+    },
+    {
       description: "Disable a user",
       enabled: true,
       debug: false,
@@ -171,7 +188,7 @@ module.exports = {
       }
     },
     {
-      description: "Update a single user (and re-enable)",
+      description: "Update a single user (and re-enable as admin_user)",
       enabled: true,
       debug: false,
       path: "/users/2",
@@ -181,7 +198,7 @@ module.exports = {
         payload: {
           "username": "havocint@gmail.com",
           "password": "new",
-          "role": 1024,
+          "role": config.permissionLevels.ADMIN_USER,
           'enabled': 1
         }
       },
@@ -209,5 +226,264 @@ module.exports = {
         json_data: true,
       }
     },
+    {
+      description: "Login as the new user (normal permissions) ",
+      enabled: true,
+      debug: false,
+      path: "/auth",
+      method: {
+        type: "POST",
+        payload: {
+          "username": "someone@somewhere.com",
+          "password": "123"
+        }
+      },
+      expected_response: {
+        narrative: "Login OK.",
+        code: 201,
+        json_data: true,
+      }
+    },
+    {
+      description: "New user attempts to disable a user",
+      enabled: true,
+      debug: false,
+      path: "/users/2",
+      use_creds: 4,
+      method: {
+        type: "DELETE",
+      },
+      expected_response: {
+        narrative: "Fails to disable User id 2 (not authorized).",
+        code: 403,
+        json_data: false,
+      }
+    },
+    {
+      description: "New user attempts to refresh token",
+      enabled: true,
+      debug: false,
+      path: "/auth/refresh",
+      use_creds: 4,
+      method: {
+        type: "POST",
+      },
+      expected_response: {
+        narrative: "Refreshes the token.",
+        code: 201,
+        json_data: false,
+      }
+    },
+    {
+      description: "List Connection Strings",
+      enabled: true,
+      debug: false,
+      path: "/connections",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Returns All connection strings",
+        code: 200,
+        json_data: true,
+        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"****","Description":"dummy entry","Username":"david.upton@boston.gov","Enabled":true},{"ID":2,"Token":"11666A1A-3E54-42C3-A523-9F38EEDD96F3","ConnectionString":"****","Description":"dummy entry","Username":"havocint@gmail.com","Enabled":true}]
+      }
+    },
+    {
+      description: "Fetch a single Connection String by token",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Returns a single connection string (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 200,
+        json_data: true,
+        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abc","Description":"dummy entry","CreatedBy":1,"Enabled":true}]
+      }
+    },
+    {
+      description: "Insert a new connection string",
+      enabled: true,
+      debug: false,
+      path: "/connection",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          connectionString: "mysql:123.123.123.123:3000/hellp@123",
+          description: "A new test connection string",
+          createdBy: 0
+        }
+      },
+      expected_response: {
+        narrative: "Creates a new connection string",
+        code: 201,
+        json_data: false,
+      }
+    },
+    {
+      description: "Disable a connection string",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 0,
+      method: {
+        type: "DELETE",
+      },
+      expected_response: {
+        narrative: "Disable a single connection string (806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 204,
+        json_data: false,
+      }
+    },
+    {
+      description: "Check Connection String was disabled",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 200,
+        json_data: true,
+        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abc","Description":"dummy entry","CreatedBy":1,"Enabled":false}]
+      }
+    },
+    {
+      description: "Update a connection string",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 0,
+      method: {
+        type: "PATCH",
+        payload: {
+          connectionString: "test/12345:abd database=abcde",
+          enabled: 1
+        }
+      },
+      expected_response: {
+        narrative: "Changes the values of some field in connection string.",
+        code: 204,
+        json_data: false,
+      }
+    },
+    {
+      description: "Check Connection String was updated",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 200,
+        json_data: true,
+        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abcde","Description":"dummy entry","CreatedBy":1,"Enabled":true}]
+      }
+    },
+    {
+      description: "Try to get connectionstring you are not permissioned for.",
+      enabled: true,
+      debug: false,
+      path: "/connections/11666a1a-3e54-42c3-a523-9f38eedd96f3",
+      use_creds: 4,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Cannot get the connections string from tokens - should get a 403.",
+        code: 403,
+      }
+    },
+    {
+      description: "List connection strings available to a user (by userid)",
+      enabled: true,
+      debug: false,
+      path: "/users/1/connections",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Should get user + connections",
+        code: 200,
+        json_data: true,
+        exact: [{"Username":"david.upton@boston.gov","userid":1,"connid":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abcde","Description":"dummy entry","Enabled":true,"Count":0}]
+      }
+    },
+    {
+      description: "List connection strings available to a user (by username)",
+      enabled: true,
+      debug: false,
+      path: "/users/david.upton@boston.gov/connections",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Should get user + connections",
+        code: 200,
+        json_data: true,
+        exact: [{"Username":"david.upton@boston.gov","userid":1,"connid":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abcde","Description":"dummy entry","Enabled":true,"Count":0}]
+      }
+    },
+    {
+      description: "List users who can use a connection string",
+      enabled: true,
+      debug: false,
+      path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/users",
+      use_creds: 0,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 200,
+        json_data: true,
+        exact: [{"ID":1,"Username":"david.upton@boston.gov","Enabled":true,"Count":0},{"ID":3,"Username":"havocint@hotmail.com","Enabled":true,"Count":0},{"ID":5,"Username":"someone@somewhere.com","Enabled":true,"Count":0}]
+      }
+    },
+    {
+      description: "Add a new connections string permission ",
+      enabled: true,
+      debug: false,
+      path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/user/2",
+      use_creds: 0,
+      method: {
+        type: "POST",
+      },
+      expected_response: {
+        narrative: "A new connection string should exist",
+        code: 201,
+        json_data: false,
+      }
+    },
+    {
+      description: "Remove a connection string permission",
+      enabled: true,
+      debug: false,
+      path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/user/2",
+      use_creds: 0,
+      method: {
+        type: "DELETE",
+      },
+      expected_response: {
+        narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 204,
+        json_data: false,
+      }
+    },
   ]
+
 };

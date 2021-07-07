@@ -2,8 +2,13 @@ const ConnModel = require('./connections.model');
 
 exports.insert = (req, res) => {
   connData = req.body;
-  connData.createdBy = req.body.userid;
-  if (typeof connData.description === "undefined" ||  connData.description == "") {
+  if ('userid' in req.body) {
+    connData.createdBy = req.body.userid;
+  }
+  else if ('userid' in req.jwt) {
+    connData.createdBy = req.jwt.userid;
+  }
+  if (! 'description' in connData ||  connData.description == "") {
     connData.description = `Created by ${req.jwt.username}`
   }
   ConnModel.create(connData)
@@ -44,7 +49,7 @@ exports.list = (req, res) => {
 };
 
 exports.get = (req, res) => {
-  UserModel.findByToken(req.params.token)
+  ConnModel.findByToken(req.params.token)
     .then((result) => {
       res.status(200).send(result);
     })
@@ -57,7 +62,7 @@ exports.get = (req, res) => {
 };
 
 exports.update = (req, res) => {
-   ConnModel.update(req.params.id, req.body)
+   ConnModel.update(req.params.token, req.body)
      .then((result) => {
         res.status(204).send({});
      })
@@ -71,7 +76,7 @@ exports.update = (req, res) => {
 };
 
 exports.disable = (req, res) => {
-  ConnModel.disableById(req.params.id)
+  ConnModel.disableByToken(req.params.token)
     .then((result)=>{
       res.status(204).send({});
     })
@@ -116,7 +121,7 @@ exports.getUserConnections = (req, res) => {
 };
 
 exports.getConnectionUsers = (req, res) => {
-  UConnModel.findUsersByToken(req.params.token)
+  ConnModel.findUsersByToken(req.params.token)
     .then((result) => {
       res.status(200).send(result);
     })
@@ -130,7 +135,7 @@ exports.getConnectionUsers = (req, res) => {
 };
 
 exports.insertMapping = (req, res) => {
-  ConnModel.createMapping(req.params.token, req.params.id)
+  ConnModel.createMapping(req.params.token, req.params.userid)
     .then((result) => {
       res.status(201).send();
     })
@@ -143,7 +148,7 @@ exports.insertMapping = (req, res) => {
 };
 
 exports.deleteMapping = (req, res) => {
-  ConnModel.deleteMapping(req.params.token, req.params.id)
+  ConnModel.deleteMapping(req.params.token, req.params.userid)
     .then((result)=>{
       res.status(204).send({});
     })

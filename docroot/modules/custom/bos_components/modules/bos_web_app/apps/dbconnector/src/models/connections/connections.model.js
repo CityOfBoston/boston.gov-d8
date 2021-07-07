@@ -8,13 +8,12 @@ const sql_exec = require('../../common/services/tedious.exec.service')
  * This structure is used for create and updates.
  */
 const connSchema = {
-  id: 0,
-  token: 'NEWID()',
-  connectionString: '',
-  description: '',
-  createdDate: 'GETDATE()',
-  createdBy: 0,
-  enabled: 1
+  'id': 0,
+  'connectionString': '',
+  'description': '',
+  'createdDate': 'GETDATE()',
+  'createdBy': 0,
+  'enabled': 1
 };
 
 String.prototype.trimRight = function(charlist) {
@@ -41,8 +40,8 @@ exports.findByToken = (id) => {
               CreatedDate,
               CreatedBy,
               Enabled
-            FROM dbo.connToken
-           WHERE ID = ${id};`
+            FROM dbo.connTokens
+           WHERE token = '${id}';`
 
     sql_exec.exec(sql, function (rows, err) {
       if (err) {
@@ -69,12 +68,15 @@ exports.create = (connData) => {
       // If there is no token provided, then remove it so one gets created by default.
       delete connData.token;
     }
-    if (typeof connData.token === "undefined" || connData.description.trim() == "") {
+    if (typeof connData.description === "undefined" || connData.description.trim() == "") {
       connData.description = `API Insert`;
     }
     if (typeof connData.createdDate !== "undefined") {
       // Always want to remove this so the server adds its own time to the creation.
       delete connData.createdDate;
+    }
+    if (!'createdBy' in connData || connData.createdBy == 0 || connData.createdBy == "") {
+      reject("Must identify the creators UserID");
     }
 
     // Create a data object with all fields from the schema, and supplied or default values.
@@ -82,39 +84,36 @@ exports.create = (connData) => {
       ...connSchema,
       ...connData
     }
+console.log(JSON.stringify(data))
+    sql = `
+    INSERT INTO dbo.connTokens(
+        Token,
+        ConnectionString,
+        Description,
+        CreatedDate,
+        CreatedBy,
+        Enabled)
+      VALUES(
+        NEWID(),
+        '${data.connectionString}',
+        '${data.description}',
+        ${data.createdDate},
+        ${data.createdBy},
+        ${data.enabled}
+      );
+    SELECT Token as connTokens
+      FROM dbo.connTokens
+    WHERE ID = @@IDENTITY;`
 
-    if (data.createdBy == 0) {
-      reject("Must identify the creators UserID");
-    }
-    else {
-      sql = `INSERT INTO dbo.connTokens(
-                Token,
-                ConnectionString,
-                Description,
-                CreatedDate,
-                CreatedBy,
-                Enabled)
-              VALUES(
-                '${data.token}',
-                '${data.connectionString}',
-                '${data.description}',
-                ${data.createdDate},
-                ${data.createdBy},
-                ${data.enabled}
-              );
-              SELECT Token as connToken
-                FROM dbo.connTokens
-              WHERE ID = @@IDENTITY;`
+    sql_exec.exec(sql, function (rows, err) {
+      if (err) {
+        reject(err);
+      }
+      else {
+        resolve(rows[1][0].connToken);
+      }
+    });
 
-      sql_exec.exec(sql, function (rows, err) {
-        if (err) {
-          reject(err);
-        }
-        else {
-          resolve(rows[1][0].connToken);
-        }
-      });
-  }
   })
 };
 
@@ -131,14 +130,14 @@ exports.list = (perPage, page) => {
 
     sql = `SELECT
               tok.ID,
-              Token,
+              tok.Token,
               '****' as ConnectionString,
-              Description,
-              CreatedDate,
-              user.Username,
-              Enabled
-           FROM dbo.connToken tok
-              LEFT JOIN dbo.users user on tok.createdBy = user.ID
+              tok.Description,
+              tok.CreatedDate,
+              users.Username,
+              tok.Enabled
+           FROM dbo.connTokens tok
+              LEFT JOIN dbo.users users on tok.createdBy = users.ID
            ORDER BY tok.ID ASC
            OFFSET ${offset} ROWS FETCH NEXT ${perPage} ROWS ONLY;`
 
@@ -166,17 +165,22 @@ exports.update = (id, connData) => {
   return new Promise((resolve, reject) => {
     let fields = "";
     for (const field in connData) {
-      fields += `${field} = '${connData[field]}',`
+      if (field == 'createdBy' || field == 'enabled') {
+        fields += `${field} = ${connData[field]},`;
+      }
+      else {
+        fields += `${field} = '${connData[field]}',`;
+      }
     }
     fields = fields.trimRight(",");
     sql = `
-      IF EXISTS (SELECT * FROM dbo.connTokens WHERE ID = ${id})
+      IF EXISTS (SELECT * FROM dbo.connTokens WHERE token = '${id}')
         BEGIN
           SELECT 'Updated' as action;
 
-          UPDATE dbo.connToken
+          UPDATE dbo.connTokens
             SET ${fields}
-          WHERE ID = ${id};
+          WHERE token = '${id}';
         END
 
       ELSE
@@ -206,7 +210,7 @@ exports.update = (id, connData) => {
  * @param  {Number} id The ID for a connToken record.
  * @return {String} Narrative of what happened.
  */
-exports.disableById = (id) => {
+exports.disableByToken = (id) => {
 
   let nothingDone = 'Not Found';
 
@@ -214,7 +218,7 @@ exports.disableById = (id) => {
     sql = `
         UPDATE dbo.connTokens
             SET Enabled = 0
-          WHERE ID = ${id};
+          WHERE token = '${id}';
         IF @@ROWCOUNT > 0
           SELECT 'Removed' as action;
         ELSE
@@ -253,7 +257,9 @@ exports.disableById = (id) => {
   return new Promise((resolve, reject) => {
 
     sql = `SELECT
-              conn.ID,
+              u.Username,
+              u.ID as userid,
+              conn.ID as connid,
               conn.Token,
               conn.ConnectionString,
               conn.Description,
@@ -288,7 +294,9 @@ exports.disableById = (id) => {
   return new Promise((resolve, reject) => {
 
     sql = `SELECT
-              conn.ID,
+              u.Username,
+              u.ID as userid,
+              conn.ID as connid,
               conn.Token,
               conn.ConnectionString,
               conn.Description,
@@ -357,10 +365,9 @@ exports.disableById = (id) => {
       sql = `INSERT INTO dbo.permissionsMap (
                 UserID,
                 ConnID)
-              SELECT ${id}, ID
-                FROM dbo.connTokens
-              WHERE Token = '${token}'
-              );`
+              SELECT ${id}, tok.ID
+                FROM dbo.connTokens tok
+              WHERE Token = '${token}';`
 
       sql_exec.exec(sql, function (rows, err) {
         if (err) {
@@ -388,7 +395,7 @@ exports.disableById = (id) => {
       DELETE dbo.permissionsMap
       FROM dbo.permissionsMap map
         INNER JOIN dbo.connTokens tok ON map.ConnID = tok.ID
-        WHERE map.UserID = ${id} AND tok.Token = ${token})
+        WHERE map.UserID = ${id} AND tok.Token = '${token}'
 
       IF @@ROWCOUNT > 0
         SELECT 'Removed' as action;
@@ -401,7 +408,7 @@ exports.disableById = (id) => {
         reject(err);
       }
       else {
-        if (rows[0][0].action == nothingDone) {
+        if (rows[1][0].action == nothingDone) {
           reject(nothingDone)
         }
         else {

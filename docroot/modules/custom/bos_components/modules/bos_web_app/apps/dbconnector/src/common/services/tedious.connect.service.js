@@ -1,7 +1,7 @@
 const Connection = require('tedious').Connection;
 
 const config = {
-  server: "172.22.0.5",
+  server: "172.18.0.2",
   options: {
     "port": 1433,
     "database": "dbconnector",

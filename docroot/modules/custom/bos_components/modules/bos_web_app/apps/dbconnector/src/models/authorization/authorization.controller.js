@@ -9,8 +9,16 @@ exports.login = (req, res) => {
     let refreshId = req.body.userid + jwtSecret;
     let salt = crypto.randomBytes(16).toString('base64');
     let hash = crypto.createHmac('sha512', salt).update(refreshId).digest("base64");
+    // console.log(JSON.stringify(req.body));
+    let token;
     req.body.refreshKey = salt;
-    let token = jwt.sign(req.body, jwtSecret, { expiresIn: jwtExpiration });
+    if ('exp' in req.body) {
+      token = jwt.sign(req.body, jwtSecret);
+    }
+    else {
+      console.log("a");
+      token = jwt.sign(req.body, jwtSecret, { expiresIn: jwtExpiration });
+    }
     let b = Buffer.from(hash);
     let refresh_token = b.toString('base64');
 

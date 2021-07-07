@@ -1,3 +1,5 @@
+
+
 const ConnController = require('./connections.controller');
 const ValidationMiddleware = require('../authorization/auth.validation.middeware');
 const PermissionMiddleware = require('../authorization/auth.permission.middleware');
@@ -65,14 +67,14 @@ exports.routesConfig = function (app) {
     ConnController.getConnectionUsers
   ]);
   // Inserts a new connection->user mapping.
-  app.post('/connection/:token/user/:userId', [
+  app.post('/connection/:token/user/:userid', [
     ValidationMiddleware.validJWTNeeded,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(SUPER),
     ConnController.insertMapping
   ]);
   // Deletes a connection->user mapping.
-  app.delete('/connection/:token/user/:userId', [
+  app.delete('/connection/:token/user/:userid', [
     ValidationMiddleware.validJWTNeeded,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(SUPER),
