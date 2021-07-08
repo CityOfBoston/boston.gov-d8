@@ -16,7 +16,6 @@ exports.login = (req, res) => {
       token = jwt.sign(req.body, jwtSecret);
     }
     else {
-      console.log("a");
       token = jwt.sign(req.body, jwtSecret, { expiresIn: jwtExpiration });
     }
     let b = Buffer.from(hash);
