@@ -1,4 +1,4 @@
-const sql_conn = require('../../common/services/tedious.connect.service').connection;
+const sql_conn = require('../../../common/services/tedious.connect.service').connection;
 const Request = require('tedious').Request;
 let rows = [];
 let statements = 0;

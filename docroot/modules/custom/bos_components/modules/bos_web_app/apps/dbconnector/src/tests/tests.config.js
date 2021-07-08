@@ -48,7 +48,7 @@ module.exports = {
 
   tests: [
     {
-      description: "Login as OWNER user (UID=1)",
+      description: "Login as OWNER user (UID=1 / creds=0)",
       enabled: true,
       debug: false,
       path: "/auth",
@@ -67,7 +67,7 @@ module.exports = {
     },
     {
       description: "List Users",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users",
       use_creds: 0,
@@ -82,7 +82,7 @@ module.exports = {
     },
     {
       description: "List Users, paged",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users",
       use_creds: 0,
@@ -102,7 +102,7 @@ module.exports = {
     },
     {
       description: "List single user",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/1",
       use_creds: 0,
@@ -119,7 +119,7 @@ module.exports = {
     },
     {
       description: "Add a single user",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users",
       use_creds: 0,
@@ -139,7 +139,7 @@ module.exports = {
     },
     {
       description: "Try to add a duplicate single user",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users",
       use_creds: 0,
@@ -158,7 +158,7 @@ module.exports = {
     },
     {
       description: "Try to fetch a user that is not yourself when not an admin",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/1",
       use_creds: 4,
@@ -174,7 +174,7 @@ module.exports = {
     },
     {
       description: "Disable a user",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/2",
       use_creds: 0,
@@ -189,7 +189,7 @@ module.exports = {
     },
     {
       description: "Update a single user (and re-enable as admin_user)",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/2",
       use_creds: 0,
@@ -210,7 +210,7 @@ module.exports = {
     },
     {
       description: "Login as updated and re-enabled user",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/auth",
       method: {
@@ -228,7 +228,7 @@ module.exports = {
     },
     {
       description: "Login as the new user (normal permissions) ",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/auth",
       method: {
@@ -246,7 +246,7 @@ module.exports = {
     },
     {
       description: "New user attempts to disable a user",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/2",
       use_creds: 4,
@@ -261,7 +261,7 @@ module.exports = {
     },
     {
       description: "New user attempts to refresh token",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/auth/refresh",
       use_creds: 4,
@@ -276,7 +276,7 @@ module.exports = {
     },
     {
       description: "List Connection Strings",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections",
       use_creds: 0,
@@ -292,7 +292,7 @@ module.exports = {
     },
     {
       description: "Fetch a single Connection String by token",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
       use_creds: 0,
@@ -308,7 +308,7 @@ module.exports = {
     },
     {
       description: "Insert a new connection string",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connection",
       use_creds: 0,
@@ -328,7 +328,7 @@ module.exports = {
     },
     {
       description: "Disable a connection string",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
       use_creds: 0,
@@ -343,7 +343,7 @@ module.exports = {
     },
     {
       description: "Check Connection String was disabled",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
       use_creds: 0,
@@ -359,7 +359,7 @@ module.exports = {
     },
     {
       description: "Update a connection string",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
       use_creds: 0,
@@ -378,7 +378,7 @@ module.exports = {
     },
     {
       description: "Check Connection String was updated",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
       use_creds: 0,
@@ -394,7 +394,7 @@ module.exports = {
     },
     {
       description: "Try to get connectionstring you are not permissioned for.",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connections/11666a1a-3e54-42c3-a523-9f38eedd96f3",
       use_creds: 4,
@@ -408,7 +408,7 @@ module.exports = {
     },
     {
       description: "List connection strings available to a user (by userid)",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/1/connections",
       use_creds: 0,
@@ -424,7 +424,7 @@ module.exports = {
     },
     {
       description: "List connection strings available to a user (by username)",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/users/david.upton@boston.gov/connections",
       use_creds: 0,
@@ -440,7 +440,7 @@ module.exports = {
     },
     {
       description: "List users who can use a connection string",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/users",
       use_creds: 0,
@@ -456,7 +456,7 @@ module.exports = {
     },
     {
       description: "Add a new connections string permission ",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/user/2",
       use_creds: 0,
@@ -471,7 +471,7 @@ module.exports = {
     },
     {
       description: "Remove a connection string permission",
-      enabled: true,
+      enabled: false,
       debug: false,
       path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/user/2",
       use_creds: 0,
@@ -480,6 +480,26 @@ module.exports = {
       },
       expected_response: {
         narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 204,
+        json_data: false,
+      }
+    },
+    {
+      description: "Execute some SQL",
+      enabled: true,
+      debug: true,
+      path: "/query/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': 'SELECT * FROM dbo.{a}',
+          'connectionString': '{"host":"172.18.0.2", "port":"1433", "schema":"dbo", "db":"cmdb", "user":"dbconnector", "password":""}',
+          'args': {"a": "cmdb"},
+        }
+      },
+      expected_response: {
+        narrative: "Runs sql",
         code: 204,
         json_data: false,
       }

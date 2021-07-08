@@ -82,8 +82,9 @@ const makeConnection = (connstr) => {
 exports.exec = (body) => {
 
   return new Promise((resolve, reject) => {
-
-    sql = body.sql;
+// SMASH the payload into the necessary
+//makeconnection here
+    sql = body.statement;
 
     sql_exec.exec(sql, function (rows, err) {
       if (err) {

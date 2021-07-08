@@ -16,7 +16,7 @@ exports.routesConfig = function (app) {
   *     'args': [],
   *   }
   */
-  app.post('/:driver/query', [
+  app.post('/query/:driver', [
     ValidationMiddleware.validJWTNeeded,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
@@ -33,7 +33,7 @@ exports.routesConfig = function (app) {
   *   }
   * querystring ?limit=N&page=N
   */
-  app.post('/:driver/select', [
+  app.post('/select/:driver', [
     ValidationMiddleware.validJWTNeeded,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),

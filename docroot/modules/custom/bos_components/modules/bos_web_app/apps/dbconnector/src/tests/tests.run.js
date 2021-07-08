@@ -253,6 +253,7 @@ function requestEndpoint (options, data) {
           body = {"result": "No Data"};
         }
         else {
+          console.log(`body: ${body}`)
           body = JSON.parse(`${body}`);
         }
 

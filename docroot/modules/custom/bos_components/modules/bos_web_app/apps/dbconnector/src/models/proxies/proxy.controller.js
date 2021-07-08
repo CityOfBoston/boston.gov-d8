@@ -1,9 +1,10 @@
 
 exports.query = (req, res) => {
-  const UserModel = require('./users.model');
-  UserModel.create(req.body)
+  const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
+  DriverModel.exec(req.body)
     .then((result) => {
-      res.status(201).send({ id: result });
+      console.log("c");
+      res.status(200).send({ id: result });
     })
     .catch((reason) => {
       error = {
@@ -14,7 +15,7 @@ exports.query = (req, res) => {
 };
 
 exports.select = (req, res) => {
-  const UserModel = require('./users.model');
+  const DriverModel = require(`${req.params.driver}.model`);
 
   let limit = 100;
   let page = 0;
@@ -29,7 +30,7 @@ exports.select = (req, res) => {
     }
   }
 
-  UserModel.create(req.body)
+  DriverModel.create(req.body)
     .then((result) => {
       res.status(201).send({ id: result });
     })

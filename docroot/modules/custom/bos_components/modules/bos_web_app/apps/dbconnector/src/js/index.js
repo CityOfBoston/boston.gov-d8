@@ -22,6 +22,7 @@ const bodyParser = require('body-parser');
 const AuthorizationRouter = require('../models/authorization/routes.config');
 const UsersRouter = require('../models/users/routes.config');
 const ConnectionsRouter = require('../models/connections/routes.config');
+const ProxyRouter = require('../models/proxies/routes.config');
 
 app.use(function (req, res, next) {
   res.set('Cache-Control', 'no-store');
@@ -46,6 +47,7 @@ app.set('trust proxy', true)
 AuthorizationRouter.routesConfig(app);
 UsersRouter.routesConfig(app);
 ConnectionsRouter.routesConfig(app);
+ProxyRouter.routesConfig(app);
 
 // Start the express server service.
 app.listen(listen_port, function () {

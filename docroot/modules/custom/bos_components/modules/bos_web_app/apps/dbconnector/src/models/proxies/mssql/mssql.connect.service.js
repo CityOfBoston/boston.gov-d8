@@ -19,7 +19,7 @@ const mssqlConfig = {
   }
 };
 
-const connection;
+const connection = new Object;
 
 /**
  * Makes a connection to the server specified in config object.
