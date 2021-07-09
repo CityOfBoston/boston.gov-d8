@@ -114,7 +114,7 @@ function clone_private_repo() {
   if [[ -z "${git_private_repo_local_dir}" ]]; then git_private_repo_local_dir="${REPO_ROOT}/tmprepo"; fi
 
   # Empty the folder if it exists.
-  if [[ -e "${git_private_repo_local_dir}" ]]; then rm -rf ${git_private_repo_local_dir}; fi
+#   if [[ -e "${git_private_repo_local_dir}" ]]; then rm -rf ${git_private_repo_local_dir}; fi
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
@@ -127,6 +127,7 @@ function clone_private_repo() {
   fi
 
   git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+  echo skipped
 
   if [[ $? -eq 0 ]]; then
     printout "SUCCESS" "Private repo cloned."
