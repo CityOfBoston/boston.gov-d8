@@ -1,24 +1,32 @@
-const sql_conn = require('../../../common/services/tedious.connect.service').connection;
 const Request = require('tedious').Request;
+const mssql = require('./mssql.connect.service');
 let rows = [];
 let statements = 0;
 let callback;
 let errors = false;
 
-exports.exec = (sql, callbacker) => {
-  callback = callbacker;
+exports.exec = (config, sql, cb) => {
+
+  callback = cb;
   errors = false;
   statements = 0;
   rows = []
-
+  console.log(JSON.stringify(config));
   sql = sql.toString();
+  sql = `use ${config.options.database};\n ${sql};`;
+  console.log(sql);
 
-  const request = new Request(sql, statementComplete);
-  request.on('doneInProc', requestDone);
-  request.on('error', tediousReturn);
-  request.on('requestCompleted', tediousReturn);
+  delete config.options.schema;
 
-  sql_conn.execSql(request);
+  mssql.connect(config, function (conn) {
+
+    const request = new Request(sql, statementComplete);
+    request.on('doneInProc', requestDone);
+    request.on('error', tediousReturn);
+    request.on('requestCompleted', tediousReturn);
+
+    conn.execSql(request);
+  });
 }
 
 function requestDone(rowCount, more, reqRows) {

@@ -21,5 +21,23 @@ module.exports = {
     // This equates to user #1 == owner.
     // Automatically given all rights.
     "OWNER": 4096
+  },
+  "apiConfig":{
+    server: "172.22.0.5",
+    options: {
+      "port": 1433,
+      "database": "dbconnector",
+      "trustServerCertificate": true,
+      "requestTimeout": 30 * 1000,
+      "useColumnNames": true,
+      "rowCollectionOnDone": true
+    },
+    authentication: {
+      type: "default",
+      options: {
+        userName: "dbconnector",
+        password: "dbc0nnector@COB",
+      }
+    }
   }
 };

@@ -50,6 +50,11 @@ ConnectionsRouter.routesConfig(app);
 ProxyRouter.routesConfig(app);
 
 // Start the express server service.
-app.listen(listen_port, function () {
-  console.log('app listening at port %s', listen_port);
-});
+try {
+  app.listen(listen_port, function () {
+    console.log('app listening at port %s', listen_port);
+  });
+}
+catch(err) {
+  console.log(err);
+}

@@ -3,7 +3,6 @@ exports.query = (req, res) => {
   const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
   DriverModel.exec(req.body)
     .then((result) => {
-      console.log("c");
       res.status(200).send({ id: result });
     })
     .catch((reason) => {

@@ -1,21 +1,9 @@
 /**
  * Functions which manipulate data within the users table.
  */
+const { type } = require('os');
 const { config } = require('process');
-const sql_svs = require('./mssql.connect.service');
-const sql_exec = require('./mssql.exec.service');
-let sql_conn;
-
-/**
- * This is the schema for the mssql connections string.  In body as JSON String.
- */
-const connstr = {
-  "server": "",     // Servername or IPAddress
-  "port": 1433,     // [optional] Usually 1433
-  "database": "",   // [optional] The name of the database
-  "userName": "",   // The Username credential
-  "password": ""    // Password Credential
-}
+const mssqlexec = require('./mssql.exec.service');
 
 /**
  * A structure which represents the body of a request.
@@ -28,13 +16,27 @@ const bodySchema = {
 }
 
 /**
+ * This is the schema for the mssql connections string.  In body as JSON String.
+ */
+const connstr = {
+  "server": "",     // Servername or IPAddress
+  "port": 1433,     // [optional] Usually 1433
+  "database": "",   // [optional] The name of the database
+  "userName": "",   // The Username credential
+  "password": ""    // Password Credential
+}
+// Export this so that the connectionstring schema is available externally.
+exports.connstr = connstr;
+
+/**
  * This is the schema for config passed to the tedious connect command.
  */
-const configSchema = {
+let tediousConfigSchema = {
   server: "",
   options: {
     "port": 1433,
     "database": "",
+    "schema": "dbo",
     "trustServerCertificate": true,
     "requestTimeout": 30 * 1000,
       "useColumnNames": true,
@@ -49,30 +51,59 @@ const configSchema = {
   }
 }
 
+
+
 /**
- * Makes a connection to the SQL Server.
+ * Applies arguments to the sql string.
+ * @param {String} sql
+ * @param {Object} args
+ * @returns
+ */
+const unpackSQL = (sql, args) => {
+  // substitute arguments into sql.
+  let element = "";
+  for (const arg in args) {
+    if (Object.hasOwnProperty.call(args, arg)) {
+      element = args[arg];
+      sql = sql.replace(`{${arg}}`, element);
+    }
+  }
+  return sql;
+}
+
+/**
+ * Convert the connection string passed in body into an object required by the
+ * mssql.connect.service.
  *
  * @param {connstr} connstr
+ * @returns {tediousConfigSchema} populated config object.
  */
-const makeConnection = (connstr) => {
-  config = new configSchema;
-  config.options.server = connstr.server;
-  config.authentication.options.userName = connstr.userName;
-  config.authentication.options.password = connstr.password;
+const makeTediousConfig = (connstr) => {
 
-  if ('port' in connstr) {
-    config.options.port = connstr.port;
+  let config;
+  config = tediousConfigSchema;
+  let csobj = JSON.parse(connstr);
+
+  config.server = csobj.host;
+  config.authentication.options.userName = csobj.user;
+  config.authentication.options.password = csobj.password;
+
+
+  if ('port' in csobj) {
+    config.options.port = parseInt(csobj.port);
   }
-  if ('database' in connstr) {
-    config.options.database = connstr.database;
+  if ('schema' in csobj) {
+    config.options.schema = parseInt(csobj.schema);
+  }
+  if ('database' in csobj) {
+    config.options.database = csobj.database;
   }
   else {
     delete config.options.database;
   }
 
-  sql_svs.connect(config)
+  return config;
 }
-
 
 /**
  * Executes an SQL statement on the provided connections string.
@@ -82,11 +113,10 @@ const makeConnection = (connstr) => {
 exports.exec = (body) => {
 
   return new Promise((resolve, reject) => {
-// SMASH the payload into the necessary
-//makeconnection here
-    sql = body.statement;
+    sql = unpackSQL(body.statement, body.args);
+    let config = makeTediousConfig(body.connectionString);
 
-    sql_exec.exec(sql, function (rows, err) {
+    mssqlexec.exec(config, sql, function (rows, err) {
       if (err) {
         reject(err);
       }
@@ -124,4 +154,3 @@ exports.exec = (body) => {
   });
 
 };
-

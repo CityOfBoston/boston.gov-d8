@@ -493,9 +493,9 @@ module.exports = {
       method: {
         type: "POST",
         payload: {
-          'statement': 'SELECT * FROM dbo.{a}',
-          'connectionString': '{"host":"172.18.0.2", "port":"1433", "schema":"dbo", "db":"cmdb", "user":"dbconnector", "password":""}',
-          'args': {"a": "cmdb"},
+          'statement': 'SELECT * FROM [dbo].[{a}]',
+          'connectionString': '{"host":"172.22.0.5", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'args': {"a": "CMDBUser"},
         }
       },
       expected_response: {

@@ -1,23 +1,5 @@
 const Connection = require('tedious').Connection;
-
-const config = {
-  server: "172.18.0.2",
-  options: {
-    "port": 1433,
-    "database": "dbconnector",
-    "trustServerCertificate": true,
-    "requestTimeout": 30 * 1000,
-    "useColumnNames": true,
-    "rowCollectionOnDone": true
-  },
-  authentication: {
-    type: "default",
-    options: {
-      userName: "dbconnector",
-      password: "dbc0nnector@COB",
-    }
-  }
-};
+const config = require('../env.config').apiConfig;
 
 const connection = new Connection(config);
 

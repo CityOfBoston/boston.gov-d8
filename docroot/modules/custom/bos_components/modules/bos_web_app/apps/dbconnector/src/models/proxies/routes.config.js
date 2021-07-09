@@ -1,5 +1,6 @@
 const ProxyController = require('./proxy.controller');
 const ValidationMiddleware = require('../authorization/auth.validation.middeware');
+const ProxyValidationMiddleware = require('./proxy.validation.middeware');
 const PermissionMiddleware = require('../authorization/auth.permission.middleware');
 const config = require('../../common/env.config');
 
@@ -19,7 +20,8 @@ exports.routesConfig = function (app) {
   app.post('/query/:driver', [
     ValidationMiddleware.validJWTNeeded,
     PermissionMiddleware.isIPAddressAllowed,
-    PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
+    ProxyValidationMiddleware.IsPayloadValid,
+    PermissionMiddleware.minimumPermissionLevelRequired(NORMAL),
     ProxyController.query
   ]);
 

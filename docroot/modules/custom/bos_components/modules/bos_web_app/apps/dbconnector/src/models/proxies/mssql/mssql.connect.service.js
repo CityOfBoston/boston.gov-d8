@@ -1,64 +1,41 @@
 const TediousConnection = require('tedious').Connection;
-
-const mssqlConfig = {
-  server: "172.18.0.2",
-  options: {
-    "port": 1433,
-    "database": "dbconnector",
-    "trustServerCertificate": true,
-    "requestTimeout": 30 * 1000,
-    "useColumnNames": true,
-    "rowCollectionOnDone": true
-  },
-  authentication: {
-    type: "default",
-    options: {
-      userName: "dbconnector",
-      password: "dbc0nnector@COB",
-    }
-  }
-};
-
-const connection = new Object;
+let callback;
+let connection;
 
 /**
  * Makes a connection to the server specified in config object.
- * @param {mssqlConfig} config Configuration obecjt for tedious.Connection
+ * @param {mssqlConfig} config Configuration object for tedious.Connection
+ * @param {any} cb Callback
  */
-exports.connect = (config) => {
+exports.connect = (config, cb) => {
 
-  connection = new TediousConnection(config);
+  callback = cb;
 
-  connection.connect(connected);
-  connection.on('infoMessage', infoError);
-  connection.on('errorMessage', infoError);
-  connection.on('end', end);
-  connection.on('debug', debug);
+  return new Promise((resolve, reject) => {
+    connection = new TediousConnection(config);
 
+    connection.connect(connected);
+    connection.on('infoMessage', infoError);
+    connection.on('errorMessage', infoError);
+    connection.on('end', end);
+    connection.on('debug', debug);
+  });
 }
 
 function connected(err) {
   if (err) {
-    console.log(err);
-    process.exit(1);
+    console.log(`MSSql proxy connection error: ${err}`);
+    callback({"error": `MSSql proxy connection error: ${err}`});
   }
 
-  // console.log('connected');
+  console.log('MSSQL Proxy Connected');
 
-  process.stdin.resume();
-
-  process.stdin.on('data', function(chunk) {
-    exec(chunk);
-  });
-
-  process.stdin.on('end', function() {
-    process.exit(0);
-  });
+  callback(connection);
 }
 
 function end() {
   console.log('Connection closed');
-  process.exit(0);
+  callback();
 }
 
 function infoError(info) {
@@ -69,4 +46,4 @@ function debug(message) {
   // console.log(message);
 }
 
-exports.connection = connection;
+exports.connection = connection
