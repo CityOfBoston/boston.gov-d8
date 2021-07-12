@@ -85,8 +85,7 @@ function doTest (testOrd) {
       }
 
       const execTest = async () => {
-        await requestEndpoint(options, data)
-
+        requestEndpoint(options, data)
           .then((result) => {
             // Validate the response.
             // console.log(`THEN: ${JSON.stringify(result)}`);
@@ -104,9 +103,8 @@ function doTest (testOrd) {
               process.exit();
             }
           })
-
           .catch((reason) => {
-            console.log(JSON.stringify(reason));
+            console.log('catch' + JSON.stringify(reason));
             msg = JSON.stringify(reason);
             if ('data' in reason && 'error' in reason.data) {
               msg = reason.data.error;
@@ -137,9 +135,13 @@ function doTest (testOrd) {
         if (parseInt(test.expected_response.code) >= 400) {
           msg = JSON.stringify(result);
           if ('data' in result && 'error' in result.data) {
-            msg = result.data.error;
-            if (Array.isArray(result.data.error)) {
-              msg = result.data.error.join(", ");
+            if (typeof result.data.error.error === "undefined") {
+              msg = result.data.error.error
+            }
+            else {
+              if (Array.isArray(result.data.error)) {
+                msg = msg.join(", ");
+              }
             }
           }
           console.log(`NOTE: Test failed as expected: \"${msg}\"`.grey);
@@ -253,7 +255,7 @@ function requestEndpoint (options, data) {
           body = {"result": "No Data"};
         }
         else {
-          console.log(`body: ${body}`)
+          // console.log(`body: ${body}`)
           body = JSON.parse(`${body}`);
         }
 

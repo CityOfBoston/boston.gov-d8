@@ -121,7 +121,12 @@ exports.exec = (body) => {
         reject(err);
       }
       else {
-        resolve(rows[0]);
+        if(rows.length == 1) {
+          resolve(rows[0]);
+        }
+        else {
+          resolve(rows);
+        }
       }
     });
 
@@ -137,16 +142,32 @@ exports.exec = (body) => {
  exports.select = (body) => {
 
   return new Promise((resolve, reject) => {
+    let sql = body.statement;
+    if (sql.endsWith(";")) {
+      // remove trailing ;'s
+      sql = sql.split(";")[0]
+    }
+    sql = unpackSQL(sql, body.args);
 
-    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role
-           FROM dbo.users
-           WHERE ID = ${id};`
+    if (! sql.toLowerCase().includes("offset")) {
+      sql = `${sql}\n OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;`;
+      paging = {
+        "limit": parseInt(body.limit),
+        "offset": (parseInt(body.page) * parseInt(body.limit))
+      }
 
-    sql_exec.exec(sql, function (rows, err) {
+      sql = unpackSQL(sql, paging);
+    }
+
+    let config = makeTediousConfig(body.connectionString);
+
+    mssqlexec.exec(config, sql, function (rows, err) {
       if (err) {
+console.log(`a: ${err}`)
         reject(err);
       }
       else {
+        console.log(`b: ${err}`)
         resolve(rows[0]);
       }
     });

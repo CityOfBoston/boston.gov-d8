@@ -3,7 +3,7 @@ exports.query = (req, res) => {
   const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
   DriverModel.exec(req.body)
     .then((result) => {
-      res.status(200).send({ id: result });
+      res.status(200).send(result);
     })
     .catch((reason) => {
       error = {
@@ -14,14 +14,13 @@ exports.query = (req, res) => {
 };
 
 exports.select = (req, res) => {
-  const DriverModel = require(`${req.params.driver}.model`);
-
+const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
   let limit = 100;
   let page = 0;
   if (req.body) {
     if (req.body.page) {
       req.body.page = parseInt(req.body.page);
-      req.bdy.page = Number.isInteger(req.body.page) ? req.body.page : 0;
+      req.body.page = Number.isInteger(req.body.page) ? req.body.page : 0;
     }
     if (req.body.limit) {
       req.body.limit = parseInt(req.body.limit);
@@ -29,9 +28,9 @@ exports.select = (req, res) => {
     }
   }
 
-  DriverModel.create(req.body)
+  DriverModel.select(req.body)
     .then((result) => {
-      res.status(201).send({ id: result });
+      res.status(200).send(result);
     })
     .catch((reason) => {
       error = {

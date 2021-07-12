@@ -39,6 +39,7 @@ exports.routesConfig = function (app) {
     ValidationMiddleware.validJWTNeeded,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
+    ProxyValidationMiddleware.IsSelectQueryValid,
     ProxyController.select
   ]);
 

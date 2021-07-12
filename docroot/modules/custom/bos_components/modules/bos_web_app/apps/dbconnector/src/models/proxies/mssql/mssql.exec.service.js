@@ -11,21 +11,24 @@ exports.exec = (config, sql, cb) => {
   errors = false;
   statements = 0;
   rows = []
-  console.log(JSON.stringify(config));
+
   sql = sql.toString();
   sql = `use ${config.options.database};\n ${sql};`;
-  console.log(sql);
 
   delete config.options.schema;
 
-  mssql.connect(config, function (conn) {
+  mssql.connect(config, function (state, conn) {
 
     const request = new Request(sql, statementComplete);
     request.on('doneInProc', requestDone);
     request.on('error', tediousReturn);
     request.on('requestCompleted', tediousReturn);
-
-    conn.execSql(request);
+    if (state == "connected") {
+      conn.execSql(request)
+    }
+    else if (state == 'error') {
+      callback([], conn);
+    }
   });
 }
 
@@ -48,6 +51,7 @@ function requestDone(rowCount, more, reqRows) {
 function tediousReturn(err) {
   if (errors) {}
   else if (err && typeof err !== "undefined") {
+    console.log(`Error?: ${err}`)
     callback([], 'Statement ' + (statements + 1) + ' failed: ' + err);
     errors = true
   }
