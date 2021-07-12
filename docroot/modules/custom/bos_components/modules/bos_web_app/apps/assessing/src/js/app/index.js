@@ -14,7 +14,7 @@ class MNL extends React.Component {
       submittedAddress: null,
       submittedKeywords: null,
       searchColor: null,
-      searchByFilter: 0,
+      searchByFilter: 1,
       searchFilters: [
         {
           value: 'address',
@@ -229,7 +229,7 @@ class MNL extends React.Component {
           // console.log('render > value: ', value);
           resultItem = (
             <a
-              className="cd dl-i search-result"
+              className="search-result"
               tabIndex='0'
               style={{ cursor: "pointer" }}
               key={index}
@@ -284,7 +284,7 @@ class MNL extends React.Component {
           onChange={this.searchFilterHandler}
         />
 
-        <div className="filterBy-desc">
+        <div className="filter-by-desc">
           {this.state.searchFilters[this.state.searchByFilter].instructions}
         </div>
         
@@ -298,16 +298,14 @@ class MNL extends React.Component {
             currentKeywords={this.state.currentKeywords}
           />
         </div>
-        <div style={{ paddingTop: "30px" }}>
+        <div className="mnl-mod">
           {this.state.isLoading ? (
             <div className="supporting-text">Loading ... </div>
           ) : (
-            <div>
-              <ul className="dl">
-                {renderListHeaders()}
-                {itemsLookupMarkup}
-              </ul>
-            </div>
+            <ul className="results-list">
+              {renderListHeaders()}
+              {itemsLookupMarkup}
+            </ul>
           )}
         </div>
       </div>
