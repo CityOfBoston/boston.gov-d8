@@ -17,6 +17,12 @@ class Search extends React.Component {
                 onChange={this.props.handleKeywordChange}
             />
 
+            <label
+              htmlFor="query"
+              className="sf-i-l">
+              Search
+            </label>
+
             <button
               type="button"
               id="mnl-search-button"
