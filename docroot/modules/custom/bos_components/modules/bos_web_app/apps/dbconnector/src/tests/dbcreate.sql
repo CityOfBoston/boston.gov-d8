@@ -26,7 +26,7 @@ BEGIN
         ('david.upton@boston.gov', 'wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==', '', 4096, 1),
         ('davidrkupton@gmail.com', 'jzY/3Zw/SLH/nH4fBPmfQQ==$Nu1CuTApDRtM2vy/ipAKy0Xpe/evQOAVdObEoRAI00Hi6YJlY4vHu+KoHgrEldEhh5Fo/+UXr+o09ANMbKyb8Q==', '', 2048, 1),
         ('havocint@hotmail.com', 'wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==', '', 4, 1),
-        ('david', 'wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==', '', 1, 1);
+        ('david', 'wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==', '10.10.10.10', 1, 1);
 END
 
 IF NOT (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='connTokens'))

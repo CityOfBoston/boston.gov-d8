@@ -97,7 +97,7 @@ module.exports = {
         narrative: "2 user records starting with the 3rd record. ",
         code: 200,
         json_data: true,
-        exact: [{"ID":3,"Username":"havocint@hotmail.com","Password":"*****","IPAddresses":"","Enabled":true,"Role":4},{"ID":4,"Username":"david","Password":"*****","IPAddresses":"","Enabled":true,"Role":1}]
+        exact: [{"ID":3,"Username":"havocint@hotmail.com","Password":"*****","IPAddresses":"","Enabled":true,"Role":4},{"ID":4,"Username":"david","Password":"*****","IPAddresses":"10.10.10.10","Enabled":true,"Role":1}]
       }
     },
     {
@@ -114,7 +114,26 @@ module.exports = {
         narrative: "Look for an exact match",
         code: 200,
         json_data: true,
-        exact: [{"ID":1,"Username":"david.upton@boston.gov","Password":"*****","IPAddresses":"","Enabled":true,"Role":4096}]
+        exact: [{ "ID": 1, "Username": "david.upton@boston.gov", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 4096 }]
+      }
+    },
+    {
+      description: "List single user (from wrong ip)",
+      enabled: true,
+      debug: false,
+      path: "/auth",
+      method: {
+        type: "POST",
+        payload: {
+          "username": "david",
+          "password": "123"
+        }
+      },
+      expected_response: {
+        narrative: "Look for an exact match",
+        code: 400,
+        json_data: true,
+        exact: { "error": ["Unathorized IPAddress"] }
       }
     },
     {
@@ -154,12 +173,13 @@ module.exports = {
         narrative: "Adds a duplicate user to the user table. Should fail.",
         code: 400,
         json_data: true,
+        exact: {"error": "Statement 3 failed: RequestError: Cannot insert duplicate key row in object 'dbo.users' with unique index 'UK_Username'. The duplicate key value is (someone@somewhere.com)."}
       }
     },
     {
       description: "Try to fetch a user that is not yourself when not an admin",
       enabled: true,
-      debug: true,
+      debug: false,
       path: "/users/1",
       use_creds: 4,
       method: {
@@ -169,7 +189,7 @@ module.exports = {
       expected_response: {
         narrative: "Should get a 403 - forbidden",
         code: 403,
-        json_data: false,
+        json_data: false
       }
     },
     {
@@ -547,6 +567,47 @@ module.exports = {
       }
     },
     {
+      description: "Execute an INSERT SQL",
+      enabled: true,
+      debug: false,
+      path: "/query/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': "INSERT INTO dbo.[CMDBVariables] ([ID], [CREATED_DATE], [LAST_MODIFIED_DATE], [CREATED_BY], [LAST_MODIFIED_BY], [key], [value]) VALUES ('123117D6-EE39-4664-B49E-4D069610E818', '2021-07-07T18:21:38.417Z', '2021-07-07T18:21:38.417Z', 'CON01579', 'CON01579', 'test1', 'test1value'),('123417D6-EE39-4664-B49E-4D069610E818', '2021-07-07T18:21:38.417Z', '2021-07-07T18:21:38.417Z', 'CON01579', 'CON01579', 'test2', 'test2value')",
+          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'args': { "a": "dbo.[CMDBVariables]"},
+        }
+      },
+      expected_response: {
+        narrative: "Adds 2 records to CMDBVariables table.",
+        code: 200,
+        json_data: false
+      }
+    },
+    {
+      description: "Execute an COMBO SQL",
+      enabled: true,
+      debug: false,
+      path: "/query/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': "DELETE FROM dbo.[CMDBVariables] WHERE [ID] = '123117D6-EE39-4664-B49E-4D069610E818'; SELECT [ID] FROM CMDBVariables WHERE [ID] = '123417D6-EE39-4664-B49E-4D069610E818';DELETE FROM dbo.[CMDBVariables] WHERE [ID] = '123417D6-EE39-4664-B49E-4D069610E818';",
+          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'args': { "a": "dbo.[CMDBVariables]" },
+        }
+      },
+      expected_response: {
+        narrative: "Adds 2 records to CMDBVariables table.",
+        code: 200,
+        json_data: true,
+        exact: [[], [{ "ID": "123417D6-EE39-4664-B49E-4D069610E818" }], []]
+      }
+    },
+    {
       description: "Execute a select SQL (fails)",
       enabled: true,
       debug: false,
@@ -588,6 +649,28 @@ module.exports = {
         code: 200,
         json_data: true,
         exact: [{ "Username": "david.upton@boston.gov" }]
+      }
+    },
+    {
+      description: "Execute a select SQL on table that does not exist",
+      enabled: true,
+      debug: false,
+      path: "/select/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': "SELECT Username from usersxx order by Username;",
+          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"dbconnector", "user":"dbconnector", "password":"dbc0nnector@COB"}',
+          'limit': 1,
+          'page': 1
+        }
+      },
+      expected_response: {
+        narrative: "Runs sql",
+        code: 400,
+        json_data: false,
+        exact: { "error": "Statement 2 failed: RequestError: Invalid object name 'usersxx'." }
       }
     },
 

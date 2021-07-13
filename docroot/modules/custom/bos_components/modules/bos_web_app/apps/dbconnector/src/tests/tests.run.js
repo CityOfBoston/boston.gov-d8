@@ -104,7 +104,7 @@ function doTest (testOrd) {
             }
           })
           .catch((reason) => {
-            console.log('catch' + JSON.stringify(reason));
+            // console.log('catch' + reason);
             msg = JSON.stringify(reason);
             if ('data' in reason && 'error' in reason.data) {
               msg = reason.data.error;
@@ -140,7 +140,7 @@ function doTest (testOrd) {
             }
             else {
               if (Array.isArray(result.data.error)) {
-                msg = msg.join(", ");
+                // msg = msg.join(", ");
               }
             }
           }
@@ -175,22 +175,34 @@ function doTest (testOrd) {
         if ('exact' in test.expected_response) {
           // This is a dated column and will only cause issues...
           ord = 0;
-          result.data.forEach(row => {
-            if ('LastUse' in row) {
-              delete result.data[ord].LastUse;
-            }
-            if ('CreatedDate' in row) {
-              delete result.data[ord].CreatedDate;
-            }
-            ord++;
-          });
+          let testout = '';
+          if ('data' in result) {
 
+            if('error' in result.data) {
+              testout = JSON.stringify(result.data);
+            }
+            else {
+              result.data.forEach(row => {
+                if ('LastUse' in row) {
+                  delete result.data[ord].LastUse;
+                }
+                if ('CreatedDate' in row) {
+                  delete result.data[ord].CreatedDate;
+                }
+                ord++;
+              });
+              testout = JSON.stringify(result.data);
+            }
+          }
+          else {
+            console.log(`aa: ${JSON.stringify(result)}`);
+          }
 
-          if (JSON.stringify(test.expected_response.exact) != JSON.stringify(result.data)) {
+          if (JSON.stringify(test.expected_response.exact) != testout) {
             // Response does not match.
             console.log(`\u2716 [FAIL] response is not exact match expected`.red);
             console.log(`\nExpected:\n${JSON.stringify(test.expected_response.exact)}`);
-            console.log(`\nReceived:\n${JSON.stringify(result.data)}\n`);
+            console.log(`\nReceived:\n${JSON.stringify(testout)}\n`);
             return false;
           }
         }
