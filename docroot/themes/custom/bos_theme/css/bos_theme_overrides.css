@@ -1261,8 +1261,8 @@ What: Adding style to view-row that is suddenly wrapping divs with .n-li class
   margin-bottom: 1rem;
 }
 .dl-d {
-  word-break: break-word;
   overflow-wrap: break-word;
+  min-width: 200px;
 }
 
 /**
@@ -1289,7 +1289,7 @@ What: Adding boston.gov only aatribute override.
 
 /**
 Stella
-Where: Menu Navigation.
+Where: Menu Navigation, Search field and Button.
 What: Updating CSS for accessibility and
  */
 
@@ -1347,6 +1347,13 @@ body.no-s .md-c:focus-within {
   transform: translateY(0)
 }
 
+.views-exposed-form .sf-i .form-item, .views-exposed-form .sf-i .form-submit {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+
+
 .sr-only {
   position:absolute;
   left:-10000px;
@@ -1372,6 +1379,21 @@ body.no-s .md-c:focus-within {
     outline: none;
   }
   .oh-display-label {min-width: 4em;}
+}
+
+/**
+Stella
+Where: Navigation Search bar
+What: Change margin top for just boston.gov pages only
+Needs to be removed once legacy public.css is removed from patterns
+ */
+
+.bos_theme .sf-i-b {
+  margin-top: -20px;
+}
+
+.paragraphs-item-commission-search .sf-i-b {
+  margin-top: -3px !important;
 }
 
 /**
