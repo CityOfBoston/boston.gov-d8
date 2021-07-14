@@ -10,9 +10,9 @@ class MNL extends React.Component {
       sam_id: null,
       itemsLookup: [],
       itemsDisplay: null,
-      currentKeywords: null,
-      submittedAddress: null,
-      submittedKeywords: null,
+      currentKeywords: '',
+      submittedAddress: '',
+      submittedKeywords: false,
       searchColor: null,
       searchByFilter: 1,
       searchFilters: [
@@ -120,7 +120,7 @@ class MNL extends React.Component {
     let inputChars = event.target.value.length;
     this.setState({
       currentKeywords: event.target.value,
-      submittedKeywords: null,
+      submittedKeywords: false,
       searchColor: null
     });
 
@@ -130,7 +130,7 @@ class MNL extends React.Component {
       this.setState({
         isLoading: true,
         submittedKeywords: true,
-        submittedAddress: null
+        submittedAddress: ''
       });
     }
   }
@@ -140,7 +140,7 @@ class MNL extends React.Component {
     this.setState({
       isLoading: true,
       submittedKeywords: true,
-      submittedAddress: null,
+      submittedAddress: '',
     });
     this.lookupAddress();
   };
@@ -210,23 +210,31 @@ class MNL extends React.Component {
       );
   };
 
-  searchFilterHandler = ev => {
+  changeSearchFilterHandler = ev => {
     this.setState({
-      searchByFilter: ev.currentTarget.value
+      itemsLookup: [],
+      searchByFilter: ev.currentTarget.value,
+      submittedKeywords: '',
+      submittedAddress: '',
+      currentKeywords: ''
     });
     
-    // console.log(`searchFilterHandler > ${this.state.searchFilters[ev.currentTarget.value].label}`);
+    // console.log(`changeSearchFilterHandler: ${this.state.searchFilters[ev.currentTarget.value].label}`);
+    // console.log(`submittedKeywords: ${this.state.submittedKeywords}`);
+    // console.log(`currentKeywords: ${this.state.currentKeywords}`);
+    // console.log(`submittedAddress: ${this.state.currentKeywords}`);
+    // console.log('-----');
   };
 
   render () {
     // Set and retreieve lookup items
     let itemsLookupArray = this.state.itemsLookup.slice(0, 9);
-    let itemsLookupMarkup = [];
+    let resultsMarkup = [];
     let resultItem;
+
     if (this.state.submittedKeywords) {
       if (itemsLookupArray.length > 0) {
         for (const [index, value] of itemsLookupArray.entries()) {
-          // console.log('render > value: ', value);
           resultItem = (
             <a
               className="search-result"
@@ -236,40 +244,66 @@ class MNL extends React.Component {
               href={`assessing-online/${itemsLookupArray[index].PID}`}
             >
               <li className="address-item rows">
-                <div className="prop-value column-value mobile">
-                  ${itemsLookupArray[index].AV_TOTAL}
+                <div className="desktop">
+                  <div className="prop-value column-property">
+                    {itemsLookupArray[index].MAIL_ADDRESS}
+                  </div>
+                  <div className="prop-value column-owner">
+                    {itemsLookupArray[index].OWNER}
+                  </div>
+                  <div className="prop-value column-parcel">
+                    {itemsLookupArray[index].PID}
+                  </div>
+                  <div className="prop-value column-value">
+                    ${itemsLookupArray[index].AV_TOTAL}
+                  </div>
                 </div>
-                <div className="prop-value column-property">
-                  {itemsLookupArray[index].MAIL_ADDRESS}
-                </div>
-                <div className="prop-value column-owner">
-                  {itemsLookupArray[index].OWNER}
-                </div>
-                <div className="prop-value column-parcel">
-                  {itemsLookupArray[index].PID}
-                </div>
-                <div className="prop-value column-value desktop">
-                  ${itemsLookupArray[index].AV_TOTAL}
+
+                <div className="mobile">
+                  <div className="left-col">
+                    <div className="prop-value column-property">
+                      {itemsLookupArray[index].MAIL_ADDRESS}
+                    </div>
+                    <div className="prop-value column-owner">
+                      {itemsLookupArray[index].OWNER}
+                    </div>
+                    <div className="prop-value column-parcel">
+                      {itemsLookupArray[index].PID}
+                    </div>
+                  </div>
+
+                  <div className="right-col">
+                    <div className="prop-value column-value">
+                      ${itemsLookupArray[index].AV_TOTAL}
+                    </div>
+                  </div>
                 </div>
               </li>
             </a>
           );
-          itemsLookupMarkup.push(resultItem);
+          resultsMarkup.push(resultItem);
         }
       } else {
-        itemsLookupMarkup = <div className="supporting-text">No address was found by that name.</div>;
+        resultsMarkup = <div className="supporting-text">No results were found.</div>;
       }
     }
 
     const renderListHeaders = () => {
       let retElem = '';
-      if (itemsLookupMarkup.length > 0) {
+      if (resultsMarkup.length > 0) {
         retElem = (
           <li className="header">
-            <div className="header-label">Property</div>
-            <div className="header-label">Owner</div>
-            <div className="header-label">Parcel ID</div>
-            <div className="header-label">Value</div>
+            <div className="header-desktop">
+              <div className="header-label">Property</div>
+              <div className="header-label">Owner</div>
+              <div className="header-label">Parcel ID</div>
+              <div className="header-label">Value</div>
+            </div>
+
+            <div className="header-mobile">
+              <div className="header-label">Property</div>
+              <div className="header-label">Value</div>
+            </div>
           </li>
         );
       }
@@ -281,7 +315,7 @@ class MNL extends React.Component {
         <SearchFilters
           searchByFilter={this.state.searchByFilter}
           searchFilters={this.state.searchFilters}
-          onChange={this.searchFilterHandler}
+          onChange={this.changeSearchFilterHandler}
         />
 
         <div className="filter-by-desc">
@@ -294,7 +328,6 @@ class MNL extends React.Component {
             handleKeywordSubmit={this.handleKeywordSubmit}
             placeholder={this.state.searchFilters[this.state.searchByFilter].placeholder}
             searchClass="sf-i-f"
-            styleInline={{ color: this.state.searchColor }}
             currentKeywords={this.state.currentKeywords}
           />
         </div>
@@ -304,7 +337,7 @@ class MNL extends React.Component {
           ) : (
             <ul className="results-list">
               {renderListHeaders()}
-              {itemsLookupMarkup}
+              {resultsMarkup}
             </ul>
           )}
         </div>
