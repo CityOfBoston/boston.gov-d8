@@ -18,7 +18,7 @@ class Search extends React.Component {
             />
 
             <label
-              htmlFor="query"
+              htmlFor="mnl-search-input"
               className="sf-i-l">
               Search
             </label>
