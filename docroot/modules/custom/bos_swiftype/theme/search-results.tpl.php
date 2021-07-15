@@ -16,6 +16,7 @@
       <div class="sf">
         <div class="sf-i">
           <input type="text" name="query" id="query" class="sf-i-f" value="<?php print $search_term ?>">
+          <label for="query" class="sf-i-l">Search</label>
           <button class="sf-i-b">Search</button>
         </div>
       </div>
