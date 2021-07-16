@@ -15,6 +15,7 @@ exports.routesConfig = function (app) {
   // Inserts a new connection.
   app.post('/connection', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
     ConnController.insert
@@ -22,6 +23,7 @@ exports.routesConfig = function (app) {
   // Lists all connections.
   app.get('/connections', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
     ConnController.list
@@ -29,6 +31,7 @@ exports.routesConfig = function (app) {
   // Fetch a single connection from Token supplied.
   app.get('/connections/:token', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     ConnPermissionMiddleware.canThisUserUseThisConnection,
     ConnController.get
@@ -36,6 +39,7 @@ exports.routesConfig = function (app) {
   // Update a single connection.
   app.patch('/connections/:token', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(SUPER),
     ConnController.update
@@ -43,6 +47,7 @@ exports.routesConfig = function (app) {
   // Disable a single connection.
   app.delete('/connections/:token', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(SUPER),
     ConnController.disable
@@ -55,6 +60,7 @@ exports.routesConfig = function (app) {
   // List all connections available to a user
   app.get('/users/:userId/connections', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.onlySameUserOrAdminCanDoThisAction,
     ConnController.getUserConnections
@@ -62,6 +68,7 @@ exports.routesConfig = function (app) {
   // List users who are allowed to use a connToken.
   app.get('/connection/:token/users', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     ConnPermissionMiddleware.canThisUserUseThisConnection,
     ConnController.getConnectionUsers
@@ -69,6 +76,7 @@ exports.routesConfig = function (app) {
   // Inserts a new connection->user mapping.
   app.post('/connection/:token/user/:userid', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(SUPER),
     ConnController.insertMapping
@@ -76,6 +84,7 @@ exports.routesConfig = function (app) {
   // Deletes a connection->user mapping.
   app.delete('/connection/:token/user/:userid', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(SUPER),
     ConnController.deleteMapping

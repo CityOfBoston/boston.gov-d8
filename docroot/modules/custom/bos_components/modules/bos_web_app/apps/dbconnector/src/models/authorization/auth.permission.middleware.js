@@ -155,7 +155,7 @@ exports.isIPAddressAllowed = (req, res, next) => {
       return next()
     }
     console.log(`IPAddress ${caller_ip} Failed`)
-    return res.status(400).send({error: ['Unathorized IPAddress']});
+    return res.status(400).send({error: 'Unathorized IPAddress'});
   }
   else {
     // No IPAddress filtering.

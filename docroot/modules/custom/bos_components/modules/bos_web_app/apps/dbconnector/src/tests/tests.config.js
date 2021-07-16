@@ -68,7 +68,7 @@ module.exports = {
     {
       description: "List Users",
       enabled: true,
-      debug: false,
+      debug: true,
       path: "/users",
       use_creds: 0,
       method: {
@@ -514,7 +514,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val",
-          'connectionString': '{"host":"172.22.0.0", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "Dataset 1" },
         }
       },
@@ -534,7 +534,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "Dataset1" },
         }
       },
@@ -555,7 +555,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val; SELECT '{b}' AS val",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "Dataset1", "b": "Dataset2" },
         }
       },
@@ -576,7 +576,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "INSERT INTO dbo.[CMDBVariables] ([ID], [CREATED_DATE], [LAST_MODIFIED_DATE], [CREATED_BY], [LAST_MODIFIED_BY], [key], [value]) VALUES ('123117D6-EE39-4664-B49E-4D069610E818', '2021-07-07T18:21:38.417Z', '2021-07-07T18:21:38.417Z', 'CON01579', 'CON01579', 'test1', 'test1value'),('123417D6-EE39-4664-B49E-4D069610E818', '2021-07-07T18:21:38.417Z', '2021-07-07T18:21:38.417Z', 'CON01579', 'CON01579', 'test2', 'test2value')",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "dbo.[CMDBVariables]"},
         }
       },
@@ -596,7 +596,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "DELETE FROM dbo.[CMDBVariables] WHERE [ID] = '123117D6-EE39-4664-B49E-4D069610E818'; SELECT [ID] FROM CMDBVariables WHERE [ID] = '123417D6-EE39-4664-B49E-4D069610E818';DELETE FROM dbo.[CMDBVariables] WHERE [ID] = '123417D6-EE39-4664-B49E-4D069610E818';",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "dbo.[CMDBVariables]" },
         }
       },
@@ -617,7 +617,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val; SELECT '{b}' AS val",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',
+          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
           'limit': 1,
           'page': 1,
           'args': { "a": "Dataset1", "b": "Dataset2" },
@@ -639,7 +639,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT Username from users order by Username;",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"dbconnector", "user":"dbconnector", "password":"dbc0nnector@COB"}',
+          'connectionString': '11666A1A-3E54-42C3-A523-9F38EEDD96F3',
           'limit': 1,
           'page': 1
         }
@@ -661,7 +661,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT Username from usersxx order by Username;",
-          'connectionString': '{"host":"172.22.0.3", "port":"1433", "schema":"dbo", "database":"dbconnector", "user":"dbconnector", "password":"dbc0nnector@COB"}',
+          'connectionString': '11666A1A-3E54-42C3-A523-9F38EEDD96F3',
           'limit': 1,
           'page': 1
         }

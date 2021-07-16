@@ -9,6 +9,7 @@ exports.routesConfig = function (app) {
     VerifyUserMiddleware.isPasswordAndUserMatch,
     PermissionMiddleware.isIPAddressAllowed,
     VerifyUserMiddleware.isUserEnabled,
+    AuthValidationMiddleware.isFlooding,
     AuthorizationController.login
   ]);
 
@@ -17,6 +18,7 @@ exports.routesConfig = function (app) {
     PermissionMiddleware.isIPAddressAllowed,
     AuthValidationMiddleware.verifyRefreshBodyField,
     AuthValidationMiddleware.validRefreshNeeded,
+    AuthValidationMiddleware.isFlooding,
     AuthorizationController.login
   ]);
 };

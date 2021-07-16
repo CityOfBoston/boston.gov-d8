@@ -1,4 +1,5 @@
 const sql_conn = require('../../common/services/tedious.connect.service').connection;
+
 const Request = require('tedious').Request;
 let rows = [];
 let statements = 0;
@@ -21,6 +22,7 @@ exports.exec = (sql, callbacker) => {
   request.on('requestCompleted', tediousReturn);
 
   sql_conn.execSql(request);
+
 }
 
 function requestDone(rowCount, more, reqRows) {
@@ -40,7 +42,9 @@ function requestDone(rowCount, more, reqRows) {
 }
 
 function tediousReturn(err) {
-  if (errors) {}
+  if (errors) {
+
+  }
   else if (err && typeof err !== "undefined") {
     callback([], 'Statement ' + (statements + 1) + ' failed: ' + err);
     errors = true

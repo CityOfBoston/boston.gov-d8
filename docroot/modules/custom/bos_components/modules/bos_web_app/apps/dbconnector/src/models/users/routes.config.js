@@ -12,6 +12,7 @@ exports.routesConfig = function (app) {
   // Inserts a new user.
   app.post('/users', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
     UsersController.insert
@@ -19,6 +20,7 @@ exports.routesConfig = function (app) {
   // Lists all users.
   app.get('/users', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
     UsersController.list
@@ -26,6 +28,7 @@ exports.routesConfig = function (app) {
   // Fetch a single user from userID supplied.
   app.get('/users/:userId', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.onlySameUserOrAdminCanDoThisAction,
     UsersController.get
@@ -33,6 +36,7 @@ exports.routesConfig = function (app) {
   // Update a single user.
   app.patch('/users/:userId', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.onlySameUserOrAdminCanDoThisAction,
     UsersController.update
@@ -40,6 +44,7 @@ exports.routesConfig = function (app) {
   // Disable a single user.
   app.delete('/users/:userId', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
     UsersController.disable

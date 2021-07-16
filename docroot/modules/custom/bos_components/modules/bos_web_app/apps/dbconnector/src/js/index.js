@@ -2,21 +2,9 @@
 const listen_port = require('../common/env.config.js').port;
 
 const express = require('express');
-// const redis   = require("redis");
 
-// const session = require('express-session');
-// var redisStore = require('connect-redis')(session);
-// var client  = redis.createClient();
 const app = express();
 const bodyParser = require('body-parser');
-
-// Temp session caching - replace with redis
-// var cookieParser = require('cookie-parser');
-// app.use(cookieParser());
-// app.use(session({
-//   secret: "Shh, its a secret!",
-//   saveUninitialized: false,
-//   resave: false}));
 
 // Include the models routing files.
 const AuthorizationRouter = require('../models/authorization/routes.config');

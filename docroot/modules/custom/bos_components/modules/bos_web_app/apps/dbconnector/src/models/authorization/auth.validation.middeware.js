@@ -8,6 +8,9 @@ const jwt = require('jsonwebtoken'),
   secret = require('../../common/env.config').jwt_secret,
   jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds,
   crypto = require('crypto');
+const flood_time = require('../../common/env.config').flood_time,
+  flood_level = require('../../common/env.config').flood_level
+
 
 /**
  * Checks that a refresh token has been supplied in the request body.
@@ -78,4 +81,83 @@ exports.validJWTNeeded = (req, res, next) => {
   } else {
     return res.status(401).send();
   }
+};
+
+function readUserSession(userid) {
+
+}
+
+/**
+ * Makes sure a flood block is created, and then increments it.
+ * @param {*} req Request object
+ * @param {number} block The time-block to increment.
+ * @param {object} sess The jwt session object.
+ */
+function incrementFloodCounter(block, sess) {
+
+  if (typeof sess.session === "undefined" || sess.session == null) {
+    console.log("recreate_1");
+    sess.session = {'flood': {}};
+  }
+  else if (typeof sess.session.flood === "undefined") {
+    console.log("recreate_2");
+    sess.session.flood = {};
+  }
+
+  let flood = sess.session.flood;
+
+  if (block in flood) {
+    // Increment this block for this user.
+    console.log("existing block");
+    flood[block]++;
+  }
+  else {
+    // Initializes new block for this user and remove any old blocks.
+    console.log("new block");
+    flood[block] = 1;
+  }
+  // console.log(sess);
+  return sess;
+
+};
+
+/**
+ * Increments the flood tracker, and checks for flood attacks.
+ *
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
+exports.isFlooding = (req, res, next) => {
+
+  // Establish which time block we are in.
+  let block = Math.round((new Date().getTime() / 1000) / flood_time);
+
+  //Manage the flood counter.
+  if (typeof req.jwt === "undefined") {
+    // During authentication, prior to login, user info is in the body.
+    req.body = incrementFloodCounter(block, req.body);
+    use_count = parseInt(req.body.session.flood[block]);
+  }
+  else {
+    req.jwt = incrementFloodCounter(block, req.jwt);
+    use_count = parseInt(req.jwt.session.flood[block]);
+  }
+
+  // Determine if user is over-using service.
+  if (use_count <= flood_level) {
+    next();
+  }
+  else {
+    // Return a simple 200, do not alert the flooder to the issue.
+    // console.log(`hits: ${use_count}`)
+    // console.log(`level: ${flood_level}`)
+    return res.status(200).send({});
+  }
+
+  if (typeof req.jwt !== "undefined") {
+    // console.log("jwt: " + JSON.stringify(req.jwt));
+  }
+
 };

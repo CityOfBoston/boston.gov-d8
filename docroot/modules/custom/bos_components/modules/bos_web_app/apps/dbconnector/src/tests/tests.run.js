@@ -189,6 +189,9 @@ function doTest (testOrd) {
                 if ('CreatedDate' in row) {
                   delete result.data[ord].CreatedDate;
                 }
+                if ('Session' in row) {
+                  delete result.data[ord].Session;
+                }
                 ord++;
               });
               testout = JSON.stringify(result.data);
@@ -267,7 +270,7 @@ function requestEndpoint (options, data) {
           body = {"result": "No Data"};
         }
         else {
-          // console.log(`body: ${body}`)
+          console.log(`body: ${body}`)
           body = JSON.parse(`${body}`);
         }
 

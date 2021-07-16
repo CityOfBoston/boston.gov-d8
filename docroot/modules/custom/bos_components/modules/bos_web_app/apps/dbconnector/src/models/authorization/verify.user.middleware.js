@@ -44,7 +44,8 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
             username: user[0].Username,
             role: user[0].Role,
             enabled: user[0].Enabled,
-            ipaddresses: user[0].IPAddresses.split(";") || ""
+            ipaddresses: user[0].IPAddresses.split(";") || "",
+            session: user[0].Session
           };
           return next();
         }
@@ -60,6 +61,6 @@ exports.isUserEnabled = (req, res, next) => {
     return next()
   }
   else {
-    return res.status(400).send({error: ['User Disabled']});
+    return res.status(400).send({error: 'User Disabled'});
   }
 };

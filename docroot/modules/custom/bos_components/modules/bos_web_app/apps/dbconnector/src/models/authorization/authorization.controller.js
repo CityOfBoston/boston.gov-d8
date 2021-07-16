@@ -1,6 +1,5 @@
 const jwtSecret = require('../../common/env.config').jwt_secret,
   jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds,
-  flood_time = require('../../common/env.config').flood_time,
   jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
@@ -20,15 +19,6 @@ exports.login = (req, res) => {
     }
     let b = Buffer.from(hash);
     let refresh_token = b.toString('base64');
-
-    // Create a session cookie with a 30 second "block" for this user.
-    // let block = Math.round((new Date().getTime / 1000) / flood_time);
-    // console.log(JSON.stringify(session));
-    // if (!"flood" in req.session) {
-    //   req.session['flood'] = {};
-    // }
-    // // Initializes for this user and removes any old blocks.
-    // req.session.flood = [req.body.userid] = {block : 0};
 
     res.status(201).send({userid: req.body.userid, accessToken: token, refreshToken: refresh_token});
   } catch (err) {

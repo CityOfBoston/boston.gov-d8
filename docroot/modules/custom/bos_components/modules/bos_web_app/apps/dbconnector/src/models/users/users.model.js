@@ -13,7 +13,8 @@ const userSchema = {
   password: '',
   ipaddresses: '',
   enabled: 1,
-  role: 1
+  role: 1,
+  session: ''
 };
 
 String.prototype.trimRight = function(charlist) {
@@ -32,7 +33,7 @@ exports.findByUsername = (username) => {
 
   return new Promise((resolve, reject) => {
 
-    sql = `SELECT ID, Username, Password, IPAddresses, Enabled, Role
+    sql = `SELECT ID, Username, Password, IPAddresses, Enabled, Role, Session
            FROM dbo.users
            WHERE Username = '${username}';`
 
@@ -58,7 +59,7 @@ exports.findByUsername = (username) => {
 
   return new Promise((resolve, reject) => {
 
-    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role
+    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role, Session
            FROM dbo.users
            WHERE ID = ${id};`
 

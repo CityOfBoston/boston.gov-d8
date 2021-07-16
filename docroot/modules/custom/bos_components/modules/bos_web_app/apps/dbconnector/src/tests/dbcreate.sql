@@ -17,7 +17,8 @@ BEGIN
         Password NVARCHAR(150) NOT NULL,
         IPAddresses NVARCHAR(500),
         Role int DEFAULT 0,
-        Enabled bit DEFAULT 1
+        Enabled bit DEFAULT 1,
+        Session NVARCHAR(500)
     );
     CREATE UNIQUE INDEX UK_Username
         ON dbo.users (Username);
@@ -49,8 +50,9 @@ BEGIN
         ON dbo.connTokens (Token);
     INSERT INTO dbo.connTokens (Token, ConnectionString, Description, CreatedBy, CreatedDate, Enabled)
     VALUES
-        ('806117D6-EE39-4664-B49E-4D069610E818', 'test/12345:abd database=abc', 'dummy entry', 1, '2021-07-07T18:21:38.417Z', 1),
-        ('11666A1A-3E54-42C3-A523-9F38EEDD96F3', 'test/1232:abd database=abc', 'dummy entry', 2, '2021-07-07T18:21:38.417Z', 1);
+        ('806117D6-EE39-4664-B49E-4D069610E818', '{"host":"172.20.0.5", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}', 'dummy entry', 1, '2021-07-07T18:21:38.417Z', 1),
+        ('11666A1A-3E54-42C3-A523-9F38EEDD96F3', '{"host":"172.20.0.5", "port":"1433", "schema":"dbo", "database":"dbconnector", "user":"dbconnector", "password":"dbc0nnector@COB"}', 'dummy entry', 2, '2021-07-07T18:21:38.417Z', 1)
+        ;
 
 END
 -- IF @@ROWCOUNT > 0

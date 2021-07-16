@@ -19,6 +19,7 @@ exports.routesConfig = function (app) {
   */
   app.post('/query/:driver', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     ProxyValidationMiddleware.IsPayloadValid,
     PermissionMiddleware.minimumPermissionLevelRequired(NORMAL),
@@ -37,6 +38,7 @@ exports.routesConfig = function (app) {
   */
   app.post('/select/:driver', [
     ValidationMiddleware.validJWTNeeded,
+    ValidationMiddleware.isFlooding,
     PermissionMiddleware.isIPAddressAllowed,
     PermissionMiddleware.minimumPermissionLevelRequired(ADMIN),
     ProxyValidationMiddleware.IsSelectQueryValid,

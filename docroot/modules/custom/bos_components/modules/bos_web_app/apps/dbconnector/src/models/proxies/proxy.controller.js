@@ -1,6 +1,9 @@
 
 exports.query = (req, res) => {
   const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
+
+  body.connectionString = fetchConnectionstringFromToekn(body.token);
+
   DriverModel.exec(req.body)
     .then((result) => {
       res.status(200).send(result);
@@ -14,7 +17,9 @@ exports.query = (req, res) => {
 };
 
 exports.select = (req, res) => {
-const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
+
+  const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
+
   let limit = 100;
   let page = 0;
   if (req.body) {
@@ -28,6 +33,8 @@ const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`)
     }
   }
 
+  body.connectionString =fetchConnectionstringFromToekn(body.token);
+
   DriverModel.select(req.body)
     .then((result) => {
       res.status(200).send(result);
@@ -39,6 +46,10 @@ const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`)
       res.status(400).send(JSON.stringify(error));
     });
 };
+
+function fetchConnectionstringFromToekn(token) {
+
+}
 
 // curl -H "Content-Type: application/json" -X PATCH -d '{"username":"david.upton@boston.gov"}' 'http://localhost:3600/users/3'
 
