@@ -23,7 +23,7 @@ exports.IsPayloadValid = (req, res, next) => {
   if ('body' in req) {
     if (
       'statement' in req.body && req.body.statement != "" &&
-      'connectionString' in req.body && req.body.connectionString != ""
+      'token' in req.body && req.body.token != ""
     ) {
       return next();
     }

@@ -133,7 +133,7 @@ module.exports = {
         narrative: "Look for an exact match",
         code: 400,
         json_data: true,
-        exact: { "error": ["Unathorized IPAddress"] }
+        exact: { "error": "Unathorized IPAddress" }
       }
     },
     {
@@ -323,7 +323,7 @@ module.exports = {
         narrative: "Returns a single connection string (token: 806117D6-EE39-4664-B49E-4D069610E818)",
         code: 200,
         json_data: true,
-        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abc","Description":"dummy entry","CreatedBy":1,"Enabled":true}]
+        exact: [{ "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": '{"host":"172.20.0.5", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',"Description":"dummy entry","CreatedBy":1,"Enabled":true}]
       }
     },
     {
@@ -374,7 +374,8 @@ module.exports = {
         narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
         code: 200,
         json_data: true,
-        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abc","Description":"dummy entry","CreatedBy":1,"Enabled":false}]
+        exact: [{
+          "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString":`{"host":"${config.apiConfig.server}", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`, "Description":"dummy entry","CreatedBy":1,"Enabled":false}]
       }
     },
     {
@@ -386,7 +387,7 @@ module.exports = {
       method: {
         type: "PATCH",
         payload: {
-          connectionString: "test/12345:abd database=abcde",
+          description: "Updated Dummy",
           enabled: 1
         }
       },
@@ -409,7 +410,7 @@ module.exports = {
         narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
         code: 200,
         json_data: true,
-        exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abcde","Description":"dummy entry","CreatedBy":1,"Enabled":true}]
+        exact: [{ "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,"Description":"Updated Dummy","CreatedBy":1,"Enabled":true}]
       }
     },
     {
@@ -439,7 +440,7 @@ module.exports = {
         narrative: "Should get user + connections",
         code: 200,
         json_data: true,
-        exact: [{"Username":"david.upton@boston.gov","userid":1,"connid":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abcde","Description":"dummy entry","Enabled":true,"Count":0}]
+        exact: [{ "Username": "david.upton@boston.gov", "userid": 1, "connid": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,"Description":"Updated Dummy","Enabled":true,"Count":0}]
       }
     },
     {
@@ -455,7 +456,7 @@ module.exports = {
         narrative: "Should get user + connections",
         code: 200,
         json_data: true,
-        exact: [{"Username":"david.upton@boston.gov","userid":1,"connid":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"test/12345:abd database=abcde","Description":"dummy entry","Enabled":true,"Count":0}]
+        exact: [{ "Username": "david.upton@boston.gov", "userid": 1, "connid": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,"Description":"Updated Dummy","Enabled":true,"Count":0}]
       }
     },
     {
@@ -505,7 +506,7 @@ module.exports = {
       }
     },
     {
-      description: "Execute SQL where Connection fails",
+      description: "Execute SQL with invalid token",
       enabled: true,
       debug: false,
       path: "/query/mssql",
@@ -514,14 +515,57 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val",
-          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
+          'token': 'x06117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "Dataset 1" },
         }
       },
       expected_response: {
-        narrative: "Tries to connect to a server which does not exist.",
+        narrative: "Tries to connect with an invalid token (token not uuid)",
         code: 400,
-        json_data: true
+        json_data: true,
+        exact: { "error": "Token not found" }
+      }
+    },
+    {
+      description: "Execute SQL with invalid token - 2",
+      enabled: true,
+      debug: false,
+      path: "/query/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': "SELECT '{a}' AS val",
+          'token': '006117D6-EE39-4664-B49E-4D069610E818',
+          'args': { "a": "Dataset 1" },
+        }
+      },
+      expected_response: {
+        narrative: "Tries to connect with an invalid token (non-existant token)",
+        code: 400,
+        json_data: true,
+        exact: { "error": "Token not found" }
+      }
+    },
+    {
+      description: "Execute SQL with disabled token",
+      enabled: false,
+      debug: false,
+      path: "/query/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': "SELECT '{a}' AS val",
+          'token': 'x06117D6-EE39-4664-B49E-4D069610E818',
+          'args': { "a": "Dataset 1" },
+        }
+      },
+      expected_response: {
+        narrative: "Tries to connect with a disabled token",
+        code: 400,
+        json_data: true,
+        exact: { "error": "Token not found" }
       }
     },
     {
@@ -534,7 +578,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val",
-          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
+          'token': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "Dataset1" },
         }
       },
@@ -555,7 +599,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val; SELECT '{b}' AS val",
-          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
+          'token': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "Dataset1", "b": "Dataset2" },
         }
       },
@@ -576,7 +620,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "INSERT INTO dbo.[CMDBVariables] ([ID], [CREATED_DATE], [LAST_MODIFIED_DATE], [CREATED_BY], [LAST_MODIFIED_BY], [key], [value]) VALUES ('123117D6-EE39-4664-B49E-4D069610E818', '2021-07-07T18:21:38.417Z', '2021-07-07T18:21:38.417Z', 'CON01579', 'CON01579', 'test1', 'test1value'),('123417D6-EE39-4664-B49E-4D069610E818', '2021-07-07T18:21:38.417Z', '2021-07-07T18:21:38.417Z', 'CON01579', 'CON01579', 'test2', 'test2value')",
-          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
+          'token': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "dbo.[CMDBVariables]"},
         }
       },
@@ -596,7 +640,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "DELETE FROM dbo.[CMDBVariables] WHERE [ID] = '123117D6-EE39-4664-B49E-4D069610E818'; SELECT [ID] FROM CMDBVariables WHERE [ID] = '123417D6-EE39-4664-B49E-4D069610E818';DELETE FROM dbo.[CMDBVariables] WHERE [ID] = '123417D6-EE39-4664-B49E-4D069610E818';",
-          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
+          'token': '806117D6-EE39-4664-B49E-4D069610E818',
           'args': { "a": "dbo.[CMDBVariables]" },
         }
       },
@@ -617,7 +661,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT '{a}' AS val; SELECT '{b}' AS val",
-          'connectionString': '806117D6-EE39-4664-B49E-4D069610E818',
+          'token': '806117D6-EE39-4664-B49E-4D069610E818',
           'limit': 1,
           'page': 1,
           'args': { "a": "Dataset1", "b": "Dataset2" },
@@ -639,7 +683,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT Username from users order by Username;",
-          'connectionString': '11666A1A-3E54-42C3-A523-9F38EEDD96F3',
+          'token': '11666A1A-3E54-42C3-A523-9F38EEDD96F3',
           'limit': 1,
           'page': 1
         }
@@ -661,7 +705,7 @@ module.exports = {
         type: "POST",
         payload: {
           'statement': "SELECT Username from usersxx order by Username;",
-          'connectionString': '11666A1A-3E54-42C3-A523-9F38EEDD96F3',
+          'token': '11666A1A-3E54-42C3-A523-9F38EEDD96F3',
           'limit': 1,
           'page': 1
         }
@@ -671,6 +715,44 @@ module.exports = {
         code: 400,
         json_data: false,
         exact: { "error": "Statement 2 failed: RequestError: Invalid object name 'usersxx'." }
+      }
+    },
+    {
+      description: "Update a connection string with non-existent server",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 0,
+      method: {
+        type: "PATCH",
+        payload: {
+          ConnectionString: '{"host":"172.20.0.256", "port":"1433", "schema":"dbo", "database":"dbconnector", "user":"dbconnector", "password":"dbc0nnector@COB"}'
+        }
+      },
+      expected_response: {
+        narrative: "Changes the value of the server in the connection string.",
+        code: 204,
+        json_data: false,
+      }
+    },
+    {
+      description: "Execute SQL where Connection fails",
+      enabled: true,
+      debug: false,
+      path: "/query/mssql",
+      use_creds: 0,
+      method: {
+        type: "POST",
+        payload: {
+          'statement': "SELECT '{a}' AS val",
+          'token': '806117D6-EE39-4664-B49E-4D069610E818',
+          'args': { "a": "Dataset 1" },
+        }
+      },
+      expected_response: {
+        narrative: "Tries to connect to a server which does not exist.",
+        code: 400,
+        json_data: true
       }
     },
 

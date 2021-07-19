@@ -1,19 +1,35 @@
+const ConnModel = require('../connections/connections.model');
 
 exports.query = (req, res) => {
   const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
 
-  body.connectionString = fetchConnectionstringFromToekn(body.token);
+ fetchConnectionstringFromToken(req.body.token)
+  .then((result) => {
+    if (!result.Enabled) {
+      res.status(400).send({"error": "Connection disabled"});
+    }
+    else {
+      req.body.connectionString = result.ConnectionString;
+      DriverModel.exec(req.body)
+        .then((result) => {
+          res.status(200).send(result);
+        })
+        .catch((reason) => {
+          error = {
+            "error": reason
+          }
 
-  DriverModel.exec(req.body)
-    .then((result) => {
-      res.status(200).send(result);
-    })
-    .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
-    });
+          res.status(400).send(JSON.stringify(error));
+        });
+    }
+  })
+  .catch((reason) => {
+     error = {
+       "error": reason
+     }
+     res.status(400).send(JSON.stringify(error));
+  });
+
 };
 
 exports.select = (req, res) => {
@@ -25,20 +41,29 @@ exports.select = (req, res) => {
   if (req.body) {
     if (req.body.page) {
       req.body.page = parseInt(req.body.page);
-      req.body.page = Number.isInteger(req.body.page) ? req.body.page : 0;
+      req.body.page = Number.isInteger(req.body.page) ? req.body.page : page;
     }
     if (req.body.limit) {
       req.body.limit = parseInt(req.body.limit);
-      req.body.limit = Number.isInteger(req.body.limit) ? req.body.limit : 100;
+      req.body.limit = Number.isInteger(req.body.limit) ? req.body.limit : limit;
     }
   }
 
-  body.connectionString =fetchConnectionstringFromToekn(body.token);
-
-  DriverModel.select(req.body)
+  fetchConnectionstringFromToken(req.body.token)
     .then((result) => {
-      res.status(200).send(result);
-    })
+      req.body.connectionString = result.ConnectionString;
+      DriverModel.select(req.body)
+        .then((result) => {
+          res.status(200).send(result);
+        })
+        .catch((reason) => {
+          console.log("ERROR: " + reason);
+          error = {
+            "error": reason
+          }
+          res.status(400).send(JSON.stringify(error));
+        });
+      })
     .catch((reason) => {
       error = {
         "error": reason
@@ -47,7 +72,20 @@ exports.select = (req, res) => {
     });
 };
 
-function fetchConnectionstringFromToekn(token) {
+function fetchConnectionstringFromToken(token) {
+
+  return new Promise((resolve, reject) => {
+    ConnModel.findByToken(token)
+      .then((result) => {
+        if(result == []) {
+          reject("Token not found");
+        }
+        resolve(result[0]);
+      })
+      .catch((reason) => {
+        reject(reason);
+      });
+    });
 
 }
 

@@ -115,7 +115,7 @@ exports.exec = (body) => {
   return new Promise((resolve, reject) => {
     sql = unpackSQL(body.statement, body.args);
     let config = makeTediousConfig(body.connectionString);
-    console.log(sql);
+    // console.log(sql);
     mssqlexec.exec(config, sql, function (rows, err) {
       if (err) {
         reject(err);
@@ -160,7 +160,6 @@ exports.exec = (body) => {
     }
 
     let config = makeTediousConfig(body.connectionString);
-
     mssqlexec.exec(config, sql, function (rows, err) {
       if (err) {
         reject(err);

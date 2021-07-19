@@ -104,7 +104,7 @@ function doTest (testOrd) {
             }
           })
           .catch((reason) => {
-            // console.log('catch' + reason);
+            // console.log('CATCH: ' + JSON.stringify(reason));
             msg = JSON.stringify(reason);
             if ('data' in reason && 'error' in reason.data) {
               msg = reason.data.error;
@@ -135,10 +135,11 @@ function doTest (testOrd) {
         if (parseInt(test.expected_response.code) >= 400) {
           msg = JSON.stringify(result);
           if ('data' in result && 'error' in result.data) {
-            if (typeof result.data.error.error === "undefined") {
-              msg = result.data.error.error
+            if (typeof result.data.error.error != "undefined") {
+              msg = result.data.error.error;
             }
             else {
+              msg = result.data.error;
               if (Array.isArray(result.data.error)) {
                 // msg = msg.join(", ");
               }
@@ -205,7 +206,7 @@ function doTest (testOrd) {
             // Response does not match.
             console.log(`\u2716 [FAIL] response is not exact match expected`.red);
             console.log(`\nExpected:\n${JSON.stringify(test.expected_response.exact)}`);
-            console.log(`\nReceived:\n${JSON.stringify(testout)}\n`);
+            console.log(`\nReceived:\n${testout}\n`);
             return false;
           }
         }
@@ -270,7 +271,7 @@ function requestEndpoint (options, data) {
           body = {"result": "No Data"};
         }
         else {
-          console.log(`body: ${body}`)
+          // console.log(`body: ${body}`)
           body = JSON.parse(`${body}`);
         }
 

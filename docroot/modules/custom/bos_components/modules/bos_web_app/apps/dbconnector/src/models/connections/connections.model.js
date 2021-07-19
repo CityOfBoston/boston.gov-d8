@@ -43,15 +43,31 @@ exports.findByToken = (id) => {
             FROM dbo.connTokens
            WHERE token = '${id}';`
 
-    sql_exec.exec(sql, function (rows, err) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(rows[0]);
-      }
-    });
-
+    try {
+        sql_exec.exec(sql, function (rows, err) {
+          if (err) {
+            if (err.includes("Conversion failed when converting from a character string to uniqueidentifier")) {
+              reject("Token not found");
+            }
+            else {
+              reject(err);
+            }
+          }
+          else {
+            // console.log(rows)
+            if (! rows[0]) {
+              reject("Token not found");
+            }
+            else {
+              resolve(rows[0]);
+            }
+          }
+        });
+    }
+    catch (err) {
+      // console.log('Error: ' + err);
+      reject(err);
+    }
   });
 
 };
@@ -84,7 +100,9 @@ exports.create = (connData) => {
       ...connSchema,
       ...connData
     }
-console.log(JSON.stringify(data))
+
+    // console.log(JSON.stringify(data))
+
     sql = `
     INSERT INTO dbo.connTokens(
         Token,
