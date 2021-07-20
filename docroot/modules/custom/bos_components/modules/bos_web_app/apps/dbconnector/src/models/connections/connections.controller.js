@@ -1,4 +1,5 @@
 const ConnModel = require('./connections.model');
+const Output = require('../../common/json.responses');
 
 exports.insert = (req, res) => {
   connData = req.body;
@@ -9,17 +10,14 @@ exports.insert = (req, res) => {
     connData.createdBy = req.jwt.userid;
   }
   if (! 'description' in connData ||  connData.description == "") {
-    connData.description = `Created by ${req.jwt.username}`
+    connData.description = `Created by ${req.jwt.username}`;
   }
   ConnModel.create(connData)
     .then((result) => {
-      res.status(201).send({connToken: result});
+      return Output.json_response(res, 201, {connToken: result});
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
@@ -38,39 +36,30 @@ exports.list = (req, res) => {
   }
   ConnModel.list(limit, page)
     .then((result) => {
-      res.status(200).send(result);
+      return Output.json_response(res, 200, {error: result});
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
 exports.get = (req, res) => {
   ConnModel.findByToken(req.params.token)
     .then((result) => {
-      res.status(200).send(result);
+      return Output.json_response(res, 200, result);
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
 exports.update = (req, res) => {
    ConnModel.update(req.params.token, req.body)
      .then((result) => {
-        res.status(204).send({});
+      return Output.json_response(res, 204);
      })
      .catch((reason) => {
-       error = {
-         "error": reason
-       }
-       res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
      });
 
 };
@@ -78,13 +67,10 @@ exports.update = (req, res) => {
 exports.disable = (req, res) => {
   ConnModel.disableByToken(req.params.token)
     .then((result)=>{
-      res.status(204).send({});
+      return Output.json_response(res, 204, result);
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 
 };
@@ -97,25 +83,19 @@ exports.getUserConnections = (req, res) => {
   if (isNaN(req.params.userId)) {
     ConnModel.findConnectionsByUsername(req.params.userId)
       .then((result) => {
-        res.status(200).send(result);
+        return Output.json_response(res, 200, result);
       })
       .catch((reason) => {
-        error = {
-          "error": reason
-        }
-        res.status(400).send(JSON.stringify(error));
+        return Output.json_response(res, 400, {error: reason});
       });
   }
   else {
     ConnModel.findConnectionsByUserId(req.params.userId)
       .then((result) => {
-        res.status(200).send(result);
+        return Output.json_response(res, 200, result);
       })
       .catch((reason) => {
-        error = {
-          "error": reason
-        }
-        res.status(400).send(JSON.stringify(error));
+        return Output.json_response(res, 400, {error: reason});
       });
   }
 };
@@ -123,13 +103,10 @@ exports.getUserConnections = (req, res) => {
 exports.getConnectionUsers = (req, res) => {
   ConnModel.findUsersByToken(req.params.token)
     .then((result) => {
-      res.status(200).send(result);
+      return Output.json_response(res, 200, result);
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 
 };
@@ -137,25 +114,19 @@ exports.getConnectionUsers = (req, res) => {
 exports.insertMapping = (req, res) => {
   ConnModel.createMapping(req.params.token, req.params.userid)
     .then((result) => {
-      res.status(201).send();
+      return Output.json_response(res, 201, result);
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
 exports.deleteMapping = (req, res) => {
   ConnModel.deleteMapping(req.params.token, req.params.userid)
     .then((result)=>{
-      res.status(204).send({});
+      return Output.json_response(res, 204);
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };

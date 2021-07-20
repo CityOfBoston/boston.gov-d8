@@ -3,6 +3,8 @@
  */
 const ConnModel = require('./connections.model');
 const sql_exec = require('../../common/services/tedious.exec.service')
+const Output = require('../../common/json.responses');
+
 // Roles are defined in env.config.js.
 const config = require('../../common/env.config');
 const ADMIN = config.permissionLevels.ADMIN_USER;
@@ -20,7 +22,7 @@ const OWNER = config.permissionLevels.OWNER;
     next();
   }
   else {
-   return res.status(401).send();
+    return Output.json_response(res, 403, result);
   }
 }
 
@@ -51,12 +53,12 @@ const OWNER = config.permissionLevels.OWNER;
 
     sql_exec.exec(sql, function (rows, err) {
       if (err) {
-        return res.status(500).send();
+        return Output.json_response(res, 400, {error: err});
       }
       else {
         if (rows[0][0].count == 0) {
           // console.log(JSON.stringify(rows))
-          return res.status(403).send();
+          return Output.json_response(res, 403);
         }
         else {
           next();

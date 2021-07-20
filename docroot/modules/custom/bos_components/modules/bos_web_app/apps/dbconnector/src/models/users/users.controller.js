@@ -1,5 +1,6 @@
 const UserModel = require('./users.model');
 const crypto = require('crypto');
+const Output = require('../../common/json.responses');
 
 exports.insert = (req, res) => {
   let salt = crypto.randomBytes(16).toString('base64');
@@ -7,13 +8,10 @@ exports.insert = (req, res) => {
   req.body.password = salt + "$" + hash;
   UserModel.create(req.body)
     .then((result) => {
-      res.status(201).send({id: result});
+      return Output.json_response(res, 201, {id: result});
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
@@ -32,13 +30,10 @@ exports.list = (req, res) => {
   }
   UserModel.list(limit, page)
     .then((result) => {
-      res.status(200).send(result);
+      return Output.json_response(res, 200, result);
     })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
@@ -47,22 +42,19 @@ exports.get = (req, res) => {
     console.log("name " + req.params.userId);
     UserModel.findByUsername(req.params.userId)
       .then((result) => {
-        res.status(200).send(result);
+        return Output.json_response(res, 200, result);
       })
       .catch((reason) => {
-        res.status(400).send(JSON.stringify({"error": reason}));
+        return Output.json_response(res, 400, {error: reason});
       });
   }
   else {
     UserModel.findByUserId(req.params.userId)
       .then((result) => {
-        res.status(200).send(result);
+        return Output.json_response(res, 200, result);
       })
       .catch((reason) => {
-        error = {
-          "error": reason
-        }
-        res.status(400).send(JSON.stringify(error));
+        return Output.json_response(res, 400, {error: reason});
       });
   }
 };
@@ -75,21 +67,18 @@ exports.update = (req, res) => {
   }
    UserModel.update(req.params.userId, req.body)
      .then((result) => {
-        res.status(204).send({});
+      return Output.json_response(res, 204);
      })
      .catch((reason) => {
-       error = {
-         "error": reason
-       }
-       res.status(400).send(JSON.stringify(error));
-     });
+       return Output.json_response(res, 400, {error: reason});
+      });
 
 };
 
 exports.disable = (req, res) => {
   UserModel.disableById(req.params.userId)
     .then((result)=>{
-      res.status(204).send({});
+      return Output.json_response(res, 204);
     });
 };
 

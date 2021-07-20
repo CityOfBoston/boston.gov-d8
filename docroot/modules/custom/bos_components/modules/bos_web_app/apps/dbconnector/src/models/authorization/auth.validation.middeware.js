@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken'),
   crypto = require('crypto');
 const flood_time = require('../../common/env.config').flood_time,
   flood_level = require('../../common/env.config').flood_level
+  const Output = require('../../common/json.responses');
 
 
 /**
@@ -24,8 +25,7 @@ exports.verifyRefreshBodyField = (req, res, next) => {
     return next();
   }
   else {
-    // console.log("No Refresh_Token was supplied in body")
-    return res.status(400).send({error: 'need to pass refresh_token field'});
+    return Output.json_response(res, 400, {error: 'Missing refresh token'});
   }
 };
 
@@ -43,8 +43,9 @@ exports.validRefreshNeeded = (req, res, next) => {
   if (hash === refresh_token) {
     req.body = req.jwt;
     return next();
-  } else {
-    return res.status(400).send({error: 'Invalid refresh token'});
+  }
+  else {
+    return Output.json_response(res, 400, {error: 'Invalid refresh token'});
   }
 };
 
@@ -60,26 +61,26 @@ exports.validJWTNeeded = (req, res, next) => {
     try {
       let authorization = req.headers['authorization'].split(' ');
       if (authorization[0] !== 'Bearer') {
-        return res.status(401).send();
+        return Output.json_response(res, 401);
       }
       else {
         req.jwt = jwt.verify(authorization[1], secret);
-        // console.log("Token Valid")
         return next();
       }
 
-    } catch (err) {
+    }
+    catch (err) {
       if (err.toString().toLowerCase().includes("expired")) {
-        return res.status(403).send({"error": `Token Expired (${jwtExpiration})`});
+        return Output.json_response(res, 401, {error: 'Expired Token'});
       }
       if (err.toString().toLowerCase().includes("invalid")) {
-        return res.status(403).send({"error": "Bad Token"});
+        return Output.json_response(res, 403, {error: 'Bad Token'});
       }
-      // console.log(`err: ${err}`)
-      return res.status(403).send();
+      return Output.json_response(res, 400, {error: err});
     }
-  } else {
-    return res.status(401).send();
+  }
+  else {
+    return Output.json_response(res, 401, {error: "Missing Authentication Token"});
   }
 };
 
@@ -153,7 +154,7 @@ exports.isFlooding = (req, res, next) => {
     // Return a simple 200, do not alert the flooder to the issue.
     // console.log(`hits: ${use_count}`)
     // console.log(`level: ${flood_level}`)
-    return res.status(200).send({});
+    return Output.json_response(res, 200, {error: "No Data"});
   }
 
   if (typeof req.jwt !== "undefined") {

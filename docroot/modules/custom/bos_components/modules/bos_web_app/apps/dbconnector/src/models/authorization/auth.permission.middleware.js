@@ -15,6 +15,7 @@ const jwt = require('jsonwebtoken'),
   flood_time = require('../../common/env.config')['flood_time'],
   flood_level = require('../../common/env.config')['flood_level'];
 const UserModel = require('../users/users.model');
+const Output = require('../../common/json.responses');
 
 // Roles are defined in env.config.js.
 const config = require('../../common/env.config');
@@ -35,7 +36,7 @@ exports.minimumPermissionLevelRequired = (required_role) => {
       return next();
     } else {
       // console.log("Role Failed")
-      return res.status(403).send();
+      return Output.json_response(res, 403)
     }
   };
 };
@@ -55,7 +56,7 @@ exports.PermissionLevelRequired = (allowed_roles) => {
     }
     else if (!Array.isArray(allowed_roles)) {
       // console.log("Unexpected role argument format")
-      return res.status(400).send({"error": "Internal: Bad Role provided"});
+      return Output.json_response(res, 400, {"error": "Internal: Bad Role provided"});
     }
 
     // Add (sum) the roles so we can use a bitwise comparison.
@@ -66,14 +67,14 @@ exports.PermissionLevelRequired = (allowed_roles) => {
 
     if (sum_roles == 0) {
       // console.log("No Roles Allowed")
-      return res.status(403).send();
+      return Output.json_response(res, 403);
     }
     else if (user_role == OWNER || user_role & sum_roles) {
       return next();
     }
     else {
       // console.log("Role Failed")
-      return res.status(403).send();
+      return Output.json_response(res, 403);
     }
   };
 };
@@ -96,7 +97,7 @@ exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
       return next();
     } else {
       // console.log("User is not the specified user nor has Admins Role")
-      return res.status(403).send();
+      return Output.json_response(res, 403);
     }
   }
 
@@ -117,7 +118,7 @@ exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
   }
   else {
     // console.log("User is prevented from this action")
-    return res.status(400).send();
+    return Output.json_response(res, 403);
   }
 
 };
@@ -143,7 +144,7 @@ exports.isIPAddressAllowed = (req, res, next) => {
   }
   else {
     // Have not run a process which determines the ipaddresses allowed.
-    return res.status(500).send({error: ['JWT not initialized']});
+    return Output.json_response(res, 500, {error: 'JWT not initialized'});
   }
 
   if (allowed_ips != "") {
@@ -156,7 +157,7 @@ exports.isIPAddressAllowed = (req, res, next) => {
       return next()
     }
     // console.log(`IPAddress ${caller_ip} Failed`)
-    return res.status(400).send({error: 'Unathorized IPAddress'});
+    return Output.json_response(res, 403);
   }
   else {
     // No IPAddress filtering.
@@ -194,7 +195,7 @@ exports.monitorForFlood = (req, res, next) => {
             // Kill the JWT Token.
             delete req.jwt;
             // Die quietly.
-            return res.status(400).send();
+            return Output.json_response(res, 401);
           });
       }
     }
@@ -207,7 +208,7 @@ exports.monitorForFlood = (req, res, next) => {
   }
   catch (err) {
     // console.log(err)
-    return res.status(400).send();
+    return Output.json_response(res, 400, {error: err});
   }
   finally {
     next();

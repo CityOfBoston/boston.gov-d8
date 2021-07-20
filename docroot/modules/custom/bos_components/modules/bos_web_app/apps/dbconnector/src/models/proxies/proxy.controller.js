@@ -1,4 +1,5 @@
 const ConnModel = require('../connections/connections.model');
+const Output = require('../../common/json.responses');
 
 exports.query = (req, res) => {
   const DriverModel = require(`./${req.params.driver}/${req.params.driver}.model`);
@@ -6,28 +7,21 @@ exports.query = (req, res) => {
  fetchConnectionstringFromToken(req.body.token)
   .then((result) => {
     if (!result.Enabled) {
-      res.status(400).send({"error": "Connection disabled"});
+      return Output.json_response(res, 403);
     }
     else {
       req.body.connectionString = result.ConnectionString;
       DriverModel.exec(req.body)
         .then((result) => {
-          res.status(200).send(result);
+          return Output.json_response(res, 200, result);
         })
         .catch((reason) => {
-          error = {
-            "error": reason
-          }
-
-          res.status(400).send(JSON.stringify(error));
+          return Output.json_response(res, 400, {error: reason});
         });
     }
   })
   .catch((reason) => {
-     error = {
-       "error": reason
-     }
-     res.status(400).send(JSON.stringify(error));
+    return Output.json_response(res, 400, {error: reason});
   });
 
 };
@@ -54,21 +48,15 @@ exports.select = (req, res) => {
       req.body.connectionString = result.ConnectionString;
       DriverModel.select(req.body)
         .then((result) => {
-          res.status(200).send(result);
+          return Output.json_response(res, 200, result);
         })
         .catch((reason) => {
           // console.log("ERROR: " + reason);
-          error = {
-            "error": reason
-          }
-          res.status(400).send(JSON.stringify(error));
+          return Output.json_response(res, 400, {error: reason});
         });
       })
     .catch((reason) => {
-      error = {
-        "error": reason
-      }
-      res.status(400).send(JSON.stringify(error));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 

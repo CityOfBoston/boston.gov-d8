@@ -2,6 +2,7 @@ const jwtSecret = require('../../common/env.config').jwt_secret,
   jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds,
   jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const Output = require('../../common/json.responses');
 
 exports.login = (req, res) => {
   try {
@@ -20,10 +21,11 @@ exports.login = (req, res) => {
     let b = Buffer.from(hash);
     let refresh_token = b.toString('base64');
 
-    res.status(201).send({userid: req.body.userid, accessToken: token, refreshToken: refresh_token});
-  } catch (err) {
+    return Output.json_response(res, 201, {userid: req.body.userid, accessToken: token, refreshToken: refresh_token});
+  }
+  catch (err) {
     // console.log(err);
-    res.status(500).send({error: err});
+    return Output.json_response(res, 400, {error: err});
   }
 };
 
@@ -31,9 +33,10 @@ exports.refresh_token = (req, res) => {
   try {
     req.body = req.jwt;
     let token = jwt.sign(req.body, jwtSecret);
-    res.status(201).send({id: token});
-  } catch (err) {
-    res.status(500).send({error: err});
+    return Output.json_response(res, 201, {id: token});
+  }
+  catch (err) {
+    return Output.json_response(res, 400, {error: err});
   }
 };
 

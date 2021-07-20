@@ -1,5 +1,6 @@
 const UserModel = require('../users/users.model');
 const crypto = require('crypto');
+const Output = require('../../common/json.responses');
 
 exports.hasAuthValidFields = (req, res, next) => {
   let errors = [];
@@ -13,12 +14,13 @@ exports.hasAuthValidFields = (req, res, next) => {
     }
 
     if (errors.length) {
-      return res.status(400).send({error: errors.join(',')});
-    } else {
+      return Output.json_response(res, 400, {error: errors.join(", ")});
+    }
+    else {
       return next();
     }
   } else {
-    return res.status(400).send({error: 'Missing username/email and password fields'});
+    return Output.json_response(res, 400, {error: 'Missing username/email and password fields'});
   }
 };
 
@@ -30,10 +32,10 @@ exports.hasAuthValidFields = (req, res, next) => {
  */
 exports.isPasswordAndUserMatch = (req, res, next) => {
   UserModel.findByUsername(req.body.username)
-    .then((user)=>{
+    .then((user) => {
       // console.log(user);
-      if(user == [] || !user[0]){
-        res.status(404).send({});
+      if (!user || user == [] || !user[0]){
+        return Output.json_response(res, 400, {error: "Invalid username or password"});
       }
       else{
         let passwordFields = user[0].Password.split('$');
@@ -51,12 +53,12 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
           return next();
         }
         else {
-          return res.status(400).send({error: ['Invalid username or password']});
+          return Output.json_response(res, 400, {error: 'Invalid username or password'});
         }
       }
     })
     .catch((reason) => {
-      res.status(400).send(JSON.stringify({ "error": reason }));
+      return Output.json_response(res, 400, {error: reason});
     });
 };
 
@@ -65,6 +67,6 @@ exports.isUserEnabled = (req, res, next) => {
     return next()
   }
   else {
-    return res.status(400).send({error: 'User Disabled'});
+    return Output.json_response(res, 401, {error: "User Disabled"});
   }
 };
