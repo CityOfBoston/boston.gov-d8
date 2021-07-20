@@ -14,7 +14,7 @@
 
 <div class="detail-item detail-item--middle detail-item__{{ field_name }}">
     <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email" alt="Email" />
+        <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email" alt="" />
     </div>
     {% for item in items %}
 
@@ -23,10 +23,10 @@
         {% endif %}
 
         {% if hide_form == TRUE %}
-            {% set hide_class = "class=hide-form" %} 
+            {% set hide_class = "class=hide-form" %}
         {% else %}
             {% set hide_class = "" %}
-        {% endif%} 
+        {% endif%}
 
 
         <div class="detail-item__content">
