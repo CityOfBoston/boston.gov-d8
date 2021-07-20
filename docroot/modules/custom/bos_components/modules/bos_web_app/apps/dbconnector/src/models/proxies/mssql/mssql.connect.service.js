@@ -19,7 +19,7 @@ exports.connect = (config, cb) => {
 
 function connected(err) {
   if (err) {
-    console.log(`MSSql proxy connection error: ${err}`);
+    // console.log(`MSSql proxy connection error: ${err}`);
     callback("error", {"error": `MSSql proxy connection error: ${err}`});
   }
   else {

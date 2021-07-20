@@ -63,6 +63,7 @@ function doTest (testOrd) {
           "id" : config.creds[test.use_creds].userid,
           "refresh_token": config.creds[test.use_creds].refreshToken,
         };
+        // console.log(config.creds);
       }
 
       if (test.method.type == "GET") {
@@ -92,6 +93,11 @@ function doTest (testOrd) {
             if (validate(result, test)) {
               console.log("\u2714 [SUCCESS]".green);
               if (options.path == "/auth") {
+                console.log("TOKEN SAVED");
+                saveAuth(result);
+              }
+              else if (options.path == "/auth/refresh") {
+                console.log("NEW TOKEN SAVED");
                 saveAuth(result);
               }
               testOrd++;

@@ -57,7 +57,7 @@ exports.select = (req, res) => {
           res.status(200).send(result);
         })
         .catch((reason) => {
-          console.log("ERROR: " + reason);
+          // console.log("ERROR: " + reason);
           error = {
             "error": reason
           }

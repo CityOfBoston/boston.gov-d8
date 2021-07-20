@@ -22,7 +22,7 @@ exports.login = (req, res) => {
 
     res.status(201).send({userid: req.body.userid, accessToken: token, refreshToken: refresh_token});
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).send({error: err});
   }
 };

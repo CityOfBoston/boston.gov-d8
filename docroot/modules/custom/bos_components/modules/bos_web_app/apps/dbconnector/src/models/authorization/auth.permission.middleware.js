@@ -31,10 +31,10 @@ exports.minimumPermissionLevelRequired = (required_role) => {
     let user_role = parseInt(req.jwt.role);
     required_role = parseInt(required_role);
     if (user_role == OWNER || user_role >= required_role) {
-      console.log("Min Role Verified")
+      // console.log("Min Role Verified")
       return next();
     } else {
-      console.log("Role Failed")
+      // console.log("Role Failed")
       return res.status(403).send();
     }
   };
@@ -54,7 +54,7 @@ exports.PermissionLevelRequired = (allowed_roles) => {
       allowed_roles = [allowed_roles];
     }
     else if (!Array.isArray(allowed_roles)) {
-      console.log("Unexpected role argument format")
+      // console.log("Unexpected role argument format")
       return res.status(400).send({"error": "Internal: Bad Role provided"});
     }
 
@@ -65,14 +65,14 @@ exports.PermissionLevelRequired = (allowed_roles) => {
     });
 
     if (sum_roles == 0) {
-      console.log("No Roles Allowed")
+      // console.log("No Roles Allowed")
       return res.status(403).send();
     }
     else if (user_role == OWNER || user_role & sum_roles) {
       return next();
     }
     else {
-      console.log("Role Failed")
+      // console.log("Role Failed")
       return res.status(403).send();
     }
   };
@@ -87,14 +87,15 @@ exports.PermissionLevelRequired = (allowed_roles) => {
  */
 exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
   let user_role = parseInt(req.jwt.role);
-  let userId = req.jwt.userid;
-  if (req.params && req.params.userId && userId === req.params.userId) {
+  let userId = parseInt(req.jwt.userid);
+  // console.log(userId + " | " + req.params.userId);
+  if (req.params && req.params.userId && userId === parseInt(req.params.userId)) {
     return next();
   } else {
     if (user_role == ADMIN || user_role == OWNER) {
       return next();
     } else {
-      console.log("User is not the specified user nor has Admins Role")
+      // console.log("User is not the specified user nor has Admins Role")
       return res.status(403).send();
     }
   }
@@ -115,7 +116,7 @@ exports.onlySameUserOrAdminCanDoThisAction = (req, res, next) => {
     return next();
   }
   else {
-    console.log("User is prevented from this action")
+    // console.log("User is prevented from this action")
     return res.status(400).send();
   }
 
@@ -151,15 +152,15 @@ exports.isIPAddressAllowed = (req, res, next) => {
     let caller_ip = req.ip.replace(/localhost/gi, "127.0.0.1");
 
     if (allowed_ips.includes(caller_ip)) {
-      console.log(`IPAddress ${caller_ip} OK`)
+      // console.log(`IPAddress ${caller_ip} OK`)
       return next()
     }
-    console.log(`IPAddress ${caller_ip} Failed`)
+    // console.log(`IPAddress ${caller_ip} Failed`)
     return res.status(400).send({error: 'Unathorized IPAddress'});
   }
   else {
     // No IPAddress filtering.
-    console.log(`IPAddress ${req.ip} OK - no filter`)
+    // console.log(`IPAddress ${req.ip} OK - no filter`)
     return next();
   }
 };
@@ -205,7 +206,7 @@ exports.monitorForFlood = (req, res, next) => {
     }
   }
   catch (err) {
-    console.log(err)
+    // console.log(err)
     return res.status(400).send();
   }
   finally {

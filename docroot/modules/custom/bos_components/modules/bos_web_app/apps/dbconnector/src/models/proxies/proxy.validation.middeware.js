@@ -28,12 +28,12 @@ exports.IsPayloadValid = (req, res, next) => {
       return next();
     }
     else {
-      console.log("Malformed payload in body");
+      // console.log("Malformed payload in body");
       return res.status(400).send({ error: 'malformed payload' });
     }
   }
   else {
-    console.log("No payload was supplied in body")
+    // console.log("No payload was supplied in body")
     return res.status(400).send({ error: 'need to pass a payload field' });
   }
 };
@@ -51,17 +51,17 @@ exports.IsSelectQueryValid = (req, res, next) => {
       sql = sql.split(";")[0]
     }
     if (sql.includes(";")) {
-      console.log("Can only pass a single sql select in statement.")
+      // console.log("Can only pass a single sql select in statement.")
       return res.status(400).send({ error: 'Can only pass a single sql select in statement' });
     }
     if (!sql.toLowerCase().includes("select")) {
-      console.log("Statement must be a select statement, (stored procedure not supported).")
+      // console.log("Statement must be a select statement, (stored procedure not supported).")
       return res.status(400).send({
         error: 'Statement must be a select statement, (stored procedure not supported)'});
     }
     if ('body' in req && 'limit' in req.body) {
       if (!sql.toLowerCase().includes("order")) {
-        console.log("Paged query must have an order by clause.")
+        // console.log("Paged query must have an order by clause.")
         return res.status(400).send({ error: 'Paged query must have order by clause' });
 
       }
@@ -69,7 +69,7 @@ exports.IsSelectQueryValid = (req, res, next) => {
     return next();
   }
   else {
-    console.log("Missing (SQL)statement in payload.")
+    // console.log("Missing (SQL)statement in payload.")
     return res.status(400).send({ error: 'need to pass a, statement field in payload' });
   }
 }

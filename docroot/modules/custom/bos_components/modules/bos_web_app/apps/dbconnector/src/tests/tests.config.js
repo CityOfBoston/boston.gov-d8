@@ -8,6 +8,7 @@ module.exports = {
     hostname:  "localhost",
     port: 3600,
     creds: [
+      {},
       {
         username: "david.upton@boston.gov",
         password: "123",
@@ -47,6 +48,7 @@ module.exports = {
   },
 
   tests: [
+// LOGIN- UID 1
     {
       description: "Login as OWNER user (UID=1 / creds=0)",
       enabled: true,
@@ -60,65 +62,13 @@ module.exports = {
         }
       },
       expected_response: {
-        narrative: "Login OK.",
+        narrative: "Tests that an ADMIN (UID=0) can login",
         code: 201,
         json_data: true,
       }
     },
     {
-      description: "List Users",
-      enabled: true,
-      debug: true,
-      path: "/users",
-      use_creds: 0,
-      method: {
-        type: "GET",
-      },
-      expected_response: {
-        narrative: "Returns All users in the users table",
-        code: 200,
-        json_data: true,
-      }
-    },
-    {
-      description: "List Users, paged",
-      enabled: true,
-      debug: false,
-      path: "/users",
-      use_creds: 0,
-      method: {
-        type: "GET",
-        querystring: {
-          "limit": 2,
-          "page":1
-        }
-      },
-      expected_response: {
-        narrative: "2 user records starting with the 3rd record. ",
-        code: 200,
-        json_data: true,
-        exact: [{"ID":3,"Username":"havocint@hotmail.com","Password":"*****","IPAddresses":"","Enabled":true,"Role":4},{"ID":4,"Username":"david","Password":"*****","IPAddresses":"10.10.10.10","Enabled":true,"Role":1}]
-      }
-    },
-    {
-      description: "List single user",
-      enabled: true,
-      debug: false,
-      path: "/users/1",
-      use_creds: 0,
-      method: {
-        type: "GET",
-        querystring: {}
-      },
-      expected_response: {
-        narrative: "Look for an exact match",
-        code: 200,
-        json_data: true,
-        exact: [{ "ID": 1, "Username": "david.upton@boston.gov", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 4096 }]
-      }
-    },
-    {
-      description: "List single user (from wrong ip)",
+      description: "Login as UID = 4 (FAILS - from wrong ip)",
       enabled: true,
       debug: false,
       path: "/auth",
@@ -130,106 +80,14 @@ module.exports = {
         }
       },
       expected_response: {
-        narrative: "Look for an exact match",
+        narrative: "Tests that Authentication can only come from approved IPAddreses ",
         code: 400,
         json_data: true,
         exact: { "error": "Unathorized IPAddress" }
       }
     },
     {
-      description: "Add a single user",
-      enabled: true,
-      debug: false,
-      path: "/users",
-      use_creds: 0,
-      method: {
-        type: "POST",
-        payload: {
-          "username": "someone@somewhere.com",
-          "password": "123",
-          "role": config.permissionLevels.NORMAL_USER
-        }
-      },
-      expected_response: {
-        narrative: "Adds a new user to the user table. ",
-        code: 201,
-        json_data: true,
-      }
-    },
-    {
-      description: "Try to add a duplicate single user",
-      enabled: true,
-      debug: false,
-      path: "/users",
-      use_creds: 0,
-      method: {
-        type: "POST",
-        payload: {
-          "username": "someone@somewhere.com",
-          "password": "123"
-        }
-      },
-      expected_response: {
-        narrative: "Adds a duplicate user to the user table. Should fail.",
-        code: 400,
-        json_data: true,
-        exact: {"error": "Statement 3 failed: RequestError: Cannot insert duplicate key row in object 'dbo.users' with unique index 'UK_Username'. The duplicate key value is (someone@somewhere.com)."}
-      }
-    },
-    {
-      description: "Try to fetch a user that is not yourself when not an admin",
-      enabled: true,
-      debug: false,
-      path: "/users/1",
-      use_creds: 4,
-      method: {
-        type: "GET",
-        querystring: {}
-      },
-      expected_response: {
-        narrative: "Should get a 403 - forbidden",
-        code: 403,
-        json_data: false
-      }
-    },
-    {
-      description: "Disable a user",
-      enabled: true,
-      debug: false,
-      path: "/users/2",
-      use_creds: 0,
-      method: {
-        type: "DELETE",
-      },
-      expected_response: {
-        narrative: "Disables User id 2 (sets enabled = 0).",
-        code: 204,
-        json_data: true,
-      }
-    },
-    {
-      description: "Update a single user (and re-enable as admin_user)",
-      enabled: true,
-      debug: false,
-      path: "/users/2",
-      use_creds: 0,
-      method: {
-        type: "PATCH",
-        payload: {
-          "username": "havocint@gmail.com",
-          "password": "new",
-          "role": config.permissionLevels.ADMIN_USER,
-          'enabled': 1
-        }
-      },
-      expected_response: {
-        narrative: "Updates the User id 2 with new password and role and re-enables.",
-        code: 204,
-        json_data: true,
-      }
-    },
-    {
-      description: "Login as updated and re-enabled user",
+      description: "Try to login as unknown user (FAILS - Unknown User)",
       enabled: true,
       debug: false,
       path: "/auth",
@@ -241,11 +99,264 @@ module.exports = {
         }
       },
       expected_response: {
-        narrative: "Login OK.",
+        narrative: "Tests that an unknown user cannot login",
+        code: 400,
+        json_data: true,
+        exact: { "error": "Username not found" }
+      }
+    },
+    {
+      description: "Try to login with bad password (FAILS - Bad password)",
+      enabled: true,
+      debug: false,
+      path: "/auth",
+      method: {
+        type: "POST",
+        payload: {
+          "username": "havocint@hotmail.com",
+          "password": "wrongpwd"
+        }
+      },
+      expected_response: {
+        narrative: "Tests that cannot login with a bad password for given username",
+        code: 400,
+        json_data: true,
+        exact: { "error": ["Invalid username or password"] }
+      }
+    },
+    {
+      description: "Request unpaged list of all Users",
+      enabled: true,
+      debug: false,
+      path: "/users",
+      use_creds: 1,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Tests that an ADMIN can list all Users",
+        code: 200,
+        json_data: true,
+      }
+    },
+    {
+      description: "Request second page of User list",
+      enabled: true,
+      debug: false,
+      path: "/users",
+      use_creds: 1,
+      method: {
+        type: "GET",
+        querystring: {
+          "limit": 2,
+          "page":1
+        }
+      },
+      expected_response: {
+        narrative: "Tests paged listing - should return 2 user records starting with the 3rd record",
+        code: 200,
+        json_data: true,
+        exact: [{"ID":3,"Username":"havocint@hotmail.com","Password":"*****","IPAddresses":"","Enabled":true,"Role":4},{"ID":4,"Username":"david","Password":"*****","IPAddresses":"10.10.10.10","Enabled":true,"Role":1}]
+      }
+    },
+    {
+      description: "Request listing of a single User",
+      enabled: true,
+      debug: false,
+      path: "/users/1",
+      use_creds: 1,
+      method: {
+        type: "GET",
+        querystring: {}
+      },
+      expected_response: {
+        narrative: "Tests that an ADMIN can request a single User",
+        code: 200,
+        json_data: true,
+        exact: [{ "ID": 1, "Username": "david.upton@boston.gov", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 4096 }]
+      }
+    },
+    {
+      description: "Request listing of a single User using username",
+      enabled: true,
+      debug: false,
+      path: "/users/david",
+      use_creds: 1,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Tests that listing can use username as well as uid",
+        code: 200,
+        json_data: true,
+        exact: [{ "ID": 4, "Username": "david", "Password": "wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==", "IPAddresses": "10.10.10.10", "Enabled": true, "Role": 1 }]
+      }
+    },
+    {
+      description: "Request listing of a single User using username which is email",
+      enabled: true,
+      debug: false,
+      path: "/users/david.upton@boston.gov",
+      use_creds: 1,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Tests that listing can use username as well as uid",
+        code: 200,
+        json_data: true,
+        exact: [{
+          "ID": 1, "Username": "david.upton@boston.gov", "Password": "wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==", "IPAddresses": "", "Enabled": true, "Role": 4096 }]
+      }
+    },
+    {
+      description: "Disable a user",
+      enabled: true,
+      debug: false,
+      path: "/users/2",
+      use_creds: 1,
+      method: {
+        type: "DELETE",
+      },
+      expected_response: {
+        narrative: "Tests that an ADMIN can disable UID=2 (sets enabled = 0).",
+        code: 204,
+        json_data: true,
+      }
+    },
+    {
+      description: "Try to login as disabled user",
+      enabled: true,
+      debug: false,
+      path: "/auth",
+      method: {
+        type: "POST",
+        payload: {
+          "username": "davidrkupton@gmail.com",
+          "password": "123"
+        }
+      },
+      expected_response: {
+        narrative: "Tests that a disabled user cannot login",
+        code: 400,
+        json_data: true,
+        exact: { "error": "User Disabled" }
+      }
+    },
+    {
+      description: "Update a single user (UID=2) (re-enable, change password and raise role to ADMIN)",
+      enabled: true,
+      debug: false,
+      path: "/users/2",
+      use_creds: 1,
+      method: {
+        type: "PATCH",
+        payload: {
+          "username": "havocint@gmail.com",
+          "password": "new",
+          "role": config.permissionLevels.ADMIN_USER,
+          'enabled': 1
+        }
+      },
+      expected_response: {
+        narrative: "Tests that an ADMIN can update a User, including updating the password.",
+        code: 204,
+        json_data: true,
+      }
+    },
+// LOGIN UID 2
+    {
+      description: "Login as the updated (and re-enabled) user (UID=2)",
+      enabled: true,
+      debug: false,
+      path: "/auth",
+      method: {
+        type: "POST",
+        payload: {
+          "username": "havocint@gmail.com",
+          "password": "new"
+        }
+      },
+      expected_response: {
+        narrative: "Tests that the updated user can login using new password",
         code: 201,
         json_data: true,
       }
     },
+    {
+      description: "Request listing of a single User as (UID=4) (FAILS Not Logged In)",
+      enabled: true,
+      debug: false,
+      path: "/users/1",
+      use_creds: 4,
+      method: {
+        type: "GET",
+        querystring: {}
+      },
+      expected_response: {
+        narrative: "Tests that you cannot list another User when not an Admin",
+        code: 403,
+        json_data: false
+      }
+    },
+    {
+      description: "Request listing of yourself when not ADMIN",
+      enabled: true,
+      debug: false,
+      path: "/users/2",
+      use_creds: 2,
+      method: {
+        type: "GET",
+        querystring: {}
+      },
+      expected_response: {
+        narrative: "Tests that you cannot list another User when not an Admin",
+        code: 200,
+        json_data: true,
+        exact: [{ "ID": 2, "Username": "havocint@gmail.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 2048 }]
+      }
+    },
+    {
+      description: "Insert a new User",
+      enabled: true,
+      debug: false,
+      path: "/users",
+      use_creds: 1,
+      method: {
+        type: "POST",
+        payload: {
+          "username": "someone@somewhere.com",
+          "password": "123",
+          "role": config.permissionLevels.NORMAL_USER
+        }
+      },
+      expected_response: {
+        narrative: "Tests that a new User can be added",
+        code: 201,
+        json_data: true,
+      }
+    },
+    {
+      description: "Insert a new User (FAILS - duplicate username)",
+      enabled: true,
+      debug: false,
+      path: "/users",
+      use_creds: 1,
+      method: {
+        type: "POST",
+        payload: {
+          "username": "someone@somewhere.com",
+          "password": "123"
+        }
+      },
+      expected_response: {
+        narrative: "Tests that the same username cannot be added twice",
+        code: 400,
+        json_data: true,
+        exact: { "error": "Statement 3 failed: RequestError: Cannot insert duplicate key row in object 'dbo.users' with unique index 'UK_Username'. The duplicate key value is (someone@somewhere.com)." }
+      }
+    },
+//LOGIN- UID 5
     {
       description: "Login as the new user (normal permissions) ",
       enabled: true,
@@ -259,13 +370,13 @@ module.exports = {
         }
       },
       expected_response: {
-        narrative: "Login OK.",
+        narrative: "Tests that the new user can login",
         code: 201,
         json_data: true,
       }
     },
     {
-      description: "New user attempts to disable a user",
+      description: "New user attempts to disable a user (FAILS - Not Authorized)",
       enabled: true,
       debug: false,
       path: "/users/2",
@@ -274,64 +385,154 @@ module.exports = {
         type: "DELETE",
       },
       expected_response: {
-        narrative: "Fails to disable User id 2 (not authorized).",
+        narrative: "Tests that a non-ADMIN cannot disable other Users",
         code: 403,
         json_data: false,
       }
     },
     {
-      description: "New user attempts to refresh token",
+      description: "Logged in User refreshes existing Token",
       enabled: true,
-      debug: false,
+      debug: true,
       path: "/auth/refresh",
-      use_creds: 4,
+      use_creds: 5,
       method: {
         type: "POST",
       },
       expected_response: {
-        narrative: "Refreshes the token.",
+        narrative: "Tests that the refresh Token can used to issue a new AuthToken",
         code: 201,
-        json_data: false,
+        json_data: true,
       }
     },
     {
-      description: "List Connection Strings",
+      description: "Request User listing (using refreshed Token)",
+      enabled: true,
+      debug: true,
+      path: "/users/5",
+      use_creds: 5,
+      method: {
+        type: "GET"
+      },
+      expected_response: {
+        narrative: "Tests that the updated token an be used",
+        code: 200,
+        json_data: true,
+        exact: [{ "ID": 5, "Username": "someone@somewhere.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 1 }]
+      }
+    },
+    {
+      description: "List All Connection Strings",
       enabled: true,
       debug: false,
       path: "/connections",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "GET",
       },
       expected_response: {
-        narrative: "Returns All connection strings",
+        narrative: "Tests that an ADMIN can return all connection strings",
         code: 200,
         json_data: true,
         exact: [{"ID":1,"Token":"806117D6-EE39-4664-B49E-4D069610E818","ConnectionString":"****","Description":"dummy entry","Username":"david.upton@boston.gov","Enabled":true},{"ID":2,"Token":"11666A1A-3E54-42C3-A523-9F38EEDD96F3","ConnectionString":"****","Description":"dummy entry","Username":"havocint@gmail.com","Enabled":true}]
       }
     },
     {
-      description: "Fetch a single Connection String by token",
+      description: "Update a connection string with correct server IP",
       enabled: true,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
-      use_creds: 0,
+      use_creds: 1,
+      method: {
+        type: "PATCH",
+        payload: {
+          ConnectionString: `{"host":"${config.apiConfig.server}", "port":"${config.apiConfig.options.port}", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,
+          enabled: 1
+        }
+      },
+      expected_response: {
+        narrative: "Tests that an ADMIN can changes the values of some fields in connection string.",
+        code: 204,
+        json_data: false,
+      }
+    },
+    {
+      description: "Check Connection String was updated",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 1,
       method: {
         type: "GET",
       },
       expected_response: {
-        narrative: "Returns a single connection string (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        narrative: "Test that the connection string is updated (token: 806117D6-EE39-4664-B49E-4D069610E818)",
         code: 200,
         json_data: true,
-        exact: [{ "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": '{"host":"172.20.0.5", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}',"Description":"dummy entry","CreatedBy":1,"Enabled":true}]
+        exact: [{
+          "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"${config.apiConfig.options.port}", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`, "Description": "dummy entry", "CreatedBy": 1, "Enabled": true
+        }]
       }
     },
     {
-      description: "Insert a new connection string",
+      description: "Update a connection string with correct server IP",
+      enabled: true,
+      debug: false,
+      path: "/connections/11666A1A-3E54-42C3-A523-9F38EEDD96F3",
+      use_creds: 1,
+      method: {
+        type: "PATCH",
+        payload: {
+          ConnectionString: `{"host":"${config.apiConfig.server}", "port":"${config.apiConfig.options.port}", "schema":"dbo", "database":"${config.apiConfig.options.database}", "user":"${config.apiConfig.authentication.options.userName}", "password":"${config.apiConfig.authentication.options.password}"}`,
+          enabled: 1
+        }
+      },
+      expected_response: {
+        narrative: "Tests that an ADMIN can changes the values of some fields in connection string.",
+        code: 204,
+        json_data: false,
+      }
+    },
+    {
+      description: "Check Connection String was updated",
+      enabled: true,
+      debug: false,
+      path: "/connections/11666A1A-3E54-42C3-A523-9F38EEDD96F3",
+      use_creds: 1,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Test that the connection string is updated (token: 11666A1A-3E54-42C3-A523-9F38EEDD96F3)",
+        code: 200,
+        json_data: true,
+        exact: [{
+          "ID": 2, "Token": "11666A1A-3E54-42C3-A523-9F38EEDD96F3", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"${config.apiConfig.options.port}", "schema":"dbo", "database":"${config.apiConfig.options.database}", "user":"${config.apiConfig.authentication.options.userName}", "password":"${config.apiConfig.authentication.options.password}"}`, "Description": "dummy entry", "CreatedBy": 2, "Enabled": true
+        }]
+      }
+    },
+    {
+      description: "Request a single Connection String using connToken",
+      enabled: true,
+      debug: false,
+      path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
+      use_creds: 1,
+      method: {
+        type: "GET",
+      },
+      expected_response: {
+        narrative: "Tests that a connToken can be used to retrieve a connection string (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        code: 200,
+        json_data: true,
+        exact: [{ "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"${config.apiConfig.options.port}", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,"Description":"dummy entry","CreatedBy":1,"Enabled":true}]
+      }
+    },
+    {
+      description: "ADMIN insert a new connection string",
       enabled: true,
       debug: false,
       path: "/connection",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -341,8 +542,28 @@ module.exports = {
         }
       },
       expected_response: {
-        narrative: "Creates a new connection string",
+        narrative: "Tests that a new connection string can be added by an Admin",
         code: 201,
+        json_data: false,
+      }
+    },
+    {
+      description: "Insert a new connection string (FAILS - Not an ADMIN)",
+      enabled: true,
+      debug: false,
+      path: "/connection",
+      use_creds: 4,
+      method: {
+        type: "POST",
+        payload: {
+          connectionString: "mysql:123.123.123.123:3000/hellp@123",
+          description: "A new test connection string",
+          createdBy: 0
+        }
+      },
+      expected_response: {
+        narrative: "Tests that a only ADMIN can insert a new connection string",
+        code: 403,
         json_data: false,
       }
     },
@@ -351,12 +572,12 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "DELETE",
       },
       expected_response: {
-        narrative: "Disable a single connection string (806117D6-EE39-4664-B49E-4D069610E818)",
+        narrative: "Tests that an ADMIN can disable a connection string (806117D6-EE39-4664-B49E-4D069610E818)",
         code: 204,
         json_data: false,
       }
@@ -366,12 +587,12 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "GET",
       },
       expected_response: {
-        narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        narrative: "Test that the connection string is disabled (token: 806117D6-EE39-4664-B49E-4D069610E818)",
         code: 200,
         json_data: true,
         exact: [{
@@ -383,7 +604,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "PATCH",
         payload: {
@@ -392,7 +613,7 @@ module.exports = {
         }
       },
       expected_response: {
-        narrative: "Changes the values of some field in connection string.",
+        narrative: "Tests that an ADMIN can changes the values of some fields in connection string.",
         code: 204,
         json_data: false,
       }
@@ -402,19 +623,19 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "GET",
       },
       expected_response: {
-        narrative: "The connection string should have enabled=false (token: 806117D6-EE39-4664-B49E-4D069610E818)",
+        narrative: "Tests that the changed fields are changed (token: 806117D6-EE39-4664-B49E-4D069610E818)",
         code: 200,
         json_data: true,
         exact: [{ "ID": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,"Description":"Updated Dummy","CreatedBy":1,"Enabled":true}]
       }
     },
     {
-      description: "Try to get connectionstring you are not permissioned for.",
+      description: "Retrieve connectionString (FAIL - you are not permissioned).",
       enabled: true,
       debug: false,
       path: "/connections/11666a1a-3e54-42c3-a523-9f38eedd96f3",
@@ -423,7 +644,7 @@ module.exports = {
         type: "GET",
       },
       expected_response: {
-        narrative: "Cannot get the connections string from tokens - should get a 403.",
+        narrative: "Tests that a User cannot request a connectionString they are not authorized for - should get a 403.",
         code: 403,
       }
     },
@@ -432,12 +653,12 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/users/1/connections",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "GET",
       },
       expected_response: {
-        narrative: "Should get user + connections",
+        narrative: "Tests that an ADMIN User can get a list of connectionStrings a User is permissioned for",
         code: 200,
         json_data: true,
         exact: [{ "Username": "david.upton@boston.gov", "userid": 1, "connid": 1, "Token": "806117D6-EE39-4664-B49E-4D069610E818", "ConnectionString": `{"host":"${config.apiConfig.server}", "port":"1433", "schema":"dbo", "database":"CMDB", "user":"admin", "password":"7sUSVGG%3g6a"}`,"Description":"Updated Dummy","Enabled":true,"Count":0}]
@@ -448,7 +669,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/users/david.upton@boston.gov/connections",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "GET",
       },
@@ -464,7 +685,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/users",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "GET",
       },
@@ -480,7 +701,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/user/2",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
       },
@@ -495,7 +716,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connection/806117D6-EE39-4664-B49E-4D069610E818/user/2",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "DELETE",
       },
@@ -510,7 +731,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -531,7 +752,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -552,7 +773,7 @@ module.exports = {
       enabled: false,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -573,7 +794,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -594,7 +815,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -615,7 +836,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -635,7 +856,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -656,7 +877,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/select/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -678,7 +899,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/select/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -700,7 +921,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/select/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {
@@ -722,7 +943,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connections/806117D6-EE39-4664-B49E-4D069610E818",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "PATCH",
         payload: {
@@ -740,7 +961,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/query/mssql",
-      use_creds: 0,
+      use_creds: 1,
       method: {
         type: "POST",
         payload: {

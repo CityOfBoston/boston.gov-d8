@@ -44,15 +44,13 @@ exports.list = (req, res) => {
 
 exports.get = (req, res) => {
   if (isNaN(req.params.userId)) {
+    console.log("name " + req.params.userId);
     UserModel.findByUsername(req.params.userId)
       .then((result) => {
         res.status(200).send(result);
       })
       .catch((reason) => {
-        error = {
-          "error": reason
-        }
-        res.status(400).send(JSON.stringify(error));
+        res.status(400).send(JSON.stringify({"error": reason}));
       });
   }
   else {

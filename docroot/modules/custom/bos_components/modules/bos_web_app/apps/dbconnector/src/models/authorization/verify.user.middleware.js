@@ -31,7 +31,8 @@ exports.hasAuthValidFields = (req, res, next) => {
 exports.isPasswordAndUserMatch = (req, res, next) => {
   UserModel.findByUsername(req.body.username)
     .then((user)=>{
-      if(!user[0]){
+      // console.log(user);
+      if(user == [] || !user[0]){
         res.status(404).send({});
       }
       else{
@@ -53,6 +54,9 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
           return res.status(400).send({error: ['Invalid username or password']});
         }
       }
+    })
+    .catch((reason) => {
+      res.status(400).send(JSON.stringify({ "error": reason }));
     });
 };
 

@@ -33,16 +33,27 @@ exports.findByUsername = (username) => {
 
   return new Promise((resolve, reject) => {
 
+    // Need to return an un-obvuscated password so that password verification
+    // can occur.
     sql = `SELECT ID, Username, Password, IPAddresses, Enabled, Role, Session
            FROM dbo.users
            WHERE Username = '${username}';`
 
+    // console.log(sql);
+
     sql_exec.exec(sql, function (rows, err) {
       if (err) {
+        console.log("error" + err);
         reject(err);
       }
       else {
-        resolve(rows[0]);
+        // console.log("Exec Rows: " + rows)
+        if (typeof rows === "undefined" || rows == [] || rows == "") {
+          reject("Username not found");
+        }
+        else {
+          resolve(rows[0]);
+        }
       }
     });
 

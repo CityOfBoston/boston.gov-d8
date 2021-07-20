@@ -24,7 +24,7 @@ exports.verifyRefreshBodyField = (req, res, next) => {
     return next();
   }
   else {
-    console.log("No Refresh_Token was supplied in body")
+    // console.log("No Refresh_Token was supplied in body")
     return res.status(400).send({error: 'need to pass refresh_token field'});
   }
 };
@@ -64,7 +64,7 @@ exports.validJWTNeeded = (req, res, next) => {
       }
       else {
         req.jwt = jwt.verify(authorization[1], secret);
-        console.log("Token Valid")
+        // console.log("Token Valid")
         return next();
       }
 
@@ -75,7 +75,7 @@ exports.validJWTNeeded = (req, res, next) => {
       if (err.toString().toLowerCase().includes("invalid")) {
         return res.status(403).send({"error": "Bad Token"});
       }
-      console.log(`err: ${err}`)
+      // console.log(`err: ${err}`)
       return res.status(403).send();
     }
   } else {
@@ -96,11 +96,11 @@ function readUserSession(userid) {
 function incrementFloodCounter(block, sess) {
 
   if (typeof sess.session === "undefined" || sess.session == null) {
-    console.log("recreate_1");
+    // console.log("recreate_1");
     sess.session = {'flood': {}};
   }
   else if (typeof sess.session.flood === "undefined") {
-    console.log("recreate_2");
+    // console.log("recreate_2");
     sess.session.flood = {};
   }
 
@@ -108,12 +108,12 @@ function incrementFloodCounter(block, sess) {
 
   if (block in flood) {
     // Increment this block for this user.
-    console.log("existing block");
+    // console.log("existing block");
     flood[block]++;
   }
   else {
     // Initializes new block for this user and remove any old blocks.
-    console.log("new block");
+    // console.log("new block");
     flood[block] = 1;
   }
   // console.log(sess);

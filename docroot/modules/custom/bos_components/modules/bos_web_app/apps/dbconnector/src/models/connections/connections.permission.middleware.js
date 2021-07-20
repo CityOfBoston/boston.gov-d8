@@ -55,7 +55,7 @@ const OWNER = config.permissionLevels.OWNER;
       }
       else {
         if (rows[0][0].count == 0) {
-          console.log(JSON.stringify(rows))
+          // console.log(JSON.stringify(rows))
           return res.status(403).send();
         }
         else {
