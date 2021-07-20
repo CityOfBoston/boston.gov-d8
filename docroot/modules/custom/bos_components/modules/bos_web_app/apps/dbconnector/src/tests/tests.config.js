@@ -81,9 +81,9 @@ module.exports = {
       },
       expected_response: {
         narrative: "Tests that Authentication can only come from approved IPAddreses ",
-        code: 400,
+        code: 403,
         json_data: true,
-        exact: { "error": "Unathorized IPAddress" }
+        exacts: { "error": "Unathorized IPAddress" }
       }
     },
     {
@@ -121,7 +121,7 @@ module.exports = {
         narrative: "Tests that cannot login with a bad password for given username",
         code: 400,
         json_data: true,
-        exact: { "error": ["Invalid username or password"] }
+        exact: {"error": "Invalid username or password"}
       }
     },
     {
@@ -238,7 +238,7 @@ module.exports = {
       },
       expected_response: {
         narrative: "Tests that a disabled user cannot login",
-        code: 400,
+        code: 401,
         json_data: true,
         exact: { "error": "User Disabled" }
       }
@@ -295,8 +295,9 @@ module.exports = {
       },
       expected_response: {
         narrative: "Tests that you cannot list another User when not an Admin",
-        code: 403,
-        json_data: false
+        code: 401,
+        json_data: true,
+        exact: {"error":"Missing Authentication Token"}
       }
     },
     {
@@ -380,7 +381,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/users/2",
-      use_creds: 4,
+      use_creds: 5,
       method: {
         type: "DELETE",
       },
@@ -393,7 +394,7 @@ module.exports = {
     {
       description: "Logged in User refreshes existing Token",
       enabled: true,
-      debug: true,
+      debug: false,
       path: "/auth/refresh",
       use_creds: 5,
       method: {
@@ -408,7 +409,7 @@ module.exports = {
     {
       description: "Request User listing (using refreshed Token)",
       enabled: true,
-      debug: true,
+      debug: false,
       path: "/users/5",
       use_creds: 5,
       method: {
@@ -552,7 +553,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connection",
-      use_creds: 4,
+      use_creds: 5,
       method: {
         type: "POST",
         payload: {
@@ -639,7 +640,7 @@ module.exports = {
       enabled: true,
       debug: false,
       path: "/connections/11666a1a-3e54-42c3-a523-9f38eedd96f3",
-      use_creds: 4,
+      use_creds: 5,
       method: {
         type: "GET",
       },

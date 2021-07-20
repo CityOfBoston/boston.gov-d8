@@ -51,7 +51,7 @@ function requestDone(rowCount, more, reqRows) {
 function tediousReturn(err) {
   if (errors) {}
   else if (err && typeof err !== "undefined") {
-    console.log(`Error?: ${err}`)
+    // console.log(`Error?: ${err}`)
     callback([], 'Statement ' + (statements + 1) + ' failed: ' + err);
     errors = true
   }
@@ -67,7 +67,7 @@ function statementComplete(err, rowCount) {
     errors = true
   }
   else {
-    console.log('Processed ' + statements + " statements");
+    // console.log('Processed ' + statements + " statements");
   }
 }
 

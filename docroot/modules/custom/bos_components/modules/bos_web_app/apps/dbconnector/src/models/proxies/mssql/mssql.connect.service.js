@@ -23,7 +23,7 @@ function connected(err) {
     callback("error", {"error": `MSSql proxy connection error: ${err}`});
   }
   else {
-    console.log('MSSQL Proxy Connected');
+    // console.log('MSSQL Proxy Connected');
     callback("connected", connection);
   }
 }
@@ -34,7 +34,7 @@ function end() {
 }
 
 function infoError(info) {
-  console.log(info.number + ' : ' + info.message);
+  // console.log(info.number + ' : ' + info.message);
 }
 
 function debug(message) {

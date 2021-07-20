@@ -39,7 +39,7 @@ exports.list = (req, res) => {
 
 exports.get = (req, res) => {
   if (isNaN(req.params.userId)) {
-    console.log("name " + req.params.userId);
+    // console.log("name " + req.params.userId);
     UserModel.findByUsername(req.params.userId)
       .then((result) => {
         return Output.json_response(res, 200, result);

@@ -44,11 +44,11 @@ function end() {
 }
 
 function info(info) {
-  console.log(info.number + ' : ' + info.message);
+  // console.log(info.number + ' : ' + info.message);
 }
 
 function error(err) {
-  console.log('ERROR: ' + err.number + ' : ' + err.message);
+  // console.log('ERROR: ' + err.number + ' : ' + err.message);
 }
 
 function debug(message) {

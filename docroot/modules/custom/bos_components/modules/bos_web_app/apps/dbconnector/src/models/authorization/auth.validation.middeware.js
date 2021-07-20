@@ -57,7 +57,7 @@ exports.validRefreshNeeded = (req, res, next) => {
  * @return {any} calls next function, or returns 401/403 error message in response object.
  */
 exports.validJWTNeeded = (req, res, next) => {
-  if (req.headers['authorization']) {
+  if (req.headers['authorization'] != "") {
     try {
       let authorization = req.headers['authorization'].split(' ');
       if (authorization[0] !== 'Bearer') {
@@ -75,6 +75,10 @@ exports.validJWTNeeded = (req, res, next) => {
       }
       if (err.toString().toLowerCase().includes("invalid")) {
         return Output.json_response(res, 403, {error: 'Bad Token'});
+      }
+      // console.log(err);
+      if (err.toString().toLowerCase().includes("jwt must be provided")) {
+        return Output.json_response(res, 401, {error: "Missing Authentication Token"});
       }
       return Output.json_response(res, 400, {error: err});
     }

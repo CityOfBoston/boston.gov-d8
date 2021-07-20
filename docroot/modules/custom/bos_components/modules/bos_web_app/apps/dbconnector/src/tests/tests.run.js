@@ -91,20 +91,19 @@ function doTest (testOrd) {
             // Validate the response.
             // console.log(`THEN: ${JSON.stringify(result)}`);
             if (validate(result, test)) {
-              console.log("\u2714 [SUCCESS]".green);
+              console.log("\u2714 [SUCCESS]".green + ` ${test.expected_response.narrative}`.grey);
               if (options.path == "/auth") {
-                console.log("TOKEN SAVED");
+                // console.log("TOKEN SAVED");
                 saveAuth(result);
               }
               else if (options.path == "/auth/refresh") {
-                console.log("NEW TOKEN SAVED");
+                // console.log("NEW TOKEN SAVED");
                 saveAuth(result);
               }
               testOrd++;
               doTest(testOrd);
             }
             else {
-              console.log(`Narrative: ${test.expected_response.narrative}\n`)
               console.log("\nTESTS FAILED".black.bgRed + "\n");
               process.exit();
             }
@@ -122,7 +121,7 @@ function doTest (testOrd) {
             // Validate the error message - some tests are expected to fail.
             if (validate(reason, test)) {
               // console.log(`NOTE: Expected failure: \"${msg}\"`.grey);
-              console.log("\u2714 [SUCCESS]".green);
+              console.log("\u2714 [SUCCESS]".green + ` ${test.expected_response.narrative}`.grey);
               testOrd++;
               doTest(testOrd);
             }
@@ -274,7 +273,7 @@ function requestEndpoint (options, data) {
       res.on('end', function () {
         if (body == "" || typeof body === "undefined") {
           // console.log("nothing");
-          body = {"result": "No Data"};
+          body = {};
         }
         else {
           // console.log(`body: ${body}`)

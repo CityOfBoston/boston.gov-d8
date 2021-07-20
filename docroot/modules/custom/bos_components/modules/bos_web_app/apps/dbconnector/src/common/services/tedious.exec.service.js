@@ -61,7 +61,7 @@ function statementComplete(err, rowCount) {
     errors = true
   }
   else {
-    console.log('Processed ' + statements + " statements");
+    // console.log('Processed ' + statements + " statements");
   }
 }
 

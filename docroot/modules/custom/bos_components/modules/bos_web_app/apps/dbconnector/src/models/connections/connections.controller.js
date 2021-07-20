@@ -17,6 +17,7 @@ exports.insert = (req, res) => {
       return Output.json_response(res, 201, {connToken: result});
     })
     .catch((reason) => {
+      console.log("ConnError: " + reason);
       return Output.json_response(res, 400, {error: reason});
     });
 };
@@ -36,7 +37,7 @@ exports.list = (req, res) => {
   }
   ConnModel.list(limit, page)
     .then((result) => {
-      return Output.json_response(res, 200, {error: result});
+      return Output.json_response(res, 200, result);
     })
     .catch((reason) => {
       return Output.json_response(res, 400, {error: reason});
