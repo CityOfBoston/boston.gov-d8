@@ -2,6 +2,7 @@
  * Functions which manipulate data within the users table.
  */
 const sql_exec = require('../../common/services/tedious.exec.service')
+let defaultTTL = require('../../common/env.config').jwt_expiration_in_seconds;
 
 /**
  * A structure which represents the columns in users table.
@@ -14,7 +15,8 @@ const userSchema = {
   ipaddresses: '',
   enabled: 1,
   role: 1,
-  session: ''
+  session: '',
+  ttl: defaultTTL
 };
 
 String.prototype.trimRight = function(charlist) {
@@ -35,7 +37,7 @@ exports.findByUsername = (username) => {
 
     // Need to return an un-obvuscated password so that password verification
     // can occur.
-    sql = `SELECT ID, Username, Password, IPAddresses, Enabled, Role, Session
+    sql = `SELECT ID, Username, Password, IPAddresses, Enabled, Role, Session, TTL
            FROM dbo.users
            WHERE Username = '${username}';`
 
@@ -70,7 +72,7 @@ exports.findByUsername = (username) => {
 
   return new Promise((resolve, reject) => {
 
-    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role, Session
+    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role, Session, TTL
            FROM dbo.users
            WHERE ID = ${id};`
 
@@ -104,13 +106,15 @@ exports.create = (userData) => {
               Password,
               IPAddresses,
               Enabled,
-              Role)
+              Role,
+              TTL)
             VALUES(
               '${data.username}',
               '${data.password}',
               '${data.ipaddresses}',
               ${data.enabled},
-              '${data.role}'
+              '${data.role}',
+              '${data.ttl}'
             );
             SELECT @@IDENTITY as 'id';`
 
@@ -137,7 +141,7 @@ exports.list = (perPage, page) => {
 
     let offset = perPage * page;
 
-    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role
+    sql = `SELECT ID, Username, '*****' as Password, IPAddresses, Enabled, Role, TTL
            FROM dbo.users
            ORDER BY ID ASC
            OFFSET ${offset} ROWS FETCH NEXT ${perPage} ROWS ONLY;`

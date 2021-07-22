@@ -14,13 +14,14 @@ exports.hasAuthValidFields = (req, res, next) => {
     }
 
     if (errors.length) {
-      return Output.json_response(res, 400, {error: errors.join(", ")});
+      return Output.json_response(res, 400, {error: errors.join(". ")});
     }
     else {
       return next();
     }
-  } else {
-    return Output.json_response(res, 400, {error: 'Missing username/email and password fields'});
+  }
+  else {
+    return Output.json_response(res, 400, { error: 'Missing authentication payload'});
   }
 };
 
@@ -48,7 +49,8 @@ exports.isPasswordAndUserMatch = (req, res, next) => {
             role: user[0].Role,
             enabled: user[0].Enabled,
             ipaddresses: user[0].IPAddresses.split(";") || "",
-            session: user[0].Session
+            session: user[0].Session,
+            ttl: user[0].TTL
           };
           return next();
         }

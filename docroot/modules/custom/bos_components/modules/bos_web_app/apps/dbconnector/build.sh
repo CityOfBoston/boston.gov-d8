@@ -2,7 +2,7 @@
 
 DBCONN_LOCAL_TAG=cob_dbconnector:latest
 ECS_HOST=251803681989.dkr.ecr.us-east-1.amazonaws.com
-ECS_URL=${ECS_HOST}/cob-digital-apps-staging/cob_dbconnector
+ECS_URL=${ECS_HOST}/cob-digital-apps-staging/dbconnector
 DBCONN_ECS_TAG="deploy-default"
 
 if [[ "${1}" == "push" ]] || [[ "${1}" == "PUSH" ]]; then

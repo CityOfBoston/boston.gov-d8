@@ -7,6 +7,7 @@ const app = express();
 const bodyParser = require('body-parser');
 
 // Include the models routing files.
+const HealthRouter = require('../models/health/routes.config');
 const AuthorizationRouter = require('../models/authorization/routes.config');
 const UsersRouter = require('../models/users/routes.config');
 const ConnectionsRouter = require('../models/connections/routes.config');
@@ -32,6 +33,7 @@ app.use(bodyParser.json());
 app.set('trust proxy', true)
 
 // Create the endpoints from the models routing files.
+HealthRouter.routesConfig(app);
 AuthorizationRouter.routesConfig(app);
 UsersRouter.routesConfig(app);
 ConnectionsRouter.routesConfig(app);
@@ -44,5 +46,5 @@ try {
   });
 }
 catch(err) {
-  console.log(err);
+  console.log("app starting error: " + err);
 }

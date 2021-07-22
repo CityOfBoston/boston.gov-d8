@@ -50,6 +50,21 @@ module.exports = {
   tests: [
 // LOGIN- UID 1
     {
+      description: "Container Health Check",
+      enabled: true,
+      debug: false,
+      path: "/admin/ok",
+      method: {
+        type: "GET",
+        payload: {}
+      },
+      expected_response: {
+        narrative: "Tests that the container health check responds",
+        code: 200,
+        json_data: false,
+      }
+    },
+    {
       description: "Login as OWNER user (UID=1 / creds=0)",
       enabled: true,
       debug: false,
@@ -63,7 +78,7 @@ module.exports = {
       },
       expected_response: {
         narrative: "Tests that an ADMIN (UID=0) can login",
-        code: 201,
+        code: 200,
         json_data: true,
       }
     },
@@ -156,7 +171,7 @@ module.exports = {
         narrative: "Tests paged listing - should return 2 user records starting with the 3rd record",
         code: 200,
         json_data: true,
-        exact: [{"ID":3,"Username":"havocint@hotmail.com","Password":"*****","IPAddresses":"","Enabled":true,"Role":4},{"ID":4,"Username":"david","Password":"*****","IPAddresses":"10.10.10.10","Enabled":true,"Role":1}]
+        exact: [{"ID":3,"Username":"havocint@hotmail.com","Password":"*****","IPAddresses":"","Enabled":true,"Role":4,"TTL":"5s"},{"ID":4,"Username":"david","Password":"*****","IPAddresses":"10.10.10.10","Enabled":true,"Role":1,"TTL":""}]
       }
     },
     {
@@ -173,7 +188,7 @@ module.exports = {
         narrative: "Tests that an ADMIN can request a single User",
         code: 200,
         json_data: true,
-        exact: [{ "ID": 1, "Username": "david.upton@boston.gov", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 4096 }]
+        exact: [{ "ID": 1, "Username": "david.upton@boston.gov", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 4096, "TTL": "" }]
       }
     },
     {
@@ -189,7 +204,7 @@ module.exports = {
         narrative: "Tests that listing can use username as well as uid",
         code: 200,
         json_data: true,
-        exact: [{ "ID": 4, "Username": "david", "Password": "wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==", "IPAddresses": "10.10.10.10", "Enabled": true, "Role": 1 }]
+        exact: [{ "ID": 4, "Username": "david", "Password": "wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==", "IPAddresses": "10.10.10.10", "Enabled": true, "Role": 1, "TTL": "" }]
       }
     },
     {
@@ -206,7 +221,7 @@ module.exports = {
         code: 200,
         json_data: true,
         exact: [{
-          "ID": 1, "Username": "david.upton@boston.gov", "Password": "wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==", "IPAddresses": "", "Enabled": true, "Role": 4096 }]
+          "ID": 1, "Username": "david.upton@boston.gov", "Password": "wV1/g/3LN3gZXmxhSNImkw==$0nM+7jTxyR7DR2sGs5UJrswFtVpNscYt2eAmeKylAVYFGrpO2fvVhnz6Tsz4EkEhRAVPK7sQgTHe7x90HumE0w==", "IPAddresses": "", "Enabled": true, "Role": 4096, "TTL": "" }]
       }
     },
     {
@@ -255,7 +270,8 @@ module.exports = {
           "username": "havocint@gmail.com",
           "password": "new",
           "role": config.permissionLevels.ADMIN_USER,
-          'enabled': 1
+          'enabled': 1,
+          'ttl': config.jwt_expiration_in_seconds
         }
       },
       expected_response: {
@@ -279,7 +295,7 @@ module.exports = {
       },
       expected_response: {
         narrative: "Tests that the updated user can login using new password",
-        code: 201,
+        code: 200,
         json_data: true,
       }
     },
@@ -314,7 +330,7 @@ module.exports = {
         narrative: "Tests that you cannot list another User when not an Admin",
         code: 200,
         json_data: true,
-        exact: [{ "ID": 2, "Username": "havocint@gmail.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 2048 }]
+        exact: [{ "ID": 2, "Username": "havocint@gmail.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 2048, "TTL": "180s" }]
       }
     },
     {
@@ -328,7 +344,8 @@ module.exports = {
         payload: {
           "username": "someone@somewhere.com",
           "password": "123",
-          "role": config.permissionLevels.NORMAL_USER
+          "role": config.permissionLevels.NORMAL_USER,
+          "ttl": "2s"
         }
       },
       expected_response: {
@@ -372,7 +389,7 @@ module.exports = {
       },
       expected_response: {
         narrative: "Tests that the new user can login",
-        code: 201,
+        code: 200,
         json_data: true,
       }
     },
@@ -399,10 +416,62 @@ module.exports = {
       use_creds: 5,
       method: {
         type: "POST",
+        payload: {}
       },
       expected_response: {
         narrative: "Tests that the refresh Token can used to issue a new AuthToken",
-        code: 201,
+        code: 200,
+        json_data: true,
+      }
+    },
+    {
+      description: "Request User listing (using refreshed Token)",
+      enabled: true,
+      debug: false,
+      path: "/users/5",
+      use_creds: 5,
+      delay_after: 5000,
+      method: {
+        type: "GET"
+      },
+      expected_response: {
+        narrative: "Tests that the updated token an be used. \n - Waiting 5s so token expires",
+        code: 200,
+        json_data: true,
+        exact: [{ "ID": 5, "Username": "someone@somewhere.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 1, "TTL": "2s" }]
+      }
+    },
+
+    {
+      description: "Request User listing (using expired Token)",
+      enabled: true,
+      debug: false,
+      path: "/users/5",
+      use_creds: 5,
+      method: {
+        type: "GET"
+      },
+      expected_response: {
+        narrative: "Tests that an expired token cannot be used",
+        code: 401,
+        json_data: true,
+        exact: { "error": "Expired Token" }
+      }
+    },
+    {
+      description: "Refreshes expired Token",
+      enabled: true,
+      debug: false,
+      path: "/auth/refresh",
+      // delay_after: 2000,
+      use_creds: 5,
+      method: {
+        type: "POST",
+        payload: {}
+      },
+      expected_response: {
+        narrative: "Tests that the refresh Token can used to issue a new AuthToken",
+        code: 200,
         json_data: true,
       }
     },
@@ -416,16 +485,16 @@ module.exports = {
         type: "GET"
       },
       expected_response: {
-        narrative: "Tests that the updated token an be used",
+        narrative: "Tests that the refreshed token can now be used",
         code: 200,
         json_data: true,
-        exact: [{ "ID": 5, "Username": "someone@somewhere.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 1 }]
+        exact: [{ "ID": 5, "Username": "someone@somewhere.com", "Password": "*****", "IPAddresses": "", "Enabled": true, "Role": 1, "TTL": "2s" }]
       }
     },
     {
       description: "List All Connection Strings",
       enabled: true,
-      debug: false,
+      debug: true,
       path: "/connections",
       use_creds: 1,
       method: {

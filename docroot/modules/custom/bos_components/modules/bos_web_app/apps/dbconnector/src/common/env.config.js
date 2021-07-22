@@ -23,7 +23,7 @@ module.exports = {
     "OWNER": 4096
   },
   "apiConfig":{
-    server: "172.18.0.2",
+    server: "172.20.0.3",
     options: {
       "port": 1433,
       "database": "dbconnector",

@@ -64,19 +64,25 @@ exports.validJWTNeeded = (req, res, next) => {
         return Output.json_response(res, 401);
       }
       else {
-        req.jwt = jwt.verify(authorization[1], secret);
+        if (req.url.includes("/auth/refresh")) {
+          req.jwt = jwt.verify(authorization[1], secret, { ignoreExpiration: true, maxAge: "1 day" });
+        }
+        else {
+          req.jwt = jwt.verify(authorization[1], secret, { maxAge: "1 day"});
+        }
         return next();
       }
 
     }
     catch (err) {
-      if (err.toString().toLowerCase().includes("expired")) {
+      // console.log(err)
+      if (err.name.toLowerCase() == "tokenexpirederror") {
+        // console.log (err);
         return Output.json_response(res, 401, {error: 'Expired Token'});
       }
       if (err.toString().toLowerCase().includes("invalid")) {
-        return Output.json_response(res, 403, {error: 'Bad Token'});
+        return Output.json_response(res, 401, {error: 'Bad Token'});
       }
-      // console.log(err);
       if (err.toString().toLowerCase().includes("jwt must be provided")) {
         return Output.json_response(res, 401, {error: "Missing Authentication Token"});
       }

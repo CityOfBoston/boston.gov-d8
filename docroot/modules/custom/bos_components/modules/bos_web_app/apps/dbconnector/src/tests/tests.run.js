@@ -24,7 +24,7 @@ exports.run = () => {
       doTest(testOrd);
     })
     .catch((reason) => {
-      console.log("DB: Reset Failed");
+      console.log("DB: Reset Failed - " + reason);
     });
 };
 
@@ -55,7 +55,7 @@ function doTest (testOrd) {
         headers: {}
       }
       // Add Authorization Header unless using /auth endpoint.
-      if (options.path != "/auth") {
+      if (options.path != "/auth" && options.path != "/admin/ok") {
         options.headers["Authorization"] = `Bearer ${config.creds[test.use_creds].token}`;
       }
       if (options.path == "/auth/refresh") {
@@ -63,7 +63,9 @@ function doTest (testOrd) {
           "id" : config.creds[test.use_creds].userid,
           "refresh_token": config.creds[test.use_creds].refreshToken,
         };
-        // console.log(config.creds);
+        if (config.debug) {
+          console.log(`configs before: ${JSON.stringify(config.creds[test.use_creds])}`.yellow);
+        }
       }
 
       if (test.method.type == "GET") {
@@ -85,6 +87,10 @@ function doTest (testOrd) {
         options.headers["Content-Type"] = "application/json";
       }
 
+      if (test.debug) {
+        console.log(`Using credentials: ${test.use_creds}`.gray);
+      }
+
       const execTest = async () => {
         requestEndpoint(options, data)
           .then((result) => {
@@ -98,10 +104,24 @@ function doTest (testOrd) {
               }
               else if (options.path == "/auth/refresh") {
                 // console.log("NEW TOKEN SAVED");
+                data = JSON.parse(data);
+                result.data.userid = data.id;
                 saveAuth(result);
+                if (config.debug) {
+                  console.log(`configs after: ${JSON.stringify(config.creds[result.data.userid])}`.yellow);
+                }
+
               }
               testOrd++;
-              doTest(testOrd);
+              if ('delay_after' in test) {
+                setTimeout(function () {
+                  doTest(testOrd);
+                }, test.delay_after);
+              }
+              else {
+                doTest(testOrd);
+              }
+
             }
             else {
               console.log("\nTESTS FAILED".black.bgRed + "\n");
@@ -123,10 +143,20 @@ function doTest (testOrd) {
               // console.log(`NOTE: Expected failure: \"${msg}\"`.grey);
               console.log("\u2714 [SUCCESS]".green + ` ${test.expected_response.narrative}`.grey);
               testOrd++;
-              doTest(testOrd);
+              if ('delay_after' in test) {
+                setTimeout(function () {
+                  doTest(testOrd);
+                }, test.delay_after);
+              }
+              else {
+                doTest(testOrd);
+              }
             }
             else {
-              console.log(`TEST RESULT: ${msg}`.grey);
+              console.log('TEST RESULT: '.grey, msg);
+              if (msg.toString().toLowerCase().includes("token")) {
+                console.log(`Cached: ${JSON.stringify(config.creds[test.use_creds])}`.grey)
+              }
               console.log(`Narrative: ${test.expected_response.narrative}\n`)
               console.log("\nTESTS FAILED".black.bgRed + "\n");
               // console.log("\n");
@@ -229,8 +259,10 @@ function doTest (testOrd) {
           guserord++;
           return false;
         });
-        config.creds[guserord].token = result.data.accessToken;
+
+        config.creds[guserord].token = result.data.authToken;
         config.creds[guserord].refreshToken = result.data.refreshToken;
+        // console.log("found userid: " + guserord);
       };
 
       execTest();
@@ -238,7 +270,15 @@ function doTest (testOrd) {
     }
     else {
       testOrd++;
-      doTest(testOrd);
+      if ('delay_after' in test) {
+        setTimeout(function () {
+          doTest(testOrd);
+        }, test.delay_after);
+      }
+      else {
+        doTest(testOrd);
+      }
+
     }
 
   }
@@ -277,7 +317,12 @@ function requestEndpoint (options, data) {
         }
         else {
           // console.log(`body: ${body}`)
-          body = JSON.parse(`${body}`);
+          if (body.includes("DOCTYPE html")) {
+
+          }
+          else {
+            body = JSON.parse(`${body}`);
+          }
         }
 
         output = {
@@ -286,11 +331,11 @@ function requestEndpoint (options, data) {
         }
 
         if (config.debug) {
-          console.log(`data: ${JSON.stringify(output)}`.gray);
+          console.log(`${JSON.stringify(output)}`.gray);
           console.log("===========================".gray);
         }
 
-        if ('error' in body) {
+        if (typeof body === "object" && 'error' in body) {
           // console.log(`${JSON.stringify(output)}`);
           reject(output);
         }

@@ -15,9 +15,9 @@ exports.routesConfig = function (app) {
 
   app.post('/auth/refresh', [
     AuthValidationMiddleware.validJWTNeeded,
-    PermissionMiddleware.isIPAddressAllowed,
     AuthValidationMiddleware.verifyRefreshBodyField,
     AuthValidationMiddleware.validRefreshNeeded,
+    PermissionMiddleware.isIPAddressAllowed,
     AuthValidationMiddleware.isFlooding,
     AuthorizationController.login
   ]);
