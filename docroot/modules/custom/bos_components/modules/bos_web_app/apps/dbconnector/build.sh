@@ -34,7 +34,8 @@ if [[ "${1}" == "push" ]] || [[ "${1}" == "PUSH" ]]; then
     # and the VPN is established (if needed).
     # NOTE: This IPAddress changes when the AWS AMI is updated.
     # Connection information is located within config.json
-    python3 ./deploy.py || printf "Ensure IPAddress URL for the AWS EC2/ECS (AppStaging) instance is properly set ... \n\n"
+
+    # Stop the ECS task to forcea rebuild of the container.
 
   fi
 
