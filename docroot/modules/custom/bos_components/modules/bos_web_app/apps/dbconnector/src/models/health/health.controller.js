@@ -1,5 +1,5 @@
-const Output = require('../../common/json.responses');
-const sql_conn = require('../../common/services/tedious.connect.service').connection;
+// const Output = require('../../common/json.responses');
+// const sql_conn = require('../../common/services/tedious.connect.service').connection;
 
 exports.ping = (req, res) => {
   if (sql_conn) {

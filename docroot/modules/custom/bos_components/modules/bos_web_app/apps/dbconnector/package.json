@@ -2,11 +2,12 @@
   "name": "dbconnector",
   "version": "1.0.0",
   "description": "Acts as a Proxy to remote data resources",
-  "main": "gulpfile.js",
+  "main": "server.js",
   "scripts": {
     "test": "node ./src/tests/index.js",
     "prep": "node ./src/tests/sql.js",
-    "start": "node ./src/js/index.js"
+    "start": "node ./src/js/server.js",
+    "startmini": "node ./dist/dbconnector.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,11 +15,14 @@
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.5",
-    "crypto": "^1.0.1",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "jsonwebtoken": "^8.5.1",
-    "tedious": "^11.0.9",
-    "uuid": "^8.3.2"
+    "tedious": "^11.4.0"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^3.0.2"
   }
 }

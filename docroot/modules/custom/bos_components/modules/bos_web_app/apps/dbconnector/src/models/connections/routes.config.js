@@ -6,11 +6,6 @@ const PermissionMiddleware = require('../authorization/auth.permission.middlewar
 const ConnPermissionMiddleware = require('./connections.permission.middleware');
 const config = require('../../common/env.config');
 
-const ADMIN = config.permissionLevels.ADMIN_USER;
-const SUPER = config.permissionLevels.SUPER_USER;
-const NORMAL = config.permissionLevels.NORMAL_USER;
-const OWNER = config.permissionLevels.OWNER;
-
 exports.routesConfig = function (app) {
   // Inserts a new connection.
   app.post('/connection', [

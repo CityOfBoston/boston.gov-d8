@@ -13,6 +13,8 @@ if [[ "${1}" == "push" ]] || [[ "${1}" == "PUSH" ]]; then
     exit
   fi
 
+  sed -i 's/COB_ENV=local/COB_ENV=prod/' Dockerfile
+
   # Login to aws ecr
   awslogin=$(aws ecr get-login-password --region us-east-1 --profile=cityofboston | docker login --username AWS --password-stdin ${ECS_HOST})
   if [[ "${awslogin}" != "Login Succeeded" ]]; then
@@ -48,16 +50,11 @@ else
     exit
   fi
 
-  # Make sure current mode is "local" in (python) config and Dockerfile
-  sed -i 's/"current": "prod",/"current": "local",/' config.json
-  sed -i 's/CMDB_ENV=prod/CMDB_ENV=local/' neo4j/Dockerfile
-
-  # Make sure local apoc config is back in place
-  rm -f conf/apoc.conf &&
-    cp conf/apoc.local conf/apoc.conf
+  # Make sure current mode is "local" in Dockerfile
+  sed -i 's/COB_ENV=prod/COB_ENV=local/' Dockerfile
 
   # Build the Neo4J image and tag as latest/local
-  docker build --tag ${DBCONN_LOCAL_TAG} --file neo4j/Dockerfile .
+  docker build --tag ${DBCONN_LOCAL_TAG} --file Dockerfile .
 
   printf "\n[NOTE] This image was only built and tagged locally (i.e. for dev purposes). \n"
   printf "       You can re-run the script with the 'push' argument to deploy to AWS.\n"

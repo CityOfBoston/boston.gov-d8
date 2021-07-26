@@ -363,7 +363,7 @@ function prepareDB () {
 
   return new Promise((resolve, reject) => {
     console.log("DB: Initializing Connection")
-    fs.readFile('/app/docroot/modules/custom/bos_components/modules/bos_web_app/apps/dbconnector/src/tests/dbpurge.sql', 'utf8' , (err, sql) => {
+    fs.readFile('./src/tests/dbpurge.sql', 'utf8' , (err, sql) => {
 
       if (err) {
         console.error(err);
@@ -377,7 +377,7 @@ function prepareDB () {
             console.log("[ERROR] " + err);
             resolve(false);
           }
-          fs.readFile('/app/docroot/modules/custom/bos_components/modules/bos_web_app/apps/dbconnector/src/tests/dbcreate.sql', 'utf8' , (err, sql) => {
+          fs.readFile('./src/tests/dbcreate.sql', 'utf8' , (err, sql) => {
             if (err) {
               console.error(err);
               resolve(false);

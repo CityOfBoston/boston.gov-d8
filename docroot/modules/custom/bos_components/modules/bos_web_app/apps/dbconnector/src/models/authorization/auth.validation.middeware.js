@@ -4,13 +4,13 @@
  * These functions are intended to be used in an express.js app (i.e. rest API endpoint).
  *
   */
-const jwt = require('jsonwebtoken'),
-  secret = require('../../common/env.config').jwt_secret,
-  jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds,
-  crypto = require('crypto');
-const flood_time = require('../../common/env.config').flood_time,
-  flood_level = require('../../common/env.config').flood_level
-  const Output = require('../../common/json.responses');
+// const jwt = require('jsonwebtoken'),
+//   secret = require('../../common/env.config').jwt_secret,
+//   jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds,
+//   crypto = require('crypto');
+const flood_time = require('../../common/env.config').flood_time;
+const flood_level = require('../../common/env.config').flood_level;
+// const Output = require('../../common/json.responses');
 
 
 /**

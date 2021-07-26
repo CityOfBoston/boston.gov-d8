@@ -30,7 +30,7 @@ function connected(err) {
   process.stdin.on('end', function() {
     state = "connected";
     info({ number: 1, message: 'System DB Connected' });
-    process.exit(0);
+    // process.exit(0);
   });
 
   process.stderr.on('error', function () {

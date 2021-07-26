@@ -1,8 +1,9 @@
-const jwtSecret = require('../../common/env.config').jwt_secret,
-  jwt = require('jsonwebtoken');
-let jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds;
 const crypto = require('crypto');
-const Output = require('../../common/json.responses');
+
+const jwt = require('jsonwebtoken');
+const jwtSecret = require('../../common/env.config').jwt_secret
+let jwtExpiration = require('../../common/env.config').jwt_expiration_in_seconds;
+// const Output = require('../../common/json.responses');
 
 const updateExpiration = (body) => {
   // Update thedefault expiration with the users ttl(if any).

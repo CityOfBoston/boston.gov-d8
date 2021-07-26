@@ -1,6 +1,7 @@
-const UserModel = require('../users/users.model');
-const crypto = require('crypto');
-const Output = require('../../common/json.responses');
+// const UserModel = require('../users/users.model');
+// const crypto = require('crypto');
+
+// const Output = require('../../common/json.responses');
 
 exports.hasAuthValidFields = (req, res, next) => {
   let errors = [];

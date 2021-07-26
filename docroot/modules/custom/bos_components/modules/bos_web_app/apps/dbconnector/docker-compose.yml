@@ -1,0 +1,21 @@
+version: "3.5"
+
+networks:
+  neo4j-network:
+    driver: bridge
+    name: neo4j-network
+
+services:
+  dbconnector:
+    container_name: dbconnector
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cob_dbconnector:latest
+    ports:
+      - "3000:3000"
+      - "3600:3600"
+    environment:
+      - COB_ENV=local
+    networks:
+      - neo4j-network

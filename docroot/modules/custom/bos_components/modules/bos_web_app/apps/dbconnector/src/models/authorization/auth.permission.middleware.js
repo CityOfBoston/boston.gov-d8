@@ -10,16 +10,18 @@
  * The token is validated at auth.validation.middleware.js:validJWTNeeded() and
  * the stored user info is loaded the req.jwt.
  */
-const jwt = require('jsonwebtoken'),
-  secret = require('../../common/env.config')['jwt_secret'],
-  flood_time = require('../../common/env.config')['flood_time'],
-  flood_level = require('../../common/env.config')['flood_level'];
-const UserModel = require('../users/users.model');
-const Output = require('../../common/json.responses');
+// const jwt = require('jsonwebtoken'),
+//   secret = require('../../common/env.config')['jwt_secret'],
+//   flood_time = require('../../common/env.config')['flood_time'],
+//   flood_level = require('../../common/env.config')['flood_level'];
+// const UserModel = require('../users/users.model');
+// const Output = require('../../common/json.responses');
 
 // Roles are defined in env.config.js.
-const config = require('../../common/env.config');
+// const config = require('../../common/env.config');
 const ADMIN = config.permissionLevels.ADMIN_USER;
+const SUPER = config.permissionLevels.SUPER_USER;
+const NORMAL = config.permissionLevels.NORMAL_USER;
 const OWNER = config.permissionLevels.OWNER;
 
 /**
@@ -172,45 +174,45 @@ exports.isIPAddressAllowed = (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-exports.monitorForFlood = (req, res, next) => {
-  try {
-    // Increment and manage 30 second "blocks" for this user.
-    let block = Math.round((new Date().getTime / 1000) / flood_time);
+// exports.monitorForFlood = (req, res, next) => {
+//   try {
+//     // Increment and manage 30 second "blocks" for this user.
+//     let block = Math.round((new Date().getTime / 1000) / flood_time);
 
-    if (block in req.session.flood[req.body.userid]) {
-      // Block already exists, so increment its count
-      req.session.flood[req.body.userid][block]++
-      // Check if "old blocks" exist, and if so delete them...
-      if (Object.keys(req.session.flood[req.body.userid]).length > 1) {
-        // Re-initialize user with the current block and counter - removes any old blocks.
-        req.session.flood[req.body.userid] = {block: req.session.flood[req.body.userid][block]};
-      }
-      // Now check we aren't being abused.
-      if (req.session.flood[req.body.userid][block] > flood_level) {
-        // Oh dear, ...
-        console.log("User abusing API");
-        // Disable the User record in the DB.
-        UserModel.disableById(req.jwt.userId)
-          .then((result) => {
-            // Kill the JWT Token.
-            delete req.jwt;
-            // Die quietly.
-            return Output.json_response(res, 401);
-          });
-      }
-    }
-    else {
-      // The current time block does not exist.
-      // Create the block, set count to 1.
-      // This will remove any old blocks.
-      req.session.flood[req.body.userid] = {block: 1};
-    }
-  }
-  catch (err) {
-    // console.log(err)
-    return Output.json_response(res, 400, {error: err});
-  }
-  finally {
-    next();
-  }
-}
+//     if (block in req.session.flood[req.body.userid]) {
+//       // Block already exists, so increment its count
+//       req.session.flood[req.body.userid][block]++
+//       // Check if "old blocks" exist, and if so delete them...
+//       if (Object.keys(req.session.flood[req.body.userid]).length > 1) {
+//         // Re-initialize user with the current block and counter - removes any old blocks.
+//         req.session.flood[req.body.userid] = {block: req.session.flood[req.body.userid][block]};
+//       }
+//       // Now check we aren't being abused.
+//       if (req.session.flood[req.body.userid][block] > flood_level) {
+//         // Oh dear, ...
+//         console.log("User abusing API");
+//         // Disable the User record in the DB.
+//         UserModel.disableById(req.jwt.userId)
+//           .then((result) => {
+//             // Kill the JWT Token.
+//             delete req.jwt;
+//             // Die quietly.
+//             return Output.json_response(res, 401);
+//           });
+//       }
+//     }
+//     else {
+//       // The current time block does not exist.
+//       // Create the block, set count to 1.
+//       // This will remove any old blocks.
+//       req.session.flood[req.body.userid] = {block: 1};
+//     }
+//   }
+//   catch (err) {
+//     // console.log(err)
+//     return Output.json_response(res, 400, {error: err});
+//   }
+//   finally {
+//     next();
+//   }
+// }

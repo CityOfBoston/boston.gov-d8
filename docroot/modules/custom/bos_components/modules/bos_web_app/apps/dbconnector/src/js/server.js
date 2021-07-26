@@ -1,5 +1,6 @@
 
-const listen_port = require('../common/env.config.js').port;
+const config = require('../common/env.config.js');
+const Output = require('../common/json.responses');
 
 const express = require('express');
 
@@ -7,11 +8,11 @@ const app = express();
 const bodyParser = require('body-parser');
 
 // Include the models routing files.
-const HealthRouter = require('../models/health/routes.config');
 const AuthorizationRouter = require('../models/authorization/routes.config');
 const UsersRouter = require('../models/users/routes.config');
 const ConnectionsRouter = require('../models/connections/routes.config');
 const ProxyRouter = require('../models/proxies/routes.config');
+const HealthRouter = require('../models/health/routes.config');
 
 app.use(function (req, res, next) {
   res.set('Cache-Control', 'no-store');
@@ -41,8 +42,8 @@ ProxyRouter.routesConfig(app);
 
 // Start the express server service.
 try {
-  app.listen(listen_port, function () {
-    console.log('app listening at port %s', listen_port);
+  app.listen(config.listen_port, 'localhost', function () {
+    console.log('app listening at port %s', config.listen_port);
   });
 }
 catch(err) {
