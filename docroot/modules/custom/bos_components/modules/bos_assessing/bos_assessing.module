@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Config;
 
 /**
  * Implements hook_theme().
@@ -18,4 +19,26 @@ function bos_assessing_theme() {
     ]
   ];
   return $theme;
+}
+
+function bos_assessing_library_info_build() {
+  $libraries = [];
+  $modName = basename(__FILE__, ".module");
+  $modulePath = drupal_get_path("module", $modName);
+  $api_key = \Drupal::config('geolocation_google_maps.settings')->get("google_map_api_key");
+  $js_path = "https://maps.googleapis.com/maps/api/js?key=$api_key&libraries=drawing";
+  $libraries['assessing_map'] = [
+    'version' => '1.x',
+    'js' => [
+      $js_path => ['type' => 'external', 'minified' => TRUE],
+      '/modules/custom/bos_components/modules/bos_assessing/js/assessing_map.js' => ['type' => 'external', 'minified' => TRUE],
+    ],
+    'css' => [
+      'layout' => [
+          '/modules/custom/bos_components/modules/bos_assessing/css/assessing.css' => [],
+        ],
+    ],
+  ];
+
+  return $libraries;
 }
