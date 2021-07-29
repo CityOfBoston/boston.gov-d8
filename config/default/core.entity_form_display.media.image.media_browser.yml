@@ -6,7 +6,7 @@ dependencies:
     - core.entity_form_mode.media.media_browser
     - field.field.media.image.field_media_in_library
     - field.field.media.image.image
-    - image.style.media_fixed_height_100px_
+    - image.style.large
     - media.type.image
   module:
     - svg_image
@@ -19,16 +19,16 @@ mode: media_browser
 content:
   field_media_in_library:
     type: boolean_checkbox
-    weight: 1
+    weight: 2
     settings:
       display_label: true
     third_party_settings: {  }
     region: content
   image:
-    weight: 2
+    weight: 1
     type: image_image
     settings:
-      preview_image_style: media_fixed_height_100px_
+      preview_image_style: large
       progress_indicator: throbber
     third_party_settings: {  }
     region: content
@@ -40,6 +40,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
+  revision_log_message:
+    type: string_textarea
+    weight: 3
+    settings:
+      rows: 4
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
 hidden:
   created: true
   langcode: true
