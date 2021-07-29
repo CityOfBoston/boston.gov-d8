@@ -169,3 +169,122 @@ html.no-scroll {
 #views-exposed-form-wysiwyg-entity-browser-image-library .form--inline #edit-actions{
   margin-top: 29px;
 }
+
+
+.ui-dialog-content.ui-widget-content {
+  /*overflow: hidden !important;*/
+}
+
+.field--name-name,
+.ui-dialog-content.ui-widget-content .form-wrapper .field--name-name {
+  float: right;
+  margin: 1rem 3rem 1rem 0rem;
+}
+
+.field--name-name::after {
+  content: "This text will show when hovering over the image.";
+  color: #595959;
+  font-size: 0.95em;
+}
+
+.field--name-field-media-in-library {
+  float: left;
+  margin-top: -16rem;
+  margin-left: 32rem;
+}
+
+.field--name-field-media-in-library::after {
+  content: "Everyone will be able to see this image when browsing the media library. Select for images that will be frequently re-used.";
+  color: #595959;
+  font-size: 0.95em;
+}
+
+#input.js-form-managed-file {
+  margin-top: 1rem;
+  float: left;
+  border-top: solid 2px #eee;
+  width: 100%;
+  padding-top: 0.5rem;
+}
+
+#input.js-form-managed-file .file--image {
+  display: none;
+}
+
+.form-item-entity-field-media-in-library-value label.option {
+  font-weight: bold;
+}
+
+.form-item-entity-image-0-alt,
+.ui-dialog-content.ui-widget-content .form-wrapper .image-widget-data .form-item-entity-image-0-alt {
+  margin-left: 32rem;
+}
+
+.image-widget-data .form-item-entity-image-0-alt::after {
+  content: "Describe the image to help visually-impaired site visitors, improve search engine rankings, and as a fallback if the image cannot be loaded.";
+  color: #595959;
+  font-size: 0.95em;
+}
+
+.image-widget .image-widget-data {
+  float: unset;
+}
+
+.image-widget-data span.file--image {
+  position: absolute;
+  margin-top: 11.5rem;
+  margin-left: -30rem;
+  font-size: 1rem;
+}
+
+.image-widget-data span.file-size {
+  position: absolute;
+  margin-top: 13rem;
+  margin-left: -30rem;
+}
+
+.image-widget-data .form-submit {
+  position: absolute;
+  margin-top: 12rem;
+  margin-left: -7.5rem;
+}
+
+.form-actions {
+  /*position: absolute;*/
+  /*top: 2.25rem;*/
+  /*right: 0;*/
+}
+
+.form-item-entity-image-0 .description {
+  display: none;
+}
+
+.image-widget .image-preview::after {
+  background-color: #ddd;
+  display: block;
+  /*margin-bottom: 5rem;*/
+  content: '';
+  width: 100%;
+  height: 4rem;
+  margin-top: -0.5rem;
+}
+
+#entity-form.form-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+#entity-form.form-wrapper #input.js-form-managed-file {
+  order: 2;
+}
+
+#entity-form.form-wrapper div.form-wrapper[data-drupal-selector=edit-widget]{
+  order: 1;
+}
+
+#entity-form.form-wrapper div.form-wrapper[data-drupal-selector=edit-actions]{
+  order: 3;
+  align-self: flex-end;
+  margin-top: -1.75rem;
+  margin-right: 1rem;
+}
