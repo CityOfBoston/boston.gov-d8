@@ -6,15 +6,14 @@ class MNL extends React.Component {
     this.state = {
       error: null,
       isLoading: false,
-      section: null,
-      sam_id: null,
       itemsLookup: [],
+      currPage: 1,
+      pageMaxCount: 10,
       itemsDisplay: null,
-      currentKeywords: null,
-      submittedAddress: null,
-      submittedKeywords: null,
-      searchColor: null,
-      searchByFilter: 0,
+      currentKeywords: '',
+      submittedAddress: '',
+      submittedKeywords: false,
+      searchByFilter: 1,
       searchFilters: [
         {
           value: 'address',
@@ -25,8 +24,8 @@ class MNL extends React.Component {
         {
           value: 'owner',
           label: "Property Owner",
-          instructions: "Enter the property owner's name (last, first) ex. Last name, First Name",
-          placeholder: "Search by Last name, First name",
+          instructions: "Enter the property owner's name (last, first) ex. First and Last Name",
+          placeholder: "Search by First and Last Name",
         },
         {
           value: 'id',
@@ -120,8 +119,7 @@ class MNL extends React.Component {
     let inputChars = event.target.value.length;
     this.setState({
       currentKeywords: event.target.value,
-      submittedKeywords: null,
-      searchColor: null
+      submittedKeywords: false
     });
 
     // console.log('handleKeywordChange: ', event.target.value, ' | ', this.state.currentKeywords);
@@ -130,7 +128,7 @@ class MNL extends React.Component {
       this.setState({
         isLoading: true,
         submittedKeywords: true,
-        submittedAddress: null
+        submittedAddress: ''
       });
     }
   }
@@ -140,41 +138,86 @@ class MNL extends React.Component {
     this.setState({
       isLoading: true,
       submittedKeywords: true,
-      submittedAddress: null,
+      submittedAddress: '',
     });
     this.lookupAddress();
   };
 
+  handleLoadMoreResults = event => {
+    event.preventDefault();
+    this.setState({
+      currPage: ++this.state.currPage
+    });
+  };
+
+  getParselIdQry = addressQuery => {
+    const qryParams = this.state.queryStr;
+    const qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    console.log('getParselIdQry: ', qryUrl);
+
+    return qryUrl;
+  };
+
+  getAddressQryStr = (
+    addressArr,
+    getMatchingSuffixObj,
+    qryParams,
+  ) => {
+    let qryUrl = '';
+
+    if (
+      addressArr.length > 2 &&
+      parseInt(addressArr[0]) !== 'NaN' &&
+      typeof getMatchingSuffixObj === 'object'
+    ) {
+      const sqlParams = qryParams.sql.filters[this.state.searchByFilter];
+      const st_num = sqlParams.parseObj.st_num.replace('__value__', addressArr[0]);
+      const st_name_suffix = sqlParams.parseObj.st_name_suffix.replace('__value__', `${getMatchingSuffixObj.abbr}%`);
+      const stName = addressArr.length === 3 ? encodeURIComponent(addressArr[1]) : encodeURIComponent(addressArr.slice(1, addressArr.length - 1).join(' '));
+      const st_name = sqlParams.parseObj.st_name.replace('__value__', stName);
+      const qry = `${st_num}${sqlParams.parseObj.bridge}${st_name}${sqlParams.parseObj.bridge}${st_name_suffix}`;
+      
+      qryUrl = `${qryParams.base}${qryParams.sql.pre}${qry}`;
+    }
+    console.log('getAddressQryStr: ', qryUrl);
+
+    return qryUrl;
+  };
+
+  getOwnerQry = (qryParams, addressQuery) => {
+    const qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    console.log(`getOwnerQry(addressQuery): ${addressQuery}`);
+
+    return qryUrl;
+  };
+
   lookupAddress = () => {
-    let addressSt = this.state.currentKeywords;
+    let qryUrl = '';
     let qryParams = this.state.queryStr;
-    let addressQuery = addressSt ? encodeURI(this.state.currentKeywords.toUpperCase()) : '';
-    let qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    let addressStr = this.state.currentKeywords;
+    let addressQuery = addressStr ? encodeURI(addressStr.toUpperCase()) : '';
     const currSearchFilterObj = this.state.searchFilters[this.state.searchByFilter];
 
-    if (currSearchFilterObj.value === 'address') {
-      let addressStr = decodeURIComponent(addressQuery);
-      let addressArr = addressStr.split(' ');
-      let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
-        const lastObj = addressArr[addressArr.length-1];
-        return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
-      });
+    switch(currSearchFilterObj.value) {
+      case "address":
+        addressStr = decodeURIComponent(addressQuery);
+        let addressArr = addressStr.split(' ');
+        let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
+          const lastObj = addressArr[addressArr.length-1];
+          return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
+        });
 
-      if (
-        addressArr.length > 2 &&
-        parseInt(addressArr[0]) !== 'NaN' &&
-        typeof getMatchingSuffixObj === 'object'
-      ) {
-        const sqlParams = qryParams.sql.filters[this.state.searchByFilter];
-        const st_num = sqlParams.parseObj.st_num.replace('__value__', addressArr[0]);
-        const st_name_suffix = sqlParams.parseObj.st_name_suffix.replace('__value__', getMatchingSuffixObj.abbr);
-        const stName = addressArr.length === 3 ? encodeURIComponent(addressArr[1]) : encodeURIComponent(addressArr.slice(1, addressArr.length - 1).join(' '));
-        const st_name = sqlParams.parseObj.st_name.replace('__value__', stName);
-        const qry = `${st_num}${sqlParams.parseObj.bridge}${st_name}${sqlParams.parseObj.bridge}${st_name_suffix}`;
-        
-        qryUrl = `${qryParams.base}${qryParams.sql.pre}${qry}`;
-        // qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}`;
-      }
+        qryUrl = this.getAddressQryStr(addressArr, getMatchingSuffixObj, qryParams);
+        break;
+      case "id":
+        qryUrl = this.getParselIdQry(addressQuery);
+        // console.log('switch: id');
+        break;
+      case "owner":
+        addressQuery = encodeURI(addressStr.split(' ').reverse().join(' ').toUpperCase());
+        qryUrl = this.getOwnerQry(qryParams, addressQuery);
+        // console.log(`switch: owner | addressQuery: ${addressQuery}`);
+        break;
     }
     
     fetch(
@@ -210,35 +253,55 @@ class MNL extends React.Component {
       );
   };
 
-  searchFilterHandler = ev => {
+  changeSearchFilterHandler = ev => {
     this.setState({
-      searchByFilter: ev.currentTarget.value
+      itemsLookup: [],
+      searchByFilter: ev.currentTarget.value,
+      submittedKeywords: false,
+      submittedAddress: '',
+      currentKeywords: ''
     });
-    
-    // console.log(`searchFilterHandler > ${this.state.searchFilters[ev.currentTarget.value].label}`);
   };
 
+  // Array Chunking
+  chunkArray = (array, size) => {
+    if(array.length <= size){
+        return [array]
+    }
+    return [array.slice(0,size), ...this.chunkArray(array.slice(size), size)]
+  }
+
   render () {
+    const {
+      currPage,
+      pageMaxCount,
+      itemsLookup,
+      submittedKeywords,
+      searchByFilter,
+      searchFilters,
+      currentKeywords,
+    } = this.state;
+
     // Set and retreieve lookup items
-    let itemsLookupArray = this.state.itemsLookup.slice(0, 9);
-    let itemsLookupMarkup = [];
+    // let itemsLookupArray = itemsLookup.slice(0, 9);
+    let itemsLookupArray = this.chunkArray(itemsLookup, pageMaxCount).slice(0, currPage).flat();
+    let resultsMarkup = [];
     let resultItem;
-    if (this.state.submittedKeywords) {
-      if (itemsLookupArray.length > 0) {
-        for (const [index, value] of itemsLookupArray.entries()) {
-          // console.log('render > value: ', value);
-          resultItem = (
-            <a
-              className="cd dl-i search-result"
-              tabIndex='0'
-              style={{ cursor: "pointer" }}
-              key={index}
-              href={`assessing-online/${itemsLookupArray[index].PID}`}
-            >
-              <li className="address-item rows">
-                <div className="prop-value column-value mobile">
-                  ${itemsLookupArray[index].AV_TOTAL}
-                </div>
+
+
+    if (submittedKeywords && itemsLookupArray.length > 0) {
+      console.log('itemsLookupArray: ', itemsLookupArray);
+      for (const [index, value] of itemsLookupArray.entries()) {
+        resultItem = (
+          <a
+            className="search-result"
+            tabIndex='0'
+            style={{ cursor: "pointer" }}
+            key={index}
+            href={`assessing-online/${itemsLookupArray[index].PID}`}
+          >
+            <li className="address-item rows">
+              <div className="desktop">
                 <div className="prop-value column-property">
                   {itemsLookupArray[index].MAIL_ADDRESS}
                 </div>
@@ -248,68 +311,113 @@ class MNL extends React.Component {
                 <div className="prop-value column-parcel">
                   {itemsLookupArray[index].PID}
                 </div>
-                <div className="prop-value column-value desktop">
+                <div className="prop-value column-value">
                   ${itemsLookupArray[index].AV_TOTAL}
                 </div>
-              </li>
-            </a>
-          );
-          itemsLookupMarkup.push(resultItem);
-        }
-      } else {
-        itemsLookupMarkup = <div className="supporting-text">No address was found by that name.</div>;
+              </div>
+
+              <div className="mobile">
+                <div className="left-col">
+                  <div className="prop-value column-property">
+                    {itemsLookupArray[index].MAIL_ADDRESS}
+                  </div>
+                  <div className="prop-value column-owner">
+                    {itemsLookupArray[index].OWNER}
+                  </div>
+                  <div className="prop-value column-parcel">
+                    {itemsLookupArray[index].PID}
+                  </div>
+                </div>
+
+                <div className="right-col">
+                  <div className="prop-value column-value">
+                    ${itemsLookupArray[index].AV_TOTAL}
+                  </div>
+                </div>
+              </div>
+            </li>
+          </a>
+        );
+        resultsMarkup.push(resultItem);
       }
+    } else {
+      resultsMarkup = <div className="supporting-text">No results were found.</div>;
     }
 
     const renderListHeaders = () => {
       let retElem = '';
-      if (itemsLookupMarkup.length > 0) {
+      if (resultsMarkup.length > 0) {
         retElem = (
           <li className="header">
-            <div className="header-label">Property</div>
-            <div className="header-label">Owner</div>
-            <div className="header-label">Parcel ID</div>
-            <div className="header-label">Value</div>
+            <div className="header-desktop">
+              <div className="header-label">Property</div>
+              <div className="header-label">Owner</div>
+              <div className="header-label">Parcel ID</div>
+              <div className="header-label">Value</div>
+            </div>
+
+            <div className="header-mobile">
+              <div className="header-label">Property</div>
+              <div className="header-label">Value</div>
+            </div>
           </li>
         );
       }
       return retElem;
     };
 
+    const loadMoreElem = () => {
+      let elem = '';
+
+      if (itemsLookup.length > pageMaxCount) {
+        elem = (
+          <div>
+            <div className="shown-label">
+              Showing: {currPage*pageMaxCount} out of {itemsLookup.length} results
+            </div>
+
+            <div className="load-more">
+              <button class="btn" onClick={this.handleLoadMoreResults}>Load More</button>
+            </div>
+          </div>
+        );
+      }
+
+      return elem;
+    };
+
     return (
-      <div className="paragraphs-items paragraphs-items-field-components paragraphs-items-full paragraphs-items-field-components-full mnl">
+      <div className="mnl">
         <SearchFilters
-          searchByFilter={this.state.searchByFilter}
-          searchFilters={this.state.searchFilters}
-          onChange={this.searchFilterHandler}
+          searchByFilter={searchByFilter}
+          searchFilters={searchFilters}
+          onChange={this.changeSearchFilterHandler}
         />
 
-        <div className="filterBy-desc">
-          {this.state.searchFilters[this.state.searchByFilter].instructions}
+        <div className="filter-by-desc">
+          {searchFilters[searchByFilter].instructions}
         </div>
         
-        <div>
-          <Search
-            handleKeywordChange={this.handleKeywordChange}
-            handleKeywordSubmit={this.handleKeywordSubmit}
-            placeholder={this.state.searchFilters[this.state.searchByFilter].placeholder}
-            searchClass="sf-i-f"
-            styleInline={{ color: this.state.searchColor }}
-            currentKeywords={this.state.currentKeywords}
-          />
-        </div>
-        <div style={{ paddingTop: "30px" }}>
+        <Search
+          handleKeywordChange={this.handleKeywordChange}
+          handleKeywordSubmit={this.handleKeywordSubmit}
+          placeholder={searchFilters[searchByFilter].placeholder}
+          searchClass="sf-i-f"
+          value={currentKeywords}
+        />
+
+        <div className="mnl-mod">
           {this.state.isLoading ? (
             <div className="supporting-text">Loading ... </div>
           ) : (
-            <div>
-              <ul className="dl">
-                {renderListHeaders()}
-                {itemsLookupMarkup}
-              </ul>
-            </div>
+            <ul className="results-list">
+              {renderListHeaders()}
+              {resultsMarkup}
+            </ul>
           )}
         </div>
+        
+        {loadMoreElem()}
       </div>
     );
   }
