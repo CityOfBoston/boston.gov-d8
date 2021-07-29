@@ -1,11 +1,6 @@
 class SearchFilters extends React.Component {
-  constructor (props) {
-    super(props);
-  }
-
   render () {
     const RadioBtnElems = () => {
-      
       return this.props.searchFilters.map((obj, index) => {
         let attributes = {
           id: `radio[${index}]`,
@@ -19,7 +14,6 @@ class SearchFilters extends React.Component {
 
         if (this.props.searchByFilter === index)
           attributes['checked'] = 'checked';
-
         return <RadioBtn {...attributes} />;
       });
     }
@@ -27,7 +21,6 @@ class SearchFilters extends React.Component {
     return(
       <div className="search-filters">
         <label className="filters-label">Search By:</label>
-
         {RadioBtnElems()}
       </div>
     );
