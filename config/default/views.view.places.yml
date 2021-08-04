@@ -167,10 +167,12 @@ display:
           exposed: true
           expose:
             operator_id: title_op
-            label: ''
+            label: Search
             description: ''
             use_operator: false
             operator: title_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: title
             required: false
             remember: false
@@ -184,9 +186,8 @@ display:
               content_editor: '0'
               content_reviewer: '0'
               content_author: '0'
+              metrolist_editor: '0'
             placeholder: 'Search ...'
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
