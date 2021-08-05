@@ -211,6 +211,13 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
 
 }
 
+function bos_list_preprocess_form_element(&$variables) {
+  if(strtolower($variables['element']['#title']) === 'search' || $variables['element']['#attributes']['id'] === "edit-title") {
+    $variables['label_display'] = 'after';
+    $variables['label']['#attributes']['class'] = 'sf-i-l';
+  }
+}
+
 /**
  * Implements hook_form_alter().
  */
