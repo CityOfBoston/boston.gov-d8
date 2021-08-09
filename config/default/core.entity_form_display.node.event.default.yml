@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.event.field_city_sponsored
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
+    - field.field.node.event.field_content_feeds
     - field.field.node.event.field_cost
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
@@ -58,6 +59,7 @@ third_party_settings:
         - group_sidebar_components
         - group_related_content
         - group_page_metadata
+        - group_feeds
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -256,6 +258,20 @@ third_party_settings:
         speed: fast
       label: Horizontal
       region: content
+    group_feeds:
+      children:
+        - field_content_feeds
+      parent_name: group_article
+      weight: 8
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Feeds
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -332,6 +348,16 @@ content:
       match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
+    region: content
+  field_content_feeds:
+    weight: 33
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
     region: content
   field_cost:
     type: string_textfield
