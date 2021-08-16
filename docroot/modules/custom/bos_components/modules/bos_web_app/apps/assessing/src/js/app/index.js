@@ -13,7 +13,7 @@ class MNL extends React.Component {
       currentKeywords: '',
       submittedAddress: '',
       submittedKeywords: false,
-      searchByFilter: 1,
+      searchByFilter: 0,
       searchFilters: [
         {
           value: 'address',
@@ -21,12 +21,13 @@ class MNL extends React.Component {
           instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc) ex. 1 City Hall Sq",
           placeholder: "Search by address",
         },
-        {
-          value: 'owner',
-          label: "Property Owner",
-          instructions: "Enter the property owner's name (first, last) ex. First and Last Name",
-          placeholder: "Search by First and Last Name",
-        },
+        // NOTE: SEARCH BY OWNER has been requested to be disabled
+        // {
+        //   value: 'owner',
+        //   label: "Property Owner",
+        //   instructions: "Enter the property owner's name (first, last) ex. First and Last Name",
+        //   placeholder: "Search by First and Last Name",
+        // },
         {
           value: 'id',
           label: 'Parcel ID',
@@ -40,7 +41,6 @@ class MNL extends React.Component {
           pre: `?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22`,
           filters: [
             {
-              // pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
               pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
               post: `%20ORDER%20BY%20%22ST_NUM%22%20,%20%22ST_NAME%22%20DESC%20LIMIT%20100`,
               parseObj: {
@@ -50,10 +50,11 @@ class MNL extends React.Component {
                 st_name_suffix: `%22ST_NAME_SUF%22%20LIKE%20%27__value__%27`,
               },
             },
-            {
-              pre: `OWNER%22%20LIKE%20%27`,
-              post: `%%27%20ORDER%20BY%20%22OWNER%22%20DESC%20LIMIT%20100`
-            },
+            // NOTE: SEARCH BY OWNER has been requested to be disabled
+            // {
+            //   pre: `OWNER%22%20LIKE%20%27`,
+            //   post: `%%27%20ORDER%20BY%20%22OWNER%22%20DESC%20LIMIT%20100`
+            // },
             {
               pre: `PID%22%20LIKE%20%27`,
               post: `%27%20ORDER%20BY%20%22PID%22%20DESC%20LIMIT%20100`,
@@ -256,7 +257,7 @@ class MNL extends React.Component {
         const validate = this.getAddressQryStr(addressArr, qryParams);
         qryUrl = validate.url;
 
-        if (!validate.validation.valid) {
+        if (!validate.validation.valid && validate.validation.error.length > 0) {
           this.setState({
             validationMgs: (
               <ul>
