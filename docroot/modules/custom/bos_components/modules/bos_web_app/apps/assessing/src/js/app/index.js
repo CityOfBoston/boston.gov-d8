@@ -120,7 +120,8 @@ class MNL extends React.Component {
     event.preventDefault();
     this.setState({
       currentKeywords: event.target.value,
-      submittedKeywords: false
+      submittedKeywords: false,
+      currPage: 1
     });
 
     if (event.keyCode === 13) {
@@ -138,6 +139,7 @@ class MNL extends React.Component {
       isLoading: true,
       submittedKeywords: true,
       submittedAddress: '',
+      currPage: 1
     });
     this.lookupAddress();
   };
@@ -157,7 +159,8 @@ class MNL extends React.Component {
       submittedAddress: '',
       currentKeywords: '',
       postResMessage: '',
-      validationMgs: ''
+      validationMgs: '',
+      currPage: 1
     });
   };
 
@@ -287,19 +290,28 @@ class MNL extends React.Component {
         .then(res => res.json())
         .then(
           result => {
-            const postResMessage = result.result.records.length > 0 ? "" : "No results were found.";
-            if (result.result.records.length > 0) {
-              this.setState({
-                isLoading: false,
-                itemsLookup: result.result.records,
-                postResMessage,
-                validationMgs: ''
-              });
+            if (result.result && result.result.records) {
+              const postResMessage = result.result.records.length > 0 ? "" : "No results were found.";
+
+              if (result.result.records.length > 0) {
+                this.setState({
+                  isLoading: false,
+                  itemsLookup: result.result.records,
+                  postResMessage,
+                  validationMgs: ''
+                });
+              } else {
+                this.setState({
+                  isLoading: false,
+                  itemsLookup: [],
+                  postResMessage
+                });
+              }
             } else {
               this.setState({
                 isLoading: false,
                 itemsLookup: [],
-                postResMessage
+                postResMessage: "No results were found."
               });
             }
           },
@@ -451,7 +463,12 @@ class MNL extends React.Component {
       let ret = '';
 
       if (typeof validationMgs === 'object') {
-        ret = (<>{validationMgs}</>);
+        ret = (
+          <>
+            <label>The Following issue were found:</label>
+            {validationMgs}
+          </>
+        );
       } else {
         ret = (<label>{postResMessage}</label>);
       }
